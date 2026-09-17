@@ -56,6 +56,7 @@ export function collaborationReason(
     | 'accessRequest'
     | 'resubmit'
     | 'commentResolution'
+    | 'reviewDecision'
 ) {
   const reasons = {
     ko: {
@@ -67,6 +68,7 @@ export function collaborationReason(
       accessRequest: '사용자가 거부된 수신자와 출처를 검토하고 접근 권한 요청을 확인했습니다.',
       resubmit: '사용자가 최신 권한 사전검사, 팀 작업공간 생성, 만료형 내부 공유를 확인했습니다.',
       commentResolution: '사용자가 댓글 내용과 답글을 검토하고 해결 처리를 확인했습니다.',
+      reviewDecision: '할당된 검토자가 4대 거버넌스 게이트와 문서 내용을 확인했습니다.',
     },
     en: {
       workspace: 'The user confirmed the team workspace and authorization scope.',
@@ -79,6 +81,7 @@ export function collaborationReason(
       resubmit:
         'The user confirmed the renewed authorization preflight, team workspace, and expiring internal share.',
       commentResolution: 'The user reviewed the comment thread and confirmed its resolution.',
+      reviewDecision: 'The assigned reviewer verified the four governance gates and document content.',
     },
   } as const;
   return reasons[locale][action];

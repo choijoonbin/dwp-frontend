@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   MAIL_GROUP_TO_RECIPIENT_LIMIT,
+  mailGroupAttemptCanSubmit,
   mailGroupDeliveryPolicy,
 } from './mail-group-delivery-policy';
 
@@ -21,5 +22,11 @@ describe('mail group delivery policy', () => {
       unsupportedPrivateMode: true,
       canSend: false,
     });
+  });
+
+  it('requires a fresh recipient snapshot after a group-version conflict', () => {
+    expect(mailGroupAttemptCanSubmit({ reviewRequired: true, snapshotStale: true })).toBe(false);
+    expect(mailGroupAttemptCanSubmit({ reviewRequired: true, snapshotStale: false })).toBe(true);
+    expect(mailGroupAttemptCanSubmit(null)).toBe(true);
   });
 });

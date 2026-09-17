@@ -49,6 +49,7 @@ export function DwaionProposalActionReview({
   const inputs = Object.entries(proposal.content.actionInputs ?? {});
   const completed = handoff.state === 'COMPLETED';
   const failed = ['FAILED', 'CANCELLED'].includes(handoff.state);
+  const ownerCompletionSupported = handoff.actionKey === 'APPROVAL.REQUEST.CREATE';
   const immutableBinding =
     handoff.proposalId === proposal.proposalId && handoff.actionKey === proposal.actionKey;
   const [draftState, setDraftState] = useState<'IDLE' | 'SAVED' | 'ERROR'>('IDLE');
@@ -190,6 +191,13 @@ export function DwaionProposalActionReview({
           {ko
             ? '인계 상태를 확인하지 못했습니다. 같은 멱등성 키로 안전하게 다시 시도합니다.'
             : 'The handoff state could not be confirmed. Retry safely with the same idempotency key.'}
+        </InlineFeedback>
+      ) : null}
+      {!ownerCompletionSupported ? (
+        <InlineFeedback severity="warning" data-testid="dwaion-owner-callback-unavailable">
+          {ko
+            ? '이 작업 유형은 원 업무 시스템의 완료 콜백이 아직 연결되지 않아 실행할 수 없습니다. 실제 완료 영수증을 회수할 수 있는 전자결재 요청만 현재 지원합니다.'
+            : 'This action cannot run because its owning work system has no completion callback. Approval request creation is the only proposal action currently able to return a verified completion receipt.'}
         </InlineFeedback>
       ) : null}
 
@@ -468,7 +476,7 @@ export function DwaionProposalActionReview({
               intent="primary"
               fullWidth
               endIcon={<ArrowRight size={17} />}
-              disabled={busy || failed || completed}
+              disabled={busy || failed || completed || !ownerCompletionSupported}
               onClick={onOpenTarget}
               sx={{ minHeight: 50 }}
             >
@@ -481,9 +489,13 @@ export function DwaionProposalActionReview({
               textAlign="center"
               sx={{ mt: 0.75 }}
             >
-              {ko
-                ? '원 업무 앱의 최종 제출 전에는 완료 처리되지 않습니다.'
-                : 'Completion is recorded only after final submission in the work app.'}
+              {ownerCompletionSupported
+                ? ko
+                  ? '원 업무 앱의 최종 제출 전에는 완료 처리되지 않습니다.'
+                  : 'Completion is recorded only after final submission in the work app.'
+                : ko
+                  ? '완료 콜백 계약이 연결될 때까지 실행이 잠겨 있습니다.'
+                  : 'Execution remains locked until an owner completion callback is installed.'}
             </Typography>
             <ActionButton
               intent="secondary"

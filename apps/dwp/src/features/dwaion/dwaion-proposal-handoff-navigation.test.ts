@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { parseDwaionHandoff } from '@dwp-frontend/shared-utils';
+import {
+  parseDwaionHandoff,
+  parseDwaionProposalHandoffBinding,
+} from '@dwp-frontend/shared-utils';
 
 import { createDwaionProposalTargetState } from './dwaion-proposal-handoff-navigation';
 
@@ -73,7 +76,14 @@ describe('DWAI.ON proposal handoff navigation', () => {
         label: 'Capacity evidence',
       },
     ]);
+    expect(state.dwaionProposalHandoff.handoffVersion).toBe(1);
     expect(parseDwaionHandoff({ dwaionHandoff: state.dwaionHandoff })).not.toBeNull();
+    expect(parseDwaionProposalHandoffBinding(state)).toMatchObject({
+      handoffId: HANDOFF_ID,
+      proposalId: PROPOSAL_ID,
+      actionKey: 'APPROVAL.REQUEST.CREATE',
+      handoffVersion: 1,
+    });
   });
 
   it('fails closed instead of forwarding unsupported nested input values', async () => {

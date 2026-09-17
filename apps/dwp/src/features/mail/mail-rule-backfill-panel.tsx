@@ -20,6 +20,8 @@ type BackfillAttempt = {
   accountId: string;
   previewFingerprint: string;
   requestId: string;
+  continuationToken?: string | null;
+  nextContinuationToken?: string | null;
 };
 
 export function MailRuleBackfillPanel({
@@ -38,6 +40,7 @@ export function MailRuleBackfillPanel({
     [accounts]
   );
   const [accountId, setAccountId] = useState('');
+  const [continuationToken, setContinuationToken] = useState<string | null>(null);
   const [attempt, setAttempt] = useState<BackfillAttempt | null>(null);
   const [result, setResult] = useState<MailRuleBackfillResult | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -47,14 +50,21 @@ export function MailRuleBackfillPanel({
     const nextAccount =
       personalAccounts.find((account) => account.defaultAccount) ?? personalAccounts[0];
     setAccountId(nextAccount?.accountId ?? '');
+    setContinuationToken(null);
     setAttempt(null);
     setResult(null);
     setConfirmOpen(false);
   }, [accountId, personalAccounts]);
 
   const preview = useQuery({
-    queryKey: ['mail', 'organization', 'rule-backfill-preview', accountId],
-    queryFn: () => getMailRuleBackfillPreview(accountId),
+    queryKey: [
+      'mail',
+      'organization',
+      'rule-backfill-preview',
+      accountId,
+      continuationToken,
+    ],
+    queryFn: () => getMailRuleBackfillPreview(accountId, continuationToken),
     enabled: Boolean(accountId),
     retry: false,
     staleTime: 0,
@@ -65,11 +75,15 @@ export function MailRuleBackfillPanel({
       runMailRuleBackfill(command.accountId, {
         requestId: command.requestId,
         previewFingerprint: command.previewFingerprint,
+        continuationToken: command.continuationToken,
       }),
-    onSuccess: async (nextResult) => {
+    onSuccess: async (nextResult, command) => {
       setConfirmOpen(false);
       setAttempt(null);
       setResult(nextResult);
+      if (command.nextContinuationToken) {
+        setContinuationToken(command.nextContinuationToken);
+      }
       await onCompleted();
     },
     onError: () => setConfirmOpen(false),
@@ -78,6 +92,7 @@ export function MailRuleBackfillPanel({
   const selectAccount = (nextAccountId: string) => {
     if (nextAccountId === accountId || mutation.isPending) return;
     setAccountId(nextAccountId);
+    setContinuationToken(null);
     setAttempt(null);
     setResult(null);
     setConfirmOpen(false);
@@ -95,12 +110,15 @@ export function MailRuleBackfillPanel({
     if (!currentPreview || preview.isFetching || mutation.isPending) return;
     const command =
       attempt?.accountId === accountId &&
-      attempt.previewFingerprint === currentPreview.previewFingerprint
+      attempt.previewFingerprint === currentPreview.previewFingerprint &&
+      attempt.continuationToken === currentPreview.continuationToken
         ? attempt
         : {
             accountId,
             previewFingerprint: currentPreview.previewFingerprint,
             requestId: crypto.randomUUID(),
+            continuationToken: currentPreview.continuationToken,
+            nextContinuationToken: currentPreview.nextContinuationToken,
           };
     setAttempt(command);
     setResult(null);
@@ -114,7 +132,6 @@ export function MailRuleBackfillPanel({
   const retryable = mutation.isError && !rejected;
   const canRun =
     Boolean(preview.data) &&
-    !preview.data?.truncated &&
     !preview.isFetching &&
     !mutation.isPending &&
     !rejected &&
@@ -218,6 +235,27 @@ export function MailRuleBackfillPanel({
                 {preview.data.truncated && (
                   <Alert severity="warning">{t('organization.backfill.truncated')}</Alert>
                 )}
+                {continuationToken && (
+                  <Alert
+                    severity="info"
+                    action={
+                      <ActionButton
+                        intent="quiet"
+                        disabled={mutation.isPending}
+                        onClick={() => {
+                          setContinuationToken(null);
+                          setAttempt(null);
+                          setResult(null);
+                          mutation.reset();
+                        }}
+                      >
+                        {t('organization.backfill.restart')}
+                      </ActionButton>
+                    }
+                  >
+                    {t('organization.backfill.continuation')}
+                  </Alert>
+                )}
               </>
             )}
 
@@ -254,6 +292,21 @@ export function MailRuleBackfillPanel({
                   {t('organization.backfill.refresh')}
                 </ActionButton>
               )}
+              {(preview.data?.plannedApplicationCount ?? 0) === 0 &&
+                preview.data?.nextContinuationToken && (
+                  <ActionButton
+                    intent="secondary"
+                    disabled={preview.isFetching || mutation.isPending}
+                    onClick={() => {
+                      setContinuationToken(preview.data!.nextContinuationToken!);
+                      setAttempt(null);
+                      setResult(null);
+                      mutation.reset();
+                    }}
+                  >
+                    {t('organization.backfill.continue')}
+                  </ActionButton>
+                )}
               <ActionButton
                 intent="primary"
                 startIcon={<Play size={16} />}

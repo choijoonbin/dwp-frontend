@@ -15,6 +15,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ActionButton } from '@dwp-frontend/design-system';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 
 import type {
   DwaionRoutineExecutionRun,
@@ -125,7 +126,7 @@ export function DwaionRoutineRunWorkbench({
         }}
       >
         <RunMetric label={copy.runEvidence} value={String(run.evidenceCount)} />
-        <RunMetric label={copy.runTokens} value={run.tokensUsed.toLocaleString()} />
+        <RunMetric label={copy.runTokens} value={formatNumber(run.tokensUsed)} />
         <RunMetric label={copy.runLatency} value={`${run.elapsedMs}ms`} />
         <RunMetric label={copy.runAttempts} value={`${run.attemptCount}/${run.maximumAttempts}`} />
       </Box>
@@ -172,7 +173,11 @@ export function DwaionRoutineRunWorkbench({
               <Typography variant="body2" fontWeight="fontWeightBold">
                 {stage.title}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ overflowWrap: 'anywhere' }}
+              >
                 {stage.detail}
               </Typography>
             </Box>

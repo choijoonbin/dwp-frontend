@@ -343,11 +343,14 @@
   "sourceTypes": {
     "CALENDAR": "Calendar",
     "CUSTOM": "Custom source",
+    "FINOPS_LEDGER": "FinOps ledger",
     "MAIL": "Mail",
     "ORACLE_HCM": "Oracle HCM",
     "SAP_HCM": "SAP HCM",
     "SCIM": "SCIM",
+    "SECURITY_POLICY": "Security policy",
     "SYSTEM": "System",
+    "TELEMETRY": "Operational telemetry",
     "WORKDAY": "Workday",
     "WORK_ITEM": "Work item"
   },

@@ -114,6 +114,7 @@ export type MailPreferences = MailPreferencesInput & {
 export type MailComposeContext = {
   accounts: MailAccount[];
   capabilities: MailComposeCapabilities;
+  accountCapabilities: Record<string, MailComposeCapabilities>;
   templates: MailTemplate[];
   signatures: MailSignature[];
   preferences: MailPreferences;

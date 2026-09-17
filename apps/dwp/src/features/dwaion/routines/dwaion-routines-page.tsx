@@ -128,7 +128,7 @@ export function DwaionRoutinesPage({
   copy?: DwaionRoutineCopy;
   formatTimestamp?: (value: string) => string;
 }) {
-  const compact = useMediaQuery('(max-width:899.95px)', { noSsr: true });
+  const compact = useMediaQuery('(max-width:1199.95px)', { noSsr: true });
   const selected = useMemo(
     () => routines.find((routine) => routine.routineId === selectedId) ?? null,
     [routines, selectedId]
@@ -471,7 +471,10 @@ export function DwaionRoutinesPage({
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) 480px' },
+                gridTemplateColumns: {
+                  xs: 'minmax(0, 1fr)',
+                  lg: 'minmax(320px, 0.65fr) minmax(600px, 1.35fr)',
+                },
                 minWidth: 0,
                 gap: 2,
                 alignItems: 'start',

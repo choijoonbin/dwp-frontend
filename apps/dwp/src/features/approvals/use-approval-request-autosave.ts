@@ -20,6 +20,7 @@ import {
 import { useApprovalGovernedMutation } from './use-approval-governed-mutation';
 
 import type { ApprovalRequestDetail } from '@dwp-frontend/shared-utils';
+import type { DwaionProposalHandoffBinding } from '@dwp-frontend/shared-utils';
 import type {
   ApprovalDraftReceipt,
   ApprovalDraftSaveAttempt,
@@ -34,6 +35,7 @@ export function useApprovalRequestAutosave({
   contextScopeKey,
   isCurrent,
   canWrite = () => true,
+  dwaionProposalHandoff,
 }: {
   sessionKey: string;
   input?: ApprovalDraftSnapshot;
@@ -42,6 +44,7 @@ export function useApprovalRequestAutosave({
   contextScopeKey?: string;
   isCurrent: () => boolean;
   canWrite?: () => boolean;
+  dwaionProposalHandoff?: DwaionProposalHandoffBinding;
 }) {
   const runCreate = useApprovalGovernedMutation('route.approvals.work.request-create.action');
   const runUpdate = useApprovalGovernedMutation('route.approvals.work.request-draft-update.action');
@@ -53,6 +56,7 @@ export function useApprovalRequestAutosave({
     contextScopeKey,
     runCreate,
     runUpdate,
+    dwaionProposalHandoff,
   });
   current.current = {
     sessionKey,
@@ -62,6 +66,7 @@ export function useApprovalRequestAutosave({
     contextScopeKey,
     runCreate,
     runUpdate,
+    dwaionProposalHandoff,
   };
 
   const controller = useMemo(() => {
@@ -103,7 +108,11 @@ export function useApprovalRequestAutosave({
           return result.request;
         }
         return createApprovalRequest(
-          { ...attempt.input, payload: structuredClone(attempt.input.payload) },
+          {
+            ...attempt.input,
+            payload: structuredClone(attempt.input.payload),
+            dwaionProposalHandoff: current.current.dwaionProposalHandoff,
+          },
           execution,
           { idempotencyKey: attempt.idempotencyKey }
         );

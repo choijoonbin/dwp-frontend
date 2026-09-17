@@ -152,15 +152,27 @@ export function DwaionArtifacts() {
       artifactId: string,
       expectedRevision: number,
       content: { title: string; body: string },
-      sources: DwaionArtifactDocument['sources']
+      sources: DwaionArtifactDocument['sources'],
+      metadata?: {
+        tags: string[];
+        projectKey: string | null;
+        reviewSlaDueAt: string | null;
+      }
     ) => {
+      const current = queryClient.getQueryData<DwaionGovernedArtifact>([
+        ...ARTIFACTS_KEY,
+        'detail',
+        identity,
+        artifactId,
+      ]);
       const saved = await governAutosave((authority) =>
         autosaveDwaionArtifact(
           artifactId,
           expectedRevision,
           { ...content, format: 'MARKDOWN' },
           [...sources],
-          authority
+          authority,
+          metadata ?? current?.metadata ?? { tags: [], projectKey: null, reviewSlaDueAt: null }
         )
       );
       const rejected = ['detail', 'versions', 'preflight'].some((scope) =>
@@ -461,6 +473,7 @@ export function DwaionArtifacts() {
             error={collaboration.error}
             canEdit={canEdit && selectionAvailable}
             canPublish={canPublish && selectionAvailable}
+            currentSubjectId={user?.userId ?? null}
             locale={locale}
             onRetry={collaboration.retry}
             onRunPreflight={collaboration.runPreflight}
@@ -471,6 +484,7 @@ export function DwaionArtifacts() {
             onCreateShare={collaboration.createShare}
             onRevokeShare={collaboration.revokeShare}
             onRequestAccess={collaboration.requestAccess}
+            onDecideReviewStage={collaboration.decideReviewStage}
             onSaveExplanation={(explanation) =>
               collaborationDraftMutation.mutateAsync({ explanation })
             }
@@ -539,6 +553,10 @@ function toSummary(artifact: DwaionGovernedArtifact) {
     draftRevision: artifact.draftRevision,
     currentVersionNumber: artifact.currentVersionNumber,
     publishedVersionNumber: artifact.publishedVersionNumber ?? null,
+    authorSubjectId: artifact.authorSubjectId ?? null,
+    tags: artifact.metadata.tags,
+    projectKey: artifact.metadata.projectKey ?? null,
+    reviewSlaDueAt: artifact.metadata.reviewSlaDueAt ?? null,
     updatedAt: artifact.updatedAt,
     capabilities: toCapabilities(artifact),
   } as const;

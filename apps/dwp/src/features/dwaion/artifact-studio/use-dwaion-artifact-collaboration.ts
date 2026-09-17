@@ -6,6 +6,7 @@ import {
   createDwaionTeamArtifactAccessRequest,
   createDwaionTeamArtifactShare,
   createDwaionTeamArtifactWorkspace,
+  decideDwaionTeamArtifactReviewStage,
   getDwaionTeamArtifactCapabilities,
   getDwaionTeamArtifactComments,
   getDwaionTeamArtifactWorkspace,
@@ -23,6 +24,8 @@ import {
   type DwaionTeamArtifactPreflight,
   type DwaionTeamArtifactShare,
   type DwaionTeamArtifactSharePermission,
+  type DwaionTeamArtifactReviewDecision,
+  type DwaionTeamArtifactReviewStage,
 } from '@dwp-frontend/shared-utils';
 
 import { useDwaionGovernedMutation } from '../../../components/use-dwaion-governed-mutation';
@@ -84,6 +87,9 @@ export function useDwaionArtifactCollaboration({
   );
   const governComments = useDwaionGovernedMutation(
     'route.dwaion.work.artifact-collaboration-comments.action'
+  );
+  const governReview = useDwaionGovernedMutation(
+    'route.dwaion.work.artifact-collaboration-review-decision.action'
   );
 
   const capabilitiesQuery = useQuery({
@@ -215,6 +221,38 @@ export function useDwaionArtifactCollaboration({
       clearCollaborationAttempts(attempts.current, 'comment-resolve');
     },
     onError: () => void commentsQuery.refetch(),
+  });
+
+  const reviewDecisionMutation = useMutation({
+    mutationFn: async (input: {
+      stage: DwaionTeamArtifactReviewStage;
+      decision: DwaionTeamArtifactReviewDecision;
+    }) => {
+      if (!document || !workspaceQuery.data) throw new Error('Workspace is required.');
+      const key = collaborationAttemptKey(
+        'review-decision',
+        input.stage.stageId,
+        input.stage.revision,
+        input.decision
+      );
+      return governReview((authority) =>
+        decideDwaionTeamArtifactReviewStage(document.artifactId, input.stage.stageId, {
+          ...collaborationHighRiskCommand(
+            collaborationCommandId(attempts.current, key),
+            input.stage.revision,
+            'USER_DECIDED_ARTIFACT_REVIEW',
+            collaborationReason(locale, 'reviewDecision'),
+            authority
+          ),
+          decision: input.decision,
+        })
+      );
+    },
+    onSuccess: (workspace) => {
+      queryClient.setQueryData(workspaceKey, workspace);
+      clearCollaborationAttempts(attempts.current, 'review-decision');
+    },
+    onError: () => void workspaceQuery.refetch(),
   });
 
   const workspaceMutation = useMutation({
@@ -556,6 +594,7 @@ export function useDwaionArtifactCollaboration({
     createCommentMutation,
     replyCommentMutation,
     resolveCommentMutation,
+    reviewDecisionMutation,
   ];
   return {
     capabilities: capabilitiesQuery.data ?? null,
@@ -582,5 +621,6 @@ export function useDwaionArtifactCollaboration({
     createComment: createCommentMutation.mutateAsync,
     replyComment: replyCommentMutation.mutateAsync,
     resolveComment: resolveCommentMutation.mutateAsync,
+    decideReviewStage: reviewDecisionMutation.mutateAsync,
   };
 }

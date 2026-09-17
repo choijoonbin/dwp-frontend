@@ -91,6 +91,28 @@ export const DWAION_ROUTINE_COPY_KO = {
   dryRun: '미리 점검',
   dryRunning: '점검 중',
   dryRunTitle: '최근 미리 점검',
+  dryRunInspectionTitle: '사전 시뮬레이션 진단 (Dry-run)',
+  dryRunInspectionDescription:
+    '저장된 정의와 서버 영수증을 분리해 5단계 안전 파이프라인을 검토합니다.',
+  dryRunReceiptUnavailable: '최근 영수증 미제공',
+  dryRunResultUnavailable:
+    '저장된 최근 Dry-run 영수증 조회 API가 아직 제공되지 않습니다. 새 미리 점검을 실행하면 현재 세션에서 실제 영수증을 표시합니다.',
+  dryRunStages: {
+    purpose: '업무 목적 결속',
+    sources: '허용 출처 경계',
+    trigger: '트리거·타임존 검증',
+    zeroWrite: 'Zero-Write 가드',
+    delivery: '제안·전달 격리',
+  },
+  zeroWritePolicyOnly:
+    '정책 capability는 구성됐지만 외부 쓰기 0건은 개별 Dry-run 영수증으로 확정합니다.',
+  dryRunEvidenceBoundaryTitle: '현재 Dry-run 계약의 증거 경계',
+  dryRunCost: '비용 예측',
+  dryRunLatency: '지연 예측',
+  dryRunCostUnavailable: '현재 Dry-run 영수증은 비용 예측치를 반환하지 않습니다.',
+  dryRunLatencyUnavailable: '현재 Dry-run 영수증은 시뮬레이션 지연을 반환하지 않습니다.',
+  dryRunIdempotencyUnavailable:
+    '현재 Dry-run 조회 계약은 commandId 또는 멱등성 토큰을 노출하지 않습니다.',
   dryRunOutcomes: { VALIDATED: '권한과 출처 연결 검증 완료' },
   dryRunEvidence: '검증한 출처 {{count}}개 · 업무 본문 분석 0건 · 제안 생성 0건',
   nextPreview: '다음 예정 시각 미리보기',
@@ -390,6 +412,28 @@ export const DWAION_ROUTINE_COPY_EN: DwaionRoutineCopy = {
   dryRun: 'Run validation',
   dryRunning: 'Validating',
   dryRunTitle: 'Latest validation',
+  dryRunInspectionTitle: 'Preflight simulation inspection (dry-run)',
+  dryRunInspectionDescription:
+    'Review the five-stage safety pipeline while keeping the saved definition separate from server receipt evidence.',
+  dryRunReceiptUnavailable: 'Latest receipt unavailable',
+  dryRunResultUnavailable:
+    'The server does not yet provide an endpoint to reload the latest dry-run receipt. A new validation displays its real receipt in this session.',
+  dryRunStages: {
+    purpose: 'Work objective binding',
+    sources: 'Allowed source boundary',
+    trigger: 'Trigger and time-zone validation',
+    zeroWrite: 'Zero-write guard',
+    delivery: 'Proposal and delivery isolation',
+  },
+  zeroWritePolicyOnly:
+    'The policy capability is configured, while zero external writes are final only in a per-run receipt.',
+  dryRunEvidenceBoundaryTitle: 'Evidence boundary in the current dry-run contract',
+  dryRunCost: 'Cost estimate',
+  dryRunLatency: 'Latency estimate',
+  dryRunCostUnavailable: 'The current dry-run receipt does not return an estimated cost.',
+  dryRunLatencyUnavailable: 'The current dry-run receipt does not return simulated latency.',
+  dryRunIdempotencyUnavailable:
+    'The current dry-run read contract does not expose commandId or an idempotency token.',
   dryRunOutcomes: { VALIDATED: 'Access and source binding validated' },
   dryRunEvidence: 'Validated {{count}} sources · 0 business records analyzed · 0 proposals created',
   nextPreview: 'Next scheduled-time preview',

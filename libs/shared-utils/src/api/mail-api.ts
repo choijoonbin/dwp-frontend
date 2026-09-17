@@ -336,6 +336,8 @@ export type MailRuleRun = {
 
 export type MailRuleBackfillPreview = {
   accountId: string;
+  continuationToken?: string | null;
+  nextContinuationToken?: string | null;
   previewFingerprint: string;
   enabledRuleCount: number;
   scannedCount: number;
@@ -760,17 +762,25 @@ export async function runMailRule(ruleId: string): Promise<MailRuleRun> {
 }
 
 export async function getMailRuleBackfillPreview(
-  accountId: string
+  accountId: string,
+  continuationToken?: string | null
 ): Promise<MailRuleBackfillPreview> {
+  const search = new URLSearchParams();
+  if (continuationToken) search.set('continuationToken', continuationToken);
+  const suffix = search.size ? `?${search.toString()}` : '';
   const response = await axiosInstance.get<ApiResponse<MailRuleBackfillPreview>>(
-    `/api/platform/v1/mail/organization/accounts/${encodeURIComponent(accountId)}/rules/backfill-preview`
+    `/api/platform/v1/mail/organization/accounts/${encodeURIComponent(accountId)}/rules/backfill-preview${suffix}`
   );
   return response.data.data;
 }
 
 export async function runMailRuleBackfill(
   accountId: string,
-  input: { requestId: string; previewFingerprint: string }
+  input: {
+    requestId: string;
+    previewFingerprint: string;
+    continuationToken?: string | null;
+  }
 ): Promise<MailRuleBackfillResult> {
   const response = await axiosInstance.post<ApiResponse<MailRuleBackfillResult>, typeof input>(
     `/api/platform/v1/mail/organization/accounts/${encodeURIComponent(accountId)}/rules/backfill`,

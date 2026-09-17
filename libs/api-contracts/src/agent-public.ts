@@ -1166,6 +1166,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/artifact-collaboration/{artifact_id}/workspace/review-stages/{stage_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decide Team Artifact Review Stage */
+        post: operations["decide_team_artifact_review_stage_v1_artifact_collaboration__artifact_id__workspace_review_stages__stage_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/artifact-collaboration/{artifact_id}/workspace/shares": {
         parameters: {
             query?: never;
@@ -3362,6 +3379,15 @@ export interface components {
              */
             success: boolean;
         };
+        /** ArtifactMetadata */
+        ArtifactMetadata: {
+            /** Projectkey */
+            projectKey?: string | null;
+            /** Reviewsladueat */
+            reviewSlaDueAt?: string | null;
+            /** Tags */
+            tags?: string[];
+        };
         /** ArtifactPreflightEnvelope */
         ArtifactPreflightEnvelope: {
             data: components["schemas"]["ArtifactPreflightReceipt"];
@@ -4022,6 +4048,7 @@ export interface components {
             content: components["schemas"]["ArtifactDraftContent"];
             /** Expectedrevision */
             expectedRevision: number;
+            metadata?: components["schemas"]["ArtifactMetadata"];
             /** Reasoncode */
             reasonCode: string;
             /** Sources */
@@ -4601,6 +4628,7 @@ export interface components {
             content: components["schemas"]["ArtifactDraftContent"];
             /** Expectedrevision */
             expectedRevision: number;
+            metadata?: components["schemas"]["ArtifactMetadata"];
             /** Reasoncode */
             reasonCode: string;
             sourceConversation?: components["schemas"]["ArtifactConversationSource"] | null;
@@ -5025,6 +5053,21 @@ export interface components {
              */
             validDays: number;
         };
+        /** DecideTeamArtifactReviewStageRequest */
+        DecideTeamArtifactReviewStageRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            decision: components["schemas"]["TeamArtifactReviewDecision"];
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
         /** DeleteAttachmentRequest */
         DeleteAttachmentRequest: {
             /**
@@ -5079,11 +5122,15 @@ export interface components {
             deletionPerformed: boolean;
             /** Domains */
             domains: components["schemas"]["DomainKey"][];
+            /** Legalholds */
+            legalHolds?: components["schemas"]["LegalHoldEvidence"][];
             /**
              * Requestedat
              * Format: date-time
              */
             requestedAt: string;
+            /** Stages */
+            stages?: components["schemas"]["DeletionStage"][];
             state: components["schemas"]["DeletionJobState"];
             /** Targets */
             targets?: components["schemas"]["DeletionTargetReceipt"][];
@@ -5122,12 +5169,36 @@ export interface components {
              */
             success: boolean;
         };
+        /** DeletionStage */
+        DeletionStage: {
+            /** Detailcode */
+            detailCode: string;
+            /** Evidencefingerprint */
+            evidenceFingerprint?: string | null;
+            /** Evidencereference */
+            evidenceReference?: string | null;
+            key: components["schemas"]["DeletionStageKey"];
+            /** Observedat */
+            observedAt?: string | null;
+            state: components["schemas"]["DeletionStageState"];
+        };
+        /**
+         * DeletionStageKey
+         * @enum {string}
+         */
+        DeletionStageKey: "REQUEST_ACCEPTED" | "TARGETS_SCHEDULED" | "ACTIVE_STORE_DISPOSITION" | "BACKUP_BOUNDARY" | "RECEIPT_FINALIZATION";
+        /**
+         * DeletionStageState
+         * @enum {string}
+         */
+        DeletionStageState: "PENDING" | "RUNNING" | "COMPLETED" | "PARTIAL" | "BLOCKED" | "FAILED" | "UNAVAILABLE";
         /** DeletionTargetReceipt */
         DeletionTargetReceipt: {
             /** Affectedcount */
             affectedCount?: number | null;
             disposition?: components["schemas"]["DataDispositionReceipt"] | null;
             domain: components["schemas"]["DomainKey"];
+            legalHoldEvidence?: components["schemas"]["LegalHoldEvidence"] | null;
             /** Safeerrorcode */
             safeErrorCode?: string | null;
             state: components["schemas"]["DeletionTargetState"];
@@ -5863,6 +5934,8 @@ export interface components {
              */
             artifactId: string;
             artifactType: components["schemas"]["ArtifactType"];
+            /** Authorsubjectid */
+            authorSubjectId?: string | null;
             capabilities?: components["schemas"]["ArtifactCapabilities"];
             content: components["schemas"]["ArtifactDraftContent"];
             /**
@@ -5874,6 +5947,7 @@ export interface components {
             currentVersionNumber: number;
             /** Draftrevision */
             draftRevision: number;
+            metadata?: components["schemas"]["ArtifactMetadata"];
             /** Publishedversionnumber */
             publishedVersionNumber?: number | null;
             /** Revision */
@@ -6155,6 +6229,42 @@ export interface components {
             simulationId: string;
             /** Targetmodelid */
             targetModelId: string | null;
+        };
+        /** LegalHoldDirective */
+        LegalHoldDirective: {
+            /** Authorityreference */
+            authorityReference: string;
+            /** Dposubjectid */
+            dpoSubjectId: string;
+            /**
+             * Effectiveat
+             * Format: date-time
+             */
+            effectiveAt: string;
+            /** Expiresat */
+            expiresAt?: string | null;
+            /** Reasoncode */
+            reasonCode: string;
+        };
+        /** LegalHoldEvidence */
+        LegalHoldEvidence: {
+            /** Authorityreference */
+            authorityReference?: string | null;
+            /** Available */
+            available: boolean;
+            domain: components["schemas"]["DomainKey"];
+            /** Dposubjectid */
+            dpoSubjectId?: string | null;
+            /** Effectiveat */
+            effectiveAt?: string | null;
+            /** Expiresat */
+            expiresAt?: string | null;
+            /** Holdid */
+            holdId?: string | null;
+            /** Reasoncode */
+            reasonCode: string;
+            /** State */
+            state?: string | null;
         };
         /**
          * MeasurementFreshness
@@ -8834,6 +8944,8 @@ export interface components {
             shareExpiryAvailable: boolean;
             /** Sharerevocationavailable */
             shareRevocationAvailable: boolean;
+            signedWormReceipt?: components["schemas"]["WorkflowCapability"];
+            stagedReview?: components["schemas"]["WorkflowCapability"];
             syntheticReplacement: components["schemas"]["WorkflowCapability"];
             /** Teamworkspaceavailable */
             teamWorkspaceAvailable: boolean;
@@ -9015,6 +9127,29 @@ export interface components {
             state: string;
             workspace: components["schemas"]["TeamArtifactWorkspace"];
         };
+        /** TeamArtifactGovernanceGate */
+        TeamArtifactGovernanceGate: {
+            /** Detailcode */
+            detailCode: string;
+            /** Evaluatedat */
+            evaluatedAt?: string | null;
+            /** Evidencefingerprint */
+            evidenceFingerprint?: string | null;
+            /** Evidencereference */
+            evidenceReference?: string | null;
+            key: components["schemas"]["TeamArtifactGovernanceGateKey"];
+            state: components["schemas"]["TeamArtifactGovernanceGateState"];
+        };
+        /**
+         * TeamArtifactGovernanceGateKey
+         * @enum {string}
+         */
+        TeamArtifactGovernanceGateKey: "DLP" | "CITATION" | "RECIPIENT_ACL" | "IMMUTABLE_VERSION";
+        /**
+         * TeamArtifactGovernanceGateState
+         * @enum {string}
+         */
+        TeamArtifactGovernanceGateState: "PASS" | "REVIEW" | "BLOCKED" | "UNAVAILABLE";
         /** TeamArtifactMember */
         TeamArtifactMember: {
             /** Allowed */
@@ -9094,6 +9229,43 @@ export interface components {
          */
         TeamArtifactPreflightState: "READY" | "PARTIAL" | "PERMISSION_DENIED" | "EXPIRED";
         /**
+         * TeamArtifactReviewDecision
+         * @enum {string}
+         */
+        TeamArtifactReviewDecision: "APPROVE" | "REJECT";
+        /** TeamArtifactReviewStage */
+        TeamArtifactReviewStage: {
+            /** Assigneesubjectid */
+            assigneeSubjectId?: string | null;
+            /** Decidedat */
+            decidedAt?: string | null;
+            /** Decidedbysubjectid */
+            decidedBySubjectId?: string | null;
+            /** Evidencefingerprint */
+            evidenceFingerprint?: string | null;
+            /** Revision */
+            revision: number;
+            /**
+             * Stageid
+             * Format: uuid
+             */
+            stageId: string;
+            stageKey: components["schemas"]["TeamArtifactReviewStageKey"];
+            /** Stageorder */
+            stageOrder: number;
+            state: components["schemas"]["TeamArtifactReviewStageState"];
+        };
+        /**
+         * TeamArtifactReviewStageKey
+         * @enum {string}
+         */
+        TeamArtifactReviewStageKey: "AUTHOR" | "PRIMARY_REVIEW" | "FINAL_APPROVAL";
+        /**
+         * TeamArtifactReviewStageState
+         * @enum {string}
+         */
+        TeamArtifactReviewStageState: "PENDING" | "APPROVED" | "REJECTED" | "UNAVAILABLE";
+        /**
          * TeamArtifactRole
          * @enum {string}
          */
@@ -9162,6 +9334,18 @@ export interface components {
          * @enum {string}
          */
         TeamArtifactShareState: "ACTIVE" | "EXPIRED" | "REVOKED";
+        /** TeamArtifactSignatureEvidence */
+        TeamArtifactSignatureEvidence: {
+            capability: components["schemas"]["WorkflowCapability"];
+            /** Keyreferencefingerprint */
+            keyReferenceFingerprint?: string | null;
+            /** Provider */
+            provider?: string | null;
+            /** Signature */
+            signature?: string | null;
+            /** Signedat */
+            signedAt?: string | null;
+        };
         /** TeamArtifactWorkspace */
         TeamArtifactWorkspace: {
             /**
@@ -9177,13 +9361,20 @@ export interface components {
              * Format: date-time
              */
             createdAt: string;
+            /** Governancegates */
+            governanceGates?: components["schemas"]["TeamArtifactGovernanceGate"][];
             /** Members */
             members: components["schemas"]["TeamArtifactMember"][];
             openConflict?: components["schemas"]["TeamArtifactConflict"] | null;
+            /** Reviewsladueat */
+            reviewSlaDueAt?: string | null;
+            /** Reviewstages */
+            reviewStages?: components["schemas"]["TeamArtifactReviewStage"][];
             /** Revision */
             revision: number;
             /** Shares */
             shares?: components["schemas"]["TeamArtifactShare"][];
+            signatureEvidence?: components["schemas"]["TeamArtifactSignatureEvidence"];
             state: components["schemas"]["TeamArtifactWorkspaceState"];
             /**
              * Teamid
@@ -9550,6 +9741,7 @@ export interface components {
              * @default false
              */
             legalHold: boolean;
+            legalHoldDirective?: components["schemas"]["LegalHoldDirective"] | null;
             /** Reasoncode */
             reasonCode: string;
             /** Retentiondays */
@@ -13070,6 +13262,8 @@ export interface operations {
                 "X-DWP-Permissions"?: string | null;
                 "X-DWP-Person-Public-ID"?: string | null;
                 "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
             };
             path: {
                 artifact_id: string;
@@ -13114,6 +13308,8 @@ export interface operations {
                 "X-DWP-Permissions"?: string | null;
                 "X-DWP-Person-Public-ID"?: string | null;
                 "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
             };
             path: {
                 artifact_id: string;
@@ -13159,6 +13355,8 @@ export interface operations {
                 "X-DWP-Permissions"?: string | null;
                 "X-DWP-Person-Public-ID"?: string | null;
                 "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
             };
             path: {
                 artifact_id: string;
@@ -13308,6 +13506,51 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["UpdateTeamArtifactMembersRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamArtifactWorkspaceEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_team_artifact_review_stage_v1_artifact_collaboration__artifact_id__workspace_review_stages__stage_id__decision_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                artifact_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideTeamArtifactReviewStageRequest"];
             };
         };
         responses: {
@@ -17058,6 +17301,8 @@ export interface operations {
                 "X-DWP-Permissions"?: string | null;
                 "X-DWP-Person-Public-ID"?: string | null;
                 "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
             };
             path: {
                 routine_id: string;
@@ -17103,6 +17348,8 @@ export interface operations {
                 "X-DWP-Permissions"?: string | null;
                 "X-DWP-Person-Public-ID"?: string | null;
                 "X-DWP-Display-Name-B64"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
             };
             path: {
                 routine_id: string;

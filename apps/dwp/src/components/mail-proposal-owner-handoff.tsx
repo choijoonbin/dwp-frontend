@@ -229,6 +229,15 @@ export function useMailProposalOwnerHandoff(owner: MailProposalOwner) {
         await cancellation.mutateAsync();
         return returnToActionCenter();
       } catch {
+        setCompletionReadError(false);
+        try {
+          const refreshed = await refreshHandoff();
+          if (refreshed.status !== 'ACCEPTED') return returnToActionCenter();
+        } catch {
+          // The recovery notice provides a read-only status retry. Never repeat an
+          // owner mutation after an ambiguous cancellation response.
+        }
+        setCompletionReadError(true);
         return false;
       }
     },

@@ -24,6 +24,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import {
   MAIL_GROUP_TO_RECIPIENT_LIMIT,
+  mailGroupAttemptCanSubmit,
   mailGroupDeliveryPolicy,
 } from './mail-group-delivery-policy';
 
@@ -312,6 +313,7 @@ type MailGroupMessageSnapshot = {
 export type MailGroupMessageAttempt = MailGroupMessageSnapshot & {
   original?: MailGroupMessageSnapshot;
   reviewRequired?: boolean;
+  snapshotStale?: boolean;
 };
 
 export function MailGroupMessageDialog({
@@ -361,7 +363,13 @@ export function MailGroupMessageDialog({
   );
   const { recipientLimitExceeded, unsupportedPrivateMode: unsupportedPrivateAttempt } =
     groupDeliveryPolicy;
-  const valid = Boolean(groupDeliveryPolicy.canSend && subject.trim() && body.trim() && confirmed);
+  const valid = Boolean(
+    groupDeliveryPolicy.canSend &&
+      mailGroupAttemptCanSubmit(attempt) &&
+      subject.trim() &&
+      body.trim() &&
+      confirmed
+  );
   return (
     <FormDialog
       open={open}
@@ -378,6 +386,7 @@ export function MailGroupMessageDialog({
       submitDisabled={!valid}
       onSubmit={() => {
         if (attempt?.reviewRequired) {
+          if (attempt.snapshotStale) return;
           const reviewedAttempt = {
             ...attempt,
             input: {
@@ -389,12 +398,13 @@ export function MailGroupMessageDialog({
               groupVersion: reviewedGroup!.version,
             },
             reviewRequired: false,
+            snapshotStale: false,
           };
           onAttempt(reviewedAttempt);
           onSubmit(reviewedAttempt.input);
         } else if (attempt) {
           if (attempt.input.recipientMode !== 'TO') return;
-          onAttempt({ ...attempt, reviewRequired: false });
+          onAttempt({ ...attempt, reviewRequired: false, snapshotStale: false });
           onSubmit(attempt.input);
         } else if (group && valid) {
           const next = {
@@ -504,10 +514,10 @@ export function MailGroupMessageDialog({
                     const originalAttempt = {
                       ...attempt.original!,
                       original: attempt.original,
-                      reviewRequired: false,
+                      reviewRequired: true,
+                      snapshotStale: true,
                     };
                     onAttempt(originalAttempt);
-                    onSubmit(originalAttempt.input);
                   }}
                 >
                   {t('addressBook.send.checkOriginal')}

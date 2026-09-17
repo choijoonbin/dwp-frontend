@@ -25,6 +25,7 @@ import { ActionButton, FormField, InlineFeedback } from '@dwp-frontend/design-sy
 
 import { DwaionArtifactExportStatus } from './dwaion-artifact-export-status';
 import { DWAION_ARTIFACT_COPY_KO } from './dwaion-artifact-copy';
+import { DwaionResearchReport } from '../deep-research/dwaion-research-report';
 import {
   applyDwaionArtifactEditorCommand,
   type DwaionArtifactEditorCommand,
@@ -93,6 +94,7 @@ export function DwaionArtifactEditor({
   );
   const bodyInput = useRef<HTMLTextAreaElement | null>(null);
   const [citationAnchor, setCitationAnchor] = useState<HTMLElement | null>(null);
+  const [editorMode, setEditorMode] = useState<'EDIT' | 'PREVIEW'>('EDIT');
   const applyEditorCommand = (
     command: DwaionArtifactEditorCommand,
     source?: DwaionArtifactDocument['sources'][number]
@@ -351,7 +353,27 @@ export function DwaionArtifactEditor({
             })
           }
         />
-        <Box
+        <Stack direction="row" gap={0.5} role="tablist" aria-label={copy.editorLabel}>
+          <ActionButton
+            role="tab"
+            aria-selected={editorMode === 'EDIT'}
+            intent={editorMode === 'EDIT' ? 'secondary' : 'quiet'}
+            onClick={() => setEditorMode('EDIT')}
+            sx={{ minHeight: 44 }}
+          >
+            {copy.editorModeEdit}
+          </ActionButton>
+          <ActionButton
+            role="tab"
+            aria-selected={editorMode === 'PREVIEW'}
+            intent={editorMode === 'PREVIEW' ? 'secondary' : 'quiet'}
+            onClick={() => setEditorMode('PREVIEW')}
+            sx={{ minHeight: 44 }}
+          >
+            {copy.editorModePreview}
+          </ActionButton>
+        </Stack>
+        {editorMode === 'EDIT' ? <Box
           role="toolbar"
           aria-label={copy.editorToolbarLabel}
           sx={{
@@ -420,23 +442,33 @@ export function DwaionArtifactEditor({
               </MenuItem>
             ))}
           </Menu>
-        </Box>
-        <FormField
-          label={copy.editorLabel}
-          value={artifact.body}
-          multiline
-          minRows={8}
-          fullWidth
-          required
-          disabled={!canEdit}
-          inputRef={bodyInput}
-          onChange={(event) =>
-            onDraftChange(artifact.artifactId, artifact.revision, {
-              title: artifact.title,
-              body: event.target.value,
-            })
-          }
-        />
+        </Box> : null}
+        {editorMode === 'EDIT' ? (
+          <FormField
+            label={copy.editorLabel}
+            value={artifact.body}
+            multiline
+            minRows={8}
+            fullWidth
+            required
+            disabled={!canEdit}
+            inputRef={bodyInput}
+            onChange={(event) =>
+              onDraftChange(artifact.artifactId, artifact.revision, {
+                title: artifact.title,
+                body: event.target.value,
+              })
+            }
+          />
+        ) : (
+          <Box
+            role="tabpanel"
+            aria-label={copy.editorModePreview}
+            sx={{ minHeight: 260, p: { xs: 1.5, md: 2 }, border: 1, borderColor: 'divider', borderRadius: 1.5 }}
+          >
+            <DwaionResearchReport markdown={artifact.body} locale={copy === DWAION_ARTIFACT_COPY_KO ? 'ko' : 'en'} />
+          </Box>
+        )}
       </Stack>
     </Box>
   );

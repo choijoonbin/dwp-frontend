@@ -640,7 +640,10 @@
       "scanned": "Scanned",
       "matched": "Matched",
       "planned": "Planned changes",
-      "truncated": "This preview reached the bounded batch limit, so execution is blocked. Narrow the scope or ask an administrator to review the limit.",
+      "truncated": "This preview is one bounded batch. Apply the reviewed changes, then continue with the next batch.",
+      "continuation": "You are reviewing a continuation batch from the same bounded mailbox snapshot.",
+      "continue": "Continue to next batch",
+      "restart": "Start over",
       "run": "Apply to existing mail",
       "confirmTitle": "Apply the previewed changes?",
       "confirmDescription": "Organize {{count}} existing conversations in {{account}} using the current rules and priority order.",
@@ -772,6 +775,7 @@
   },
   "proposal": {
     "assistant": "DWP action proposal",
+    "conflict": "This proposal changed. The latest version was loaded; review it before trying again.",
     "source": "Source message: {{source}}",
     "filters": {
       "status": "Status",
@@ -1391,6 +1395,20 @@
       "shortcutTab": "Shortcuts",
       "defaultSender": "Default sender account",
       "manageWritingAssets": "Manage templates and signatures",
+      "capabilityBoundary": "Feature readiness is verified separately for each account. Unavailable features require the relevant provider adapter, authorization, synchronization, or trusted attachment scanner to become ready.",
+      "capabilityLoadError": "Feature readiness could not be verified. Sending remains governed by the server and unavailable capabilities stay blocked.",
+      "capabilityLoading": "Checking feature readiness",
+      "capabilityStatus": "{{feature}} · {{status}}",
+      "capabilityReady": "Ready",
+      "capabilityUnavailable": "Unavailable",
+      "capabilities": {
+        "send": "Send",
+        "bcc": "Bcc",
+        "html": "Formatted content",
+        "attachments": "Attachments",
+        "scheduling": "Scheduled send",
+        "sharedIdentity": "Shared identity"
+      },
       "densityTitle": "Message list density",
       "densityDescription": "Choose the row spacing and amount of mail visible at once.",
       "density": "List display",
@@ -1428,6 +1446,7 @@
   },
   "admin": {
     "loadError": "Mail operations data could not be loaded.",
+    "conflict": "A newer version is available. Your input was kept, and current evidence was loaded. Review it before saving again.",
     "metrics": {
       "accounts": "Personal accounts",
       "accountsDetail": "Accounts assigned to SKAX members",

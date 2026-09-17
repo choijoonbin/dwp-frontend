@@ -20,6 +20,7 @@ import type { ApiResponse } from '../types';
 import type {
   DwaionArtifactCollaborationCommand,
   DwaionArtifactCollaborationHighRiskCommand,
+  DecideDwaionTeamArtifactReviewStageInput,
   DwaionTeamArtifactConflictResolution,
   DwaionTeamArtifactComment,
   DwaionTeamArtifactAccessRequest,
@@ -136,6 +137,30 @@ export async function resolveDwaionTeamArtifactComment(
     'comment resolution'
   );
   return comment;
+}
+
+export async function decideDwaionTeamArtifactReviewStage(
+  artifactId: string,
+  stageId: string,
+  input: DecideDwaionTeamArtifactReviewStageInput
+): Promise<DwaionTeamArtifactWorkspace> {
+  validateCommand(input, true);
+  assertAgentUuid(stageId, 'Artifact review stage identifier');
+  if (!['APPROVE', 'REJECT'].includes(input.decision)) {
+    throw new TypeError('Artifact review decision is invalid.');
+  }
+  const response = await axiosInstance.post<ApiResponse<unknown>, object>(
+    `${artifactPath(artifactId)}/workspace/review-stages/${encodeURIComponent(stageId)}/decision`,
+    {
+      ...commandBody(input),
+      changeReason: input.changeReason.trim(),
+      decision: input.decision,
+    },
+    highRiskConfig(input)
+  );
+  const workspace = parseDwaionTeamArtifactWorkspace(response.data.data);
+  assertBinding(workspace.artifactId === artifactId, 'review decision');
+  return workspace;
 }
 
 export async function runDwaionTeamArtifactPreflight(

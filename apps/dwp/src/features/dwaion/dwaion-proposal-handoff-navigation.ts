@@ -13,6 +13,7 @@ export type DwaionProposalTargetState = {
     handoffId: string;
     proposalId: string;
     actionKey: string;
+    handoffVersion: number;
     evidence: Array<{ sourceType: string; referenceId: string; label: string }>;
     receiptId: string | null;
   };
@@ -36,6 +37,7 @@ export async function createDwaionProposalTargetState(
       proposalId: proposal.proposalId,
       revision: proposal.revision,
       actionKey,
+      handoffVersion: handoff.version,
       reviewedInputs,
       evidence,
     })
@@ -62,6 +64,7 @@ export async function createDwaionProposalTargetState(
       handoffId: handoff.handoffId,
       proposalId: proposal.proposalId,
       actionKey,
+      handoffVersion: handoff.version,
       evidence,
       receiptId: handoff.receiptId,
     },

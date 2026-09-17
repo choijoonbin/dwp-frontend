@@ -294,6 +294,63 @@ test('HR owner creation binds the accepted command, submits once, and only polls
   expect(createCount).toBe(1);
 });
 
+test('owner cancellation conflict reads the terminal receipt and returns without repeating a command', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'en',
+    displayName: 'Mail User',
+    permissions: MAIL_PERMISSIONS,
+  });
+  const commandId = '60000000-0000-4000-8000-000000000044';
+  let handoffReads = 0;
+  let cancelCount = 0;
+  await page.route('**/api/platform/v1/mail/proposals**', (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith(`/proposals/${leaveProposal.proposalId}/handoff/cancel`)) {
+      cancelCount += 1;
+      return route.fulfill({
+        status: 409,
+        contentType: 'application/json',
+        body: JSON.stringify({ code: 'VERSION_CONFLICT' }),
+      });
+    }
+    if (url.pathname.endsWith(`/proposals/${leaveProposal.proposalId}/handoff`)) {
+      handoffReads += 1;
+      const terminal = handoffReads > 1;
+      return fulfill(route, {
+        proposalId: leaveProposal.proposalId,
+        commandId,
+        ownerRoute: leaveProposal.targetRoute,
+        returnTo: `/mail/actions?proposalId=${leaveProposal.proposalId}`,
+        focus: `mail-proposal-${leaveProposal.proposalId}`,
+        status: terminal ? 'CANCELLED' : 'ACCEPTED',
+        resultRef: terminal ? 'mail-proposal-cancel:concurrent-owner-result' : null,
+        updatedAt: '2026-09-17T09:00:00Z',
+        version: terminal ? 6 : 5,
+      });
+    }
+    return fulfill(route, [{ ...leaveProposal, status: 'CANCELLED' }]);
+  });
+  const ownerSearch = new URLSearchParams({
+    request: 'open',
+    proposalId: leaveProposal.proposalId as string,
+    commandId,
+    returnTo: `/mail/actions?proposalId=${leaveProposal.proposalId}`,
+    focus: `mail-proposal-${leaveProposal.proposalId}`,
+  });
+
+  await page.goto(`/hr/absence?${ownerSearch.toString()}`);
+  await page.getByRole('button', { name: 'Cancel review and return' }).click();
+
+  await expect.poll(() => cancelCount).toBe(1);
+  await expect.poll(() => handoffReads).toBeGreaterThan(1);
+  await expect(page).toHaveURL(
+    new RegExp(`/mail/actions\\?proposalId=${leaveProposal.proposalId}`, 'u')
+  );
+  expect(cancelCount).toBe(1);
+});
+
 test('mail home retains work context across themes, reflow, and reduced motion', async ({
   page,
 }, testInfo) => {

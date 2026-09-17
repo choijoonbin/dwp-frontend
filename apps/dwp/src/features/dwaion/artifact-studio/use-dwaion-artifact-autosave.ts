@@ -6,7 +6,8 @@ type SaveArtifact = (
   artifactId: string,
   expectedRevision: number,
   content: { title: string; body: string },
-  sources: DwaionArtifactDocument['sources']
+  sources: DwaionArtifactDocument['sources'],
+  metadata?: Pick<DwaionArtifactDocument, 'tags' | 'projectKey' | 'reviewSlaDueAt'>
 ) => Promise<DwaionArtifactDocument>;
 
 export function useDwaionArtifactAutosave({
@@ -57,6 +58,24 @@ export function useDwaionArtifactAutosave({
     [enabled, localDocument, serverDocument]
   );
 
+  const updateMetadata = useCallback(
+    (
+      artifactId: string,
+      expectedRevision: number,
+      metadata: Pick<DwaionArtifactDocument, 'tags' | 'projectKey' | 'reviewSlaDueAt'>
+    ) => {
+      const current =
+        localDocument?.artifactId === artifactId && localDocument.revision === expectedRevision
+          ? localDocument
+          : serverDocument?.artifactId === artifactId
+            ? serverDocument
+            : null;
+      if (!enabled || !current) return;
+      setDraft({ ...current, ...metadata, autosaveState: 'DIRTY' });
+    },
+    [enabled, localDocument, serverDocument]
+  );
+
   useEffect(() => {
     if (!enabled || !draft || draft.autosaveState !== 'DIRTY') return;
     if (!draft.title.trim() || !draft.body.trim()) return;
@@ -74,7 +93,12 @@ export function useDwaionArtifactAutosave({
         snapshot.artifactId,
         snapshot.revision,
         { title: snapshot.title, body: snapshot.body },
-        snapshot.sources
+        snapshot.sources,
+        {
+          tags: [...snapshot.tags],
+          projectKey: snapshot.projectKey,
+          reviewSlaDueAt: snapshot.reviewSlaDueAt,
+        }
       )
         .then((saved) => {
           activeSave.current = false;
@@ -84,7 +108,13 @@ export function useDwaionArtifactAutosave({
           }
           setDraft((current) => {
             if (!current || current.artifactId !== snapshot.artifactId) return current;
-            if (current.title === snapshot.title && current.body === snapshot.body) {
+            if (
+              current.title === snapshot.title &&
+              current.body === snapshot.body &&
+              current.projectKey === snapshot.projectKey &&
+              current.reviewSlaDueAt === snapshot.reviewSlaDueAt &&
+              current.tags.join('\u0000') === snapshot.tags.join('\u0000')
+            ) {
               return { ...saved, autosaveState: 'SAVED', lastSavedAt: saved.updatedAt };
             }
             return {
@@ -122,5 +152,5 @@ export function useDwaionArtifactAutosave({
     return () => window.clearTimeout(timer);
   }, [draft, enabled, onError, save]);
 
-  return { document: localDocument, update };
+  return { document: localDocument, update, updateMetadata };
 }

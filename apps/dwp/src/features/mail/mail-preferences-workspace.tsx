@@ -15,6 +15,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   getMailHome,
+  getMailComposeContext,
   getMailPreferences,
   getMailWritingAssets,
   updateMailPreferences,
@@ -41,12 +42,14 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { MailPageHeading } from './mail-components';
+import { mailAccountCapabilityPresentation } from './mail-account-capability-presentation';
 import { MAIL_PREFERENCES_QUERY_KEY } from './mail-runtime-preferences';
 
 import type {
   MailAccount,
   MailAccountConnectionState,
   MailAccountSynchronizationState,
+  MailComposeCapabilities,
   MailPreferences,
   MailPreferenceKey,
 } from '@dwp-frontend/shared-utils';
@@ -69,6 +72,12 @@ export function MailPreferencesWorkspace() {
   const preferences = useQuery({
     queryKey: MAIL_PREFERENCES_QUERY_KEY,
     queryFn: getMailPreferences,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const composeContext = useQuery({
+    queryKey: ['mail', 'compose-context'],
+    queryFn: getMailComposeContext,
     staleTime: 30_000,
     retry: 1,
   });
@@ -97,7 +106,13 @@ export function MailPreferencesWorkspace() {
     },
     onError: () => toast.error(t('secondary.accounts.preferencesSaveError')),
   });
-  const refresh = () => void Promise.all([home.refetch(), preferences.refetch(), assets.refetch()]);
+  const refresh = () =>
+    void Promise.all([
+      home.refetch(),
+      preferences.refetch(),
+      assets.refetch(),
+      composeContext.refetch(),
+    ]);
 
   return (
     <PageCanvas topInset="compact">
@@ -136,6 +151,9 @@ export function MailPreferencesWorkspace() {
           {tab === 'accounts' && (
             <AccountSettings
               accounts={home.data?.accounts ?? []}
+              accountCapabilities={composeContext.data?.accountCapabilities ?? {}}
+              capabilityLoading={composeContext.isLoading}
+              capabilityError={composeContext.isError}
               draft={draft}
               onChange={setDraft}
             />
@@ -172,10 +190,16 @@ export function MailPreferencesWorkspace() {
 
 function AccountSettings({
   accounts,
+  accountCapabilities,
+  capabilityLoading,
+  capabilityError,
   draft,
   onChange,
 }: {
   accounts: MailAccount[];
+  accountCapabilities: Record<string, MailComposeCapabilities>;
+  capabilityLoading: boolean;
+  capabilityError: boolean;
   draft: MailPreferences;
   onChange: (next: MailPreferences) => void;
 }) {
@@ -191,6 +215,12 @@ function AccountSettings({
   }
   return (
     <Stack spacing={2}>
+      <Typography variant="body2" color="text.secondary">
+        {t('secondary.accounts.capabilityBoundary')}
+      </Typography>
+      {capabilityError && (
+        <Alert severity="warning">{t('secondary.accounts.capabilityLoadError')}</Alert>
+      )}
       <SelectField
         label={t('secondary.accounts.defaultSender')}
         value={draft.defaultAccountId ?? ''}
@@ -211,7 +241,11 @@ function AccountSettings({
         {accounts.map((account, index) => (
           <Box key={account.accountId}>
             {index > 0 && <Divider />}
-            <AccountRow account={account} />
+            <AccountRow
+              account={account}
+              capabilities={accountCapabilities[account.accountId]}
+              capabilityLoading={capabilityLoading}
+            />
           </Box>
         ))}
       </Box>
@@ -227,7 +261,15 @@ function AccountSettings({
   );
 }
 
-function AccountRow({ account }: { account: MailAccount }) {
+function AccountRow({
+  account,
+  capabilities,
+  capabilityLoading,
+}: {
+  account: MailAccount;
+  capabilities?: MailComposeCapabilities;
+  capabilityLoading: boolean;
+}) {
   const { t } = useTranslation('mail');
   const status = accountStatusPresentation(account);
   const StatusIcon = status.icon;
@@ -267,6 +309,28 @@ function AccountRow({ account }: { account: MailAccount }) {
           {t(`provider.${account.providerType}`)} ·{' '}
           {t(`accounts.sync.${account.synchronizationState}`)}
         </Typography>
+        <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.75 }}>
+          {capabilityLoading ? (
+            <Chip size="small" variant="outlined" label={t('secondary.accounts.capabilityLoading')} />
+          ) : (
+            mailAccountCapabilityPresentation(account, capabilities).map((capability) => (
+              <Chip
+                key={capability.key}
+                size="small"
+                variant={capability.ready ? 'filled' : 'outlined'}
+                color={capability.ready ? 'success' : 'default'}
+                label={t('secondary.accounts.capabilityStatus', {
+                  feature: t(`secondary.accounts.capabilities.${capability.key}`),
+                  status: t(
+                    capability.ready
+                      ? 'secondary.accounts.capabilityReady'
+                      : 'secondary.accounts.capabilityUnavailable'
+                  ),
+                })}
+              />
+            ))
+          )}
+        </Stack>
       </Box>
       <Stack direction="row" spacing={0.75} alignItems="center" color={`${status.color}.main`}>
         <StatusIcon size={16} aria-hidden />

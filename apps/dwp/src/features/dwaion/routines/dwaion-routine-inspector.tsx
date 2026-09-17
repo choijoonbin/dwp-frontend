@@ -1,13 +1,4 @@
-import {
-  Archive,
-  CheckCircle2,
-  Clock3,
-  FlaskConical,
-  PauseCircle,
-  Pencil,
-  PlayCircle,
-  ShieldCheck,
-} from 'lucide-react';
+import { Archive, FlaskConical, PauseCircle, Pencil, PlayCircle, ShieldCheck } from 'lucide-react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -17,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { ActionButton, DetailInspector, InlineFeedback } from '@dwp-frontend/design-system';
 
 import { DWAION_ROUTINE_COPY_KO } from './dwaion-routine-copy';
+import { DwaionRoutineDryRunInspection } from './dwaion-routine-dry-run-inspection';
 import { DwaionRoutineExecutionPanel } from './dwaion-routine-execution-panel';
 import {
   routineCommandState,
@@ -104,7 +96,7 @@ export function DwaionRoutineInspector({
 
   const consentReady = routineConsentComplete(routine.consents);
   const currentReceipt = routineDryRunIsCurrent(routine, dryRunReceipt ?? null)
-    ? dryRunReceipt
+    ? (dryRunReceipt ?? null)
     : null;
   const archived = routine.status === 'ARCHIVED';
   const dryRunEnabled =
@@ -114,7 +106,7 @@ export function DwaionRoutineInspector({
     <DetailInspector
       open={open}
       variant={variant}
-      width={480}
+      width={760}
       title={routine.title}
       subtitle={`${
         routine.status === 'DRAFT' && !consentReady
@@ -226,58 +218,13 @@ export function DwaionRoutineInspector({
           </Stack>
         </Box>
 
-        {currentReceipt ? (
-          <Box
-            component="section"
-            aria-labelledby="routine-dry-run-title"
-            sx={{
-              p: 2,
-              bgcolor: 'action.hover',
-            }}
-          >
-            <Stack direction="row" gap={1} alignItems="flex-start">
-              <CheckCircle2 size={18} color="var(--dwp-semantic-success)" aria-hidden="true" />
-              <Box sx={{ minWidth: 0 }}>
-                <Typography id="routine-dry-run-title" component="h3" variant="subtitle2">
-                  {copy.dryRunOutcomes.VALIDATED}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {formatTimestamp(currentReceipt.evaluatedAt)}
-                </Typography>
-                <Box
-                  sx={{
-                    mt: 1,
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                    gap: 0.75,
-                  }}
-                >
-                  <ReceiptMetric
-                    label={copy.dryRunMetrics.sources}
-                    value={currentReceipt.evidenceCount}
-                  />
-                  <ReceiptMetric
-                    label={copy.dryRunMetrics.records}
-                    value={currentReceipt.businessEvidenceCount}
-                  />
-                  <ReceiptMetric
-                    label={copy.dryRunMetrics.proposals}
-                    value={currentReceipt.proposalsCreated}
-                  />
-                </Box>
-                <Stack direction="row" gap={0.75} alignItems="center" sx={{ mt: 0.75 }}>
-                  <Clock3 size={15} aria-hidden="true" />
-                  <Typography variant="caption" color="text.secondary">
-                    {copy.nextPreview}:{' '}
-                    {currentReceipt.previewNextRunAt
-                      ? formatTimestamp(currentReceipt.previewNextRunAt)
-                      : (routine.webhookEventType ?? copy.webhookTrigger)}
-                  </Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          </Box>
-        ) : null}
+        <DwaionRoutineDryRunInspection
+          routine={routine}
+          receipt={currentReceipt}
+          capabilities={runtimeCapabilities}
+          copy={copy}
+          formatTimestamp={formatTimestamp}
+        />
 
         <DwaionRoutineExecutionPanel
           routine={routine}
@@ -410,19 +357,6 @@ function ContractStep({
         </Typography>
         {children}
       </Box>
-    </Box>
-  );
-}
-
-function ReceiptMetric({ label, value }: { label: string; value: number }) {
-  return (
-    <Box sx={{ p: 0.75, bgcolor: 'background.paper', textAlign: 'center' }}>
-      <Typography variant="subtitle2" color={value ? 'success.main' : 'text.primary'}>
-        {value}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        {label}
-      </Typography>
     </Box>
   );
 }

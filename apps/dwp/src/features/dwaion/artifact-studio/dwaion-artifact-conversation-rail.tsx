@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { FileText, Plus, Search } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -32,6 +32,7 @@ export type DwaionArtifactNavigationCapabilities = {
 
 type ArtifactTab = 'MINE' | 'TEAM' | 'REVIEW';
 type ArtifactFilter = 'ALL' | DwaionArtifactState;
+type ArtifactGroup = 'RECENT' | 'PROJECTS' | 'ARCHIVED';
 
 export function DwaionArtifactConversationRail({
   artifacts,
@@ -55,6 +56,9 @@ export function DwaionArtifactConversationRail({
   const [tab, setTab] = useState<ArtifactTab>('MINE');
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<ArtifactFilter>('ALL');
+  const [authorFilter, setAuthorFilter] = useState('ALL');
+  const [tagFilter, setTagFilter] = useState('ALL');
+  const [projectFilter, setProjectFilter] = useState('ALL');
   const teamArtifactIds = useMemo(
     () => new Set(navigationCapabilities?.teamArtifactIds ?? []),
     [navigationCapabilities?.teamArtifactIds]
@@ -75,12 +79,43 @@ export function DwaionArtifactConversationRail({
     const query = search.trim().toLocaleLowerCase();
     return tabArtifacts.filter((artifact) => {
       if (filter !== 'ALL' && artifact.state !== filter) return false;
+      if (authorFilter !== 'ALL' && artifact.authorSubjectId !== authorFilter) return false;
+      if (tagFilter !== 'ALL' && !artifact.tags.includes(tagFilter)) return false;
+      if (projectFilter !== 'ALL' && artifact.projectKey !== projectFilter) return false;
       if (!query) return true;
-      return [artifact.title, artifact.artifactType, artifact.state].some((value) =>
-        value.toLocaleLowerCase().includes(query)
-      );
+      return [
+        artifact.title,
+        artifact.artifactType,
+        artifact.state,
+        artifact.authorSubjectId ?? '',
+        artifact.projectKey ?? '',
+        ...artifact.tags,
+      ].some((value) => value.toLocaleLowerCase().includes(query));
     });
-  }, [filter, search, tabArtifacts]);
+  }, [authorFilter, filter, projectFilter, search, tabArtifacts, tagFilter]);
+  const metadataOptions = useMemo(
+    () => ({
+      authors: unique(tabArtifacts.map((artifact) => artifact.authorSubjectId)),
+      tags: unique(tabArtifacts.flatMap((artifact) => artifact.tags)),
+      projects: unique(tabArtifacts.map((artifact) => artifact.projectKey)),
+    }),
+    [tabArtifacts]
+  );
+  const groupedArtifacts = useMemo(() => {
+    const groups: Record<ArtifactGroup, DwaionArtifactSummary[]> = {
+      RECENT: [],
+      PROJECTS: [],
+      ARCHIVED: [],
+    };
+    visibleArtifacts.forEach((artifact) => {
+      if (artifact.state === 'ARCHIVED') groups.ARCHIVED.push(artifact);
+      else if (artifact.projectKey) groups.PROJECTS.push(artifact);
+      else groups.RECENT.push(artifact);
+    });
+    return (Object.keys(groups) as ArtifactGroup[]).filter((key) => groups[key].length).map(
+      (key) => ({ key, artifacts: groups[key] })
+    );
+  }, [visibleArtifacts]);
   const unavailableReason =
     tab === 'TEAM' && !navigationCapabilities?.teamWorkspaceAvailable
       ? (navigationCapabilities?.teamWorkspaceReason ?? copy.teamWorkspaceUnavailable)
@@ -134,6 +169,9 @@ export function DwaionArtifactConversationRail({
             onClick={() => {
               setTab(item.key);
               setFilter('ALL');
+              setAuthorFilter('ALL');
+              setTagFilter('ALL');
+              setProjectFilter('ALL');
             }}
             sx={{
               minHeight: 44,
@@ -175,6 +213,32 @@ export function DwaionArtifactConversationRail({
           )}
           onValueChange={(value) => setFilter((value || 'ALL') as ArtifactFilter)}
         />
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+            gap: 1,
+          }}
+        >
+          <SelectField
+            label={copy.artifactAuthorFilterLabel}
+            value={authorFilter}
+            options={filterOptions(metadataOptions.authors, copy.artifactFilterAll)}
+            onValueChange={(value) => setAuthorFilter(value || 'ALL')}
+          />
+          <SelectField
+            label={copy.artifactTagFilterLabel}
+            value={tagFilter}
+            options={filterOptions(metadataOptions.tags, copy.artifactFilterAll)}
+            onValueChange={(value) => setTagFilter(value || 'ALL')}
+          />
+          <SelectField
+            label={copy.artifactProjectFilterLabel}
+            value={projectFilter}
+            options={filterOptions(metadataOptions.projects, copy.artifactFilterAll)}
+            onValueChange={(value) => setProjectFilter(value || 'ALL')}
+          />
+        </Box>
         <Typography variant="caption" color="text.secondary">
           {copy.artifactSearchCapabilityNotice}
         </Typography>
@@ -211,9 +275,19 @@ export function DwaionArtifactConversationRail({
         />
       ) : (
         <Box sx={{ borderBlock: 1, borderColor: 'divider' }}>
-          {visibleArtifacts.map((artifact, index) => (
-            <Box key={artifact.artifactId}>
-              {index > 0 ? <Divider /> : null}
+          {groupedArtifacts.map((group) => (
+            <Fragment key={group.key}>
+              <Typography
+                component="h3"
+                variant="overline"
+                color="text.secondary"
+                sx={{ display: 'block', px: 1, pt: 1.25 }}
+              >
+                {copy.artifactGroups[group.key]} ({group.artifacts.length})
+              </Typography>
+              {group.artifacts.map((artifact, index) => (
+                <Box key={artifact.artifactId}>
+                  {index > 0 ? <Divider /> : null}
               <Box
                 component="button"
                 type="button"
@@ -272,6 +346,30 @@ export function DwaionArtifactConversationRail({
                       variant="outlined"
                       label={copy.artifactStates[artifact.state]}
                     />
+                    {artifact.projectKey ? (
+                      <Chip size="small" variant="outlined" label={artifact.projectKey} />
+                    ) : null}
+                    {artifact.tags.slice(0, 2).map((tag) => (
+                      <Chip size="small" variant="outlined" label={`#${tag}`} key={tag} />
+                    ))}
+                    <Chip
+                      size="small"
+                      color={
+                        artifact.reviewSlaDueAt && Date.parse(artifact.reviewSlaDueAt) < Date.now()
+                          ? 'warning'
+                          : 'default'
+                      }
+                      variant="outlined"
+                      label={
+                        artifact.reviewSlaDueAt
+                          ? `${
+                              Date.parse(artifact.reviewSlaDueAt) < Date.now()
+                                ? copy.artifactSla.overdue
+                                : copy.artifactSla.due
+                            } ${formatTimestamp(artifact.reviewSlaDueAt)}`
+                          : copy.artifactSla.none
+                      }
+                    />
                     <Typography variant="caption" color="text.secondary">
                       {copy.revisionPrefix}
                       {artifact.revision} {copy.separator} {formatTimestamp(artifact.updatedAt)}
@@ -279,10 +377,25 @@ export function DwaionArtifactConversationRail({
                   </Stack>
                 </Box>
               </Box>
-            </Box>
+                </Box>
+              ))}
+            </Fragment>
           ))}
         </Box>
       )}
     </Box>
   );
+}
+
+function unique(values: readonly (string | null)[]): string[] {
+  return [...new Set(values.filter((value): value is string => Boolean(value)))].sort((left, right) =>
+    left.localeCompare(right)
+  );
+}
+
+function filterOptions(values: readonly string[], allLabel: string) {
+  return [
+    { value: 'ALL', label: allLabel },
+    ...values.map((value) => ({ value, label: value })),
+  ];
 }
