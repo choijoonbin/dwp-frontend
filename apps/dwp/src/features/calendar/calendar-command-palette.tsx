@@ -183,11 +183,13 @@ export function CalendarCommandPalette({
           maxHeight: 420,
           overflowY: 'auto',
           py: 0.75,
-          color: '#F8FAFC',
+          color: foundationTokens.color.neutral[25],
           '& .MuiListItemButton-root:hover, & .MuiListItemButton-root.Mui-selected': {
-            bgcolor: '#1E293B',
+            bgcolor: foundationTokens.color.neutral[800],
           },
-          '& .MuiListItemButton-root.Mui-selected:hover': { bgcolor: '#1E293B' },
+          '& .MuiListItemButton-root.Mui-selected:hover': {
+            bgcolor: foundationTokens.color.neutral[800],
+          },
           '@media (forced-colors: active)': {
             color: 'CanvasText',
             '& .MuiListItemButton-root:hover, & .MuiListItemButton-root.Mui-selected': {
@@ -221,26 +223,27 @@ export function CalendarCommandPalette({
               <Typography
                 component="kbd"
                 aria-hidden="true"
-                sx={{
+                sx={(theme) => ({
                   ml: 1,
                   px: 0.75,
                   py: 0.35,
-                  border: '1px solid #334155',
+                  border: 1,
+                  borderColor: foundationTokens.color.neutral[700],
                   borderRadius: COMPACT_RADIUS,
-                  bgcolor: '#1E293B',
-                  color: '#94A3B8',
+                  bgcolor: foundationTokens.color.neutral[800],
+                  color: foundationTokens.color.neutral[300],
                   fontFamily: 'inherit',
-                  fontSize: 10,
-                  fontWeight: 600,
-                  lineHeight: '12px',
-                  letterSpacing: '0.05em',
+                  fontSize: theme.typography.pxToRem(10),
+                  fontWeight: theme.typography.fontWeightMedium,
+                  lineHeight: theme.typography.pxToRem(12),
+                  letterSpacing: theme.typography.overline.letterSpacing,
                   whiteSpace: 'nowrap',
                   '@media (forced-colors: active)': {
                     borderColor: 'CanvasText',
                     backgroundColor: 'Canvas',
                     color: 'CanvasText',
                   },
-                }}
+                })}
               >
                 {command.shortcut}
               </Typography>
@@ -248,7 +251,10 @@ export function CalendarCommandPalette({
           );
         })}
         {commands.length === 0 && (
-          <Typography sx={{ color: '#94A3B8', px: 2, py: 3 }} variant="body2">
+          <Typography
+            sx={{ color: foundationTokens.color.neutral[300], px: 2, py: 3 }}
+            variant="body2"
+          >
             {t('command.noResults')}
           </Typography>
         )}

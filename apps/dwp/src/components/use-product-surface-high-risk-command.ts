@@ -62,6 +62,7 @@ export {
   assertApprovalHighRiskAttemptBinding,
   assertApprovalHighRiskOperationBindingCurrent,
   classifyApprovalHighRiskCommandFailure,
+  resolveApprovalHighRiskActionAuthority,
   runApprovalHighRiskBoundDispatch,
   runApprovalHighRiskResumeSingleFlight,
 };

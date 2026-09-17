@@ -15,9 +15,14 @@ import {
 } from './support/notification-fixtures';
 import { mockShellSession } from './support/shell-session';
 
+test.beforeEach(({ page: _page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'This suite owns its explicit viewport matrix.');
+});
+
 test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응형 상세 흐름을 제공한다', async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'ko',
@@ -30,15 +35,16 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
 
   await page.goto('/notifications/center');
 
-  await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible({
+    timeout: 15_000,
+  });
   const protectedNotification = page.getByRole('button', { name: /보호된 업무 알림/ });
   await expect(protectedNotification).toBeVisible();
   await expect(page.getByText('운영 개요', { exact: true })).toHaveCount(0);
   await expect(page.getByText('알림 계약', { exact: true })).toHaveCount(0);
   await expect(page.getByText('전달 운영', { exact: true })).toHaveCount(0);
 
-  await expect(page.getByRole('heading', { name: '알림 상세', level: 2 })).toHaveCount(0);
-  await protectedNotification.click();
+  await expect(page.getByRole('heading', { name: '알림 상세', level: 2 })).toBeVisible();
   await expect(page.getByRole('heading', { name: '알림 상세', level: 2 })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: '클라우드 운영 예산 승인이 필요합니다', level: 3 })
@@ -70,7 +76,9 @@ test('알림 센터는 사용자 작업과 관리 경계를 분리하고 반응�
   for (const width of [1440, 1280, 1024, 900, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/notifications/center');
-    await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible({
+      timeout: 15_000,
+    });
     await expectNoHorizontalOverflow(page);
 
     const headerBounds = await page
@@ -267,15 +275,15 @@ test('알림 설정은 긴 정책 화면을 섹션 바로가기로 탐색하고 
     const presentationSection = page.locator('#notification-preferences-presentation');
     const appsSection = page.locator('#notification-preferences-apps');
     await expect(navigation).toBeVisible();
-    await expect(presentationSection).toBeVisible();
-    await expect(appsSection).toBeVisible();
+    await expect(presentationSection).toBeHidden();
+    await expect(appsSection).toBeHidden();
     await navigation.getByRole('button', { name: '앱별 알림' }).click();
     await expect
       .poll(() =>
         navigation.getByRole('button', { name: '앱별 알림' }).getAttribute('aria-current')
       )
       .toBe('location');
-    await expect(presentationSection).toBeVisible();
+    await expect(presentationSection).toBeHidden();
     await expect(appsSection).toBeVisible();
     await expect(page.getByRole('button', { name: '전자결재', exact: true })).toBeVisible();
     if (width < 1200) {
@@ -316,12 +324,12 @@ test('데스크톱 설정 위치는 모바일 전환 후에도 같은 설정군�
   const appsTab = navigation.getByRole('button', { name: '앱별 알림' });
   const presentationSection = page.locator('#notification-preferences-presentation');
   const appsSection = page.locator('#notification-preferences-apps');
-  await appsSection.evaluate((section) => section.scrollIntoView({ block: 'start' }));
+  await appsTab.click();
   await expect(appsTab).toHaveAttribute('aria-current', 'location');
 
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(appsSection).toBeVisible();
-  await expect(presentationSection).toBeVisible();
+  await expect(presentationSection).toBeHidden();
   await expect(appsTab).toHaveAttribute('aria-current', 'location');
   await expect(
     appsSection.getByRole('heading', { name: '앱별 알림', exact: true })
@@ -403,8 +411,10 @@ test('알림 센터의 필터와 일괄 정리는 키보드만으로 수행할 �
 
   const priority = page.getByRole('combobox', { name: '우선순위 필터' });
   await priority.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('option', { name: '긴급' })).toBeVisible();
   await page.keyboard.press('ArrowDown');
-  await page.getByRole('option', { name: '긴급' }).press('Enter');
+  await page.keyboard.press('Enter');
   await expect(priority).toHaveText(/긴급/);
 
   const app = page.getByRole('combobox', { name: '앱 필터' });
@@ -412,13 +422,16 @@ test('알림 센터의 필터와 일괄 정리는 키보드만으로 수행할 �
   await page.keyboard.press('Enter');
   const approvalsOption = page.getByRole('option', { name: '전자결재' });
   await expect(approvalsOption).toBeVisible();
-  await approvalsOption.press('Enter');
+  await approvalsOption.focus();
+  await page.keyboard.press('Enter');
   await expect(app).toHaveText(/전자결재/);
 
   const readState = page.getByRole('combobox', { name: '읽음 상태 필터' });
   await readState.focus();
-  await page.keyboard.press('ArrowDown');
-  await page.getByRole('option', { name: '읽음', exact: true }).press('Enter');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('option', { name: '읽음', exact: true })).toBeVisible();
+  await page.keyboard.press('End');
+  await page.keyboard.press('Enter');
   await expect(readState).toHaveText(/읽음/);
   await expect
     .poll(() =>
@@ -434,7 +447,7 @@ test('알림 센터의 필터와 일괄 정리는 키보드만으로 수행할 �
     )
     .toBe(true);
   await expect(page).toHaveURL(
-    /\/notifications\/center\?view=priority&read=read&q=%EC%98%88%EC%82%B0&app=approvals&priority=urgent$/u
+    /\/notifications\/center\/notification-e2e-1\?view=priority&read=read&q=%EC%98%88%EC%82%B0&app=approvals&priority=urgent$/u
   );
 
   const toolbar = page.getByRole('toolbar', { name: '선택한 알림 작업' });
@@ -494,7 +507,7 @@ test('알림 센터는 보기 필터와 j/k/e/s 단축키로 즉시 분류할 �
 
   await page.goto('/notifications/center');
   await expect(page.getByRole('heading', { name: '알림 센터', level: 1 })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '조치 필요', level: 2 })).toBeVisible();
+  await expect(page.getByRole('button', { name: '알림 묶기: 묶지 않음' })).toBeVisible();
 
   await page
     .getByRole('navigation', { name: '알림 센터 보기' })
@@ -678,9 +691,10 @@ test('메신저 알림은 실패한 답장 초안을 보존하고 재시도 성�
   await reply.fill('점검 결과 확인했습니다. 후속 조치하겠습니다.');
   await page.getByRole('button', { name: '보내기' }).click();
 
+  await expect.poll(() => sendAttempts, { timeout: 15_000 }).toBe(1);
   await expect(
     page.getByText('메시지를 보내지 못했습니다. 내용을 유지한 채 다시 시도해 주세요.')
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 15_000 });
   await expect(reply).toHaveValue('점검 결과 확인했습니다. 후속 조치하겠습니다.');
   expect(triageActions).not.toContain('COMPLETE');
 

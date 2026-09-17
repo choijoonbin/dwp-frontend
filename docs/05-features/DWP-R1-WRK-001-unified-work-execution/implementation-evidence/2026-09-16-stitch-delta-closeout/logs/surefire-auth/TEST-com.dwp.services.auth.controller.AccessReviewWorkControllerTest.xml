@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.auth.controller.AccessReviewWorkControllerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-16T02:53:31" hostname="MacBook-Pro" time="1.209">
+  <properties/>
+  <testcase name="workEndpointsExposeStableOpenApiOperationIds()" classname="com.dwp.services.auth.controller.AccessReviewWorkControllerTest" time="0.07"/>
+  <testcase name="namedReviewerCannotEnterTheAdminCampaignApi()" classname="com.dwp.services.auth.controller.AccessReviewWorkControllerTest" time="1.012"/>
+  <testcase name="providerIdentityIsRejectedBeforeWorkItemResolution()" classname="com.dwp.services.auth.controller.AccessReviewWorkControllerTest" time="0.073"/>
+  <testcase name="workDecisionRationaleIsBoundedToTheFiveHundredCharacterContract()" classname="com.dwp.services.auth.controller.AccessReviewWorkControllerTest" time="0.006"/>
+  <testcase name="namedReviewerUsesOnlyTheOpaqueWorkApi()" classname="com.dwp.services.auth.controller.AccessReviewWorkControllerTest" time="0.032"/>
+  <testcase name="decisionForwardsExpectedVersionToTheOwnerService()" classname="com.dwp.services.auth.controller.AccessReviewWorkControllerTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/Users/a10697/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.17.8/f09415827a71be7ed621c7bd02550678f28bc81c/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>

@@ -1,4 +1,6 @@
-export const EXPECTED_REGISTRY_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+export const EXPECTED_REGISTRY_VERSIONS = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+];
 export const PRESERVED_AUTHORIZATION_CHECKSUMS = Object.freeze({
   1: 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67',
   2: '5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c',
@@ -14,6 +16,13 @@ export const PRESERVED_AUTHORIZATION_CHECKSUMS = Object.freeze({
   12: '65155dcc88f454a0ad2530518f8ec9b0c070afd31d583a19f980dd3d10f78a74',
   13: '3bd67d7b145c5b7c845788c70f8884c8afadedd9920de419ecd1e1d0e8a4c8b0',
   14: '7ee0bac12ddfbc72dda55a5014c67b0798caa68a5ffc73b4be479d06a4590336',
+  15: 'a9eab001b26d6488de0f7f176fa1d70fea2c9792a230769f645eb53ba90cf89f',
+  16: 'a677d2ad662d8791a09cdf4ad592f3483aa3dbf068ed2785c648351e8f2a20d0',
+  17: 'cdd1e671c8df1bbd63cab442acf175ee22c645cac071b79a3598f498c9947239',
+  18: 'ce5ce0e2058ab33998c0bf19ace2ff54ace06c8c0bda4dc4dca3554b06926fc5',
+  19: '32bec6d3fb912af6072139aec72228281597c5b4fbb15f8b4af947c20721644c',
+  20: '1acbce34c450c650aa3e8f1c11995b831f177ee4a6139dd8217ea5bdd22e7a60',
+  21: '4cd1732df91d197cc47fca94699b0fb702ab1f6f2c557d3d17ce0e069d65af85',
 });
 
 const authorizationCounts = (
@@ -44,4 +53,11 @@ export const EXPECTED_AUTHORIZATION_COUNTS = Object.freeze({
   12: authorizationCounts(134, 22, 16, 46, 352),
   13: authorizationCounts(134, 22, 16, 46, 355),
   14: authorizationCounts(134, 22, 16, 46, 360),
+  15: authorizationCounts(136, 22, 16, 46, 411),
+  16: authorizationCounts(137, 22, 16, 46, 425),
+  17: authorizationCounts(139, 22, 16, 46, 446),
+  18: authorizationCounts(139, 22, 16, 46, 459),
+  19: authorizationCounts(139, 22, 16, 46, 460),
+  20: authorizationCounts(159, 22, 16, 46, 686),
+  21: authorizationCounts(159, 22, 16, 46, 709),
 });

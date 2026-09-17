@@ -149,7 +149,9 @@ test('공통 상세는 데스크톱 인라인과 모바일 드로어에서 사�
   await expect(page).toHaveURL((url) => !url.searchParams.has('event'));
 });
 
-test('DWAI·ON 실행 이력은 최근 응답 범위와 정확한 실행 상세만 표시한다', async ({ page }) => {
+test('DWAI·ON 실행 이력은 선택 기간의 서버 페이지와 정확한 실행 상세만 표시한다', async ({
+  page,
+}) => {
   const commonDetailRequests: string[] = [];
   const consoleErrors: string[] = [];
   page.on('console', (message) => {
@@ -167,8 +169,8 @@ test('DWAI·ON 실행 이력은 최근 응답 범위와 정확한 실행 상세�
   await expect(summary.getByTestId('dwaion-sample-summary')).toContainText(
     '1건은 위 운영 수치에서 제외'
   );
-  await expect(page.getByText(/\ucd5c근 실행을 최대 100건까지 조회합니다/)).toBeVisible();
-  await expect(page.getByRole('list', { name: '최근 조회된 AI 실행' })).toBeVisible();
+  await expect(page.getByText(/선택 기간의 실행을 페이지당 50건씩 조회합니다/)).toBeVisible();
+  await expect(page.getByRole('list', { name: '선택 기간에 조회된 AI 실행' })).toBeVisible();
 
   const inspector = page.getByRole('complementary', { name: '선택 실행 상세' });
   await expect(inspector).toContainText(COMPLETED_RUN_ID);
@@ -495,7 +497,7 @@ for (const surface of qualitySurfaces) {
       await attention.focus();
       await page.keyboard.press('Enter');
       await expect(
-        page.getByRole('list', { name: '최근 조회된 AI 실행' }).getByRole('button')
+        page.getByRole('list', { name: '선택 기간에 조회된 AI 실행' }).getByRole('button')
       ).toHaveCount(2);
     } else {
       await expect(

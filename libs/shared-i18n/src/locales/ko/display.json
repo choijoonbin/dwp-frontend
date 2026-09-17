@@ -162,6 +162,7 @@
     "TENANT_LIFECYCLE": "테넌트 수명주기"
   },
   "auditActions": {
+    "SUBMITTED": "서비스 주문 제출",
     "ACCEPT": "배정 수락",
     "ARCHIVE": "메일 보관",
     "ARCHIVE_NOW": "즉시 보관",
@@ -438,7 +439,8 @@
     "SYSTEM_TABLE": "시스템 테이블",
     "TABLE": "테이블",
     "VIEW": "뷰",
-    "WORK_ITEM": "업무"
+    "WORK_ITEM": "업무",
+    "WORKSPACE_APP": "워크스페이스 앱"
   },
   "roleNames": {
     "ADMIN": "관리자",

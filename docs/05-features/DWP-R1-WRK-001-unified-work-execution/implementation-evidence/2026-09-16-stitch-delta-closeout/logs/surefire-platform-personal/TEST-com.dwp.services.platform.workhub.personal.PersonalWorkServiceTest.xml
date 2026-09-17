@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-09-16T02:58:18" hostname="MacBook-Pro" time="0.126">
+  <properties/>
+  <testcase name="rejectsMissingIdentityAndReadOnlyMutationBeforeQueryingStorage()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.085"/>
+  <testcase name="selectionTokenCannotBeReusedForAnotherDay()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.006"/>
+  <testcase name="currentAclHidesAllMetadataAfterRevocation()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.002"/>
+  <testcase name="nativeReferenceUsesCanonicalWorkDeepLinkAndRejectsObligationAliases()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.002"/>
+  <testcase name="rejectsUnsupportedUnvalidatedUrlReferencesWithoutCreatingOrAuditing()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.004"/>
+  <testcase name="nativeUuidAliasesCannotCreateMultipleIdentitiesForTheSameTask()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.001"/>
+  <testcase name="remoteBookmarksNeverMasqueradeAsVerifiedMetadata()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.005"/>
+  <testcase name="messagePreviewIsAuthoritativeAndCreateRevalidatesAfterRevocation()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.004"/>
+  <testcase name="updateCanKeepRevokedSourceWithoutRevalidatingOrLosingThePrivateLink()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.006"/>
+  <testcase name="staleVersionAndInvalidTransitionNeverWrite()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.003"/>
+  <testcase name="planningKeepsInaccessibleSelectionWithoutTouchingTaskDatesOrStatus()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

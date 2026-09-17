@@ -127,7 +127,7 @@ test('mail home presents governed action proposals as compact contextual workflo
   await expect(calendarCard.getByText('Calendar event')).toBeVisible();
   await expect(calendarCard.getByText('Meeting room 4A')).toBeVisible();
   await expect(calendarCard.getByText('About 60 minutes')).toBeVisible();
-  await expect(calendarCard.getByText('98% match')).toBeVisible();
+  await expect(calendarCard.getByText(/% (?:match|confidence)/iu)).toHaveCount(0);
 
   const taskCard = page.getByTestId('mail-proposal-CREATE_TASK');
   await expect(taskCard.getByText('Work item', { exact: true })).toBeVisible();

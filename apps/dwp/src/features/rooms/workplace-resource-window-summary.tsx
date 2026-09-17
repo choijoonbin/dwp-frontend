@@ -55,6 +55,38 @@ export function WorkplaceResourceWindowSummary({
           {time(facts.endsAt)}
         </Typography>
         <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gap: 0.75,
+            mt: 1,
+          }}
+        >
+          {(['UNRESERVED', 'RESERVED', 'CLOSED'] as const).map((kind) => (
+            <Box
+              key={kind}
+              sx={{
+                minWidth: 0,
+                p: 0.75,
+                border: 1,
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+              }}
+            >
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
+                {labels[kind]}
+              </Typography>
+              <Typography variant="body2" fontWeight="fontWeightBold">
+                {t('workplace.explore.minutes', { count: facts.minutesByKind[kind] })}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+        <Box
           aria-hidden="true"
           sx={{
             display: 'flex',

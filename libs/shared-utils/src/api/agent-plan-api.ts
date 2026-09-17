@@ -11,9 +11,10 @@ export type AgentRiskTier = AgentSchemas['RiskTier'];
 
 export type AgentActionHandoffOrigin = Omit<
   AgentSchemas['ActionHandoffOrigin'],
-  'conversationId'
+  'conversationId' | 'surface'
 > & {
   conversationId: string | null;
+  surface: 'action-shelf' | 'proposal-handoff';
 };
 
 export type AgentPlanPreviewRequest = AgentSchemas['PlanPreviewRequest'];
@@ -65,8 +66,8 @@ export function isAgentActionHandoffOrigin(value: unknown): value is AgentAction
   return (
     origin.appKey === 'APP.ASK' &&
     typeof origin.route === 'string' &&
-    /^\/dwaion\/(?:new|conversations\/[0-9a-f-]{36})$/.test(origin.route) &&
-    origin.surface === 'action-shelf' &&
+    /^\/dwaion\/(?:new|proposals|conversations\/[0-9a-f-]{36})$/.test(origin.route) &&
+    (origin.surface === 'action-shelf' || origin.surface === 'proposal-handoff') &&
     typeof origin.sourceRunId === 'string' &&
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(
       origin.sourceRunId

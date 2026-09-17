@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { Ban, CircleStop, Clock3, RotateCcw, ShieldAlert, Siren } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -45,6 +46,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { notificationQueryKeys } from './integration-contract';
+import { notificationAdminFocus } from './notification-admin-focus';
 
 const CHANNELS: readonly NotificationSuppressionChannel[] = [
   'ALL',
@@ -116,6 +118,8 @@ export function NotificationSuppressionStudio() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const { hasPermission } = usePermissions();
+  const [searchParams] = useSearchParams();
+  const requestedControlId = notificationAdminFocus(searchParams, 'controlId');
   const canManage = hasPermission('ADMIN.NOTIFICATION_OPERATIONS', 'MANAGE');
   const [editorOpen, setEditorOpen] = useState(false);
   const [editor, setEditor] = useState<SuppressionEditor>(newEditor);
@@ -143,6 +147,21 @@ export function NotificationSuppressionStudio() {
       ),
     [contracts]
   );
+
+  useEffect(() => {
+    if (
+      !requestedControlId ||
+      !suppressionQuery.data?.items.some((item) => item.suppressionId === requestedControlId)
+    )
+      return;
+    const frame = globalThis.requestAnimationFrame(() => {
+      const target = [
+        ...document.querySelectorAll<HTMLElement>('[data-suppression-focus="true"]'),
+      ].find((element) => element.offsetParent !== null);
+      target?.scrollIntoView({ block: 'center' });
+    });
+    return () => globalThis.cancelAnimationFrame(frame);
+  }, [requestedControlId, suppressionQuery.data]);
 
   const refresh = async () => {
     await Promise.all([
@@ -318,12 +337,17 @@ export function NotificationSuppressionStudio() {
                 <Box
                   component="li"
                   key={item.suppressionId}
+                  id={`notification-suppression-mobile-${item.suppressionId}`}
+                  data-suppression-focus={
+                    item.suppressionId === requestedControlId ? 'true' : undefined
+                  }
                   data-testid={`notification-suppression-mobile-${item.suppressionId}`}
                   sx={{
                     p: 2,
                     minWidth: 0,
                     border: 1,
-                    borderColor: 'divider',
+                    borderColor:
+                      item.suppressionId === requestedControlId ? 'primary.main' : 'divider',
                     borderTop: 3,
                     borderTopColor:
                       state === 'ACTIVE'
@@ -332,7 +356,10 @@ export function NotificationSuppressionStudio() {
                           ? 'info.main'
                           : 'divider',
                     borderRadius: foundationTokens.radius.control + 'px',
-                    bgcolor: 'background.paper',
+                    bgcolor:
+                      item.suppressionId === requestedControlId
+                        ? 'action.selected'
+                        : 'background.paper',
                   }}
                 >
                   <Stack
@@ -479,7 +506,14 @@ export function NotificationSuppressionStudio() {
                   {items.map((item) => {
                     const state = stateOf(item);
                     return (
-                      <TableRow key={item.suppressionId}>
+                      <TableRow
+                        key={item.suppressionId}
+                        id={`notification-suppression-desktop-${item.suppressionId}`}
+                        data-suppression-focus={
+                          item.suppressionId === requestedControlId ? 'true' : undefined
+                        }
+                        selected={item.suppressionId === requestedControlId}
+                      >
                         <TableCell>
                           <Typography variant="body2" fontWeight={700}>
                             {item.scopeKey}

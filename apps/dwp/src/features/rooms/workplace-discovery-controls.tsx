@@ -48,10 +48,13 @@ type Props = {
   onFloorChange: (value: string) => void;
   type: WorkplaceResourceType | 'ALL';
   typeLabels: Record<WorkplaceResourceType, string>;
+  typeOptions: readonly WorkplaceResourceType[];
   onTypeChange: (value: WorkplaceResourceType | 'ALL') => void;
   feature: string;
   features: readonly string[];
   onFeatureChange: (value: string) => void;
+  capacity: number | null;
+  onCapacityChange: (value: number | null) => void;
   neighborhood: string;
   neighborhoods: readonly string[];
   onNeighborhoodChange: (value: string) => void;
@@ -90,10 +93,13 @@ export function WorkplaceDiscoveryControls({
   onFloorChange,
   type,
   typeLabels,
+  typeOptions,
   onTypeChange,
   feature,
   features,
   onFeatureChange,
+  capacity,
+  onCapacityChange,
   neighborhood,
   neighborhoods,
   onNeighborhoodChange,
@@ -117,6 +123,15 @@ export function WorkplaceDiscoveryControls({
       ? [{ key: 'type', label: typeLabels[type], onRemove: () => onTypeChange('ALL') }]
       : []),
     ...(feature ? [{ key: 'feature', label: feature, onRemove: () => onFeatureChange('') }] : []),
+    ...(capacity !== null
+      ? [
+          {
+            key: 'capacity',
+            label: t('workplace.explore.capacityFilterValue', { count: capacity }),
+            onRemove: () => onCapacityChange(null),
+          },
+        ]
+      : []),
     ...(neighborhood
       ? [
           {
@@ -136,6 +151,14 @@ export function WorkplaceDiscoveryControls({
         ]
       : []),
   ];
+  const featureOptions = feature && !features.includes(feature) ? [feature, ...features] : features;
+  const neighborhoodOptions =
+    neighborhood && !neighborhoods.includes(neighborhood)
+      ? [neighborhood, ...neighborhoods]
+      : neighborhoods;
+  const capacityOptions = [1, 2, 4, 6, 8, 10, 12, 20];
+  if (capacity !== null && !capacityOptions.includes(capacity)) capacityOptions.push(capacity);
+  capacityOptions.sort((left, right) => left - right);
 
   const resultLabel = t('workplace.explore.resultSummary', {
     count: resultCount,
@@ -232,8 +255,8 @@ export function WorkplaceDiscoveryControls({
             searchValue={search}
             onSearchChange={onSearchChange}
             activeFilters={activeFilters}
-            resetLabel={t('workplace.explore.resetDetails')}
-            onReset={onReset}
+            resetLabel={mobile ? undefined : t('workplace.explore.resetDetails')}
+            onReset={mobile ? undefined : onReset}
             filters={
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <DatePickerField
@@ -266,6 +289,21 @@ export function WorkplaceDiscoveryControls({
                   }))}
                   onValueChange={(value) => onDurationChange(Number(value))}
                   sx={{ width: { xs: 1, sm: 128 } }}
+                />
+                <SelectField
+                  size="small"
+                  fullWidth={false}
+                  label={t('workplace.explore.capacityFilter')}
+                  value={capacity === null ? '' : String(capacity)}
+                  options={[
+                    { value: '', label: t('workplace.explore.anyCapacity') },
+                    ...capacityOptions.map((value) => ({
+                      value: String(value),
+                      label: t('workplace.explore.capacityFilterValue', { count: value }),
+                    })),
+                  ]}
+                  onValueChange={(value) => onCapacityChange(value === '' ? null : Number(value))}
+                  sx={{ width: { xs: 1, sm: 132 } }}
                 />
                 <SelectField
                   size="small"
@@ -306,7 +344,7 @@ export function WorkplaceDiscoveryControls({
           value={type}
           options={[
             { value: 'ALL', label: t('workplace.explore.allTypes') },
-            ...(Object.keys(typeLabels) as WorkplaceResourceType[]).map((value) => ({
+            ...typeOptions.map((value) => ({
               value,
               label: typeLabels[value],
             })),
@@ -339,7 +377,7 @@ export function WorkplaceDiscoveryControls({
               }}
             >
               <ToggleButton value="ALL">{t('workplace.explore.allTypes')}</ToggleButton>
-              {(Object.keys(typeLabels) as WorkplaceResourceType[]).map((value) => (
+              {typeOptions.map((value) => (
                 <ToggleButton key={value} value={value}>
                   {typeLabels[value]}
                 </ToggleButton>
@@ -371,7 +409,7 @@ export function WorkplaceDiscoveryControls({
               value={feature}
               options={[
                 { value: '', label: t('workplace.explore.allFeatures') },
-                ...features.map((value) => ({ value, label: value })),
+                ...featureOptions.map((value) => ({ value, label: value })),
               ]}
               onValueChange={(value) => onFeatureChange(String(value))}
               sx={{ width: { xs: 1, sm: 210 } }}
@@ -383,7 +421,7 @@ export function WorkplaceDiscoveryControls({
               value={neighborhood}
               options={[
                 { value: '', label: t('workplace.explore.allNeighborhoods') },
-                ...neighborhoods.map((value) => ({ value, label: value })),
+                ...neighborhoodOptions.map((value) => ({ value, label: value })),
               ]}
               onValueChange={(value) => onNeighborhoodChange(String(value))}
               sx={{ width: { xs: 1, sm: 210 } }}
@@ -502,8 +540,12 @@ export function WorkplaceDiscoveryControls({
           paper: {
             sx: {
               maxHeight: '92dvh',
+              width: '100%',
+              maxWidth: 430,
+              mx: 'auto',
               borderTopLeftRadius: foundationTokens.radius.surface * 2 + 'px',
               borderTopRightRadius: foundationTokens.radius.surface * 2 + 'px',
+              overflow: 'hidden',
             },
           },
         }}
@@ -513,16 +555,63 @@ export function WorkplaceDiscoveryControls({
           role="dialog"
           aria-modal="true"
           aria-labelledby="workplace-mobile-filter-title"
-          spacing={2}
-          sx={{ p: 2, minWidth: 0 }}
+          sx={{ minWidth: 0, maxHeight: '92dvh' }}
         >
-          <Typography id="workplace-mobile-filter-title" component="h2" variant="h6">
-            {t('workplace.explore.filterLabel')}
-          </Typography>
-          {controls}
-          <ActionButton intent="primary" onClick={() => setFiltersOpen(false)}>
-            {t('workplace.member.filters.apply')}
-          </ActionButton>
+          <Box sx={{ px: 2, pt: 1, pb: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 40,
+                height: 4,
+                borderRadius: foundationTokens.radius.surface + 'px',
+                bgcolor: 'divider',
+                mx: 'auto',
+                mb: 1.5,
+              }}
+            />
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
+              <Box minWidth={0}>
+                <Typography id="workplace-mobile-filter-title" component="h2" variant="h6">
+                  {t('workplace.explore.filterLabel')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {scopeLabel} · {resultLabel}
+                </Typography>
+              </Box>
+              <Typography variant="caption" color="primary.main" fontWeight="fontWeightBold">
+                {t('workplace.explore.availableCount', { count: bookableCount })}
+              </Typography>
+            </Stack>
+          </Box>
+          <Box
+            sx={{
+              px: 2,
+              minHeight: 0,
+              flex: '1 1 auto',
+              overflowY: 'auto',
+              overscrollBehavior: 'contain',
+            }}
+          >
+            {controls}
+          </Box>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(96px, .7fr) minmax(0, 1.5fr)',
+              gap: 1,
+              p: 2,
+              borderTop: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+            }}
+          >
+            <ActionButton intent="secondary" onClick={onReset}>
+              {t('workplace.explore.resetDetails')}
+            </ActionButton>
+            <ActionButton intent="primary" onClick={() => setFiltersOpen(false)}>
+              {t('workplace.member.filters.apply')}
+            </ActionButton>
+          </Box>
         </Stack>
       </Drawer>
     </>

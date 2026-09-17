@@ -117,6 +117,7 @@ export function resolveWorkplaceGovernanceCapabilities({
       canViewAssignments: globallyVisible,
     },
     experience: { canView: globallyVisible, canManage: globallyManaged },
+    dataSources: { canView: globallyVisible, canManage: globallyManaged },
   };
 }
 

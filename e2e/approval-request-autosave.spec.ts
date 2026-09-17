@@ -3,6 +3,7 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 import { mockShellSession } from './support/shell-session';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
+import { assertApprovalSubmissionBlocked } from './support/approval-request-submission';
 import {
   APPROVAL_REQUEST_DETAIL_FIXTURE,
   APPROVAL_REQUEST_FIXTURE,
@@ -65,7 +66,7 @@ test('부분 초안 자동저장과 저장 중 닫기는 최신 입력을 순서
   await selectForm(page);
   await page.getByLabel('제목').fill('제목만 작성한 부분 초안');
   await expect(page.getByRole('status').filter({ hasText: '초안 저장 중' })).toBeVisible();
-  expect(creates).toHaveLength(1);
+  await expect.poll(() => creates.length).toBe(1);
   await page
     .getByLabel('요청 내용')
     .fill('첫 저장 요청 이후 추가한 입력도 닫기 전에 저장해야 합니다.');
@@ -111,7 +112,7 @@ test('자동저장 첫 503은 결과 불명으로 입력을 보존하고 다른 
   await expect(unknown).toBeVisible();
   await expect(page.getByLabel('제목')).toHaveValue('유실되면 안 되는 부분 초안');
   await expect(page.getByRole('button', { name: '임시 저장' })).toBeDisabled();
-  await expect(page.getByRole('button', { name: '결재 상신' })).toBeDisabled();
+  await assertApprovalSubmissionBlocked(page);
   await page.getByLabel('요청 내용').fill('결과 확인 전의 추가 입력도 로컬에 보존합니다.');
   await page.waitForTimeout(2000);
   expect(creates).toBe(1);

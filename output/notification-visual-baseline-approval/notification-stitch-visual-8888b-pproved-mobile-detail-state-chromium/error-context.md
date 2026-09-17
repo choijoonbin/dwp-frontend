@@ -1,0 +1,266 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - button [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e19]: 알림
+          - generic [ref=e20]:
+            - button [ref=e22] [cursor=pointer]:
+              - img [ref=e23]
+            - button [ref=e29] [cursor=pointer]:
+              - generic [ref=e30]:
+                - img [ref=e31]
+                - generic [ref=e34]: "4"
+            - button [ref=e36] [cursor=pointer]:
+              - generic [ref=e37]: T
+              - img [ref=e38]
+        - navigation [ref=e43]:
+          - link [ref=e45] [cursor=pointer]:
+            - /url: /notifications/admin/overview
+            - img [ref=e47]
+            - generic [ref=e50]: 관리
+      - main [ref=e51]:
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - img [ref=e58]
+              - generic [ref=e64]:
+                - heading [level=1] [ref=e65]: 알림 센터
+                - generic [ref=e68]: 주기적으로 동기화 중
+            - button [ref=e70] [cursor=pointer]:
+              - img [ref=e71]
+          - region [ref=e74]:
+            - navigation [ref=e75]:
+              - button [ref=e76] [cursor=pointer]:
+                - img [ref=e78]
+                - text: 받은 알림5
+              - button [ref=e81] [cursor=pointer]:
+                - img [ref=e83]
+                - text: 조치 필요2
+              - button [ref=e85] [cursor=pointer]:
+                - img [ref=e87]
+                - text: 나를 멘션1
+              - button [ref=e90] [cursor=pointer]:
+                - img [ref=e92]
+                - text: 저장됨1
+              - button [ref=e94] [cursor=pointer]:
+                - img [ref=e96]
+                - text: 나중에1
+              - button [ref=e99] [cursor=pointer]:
+                - img [ref=e101]
+                - text: 정리됨2
+            - generic [ref=e104]:
+              - generic [ref=e106]:
+                - img [ref=e108]
+                - textbox [ref=e111]:
+                  - /placeholder: 제목, 소스 또는 안전한 미리보기 검색
+                - group
+              - button [ref=e113] [cursor=pointer]:
+                - img [ref=e114]
+              - button [ref=e116] [cursor=pointer]:
+                - img [ref=e118]
+                - text: 저장된 뷰
+                - img [ref=e121]
+          - region [ref=e123]:
+            - radiogroup [ref=e125]:
+              - radio [ref=e126] [cursor=pointer]:
+                - img [ref=e127]
+              - radio [checked] [ref=e129] [cursor=pointer]:
+                - img [ref=e130]
+            - button [ref=e133] [cursor=pointer]:
+              - img [ref=e135]
+              - text: 묶지 않음
+              - img [ref=e138]
+          - list [ref=e142]:
+            - listitem [ref=e143]:
+              - list [ref=e144]:
+                - listitem [ref=e145]:
+                  - article [ref=e146]:
+                    - generic [ref=e147]:
+                      - generic [ref=e148] [cursor=pointer]:
+                        - checkbox [ref=e149]
+                        - img [ref=e150]
+                      - img [ref=e153]
+                      - generic [ref=e156]:
+                        - generic [ref=e157]:
+                          - generic [ref=e158]:
+                            - generic [ref=e159]: 전자결재
+                            - generic [ref=e160]: 김민서
+                            - generic [ref=e162]: 긴급
+                            - generic [ref=e164]: 조치 필요
+                          - time [ref=e165]: 1시간 전
+                        - button [ref=e166] [cursor=pointer]:
+                          - heading [level=3] [ref=e167]: 클라우드 운영 예산 승인이 필요합니다
+                        - paragraph [ref=e168]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                        - generic [ref=e169]:
+                          - generic [ref=e170]: 직접 수신
+                          - generic [ref=e171]: · 9월 16일 오후 05:00까지
+                        - generic [ref=e172]:
+                          - button [ref=e174] [cursor=pointer]:
+                            - text: 검토하기
+                            - img [ref=e176]
+                          - button [ref=e180] [cursor=pointer]:
+                            - img [ref=e181]
+                - listitem [ref=e185]:
+                  - article [ref=e186]:
+                    - generic [ref=e187]:
+                      - generic [ref=e188] [cursor=pointer]:
+                        - checkbox [ref=e189]
+                        - img [ref=e190]
+                      - img [ref=e193]
+                      - generic [ref=e196]:
+                        - generic [ref=e197]:
+                          - generic [ref=e198]:
+                            - generic [ref=e199]: IT 서비스
+                            - generic [ref=e200]: 인프라운영팀
+                            - generic [ref=e202]: 높음
+                            - generic [ref=e204]: 조치 필요
+                          - time [ref=e205]: 2시간 전
+                        - button [ref=e206] [cursor=pointer]:
+                          - heading [level=3] [ref=e207]: 원격접속 VPN 갱신 신청에 대한 추가 사유 확인 필요
+                        - paragraph [ref=e208]: 외부 네트워크 접근 권한 연장을 위해 신청 사유 보완이 요청되었습니다.
+                        - generic [ref=e209]:
+                          - generic [ref=e210]: 담당 역할에 포함됨
+                          - generic [ref=e211]: · 9월 16일 오후 06:00까지
+                        - generic [ref=e212]:
+                          - button [ref=e214] [cursor=pointer]:
+                            - text: 보완 작성하기
+                            - img [ref=e216]
+                          - button [ref=e220] [cursor=pointer]:
+                            - img [ref=e221]
+                - listitem [ref=e225]:
+                  - article [ref=e226]:
+                    - generic [ref=e227]:
+                      - generic [ref=e228] [cursor=pointer]:
+                        - checkbox [ref=e229]
+                        - img [ref=e230]
+                      - img [ref=e233]
+                      - generic [ref=e235]:
+                        - generic [ref=e236]:
+                          - generic [ref=e237]:
+                            - generic [ref=e238]: 메신저
+                            - generic [ref=e239]: 이서윤
+                            - generic [ref=e241]: 보통
+                          - time [ref=e242]: 2시간 전
+                        - button [ref=e243] [cursor=pointer]:
+                          - heading [level=3] [ref=e244]: 분기 운영 보고서 배포 일정 확인 요청
+                        - paragraph [ref=e245]: "@최준빈 분기 운영 보고서 배포 일정 확인 부탁드립니다. 이번 배포 파이프라인에 디자인 승인 단계가 포함되어야 합니다."
+                        - generic [ref=e246]:
+                          - generic [ref=e247]: 나를 멘션함
+                          - generic [ref=e248]: · 관련 업데이트 4건
+                        - generic [ref=e249]:
+                          - button [ref=e251] [cursor=pointer]:
+                            - text: Space 열기
+                            - img [ref=e253]
+                          - button [ref=e257] [cursor=pointer]:
+                            - img [ref=e258]
+                - listitem [ref=e262]:
+                  - article [ref=e263]:
+                    - generic [ref=e264]:
+                      - generic [ref=e265] [cursor=pointer]:
+                        - checkbox [ref=e266]
+                        - img [ref=e267]
+                      - img [ref=e270]
+                      - generic [ref=e273]:
+                        - generic [ref=e274]:
+                          - generic [ref=e275]:
+                            - generic [ref=e276]: HR People
+                            - generic [ref=e277]: 조직 정책
+                            - generic [ref=e279]: 낮음
+                          - time [ref=e280]: 2시간 전
+                        - button [ref=e281] [cursor=pointer]:
+                          - heading [level=3] [ref=e282]: 사내 정보 보안 가이드 2026 개정 안내
+                        - paragraph [ref=e283]: 클라우드 데이터 처리 절차와 비밀번호 정책이 개정되었습니다.
+                        - generic [ref=e285]: 구독 중인 소식
+                        - button [ref=e289] [cursor=pointer]:
+                          - img [ref=e290]
+                - listitem [ref=e294]:
+                  - article [ref=e295]:
+                    - generic [ref=e296]:
+                      - generic [ref=e297] [cursor=pointer]:
+                        - checkbox [ref=e298]
+                        - img [ref=e299]
+                      - img [ref=e302]
+                      - generic [ref=e305]:
+                        - generic [ref=e306]:
+                          - generic [ref=e307]:
+                            - generic [ref=e308]: 캘린더
+                            - generic [ref=e309]: 전자결재
+                            - generic [ref=e311]: 보통
+                          - time [ref=e312]: 4시간 전
+                        - button [ref=e313] [cursor=pointer]:
+                          - heading [level=3] [ref=e314]: 외부 교육 참가 신청서 최종 승인됨
+                        - paragraph [ref=e315]: 신청자 본인과 워크플로우 승인 완료 및 교육비 청구 프로세스가 시작됩니다.
+                        - generic [ref=e317]: 직접 수신
+                        - button [ref=e321] [cursor=pointer]:
+                          - img [ref=e322]
+          - status [ref=e326]
+  - dialog [active] [ref=e328]:
+    - complementary "선택한 알림 상세" [ref=e329]:
+      - generic [ref=e331]:
+        - generic "뒤로" [ref=e332]:
+          - button "뒤로" [ref=e333] [cursor=pointer]:
+            - img [ref=e334]
+        - heading "알림 상세" [level=2] [ref=e336]
+      - generic [ref=e338]:
+        - generic [ref=e339]:
+          - generic [ref=e341]: 전자결재
+          - generic [ref=e343]: 긴급
+        - heading "클라우드 운영 예산 승인이 필요합니다" [level=3] [ref=e344]
+        - generic [ref=e345]:
+          - generic [ref=e346]:
+            - term [ref=e347]: 업무 앱
+            - definition [ref=e348]: 전자결재
+          - generic [ref=e349]:
+            - term [ref=e350]: 수신 기준
+            - definition [ref=e351]: 직접 수신
+          - generic [ref=e352]:
+            - term [ref=e353]: 보낸 사람
+            - definition [ref=e354]: 김민서
+          - generic [ref=e355]:
+            - term [ref=e356]: 알림 수신
+            - definition [ref=e357]: 2026년 8월 19일 오후 3:57
+          - generic [ref=e358]:
+            - term [ref=e359]: 처리 기한
+            - definition [ref=e360]: 2026. 9. 16. 오후 5:00
+        - region "내용 미리보기" [ref=e361]:
+          - generic [ref=e362]: 내용 미리보기
+          - paragraph [ref=e364]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+        - region "선택한 알림 작업" [ref=e365]:
+          - generic [ref=e366]: 빠른 정리
+          - generic [ref=e367]:
+            - generic "읽음으로 표시" [ref=e368]:
+              - button "읽음으로 표시" [ref=e369] [cursor=pointer]:
+                - img [ref=e370]
+            - generic "저장" [ref=e373]:
+              - button "저장" [ref=e374] [cursor=pointer]:
+                - img [ref=e375]
+            - generic "나중에 알림" [ref=e377]:
+              - button "나중에 알림" [ref=e378] [cursor=pointer]:
+                - img [ref=e379]
+            - generic "알림 정리" [ref=e382]:
+              - button "알림 정리" [ref=e383] [cursor=pointer]:
+                - img [ref=e384]
+        - group [ref=e386]:
+          - generic "왜 이 알림을 받았나요?" [ref=e387] [cursor=pointer]
+        - group [ref=e388]:
+          - generic "앞으로 이런 알림을 받는 방식 조정" [ref=e389] [cursor=pointer]:
+            - generic [ref=e390]:
+              - img [ref=e391]
+              - heading "앞으로 이런 알림을 받는 방식 조정" [level=6] [ref=e395]
+        - group [ref=e396]:
+          - generic "관련 변화" [ref=e397] [cursor=pointer]
+      - button "검토하기" [ref=e399] [cursor=pointer]:
+        - text: 검토하기
+        - img [ref=e401]
+```

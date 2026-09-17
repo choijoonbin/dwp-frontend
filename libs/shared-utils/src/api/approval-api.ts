@@ -9,6 +9,7 @@ import { APPROVAL_DOCUMENT_ACTION_CONTRACTS } from './approval-document-action-c
 import { APPROVAL_EXTENSION_ACTION_CONTRACTS } from './approval-extension-action-contracts';
 import { APPROVAL_RELEASE10_ACTION_CONTRACTS } from './approval-release10-action-contracts';
 import { APPROVAL_RELEASE14_ACTION_CONTRACTS } from './approval-release14-action-contracts';
+import { APPROVAL_RELEASE15_ACTION_CONTRACTS } from './approval-release15-action-contracts';
 import {
   captureApprovalTypedWorkflowDefinition,
   readApprovalTypedWorkflowDetail,
@@ -64,6 +65,7 @@ export type * from './approval-request-contract';
 export * from './approval-management-api';
 export * from './approval-draft-api';
 export * from './approval-search-api';
+export * from './approval-admin-v2-canonical-mutation-api';
 export { getApprovalTasks } from './approval-task-read-api';
 export type * from './approval-content-access';
 export { resolveApprovalContentAccess } from './approval-content-access';
@@ -115,6 +117,22 @@ export type ApprovalRequestDetail = {
   payload: Record<string, unknown>;
   formSchema?: ApprovalFormSchema;
   timeline: ApprovalTimelineEvent[];
+};
+
+export type ApprovalRequestPreflightCheck = {
+  code: string;
+  status: 'PASS' | 'BLOCKED';
+  detail: string;
+};
+
+export type ApprovalRequestServerPreflight = {
+  requestId: string;
+  expectedVersion: number;
+  ready: boolean;
+  workflowContract: string;
+  checks: ApprovalRequestPreflightCheck[];
+  evaluatedAt: string;
+  validUntil?: string | null;
 };
 
 export type ApprovalStageMetric = { stage: string; count: number; atRisk: number };
@@ -202,6 +220,7 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
   ...APPROVAL_EXTENSION_ACTION_CONTRACTS,
   ...APPROVAL_RELEASE10_ACTION_CONTRACTS,
   ...APPROVAL_RELEASE14_ACTION_CONTRACTS,
+  ...APPROVAL_RELEASE15_ACTION_CONTRACTS,
   {
     apiFunction: 'claimApprovalTask',
     routeContractKey: 'route.approvals.work.task-claim.action',
@@ -237,6 +256,12 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
     routeContractKey: 'route.approvals.work.request-submit.action',
     method: 'POST',
     path: `${base}/requests/{requestId}/submit`,
+  },
+  {
+    apiFunction: 'preflightApprovalRequest',
+    routeContractKey: 'route.approvals.work.request-preflight.action',
+    method: 'POST',
+    path: `${base}/requests/{requestId}/preflight`,
   },
   {
     apiFunction: 'recoverApprovalDraft',
@@ -555,6 +580,22 @@ export async function submitApprovalRequest(
     `${base}/requests/${requestId}/submit`,
     { expectedVersion },
     approvalRequestExecutionConfig(execution, options)
+  );
+  return response.data.data;
+}
+
+export async function preflightApprovalRequest(
+  requestId: string,
+  expectedVersion: number,
+  execution: ApprovalMutationExecution
+): Promise<ApprovalRequestServerPreflight> {
+  const response = await axiosInstance.post<
+    ApiResponse<ApprovalRequestServerPreflight>,
+    { expectedVersion: number }
+  >(
+    `${base}/requests/${requestId}/preflight`,
+    { expectedVersion },
+    approvalRequestExecutionConfig(execution)
   );
   return response.data.data;
 }

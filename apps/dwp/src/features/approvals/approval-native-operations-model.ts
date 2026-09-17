@@ -6,6 +6,7 @@ import {
   approvalTaskReassignCommand,
 } from '../../components/product-surface-high-risk-command-model';
 import {
+  approvalOperationsFullData,
   approvalOperationsSourceCurrent,
   type ApprovalOperationsQueryState,
 } from './approval-operations-workbench-model';
@@ -287,7 +288,7 @@ export function approvalNativeOperationSnapshotCurrent(
   ) {
     return false;
   }
-  const data = state?.data;
+  const data = approvalOperationsFullData(state?.data);
   if (!data) return false;
   if (proposal.kind === 'DELIVERY_SINGLE') {
     const target = data.integrationDeliveries.find(

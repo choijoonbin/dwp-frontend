@@ -24,12 +24,14 @@ const plan = {
 describe('public colleague plan discovery', () => {
   it('links the disclosed native floor and local plan date without claiming a seat or revealing a person', () => {
     const url = new URL(workplaceSharedPlanDiscoveryPath(plan, catalog)!, 'https://dwp.test');
-    expect(url.pathname).toBe('/workplace/explore');
+    expect(url.pathname).toBe('/workplace/find');
     expect(Object.fromEntries(url.searchParams)).toEqual({
-      site: site.siteId,
-      floor: floor.floorId,
+      v: '1',
       date: plan.planDate,
-      timeZone: site.timeZone,
+      tz: site.timeZone,
+      sites: site.siteId,
+      floors: floor.floorId,
+      types: 'ALL',
     });
     expect(workplaceSharedPlanDiscoveryPath({ ...plan, visibility: 'RESOURCE' }, catalog)).toBe(
       url.pathname + url.search

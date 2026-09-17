@@ -50,6 +50,7 @@ function Scalar({
   userBinding,
   onUserSourceReadyChange,
   verifyOnlyUserValues,
+  errorMessage,
 }: {
   field: ApprovalTypedScalarField;
   value: unknown;
@@ -61,6 +62,7 @@ function Scalar({
   userBinding?: ApprovalRequestUserBinding;
   onUserSourceReadyChange?: (state: ApprovalRequestUserSourceState) => void;
   verifyOnlyUserValues: boolean;
+  errorMessage?: string;
 }) {
   const { t } = useTranslation('approvals');
   const label = korean ? field.labelKo : field.labelEn;
@@ -80,17 +82,20 @@ function Scalar({
   const text = displayed == null ? '' : String(displayed);
   if (field.type === 'USER')
     return (
-      <ApprovalRequestUserPicker
-        binding={userBinding}
-        label={label}
-        required={required}
-        disabled={disabled}
-        verifyOnlyValue={verifyOnlyUserValues}
-        value={text}
-        supportingText={help ?? undefined}
-        onChange={onChange}
-        onSourceReadyChange={onUserSourceReadyChange}
-      />
+      <Stack gap={0.5}>
+        <ApprovalRequestUserPicker
+          binding={userBinding}
+          label={label}
+          required={required}
+          disabled={disabled}
+          verifyOnlyValue={verifyOnlyUserValues}
+          value={text}
+          supportingText={errorMessage ? undefined : (help ?? undefined)}
+          onChange={onChange}
+          onSourceReadyChange={onUserSourceReadyChange}
+        />
+        {errorMessage && <InlineFeedback severity="error">{errorMessage}</InlineFeedback>}
+      </Stack>
     );
   if (field.type === 'DATE')
     return (
@@ -101,6 +106,7 @@ function Scalar({
         value={text || null}
         onValueChange={(next) => onChange(next ?? '')}
         supportingText={help ?? undefined}
+        errorMessage={errorMessage}
       />
     );
   if (field.type === 'SELECT')
@@ -113,6 +119,7 @@ function Scalar({
         options={field.options.map((option) => ({ value: option, label: option }))}
         onValueChange={onChange}
         supportingText={help ?? undefined}
+        errorMessage={errorMessage}
       />
     );
   return (
@@ -128,6 +135,7 @@ function Scalar({
       InputProps={calculated ? { readOnly: true } : undefined}
       inputProps={field.type === 'NUMBER' ? { inputMode: 'decimal', maxLength: 40 } : undefined}
       supportingText={calculated ? t('requests.typed.calculated') : (help ?? undefined)}
+      errorMessage={errorMessage}
     />
   );
 }
@@ -143,6 +151,7 @@ export function ApprovalRequestTypedFields({
   userBinding,
   onUserSourceReadyChange,
   verifyOnlyUserValues = false,
+  invalidPaths,
 }: {
   compiled: CompiledApprovalTypedForm;
   evaluation?: ApprovalTypedFormEvaluation;
@@ -158,6 +167,7 @@ export function ApprovalRequestTypedFields({
     value: unknown,
     state: ApprovalRequestUserSourceState
   ) => void;
+  invalidPaths?: ReadonlySet<string>;
 }) {
   const { t } = useTranslation('approvals');
   const visible = new Set(
@@ -187,6 +197,13 @@ export function ApprovalRequestTypedFields({
       onChange={change}
       userBinding={userBinding ? { ...userBinding, fieldKey: field.key, groupKey } : undefined}
       onUserSourceReadyChange={(state) => onUserSourceReadyChange?.(path, value ?? '', state)}
+      errorMessage={
+        invalidPaths?.has(path)
+          ? t('requests.typed.fieldInvalid', {
+              field: korean ? field.labelKo : field.labelEn,
+            })
+          : undefined
+      }
     />
   );
   return (
@@ -202,7 +219,7 @@ export function ApprovalRequestTypedFields({
         .map((field: ApprovalTypedField) => {
           if (field.type !== 'REPEATING_GROUP')
             return (
-              <Box key={field.key} minWidth={0}>
+              <Box key={field.key} minWidth={0} data-approval-field-path={field.key}>
                 {input(field, field.key, values[field.key], (next) => onChange(field.key, next))}
               </Box>
             );
@@ -213,6 +230,7 @@ export function ApprovalRequestTypedFields({
             <Box
               key={field.key}
               component="fieldset"
+              data-approval-field-path={field.key}
               sx={{ m: 0, p: 0, border: 0, minWidth: 0, gridColumn: '1 / -1' }}
             >
               <Typography component="legend" variant="subtitle2">
@@ -273,7 +291,11 @@ export function ApprovalRequestTypedFields({
                               : !child.visibleWhen
                           )
                           .map((child) => (
-                            <Box key={child.key} minWidth={0}>
+                            <Box
+                              key={child.key}
+                              minWidth={0}
+                              data-approval-field-path={`${field.key}[${index}].${child.key}`}
+                            >
                               {input(
                                 child,
                                 `${field.key}[${index}].${child.key}`,

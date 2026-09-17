@@ -482,7 +482,8 @@ describe('Home contribution privacy contracts', () => {
     expect(booking).toMatchObject({
       title: 'Desk booking-1',
       description: null,
-      route: '/workplace/my-bookings',
+      route:
+        '/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE',
       privacy: { redaction: 'TITLE_ONLY', sensitive: false },
     });
   });

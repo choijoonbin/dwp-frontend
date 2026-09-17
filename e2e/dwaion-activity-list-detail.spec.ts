@@ -18,18 +18,13 @@ const runs = [
   run(FAILED_RUN, 'FAILED', 'DENY', 'CONFIGURATION_REQUIRED', null),
 ];
 
-test('one recent-window request powers URL-preserved client filtering and exact selection', async ({
+test('loaded server pages power URL-preserved client filtering and exact selection', async ({
   page,
 }, testInfo) => {
   const requests = await mockActivity(page);
   await page.goto('/dwaion/activity');
 
-  await expect(
-    page.getByText(
-      /(?:Up to 100 recent runs are retrieved|Counts and filters use up to 100 recently retrieved runs)/
-    )
-  ).toBeVisible();
-  await expect(page.getByText(/3 of 3 retrieved runs/)).toBeVisible();
+  await expect(page.getByText(/3 of 3 loaded runs/)).toBeVisible();
   await expect(
     page
       .getByRole('region', { name: 'AI run status summary' })
@@ -38,19 +33,23 @@ test('one recent-window request powers URL-preserved client filtering and exact 
 
   const originalViewport = page.viewportSize();
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await expect(
+    page.getByText(/Runs in the selected period are retrieved 50 at a time/)
+  ).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath('U09-activity-list-only-1440.png'),
     fullPage: false,
   });
 
+  const requestsBeforeFilter = requests.runRequests.length;
   await page.getByRole('button', { name: 'In progress', exact: true }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'RUNNING');
-  await expect(page.getByText(/1 of 3 retrieved runs/)).toBeVisible();
-  await expect(page.getByRole('list', { name: 'Recently retrieved AI runs' })).toContainText(
-    'Connected to owning workflow'
-  );
-  expect(requests.runRequests).toHaveLength(1);
-  expect(requests.runRequests[0]?.searchParams.get('limit')).toBe('100');
+  await expect(page.getByText(/1 of 3 loaded runs/)).toBeVisible();
+  await expect(
+    page.getByRole('list', { name: 'AI runs retrieved for the selected period' })
+  ).toContainText('Connected to owning workflow');
+  expect(requests.runRequests).toHaveLength(requestsBeforeFilter);
+  expect(requests.runRequests[0]?.searchParams.get('limit')).toBe('50');
   expect(requests.runRequests[0]?.searchParams.has('state')).toBe(false);
 
   await page.getByRole('button', { name: 'All', exact: true }).click();
@@ -216,14 +215,16 @@ test('summary metrics drill into the exact attention evidence set and preserve i
   const requests = await mockActivity(page, { attentionEvidence: true });
   await page.goto(`/dwaion/activity?run=${COMPLETED_RUN}`);
   await expect(page.getByRole('complementary', { name: 'Selected run details' })).toBeVisible();
+  await expect(page.getByText(/5 of 5 loaded runs/)).toBeVisible();
   const summary = page.getByRole('region', { name: 'AI run status summary' });
+  const requestsBeforeFilter = requests.runRequests.length;
   await summary.getByRole('button', { name: /Attention signals/ }).click();
   await expect(page).toHaveURL(
     (url) =>
       url.searchParams.get('state') === 'ATTENTION' && url.searchParams.get('run') === COMPLETED_RUN
   );
-  await expect(page.getByText(/3 of 5 retrieved runs/)).toBeVisible();
-  const list = page.getByRole('list', { name: 'Recently retrieved AI runs' });
+  await expect(page.getByText(/3 of 5 loaded runs/)).toBeVisible();
+  const list = page.getByRole('list', { name: 'AI runs retrieved for the selected period' });
   await expect(list.getByTestId(`dwaion-run-${FAILED_RUN}`)).toBeVisible();
   await expect(list.getByTestId(`dwaion-run-${POLICY_BLOCKED_RUN}`)).toBeVisible();
   await expect(list.getByTestId(`dwaion-run-${POLICY_BLOCKED_RUN}`)).toHaveAttribute(
@@ -233,7 +234,7 @@ test('summary metrics drill into the exact attention evidence set and preserve i
   await expect(list.getByTestId(`dwaion-run-${CONFIGURATION_RUN}`)).toBeVisible();
   await expect(list.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveCount(0);
   await expect(list.getByTestId(`dwaion-run-${RUNNING_RUN}`)).toHaveCount(0);
-  expect(requests.runRequests).toHaveLength(1);
+  expect(requests.runRequests).toHaveLength(requestsBeforeFilter);
 
   await summary.getByRole('button', { name: /Retrieved runs/ }).click();
   await expect(page).toHaveURL((url) => !url.searchParams.has('state'));
@@ -263,7 +264,7 @@ test('a short mobile viewport keeps compact summary filters and exposes the firs
 
   await summary.getByRole('button', { name: /Attention signals:/ }).click();
   await expect(page).toHaveURL((url) => url.searchParams.get('state') === 'ATTENTION');
-  await expect(page.getByText(/1 of 3 retrieved runs/)).toBeVisible();
+  await expect(page.getByText(/1 of 3 loaded runs/)).toBeVisible();
   await expect(summary.getByRole('button', { name: /Attention signals:/ })).toHaveAttribute(
     'aria-pressed',
     'true'
@@ -310,7 +311,7 @@ test('an exact deep link does not wait for a stalled recent-window request', asy
   expect(requests.exactRunRequests.length).toBeGreaterThan(0);
   expect(new Set(requests.exactRunRequests)).toEqual(new Set([OUTSIDE_WINDOW_RUN]));
   requests.releaseList();
-  await expect(page.getByText(/3 of 3 retrieved runs/)).toBeVisible();
+  await expect(page.getByText(/3 of 3 loaded runs/)).toBeVisible();
 });
 
 test('a failed exact-run revalidation removes the stale receipt and conversation action', async ({
@@ -347,11 +348,103 @@ test('a failed recent-window access revalidation removes cached run metadata', a
   await expect(inspector.getByRole('button', { name: 'Open conversation' })).toHaveCount(0);
   await expect(inspector.getByText('Verified run detail')).toHaveCount(0);
   await expect(page.getByText('Run activity is not available', { exact: true })).toBeVisible();
-  await expect(page.getByText(/0 of 0 retrieved runs/)).toHaveCount(0);
+  await expect(page.getByText(/0 of 0 loaded runs/)).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'All', exact: true })).toBeDisabled();
   await expect(page.getByText('There is no AI run activity to show', { exact: true })).toHaveCount(
     0
   );
+});
+
+test('server pages retain older lease attention and refresh both loaded pages with a new cursor', async ({
+  page,
+}, testInfo) => {
+  await page.clock.install({ time: new Date('2026-09-16T00:00:00Z') });
+  await mockActivity(page, { askOnly: true });
+  let revision = 1;
+  const requests: URL[] = [];
+  await page.route('**/api/agent/v1/runs?**', (route) => {
+    const url = new URL(route.request().url());
+    requests.push(url);
+    const cursor = url.searchParams.get('cursor');
+    if (cursor && cursor !== `older-${revision}`) {
+      return route.fulfill({ status: 400, json: { detail: 'Cursor belongs to an old snapshot.' } });
+    }
+    const item = cursor
+      ? {
+          ...run(RUNNING_RUN, 'RUNNING', 'ALLOW', null, null),
+          activityTitle: `Older expired run ${revision}`,
+          lease: { status: 'EXPIRED', expiresAt: '2026-09-04T00:02:00Z' },
+        }
+      : {
+          ...run(COMPLETED_RUN, 'COMPLETED', 'ALLOW', 'COMPLETED', CONVERSATION),
+          activityTitle: `Latest completed run ${revision}`,
+          createdAt: '2026-09-05T00:00:00Z',
+          completedAt: '2026-09-05T00:00:01Z',
+        };
+    return route.fulfill({
+      json: {
+        data: [item],
+        snapshotAt: revision === 1 ? '2026-09-16T00:00:00Z' : '2026-09-16T00:01:00Z',
+        nextCursor: cursor ? null : `older-${revision}`,
+        hasMore: !cursor,
+      },
+    });
+  });
+  await page.goto('/dwaion/activity');
+  await expect(page.getByText(/1 of 1 loaded runs/)).toBeVisible();
+  const initialRequests = requests.length;
+  const summary = page.getByRole('region', { name: 'AI run status summary' });
+  await summary.getByRole('button', { name: /Attention signals:/ }).click();
+  await expect(page.getByText(/0 of 1 loaded runs/)).toBeVisible();
+  await page.getByRole('button', { name: 'Load older runs', exact: true }).click();
+
+  const expired = page.getByTestId(`dwaion-run-${RUNNING_RUN}`);
+  await expect(page.getByText(/1 of 2 loaded runs/)).toBeVisible();
+  await expect(expired).toContainText('Running · lease expired');
+  await expect(expired).toHaveAttribute(
+    'aria-label',
+    /still reports this run as running after its worker lease expired/
+  );
+  await expect(page.getByRole('button', { name: 'Load older runs', exact: true })).toHaveCount(0);
+  expect(requests.slice(initialRequests).map((url) => url.searchParams.get('cursor'))).toEqual([
+    'older-1',
+  ]);
+  expect(requests[0]?.searchParams.get('limit')).toBe('50');
+  expect(requests[0]?.searchParams.get('from')).toMatch(/^2026-08-17T/);
+  expect(requests.at(-1)?.searchParams.get('from')).toBe(requests[0]?.searchParams.get('from'));
+  expect(requests.every((url) => !url.searchParams.has('state'))).toBe(true);
+
+  await expired.click();
+  await expect(page).toHaveURL((url) => url.searchParams.get('run') === RUNNING_RUN);
+  await expect(expired).toHaveAttribute('aria-current', 'true');
+  await summary.getByRole('button', { name: /Retrieved runs:/ }).click();
+  await expect(page.getByText(/2 of 2 loaded runs/)).toBeVisible();
+  await expect(expired).toHaveAttribute('aria-current', 'true');
+  const requestsBeforeRefresh = requests.length;
+  revision = 2;
+  await page.clock.fastForward(61_000);
+
+  await expect(page.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toContainText(
+    'Latest completed run 2'
+  );
+  await expect(expired).toContainText('Older expired run 2');
+  await expect(expired).toHaveAttribute('aria-current', 'true');
+  await expect(page.getByText(/2 of 2 loaded runs/)).toBeVisible();
+  expect(
+    requests.slice(requestsBeforeRefresh).map((url) => url.searchParams.get('cursor'))
+  ).toEqual([null, 'older-2']);
+  expect(new Set(requests.map((url) => url.searchParams.get('from'))).size).toBe(1);
+  await expect(summary.getByRole('button', { name: /^In progress: 1/ })).toBeVisible();
+  await expect(summary.getByRole('button', { name: /^Attention signals: 1/ })).toBeVisible();
+  await summary.getByRole('button', { name: /Attention signals:/ }).click();
+  await expect(page.getByText(/1 of 2 loaded runs/)).toBeVisible();
+  await expect(expired).toHaveAttribute('aria-current', 'true');
+  await expect(expired).toContainText('Running · lease expired');
+  await expect(page.getByTestId(`dwaion-run-${COMPLETED_RUN}`)).toHaveCount(0);
+  await page.screenshot({
+    path: testInfo.outputPath('dwaion-paged-lease-attention-refreshed.png'),
+    fullPage: true,
+  });
 });
 
 async function mockActivity(
@@ -401,6 +494,9 @@ async function mockActivity(
               run(CONFIGURATION_RUN, 'COMPLETED', 'ALLOW', 'CONFIGURATION_REQUIRED', null),
             ]
           : runs,
+        snapshotAt: '2026-09-16T00:00:00Z',
+        nextCursor: null,
+        hasMore: false,
       },
     });
   });

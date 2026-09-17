@@ -14,6 +14,7 @@ import {
   ScrollText,
   SlidersHorizontal,
   ShieldAlert,
+  Route,
   Workflow,
 } from 'lucide-react';
 
@@ -91,6 +92,13 @@ export const DWAION_NAVIGATION = [
         path: '/dwaion/admin/overview',
         view: 'admin-overview',
         icon: ChartNoAxesCombined,
+        requiredResourceKey: 'ADMIN.DWAION_OPERATIONS',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        path: '/dwaion/admin/models',
+        view: 'admin-models',
+        icon: Route,
         requiredResourceKey: 'ADMIN.DWAION_OPERATIONS',
         requiredPermissionCode: 'VIEW',
       },

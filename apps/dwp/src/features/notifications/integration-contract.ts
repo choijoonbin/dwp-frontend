@@ -10,7 +10,12 @@ export const notificationQueryKeys = {
   preferences: () => ['notifications', 'preferences'] as const,
   deliveryEndpoints: () => ['notifications', 'delivery-endpoints'] as const,
   effectiveSettings: () => ['notifications', 'effective-settings'] as const,
+  attentionRules: () => ['notifications', 'attention-rules'] as const,
+  attentionControls: (notificationId: string | null) =>
+    ['notifications', 'attention-controls', notificationId] as const,
+  testDelivery: (testId: string | null) => ['notifications', 'test-delivery', testId] as const,
   adminOverview: () => ['notifications', 'admin', 'overview'] as const,
+  adminNoiseQuality: () => ['notifications', 'admin', 'noise-quality'] as const,
   adminTypes: (scope: Record<string, unknown>) =>
     ['notifications', 'admin', 'types', scope] as const,
   adminPolicies: () => ['notifications', 'admin', 'policies'] as const,

@@ -71,6 +71,7 @@ import {
 } from './provider-ui';
 import { displayProviderFeatureValue } from './provider-feature-rollout-evaluation-model';
 import { ProviderFeatureRolloutEvaluationPreview } from './provider-feature-rollout-evaluation-preview';
+import { ProviderSettingsResolution } from './provider-settings-resolution';
 
 type RolloutAction =
   'submit' | 'approve' | 'reject' | 'activate' | 'pause' | 'resume' | 'advance' | 'rollback';
@@ -895,6 +896,13 @@ export function ProviderFeatureRollouts() {
       <ProviderFeatureRolloutEvaluationPreview
         flags={flags.data ?? []}
         tenants={tenants.data?.content ?? []}
+      />
+      <ProviderSettingsResolution
+        tenants={tenants.data?.content ?? []}
+        canReadEstate={canReadEstate}
+        tenantLoading={tenants.isLoading}
+        tenantError={tenants.error}
+        onTenantRetry={() => void tenants.refetch()}
       />
       {dialog === 'flag' && (
         <FlagDialog

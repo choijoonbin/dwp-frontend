@@ -96,6 +96,27 @@ describe('axiosInstance browser session contract', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it('classifies an interrupted response body as a transport failure after dispatch', async () => {
+    const response = {
+      ok: true,
+      status: 202,
+      headers: new Headers(),
+      text: vi.fn().mockRejectedValue(new Error('stream reset after headers')),
+    } as unknown as Response;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(200, { data: { token: 'csrf', headerName: 'X-CSRF' } }))
+      .mockResolvedValueOnce(response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(sessionHttp.post('/api/command', { command: true })).rejects.toMatchObject({
+      name: 'HttpTransportError',
+      reason: 'NETWORK',
+    });
+    expect(response.text).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it('keeps the authenticated session when an authorized route returns forbidden', async () => {
     const unauthorized = vi.fn();
     setUnauthorizedHandler(unauthorized);

@@ -35,6 +35,8 @@ export type AccountNavigationGroup = {
 
 export type ProviderAccountRouteDecision = 'allow' | 'loading' | 'redirect-support';
 
+export const ACCOUNT_SETTINGS_HOME_PATH = '/account/settings';
+
 export function resolveProviderAccountRouteDecision({
   providerAccount,
   supportLoading,

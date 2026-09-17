@@ -174,8 +174,8 @@ function isOrigin(value: unknown): value is AgentActionHandoffOrigin {
   return (
     value.appKey === 'APP.ASK' &&
     typeof value.route === 'string' &&
-    /^\/dwaion\/(?:new|conversations\/[0-9a-f-]{36})$/.test(value.route) &&
-    value.surface === 'action-shelf' &&
+    /^\/dwaion\/(?:new|proposals|conversations\/[0-9a-f-]{36})$/.test(value.route) &&
+    (value.surface === 'action-shelf' || value.surface === 'proposal-handoff') &&
     typeof value.sourceRunId === 'string' &&
     UUID_PATTERN.test(value.sourceRunId) &&
     typeof value.sourceRequestId === 'string' &&

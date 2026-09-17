@@ -10,6 +10,7 @@ import {
   getPublishedApprovalForms,
   HttpError,
   parseDwaionHandoff,
+  preflightApprovalRequest,
   submitApprovalRequest,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -27,6 +28,7 @@ import { useApprovalRequestUserSource } from './use-approval-request-user-source
 import { useApprovalRequestFormEvaluation } from './use-approval-request-form-evaluation';
 import {
   approvalRequestPublishedSchemaMatches,
+  approvalRequestEditingValues,
   approvalRequestStoredEditingValues,
   approvalRequestValuePresent,
 } from './approval-request-schema-model';
@@ -35,8 +37,12 @@ import {
   isProductSurfaceOperationCancelledError,
   useApprovalGovernedMutation,
 } from './use-approval-governed-mutation';
+import {
+  approvalRequestFormChangeImpact,
+  approvalRequestValidationIssues,
+} from './approval-request-composer-review';
 
-import type { ApprovalPriority } from '@dwp-frontend/shared-utils';
+import type { ApprovalPriority, ApprovalRequestServerPreflight } from '@dwp-frontend/shared-utils';
 import type { ApprovalManagementScopedCommand } from './approval-management-command-scope';
 import type { ApprovalDraftSnapshot } from './approval-request-autosave-model';
 import type { ApprovalRequestUserContext } from './approval-request-user-picker';
@@ -45,6 +51,7 @@ type SaveIntent = 'DRAFT' | 'SUBMIT' | 'CLOSE';
 type SaveCommand = ApprovalManagementScopedCommand<
   Readonly<{ intent: SaveIntent; idempotencyKey?: string }>
 >;
+type PreflightCommand = ApprovalManagementScopedCommand<Readonly<{ intent: 'PREFLIGHT' }>>;
 type RecoveryState = Readonly<{
   kind: ReturnType<typeof approvalRequestRecovery> | 'UNKNOWN';
   latestLoaded: boolean;
@@ -89,6 +96,7 @@ export function useApprovalRequestComposer() {
   const [dwaionDraft, setDwaionDraft] = useState(false);
   const [pendingFormId, setPendingFormId] = useState('');
   const [preflightOpen, setPreflightOpen] = useState(false);
+  const [serverPreflight, setServerPreflight] = useState<ApprovalRequestServerPreflight>();
   const [manualRecovery, setManualRecovery] = useState<RecoveryState>();
   const [quarantinedEditor, setQuarantinedEditor] = useState<QuarantinedEditor>();
   const quarantined = quarantinedEditor?.sessionKey === sessionKey ? quarantinedEditor : undefined;
@@ -222,6 +230,7 @@ export function useApprovalRequestComposer() {
     setHydratedDraftId('');
     setDwaionDraft(false);
     setPendingFormId('');
+    setServerPreflight(undefined);
     setManualRecovery(undefined);
     setPreflightOpen(false);
     setQuarantinedEditor(undefined);
@@ -372,6 +381,21 @@ export function useApprovalRequestComposer() {
     accessDenied(draft.error) ||
     accessDenied(forms.error) ||
     accessDenied(template.error);
+  const reviewReady =
+    requestScope.ready &&
+    Boolean(boundFormId) &&
+    Boolean(template.data) &&
+    formEvaluation.kind !== 'ABSENT' &&
+    formEvaluation.schemaReady &&
+    schemaBindingReady &&
+    !forms.isFetching &&
+    !forms.isError &&
+    !draft.isFetching &&
+    !draft.isError &&
+    (!draftId || (draft.data?.request.status === 'DRAFT' && hydratedDraftId === draftId)) &&
+    !template.isFetching &&
+    !template.isError &&
+    !contentMasked;
   const contextReady = authoritativeContextReady && !recovery && !contentMasked;
   const submissionReady =
     formEvaluation.submitValid &&
@@ -382,6 +406,54 @@ export function useApprovalRequestComposer() {
       fields,
       values: formEvaluation.legacyValues,
     });
+  const validationIssues = useMemo(
+    () =>
+      approvalRequestValidationIssues({
+        title,
+        summary,
+        titleLabel: t('requests.fields.title'),
+        summaryLabel: t('requests.fields.summary'),
+        businessFieldsLabel: t('requests.template.businessFields'),
+        korean,
+        legacyMissing: missingFields,
+        typedFields: formEvaluation.compiled?.definition.fields,
+        typedMissingPaths: formEvaluation.missing,
+        invalidPath:
+          formEvaluation.submitError?.fieldPath ??
+          formEvaluation.draftError?.fieldPath ??
+          (formEvaluation.kind === 'TYPED' && !formEvaluation.submitValid
+            ? '$business-fields'
+            : undefined),
+        userSourcePath: userSource.unreadyPath,
+      }),
+    [
+      title,
+      summary,
+      t,
+      korean,
+      missingFields,
+      formEvaluation.compiled,
+      formEvaluation.missing,
+      formEvaluation.submitError,
+      formEvaluation.draftError,
+      formEvaluation.kind,
+      formEvaluation.submitValid,
+      userSource.unreadyPath,
+    ]
+  );
+  const pendingFormChange = useMemo(
+    () =>
+      approvalRequestFormChangeImpact({
+        forms: forms.data ?? [],
+        sourceFormId: formId,
+        targetFormId: pendingFormId,
+        values: payloadValues,
+        korean,
+        legacyFields: fields,
+        typedFields: formEvaluation.compiled?.definition.fields,
+      }),
+    [forms.data, formId, pendingFormId, payloadValues, korean, fields, formEvaluation.compiled]
+  );
   const schemaHash = formEvaluation.compiled?.schemaSha256;
   const currentAuthority = useRef({ authoritativeContextReady, submissionReady, schemaHash });
   currentAuthority.current = { authoritativeContextReady, submissionReady, schemaHash };
@@ -452,8 +524,50 @@ export function useApprovalRequestComposer() {
     payloadValues,
   ]);
 
+  const runPreflight = useApprovalGovernedMutation('route.approvals.work.request-preflight.action');
   const runSubmit = useApprovalGovernedMutation('route.approvals.work.request-submit.action');
   const persistedRef = useRef<string | undefined>(undefined);
+  const preflight = useMutation({
+    retry: false,
+    mutationFn: async (command: PreflightCommand) => {
+      if (
+        !commandScope.isCurrent(command) ||
+        sessionRef.current !== sessionKey ||
+        !authoritativeContextReady ||
+        !submissionReady
+      )
+        throw new HttpError('Approval request context is not current.', 409);
+      const persisted = await autosave.flush();
+      await userSource.waitForOwner(
+        persisted.requestId,
+        persisted.version,
+        () => commandScope.isCurrent(command) && sessionRef.current === sessionKey
+      );
+      const result = await runPreflight(async (execution) => {
+        if (
+          !commandScope.isCurrent(command) ||
+          sessionRef.current !== sessionKey ||
+          !currentAuthority.current.authoritativeContextReady ||
+          !currentAuthority.current.submissionReady ||
+          !userSource.isReady() ||
+          currentAuthority.current.schemaHash !== schemaHash
+        )
+          throw new HttpError('Approval request identity changed.', 409);
+        return preflightApprovalRequest(persisted.requestId, persisted.version, execution);
+      });
+      return { command, result };
+    },
+    onSuccess: ({ command, result }) => {
+      if (!commandScope.isCurrent(command) || sessionRef.current !== sessionKey) return;
+      setServerPreflight(result);
+      setPreflightOpen(true);
+    },
+    onError: (_, command) => {
+      if (!commandScope.isCurrent(command) || sessionRef.current !== sessionKey) return;
+      setServerPreflight(undefined);
+      setPreflightOpen(true);
+    },
+  });
   const save = useMutation({
     retry: false,
     mutationFn: async (command: SaveCommand) => {
@@ -478,6 +592,20 @@ export function useApprovalRequestComposer() {
           persisted.version,
           () => commandScope.isCurrent(command) && sessionRef.current === sessionKey
         );
+        const currentPreflight = await runPreflight(async (execution) => {
+          if (
+            !commandScope.isCurrent(command) ||
+            sessionRef.current !== sessionKey ||
+            !currentAuthority.current.authoritativeContextReady ||
+            !currentAuthority.current.submissionReady ||
+            !userSource.isReady() ||
+            currentAuthority.current.schemaHash !== schemaHash
+          )
+            throw new HttpError('Approval request identity changed.', 409);
+          return preflightApprovalRequest(persisted.requestId, persisted.version, execution);
+        });
+        if (!currentPreflight.ready)
+          throw new HttpError('Approval request preflight is blocked.', 409);
         await runSubmit(async (execution) => {
           if (
             !commandScope.isCurrent(command) ||
@@ -592,7 +720,7 @@ export function useApprovalRequestComposer() {
           requestScope.contextScopeKey
         );
         if (sessionRef.current !== captured || !commandScope.isCurrent(binding)) return;
-        autosave.reviewLatest(latest.request);
+        autosave.reviewLatestDetail(latest, formEvaluation.compiled?.schemaSha256);
       } else if (manualRecovery?.kind === 'CONFLICT') {
         setManualRecovery({ ...manualRecovery, latestLoaded: true });
       } else {
@@ -608,22 +736,45 @@ export function useApprovalRequestComposer() {
   const reapply = async () => {
     if (submissionUnknown) return;
     try {
-      if (autosave.status === 'CONFLICT') await autosave.reapply();
-      else setManualRecovery(undefined);
+      if (autosave.status === 'CONFLICT') {
+        const merged = autosave.reviewedInput();
+        if (!merged) return;
+        const mergedValues = approvalRequestEditingValues(
+          merged.payload,
+          template.data?.form.schema,
+          formEvaluation.compiled
+        );
+        setFormId(merged.formId);
+        setTitle(merged.title);
+        setSummary(merged.summary);
+        setPriority(merged.priority);
+        setPayloadValues(mergedValues);
+        await autosave.reapply();
+      } else setManualRecovery(undefined);
     } catch {
-      /* The autosave state retains input and exposes the server failure. */
+      /* The merged editor and autosave state retain input and expose the server failure. */
     }
   };
   const requestFormChange = (nextFormId: string) => {
     if (contentMasked || autosave.unresolved || submissionUnknown) return;
     if (nextFormId === formId) return;
-    if (Object.values(payloadValues).some(approvalRequestValuePresent))
-      setPendingFormId(nextFormId);
-    else setFormId(nextFormId);
+    if (!formId) {
+      setFormId(nextFormId);
+      return;
+    }
+    setPendingFormId(nextFormId);
   };
   const applyFormChange = () => {
-    if (contentMasked || autosave.unresolved || submissionUnknown) return;
-    setFormId(pendingFormId);
+    if (
+      contentMasked ||
+      autosave.unresolved ||
+      submissionUnknown ||
+      !pendingFormChange ||
+      pendingFormChange.source.formId !== formId ||
+      pendingFormChange.target.formId !== pendingFormId
+    )
+      return;
+    setFormId(pendingFormChange.target.formId);
     setPayloadValues({});
     setPendingFormId('');
   };
@@ -664,6 +815,16 @@ export function useApprovalRequestComposer() {
     manualFlight.current = command;
     save.mutate(command);
   };
+  const prepareReview = () => {
+    if (!reviewReady || preflight.isPending || save.isPending) return;
+    if (!submissionReady) {
+      setServerPreflight(undefined);
+      setPreflightOpen(true);
+      return;
+    }
+    setServerPreflight(undefined);
+    preflight.mutate(commandScope.capture(Object.freeze({ intent: 'PREFLIGHT' })));
+  };
 
   return {
     t,
@@ -685,10 +846,15 @@ export function useApprovalRequestComposer() {
     missingFields,
     dwaionDraft,
     pendingFormId,
+    pendingFormChange,
     preflightOpen,
+    serverPreflight,
+    preflight,
     recovery,
     submissionUnknown,
     contextReady,
+    reviewReady,
+    validationIssues,
     contentMasked,
     fieldsDisabled:
       contentMasked ||
@@ -708,6 +874,7 @@ export function useApprovalRequestComposer() {
     setPayloadValues,
     setPendingFormId,
     setPreflightOpen,
+    prepareReview,
     requestFormChange,
     applyFormChange,
     saveDraft: () => beginSave('DRAFT'),

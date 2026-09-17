@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 14,
-  checksum: '7ee0bac12ddfbc72dda55a5014c67b0798caa68a5ffc73b4be479d06a4590336',
-  indexChecksum: 'b99af40653a99e9ad5a7e22a6b1f2af5bf1d7abca5831aa9bc15161e971468b2',
+  version: 21,
+  checksum: '4cd1732df91d197cc47fca94699b0fb702ab1f6f2c557d3d17ce0e069d65af85',
+  indexChecksum: '79d16d664df9a732b24fb1cc7cbe5d8ab1c859fe22217a852cd298417b8182f0',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -40,6 +40,54 @@ export const PRODUCT_SURFACE_ROLLOUT_PRODUCTS = [
 ] as const;
 
 export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
+  {
+    routeContractKey: 'route.approvals.admin.analytics-cohort.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/analytics/cohorts/{cohortKey}/representatives',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.analytics-metric-definitions.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/analytics/metric-definitions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.analytics.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: 'approvals.admin.analytics',
+    pattern: '/approvals/admin/analytics',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/analytics/dashboard',
+      },
+    ],
+  },
   {
     routeContractKey: 'route.approvals.admin.attachment-policy-draft.action',
     routeKind: 'ACTION',
@@ -101,6 +149,358 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/admin/attachments/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.audit-export-attestation.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/audit-records/exports/{exportId}/external-attestations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.audit-export-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/audit-records/exports',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.audit-record-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/audit-records/events/{eventId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/audit-records/requests/{requestId}/retention-linkage',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/audit-records/saved-views/{savedViewId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/audit-records/exports/{exportId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.audit-saved-view-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/audit-records/saved-views',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.audit-saved-view-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/audit-records/saved-views',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.audit.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: 'approvals.admin.audit',
+    pattern: '/approvals/admin/audit',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/audit-records/events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.connector-command.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/operations/connectors/{connectorId}/draft',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/connectors/{connectorId}/probes',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/connectors/{connectorId}/probes/{probeId}/complete',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/connectors/{connectorId}/publish',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/connectors/{connectorId}/lifecycle',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.connector-governance.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/connectors/{connectorId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/connectors/{connectorId}/probes/{probeId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-activation-evidence.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/activation-evidence',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-activation.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/activation',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/deployments/packages',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/deployments/package-diff',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/deployments/packages/{packageId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/rollback-feasibility',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-package-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/packages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-promotion-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-promotion-review.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/approval',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-promotion-schedule.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/schedule',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-rollback-evidence.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/rollback-evidence',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployment-rollback.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/rollback',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployments.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: 'approvals.admin.deployments',
+    pattern: '/approvals/admin/deployments',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/deployments/dashboard',
       },
     ],
   },
@@ -425,6 +825,78 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.form-studio-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/studio-v3',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/studio-v3/validate',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.form-studio-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/studio-v3/{formId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/studio-v3/{formId}/versions',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/studio-v3/{formId}/review',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/studio-v3/{formId}/evaluate',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.form-studio-draft.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/studio-v3/{sourceFormId}/draft',
+      },
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/forms/studio-v3/{formId}/draft',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/studio-v3/{formId}/archive',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.form-update.action',
     routeKind: 'ACTION',
     navigationContextId: 'approvals.admin',
@@ -577,6 +1049,106 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/admin/form-categories',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.incident-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/incidents',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.incident-command.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/status',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/diagnostics',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/recovery-plans',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/recovery-plans/{planId}/dry-run',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/recovery-plans/{planId}/stages/{stageNumber}/start',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/recovery-plans/{planId}/stages/{stageNumber}/complete',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/recovery-plans/{planId}/reconcile',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/postmortem',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.incident-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/incidents/{incidentId}/recovery-plans/{planId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.integrations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: 'approvals.admin.integrations',
+    pattern: '/approvals/admin/integrations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/operations/connectors',
       },
     ],
   },
@@ -773,6 +1345,118 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/admin/policies/{policyId}/versions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.policy-automation-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/calendars',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/channels',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/rules',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/delegations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.policy-automation-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/calendars/{calendarId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/calendars/{calendarId}/deadline',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/channels/{channelId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/rules/{policyId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/delegations/{delegationId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/policies/automation/delegations/{delegationId}/reviews',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.policy-automation-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/policies/automation/rules/{policyId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.policy-automation-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/policies/automation/calendars/{calendarId}',
+      },
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/policies/automation/channels/{channelId}',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/policies/automation/channels/{channelId}/observations',
+      },
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/policies/automation/rules/{policyId}/draft',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/policies/automation/delegations/{delegationId}/reviews',
       },
     ],
   },
@@ -1017,6 +1701,138 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.admin.routing-directory-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.routing-directory-retire.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/retire',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.routing-directory-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/resolvers/{resolverId}',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/resolvers/{resolverId}/observations',
+      },
+      {
+        method: 'PUT',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/usages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.routing-group.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/resolution',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/retirement-impact',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.routing-resolver-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/resolvers',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.routing-resolver.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/resolvers/{resolverId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.routing.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: 'approvals.admin.routing',
+    pattern: '/approvals/admin/routing',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/workflows/routing-directory/groups',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.admin.signature-diagnostic-history.data',
     routeKind: 'DATA',
     navigationContextId: 'approvals.admin',
@@ -1205,6 +2021,62 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/admin/signatures',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.template-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/templates',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.template-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/templates/{templateId}',
+      },
+      {
+        method: 'GET',
+        path: '/api/approvals/v1/admin/forms/templates/{templateId}/comparison',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.admin.template-draft.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.admin',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.admin',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/templates/{templateId}/draft',
+      },
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/admin/forms/templates/versions/{templateVersionId}/install',
       },
     ],
   },
@@ -2121,6 +2993,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.approvals.work.request-preflight.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/requests/{requestId}/preflight',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.approvals.work.request-resubmit-draft.action',
     routeKind: 'ACTION',
     navigationContextId: 'approvals.work',
@@ -3029,6 +3917,70 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/platform/v1/admin/dwaion/agents',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.management.ai-control-bootstrap.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/admin/ai-control/bootstrap',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.management.ai-control-emergency.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/agent/v1/admin/ai-control/emergency',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.management.ai-control-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/agent/v1/admin/ai-control/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.dwaion.management.ai-control.page',
+    routeKind: 'DATA',
+    navigationContextId: 'dwaion.management',
+    subjectType: 'PRODUCT',
+    productId: 'dwaion',
+    surfaceId: 'dwaion.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/agent/v1/admin/ai-control',
       },
     ],
   },
@@ -5909,6 +6861,3738 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.workplace.management.access-zones-by-zone-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/access-zones/{zoneId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.access-zones-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/access-zones',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.access-zones.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.access-zones',
+    pattern: '/workplace/admin/access-zones',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/access-zones',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.assistant-audit-events-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/assistant/audit-events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.assistant-governance-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/assistant/governance',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.assistant-governance.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.assistant-governance',
+    pattern: '/workplace/admin/assistant-governance',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/assistant/governance',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.audit-events-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/audit-events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.bookings-by-booking-id-force-cancel-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/bookings/{bookingId}/force-cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.bookings-by-booking-id-legal-hold-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/bookings/{bookingId}/legal-hold',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.connector-operation.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/connectors/{kind}/operations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.connector-operations.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/connectors/operations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.connector-replay-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/connectors/{kind}/replays:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.connector-replay-start.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/connectors/{kind}/replays',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.connector-replay-status.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/connectors/{kind}/replays/{jobId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.device-providers-by-capability-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/device-providers/{capability}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.device-providers-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/device-providers',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices-by-device-id-approve-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/devices/{deviceId}:approve',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices-by-device-id-audit-events-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/devices/{deviceId}/audit-events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices-by-device-id-bind-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/devices/{deviceId}:bind',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices-by-device-id-commands-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/devices/{deviceId}/commands',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices-by-device-id-commands-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/devices/{deviceId}/commands',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.devices-by-device-id-commands-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/devices/{deviceId}/commands:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices-by-device-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/devices/{deviceId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices-commands-by-command-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/devices/commands/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.devices.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.devices',
+    pattern: '/workplace/admin/devices',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/devices',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.exception-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/exceptions/{exceptionId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.exception-export-content.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/exceptions/exports/{commandId}/content',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.exception-export-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/exceptions/exports:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.exception-export.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/exceptions/exports',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.exception-recovery-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/exceptions/{exceptionId}/recovery:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.exception-recovery.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/exceptions/{exceptionId}/recovery',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.exceptions.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.exceptions',
+    pattern: '/workplace/admin/exceptions',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/exceptions',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-booking-policy-changes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/booking-policy/changes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-booking-policy-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/booking-policy/review',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-connectors-by-kind-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/connectors/{kind}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-delegations-by-delegation-id-changes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/delegations/{delegationId}/changes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-delegations-by-delegation-id-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/delegations/{delegationId}/review',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-delegations-changes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/delegations/changes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-delegations-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/delegations/review',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.experience-collaboration-overview-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/overview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.experience-collaboration-policy-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-policy-overrides-by-override-id-changes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/{overrideId}/changes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-policy-overrides-by-override-id-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/{overrideId}/review',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-policy-overrides-changes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/changes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-policy-overrides-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/policy-overrides/review',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.experience-collaboration-policy-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-resources-by-resource-id-photo-delete.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'DELETE',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/resources/{resourceId}/photo',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-resources-by-resource-id-photo-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/resources/{resourceId}/photo',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-resources-by-resource-id-photo-metadata-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/resources/{resourceId}/photo/metadata',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-resources-by-resource-id-photo-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/resources/{resourceId}/photo',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-sites-by-site-id-access-rules-by-rule-id-changes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/{ruleId}/changes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-sites-by-site-id-access-rules-by-rule-id-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/{ruleId}/review',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-sites-by-site-id-access-rules-changes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/changes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-collaboration-sites-by-site-id-access-rules-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/collaboration/sites/{siteId}/access-rules/review',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-facilities-closures-by-closure-id-cancel-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closures/{closureId}/cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-facilities-closures-by-closure-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closures/{closureId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.experience-facilities-closures-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closures',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-facilities-requests-by-request-id-status-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/requests/{requestId}/status',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.experience-facilities-requests-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/requests',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-facilities-resources-by-resource-id-closures-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/resources/{resourceId}/closures',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-facilities-resources-by-resource-id-room-booking-impact-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/resources/{resourceId}/room-booking-impact',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.experience-report-bookings-by-booking-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience-report/bookings/{bookingId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.experience-report-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience-report',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.facility-closure-command-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closure-commands/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.facility-closure-command-receipt-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closure-commands/{commandId}/receipt',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.facility-closure-impact-execute.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closure-impact-previews/{previewId}/commands',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.facility-closure-impact-preview-create.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/resources/{resourceId}/closure-impact-previews',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.facility-closure-impact-preview-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closure-impact-previews/{previewId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.facility-closure-notifications-reconcile.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closure-commands/{commandId}/notifications/reconcile',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.facility-closure-notifications-retry.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/experience/facilities/closure-commands/{commandId}/notifications/retry',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.floors-by-floor-id-background-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/floors/{floorId}/background',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.floors-by-floor-id-layout-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/floors/{floorId}/layout',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.floors-by-floor-id-resources-by-resource-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/floors/{floorId}/resources/{resourceId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.floors-by-floor-id-resources-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/floors/{floorId}/resources',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.floors-by-floor-id-resources-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/floors/{floorId}/resources',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.floors-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/floors',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-campuses-by-campus-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/campuses/{campusId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-campuses-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/campuses',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-delegated-admin-scopes-by-delegation-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/delegated-admin-scopes/{delegationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-delegated-admin-scopes-effective-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/delegated-admin-scopes/effective',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-delegated-admin-scopes-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/delegated-admin-scopes',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-delegated-admin-scopes-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/delegated-admin-scopes',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floor-plan-revisions-by-revision-id-background-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/background',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floor-plan-revisions-by-revision-id-background-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/background',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floor-plan-revisions-by-revision-id-publish-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floor-plan-revisions-by-revision-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floor-plan-revisions-by-revision-id-restore-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/restore',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floor-plan-revisions-by-revision-id-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/review',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floor-plan-revisions-by-revision-id-snapshot-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/floor-plan-revisions/{revisionId}/snapshot',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floors-by-floor-id-floor-plan-revisions-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/floors/{floorId}/floor-plan-revisions',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floors-by-floor-id-floor-plan-revisions-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/floors/{floorId}/floor-plan-revisions',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floors-by-floor-id-projection-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/floors/{floorId}/projection',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-floors-by-floor-id-zones-by-zone-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/floors/{floorId}/zones/{zoneId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-floors-by-floor-id-zones-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/floors/{floorId}/zones',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-floors-by-floor-id-zones-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/floors/{floorId}/zones',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-policy-overrides-by-override-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/policy-overrides/{overrideId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-policy-overrides-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/policy-overrides',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-policy-overrides-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/policy-overrides',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-policy-preview-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/policy-preview',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-sites-by-site-id-access-preview-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/sites/{siteId}/access-preview',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-sites-by-site-id-access-rules-by-rule-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/sites/{siteId}/access-rules/{ruleId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-sites-by-site-id-access-rules-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/sites/{siteId}/access-rules',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-sites-by-site-id-access-rules-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/sites/{siteId}/access-rules',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-sites-by-site-id-campus-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/sites/{siteId}/campus',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.governance-zones-by-zone-id-sections-by-section-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/governance/zones/{zoneId}/sections/{sectionId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-zones-by-zone-id-sections-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/zones/{zoneId}/sections',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance-zones-by-zone-id-sections-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/governance/zones/{zoneId}/sections',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.governance.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.governance',
+    pattern: '/workplace/admin/governance',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/governance/campuses',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.kiosk-devices-by-device-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/kiosk-devices/{deviceId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.kiosk-devices-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/kiosk-devices',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.kiosk-devices.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.kiosk-devices',
+    pattern: '/workplace/admin/kiosk-devices',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/kiosk-devices',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.locations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.locations',
+    pattern: '/workplace/admin/locations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/sites',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.navigation-graphs-by-graph-id-archive-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/navigation/graphs/{graphId}:archive',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.navigation-graphs-by-graph-id-publish-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/navigation/graphs/{graphId}:publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.navigation-graphs-by-graph-id-review-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/navigation/graphs/{graphId}:review',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.navigation-graphs-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/navigation/graphs',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.navigation-graphs-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/navigation/graphs',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.operations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.operations',
+    pattern: '/workplace/admin/operations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/bookings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.overview.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.overview',
+    pattern: '/workplace/admin/overview',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/overview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.policy-impact-preview-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/policy-impact-preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.policy-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.policy.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.policy',
+    pattern: '/workplace/admin/policies',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.provider-bindings-by-binding-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/provider-bindings/{bindingId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.provider-bindings-by-binding-id-test-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/provider-bindings/{bindingId}:test',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.provider-bindings-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/provider-bindings',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.resources-by-resource-id-future-booking-impact-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/resources/{resourceId}/future-booking-impact',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.room-booking-decision-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/rooms/bookings/{bookingId}/decision',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.room-operations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.room-operations',
+    pattern: '/workplace/admin/meeting-operations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/rooms/overview',
+      },
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/rooms/bookings/pending',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.room-policy-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/rooms/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.room-policy.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.room-policy',
+    pattern: '/workplace/admin/meeting-policy',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/rooms/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.room-resource-by-resource-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/rooms/resources/{resourceId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.room-resources-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/rooms/resources',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-activation-previews-by-preview-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/activation-previews/{previewId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-connectors-by-kind-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/safety/connectors/{kind}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-connectors-commands-by-command-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/connectors/commands/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-connectors-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/connectors',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-exports-by-export-id-content-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/exports/{exportId}/content',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-assembly-confirmations-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/assembly-confirmations',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-closure-previews-by-preview-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/closure-previews/{previewId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-closure-requests-by-closure-id-approve-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/closure-requests/{closureId}:approve',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-closure-requests-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/closure-requests',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-closures-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/closures:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-commands-by-command-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/commands/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-dispatches-resend-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/dispatches:resend',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-exports-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/exports',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-incidents-by-incident-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-messages-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-messages-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-incidents-by-incident-id-report-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/report',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-scope-revisions-by-revision-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/scope-revisions/{revisionId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-scope-revisions-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/scope-revisions',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.safety-incidents-by-incident-id-scope-revisions-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents/{incidentId}/scope-revisions:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-incidents-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety-incidents-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/safety/incidents:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.safety.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.safety',
+    pattern: '/workplace/admin/safety',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/safety/incidents',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-assignees-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-assignees',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-catalog-by-catalog-item-id-capacity-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-catalog/{catalogItemId}/capacity',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-catalog-by-catalog-item-id-capacity-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/service-catalog/{catalogItemId}/capacity',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-catalog-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-catalog',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-catalog-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-catalog/{itemId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-catalog-state.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-catalog/{itemId}:state',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-catalog-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/service-catalog/{itemId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-catalog.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.service-catalog',
+    pattern: '/workplace/admin/service-catalog',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-catalog',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-attachment-download.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/attachments/{attachmentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-fulfillment-attachment-scan-result.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/attachments/{attachmentId}/scan-result',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-attachment-scan-status.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/attachments/{attachmentId}/scan-status',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-attachment-upload.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/attachments',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-attachments.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/attachments',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-events.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/events',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-fulfillment-line-adjustment-reconcile.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/line-adjustments/{adjustmentId}:reconcile',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-line-adjustment.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/line-adjustments/{adjustmentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-message.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-messages.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment-task-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/tasks/{taskId}:update',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-fulfillment.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.service-fulfillment',
+    pattern: '/workplace/admin/service-fulfillment',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-orders-by-order-id-lines-by-line-id-inspection-attempts-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/lines/{lineId}/inspection-attempts',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-orders-by-order-id-lines-by-line-id-inspection-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/lines/{lineId}/inspection',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-orders-by-order-id-tasks-by-task-id-assign-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-orders/{orderId}/tasks/{taskId}:assign',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-providers-by-provider-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-providers/{providerId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-providers-by-provider-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/service-providers/{providerId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-providers-by-provider-id-state-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-providers/{providerId}:state',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.service-providers-by-provider-id-verify-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-providers/{providerId}:verify',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-providers-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/service-providers',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.service-providers.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.service-providers',
+    pattern: '/workplace/admin/service-providers',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/service-providers',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.sites-by-site-id-floors-by-floor-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/sites/{siteId}/floors/{floorId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.sites-by-site-id-floors-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/sites/{siteId}/floors',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.sites-by-site-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/sites/{siteId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.sites-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/sites',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.space-planning-scenarios-by-scenario-id-approve-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios/{scenarioId}:approve',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.space-planning-scenarios-by-scenario-id-booking-impact-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios/{scenarioId}/booking-impact:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning-scenarios-by-scenario-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios/{scenarioId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.space-planning-scenarios-by-scenario-id-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios/{scenarioId}:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.space-planning-scenarios-by-scenario-id-publish-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios/{scenarioId}:publish',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.space-planning-scenarios-by-scenario-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios/{scenarioId}',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.space-planning-scenarios-by-scenario-id-submit-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios/{scenarioId}:submit',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning-scenarios-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning-scenarios-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/space-planning/scenarios',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning-sources-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/space-planning/sources',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.space-planning.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.space-planning',
+    pattern: '/workplace/admin/space-planning',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/space-planning/overview',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.management.visit-policies-by-policy-id-impact-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/visit-policies/{policyId}:impact-preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visit-policies-by-policy-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/admin/workplace/visit-policies/{policyId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visit-policies-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/visit-policies',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visit-policies.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.visit-policies',
+    pattern: '/workplace/admin/visit-policies',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/visit-policies',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visit-providers.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.visit-providers',
+    pattern: '/workplace/admin/visit-providers',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/provider-bindings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visits-by-visit-id-approve-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/visits/{visitId}:approve',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visits-by-visit-id-confirm-checkout-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/visits/{visitId}:confirm-checkout',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visits-by-visit-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/visits/{visitId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visits-by-visit-id-notify-host-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/visits/{visitId}:notify-host',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visits-by-visit-id-retry-access-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/workplace/visits/{visitId}:retry-access',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.management.visits.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.management',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.management',
+    routeId: 'workplace.management.visits',
+    pattern: '/workplace/admin/visits',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/workplace/visits/exceptions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.access-pass-audit-events-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/navigation/access-pass/audit-events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.access-pass-command-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/navigation/access-pass/commands/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.access-pass-context-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/navigation/access-pass',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.access-pass-execute.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/navigation/access-pass:execute',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.access-pass-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/navigation/access-pass:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.alternative-offer-accept.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/alternative-offers/{offerId}:accept',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.assistant-requests-by-request-id-confirm-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/assistant/requests/{requestId}:confirm',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.assistant-requests-by-request-id-execution-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/assistant/requests/{requestId}/execution',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.assistant-requests-by-request-id-feedback-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/assistant/requests/{requestId}:feedback',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.assistant-requests-by-request-id-validate-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/assistant/requests/{requestId}:validate',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.assistant-requests-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/assistant/requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.assistant.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.assistant',
+    pattern: '/workplace/assistant',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/assistant/requests/{requestId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-batch-compensation.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/booking-batches/{batchId}/compensations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-batch-replan.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/booking-batches/{batchId}/replans',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-batch-start.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/booking-batches',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-batch-status.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/booking-batches/{batchId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-beneficiaries.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/booking-intents/beneficiaries',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.workplace.work.booking-create.action',
     routeKind: 'ACTION',
     navigationContextId: 'workplace.work',
@@ -5921,6 +10605,300 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/platform/v1/workplace/bookings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-intent-hold.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/booking-intents/{intentId}/holds',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-intent-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/booking-intents/preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.booking-intent-status.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/booking-intents/{intentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.bookings-by-booking-id-cancel-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.bookings-by-booking-id-check-in-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/check-in',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.bookings-by-booking-id-release-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/release',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.bookings-by-booking-id-relocate-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/bookings/{bookingId}/relocate',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.experience-collaboration-overview-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/experience/collaboration/overview',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.experience-collaboration-resources-by-resource-id-photo-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/experience/collaboration/resources/{resourceId}/photo',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.experience-collaboration-resources-by-resource-id-photo-metadata-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/experience/collaboration/resources/{resourceId}/photo/metadata',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.experience-collaboration-sharing-preference-delete.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'DELETE',
+        path: '/api/platform/v1/workplace/experience/collaboration/sharing-preference',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.experience-collaboration-sharing-preference-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/workplace/experience/collaboration/sharing-preference',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.experience-collaboration-work-plans-by-plan-id-delete.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'DELETE',
+        path: '/api/platform/v1/workplace/experience/collaboration/work-plans/{planId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.experience-collaboration-work-plans-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/experience/collaboration/work-plans',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.experience-facilities-requests-by-request-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/experience/facilities/requests/{requestId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.experience-facilities-requests-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/experience/facilities/requests',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.experience-facilities-resources-by-resource-id-booking-availability-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/experience/facilities/resources/{resourceId}/booking-availability',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.experience-facilities-resources-by-resource-id-requests-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/experience/facilities/resources/{resourceId}/requests',
       },
     ],
   },
@@ -5941,6 +10919,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.workplace.work.find.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.find',
+    pattern: '/workplace/find',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/explore',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.workplace.work.floor-background.data',
     routeKind: 'DATA',
     navigationContextId: 'workplace.work',
@@ -5953,6 +10947,879 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/platform/v1/workplace/floors/{floorId}/background',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.home',
+    pattern: '/workplace/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/explore',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.navigation-pois-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/navigation/pois',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.planner.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.planner',
+    pattern: '/workplace/planner',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/explore',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.release-windows-by-release-window-id-cancel-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/release-windows/{releaseWindowId}/cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.release-windows-eligible-resources-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/release-windows/eligible-resources',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.release-windows-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/release-windows',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.release-windows-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/release-windows',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.reservations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.reservations',
+    pattern: '/workplace/reservations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/bookings',
+      },
+      {
+        method: 'GET',
+        path: '/api/platform/v1/rooms/bookings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.room-availability-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/rooms/availability',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.room-booking-by-event-id-put.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/rooms/bookings/{eventId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.room-booking-cancel-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/rooms/bookings/{eventId}/cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.room-booking-response-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/rooms/bookings/{eventId}/response',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.room-bookings-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/rooms/bookings',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.room-policy-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/rooms/policy',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.safety-incidents-by-incident-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/safety/incidents/{incidentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.safety-incidents-by-incident-id-messages-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/safety/incidents/{incidentId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.safety-incidents-by-incident-id-messages-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/safety/incidents/{incidentId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.safety-incidents-by-incident-id-responses-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/safety/incidents/{incidentId}/responses',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.safety.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.safety',
+    pattern: '/workplace/safety',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/safety/incidents/active',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-catalog-by-catalog-item-id-capacity-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-catalog/{catalogItemId}/capacity',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-catalog',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-attachment-download.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/attachments/{attachmentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-attachment-upload.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/attachments',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-attachments.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/attachments',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-cancel.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}:cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-events.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-line-adjustment.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/line-adjustments/{adjustmentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-line-cancel.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/lines/{lineId}:cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-line-cancellation-impact.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/lines/{lineId}/cancellation-impact:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-message.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-messages.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/messages',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/reservations/{reservationId}/service-orders:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-reconfirm.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}:reconfirm',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-order-submit.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/reservations/{reservationId}/service-orders',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-orders-by-order-id-contacts-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/contacts',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.service-orders-by-order-id-lines-by-line-id-access-grants-by-grant-id-revoke-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/lines/{lineId}/access-credentials/{grantId}:revoke',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.service-orders-by-order-id-lines-by-line-id-access-grants-issue-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/lines/{lineId}/access-credentials:issue',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.service-orders-by-order-id-lines-by-line-id-inspection-attempts-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/lines/{lineId}/inspection-attempts',
+      },
+    ],
+  },
+  {
+    routeContractKey:
+      'route.workplace.work.service-orders-by-order-id-lines-by-line-id-inspection-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders/{orderId}/lines/{lineId}/inspection',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.service-orders.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.service-orders',
+    pattern: '/workplace/service-orders',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/service-orders',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.visits-by-visit-id-access-requests-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/visits/{visitId}/access-requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.visits-by-visit-id-cancel-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/visits/{visitId}:cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.visits-by-visit-id-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/visits/{visitId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.visits-by-visit-id-send-invitation-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/visits/{visitId}:send-invitation',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.visits-get.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/visits',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.visits-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/visits',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.visits-preview-post.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/visits:preview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.waitlist-cancel.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/waitlist-entries/{entryId}:cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.waitlist-catalog.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/waitlist-entries',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.waitlist-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/workplace/waitlist-entries',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.waitlist-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/waitlist-entries/{entryId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.waitlist-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PATCH',
+        path: '/api/platform/v1/workplace/waitlist-entries/{entryId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.workplace.work.wayfinding.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'workplace.work',
+    subjectType: 'PRODUCT',
+    productId: 'workplace',
+    surfaceId: 'workplace.work',
+    routeId: 'workplace.work.wayfinding',
+    pattern: '/workplace/navigation',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/workplace/navigation/routes',
       },
     ],
   },

@@ -102,6 +102,30 @@ test('accepts a documented verification root but rejects stale and duplicate all
   assert.ok(!result.errors.some((error) => error.includes('verification-contract')));
 });
 
+test('requires an exact allowance for a governed legacy production module', () => {
+  const path = 'apps/dwp/src/features/example/legacy-screen.tsx';
+  const root = fixture();
+  writeFileSync(join(root, 'apps/dwp/src/main.tsx'), 'export {};\n');
+  writeFileSync(join(root, path), 'export const LegacyScreen = () => null;\n');
+
+  const withoutAllowance = checkProductionReachability({
+    repositoryRoot: root,
+    entryRoots: ['apps/dwp/src/main.tsx'],
+  });
+  assert.deepEqual(withoutAllowance.errors, [`unreachable production module: ${path}`]);
+
+  writeFileSync(
+    join(root, 'scripts/production-reachability-allowlist.json'),
+    `${JSON.stringify({ version: 1, maximumEntries: 1, entries: [allowance(path)] }, null, 2)}\n`
+  );
+  const withExactAllowance = checkProductionReachability({
+    repositoryRoot: root,
+    entryRoots: ['apps/dwp/src/main.tsx'],
+  });
+  assert.deepEqual(withExactAllowance.errors, []);
+  assert.deepEqual(withExactAllowance.unreachable, [path]);
+});
+
 test('rejects allowlist growth or unclaimed headroom against the exact ratchet', () => {
   const root = fixture([allowance('apps/dwp/src/one.ts'), allowance('apps/dwp/src/two.ts')], 1);
   writeFileSync(join(root, 'apps/dwp/src/main.tsx'), 'export {};\n');
@@ -138,6 +162,8 @@ test('excludes tests, test support and test utility fixtures from production can
   writeFileSync(join(root, 'apps/dwp/src/main.tsx'), 'export {};\n');
   writeFileSync(join(root, 'apps/dwp/src/value.test.ts'), 'export {};\n');
   writeFileSync(join(root, 'apps/dwp/src/value.test-support.ts'), 'export {};\n');
+  writeFileSync(join(root, 'apps/dwp/src/admin-v2-test-fixtures.ts'), 'export {};\n');
+  writeFileSync(join(root, 'apps/dwp/src/admin-v2-test-harness.tsx'), 'export {};\n');
   mkdirSync(join(root, 'apps/dwp/src/test-utils'), { recursive: true });
   writeFileSync(join(root, 'apps/dwp/src/test-utils/fixture.ts'), 'export {};\n');
 

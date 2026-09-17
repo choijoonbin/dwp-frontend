@@ -11,15 +11,18 @@ import { WorkplaceResourcePhoto } from './workplace-resource-photo';
 import { WorkplaceBookingCheckInWindow } from './workplace-booking-check-in-window';
 
 import type { WorkplaceBooking } from '@dwp-frontend/shared-utils';
+import type { ReactNode } from 'react';
 
 export function WorkplaceBookingDetailPanel({
   booking,
   format,
   now,
+  actions,
 }: {
   booking: WorkplaceBooking | null;
   format: (value: string) => string;
   now: number;
+  actions?: ReactNode;
 }) {
   const { t } = useTranslation('rooms');
   if (!booking) return null;
@@ -75,6 +78,18 @@ export function WorkplaceBookingDetailPanel({
           </Stack>
         </Stack>
         <WorkplaceBookingCheckInWindow booking={booking} now={now} format={format} />
+        {actions ? (
+          <Box
+            sx={{
+              pt: 2,
+              borderTop: 1,
+              borderColor: 'divider',
+              '& .MuiButton-root': { minHeight: 44 },
+            }}
+          >
+            {actions}
+          </Box>
+        ) : null}
         {booking.purpose && (
           <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
             {booking.purpose}

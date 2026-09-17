@@ -27,8 +27,8 @@ type ApprovalRequestListPanelProps = {
   selectedId?: string;
   actionsReady: boolean;
   pending: boolean;
-  onSelect: (request: ApprovalRequest) => void;
-  onOpenDetails: (request: ApprovalRequest) => void;
+  onSelect: (request: ApprovalRequest, trigger?: HTMLElement) => void;
+  onOpenDetails: (request: ApprovalRequest, trigger?: HTMLElement) => void;
   onEdit: (request: ApprovalRequest) => void;
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;
@@ -68,7 +68,7 @@ export function ApprovalRequestListPanel({
             <ListItemButton
               selected={selected}
               aria-current={selected ? 'true' : undefined}
-              onClick={() => onSelect(request)}
+              onClick={(event) => onSelect(request, event.currentTarget)}
               sx={{ alignItems: 'stretch', px: 2, py: 1.75 }}
             >
               <Stack gap={1.1} width="100%" minWidth={0}>
@@ -168,7 +168,8 @@ export function ApprovalRequestListPanel({
                 label={t('actions.openDetails')}
                 tooltip={t('actions.openDetails')}
                 size="small"
-                onClick={() => onOpenDetails(request)}
+                data-approval-request-detail-id={request.requestId}
+                onClick={(event) => onOpenDetails(request, event.currentTarget)}
               >
                 <Eye size={17} />
               </ActionIconButton>

@@ -187,6 +187,74 @@ export interface paths {
         patch: operations["update_action_policy_v1_admin_actions__action_key__patch"];
         trace?: never;
     };
+    "/v1/admin/ai-control": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Ai Control Overview */
+        get: operations["get_ai_control_overview_v1_admin_ai_control_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ai-control/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bootstrap Ai Control */
+        post: operations["bootstrap_ai_control_v1_admin_ai_control_bootstrap_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ai-control/emergency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Set Ai Emergency Control */
+        post: operations["set_ai_emergency_control_v1_admin_ai_control_emergency_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ai-control/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Ai Control Policy */
+        put: operations["update_ai_control_policy_v1_admin_ai_control_policy_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/audit": {
         parameters: {
             query?: never;
@@ -1237,6 +1305,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/routines/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Routine Capabilities */
+        get: operations["get_routine_capabilities_v1_routines_capabilities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/routines/{routine_id}": {
         parameters: {
             query?: never;
@@ -1249,6 +1334,23 @@ export interface paths {
         /** Update Routine */
         put: operations["update_routine_v1_routines__routine_id__put"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/activation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Routine Activation */
+        post: operations["change_routine_activation_v1_routines__routine_id__activation_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1317,6 +1419,58 @@ export interface paths {
         put?: never;
         /** Change Routine Lifecycle */
         post: operations["change_routine_lifecycle_v1_routines__routine_id__lifecycle_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Routine Runs */
+        get: operations["list_routine_runs_v1_routines__routine_id__runs_get"];
+        put?: never;
+        /** Trigger Routine Run */
+        post: operations["trigger_routine_run_v1_routines__routine_id__runs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/runs/{routine_run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Routine Run */
+        get: operations["get_routine_run_v1_routines__routine_id__runs__routine_run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/routines/{routine_id}/runs/{routine_run_id}/commands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Command Routine Run */
+        post: operations["command_routine_run_v1_routines__routine_id__runs__routine_run_id__commands_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1412,6 +1566,83 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AIControlOverview */
+        AIControlOverview: {
+            /**
+             * Controlscope
+             * @default ASK_RUNTIME
+             * @constant
+             */
+            controlScope: "ASK_RUNTIME";
+            enforcementActivationState: components["schemas"]["EnforcementActivationState"];
+            policy?: components["schemas"]["TenantAIExecutionPolicy"] | null;
+            runtimeControlState: components["schemas"]["RuntimeControlState"];
+            /** @default NOT_CONNECTED */
+            toolEnforcementState: components["schemas"]["ToolEnforcementState"];
+            usage: components["schemas"]["AIUsageObservation"];
+            /** Warnings */
+            warnings?: string[];
+        };
+        /** AIControlOverviewEnvelope */
+        AIControlOverviewEnvelope: {
+            data: components["schemas"]["AIControlOverview"];
+            /**
+             * Message
+             * @default DWAI-ON AI runtime control loaded.
+             */
+            message: string;
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** AIUsageObservation */
+        AIUsageObservation: {
+            /** Billedcostminor */
+            billedCostMinor?: number | null;
+            /** Currency */
+            currency?: string | null;
+            /** Estimatedcostminor */
+            estimatedCostMinor?: number | null;
+            /** Measuredinputtokens */
+            measuredInputTokens: number;
+            /** Measuredoutputtokens */
+            measuredOutputTokens: number;
+            /** Measuredtotaltokens */
+            measuredTotalTokens: number;
+            measurementFreshness: components["schemas"]["MeasurementFreshness"];
+            /** Measurementobservedat */
+            measurementObservedAt?: string | null;
+            /**
+             * Periodend
+             * Format: date-time
+             */
+            periodEnd: string;
+            /**
+             * Periodstart
+             * Format: date-time
+             */
+            periodStart: string;
+            /** @default UNAVAILABLE */
+            providerBillingState: components["schemas"]["ExternalDataState"];
+            /** @default UNAVAILABLE */
+            providerPricingState: components["schemas"]["ExternalDataState"];
+            /** @default UNAVAILABLE */
+            providerUsageState: components["schemas"]["ExternalDataState"];
+            /** Reservedtokens */
+            reservedTokens: number;
+            /**
+             * Unmeasuredreservedtokens
+             * @default 0
+             */
+            unmeasuredReservedTokens: number;
+        };
         /**
          * ActionExecutionPolicy
          * @enum {string}
@@ -2581,6 +2812,49 @@ export interface components {
             /** Sources */
             sources?: components["schemas"]["ArtifactSourceReference"][];
         };
+        /** BootstrapAIExecutionPolicyRequest */
+        BootstrapAIExecutionPolicyRequest: {
+            /**
+             * Alertthresholdpercent
+             * @default 80
+             */
+            alertThresholdPercent: number;
+            /** Allowedknowledgesources */
+            allowedKnowledgeSources?: string[];
+            /** Allowedmodelroutes */
+            allowedModelRoutes: components["schemas"]["ModelRoutePolicy"][];
+            /** Allowedtoolkeys */
+            allowedToolKeys?: string[];
+            /** @default ALERT_ONLY */
+            budgetEnforcementMode: components["schemas"]["BudgetEnforcementMode"];
+            /** Changereason */
+            changeReason: string;
+            /** @default NOT_REQUIRED */
+            evaluationGateStatus: components["schemas"]["EvaluationGateStatus"];
+            /** Evaluationobservedat */
+            evaluationObservedAt?: string | null;
+            /** Evaluationpolicyversion */
+            evaluationPolicyVersion?: number | null;
+            /** Expectedexistingcount */
+            expectedExistingCount: number;
+            /**
+             * Idempotencykey
+             * Format: uuid
+             */
+            idempotencyKey: string;
+            /**
+             * Maxoutputtokensperrequest
+             * @default 900
+             */
+            maxOutputTokensPerRequest: number;
+            /** Periodtokenlimit */
+            periodTokenLimit?: number | null;
+            /**
+             * Requireevaluationpass
+             * @default false
+             */
+            requireEvaluationPass: boolean;
+        };
         /** BootstrapGovernancePoliciesRequest */
         BootstrapGovernancePoliciesRequest: {
             /** Changereason */
@@ -2627,6 +2901,11 @@ export interface components {
              */
             retentionDays: number;
         };
+        /**
+         * BudgetEnforcementMode
+         * @enum {string}
+         */
+        BudgetEnforcementMode: "ALERT_ONLY" | "ENFORCED";
         /** ChangeMemoryStateRequest */
         ChangeMemoryStateRequest: {
             /** Changereason */
@@ -2641,6 +2920,23 @@ export interface components {
             memoryState: components["schemas"]["MemoryState"];
             /** Reasoncode */
             reasonCode: string;
+        };
+        /** ChangeRoutineActivationRequest */
+        ChangeRoutineActivationRequest: {
+            action: components["schemas"]["RoutineActivationAction"];
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Startat */
+            startAt?: string | null;
         };
         /** ChangeRoutineConsentRequest */
         ChangeRoutineConsentRequest: {
@@ -2714,6 +3010,21 @@ export interface components {
              * Format: uuid
              */
             commandId: string;
+        };
+        /** CommandRoutineRunRequest */
+        CommandRoutineRunRequest: {
+            action: components["schemas"]["RoutineRunCommand"];
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
         };
         /** ConfigureOperationalGateRequest */
         ConfigureOperationalGateRequest: {
@@ -3332,6 +3643,11 @@ export interface components {
              */
             success: boolean;
         };
+        /**
+         * EnforcementActivationState
+         * @enum {string}
+         */
+        EnforcementActivationState: "DISABLED" | "ENABLED";
         /** EvaluationCase */
         EvaluationCase: {
             /**
@@ -3360,6 +3676,16 @@ export interface components {
             /** Version */
             version: number;
         };
+        /**
+         * EvaluationEvidenceState
+         * @enum {string}
+         */
+        EvaluationEvidenceState: "VERIFIED" | "STALE" | "UNAVAILABLE";
+        /**
+         * EvaluationGateStatus
+         * @enum {string}
+         */
+        EvaluationGateStatus: "NOT_REQUIRED" | "PENDING" | "PASSED" | "FAILED" | "STALE";
         /**
          * EvaluationLifecycle
          * @enum {string}
@@ -3575,6 +3901,8 @@ export interface components {
         };
         /** ExecutionSummary */
         ExecutionSummary: {
+            /** Attentionitems */
+            attentionItems?: components["schemas"]["ActivityEvent"][];
             /**
              * Cancelled
              * @default 0
@@ -3673,6 +4001,11 @@ export interface components {
          * @enum {string}
          */
         ExportFormat: "MARKDOWN" | "DOCX" | "PDF";
+        /**
+         * ExternalDataState
+         * @enum {string}
+         */
+        ExternalDataState: "VERIFIED" | "STALE" | "UNAVAILABLE" | "UNVERIFIED";
         /** FeedbackEnvelope */
         FeedbackEnvelope: {
             data: components["schemas"]["FeedbackReceipt"];
@@ -3848,6 +4181,11 @@ export interface components {
             detail?: components["schemas"]["ValidationError"][];
         };
         JsonValue: unknown;
+        /**
+         * MeasurementFreshness
+         * @enum {string}
+         */
+        MeasurementFreshness: "CURRENT" | "STALE" | "UNAVAILABLE";
         /** MemoryEnvelope */
         MemoryEnvelope: {
             data: components["schemas"]["PersonalMemory"];
@@ -3892,6 +4230,19 @@ export interface components {
          * @enum {string}
          */
         MemoryState: "ACTIVE" | "DISABLED" | "DELETED";
+        /** ModelRoutePolicy */
+        ModelRoutePolicy: {
+            /** Availabilityobservedat */
+            availabilityObservedAt?: string | null;
+            /** @default UNVERIFIED */
+            availabilityState: components["schemas"]["ExternalDataState"];
+            /** Model */
+            model: string;
+            /** Provider */
+            provider: string;
+            /** Region */
+            region?: string | null;
+        };
         /**
          * ModelRouteState
          * @enum {string}
@@ -4297,11 +4648,8 @@ export interface components {
              */
             createdAt: string;
             definition: components["schemas"]["RoutineDefinition"];
-            /**
-             * Executionmode
-             * @default DRY_RUN_ONLY
-             */
-            executionMode: string;
+            /** @default DRY_RUN_ONLY */
+            executionMode: components["schemas"]["RoutineExecutionMode"];
             lifecycleState: components["schemas"]["RoutineLifecycle"];
             /** Nextrunat */
             nextRunAt?: string | null;
@@ -4725,6 +5073,29 @@ export interface components {
          */
         RiskTier: "L0" | "L1" | "L2" | "L3";
         /**
+         * RoutineActivationAction
+         * @enum {string}
+         */
+        RoutineActivationAction: "ACTIVATE" | "DEACTIVATE";
+        /** RoutineBudget */
+        RoutineBudget: {
+            /**
+             * Maximumminutesperrun
+             * @default 15
+             */
+            maximumMinutesPerRun: number;
+            /**
+             * Maximumrunspermonth
+             * @default 31
+             */
+            maximumRunsPerMonth: number;
+            /**
+             * Maximumtokensperrun
+             * @default 32000
+             */
+            maximumTokensPerRun: number;
+        };
+        /**
          * RoutineCadence
          * @enum {string}
          */
@@ -4759,6 +5130,11 @@ export interface components {
              */
             dryRunAvailable: boolean;
             /**
+             * Executionproviderstate
+             * @default NOT_CONFIGURED
+             */
+            executionProviderState: string;
+            /**
              * Externalwriteavailable
              * @default false
              */
@@ -4770,7 +5146,7 @@ export interface components {
             holidayPolicyAvailable: boolean;
             /**
              * Lifecyclemode
-             * @default DRAFT_PREVIEW_ONLY
+             * @default GOVERNED_SCHEDULED_EXECUTION
              */
             lifecycleMode: string;
             /**
@@ -4804,6 +5180,11 @@ export interface components {
              */
             quietHoursPreviewAvailable: boolean;
             /**
+             * Recoveryhint
+             * @default Configure and start the governed routine execution broker.
+             */
+            recoveryHint: string | null;
+            /**
              * Runtimebudgetavailable
              * @default false
              */
@@ -4816,6 +5197,35 @@ export interface components {
             /** Supportedcadences */
             supportedCadences?: components["schemas"]["RoutineCadence"][];
         };
+        /** RoutineCapabilitiesEnvelope */
+        RoutineCapabilitiesEnvelope: {
+            data: components["schemas"]["RoutineCapabilities"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** RoutineCompensationPolicy */
+        RoutineCompensationPolicy: {
+            /**
+             * Enabled
+             * @default true
+             */
+            enabled: boolean;
+            /** @default REVOKE_PENDING_HANDOFFS */
+            strategy: components["schemas"]["RoutineCompensationStrategy"];
+        };
+        /**
+         * RoutineCompensationStrategy
+         * @enum {string}
+         */
+        RoutineCompensationStrategy: "REVOKE_PENDING_HANDOFFS" | "PROVIDER_MANAGED";
         /**
          * RoutineConsentScope
          * @enum {string}
@@ -4838,19 +5248,23 @@ export interface components {
             activeFrom?: string | null;
             /** Activeuntil */
             activeUntil?: string | null;
+            budget?: components["schemas"]["RoutineBudget"];
             cadence: components["schemas"]["RoutineCadence"];
+            compensationPolicy?: components["schemas"]["RoutineCompensationPolicy"];
             /** Localtime */
             localTime: string;
             /** Locale */
             locale: string;
             /** Name */
             name: string;
+            notificationPolicy?: components["schemas"]["RoutineNotificationPolicy"];
             /** Objective */
             objective: string;
             /** Quiethoursend */
             quietHoursEnd?: string | null;
             /** Quiethoursstart */
             quietHoursStart?: string | null;
+            retryPolicy?: components["schemas"]["RoutineRetryPolicy"];
             /** Sources */
             sources: components["schemas"]["RoutineSource"][];
             /** Timezone */
@@ -4960,11 +5374,172 @@ export interface components {
              */
             success: boolean;
         };
+        /** RoutineExecutionEnvelope */
+        RoutineExecutionEnvelope: {
+            data: components["schemas"]["RoutineExecutionRun"];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** RoutineExecutionListEnvelope */
+        RoutineExecutionListEnvelope: {
+            /** Data */
+            data: components["schemas"]["RoutineExecutionRun"][];
+            /**
+             * Status
+             * @default SUCCESS
+             */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /**
+         * RoutineExecutionMode
+         * @enum {string}
+         */
+        RoutineExecutionMode: "DRY_RUN_ONLY" | "SCHEDULED";
+        /** RoutineExecutionReceipt */
+        RoutineExecutionReceipt: {
+            /** Approvalgatedactionscreated */
+            approvalGatedActionsCreated: number;
+            /** Authorizationdecisionrevision */
+            authorizationDecisionRevision: number;
+            /** Authorizedsources */
+            authorizedSources: components["schemas"]["RoutineSource"][];
+            /**
+             * Completedat
+             * Format: date-time
+             */
+            completedAt: string;
+            /** Evidencecount */
+            evidenceCount: number;
+            /**
+             * Externalwritesperformed
+             * @default 0
+             */
+            externalWritesPerformed: number;
+            notificationState: components["schemas"]["RoutineNotificationState"];
+            /** Proposalscreated */
+            proposalsCreated: number;
+            /** Providerreceiptid */
+            providerReceiptId: string;
+            /**
+             * Receiptid
+             * Format: uuid
+             */
+            receiptId: string;
+            /** Resultsha256 */
+            resultSha256: string;
+            /**
+             * Routineid
+             * Format: uuid
+             */
+            routineId: string;
+            /** Routinerevision */
+            routineRevision: number;
+            /**
+             * Routinerunid
+             * Format: uuid
+             */
+            routineRunId: string;
+            terminalState: components["schemas"]["RoutineRunState"];
+        };
+        /** RoutineExecutionRun */
+        RoutineExecutionRun: {
+            /**
+             * Approvalgatedactionscreated
+             * @default 0
+             */
+            approvalGatedActionsCreated: number;
+            /** Attemptcount */
+            attemptCount: number;
+            /**
+             * Compensationrequired
+             * @default false
+             */
+            compensationRequired: boolean;
+            /** Completedat */
+            completedAt?: string | null;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
+             * Elapsedms
+             * @default 0
+             */
+            elapsedMs: number;
+            /**
+             * Evidencecount
+             * @default 0
+             */
+            evidenceCount: number;
+            /** Maximumattempts */
+            maximumAttempts: number;
+            /** Nextattemptat */
+            nextAttemptAt?: string | null;
+            /** @default NOT_REQUIRED */
+            notificationState: components["schemas"]["RoutineNotificationState"];
+            /**
+             * Proposalscreated
+             * @default 0
+             */
+            proposalsCreated: number;
+            receipt?: components["schemas"]["RoutineExecutionReceipt"] | null;
+            /** Recoveryhint */
+            recoveryHint?: string | null;
+            /**
+             * Routineid
+             * Format: uuid
+             */
+            routineId: string;
+            /** Routinerevision */
+            routineRevision: number;
+            /**
+             * Routinerunid
+             * Format: uuid
+             */
+            routineRunId: string;
+            /** Safeerrorcode */
+            safeErrorCode?: string | null;
+            /**
+             * Scheduledfor
+             * Format: date-time
+             */
+            scheduledFor: string;
+            /** Startedat */
+            startedAt?: string | null;
+            state: components["schemas"]["RoutineRunState"];
+            /**
+             * Tokensused
+             * @default 0
+             */
+            tokensUsed: number;
+            trigger: components["schemas"]["RoutineRunTrigger"];
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+            /** Version */
+            version: number;
+        };
         /**
          * RoutineLifecycle
          * @enum {string}
          */
-        RoutineLifecycle: "DRAFT" | "PAUSED" | "ARCHIVED";
+        RoutineLifecycle: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED";
         /**
          * RoutineLifecycleAction
          * @enum {string}
@@ -4985,6 +5560,62 @@ export interface components {
              */
             success: boolean;
         };
+        /** RoutineNotificationPolicy */
+        RoutineNotificationPolicy: {
+            /**
+             * Notifyonfailure
+             * @default true
+             */
+            notifyOnFailure: boolean;
+            /**
+             * Notifyonpartial
+             * @default true
+             */
+            notifyOnPartial: boolean;
+            /**
+             * Notifyonrecovery
+             * @default true
+             */
+            notifyOnRecovery: boolean;
+        };
+        /**
+         * RoutineNotificationState
+         * @enum {string}
+         */
+        RoutineNotificationState: "NOT_REQUIRED" | "DELIVERED" | "NOT_CONFIGURED" | "FAILED";
+        /** RoutineRetryPolicy */
+        RoutineRetryPolicy: {
+            /**
+             * Backoffmultiplier
+             * @default 2
+             */
+            backoffMultiplier: number;
+            /**
+             * Initialbackoffseconds
+             * @default 30
+             */
+            initialBackoffSeconds: number;
+            /**
+             * Maximumattempts
+             * @default 3
+             */
+            maximumAttempts: number;
+        };
+        /**
+         * RoutineRunCommand
+         * @enum {string}
+         */
+        RoutineRunCommand: "RETRY" | "CANCEL" | "COMPENSATE";
+        /**
+         * RoutineRunState
+         * @enum {string}
+         */
+        RoutineRunState: "QUEUED" | "CLAIMED" | "RUNNING" | "RETRY_SCHEDULED" | "COMPENSATING" | "PARTIAL" | "COMPLETED" | "FAILED" | "CANCELLED" | "COMPENSATED";
+        /**
+         * RoutineRunTrigger
+         * @enum {string}
+         */
+        RoutineRunTrigger: "SCHEDULED" | "MANUAL";
         /**
          * RoutineSource
          * @enum {string}
@@ -5039,6 +5670,11 @@ export interface components {
          * @enum {string}
          */
         RunStageState: "ACTIVE" | "COMPLETED" | "SKIPPED" | "FAILED";
+        /**
+         * RuntimeControlState
+         * @enum {string}
+         */
+        RuntimeControlState: "ENABLED" | "EMERGENCY_DISABLED" | "POLICY_NOT_CONFIGURED" | "CONTROL_UNAVAILABLE";
         /** SafetyPolicy */
         SafetyPolicy: {
             /** Maxsourcescopes */
@@ -5079,11 +5715,100 @@ export interface components {
              */
             success: boolean;
         };
+        /** SetAIEmergencyDisableRequest */
+        SetAIEmergencyDisableRequest: {
+            /** Changereason */
+            changeReason: string;
+            /** Disabled */
+            disabled: boolean;
+            /** Expectedversion */
+            expectedVersion: number;
+        };
         /**
          * SourceAccessMode
          * @enum {string}
          */
         SourceAccessMode: "SOURCE_PERMISSIONS" | "TENANT_ALLOWLIST" | "BLOCKED";
+        /** TenantAIExecutionPolicy */
+        TenantAIExecutionPolicy: {
+            /** Alertthresholdpercent */
+            alertThresholdPercent: number;
+            /** Allowedknowledgesources */
+            allowedKnowledgeSources?: string[];
+            /** Allowedmodelroutes */
+            allowedModelRoutes: components["schemas"]["ModelRoutePolicy"][];
+            /** Allowedtoolkeys */
+            allowedToolKeys?: string[];
+            budgetEnforcementMode: components["schemas"]["BudgetEnforcementMode"];
+            /** Emergencydisabled */
+            emergencyDisabled: boolean;
+            /** @default UNAVAILABLE */
+            evaluationEvidenceState: components["schemas"]["EvaluationEvidenceState"];
+            evaluationGateStatus: components["schemas"]["EvaluationGateStatus"];
+            /** Evaluationobservedat */
+            evaluationObservedAt?: string | null;
+            /** Evaluationpolicyversion */
+            evaluationPolicyVersion?: number | null;
+            /** Maxoutputtokensperrequest */
+            maxOutputTokensPerRequest: number;
+            /** Periodtokenlimit */
+            periodTokenLimit?: number | null;
+            /** Policyversion */
+            policyVersion: number;
+            /** Requireevaluationpass */
+            requireEvaluationPass: boolean;
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+        };
+        /**
+         * ToolEnforcementState
+         * @enum {string}
+         */
+        ToolEnforcementState: "NOT_CONNECTED";
+        /** TriggerRoutineRunRequest */
+        TriggerRoutineRunRequest: {
+            /** Changereason */
+            changeReason: string;
+            /**
+             * Commandid
+             * Format: uuid
+             */
+            commandId: string;
+            /** Expectedrevision */
+            expectedRevision: number;
+            /** Reasoncode */
+            reasonCode: string;
+        };
+        /** UpdateAIExecutionPolicyRequest */
+        UpdateAIExecutionPolicyRequest: {
+            /** Alertthresholdpercent */
+            alertThresholdPercent: number;
+            /** Allowedknowledgesources */
+            allowedKnowledgeSources?: string[];
+            /** Allowedmodelroutes */
+            allowedModelRoutes: components["schemas"]["ModelRoutePolicy"][];
+            /** Allowedtoolkeys */
+            allowedToolKeys?: string[];
+            budgetEnforcementMode: components["schemas"]["BudgetEnforcementMode"];
+            /** Changereason */
+            changeReason: string;
+            evaluationGateStatus: components["schemas"]["EvaluationGateStatus"];
+            /** Evaluationobservedat */
+            evaluationObservedAt?: string | null;
+            /** Evaluationpolicyversion */
+            evaluationPolicyVersion?: number | null;
+            /** Expectedversion */
+            expectedVersion: number;
+            /** Maxoutputtokensperrequest */
+            maxOutputTokensPerRequest: number;
+            /** Periodtokenlimit */
+            periodTokenLimit?: number | null;
+            /** Requireevaluationpass */
+            requireEvaluationPass: boolean;
+        };
         /** UpdateActionPolicyRequest */
         UpdateActionPolicyRequest: {
             /** Changereason */
@@ -5295,10 +6020,19 @@ export interface components {
             /** Data */
             data: components["schemas"]["UserAgentRunSummary"][];
             /**
+             * Hasmore
+             * @default false
+             */
+            hasMore: boolean;
+            /**
              * Message
              * @default Agent activity loaded.
              */
             message: string;
+            /** Nextcursor */
+            nextCursor?: string | null;
+            /** Snapshotat */
+            snapshotAt?: string | null;
             /**
              * Status
              * @default SUCCESS
@@ -5865,6 +6599,7 @@ export interface operations {
                 to?: string | null;
             };
             header: {
+                "Accept-Language"?: string;
                 "X-DWP-User-ID": string;
                 "X-DWP-Tenant-ID": string;
                 "X-Correlation-ID": string;
@@ -6001,6 +6736,158 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ActionPolicyEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ai_control_overview_v1_admin_ai_control_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-Permissions"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIControlOverviewEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    bootstrap_ai_control_v1_admin_ai_control_bootstrap_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BootstrapAIExecutionPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIControlOverviewEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_ai_emergency_control_v1_admin_ai_control_emergency_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetAIEmergencyDisableRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIControlOverviewEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_ai_control_policy_v1_admin_ai_control_policy_put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-User-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Permissions"?: string | null;
+                /** @description Required for product-authorization rollout states 110/111. The gateway rejects a missing or stale value before the state-changing request reaches the Agent owner service; rollout states 000/100 ignore it. */
+                "X-DWP-Expected-Decision-Revision"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAIExecutionPolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIControlOverviewEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -9292,6 +10179,44 @@ export interface operations {
             };
         };
     };
+    get_routine_capabilities_v1_routines_capabilities_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineCapabilitiesEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_routine_v1_routines__routine_id__get: {
         parameters: {
             query?: never;
@@ -9355,6 +10280,50 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["UpdateRoutineRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_routine_activation_v1_routines__routine_id__activation_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeRoutineActivationRequest"];
             };
         };
         responses: {
@@ -9562,11 +10531,186 @@ export interface operations {
             };
         };
     };
+    list_routine_runs_v1_routines__routine_id__runs_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineExecutionListEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trigger_routine_run_v1_routines__routine_id__runs_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TriggerRoutineRunRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineExecutionEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_routine_run_v1_routines__routine_id__runs__routine_run_id__get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+                routine_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineExecutionEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    command_routine_run_v1_routines__routine_id__runs__routine_run_id__commands_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Auth-Session-ID": string;
+                "X-DWP-User-ID": string;
+                "X-DWP-Tenant-ID": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Roles"?: string | null;
+                "X-DWP-Permissions"?: string | null;
+                "X-DWP-Person-Public-ID"?: string | null;
+                "X-DWP-Display-Name-B64"?: string | null;
+            };
+            path: {
+                routine_id: string;
+                routine_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommandRoutineRunRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutineExecutionEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_user_runs_v1_runs_get: {
         parameters: {
             query?: {
                 limit?: number;
                 state?: components["schemas"]["AgentRunState"] | null;
+                from?: string | null;
+                to?: string | null;
+                cursor?: string | null;
             };
             header: {
                 "X-DWP-Permissions"?: string | null;

@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ContentDialog } from '@dwp-frontend/design-system/components/dialogs/content-dialog';
 import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
-import { getNotificationSummary } from '@dwp-frontend/shared-utils/api/notification-api';
+import { getNotificationSummary } from '@dwp-frontend/shared-utils/api/notification-summary-api';
 import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils/env';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';

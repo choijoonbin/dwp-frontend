@@ -1,23 +1,36 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { MailAccounts } from '../features/mail/mail-accounts';
 import { ProductSurfaceLocalNotFound } from '../components/product-surface-local-not-found';
 import {
   MailAdminConnections,
-  MailAdminOverview,
   MailAdminPolicies,
   MailAdminSharedInboxes,
 } from '../features/mail/mail-admin';
+import {
+  MailConnectionsAdminWorkspace,
+  MailDeliveryAuditAdminWorkspace,
+  MailGovernanceAdminWorkspace,
+  MailOperationsAdminWorkspace,
+  MailRetentionAdminWorkspace,
+  MailSharedAccessAdminWorkspace,
+} from '../features/mail/mail-admin-operations-workspace';
 import { MailHome } from '../features/mail/mail-home';
 import { MailInbox } from '../features/mail/mail-inbox';
 import { MailAddressBook } from '../features/mail/mail-address-book';
 import { MailOrganization } from '../features/mail/mail-organization';
 import { findMailNavigationItem } from '../features/mail/mail-navigation';
+import { MailSecondaryWorkspace } from '../features/mail/mail-secondary-workspace';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 
 export default function MailPage() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const page = findMailNavigationItem(pathname);
+  const settingsOpen = searchParams.get('settings') === 'edit';
+  const openSettings = () => navigate(`${pathname}?settings=edit`);
+  const closeSettings = () => navigate(pathname, { replace: true });
 
   if (!page) return <ProductSurfaceLocalNotFound />;
 
@@ -27,6 +40,9 @@ export default function MailPage() {
         {
           home: <MailHome />,
           inbox: <MailInbox mode="inbox" />,
+          search: <MailSecondaryWorkspace view="search" />,
+          'follow-up': <MailSecondaryWorkspace view="follow-up" />,
+          delivery: <MailSecondaryWorkspace view="delivery" />,
           sent: <MailInbox mode="sent" />,
           drafts: <MailInbox mode="drafts" />,
           archive: <MailInbox mode="archive" />,
@@ -35,12 +51,28 @@ export default function MailPage() {
           folders: <MailInbox mode="custom" />,
           shared: <MailInbox mode="shared" />,
           contacts: <MailAddressBook />,
+          actions: <MailSecondaryWorkspace view="actions" />,
           organization: <MailOrganization />,
           accounts: <MailAccounts />,
-          'admin-overview': <MailAdminOverview />,
-          'admin-connections': <MailAdminConnections />,
-          'admin-shared-inboxes': <MailAdminSharedInboxes />,
-          'admin-policies': <MailAdminPolicies />,
+          templates: <MailSecondaryWorkspace view="templates" />,
+          'admin-overview': <MailOperationsAdminWorkspace />,
+          'admin-connections': settingsOpen ? (
+            <MailAdminConnections onBack={closeSettings} />
+          ) : (
+            <MailConnectionsAdminWorkspace onOpenConnectionSettings={openSettings} />
+          ),
+          'admin-shared-inboxes': settingsOpen ? (
+            <MailAdminSharedInboxes onBack={closeSettings} />
+          ) : (
+            <MailSharedAccessAdminWorkspace onOpenSharedInboxSettings={openSettings} />
+          ),
+          'admin-policies': settingsOpen ? (
+            <MailAdminPolicies onBack={closeSettings} />
+          ) : (
+            <MailGovernanceAdminWorkspace onOpenPolicySettings={openSettings} />
+          ),
+          'admin-retention': <MailRetentionAdminWorkspace />,
+          'admin-delivery-audit': <MailDeliveryAuditAdminWorkspace />,
         }[page.view]
       }
     </ProductAreaNavigationItemAccessGuard>

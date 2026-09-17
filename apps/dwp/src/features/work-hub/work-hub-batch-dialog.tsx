@@ -4,6 +4,7 @@ import {
   ActionButton,
   FormDialog,
   ContentDialog,
+  foundationTokens,
   InlineFeedback,
 } from '@dwp-frontend/design-system';
 
@@ -116,7 +117,7 @@ export function WorkHubBatchReportPanel({
           gridTemplateColumns: 'repeat(auto-fit, minmax(7.5rem, 1fr))',
           border: 1,
           borderColor: 'divider',
-          borderRadius: 1.5,
+          borderRadius: foundationTokens.radius.surface + foundationTokens.radius.control + 'px',
           overflow: 'hidden',
           bgcolor: 'background.paper',
           '@media (forced-colors: active)': { borderColor: 'CanvasText' },
@@ -146,7 +147,7 @@ export function WorkHubBatchReportPanel({
               '@media (forced-colors: active)': { borderColor: 'CanvasText' },
             }}
           >
-            <Typography component="dd" variant="h6" sx={{ m: 0, lineHeight: 1.15 }}>
+            <Typography component="dd" variant="h6" sx={{ m: 0 }}>
               {summary[value]}
             </Typography>
             <Typography

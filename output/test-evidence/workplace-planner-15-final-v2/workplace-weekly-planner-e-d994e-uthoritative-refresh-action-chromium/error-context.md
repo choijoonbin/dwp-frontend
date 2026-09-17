@@ -1,0 +1,270 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+                - navigation "Workplace home" [ref=e40]:
+                  - generic [ref=e41]:
+                    - link "Today's workspace" [ref=e42] [cursor=pointer]:
+                      - /url: /workplace/home?view=home
+                      - img [ref=e44]
+                      - text: Today's workspace
+                    - link "Team work plans" [ref=e47] [cursor=pointer]:
+                      - /url: /workplace/home?view=team
+                      - img [ref=e49]
+                      - text: Team work plans
+                    - link "Facility requests" [ref=e53] [cursor=pointer]:
+                      - /url: /workplace/home?view=requests
+                      - img [ref=e55]
+                      - text: Facility requests
+              - listitem [ref=e57]:
+                - link "Find and book a space" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/find
+                  - img [ref=e60]
+                  - paragraph [ref=e65]: Find and book a space
+              - listitem [ref=e66]:
+                - link "Weekly booking planner" [ref=e67] [cursor=pointer]:
+                  - /url: /workplace/planner
+                  - img [ref=e69]
+                  - paragraph [ref=e72]: Weekly booking planner
+              - listitem [ref=e73]:
+                - link "My reservations" [ref=e74] [cursor=pointer]:
+                  - /url: /workplace/reservations
+                  - img [ref=e76]
+                  - paragraph [ref=e79]: My reservations
+              - listitem [ref=e80]:
+                - link "My service orders" [ref=e81] [cursor=pointer]:
+                  - /url: /workplace/service-orders
+                  - img [ref=e83]
+                  - paragraph [ref=e87]: My service orders
+        - link "Return to apps" [ref=e89] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e91]
+          - text: Return to apps
+    - banner [ref=e93]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - img [ref=e97]
+          - generic "Workplace" [ref=e102]
+        - navigation "App area switcher" [ref=e105]:
+          - 'link "App management: Workplace" [ref=e107] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e109]
+            - generic [ref=e112]: App management
+        - generic [ref=e113]:
+          - button "Search DWP" [ref=e115] [cursor=pointer]:
+            - img [ref=e116]
+          - generic [ref=e119]:
+            - button "Enter full screen" [ref=e120] [cursor=pointer]:
+              - img [ref=e121]
+            - generic "0 actionable notifications, 0 total unread" [ref=e127]:
+              - button "0 actionable notifications, 0 total unread" [ref=e128] [cursor=pointer]:
+                - generic [ref=e129]:
+                  - img [ref=e130]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e134] [cursor=pointer]':
+            - generic [ref=e135]: T
+            - img [ref=e136]
+    - main [ref=e138]:
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - text: Multi-day workplace planning
+            - heading "Weekly booking planner" [level=1] [ref=e143]
+            - paragraph [ref=e144]: Plan desks, parking and lockers for yourself or authorized beneficiaries, then confirm one server-held batch.
+          - button "Refresh" [ref=e146] [cursor=pointer]
+        - generic [ref=e148]:
+          - paragraph [ref=e149]: Planner progress
+          - generic [ref=e151]: 1. Plan
+          - generic [ref=e153]: 2. Hold and review
+          - generic [ref=e155]: 3. Results
+          - generic [ref=e157]: Current
+        - generic [ref=e159]:
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - heading "Schedule and beneficiaries" [level=2] [ref=e162]
+              - paragraph [ref=e163]: Only people returned by the authorized-beneficiaries source can be selected.
+            - generic [ref=e165]: 5-day package
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - img [ref=e168]
+              - paragraph [ref=e172]: Actor and beneficiary scope
+            - paragraph [ref=e173]: "Booking actor: Tenant Admin"
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - generic [ref=e176]: Reservation target
+                - generic [ref=e177]:
+                  - combobox "Reservation target Myself" [ref=e178] [cursor=pointer]: Myself
+                  - textbox: SELF
+                  - img
+                  - group:
+                    - generic: Reservation target
+              - generic [ref=e179]:
+                - text: Authorized beneficiaries
+                - button "Tenant Admin" [pressed] [ref=e181] [cursor=pointer]:
+                  - generic [ref=e182]: Tenant Admin
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - img [ref=e185]
+              - paragraph [ref=e187]: Dates and time
+            - generic [ref=e188]:
+              - generic [ref=e189]:
+                - generic [ref=e190]: Week of
+                - group "Week of" [ref=e191]:
+                  - generic [ref=e192]:
+                    - generic [ref=e193]:
+                      - spinbutton "Month" [ref=e194]: "09"
+                      - text: /
+                    - generic [ref=e195]:
+                      - spinbutton "Day" [ref=e196]: "14"
+                      - text: /
+                    - spinbutton "Year" [ref=e198]: "2026"
+                  - button "Choose date, selected date is Sep 14, 2026" [ref=e200] [cursor=pointer]:
+                    - img [ref=e201]
+                  - group:
+                    - generic: Week of
+                  - textbox [ref=e203]: 09/14/2026
+              - generic [ref=e204]:
+                - generic [ref=e205]: Start time
+                - group "Start time" [ref=e206]:
+                  - generic [ref=e207]:
+                    - generic [ref=e208]:
+                      - spinbutton "Hours" [ref=e209]: "09"
+                      - text: ":"
+                    - spinbutton "Minutes" [ref=e211]: "00"
+                    - spinbutton "Meridiem" [ref=e213]: AM
+                  - button "Choose time, selected time is 09:00 AM" [ref=e215] [cursor=pointer]:
+                    - img [ref=e216]
+                  - group:
+                    - generic: Start time
+                  - textbox [ref=e219]: 09:00 AM
+              - generic [ref=e220]:
+                - generic [ref=e221]: Daily duration
+                - generic [ref=e222]:
+                  - combobox "Daily duration 9 hours" [ref=e223] [cursor=pointer]: 9 hours
+                  - textbox: "540"
+                  - img
+                  - group:
+                    - generic: Daily duration
+            - generic [ref=e224]:
+              - generic [ref=e225] [cursor=pointer]:
+                - generic [ref=e226]:
+                  - checkbox "2026-09-14" [checked] [ref=e227]
+                  - img [ref=e228]
+                - generic [ref=e230]: 2026-09-14
+              - generic [ref=e231] [cursor=pointer]:
+                - generic [ref=e232]:
+                  - checkbox "2026-09-15" [checked] [ref=e233]
+                  - img [ref=e234]
+                - generic [ref=e236]: 2026-09-15
+          - generic [ref=e237]:
+            - generic [ref=e238]:
+              - generic [ref=e239]: Site
+              - generic [ref=e240]:
+                - combobox "Site Pangyo HQ" [ref=e241] [cursor=pointer]: Pangyo HQ
+                - textbox: 10000000-0000-4000-8000-000000000001
+                - img
+                - group:
+                  - generic: Site
+            - generic [ref=e242]:
+              - generic [ref=e243]: Floor
+              - generic [ref=e244]:
+                - combobox "Floor 12F" [ref=e245] [cursor=pointer]: 12F
+                - textbox: 20000000-0000-4000-8000-000000000012
+                - img
+                - group:
+                  - generic: Floor
+          - generic [ref=e246]:
+            - paragraph [ref=e247]: Package resources
+            - generic [ref=e248]:
+              - generic [ref=e249] [cursor=pointer]:
+                - generic [ref=e250]:
+                  - checkbox "Desk" [checked] [ref=e251]
+                  - img [ref=e252]
+                - generic [ref=e254]: Desk
+              - generic [ref=e255] [cursor=pointer]:
+                - generic [ref=e256]:
+                  - checkbox "Parking" [ref=e257]
+                  - img [ref=e258]
+                - generic [ref=e260]: Parking
+              - generic [ref=e261] [cursor=pointer]:
+                - generic [ref=e262]:
+                  - checkbox "Locker" [ref=e263]
+                  - img [ref=e264]
+                - generic [ref=e266]: Locker
+          - generic [ref=e267]:
+            - paragraph [ref=e268]: Waitlist conditions
+            - paragraph [ref=e269]: "Maximum alternative distance: not specified. The requested booking window is retained."
+            - generic [ref=e271]: "Price limit: not applicable for this resource"
+          - generic [ref=e272]:
+            - generic [ref=e273]:
+              - generic [ref=e274]: Booking purpose
+              - generic [ref=e275]:
+                - textbox "Booking purpose" [ref=e276]: Weekly workplace plan
+                - group:
+                  - generic: Booking purpose
+            - generic [ref=e277] [cursor=pointer]:
+              - generic [ref=e278]:
+                - checkbox "Accessible resources only" [ref=e279]
+                - img [ref=e280]
+              - generic [ref=e282]: Accessible resources only
+          - button "Preview package availability" [ref=e283] [cursor=pointer]
+        - generic [ref=e285]:
+          - generic [ref=e286]:
+            - img [ref=e287]
+            - heading "Waitlists and offers" [level=2] [ref=e290]
+          - generic [ref=e292]:
+            - generic [ref=e293]:
+              - generic [ref=e294]:
+                - paragraph [ref=e295]: Tenant Admin · Desk
+                - generic [ref=e296]: Current rank 3
+                - generic [ref=e297]: "Notifications: In-app, Email"
+                - generic [ref=e298]:
+                  - generic [ref=e300]: Within 800 m
+                  - generic [ref=e302]: Sep 15, 2026, 9:00 AM – 6:00 PM
+                  - generic [ref=e304]: "Price: not applicable"
+                - alert [ref=e305]:
+                  - img [ref=e307]
+                  - generic [ref=e309]:
+                    - paragraph [ref=e310]: Alternative matching needs attention
+                    - paragraph [ref=e311]: This floor has no governed meter scale. Remove the distance condition or ask an administrator to configure the floor scale.
+                  - button "Refresh waitlist status" [ref=e313] [cursor=pointer]:
+                    - img [ref=e315]
+                    - text: Refresh waitlist status
+              - generic [ref=e320]:
+                - generic [ref=e322]: Waiting
+                - generic [ref=e323]:
+                  - img [ref=e324]
+                  - generic [ref=e329]: Manual confirmation
+            - generic [ref=e330]:
+              - button "Enable auto-confirm" [ref=e331] [cursor=pointer]
+              - button "Leave waitlist" [ref=e332] [cursor=pointer]
+  - generic "Open DWAI·ON" [ref=e334]:
+    - button "Open DWAI·ON" [ref=e335] [cursor=pointer]
+```

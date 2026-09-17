@@ -7,17 +7,36 @@ const capability = (capabilityContractKey: string) => ({
   capabilityContractKey,
 });
 
+const workAccess = () => ({
+  type: 'policy' as const,
+  accessPolicyKey: 'workplace.work-access.v1',
+});
+
 export const WORKPLACE_WORK_NAVIGATION = projectProductSurfaceNavigation(ROOMS_NAVIGATION, {
-  home: { taskKind: 'work', access: capability('workplace.space.read') },
-  explore: { taskKind: 'work', access: capability('workplace.space.read') },
-  'find-rooms': { taskKind: 'work', access: capability('workplace.room.read') },
-  'my-bookings': { taskKind: 'work', access: capability('workplace.space.read') },
-  'my-meetings': { taskKind: 'work', access: capability('workplace.room.read') },
+  home: { taskKind: 'work', access: workAccess() },
+  find: { taskKind: 'work', access: workAccess() },
+  wayfinding: { taskKind: 'work', access: workAccess() },
+  planner: { taskKind: 'work', access: workAccess() },
+  assistant: { taskKind: 'work', access: workAccess() },
+  reservations: { taskKind: 'work', access: workAccess() },
+  'service-orders': { taskKind: 'work', access: workAccess() },
+  safety: { taskKind: 'work', access: workAccess() },
 });
 
 export const WORKPLACE_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(ROOMS_NAVIGATION, {
   'admin-overview': { taskKind: 'operations', access: capability('workplace.operations.read') },
+  'admin-safety': { taskKind: 'operations', access: capability('workplace.operations.read') },
   'admin-operations': { taskKind: 'operations', access: capability('workplace.operations.read') },
+  'admin-exceptions': { taskKind: 'operations', access: capability('workplace.operations.read') },
+  'admin-devices': { taskKind: 'operations', access: capability('workplace.operations.read') },
+  'admin-space-planning': {
+    taskKind: 'administration',
+    access: capability('workplace.policy.read'),
+  },
+  'admin-assistant-governance': {
+    taskKind: 'administration',
+    access: capability('workplace.governance.read'),
+  },
   'admin-governance': {
     taskKind: 'administration',
     access: capability('workplace.governance.read'),
@@ -27,6 +46,35 @@ export const WORKPLACE_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(R
     access: capability('workplace.locations.read'),
   },
   'admin-policy': { taskKind: 'administration', access: capability('workplace.policy.read') },
+  'admin-service-fulfillment': {
+    taskKind: 'operations',
+    access: capability('workplace.service-operations.read'),
+  },
+  'admin-service-catalog': {
+    taskKind: 'administration',
+    access: capability('workplace.service-operations.read'),
+  },
+  'admin-service-providers': {
+    taskKind: 'administration',
+    access: capability('workplace.service-operations.read'),
+  },
+  'admin-visits': { taskKind: 'operations', access: capability('workplace.operations.read') },
+  'admin-visit-policies': {
+    taskKind: 'administration',
+    access: capability('workplace.governance.read'),
+  },
+  'admin-access-zones': {
+    taskKind: 'administration',
+    access: capability('workplace.governance.read'),
+  },
+  'admin-visit-providers': {
+    taskKind: 'administration',
+    access: capability('workplace.governance.read'),
+  },
+  'admin-kiosk-devices': {
+    taskKind: 'administration',
+    access: capability('workplace.governance.read'),
+  },
   'admin-room-operations': {
     taskKind: 'operations',
     access: capability('workplace.room-operations.read'),
@@ -76,6 +124,7 @@ export const WORKPLACE_PRODUCT_MANIFEST = defineProductManifest({
           'workplace.policy.read',
           'workplace.room-operations.read',
           'workplace.room-policy.read',
+          'workplace.service-operations.read',
         ],
         requiresProductEntitlement: false,
       },

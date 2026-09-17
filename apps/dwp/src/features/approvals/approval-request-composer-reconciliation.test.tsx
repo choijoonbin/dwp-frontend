@@ -25,6 +25,7 @@ const dependencies = vi.hoisted(() => ({
   detail: vi.fn(),
   forms: vi.fn(),
   template: vi.fn(),
+  preflight: vi.fn(),
   submit: vi.fn(),
   submitExecution: {} as Record<string, unknown>,
   scope: { ready: true, identity: 'actor-a' },
@@ -43,6 +44,7 @@ vi.mock('@dwp-frontend/shared-utils', async (load) => ({
   getApprovalRequestDetail: dependencies.detail,
   getPublishedApprovalForms: dependencies.forms,
   getPublishedApprovalFormTemplate: dependencies.template,
+  preflightApprovalRequest: dependencies.preflight,
   submitApprovalRequest: dependencies.submit,
   useToast: () => ({ success: vi.fn(), error: vi.fn() }),
 }));
@@ -194,6 +196,15 @@ describe('Actual composer and autosave receipt-denial recovery', () => {
     });
     dependencies.detail.mockResolvedValue(detail());
     dependencies.update.mockResolvedValue(detail(4));
+    dependencies.preflight.mockResolvedValue({
+      requestId: 'request-1',
+      expectedVersion: 3,
+      ready: true,
+      workflowContract: 'LEGACY_SEQUENTIAL',
+      checks: [],
+      evaluatedAt: '2026-09-14T00:00:00Z',
+      validUntil: null,
+    });
     dependencies.submit.mockResolvedValue({ ...detail(4).request, status: 'SUBMITTED' });
     client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     container = document.createElement('div');
@@ -411,6 +422,47 @@ describe('Actual composer and autosave receipt-denial recovery', () => {
     expect(dependencies.create).not.toHaveBeenCalled();
   });
 
+  it('applies a reviewed 409 merge to the editor before persisting it', async () => {
+    await act(async () => render(true));
+    await vi.waitFor(() => expect(api.contextReady).toBe(true));
+    dependencies.update.mockRejectedValueOnce(new HttpError('Version conflict', 409));
+    await act(async () => api.setSummary('Locally reviewed summary'));
+    await act(async () => {
+      await expect(api.autosave.flush()).rejects.toMatchObject({ status: 409 });
+    });
+    expect(api.autosave.status).toBe('CONFLICT');
+
+    dependencies.detail.mockResolvedValue(detail(4, 'Server-reviewed title'));
+    await act(async () => api.refreshContext());
+    expect(api.autosave.conflicts).toEqual([]);
+    dependencies.update.mockResolvedValueOnce({
+      ...detail(5, 'Server-reviewed title'),
+      request: {
+        ...detail(5, 'Server-reviewed title').request,
+        summary: 'Locally reviewed summary',
+      },
+      payload: {
+        summary: 'Locally reviewed summary',
+        costCenter: 'A',
+        createdFrom: 'DWP_APPROVALS',
+      },
+    });
+    await act(async () => api.reapply());
+
+    expect(api).toMatchObject({
+      title: 'Server-reviewed title',
+      summary: 'Locally reviewed summary',
+      payloadValues: { costCenter: 'A' },
+    });
+    expect(api.autosave.status).toBe('SAVED');
+    expect(dependencies.update).toHaveBeenCalledTimes(2);
+    expect(dependencies.update.mock.calls[1]![1]).toMatchObject({
+      title: 'Server-reviewed title',
+      summary: 'Locally reviewed summary',
+      expectedVersion: 4,
+    });
+  });
+
   it('restores preserved input for review, not automatic overwrite, when the denied CREATE receipt finds a newer edit', async () => {
     await compose();
     const key = await loseCreate();
@@ -430,12 +482,35 @@ describe('Actual composer and autosave receipt-denial recovery', () => {
     expect(dependencies.update).not.toHaveBeenCalled();
     await act(async () => api.refreshContext());
     expect(api.autosave.latestLoaded).toBe(true);
-    expect(api.autosave.conflicts.map((conflict) => conflict.path)).toEqual(['$document']);
+    expect(api.autosave.conflicts.map((conflict) => conflict.path)).toEqual(['title']);
     dependencies.update.mockResolvedValue(detail(5));
     await act(async () => api.reapply());
     expect(dependencies.update).not.toHaveBeenCalled();
     expect(api.autosave.status).toBe('CONFLICT');
     expect(dependencies.create).toHaveBeenCalledTimes(1);
+  });
+
+  it('requires an explicit reviewed form-change impact before dropping business values', async () => {
+    dependencies.forms.mockResolvedValue([
+      { formId: 'form-1', nameKo: '기존 양식', nameEn: 'Source form', currentVersion: 1 },
+      { formId: 'form-2', nameKo: '신규 양식', nameEn: 'Target form', currentVersion: 2 },
+    ]);
+    await compose();
+
+    await act(async () => api.requestFormChange('form-2'));
+    expect(api.formId).toBe('form-1');
+    expect(api.payloadValues).toEqual(original.payloadValues);
+    expect(api.pendingFormChange).toMatchObject({
+      source: { formId: 'form-1', version: 1 },
+      target: { formId: 'form-2', version: 2 },
+      excluded: [{ path: 'costCenter' }],
+    });
+
+    await act(async () => api.applyFormChange());
+    expect(api.formId).toBe('form-2');
+    expect(api.payloadValues).toEqual({});
+    expect(api.title).toBe(original.title);
+    expect(api.summary).toBe(original.summary);
   });
 });
 
@@ -445,6 +520,15 @@ describe('Actual composer and autosave typed form integration', () => {
     vi.resetAllMocks();
     dependencies.scope = { ready: true, identity: 'actor-a' };
     dependencies.forms.mockResolvedValue([{ formId: 'form-1' }]);
+    dependencies.preflight.mockResolvedValue({
+      requestId: 'request-1',
+      expectedVersion: 3,
+      ready: true,
+      workflowContract: 'LEGACY_SEQUENTIAL',
+      checks: [],
+      evaluatedAt: '2026-09-14T00:00:00Z',
+      validUntil: null,
+    });
     client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -553,7 +637,9 @@ describe('Actual composer and autosave typed form integration', () => {
       await act(async () => api.setPayloadValues(values));
       expect(api.payloadValues).toEqual(values);
       expect(api.contextReady).toBe(false);
+      expect(api.reviewReady).toBe(true);
       expect(api.submissionReady).toBe(false);
+      expect(api.validationIssues.length).toBeGreaterThan(0);
       await act(async () => {
         api.saveDraft();
         api.submit();

@@ -1858,6 +1858,101 @@
       "empty": "이 테넌트의 지원 세션이 없습니다."
     }
   },
+  "settingsResolution": {
+    "title": "설정 유효값 및 적용 상태",
+    "description": "테넌트별 원하는 값, 현재 유효값, 실제 관측 상태와 값의 출처를 함께 확인합니다.",
+    "journey": "S17 · 설정 추적",
+    "catalog": {
+      "loading": "읽을 수 있는 설정 카탈로그를 불러오는 중",
+      "denied": "설정 카탈로그를 조회할 권한이 없습니다.",
+      "error": "설정 카탈로그를 불러오지 못했습니다.",
+      "stale": "카탈로그 새로고침에 실패했습니다. 마지막으로 확인한 항목을 표시합니다.",
+      "emptyTitle": "조회 가능한 테넌트 설정이 없습니다",
+      "emptyDescription": "현재 권한으로 읽을 수 있는 설정 소유자가 없거나 등록된 설정이 없습니다."
+    },
+    "fields": {
+      "setting": "설정",
+      "tenant": "대상 테넌트",
+      "selectTenant": "테넌트를 선택하세요"
+    },
+    "tenant": {
+      "denied": "테넌트 목록 조회 권한이 없어 대상별 유효값은 요청하지 않았습니다.",
+      "loading": "테넌트 목록을 불러오는 중",
+      "error": "테넌트 목록을 불러오지 못했습니다.",
+      "empty": "조회 가능한 테넌트가 없어 유효값을 계산할 수 없습니다.",
+      "searchHelp": "전체 테넌트 자산에서 회사, 테넌트 이름 또는 키로 검색합니다.",
+      "searchLoading": "테넌트 검색 중…",
+      "searchEmpty": "일치하는 테넌트가 없습니다.",
+      "searchError": "테넌트 검색을 일시적으로 사용할 수 없습니다."
+    },
+    "lifecycle": {
+      "ACTIVE": "활성 정의",
+      "DEPRECATED": "사용 중단 예정",
+      "UNAVAILABLE": "사용 불가"
+    },
+    "definitionMeta": "{{id}} · 정의 v{{version}} · {{workflow}}",
+    "effective": {
+      "loading": "대상 설정의 유효값을 계산하는 중",
+      "denied": "이 대상의 유효값을 조회할 권한이 없습니다.",
+      "error": "대상 설정의 유효값을 불러오지 못했습니다."
+    },
+    "resolution": {
+      "RESOLVED": "유효값을 확인했습니다.",
+      "REDACTED": "민감도 정책에 따라 유효값을 마스킹했습니다. 사유: {{reason}}",
+      "UNSUPPORTED_SETTING": "지원되거나 조회 가능한 설정이 아닙니다. 사유: {{reason}}",
+      "UNSUPPORTED_SCOPE": "이 설정은 선택한 범위를 지원하지 않습니다. 사유: {{reason}}",
+      "VALUE_UNAVAILABLE": "현재 유효값을 결정할 수 없습니다. 사유: {{reason}}"
+    },
+    "observationUnsupported": "게시된 유효값은 확인했지만 실행 대상의 적용 영수증을 수집하는 연결이 아직 없습니다. 실제 적용 완료로 간주하지 않습니다.",
+    "stages": {
+      "desired": "원하는 상태",
+      "effective": "현재 유효값",
+      "applied": "실제 적용 관측"
+    },
+    "desiredStates": {
+      "NONE": "원하는 변경 없음",
+      "DRAFT": "초안",
+      "PENDING_APPROVAL": "승인 대기",
+      "APPROVED": "승인됨",
+      "PUBLISH_REQUESTED": "게시 요청됨",
+      "PUBLISHED": "게시됨",
+      "FAILED": "처리 실패"
+    },
+    "version": "버전 · {{value}}",
+    "publishAcceptedAt": "게시 접수 {{value}}",
+    "observedVersion": "동일하게 관측된 버전 · {{value}}",
+    "resolutionStates": {
+      "RESOLVED": "해석 완료",
+      "REDACTED": "마스킹됨",
+      "UNSUPPORTED_SETTING": "지원하지 않는 설정",
+      "UNSUPPORTED_SCOPE": "지원하지 않는 범위",
+      "VALUE_UNAVAILABLE": "값 확인 불가"
+    },
+    "applicationStates": {
+      "NOT_CONFIGURED": "적용 상태 없음",
+      "DRAFT": "초안",
+      "APPROVAL_PENDING": "승인 대기",
+      "READY_TO_PUBLISH": "게시 준비",
+      "PUBLISH_PENDING": "게시 처리 중",
+      "OBSERVATION_UNSUPPORTED": "적용 관측 미지원",
+      "PUBLISHED_UNOBSERVED": "게시됨 · 미관측",
+      "APPLYING": "적용 중",
+      "CONVERGED": "전체 일치",
+      "PARTIAL": "일부 적용",
+      "DRIFTED": "드리프트 발견",
+      "FAILED": "적용 실패",
+      "OBSERVATION_STALE": "관측 정보 오래됨"
+    },
+    "observationCounts": "관측 {{observed}}/{{expected}} · 일치 {{converged}} · 실패 {{failed}} · 드리프트 {{drifted}}",
+    "resolvedAt": "유효값 계산 {{resolvedAt}} · 최근 적용 관측 {{observedAt}}",
+    "openOwner": "소유 화면에서 관리",
+    "provenance": {
+      "title": "값 결정 근거",
+      "description": "우선순위가 높은 순서대로 유효값 결정에 참여한 출처를 표시합니다.",
+      "version": "v{{version}} · {{date}}",
+      "empty": "공개 가능한 값 결정 근거가 없습니다."
+    }
+  },
   "tenantExperiencePreview": {
     "title": "테넌트 경험 설정 미리보기",
     "description": "고객 사용자 세션을 열지 않고 고정된 테넌트 브랜딩 및 홈 경험 설정을 확인합니다.",

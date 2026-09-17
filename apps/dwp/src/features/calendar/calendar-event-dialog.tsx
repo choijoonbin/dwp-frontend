@@ -29,11 +29,11 @@ import {
   DwpDateTimeProvider,
   FormDialog,
   FormField,
+  InlineFeedback,
   SelectField,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -478,16 +478,24 @@ export function CalendarEventDialog({
     >
       <DwpDateTimeProvider locale={i18n.resolvedLanguage ?? i18n.language} timeZone={form.timeZone}>
         <Stack spacing={2.25}>
-          {fromDwaion && <Alert severity="info">{t('event.dwaionDraftNotice')}</Alert>}
-          {workHandoff && <Alert severity="info">{t('event.workHandoffNotice')}</Alert>}
+          {fromDwaion && (
+            <InlineFeedback severity="info">{t('event.dwaionDraftNotice')}</InlineFeedback>
+          )}
+          {workHandoff && (
+            <InlineFeedback severity="info">{t('event.workHandoffNotice')}</InlineFeedback>
+          )}
           {workReceiptLocked && (
-            <Alert severity="warning">{t('event.workLinkRecoveryRequired')}</Alert>
+            <InlineFeedback severity="warning">
+              {t('event.workLinkRecoveryRequired')}
+            </InlineFeedback>
           )}
           {mutation.isError && (
-            <Alert severity="error">{message(mutation.error, t('event.saveError'))}</Alert>
+            <InlineFeedback severity="error">
+              {message(mutation.error, t('event.saveError'))}
+            </InlineFeedback>
           )}
           {calendarsQuery.isError && (
-            <Alert
+            <InlineFeedback
               severity="error"
               action={
                 <ActionButton intent="quiet" size="small" onClick={() => calendarsQuery.refetch()}>
@@ -496,10 +504,10 @@ export function CalendarEventDialog({
               }
             >
               {t('event.calendarsLoadError')}
-            </Alert>
+            </InlineFeedback>
           )}
           {peopleQuery.isError && (
-            <Alert
+            <InlineFeedback
               severity="warning"
               action={
                 <ActionButton intent="quiet" size="small" onClick={() => peopleQuery.refetch()}>
@@ -508,7 +516,7 @@ export function CalendarEventDialog({
               }
             >
               {t('event.peopleLoadError')}
-            </Alert>
+            </InlineFeedback>
           )}
           <Box
             sx={{
@@ -967,7 +975,9 @@ export function CalendarEventDialog({
                       }
                     />
                   ) : (
-                    <Alert severity="info">{t('schedulingAssistant.recurringSeriesNotice')}</Alert>
+                    <InlineFeedback severity="info">
+                      {t('schedulingAssistant.recurringSeriesNotice')}
+                    </InlineFeedback>
                   )}
                 </Box>
               </Box>

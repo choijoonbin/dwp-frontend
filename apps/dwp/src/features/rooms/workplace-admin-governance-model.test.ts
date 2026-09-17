@@ -62,6 +62,7 @@ describe('Workplace governance model', () => {
 
   it('normalizes governance deep links and rejects unknown tab values', () => {
     expect(parseWorkplaceGovernanceTab('floorPlans')).toBe('floorPlans');
+    expect(parseWorkplaceGovernanceTab('dataSources')).toBe('dataSources');
     expect(parseWorkplaceGovernanceTab('unknown')).toBe('hierarchy');
     expect(parseWorkplaceGovernanceTab(null)).toBe('hierarchy');
   });
@@ -85,9 +86,9 @@ describe('Workplace governance model', () => {
   it('selects a permitted fallback instead of redirecting to an inaccessible default', () => {
     expect(
       findFirstAccessibleRoomsPath(
-        (resource, permission) => resource === 'APP.ROOMS' && permission === 'VIEW'
+        (resource, permission) => resource === 'APP.WORKPLACE' && permission === 'VIEW'
       )
-    ).toBe('/workplace/rooms');
+    ).toBe('/workplace/home');
     expect(findFirstAccessibleRoomsPath(() => false)).toBe('/');
   });
 });

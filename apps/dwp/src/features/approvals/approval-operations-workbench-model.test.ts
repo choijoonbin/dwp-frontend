@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { ApprovalIntegrationDelivery, ApprovalOperations } from '@dwp-frontend/shared-utils';
 import {
   approvalOperationsDeliveryQueue,
+  approvalOperationsFullData,
   approvalOperationsQueueFromSearch,
   approvalOperationsRetrySnapshotCurrent,
   approvalOperationsSourceCurrent,
@@ -35,10 +36,11 @@ const state = () => ({
   fetchFailureCount: 0,
   data: structuredClone(data),
 });
+const normalizedDelivery = approvalOperationsFullData(data)!.integrationDeliveries[0]!;
 const original = {
   outboxId: delivery.outboxId,
   expectedVersion: 4,
-  deliveryFingerprint: JSON.stringify(delivery),
+  deliveryFingerprint: JSON.stringify(normalizedDelivery),
   scopeFingerprint: 'actor-1:scope-1',
 };
 const current = {
@@ -195,6 +197,18 @@ describe('Approval operations workbench', () => {
   });
   it('accepts only the exact current selected native row and authority', () => {
     expect(approvalOperationsRetrySnapshotCurrent(state(), original, current, now)).toBe(true);
+  });
+  it('compares normalized response meaning rather than JSON property order', () => {
+    const reordered = {
+      ...state(),
+      data: {
+        ...data,
+        integrationDeliveries: [
+          Object.fromEntries(Object.entries(delivery).reverse()) as ApprovalIntegrationDelivery,
+        ],
+      },
+    };
+    expect(approvalOperationsRetrySnapshotCurrent(reordered, original, current, now)).toBe(true);
   });
   it.each([
     { status: 'error' },

@@ -24,6 +24,7 @@ import type {
 } from './activity-page-merge';
 import type {
   RawWorkspaceActivityEvent,
+  RawWorkspaceActivityExecutionSummary,
   RawWorkspaceActivityFeed,
   WorkspaceActivityEvent,
   WorkspaceActivityExecutionSummary,
@@ -57,10 +58,19 @@ function validateSummary(
     summary?.cancelled,
     summary?.unknown ?? 0,
   ];
+  const attentionItems = summary?.attentionItems ?? [];
   if (
     !counts.every((value) => Number.isSafeInteger(value) && value >= 0) ||
     !Number.isFinite(Date.parse(summary?.generatedAt)) ||
     !Array.isArray(summary?.coverage?.supportedObjectTypes) ||
+    !Array.isArray(attentionItems) ||
+    attentionItems.length > 5 ||
+    !attentionItems.every(
+      (item) =>
+        ['needs-input', 'policy-blocked'].includes(item.state) &&
+        item.sourceAccess === 'AVAILABLE' &&
+        ['EXECUTION', 'EXECUTION_SNAPSHOT'].includes(item.eventKind ?? '')
+    ) ||
     counts.slice(1).reduce((sum, value) => sum + value, 0) !== counts[0]
   ) {
     throw new HttpError('Invalid current execution summary.', 502);
@@ -197,16 +207,24 @@ export async function getActivityExecutionSummary(
         };
       }
       try {
-        const summary = validateSummary(
-          source === 'WORKSPACE'
-            ? await getWorkspaceActivityExecutionSummary(signal)
-            : (
-                await axiosInstance.get<ApiResponse<WorkspaceActivityExecutionSummary>>(
-                  '/api/agent/v1/activity/executions/summary',
-                  { timeoutMs: 8000, signal }
-                )
-              ).data.data
-        );
+        let summary: WorkspaceActivityExecutionSummary;
+        if (source === 'WORKSPACE') {
+          summary = await getWorkspaceActivityExecutionSummary(signal);
+        } else {
+          const raw = (
+            await axiosInstance.get<ApiResponse<RawWorkspaceActivityExecutionSummary>>(
+              '/api/agent/v1/activity/executions/summary',
+              { timeoutMs: 8000, signal }
+            )
+          ).data.data;
+          summary = {
+            ...raw,
+            attentionItems: raw.attentionItems?.map((item) =>
+              withActivitySourceId('DWAI_ON', normalizeWorkspaceActivityEvent(item))
+            ),
+          };
+        }
+        summary = validateSummary(summary);
         return {
           summary,
           state: {
@@ -237,6 +255,16 @@ export async function getActivityExecutionSummary(
       | 'cancelled'
       | 'unknown'
   ) => available.reduce((count, summary) => count + (summary[key] ?? 0), 0);
+  const seenAttention = new Set<string>();
+  const attentionItems = available
+    .flatMap((summary) => summary.attentionItems ?? [])
+    .sort((left, right) => Date.parse(right.occurredAt) - Date.parse(left.occurredAt))
+    .filter((item) => {
+      if (seenAttention.has(item.id)) return false;
+      seenAttention.add(item.id);
+      return true;
+    })
+    .slice(0, 5);
   return {
     total: sum('total'),
     running: sum('running'),
@@ -246,6 +274,7 @@ export async function getActivityExecutionSummary(
     failed: sum('failed'),
     cancelled: sum('cancelled'),
     unknown: sum('unknown'),
+    attentionItems,
     generatedAt: oldestActivityTimestamp(available.map((summary) => summary.generatedAt)),
     partial: false,
     sourceStates: results.map((result) => result.state),

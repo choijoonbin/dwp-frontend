@@ -14,6 +14,33 @@
     "description": "The administration shell is still available. Reload the page to download this page again.",
     "reloadPage": "Reload page"
   },
+  "settingsHome": {
+    "eyebrow": "Company administration",
+    "title": "Company settings",
+    "description": "Find and manage organization, people, app, integration, and governance settings within your authorized scope.",
+    "availableCount": "{{count}} available to your role",
+    "searchLabel": "Search company settings",
+    "searchPlaceholder": "Search SSO, SCIM, app access, audit, and more",
+    "searchHelp": "Results include only settings allowed by your current role and delegated scope.",
+    "emptyTitle": "No company settings match",
+    "emptyDescription": "Use fewer words or ask the responsible administrator to verify your access.",
+    "controlLoop": {
+      "title": "Application and operations",
+      "description": "Distinguish a saved setting from its applied and observed result in the owning workspace.",
+      "application": {
+        "title": "Application and convergence",
+        "description": "Inspect failures, delay, and last-success evidence in API monitoring."
+      },
+      "connections": {
+        "title": "Connections and synchronization",
+        "description": "Inspect configuration, consent, synchronization runs, and failure results."
+      },
+      "ai": {
+        "title": "AI policy and operations",
+        "description": "Manage DWAI·ON model, tool, source, safety, and evaluation policy."
+      }
+    }
+  },
   "navigation": {
     "groups": {
       "experience": "Experience",

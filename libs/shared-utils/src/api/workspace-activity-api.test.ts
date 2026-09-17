@@ -170,6 +170,36 @@ describe('workspace activity API foundation', () => {
     expect(get.mock.calls[0]?.[0]).toBe('/api/platform/v1/workspace/activity/executions/summary');
   });
 
+  it('normalizes only the current attention records supplied by the execution summary', async () => {
+    const attention = {
+      ...event,
+      id: 'a1111111-1111-4111-8111-111111111111',
+      state: 'NEEDS_INPUT' as const,
+      eventKind: 'EXECUTION' as const,
+      source: 'DWP_WORKSPACE',
+      sourceAccess: 'AVAILABLE' as const,
+    };
+    vi.spyOn(axiosInstance, 'get').mockResolvedValue({
+      data: {
+        data: {
+          total: 1,
+          running: 0,
+          completed: 0,
+          needsInput: 1,
+          policyBlocked: 0,
+          failed: 0,
+          cancelled: 0,
+          generatedAt: '2026-09-04T09:00:00Z',
+          coverage: { supportedObjectTypes: ['WORK_ITEM'] },
+          attentionItems: [attention],
+        },
+      },
+    });
+    expect((await getWorkspaceActivityExecutionSummary()).attentionItems).toMatchObject([
+      { id: attention.id, state: 'needs-input', actor: 'person' },
+    ]);
+  });
+
   it.each(['FAILED', 'CANCELLED', 'UNKNOWN'] as const)(
     'normalizes terminal/unverified state %s',
     (state) => {

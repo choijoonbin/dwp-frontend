@@ -48,6 +48,12 @@ export function MailLifecycleUndo({
       open={Boolean(state)}
       autoHideDuration={7_000}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      sx={{
+        bottom: {
+          xs: 'calc(8px + var(--dwp-mobile-fixed-footer-offset, 0px))',
+          sm: 'calc(24px + var(--dwp-mobile-fixed-footer-offset, 0px))',
+        },
+      }}
       onClose={(_event, reason) => {
         if (reason !== 'clickaway' && !mutation.isPending) onClose();
       }}

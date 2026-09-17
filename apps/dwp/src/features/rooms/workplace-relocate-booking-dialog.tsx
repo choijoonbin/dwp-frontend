@@ -1,6 +1,7 @@
 import { useWorkplaceMemberScopeRevision } from './workplace-member-scope-revision';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ShieldCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
@@ -18,11 +19,15 @@ import {
   relocateWorkplaceBooking,
   useToast,
 } from '@dwp-frontend/shared-utils';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
+import Chip from '@mui/material/Chip';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
@@ -142,6 +147,7 @@ export function WorkplaceRelocateBookingDialog({
     isPending: query.isPending,
     required: Boolean(open && booking && startsAt && endsAt),
   });
+  const targetSourceVerified = targetSourceState === 'READY';
   const data = targetSourceState === 'DENIED' ? undefined : query.data;
   const selectedFloor = data?.selectedFloor ?? null;
   const selectedSite = data?.sites.find((site) => site.siteId === selectedFloor?.siteId) ?? null;
@@ -216,7 +222,7 @@ export function WorkplaceRelocateBookingDialog({
     bookingId: booking?.bookingId ?? null,
     generatedAt: data?.generatedAt ?? null,
     queryScope: targetQueryScope,
-    sourceReady: targetSourceState === 'READY',
+    sourceReady: targetSourceVerified,
     resourceVersions: new Map(
       candidates.map((candidate) => [candidate.resourceId, candidate.version])
     ),
@@ -245,7 +251,7 @@ export function WorkplaceRelocateBookingDialog({
     !rangeError &&
     !unchanged &&
     reason.trim() &&
-    targetSourceState === 'READY' &&
+    targetSourceVerified &&
     capabilities.canUpdateWorkplaceBooking &&
     isBookingCurrent(identityKey, booking.bookingId, booking.version)
   );
@@ -301,7 +307,7 @@ export function WorkplaceRelocateBookingDialog({
       ) {
         setFailure({
           scopeKey: submission.scopeKey,
-          outcome: error instanceof HttpError && error.status < 500 ? 'conflict' : 'unknown',
+          outcome: error instanceof HttpError && error.status === 409 ? 'conflict' : 'unknown',
         });
         toast.error(message(error, t('workplace.my.relocate.saveError')));
       }
@@ -339,7 +345,7 @@ export function WorkplaceRelocateBookingDialog({
 
   const submit = () => {
     if (!valid || currentFailure || inFlightRef.current || recheckingScope === scopeKey) return;
-    if (targetSourceState !== 'READY') {
+    if (!targetSourceVerified) {
       toast.error(t('workplace.my.relocate.freshnessRequired'));
       return;
     }
@@ -394,7 +400,7 @@ export function WorkplaceRelocateBookingDialog({
       <Stack spacing={2}>
         {currentFailure ? (
           <InlineFeedback
-            severity="warning"
+            severity={currentFailure.outcome === 'conflict' ? 'error' : 'warning'}
             action={
               <ActionButton
                 intent="secondary"
@@ -405,11 +411,18 @@ export function WorkplaceRelocateBookingDialog({
               </ActionButton>
             }
           >
-            {t(
-              currentFailure.outcome === 'unknown'
-                ? 'workplace.member.bookings.changeUnknown'
-                : 'workplace.experience.conflict'
-            )}
+            <Typography variant="subtitle2" fontWeight="fontWeightBold">
+              {t(
+                currentFailure.outcome === 'unknown'
+                  ? 'workplace.member.bookings.changeUnknown'
+                  : 'workplace.experience.conflict'
+              )}
+            </Typography>
+            <Typography variant="body2">
+              {currentFailure.outcome === 'conflict'
+                ? t('workplace.my.relocate.saveError')
+                : t('workplace.my.relocate.freshnessRequired')}
+            </Typography>
           </InlineFeedback>
         ) : null}
         {booking ? (
@@ -445,7 +458,26 @@ export function WorkplaceRelocateBookingDialog({
         {data && (
           <>
             {targetSourceState === 'READY' && (
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                alignItems={{ xs: 'stretch', sm: 'center' }}
+                justifyContent="space-between"
+                gap={1}
+              >
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={targetSourceVerified ? 'success' : 'default'}
+                  icon={<ShieldCheck size={14} />}
+                  label={t('workplace.home.status.verifiedAt', {
+                    time: formatDate(
+                      data.generatedAt,
+                      { hour: '2-digit', minute: '2-digit', timeZone },
+                      resolveSupportedLocale(i18n.resolvedLanguage)
+                    ),
+                  })}
+                  sx={{ alignSelf: { xs: 'flex-start', sm: 'center' } }}
+                />
                 <ActionButton
                   intent="quiet"
                   loading={query.isFetching}
@@ -453,7 +485,7 @@ export function WorkplaceRelocateBookingDialog({
                 >
                   {t('workplace.my.relocate.refresh')}
                 </ActionButton>
-              </Box>
+              </Stack>
             )}
             <Box
               sx={{
@@ -487,6 +519,87 @@ export function WorkplaceRelocateBookingDialog({
                 onValueChange={(value) => setResourceId(String(value))}
               />
             </Box>
+            {candidates.length > 0 ? (
+              <Box>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  gap={1}
+                  sx={{ mb: 1 }}
+                >
+                  <Typography component="h3" variant="subtitle2" fontWeight="fontWeightBold">
+                    {t('workplace.my.relocate.resource')}
+                  </Typography>
+                  <Chip
+                    size="small"
+                    label={t('workplace.explore.availableCount', { count: candidates.length })}
+                  />
+                </Stack>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                    gap: 1,
+                  }}
+                >
+                  {candidates.slice(0, 4).map((resource) => {
+                    const selected = resource.resourceId === selectedResource?.resourceId;
+                    return (
+                      <ButtonBase
+                        key={resource.resourceId}
+                        type="button"
+                        disabled={targetSourceState !== 'READY'}
+                        aria-pressed={selected}
+                        onClick={() => setResourceId(resource.resourceId)}
+                        sx={{
+                          display: 'block',
+                          minWidth: 0,
+                          p: 1.25,
+                          textAlign: 'left',
+                          border: 1,
+                          borderColor: selected ? 'primary.main' : 'divider',
+                          bgcolor: selected ? 'action.selected' : 'background.paper',
+                          '&:focus-visible': {
+                            outline: '3px solid',
+                            outlineColor: 'primary.light',
+                          },
+                        }}
+                      >
+                        <Stack direction="row" justifyContent="space-between" gap={1}>
+                          <Typography variant="body2" fontWeight="fontWeightBold">
+                            {resource.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {t('workplace.experience.version')} {resource.version}
+                          </Typography>
+                        </Stack>
+                        <Typography variant="caption" color="text.secondary">
+                          {[selectedFloor?.name, resource.neighborhood].filter(Boolean).join(' · ')}
+                        </Typography>
+                        {resource.features.length ? (
+                          <Stack
+                            direction="row"
+                            gap={0.5}
+                            useFlexGap
+                            flexWrap="wrap"
+                            sx={{ mt: 1 }}
+                          >
+                            {resource.features.slice(0, 3).map((feature) => (
+                              <Chip
+                                key={feature}
+                                size="small"
+                                label={t(`features.${feature}`, { defaultValue: feature })}
+                              />
+                            ))}
+                          </Stack>
+                        ) : null}
+                      </ButtonBase>
+                    );
+                  })}
+                </Box>
+              </Box>
+            ) : null}
             <DwpDateTimeProvider locale={i18n.resolvedLanguage} timeZone={timeZone}>
               <Box
                 sx={{

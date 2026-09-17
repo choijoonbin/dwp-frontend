@@ -17,13 +17,17 @@ function notificationWorkspaceTheme(theme: Theme): Theme {
       ...theme.typography,
       h5: {
         ...theme.typography.h5,
-        fontSize: theme.typography.h4.fontSize,
-        lineHeight: theme.typography.h4.lineHeight,
+        fontSize: theme.typography.pxToRem(20),
+        lineHeight: theme.typography.pxToRem(26),
+        fontWeight: theme.typography.fontWeightBold,
+        letterSpacing: theme.typography.pxToRem(0),
       },
       h6: {
         ...theme.typography.h6,
-        fontSize: theme.typography.h5.fontSize,
-        lineHeight: theme.typography.h5.lineHeight,
+        fontSize: theme.typography.pxToRem(16),
+        lineHeight: theme.typography.pxToRem(22),
+        fontWeight: theme.typography.fontWeightBold,
+        letterSpacing: theme.typography.pxToRem(0),
       },
       body2: {
         ...theme.typography.body2,

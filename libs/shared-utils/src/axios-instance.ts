@@ -234,8 +234,19 @@ function withContextScope(url: string, contextScopeKey?: string): string {
 
 async function parseBody(response: Response, responseType: 'json' | 'blob' = 'json') {
   if (response.status === 204) return undefined;
-  if (responseType === 'blob') return response.blob();
-  const text = await response.text();
+  try {
+    if (responseType === 'blob') return await response.blob();
+  } catch (cause) {
+    throw new HttpTransportError('NETWORK', cause);
+  }
+  let text: string;
+  try {
+    text = await response.text();
+  } catch (cause) {
+    // Headers can arrive after a mutation commits while the response body still fails in transit.
+    // Preserve that ambiguity for callers that must retry with the same idempotency identity.
+    throw new HttpTransportError('NETWORK', cause);
+  }
   if (!text) return undefined;
   try {
     return JSON.parse(text);

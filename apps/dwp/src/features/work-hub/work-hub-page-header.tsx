@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DatabaseZap, Plus } from 'lucide-react';
-import { ActionButton, LiveStatus } from '@dwp-frontend/design-system';
+import { ActionButton, foundationTokens, LiveStatus } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import type { workspaceWorkFreshness } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
@@ -62,7 +62,9 @@ export function WorkHubPageHeader({
               fontWeight: 'fontWeightBold',
               fontSize: { xs: 'h5.fontSize', md: 'h4.fontSize' },
               letterSpacing: 'h4.letterSpacing',
-              '@media (max-width: 359.95px)': { fontSize: '1.125rem' },
+              '@media (max-width: 359.95px)': {
+                fontSize: foundationTokens.workplace.typography.subsectionTitle.fontSize,
+              },
             }}
           >
             {t(`work:workHub.viewTitles.${view}`)}

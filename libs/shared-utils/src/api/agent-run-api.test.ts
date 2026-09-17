@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getDwaionUserRun, getDwaionUserRuns } from './agent-run-api';
+import { getDwaionUserRun, getDwaionUserRunPage, getDwaionUserRuns } from './agent-run-api';
 
 const run = {
   runId: 'aaaaaaaa-0000-4000-8000-000000000101',
@@ -86,6 +86,68 @@ describe('Agent run API', () => {
   it('fails closed for malformed activity responses', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ success: true, data: [{}] })));
     await expect(getDwaionUserRuns()).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('requests a bounded time page and validates its continuation cursor', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      response({
+        success: true,
+        data: [run],
+        snapshotAt: '2026-09-01T00:00:00Z',
+        nextCursor: 'signed-cursor',
+        hasMore: true,
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      getDwaionUserRunPage({
+        limit: 50,
+        from: '2026-08-02T00:00:00Z',
+        to: '2026-09-01T00:00:00Z',
+        cursor: 'current-cursor',
+      })
+    ).resolves.toEqual({
+      runs: [run],
+      snapshotAt: '2026-09-01T00:00:00Z',
+      nextCursor: 'signed-cursor',
+      hasMore: true,
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/agent/v1/runs?limit=50&from=2026-08-02T00%3A00%3A00Z&to=2026-09-01T00%3A00%3A00Z&cursor=current-cursor',
+      expect.objectContaining({ method: 'GET', credentials: 'include' })
+    );
+  });
+
+  it.each([
+    { nextCursor: null, hasMore: true },
+    { nextCursor: 'unexpected', hasMore: false },
+    { nextCursor: null, hasMore: 'yes' },
+    { nextCursor: null, hasMore: false, snapshotAt: 'not-a-date' },
+  ])('fails closed for malformed activity page metadata %#', async (metadata) => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(response({ success: true, data: [run], ...metadata }))
+    );
+
+    await expect(getDwaionUserRunPage()).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('rejects unscoped time values and invalid cursors before dispatch', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(getDwaionUserRunPage({ from: '2026-08-01T00:00:00' })).rejects.toBeInstanceOf(
+      TypeError
+    );
+    await expect(getDwaionUserRunPage({ cursor: '' })).rejects.toBeInstanceOf(TypeError);
+    await expect(
+      getDwaionUserRunPage({
+        from: '2026-09-01T00:00:00Z',
+        to: '2026-08-01T00:00:00Z',
+      })
+    ).rejects.toBeInstanceOf(TypeError);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('accepts measured run evidence without deriving or inventing telemetry', async () => {

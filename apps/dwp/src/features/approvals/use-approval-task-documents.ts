@@ -210,6 +210,7 @@ export function useApprovalTaskDocuments(
     if (denied(error)) {
       deniedRef.current = true;
       setSourceDenied(true);
+      setDialog(null);
     }
     artifactRef.current = null;
     artifactCommand.current = null;

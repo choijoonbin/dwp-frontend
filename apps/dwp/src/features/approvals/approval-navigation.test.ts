@@ -37,6 +37,19 @@ describe('approval product navigation', () => {
       'delegations',
     ]);
     expect(administration?.every((item) => isApprovalAdminView(item.view))).toBe(true);
+    expect(administration?.map((item) => item.view)).toEqual([
+      'admin-overview',
+      'forms',
+      'workflows',
+      'routing',
+      'policies',
+      'integrations',
+      'audit',
+      'operations',
+      'signatures',
+      'analytics',
+      'deployments',
+    ]);
     expect(administration?.every((item) => item.requiredResourceKey?.startsWith('ADMIN.'))).toBe(
       true
     );
@@ -46,6 +59,7 @@ describe('approval product navigation', () => {
     expect(findApprovalNavigationItem('/approvals/inbox')?.view).toBe('inbox');
     expect(findApprovalNavigationItem('/approvals/completed')?.view).toBe('completed');
     expect(findApprovalNavigationItem('/approvals/admin/workflows')?.view).toBe('workflows');
+    expect(findApprovalNavigationItem('/approvals/admin/deployments')?.view).toBe('deployments');
     expect(findApprovalNavigationItem('/approvals/inbox/other')).toBeUndefined();
   });
 
@@ -78,7 +92,7 @@ describe('approval product navigation', () => {
     ];
     const serializedAccess = JSON.stringify(surfaceItems.map((item) => item.access));
 
-    expect(surfaceItems).toHaveLength(15);
+    expect(surfaceItems).toHaveLength(20);
     expect(serializedAccess).not.toContain('MANAGE');
     expect(serializedAccess).not.toContain('ADMIN.APPROVAL');
     expect(

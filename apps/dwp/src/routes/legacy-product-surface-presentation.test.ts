@@ -73,7 +73,7 @@ const CONTRACTLESS_PRODUCT_CASES = [
   },
   {
     productId: 'workplace',
-    workPath: '/workplace/rooms',
+    workPath: '/workplace/find',
     managementPath: '/workplace/admin/meeting-policy',
   },
 ] as const;

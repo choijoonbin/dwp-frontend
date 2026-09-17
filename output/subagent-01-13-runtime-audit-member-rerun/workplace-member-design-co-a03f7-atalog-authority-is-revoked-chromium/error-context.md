@@ -1,0 +1,80 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - generic "0 actionable notifications, 0 total unread" [ref=e27]:
+            - button "0 actionable notifications, 0 total unread" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]:
+                - img [ref=e30]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+          - generic "Open DWAI·ON" [ref=e39]:
+            - button "Open DWAI·ON" [ref=e40] [cursor=pointer]
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - img [ref=e49]
+              - generic [ref=e52]:
+                - heading "Find a space · Pangyo HQ · 12F" [active] [level=1] [ref=e53]: Pangyo HQ · 12F
+                - text: 2026-08-19 · 09:30 · 60 min
+            - button "Filters" [ref=e54] [cursor=pointer]:
+              - img [ref=e56]
+              - text: Filters
+          - generic [ref=e58]:
+            - status [ref=e60]: 1 of 1 results · 1 pass initial booking checks
+            - group "View mode" [ref=e61]:
+              - button "List view" [pressed] [ref=e62] [cursor=pointer]:
+                - img [ref=e63]
+              - button "Map view" [disabled]:
+                - img
+        - region "Pangyo HQ" [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - img [ref=e68]
+              - generic [ref=e72]:
+                - heading "Pangyo HQ" [level=2] [ref=e73]
+                - text: 12F · 1 results
+            - generic "Space status legend" [ref=e74]:
+              - generic [ref=e77]: Open by reservation state
+              - generic [ref=e80]: Occupied
+              - generic [ref=e83]: My booking
+              - generic [ref=e86]: Assigned
+              - generic [ref=e89]: Drop-in
+              - generic [ref=e92]: Unavailable
+          - status [ref=e93]:
+            - img [ref=e95]
+            - generic [ref=e99]:
+              - heading "A floor plan has not been registered for this floor" [level=6] [ref=e100]
+              - paragraph [ref=e101]: Use the list to review space details and availability.
+          - article [ref=e103]:
+            - generic [ref=e106]:
+              - img [ref=e107]
+              - generic [ref=e109]: Photo unavailable
+              - button "Try again" [ref=e110] [cursor=pointer]
+            - button "Focus desk 12 Desk · Focus zone · MONITOR · STANDING Open by reservation state Initial booking checks passed" [ref=e111] [cursor=pointer]:
+              - img [ref=e113]
+              - generic [ref=e115]:
+                - heading "Focus desk 12" [level=6] [ref=e116]
+                - generic [ref=e117]: Desk · Focus zone · MONITOR · STANDING
+              - generic [ref=e118]:
+                - generic [ref=e120]: Open by reservation state
+                - generic [ref=e122]: Initial booking checks passed
+```

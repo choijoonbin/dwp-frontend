@@ -541,93 +541,97 @@ function ApprovalOperationsWorkbench() {
               />
             }
           >
-          <Tabs
-            value={queue}
-            onChange={(_, value: ApprovalOperationsQueue) => setQueue(value)}
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label={t('admin.operationsQueue.title')}
-          >
-            {(['sla', 'delivery', 'resolved'] as const).map((value) => (
-              <Tab
-                key={value}
-                value={value}
-                disabled={Boolean(nativeProposal)}
-                id={`approval-operations-${value}-tab`}
-                aria-controls={`approval-operations-${value}-panel`}
-                label={t(`admin.operationsQueue.${value}`)}
+            <Tabs
+              value={queue}
+              onChange={(_, value: ApprovalOperationsQueue) => setQueue(value)}
+              variant="scrollable"
+              scrollButtons="auto"
+              aria-label={t('admin.operationsQueue.title')}
+            >
+              {(['sla', 'delivery', 'resolved'] as const).map((value) => (
+                <Tab
+                  key={value}
+                  value={value}
+                  disabled={Boolean(nativeProposal)}
+                  id={`approval-operations-${value}-tab`}
+                  aria-controls={`approval-operations-${value}-panel`}
+                  label={t(`admin.operationsQueue.${value}`)}
+                />
+              ))}
+            </Tabs>
+            <Box
+              sx={{
+                p: 1.5,
+                display: 'grid',
+                gridTemplateColumns: { xs: 'minmax(0,1fr)', sm: 'repeat(2,minmax(0,1fr))' },
+                gap: 1,
+              }}
+            >
+              <SelectField
+                size="small"
+                label={t('admin.integrations.columns.status')}
+                value={status}
+                disabled={queue !== 'delivery' || Boolean(nativeProposal)}
+                options={(['ALL', 'PENDING', 'SENDING', 'FAILED', 'DEAD'] as const).map(
+                  (value) => ({
+                    value,
+                    label:
+                      value === 'ALL'
+                        ? t('admin.operationsQueue.allStatuses')
+                        : t(`status.${value}`),
+                  })
+                )}
+                onValueChange={(value) => value && setStatus(value)}
               />
-            ))}
-          </Tabs>
-          <Box
-            sx={{
-              p: 1.5,
-              display: 'grid',
-              gridTemplateColumns: { xs: 'minmax(0,1fr)', sm: 'repeat(2,minmax(0,1fr))' },
-              gap: 1,
-            }}
-          >
-            <SelectField
-              size="small"
-              label={t('admin.integrations.columns.status')}
-              value={status}
-              disabled={queue !== 'delivery' || Boolean(nativeProposal)}
-              options={(['ALL', 'PENDING', 'SENDING', 'FAILED', 'DEAD'] as const).map((value) => ({
-                value,
-                label:
-                  value === 'ALL' ? t('admin.operationsQueue.allStatuses') : t(`status.${value}`),
-              }))}
-              onValueChange={(value) => value && setStatus(value)}
-            />
-            <SelectField
-              size="small"
-              label={t('admin.operationsQueue.sort')}
-              value={sort}
-              disabled={queue === 'sla' || Boolean(nativeProposal)}
-              options={(['OLDEST', 'NEWEST', 'AVAILABLE'] as const).map((value) => ({
-                value,
-                label: t(`admin.operationsQueue.sorts.${value}`),
-              }))}
-              onValueChange={(value) => value && setSort(value)}
-            />
-          </Box>
-          <Box
-            role="tabpanel"
-            id={`approval-operations-${queue}-panel`}
-            aria-labelledby={`approval-operations-${queue}-tab`}
-            tabIndex={0}
-          >
-            {queue === 'sla' ? (
-              <ApprovalOperationsTaskPane
-                tasks={tasks}
-                selected={selectedTask}
-                selectedIds={selectedIds}
-                canOperate={operationWriteReady}
-                busy={Boolean(nativeProposal)}
-                onSelect={(task) => selectForInspection(task.taskId)}
-                onToggle={toggleSelection}
-                onToggleVisible={(targets, checked) =>
-                  replaceSelection(checked ? targets.map((target) => target.taskId) : [])
-                }
-                onReassign={openTaskCommand}
+              <SelectField
+                size="small"
+                label={t('admin.operationsQueue.sort')}
+                value={sort}
+                disabled={queue === 'sla' || Boolean(nativeProposal)}
+                options={(['OLDEST', 'NEWEST', 'AVAILABLE'] as const).map((value) => ({
+                  value,
+                  label: t(`admin.operationsQueue.sorts.${value}`),
+                }))}
+                onValueChange={(value) => value && setSort(value)}
               />
-            ) : (
-              <ApprovalOperationsDeliveryPane
-                deliveries={deliveries}
-                selected={selectedDelivery}
-                selectedIds={selectedIds}
-                canOperate={operationWriteReady && queue === 'delivery'}
-                busy={Boolean(nativeProposal)}
-                formatTimestamp={formatTimestamp}
-                onSelect={(delivery) => selectForInspection(delivery.outboxId)}
-                onToggle={toggleSelection}
-                onToggleVisible={(targets, checked) =>
-                  replaceSelection(checked ? targets.map((target) => target.outboxId) : [])
-                }
-                onNative={openDeliveryCommand}
-              />
-            )}
-          </Box>
+            </Box>
+            <Box
+              role="tabpanel"
+              id={`approval-operations-${queue}-panel`}
+              aria-labelledby={`approval-operations-${queue}-tab`}
+              tabIndex={0}
+            >
+              {queue === 'sla' ? (
+                <ApprovalOperationsTaskPane
+                  tasks={tasks}
+                  selected={selectedTask}
+                  selectedIds={selectedIds}
+                  canOperate={operationWriteReady}
+                  busy={Boolean(nativeProposal)}
+                  onSelect={(task) => selectForInspection(task.taskId)}
+                  onToggle={toggleSelection}
+                  onToggleVisible={(targets, checked) =>
+                    replaceSelection(checked ? targets.map((target) => target.taskId) : [])
+                  }
+                  onReassign={openTaskCommand}
+                />
+              ) : (
+                <ApprovalOperationsDeliveryPane
+                  deliveries={deliveries}
+                  selected={selectedDelivery}
+                  selectedIds={selectedIds}
+                  canOperate={operationWriteReady && queue === 'delivery'}
+                  busy={Boolean(nativeProposal)}
+                  formatTimestamp={formatTimestamp}
+                  onSelect={(delivery) => selectForInspection(delivery.outboxId)}
+                  onToggle={toggleSelection}
+                  onToggleVisible={(targets, checked) =>
+                    replaceSelection(checked ? targets.map((target) => target.outboxId) : [])
+                  }
+                  onNative={openDeliveryCommand}
+                />
+              )}
+            </Box>
           </ApprovalSurface>
         </Box>
         <Box
@@ -816,7 +820,7 @@ function ApprovalRestrictedOperations({
                     sx={{
                       display: 'block',
                       typography: 'body2',
-                      fontWeight: 700,
+                      fontWeight: 'fontWeightBold',
                       overflowWrap: 'anywhere',
                     }}
                   >

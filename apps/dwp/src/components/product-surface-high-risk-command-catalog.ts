@@ -1,3 +1,8 @@
+import { APPROVAL_RELEASE15_HIGH_RISK_ROUTE_OPERATIONS } from '../../../../libs/shared-utils/src/api/approval-release15-action-contracts.ts';
+
+type ApprovalRelease15HighRiskOperation =
+  (typeof APPROVAL_RELEASE15_HIGH_RISK_ROUTE_OPERATIONS)[number]['operation'];
+
 export type ProductSurfaceHighRiskOperation =
   | 'WORKFLOW_PUBLISH'
   | 'FORM_PUBLISH'
@@ -26,7 +31,8 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_INTEGRATION_CONFIGURATION_CHECK'
   | 'HCM_INTEGRATION_EXECUTE'
   | 'HCM_INTEGRATION_RETRY'
-  | 'HCM_INTEGRATION_RECONCILE';
+  | 'HCM_INTEGRATION_RECONCILE'
+  | ApprovalRelease15HighRiskOperation;
 
 export type ProductSurfaceHighRiskCommandCatalogEntry = Readonly<{
   operation: ProductSurfaceHighRiskOperation;
@@ -116,6 +122,15 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       surfaceKey: 'approvals.admin',
       routeContractKey: 'route.approvals.admin.operations.task-batch-reassign.action',
     },
+    ...APPROVAL_RELEASE15_HIGH_RISK_ROUTE_OPERATIONS.map(
+      ({ operation, routeContractKey }) =>
+        ({
+          operation,
+          productKey: 'approvals',
+          surfaceKey: 'approvals.admin',
+          routeContractKey,
+        }) as const
+    ),
     {
       operation: 'HCM_ORG_PUBLISH',
       productKey: 'hcm',

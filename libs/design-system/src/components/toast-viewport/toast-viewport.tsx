@@ -15,7 +15,13 @@ export function ToastViewport() {
       anchorOrigin={toast.anchorOrigin}
       autoHideDuration={6000}
       onClose={toast.hide}
-      sx={{ pointerEvents: 'none' }}
+      sx={{
+        pointerEvents: 'none',
+        bottom: {
+          xs: 'calc(8px + var(--dwp-mobile-fixed-footer-offset, 0px))',
+          sm: 'calc(24px + var(--dwp-mobile-fixed-footer-offset, 0px))',
+        },
+      }}
     >
       <Alert
         variant="filled"

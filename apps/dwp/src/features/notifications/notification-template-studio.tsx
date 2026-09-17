@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import {
   CheckCircle2,
   ChevronRight,
@@ -52,6 +53,7 @@ import { NotificationTemplateComparison } from './notification-governance-compar
 import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
 import { NotificationChannelTemplatePreview } from './notification-template-preview';
 import { NotificationTemplateDetailWorkspace } from './notification-template-detail-workspace';
+import { notificationAdminFocus } from './notification-admin-focus';
 
 type EditorState = NotificationTemplateContent & {
   changeReason: string;
@@ -319,6 +321,8 @@ export function NotificationTemplateStudio() {
   const { hasPermission } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const requestedRevisionId = notificationAdminFocus(searchParams, 'revisionId');
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -362,8 +366,20 @@ export function NotificationTemplateStudio() {
     : null;
 
   useEffect(() => {
+    const requested = requestedRevisionId
+      ? variants.find(
+          (variant) =>
+            variant.draft?.revisionId === requestedRevisionId ||
+            variant.publishedOverride?.revisionId === requestedRevisionId
+        )
+      : null;
+    if (requested) {
+      setSelectedKey(variantKey(requested));
+      setMobileDetailOpen(true);
+      return;
+    }
     if (!selectedKey && variants.length) setSelectedKey(variantKey(variants[0]));
-  }, [selectedKey, variants]);
+  }, [requestedRevisionId, selectedKey, variants]);
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.adminTemplates() });

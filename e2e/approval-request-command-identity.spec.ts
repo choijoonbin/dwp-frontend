@@ -4,6 +4,7 @@ import { mockShellSession } from './support/shell-session';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
 import { installApprovalInformationWireCapture } from './support/approval-information-wire-fixtures';
+import { assertApprovalSubmissionBlocked } from './support/approval-request-submission';
 import {
   APPROVAL_FORM_DETAIL_FIXTURE,
   APPROVAL_REQUEST_DETAIL_FIXTURE,
@@ -93,7 +94,7 @@ test('상신의 실제 original key를 전송하고 첫 503 이후 같은 초안
   await expect(page.getByRole('textbox', { name: '제목', exact: true })).toHaveValue(
     APPROVAL_REQUEST_FIXTURE.title
   );
-  await page.getByRole('button', { name: '결재 상신', exact: true }).click();
+  await page.getByRole('button', { name: '검토', exact: true }).click();
   const preflight = page.getByRole('dialog');
   await preflight.getByRole('button', { name: '결재 상신', exact: true }).click();
   const recovery = page
@@ -105,7 +106,7 @@ test('상신의 실제 original key를 전송하고 첫 503 이후 같은 초안
   expect(commands[0]!.body).toEqual({ expectedVersion: 3 });
   await expect(page.getByRole('textbox', { name: '제목', exact: true })).toBeDisabled();
   await recovery.getByRole('button', { name: '새로고침', exact: true }).click();
-  await expect(page.getByRole('button', { name: '결재 상신', exact: true })).toBeDisabled();
+  await assertApprovalSubmissionBlocked(page);
   await expect(page.getByRole('button', { name: '저장하고 닫기', exact: true })).toBeDisabled();
   await expect(page.getByRole('textbox', { name: '제목', exact: true })).toHaveValue(
     APPROVAL_REQUEST_FIXTURE.title

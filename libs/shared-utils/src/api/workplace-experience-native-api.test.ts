@@ -100,6 +100,12 @@ describe('Native Workplace experience gateway contracts', () => {
       version: 7,
       reason: 'Engineer assigned',
       confirmed: true,
+      priority: 'HIGH' as const,
+      assignedTo: 'Facilities A',
+      serviceProvider: 'Approved Vendor',
+      externalWorkOrderReference: 'WO-1202',
+      slaDueAt: '2026-09-16T08:00:00Z',
+      clearSla: false,
     };
     await changeWorkplaceFacilityRequestStatus('site/1', 'request/1', body);
     expect(fetchMock.mock.calls[2]?.[0]).toBe(

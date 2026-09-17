@@ -1,0 +1,122 @@
+{
+  "messaging": {
+    "module": "dwp-messaging-server",
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "files": [
+      {
+        "class": "com.dwp.services.messaging.api.MessagingControllerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.messaging.domain.MessagingServiceTest",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.messaging.security.MessagingWorkSourceSecurityFilterTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "platform-personal": {
+    "module": "dwp-platform-server",
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "files": [
+      {
+        "class": "com.dwp.services.platform.workhub.personal.MessagingMessageSourceResolverTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.platform.workhub.personal.PersonalWorkControllerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.platform.workhub.personal.PersonalWorkServiceTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "auth": {
+    "module": "dwp-auth-server",
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "files": [
+      {
+        "class": "com.dwp.services.auth.controller.AccessReviewWorkControllerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.auth.identity.WorkforceIdentitySyncServiceTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.auth.identity.WorkforceIdentityWorkerNumberMigrationPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.dwp.services.auth.service.AccessReviewWorkServiceTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "people": {
+    "module": "dwp-people-server",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "files": [
+      {
+        "class": "com.dwp.services.people.integration.HrisIdentityProjectionContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  }
+}

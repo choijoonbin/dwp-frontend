@@ -1,0 +1,315 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "알림 탐색 열기" [ref=e8]:
+          - button "알림 탐색 열기" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "알림" [ref=e19]
+        - generic [ref=e20]:
+          - button "DWP 검색" [ref=e22] [cursor=pointer]:
+            - img [ref=e23]
+          - generic "조치 필요 알림 1건, 전체 새 알림 6건" [ref=e28]:
+            - button "조치 필요 알림 1건, 전체 새 알림 6건" [ref=e29] [cursor=pointer]:
+              - generic [ref=e30]:
+                - img [ref=e31]
+                - generic [ref=e34]: "6"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e36] [cursor=pointer]':
+            - generic [ref=e37]: T
+            - img [ref=e38]
+    - main [ref=e40]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e52]:
+              - generic [ref=e53]:
+                - heading "알림 센터" [level=1] [ref=e54]
+                - generic [ref=e57]: 주기적으로 동기화 중
+              - generic [ref=e58]: 최근 동기화 오후 04:00
+          - generic "알림 설정" [ref=e59]:
+            - button "알림 설정" [ref=e60] [cursor=pointer]:
+              - img [ref=e61]
+        - region "알림 보기 및 필터" [ref=e64]:
+          - navigation "알림 센터 보기" [ref=e65]:
+            - button "받은 알림6" [ref=e66] [cursor=pointer]:
+              - img [ref=e68]
+              - text: 받은 알림6
+            - button "조치 필요1" [ref=e71] [cursor=pointer]:
+              - img [ref=e73]
+              - text: 조치 필요1
+            - button "나를 멘션1" [ref=e75] [cursor=pointer]:
+              - img [ref=e77]
+              - text: 나를 멘션1
+            - button "저장됨0" [ref=e80] [cursor=pointer]:
+              - img [ref=e82]
+              - text: 저장됨0
+            - button "나중에0" [ref=e84] [cursor=pointer]:
+              - img [ref=e86]
+              - text: 나중에0
+            - button "정리됨0" [ref=e89] [cursor=pointer]:
+              - img [ref=e91]
+              - text: 정리됨0
+          - generic [ref=e94]:
+            - generic [ref=e96]:
+              - img [ref=e98]
+              - textbox "알림 검색" [ref=e101]:
+                - /placeholder: 제목, 소스 또는 안전한 미리보기 검색
+              - group
+            - generic "상세 필터" [ref=e102]:
+              - button "상세 필터" [ref=e103] [cursor=pointer]:
+                - img [ref=e104]
+            - 'button "저장된 뷰: 저장된 뷰" [ref=e106] [cursor=pointer]':
+              - img [ref=e108]
+              - text: 저장된 뷰
+              - img [ref=e111]
+        - region "알림 표시 방식" [ref=e113]:
+          - generic [ref=e114]:
+            - generic [ref=e115]: 표시 밀도
+            - radiogroup "표시 밀도" [ref=e116]:
+              - radio "간결하게" [ref=e117] [cursor=pointer]:
+                - img [ref=e118]
+                - generic [ref=e120]: 간결하게
+              - radio "자세히" [checked] [ref=e121] [cursor=pointer]:
+                - img [ref=e122]
+                - generic [ref=e125]: 자세히
+          - 'button "알림 묶기: 묶지 않음" [ref=e126] [cursor=pointer]':
+            - img [ref=e128]
+            - generic [ref=e130]: "알림 묶기:"
+            - text: 묶지 않음
+            - img [ref=e132]
+        - list "알림 목록" [ref=e136]:
+          - listitem [ref=e137]:
+            - list [ref=e138]:
+              - listitem [ref=e139]:
+                - article "수신 이유 DIRECT, 읽지 않은 알림" [ref=e140]:
+                  - generic [ref=e141]:
+                    - generic [ref=e142] [cursor=pointer]:
+                      - checkbox "수신 이유 DIRECT 선택" [ref=e143]
+                      - img [ref=e144]
+                    - img [ref=e147]
+                    - generic [ref=e150]:
+                      - generic [ref=e151]:
+                        - generic [ref=e152]:
+                          - generic [ref=e153]: 전자결재
+                          - generic [ref=e154]: 김민서
+                          - generic [ref=e156]: 긴급
+                          - generic [ref=e158]: 조치 필요
+                        - time [ref=e159]: 28일 전
+                      - button "수신 이유 DIRECT" [ref=e160] [cursor=pointer]:
+                        - heading "수신 이유 DIRECT" [level=3] [ref=e161]
+                      - paragraph [ref=e162]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                      - generic [ref=e163]:
+                        - generic [ref=e164]: 직접 수신
+                        - generic [ref=e165]: · 8월 19일 오후 11:59까지
+                      - generic [ref=e166]:
+                        - button "검토하기" [ref=e168] [cursor=pointer]:
+                          - text: 검토하기
+                          - img [ref=e170]
+                        - generic [ref=e172]:
+                          - generic "상세 보기" [ref=e173]:
+                            - button "상세 보기" [ref=e174] [cursor=pointer]:
+                              - img [ref=e175]
+                          - generic "저장" [ref=e177]:
+                            - button "저장" [ref=e178] [cursor=pointer]:
+                              - img [ref=e179]
+                          - generic "나중에 알림" [ref=e181]:
+                            - button "나중에 알림" [ref=e182] [cursor=pointer]:
+                              - img [ref=e183]
+                          - generic "알림 정리" [ref=e186]:
+                            - button "알림 정리" [ref=e187] [cursor=pointer]:
+                              - img [ref=e188]
+              - listitem [ref=e190]:
+                - article "수신 이유 MENTION, 읽지 않은 알림" [ref=e191]:
+                  - generic [ref=e192]:
+                    - generic [ref=e193] [cursor=pointer]:
+                      - checkbox "수신 이유 MENTION 선택" [ref=e194]
+                      - img [ref=e195]
+                    - img [ref=e198]
+                    - generic [ref=e201]:
+                      - generic [ref=e202]:
+                        - generic [ref=e203]:
+                          - generic [ref=e204]: 전자결재
+                          - generic [ref=e205]: 김민서
+                          - generic [ref=e207]: 긴급
+                        - time [ref=e208]: 28일 전
+                      - button "수신 이유 MENTION" [ref=e209] [cursor=pointer]:
+                        - heading "수신 이유 MENTION" [level=3] [ref=e210]
+                      - paragraph [ref=e211]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                      - generic [ref=e212]:
+                        - generic [ref=e213]: 나를 멘션함
+                        - generic [ref=e214]: · 8월 19일 오후 11:59까지
+                      - generic [ref=e215]:
+                        - button "검토하기" [ref=e217] [cursor=pointer]:
+                          - text: 검토하기
+                          - img [ref=e219]
+                        - generic [ref=e221]:
+                          - generic "상세 보기" [ref=e222]:
+                            - button "상세 보기" [ref=e223] [cursor=pointer]:
+                              - img [ref=e224]
+                          - generic "저장" [ref=e226]:
+                            - button "저장" [ref=e227] [cursor=pointer]:
+                              - img [ref=e228]
+                          - generic "나중에 알림" [ref=e230]:
+                            - button "나중에 알림" [ref=e231] [cursor=pointer]:
+                              - img [ref=e232]
+                          - generic "알림 정리" [ref=e235]:
+                            - button "알림 정리" [ref=e236] [cursor=pointer]:
+                              - img [ref=e237]
+              - listitem [ref=e239]:
+                - article "수신 이유 ROLE, 읽지 않은 알림" [ref=e240]:
+                  - generic [ref=e241]:
+                    - generic [ref=e242] [cursor=pointer]:
+                      - checkbox "수신 이유 ROLE 선택" [ref=e243]
+                      - img [ref=e244]
+                    - img [ref=e247]
+                    - generic [ref=e250]:
+                      - generic [ref=e251]:
+                        - generic [ref=e252]:
+                          - generic [ref=e253]: 전자결재
+                          - generic [ref=e254]: 김민서
+                          - generic [ref=e256]: 긴급
+                        - time [ref=e257]: 28일 전
+                      - button "수신 이유 ROLE" [ref=e258] [cursor=pointer]:
+                        - heading "수신 이유 ROLE" [level=3] [ref=e259]
+                      - paragraph [ref=e260]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                      - generic [ref=e261]:
+                        - generic [ref=e262]: 담당 역할에 포함됨
+                        - generic [ref=e263]: · 8월 19일 오후 11:59까지
+                      - generic [ref=e264]:
+                        - button "검토하기" [ref=e266] [cursor=pointer]:
+                          - text: 검토하기
+                          - img [ref=e268]
+                        - generic [ref=e270]:
+                          - generic "상세 보기" [ref=e271]:
+                            - button "상세 보기" [ref=e272] [cursor=pointer]:
+                              - img [ref=e273]
+                          - generic "저장" [ref=e275]:
+                            - button "저장" [ref=e276] [cursor=pointer]:
+                              - img [ref=e277]
+                          - generic "나중에 알림" [ref=e279]:
+                            - button "나중에 알림" [ref=e280] [cursor=pointer]:
+                              - img [ref=e281]
+                          - generic "알림 정리" [ref=e284]:
+                            - button "알림 정리" [ref=e285] [cursor=pointer]:
+                              - img [ref=e286]
+              - listitem [ref=e288]:
+                - article "수신 이유 ORGANIZATION, 읽지 않은 알림" [ref=e289]:
+                  - generic [ref=e290]:
+                    - generic [ref=e291] [cursor=pointer]:
+                      - checkbox "수신 이유 ORGANIZATION 선택" [ref=e292]
+                      - img [ref=e293]
+                    - img [ref=e296]
+                    - generic [ref=e299]:
+                      - generic [ref=e300]:
+                        - generic [ref=e301]:
+                          - generic [ref=e302]: 전자결재
+                          - generic [ref=e303]: 김민서
+                          - generic [ref=e305]: 긴급
+                        - time [ref=e306]: 28일 전
+                      - button "수신 이유 ORGANIZATION" [ref=e307] [cursor=pointer]:
+                        - heading "수신 이유 ORGANIZATION" [level=3] [ref=e308]
+                      - paragraph [ref=e309]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                      - generic [ref=e310]:
+                        - generic [ref=e311]: 소속 조직에 전달됨
+                        - generic [ref=e312]: · 8월 19일 오후 11:59까지
+                      - generic [ref=e313]:
+                        - button "검토하기" [ref=e315] [cursor=pointer]:
+                          - text: 검토하기
+                          - img [ref=e317]
+                        - generic [ref=e319]:
+                          - generic "상세 보기" [ref=e320]:
+                            - button "상세 보기" [ref=e321] [cursor=pointer]:
+                              - img [ref=e322]
+                          - generic "저장" [ref=e324]:
+                            - button "저장" [ref=e325] [cursor=pointer]:
+                              - img [ref=e326]
+                          - generic "나중에 알림" [ref=e328]:
+                            - button "나중에 알림" [ref=e329] [cursor=pointer]:
+                              - img [ref=e330]
+                          - generic "알림 정리" [ref=e333]:
+                            - button "알림 정리" [ref=e334] [cursor=pointer]:
+                              - img [ref=e335]
+              - listitem [ref=e337]:
+                - article "수신 이유 SUBSCRIPTION, 읽지 않은 알림" [ref=e338]:
+                  - generic [ref=e339]:
+                    - generic [ref=e340] [cursor=pointer]:
+                      - checkbox "수신 이유 SUBSCRIPTION 선택" [ref=e341]
+                      - img [ref=e342]
+                    - img [ref=e345]
+                    - generic [ref=e348]:
+                      - generic [ref=e349]:
+                        - generic [ref=e350]:
+                          - generic [ref=e351]: 전자결재
+                          - generic [ref=e352]: 김민서
+                          - generic [ref=e354]: 긴급
+                        - time [ref=e355]: 28일 전
+                      - button "수신 이유 SUBSCRIPTION" [ref=e356] [cursor=pointer]:
+                        - heading "수신 이유 SUBSCRIPTION" [level=3] [ref=e357]
+                      - paragraph [ref=e358]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                      - generic [ref=e359]:
+                        - generic [ref=e360]: 구독 중인 소식
+                        - generic [ref=e361]: · 8월 19일 오후 11:59까지
+                      - generic [ref=e362]:
+                        - button "검토하기" [ref=e364] [cursor=pointer]:
+                          - text: 검토하기
+                          - img [ref=e366]
+                        - generic [ref=e368]:
+                          - generic "상세 보기" [ref=e369]:
+                            - button "상세 보기" [ref=e370] [cursor=pointer]:
+                              - img [ref=e371]
+                          - generic "저장" [ref=e373]:
+                            - button "저장" [ref=e374] [cursor=pointer]:
+                              - img [ref=e375]
+                          - generic "나중에 알림" [ref=e377]:
+                            - button "나중에 알림" [ref=e378] [cursor=pointer]:
+                              - img [ref=e379]
+                          - generic "알림 정리" [ref=e382]:
+                            - button "알림 정리" [ref=e383] [cursor=pointer]:
+                              - img [ref=e384]
+              - listitem [ref=e386]:
+                - article "수신 이유 MANDATORY_POLICY, 읽지 않은 알림" [ref=e387]:
+                  - generic [ref=e388]:
+                    - generic [ref=e389] [cursor=pointer]:
+                      - checkbox "수신 이유 MANDATORY_POLICY 선택" [ref=e390]
+                      - img [ref=e391]
+                    - img [ref=e394]
+                    - generic [ref=e397]:
+                      - generic [ref=e398]:
+                        - generic [ref=e399]:
+                          - generic [ref=e400]: 전자결재
+                          - generic [ref=e401]: 김민서
+                          - generic [ref=e403]: 긴급
+                        - time [ref=e404]: 28일 전
+                      - button "수신 이유 MANDATORY_POLICY" [ref=e405] [cursor=pointer]:
+                        - heading "수신 이유 MANDATORY_POLICY" [level=3] [ref=e406]
+                      - paragraph [ref=e407]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                      - generic [ref=e408]:
+                        - generic [ref=e409]: 필수 정책 알림
+                        - generic [ref=e410]: · 8월 19일 오후 11:59까지
+                      - generic [ref=e411]:
+                        - button "검토하기" [ref=e413] [cursor=pointer]:
+                          - text: 검토하기
+                          - img [ref=e415]
+                        - generic [ref=e417]:
+                          - generic "상세 보기" [ref=e418]:
+                            - button "상세 보기" [ref=e419] [cursor=pointer]:
+                              - img [ref=e420]
+                          - generic "저장" [ref=e422]:
+                            - button "저장" [ref=e423] [cursor=pointer]:
+                              - img [ref=e424]
+                          - generic "나중에 알림" [ref=e426]:
+                            - button "나중에 알림" [ref=e427] [cursor=pointer]:
+                              - img [ref=e428]
+                          - generic "알림 정리" [ref=e431]:
+                            - button "알림 정리" [ref=e432] [cursor=pointer]:
+                              - img [ref=e433]
+        - status [ref=e435]
+```

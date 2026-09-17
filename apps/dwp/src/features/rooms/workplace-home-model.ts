@@ -2,6 +2,7 @@ import { Temporal } from 'temporal-polyfill';
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { workplaceBookingActionPolicy } from './workplace-booking-action-policy';
 import { workplaceBookingBlockCode } from './workplace-discovery-model';
+import { parseWorkplaceFindUrl } from './workplace-find-url-state';
 
 import type { WorkplaceHomeSourceState } from './workplace-home-source-state';
 import type { WorkplaceBookabilityContext } from './workplace-discovery-model';
@@ -141,17 +142,17 @@ export function workplaceDiscoveryTarget({
   timeZone: string;
   type?: WorkplaceResourceType;
 }) {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams({ v: '1', types: type ?? 'ALL' });
   const floor = explore?.selectedFloor;
   const site = explore?.sites.find((candidate) => candidate.siteId === floor?.siteId);
-  if (site) params.set('site', site.siteId);
-  if (floor) params.set('floor', floor.floorId);
-  if (site) params.set('timeZone', timeZone);
+  if (site) params.set('sites', site.siteId);
+  if (floor) params.set('floors', floor.floorId);
+  if (site) params.set('tz', timeZone);
   if (rangeFrom) {
     const start = Temporal.Instant.from(rangeFrom).toZonedDateTimeISO(timeZone);
     params.set('date', start.toPlainDate().toString());
     params.set(
-      'time',
+      'start',
       `${String(start.hour).padStart(2, '0')}:${String(start.minute).padStart(2, '0')}`
     );
   }
@@ -159,9 +160,8 @@ export function workplaceDiscoveryTarget({
     const duration = Math.round((Date.parse(rangeTo) - Date.parse(rangeFrom)) / 60_000);
     if (duration > 0) params.set('duration', String(duration));
   }
-  if (type) params.set('type', type);
-  const query = params.toString();
-  return query ? `/workplace/explore?${query}` : '/workplace/explore';
+  const query = parseWorkplaceFindUrl(params).canonicalSearchParams.toString();
+  return `/workplace/find?${query}`;
 }
 
 function verifiedDiscoveryRange(bookability: WorkplaceBookabilityContext) {
@@ -280,7 +280,7 @@ export function workplaceAgenda({
       location: event.resource
         ? [event.resource.site, event.resource.floor].filter(Boolean).join(' · ')
         : (event.location ?? ''),
-      path: `/workplace/my-meetings?event=${encodeURIComponent(event.eventId)}`,
+      path: `/workplace/reservations?v=1&period=TODAY&types=MEETING&status=ACTIVE&authority=CALENDAR&reservation=${encodeURIComponent(event.eventId)}&reservationAuthority=CALENDAR`,
     });
   }
 
@@ -298,7 +298,7 @@ export function workplaceAgenda({
       startsAt: booking.startsAt,
       endsAt: booking.endsAt,
       location: [booking.siteName, booking.floorName].filter(Boolean).join(' · '),
-      path: `/workplace/my-bookings?booking=${encodeURIComponent(booking.bookingId)}`,
+      path: `/workplace/reservations?v=1&period=TODAY&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE&reservation=${encodeURIComponent(booking.bookingId)}&reservationAuthority=WORKPLACE`,
       booking,
     });
   }
@@ -374,7 +374,7 @@ export function workplaceAttention({
   const items: WorkplaceHomeAttention[] = [];
   const nowInstant = Date.parse(now);
   for (const booking of bookings) {
-    const path = `/workplace/my-bookings?booking=${encodeURIComponent(booking.bookingId)}`;
+    const path = `/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE&reservation=${encodeURIComponent(booking.bookingId)}&reservationAuthority=WORKPLACE`;
     const actionPolicy = workplaceBookingActionPolicy({
       booking,
       sourceState: bookingSourceState,
@@ -536,16 +536,16 @@ export function buildWorkplaceHomeModel({
     ? {
         kind: 'CHECK_IN',
         booking: checkIn,
-        path: `/workplace/my-bookings?booking=${encodeURIComponent(checkIn.bookingId)}`,
+        path: `/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE&reservation=${encodeURIComponent(checkIn.bookingId)}&reservationAuthority=WORKPLACE`,
       }
     : nextAgenda
       ? { kind: 'OPEN_NEXT', item: nextAgenda, path: nextAgenda.path }
       : scopeState === 'NO_SITE'
-        ? { kind: 'NO_SITE', path: '/workplace/explore' }
+        ? { kind: 'NO_SITE', path: '/workplace/find?v=1&types=ALL' }
         : scopeState === 'NO_FLOOR'
-          ? { kind: 'NO_FLOOR', path: '/workplace/explore' }
+          ? { kind: 'NO_FLOOR', path: '/workplace/find?v=1&types=ALL' }
           : scopeState === 'NO_RESOURCE'
-            ? { kind: 'NO_RESOURCE', path: '/workplace/explore' }
+            ? { kind: 'NO_RESOURCE', path: '/workplace/find?v=1&types=ALL' }
             : bookableCount > 0
               ? {
                   kind: 'BOOK_SPACE',

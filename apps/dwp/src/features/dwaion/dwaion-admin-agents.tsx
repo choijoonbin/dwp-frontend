@@ -57,6 +57,7 @@ import {
   useAdminRegistryCopy,
 } from './dwaion-admin-registry';
 import { DwaionAdminAgentHistory } from './dwaion-admin-agent-history';
+import { DwaionAgentGovernancePanel } from './admin-advancement/dwaion-agent-governance-panel';
 import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 type EditorMode = 'create' | 'edit' | 'revision';
@@ -250,10 +251,27 @@ export function DwaionAdminAgents() {
         description={t('dwaionAdmin.agents.description')}
         actions={
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="stretch">
-            <ActionButton intent="secondary" startIcon={<Archive size={16} />} disabled>
+            <ActionButton
+              intent="secondary"
+              startIcon={<Archive size={16} />}
+              disabled={!firstEntryId}
+              onClick={() =>
+                firstEntryId &&
+                setParams((current) => {
+                  const next = new URLSearchParams(current);
+                  next.set('entry', firstEntryId);
+                  return next;
+                })
+              }
+            >
               {t('dwaionAdmin.agents.deploymentHistoryUnavailable')}
             </ActionButton>
-            <ActionButton intent="secondary" startIcon={<FileDown size={16} />} disabled>
+            <ActionButton
+              intent="secondary"
+              startIcon={<FileDown size={16} />}
+              disabled={!agents.length}
+              onClick={() => downloadAgentRegistry(agents)}
+            >
               {t('dwaionAdmin.agents.schemaExportUnavailable')}
             </ActionButton>
             {canCreate && (
@@ -332,6 +350,10 @@ export function DwaionAdminAgents() {
         <InlineFeedback severity="info" sx={{ mt: 2 }}>
           {t('dwaionAdmin.agents.unsupportedNotice')}
         </InlineFeedback>
+      )}
+
+      {!query.isLoading && !query.isError && agents.length > 0 && (
+        <DwaionAgentGovernancePanel agents={agents} onRefresh={refresh} />
       )}
 
       {!query.isError && (
@@ -602,6 +624,21 @@ export function DwaionAdminAgents() {
       </FormDialog>
     </PageCanvas>
   );
+}
+
+function downloadAgentRegistry(agents: RegistryEntry[]) {
+  const blob = new Blob(
+    [JSON.stringify({ exportedAt: new Date().toISOString(), agents }, null, 2)],
+    {
+      type: 'application/json',
+    }
+  );
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `dwaion-agent-registry-${new Date().toISOString().slice(0, 10)}.json`;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 function AgentSummaryCard({

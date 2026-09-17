@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Accessibility, Clock3, MapPin, ShieldCheck, UsersRound } from 'lucide-react';
+import { Accessibility, Clock3, MapPin, ShieldCheck, UsersRound, WifiOff } from 'lucide-react';
 import { useAuth } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -173,6 +173,15 @@ export function WorkplaceResourceInspector({
           }
         >
           <WorkplaceResourcePhoto resourceId={resource.resourceId} alt={resource.name} />
+          <InlineFeedback severity="info" icon={<WifiOff size={17} />}>
+            <Typography variant="caption" fontWeight="fontWeightBold" sx={{ display: 'block' }}>
+              {t('workplace.home.sources.externalPresence')} ·{' '}
+              {t('workplace.home.sources.unverified')}
+            </Typography>
+            <Typography variant="caption">
+              {t('workplace.home.sources.externalDescription')}
+            </Typography>
+          </InlineFeedback>
           <Stack direction="row" gap={0.75} useFlexGap flexWrap="wrap">
             <Chip size="small" label={typeLabels[resource.type]} />
             <Chip size="small" variant="outlined" label={resource.code} />

@@ -100,6 +100,42 @@ test('native booking policy review recovers from conflict with the draft preserv
     confirmed: true,
   });
 });
+
+test('policy history opens the governed audit trail with the policy event filters applied', async ({
+  page,
+}) => {
+  await setup(page);
+  const auditReads: URL[] = [];
+  page.on('request', (request) => {
+    const url = new URL(request.url());
+    if (url.pathname.endsWith('/api/platform/v1/admin/workplace/audit-events'))
+      auditReads.push(url);
+  });
+
+  await page.goto('/workplace/admin/policies');
+  await page.getByRole('link', { name: 'View policy history', exact: true }).click();
+
+  await expect(page).toHaveURL(/\/workplace\/admin\/operations\?/u);
+  const location = new URL(page.url());
+  expect(location.searchParams.get('view')).toBe('audit');
+  expect(location.searchParams.get('action')).toBe('workplace.policy.updated');
+  expect(location.searchParams.get('aggregateType')).toBe('POLICY');
+  await expect(page.getByRole('tab', { name: 'Audit trail', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  await expect(page.getByRole('textbox', { name: 'Action contains', exact: true })).toHaveValue(
+    'workplace.policy.updated'
+  );
+  await expect(page.getByRole('textbox', { name: 'Aggregate type', exact: true })).toHaveValue(
+    'POLICY'
+  );
+  await expect
+    .poll(() => auditReads.at(-1)?.searchParams.get('action'))
+    .toBe('workplace.policy.updated');
+  expect(auditReads.at(-1)?.searchParams.get('aggregateType')).toBe('POLICY');
+});
+
 test('policy subject editing compares native fields, previews actual bookings and saves the reviewed draft', async ({
   page,
 }) => {
@@ -215,28 +251,66 @@ test('policy subject editing compares native fields, previews actual bookings an
   });
 });
 
-test('facility closures retain bookings and request status uses reason and optimistic version', async ({
+test('facility closures execute explicit booking decisions and request status uses optimistic version', async ({
   page,
-}) => {
-  const state = await setup(page);
+}, testInfo) => {
+  const state = await setup(page, { elevated: true });
   await page.goto('/workplace/admin/operations?view=facilities');
   await page
     .getByRole('region', { name: 'Spaces to work on' })
     .getByRole('button', { name: /QA desk/u })
     .click();
-  await page.getByRole('textbox', { name: 'Closure reason' }).fill('Fixture scheduled maintenance');
-  await page
+  await expect(page).toHaveURL(new RegExp(`resource=${resourceId}`, 'u'));
+  await expect(page.getByRole('region', { name: 'Audit trail', exact: true })).toContainText(
+    'workplace.facility.closure_created'
+  );
+  const closurePanel = page.getByRole('region', { name: 'Scheduled space closure', exact: true });
+  await closurePanel
+    .getByRole('textbox', { name: 'Closure reason' })
+    .fill('Fixture scheduled maintenance');
+  await closurePanel.getByRole('button', { name: 'Create impact preview' }).click();
+  await closurePanel.getByRole('combobox', { name: 'Booking decision' }).click();
+  await page.getByRole('option', { name: 'Keep booking', exact: true }).click();
+  await closurePanel
     .getByRole('checkbox', {
-      name: 'I have reviewed the current values, proposed values and known impact.',
+      name: 'I reviewed the current snapshot and confirm every booking decision and notification impact.',
     })
     .check();
-  await page.getByRole('button', { name: 'Schedule closure' }).click();
+  await closurePanel.getByRole('button', { name: 'Execute closure and booking decisions' }).click();
+  await expect(closurePanel.getByText('Closure execution receipt')).toBeVisible();
+  await stableViewport(page, 390);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
+    .toBeLessThanOrEqual(390);
+  const mobileClosureAxe = await new AxeBuilder({ page }).include('main').analyze();
+  expect(
+    mobileClosureAxe.violations.filter((item) =>
+      ['critical', 'serious'].includes(item.impact ?? '')
+    )
+  ).toEqual([]);
+  await page.screenshot({
+    path: testInfo.outputPath('facility-closure-command-receipt-390.png'),
+    fullPage: true,
+  });
+  await stableViewport(page, 1280);
   await expect(page.getByRole('button', { name: /Fixture scheduled maintenance/u })).toBeVisible();
+  expect(state.closurePreviews).toHaveLength(1);
   expect(state.writes[0]).toMatchObject({
-    body: { version: 1, reason: 'Fixture scheduled maintenance', confirmed: true },
+    body: {
+      expectedPreviewVersion: 1,
+      reason: 'Fixture scheduled maintenance',
+      confirmed: true,
+      selections: [
+        {
+          previewItemId: '62000000-0000-0000-0000-000000000001',
+          action: 'KEEP',
+          expectedBookingVersion: 1,
+        },
+      ],
+    },
   });
   expect(state.writes[0]?.key).toBeTruthy();
-  const created = state.writes[0]!.body;
+  const created = state.closurePreviews[0]!.body;
   // A fresh page proposes a later start than the already persisted closure.
   await page.reload();
   await page
@@ -244,7 +318,6 @@ test('facility closures retain bookings and request status uses reason and optim
     .getByRole('button', { name: /QA desk/u })
     .click();
   await expect.poll(() => state.impacts.at(-1)?.from).not.toBe(created.startsAt);
-  const closurePanel = page.getByRole('region', { name: 'Scheduled space closure', exact: true });
   await closurePanel.getByRole('button', { name: /Fixture scheduled maintenance/u }).click();
   await expect.poll(() => state.detailReads).toBeGreaterThan(0);
   await expect
@@ -268,6 +341,15 @@ test('facility closures retain bookings and request status uses reason and optim
   });
   const requests = page.getByRole('region', { name: 'Facility requests', exact: true });
   await requests.getByRole('button', { name: /QA desk/u }).click();
+  await requests.getByRole('combobox', { name: /^Priority/u }).click();
+  await page.getByRole('option', { name: 'High', exact: true }).click();
+  await requests.getByRole('textbox', { name: 'Assignee', exact: true }).fill('Facilities A');
+  await requests
+    .getByRole('textbox', { name: 'Service provider', exact: true })
+    .fill('Approved Vendor');
+  await requests
+    .getByRole('textbox', { name: 'External work-order reference', exact: true })
+    .fill('WO-1202');
   await requests
     .getByRole('textbox', { name: 'Reason for change' })
     .fill('Fixture engineer dispatched');
@@ -276,13 +358,18 @@ test('facility closures retain bookings and request status uses reason and optim
       name: 'I have reviewed the current values, proposed values and known impact.',
     })
     .check();
-  await requests.getByRole('button', { name: 'Change status', exact: true }).click();
+  await requests.getByRole('button', { name: 'Save status and work order', exact: true }).click();
   await expect(requests.getByText('Fixture engineer dispatched')).toBeVisible();
   expect(state.writes[2]?.body).toMatchObject({
     status: 'IN_PROGRESS',
     version: 0,
     reason: 'Fixture engineer dispatched',
     confirmed: true,
+    priority: 'HIGH',
+    assignedTo: 'Facilities A',
+    serviceProvider: 'Approved Vendor',
+    externalWorkOrderReference: 'WO-1202',
+    clearSla: false,
   });
   let releaseStatus!: () => void;
   state.statusGate = new Promise<void>((resolve) => {
@@ -299,7 +386,7 @@ test('facility closures retain bookings and request status uses reason and optim
       name: 'I have reviewed the current values, proposed values and known impact.',
     })
     .check();
-  await requests.getByRole('button', { name: 'Change status', exact: true }).click();
+  await requests.getByRole('button', { name: 'Save status and work order', exact: true }).click();
   await expect.poll(() => state.writes.length).toBe(4);
   const queueFilter = requests.getByRole('combobox', { name: 'Status', exact: true });
   await expect(queueFilter).toBeDisabled();
@@ -311,12 +398,19 @@ test('facility closures retain bookings and request status uses reason and optim
   ).toBeVisible();
   await expect(queueFilter).toBeDisabled();
   await expect(requests.getByRole('button', { name: 'Close', exact: true })).toBeDisabled();
-  await expect(requests.getByRole('button', { name: 'Change status', exact: true })).toBeDisabled();
-  expect(state.writes[3]?.body).toEqual({
+  await expect(
+    requests.getByRole('button', { name: 'Save status and work order', exact: true })
+  ).toBeDisabled();
+  expect(state.writes[3]?.body).toMatchObject({
     status: 'RESOLVED',
     version: 1,
     reason: 'Fixture repair verified',
     confirmed: true,
+    priority: 'HIGH',
+    assignedTo: 'Facilities A',
+    serviceProvider: 'Approved Vendor',
+    externalWorkOrderReference: 'WO-1202',
+    clearSla: false,
   });
   await requests.getByRole('button', { name: 'Reload current values', exact: true }).click();
   await expect(queueFilter).toBeEnabled();
@@ -325,7 +419,9 @@ test('facility closures retain bookings and request status uses reason and optim
       name: 'I have reviewed the current values, proposed values and known impact.',
     })
   ).not.toBeChecked();
-  await expect(requests.getByRole('button', { name: 'Change status', exact: true })).toBeDisabled();
+  await expect(
+    requests.getByRole('button', { name: 'Save status and work order', exact: true })
+  ).toBeDisabled();
   expect(state.writes).toHaveLength(4);
 });
 
@@ -356,7 +452,7 @@ test('partial report and impact failures hide data and block dependent writes un
     .getByRole('region', { name: 'Spaces to work on' })
     .getByRole('button', { name: /QA desk/u })
     .click();
-  await expect(page.getByRole('button', { name: 'Schedule closure' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Create impact preview' })).toBeDisabled();
   expect(state.writes).toHaveLength(0);
 });
 
@@ -386,6 +482,9 @@ test('admin overview, insights, policy and facilities reflow and pass scoped Axe
         .getByRole('button', { name: /QA desk/u })
         .click();
       await expect(page.getByRole('region', { name: 'Scheduled space closure' })).toBeVisible();
+      await expect(page.getByRole('region', { name: 'Audit trail', exact: true })).toContainText(
+        'workplace.facility.closure_created'
+      );
     }
     for (const width of [1440, 1280, 390, 320, 640]) {
       await stableViewport(page, width);

@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - generic "0 actionable notifications, 0 total unread" [ref=e27]:
+            - button "0 actionable notifications, 0 total unread" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]:
+                - img [ref=e30]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+          - generic "Open DWAI·ON" [ref=e39]:
+            - button "Open DWAI·ON" [ref=e40] [cursor=pointer]
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - img [ref=e49]
+              - generic [ref=e52]:
+                - heading "Find a space · Pangyo HQ · 12F" [active] [level=1] [ref=e53]: Pangyo HQ · 12F
+                - text: 2026-08-19 · 09:01 · 60 min
+            - button "Filters" [ref=e54] [cursor=pointer]:
+              - img [ref=e56]
+              - text: Filters
+          - generic [ref=e58]:
+            - status [ref=e60]: 2 of 2 results · 2 pass initial booking checks
+            - group "View mode" [ref=e61]:
+              - button "List view" [pressed] [ref=e62] [cursor=pointer]:
+                - img [ref=e63]
+              - button "Map view" [ref=e64] [cursor=pointer]:
+                - img [ref=e65]
+        - region "Pangyo HQ" [ref=e68]:
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - img [ref=e71]
+              - generic [ref=e75]:
+                - heading "Pangyo HQ" [level=2] [ref=e76]
+                - text: 12F · 2 results
+            - generic "Space status legend" [ref=e77]:
+              - generic [ref=e80]: Open by reservation state
+              - generic [ref=e83]: Occupied
+              - generic [ref=e86]: My booking
+              - generic [ref=e89]: Assigned
+              - generic [ref=e92]: Drop-in
+              - generic [ref=e95]: Unavailable
+          - generic [ref=e96]:
+            - article [ref=e97]:
+              - generic [ref=e100]:
+                - img [ref=e101]
+                - generic [ref=e103]: No space photo is registered.
+              - button "Actual alternative desk Desk · Focus zone · MONITOR · STANDING Open by reservation state Initial booking checks passed" [ref=e104] [cursor=pointer]:
+                - img [ref=e106]
+                - generic [ref=e108]:
+                  - heading "Actual alternative desk" [level=6] [ref=e109]
+                  - generic [ref=e110]: Desk · Focus zone · MONITOR · STANDING
+                - generic [ref=e111]:
+                  - generic [ref=e113]: Open by reservation state
+                  - generic [ref=e115]: Initial booking checks passed
+            - article [ref=e116]:
+              - generic [ref=e119]:
+                - img [ref=e120]
+                - generic [ref=e122]: No space photo is registered.
+              - button "Focus desk 12 Desk · Focus zone · MONITOR · STANDING Open by reservation state Initial booking checks passed" [ref=e123] [cursor=pointer]:
+                - img [ref=e125]
+                - generic [ref=e127]:
+                  - heading "Focus desk 12" [level=6] [ref=e128]
+                  - generic [ref=e129]: Desk · Focus zone · MONITOR · STANDING
+                - generic [ref=e130]:
+                  - generic [ref=e132]: Open by reservation state
+                  - generic [ref=e134]: Initial booking checks passed
+```

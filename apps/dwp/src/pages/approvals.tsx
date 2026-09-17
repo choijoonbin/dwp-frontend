@@ -9,6 +9,7 @@ import {
   APPROVAL_DEFAULT_PATH,
   findApprovalNavigationItem,
   isApprovalAdminView,
+  isApprovalAdminV2View,
 } from '../features/approvals/approval-navigation';
 import { ApprovalPageHeader } from '../features/approvals/approval-ui';
 import { canAccessProductAreaNavigationItem } from '../layouts/product-area-permissions';
@@ -57,15 +58,7 @@ export default function ApprovalsPage({ governed = false }: { governed?: boolean
   if (page.view === 'inbox') content = <ApprovalInbox view="INBOX" />;
   else if (page.view === 'completed') content = <ApprovalInbox view="COMPLETED" />;
   else if (page.view === 'delegations') content = <ApprovalDelegations />;
-  else if (isApprovalAdminView(page.view))
-    content = (
-      <ApprovalAdmin
-        view={
-          page.view as
-            'admin-overview' | 'workflows' | 'forms' | 'policies' | 'operations' | 'signatures'
-        }
-      />
-    );
+  else if (isApprovalAdminView(page.view)) content = <ApprovalAdmin view={page.view} />;
   else
     content = (
       <ApprovalRequests
@@ -74,8 +67,10 @@ export default function ApprovalsPage({ governed = false }: { governed?: boolean
     );
   return (
     <PageCanvas topInset="compact">
-      <ApprovalPageHeader view={page.view} icon={page.icon} />
-      <Box sx={{ mt: { xs: 2.5, md: 3 } }}>
+      {isApprovalAdminV2View(page.view) ? null : (
+        <ApprovalPageHeader view={page.view} icon={page.icon} />
+      )}
+      <Box sx={{ mt: isApprovalAdminV2View(page.view) ? 0 : { xs: 2.5, md: 3 } }}>
         <Suspense fallback={<RouteFallback />}>{content}</Suspense>
       </Box>
     </PageCanvas>

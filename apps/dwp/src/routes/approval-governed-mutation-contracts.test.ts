@@ -6,10 +6,20 @@ import {
   APPROVAL_GOVERNED_MUTATION_API_CONTRACTS,
   APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT,
 } from '@dwp-frontend/shared-utils';
+import { APPROVAL_ADMIN_V2_UNSUPPORTED_MUTATION_API_FUNCTIONS } from '@dwp-frontend/shared-utils/api/approval-admin-v2-canonical-mutation-api';
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from './product-surface-authorization.generated';
 import { PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG } from '../components/product-surface-high-risk-command-catalog';
 import { APPROVAL_NATIVE_HIGH_RISK_OPERATIONS } from '../features/approvals/approval-native-operations-model';
+import { APPROVAL_ADMIN_V2_HIGH_RISK_OPERATIONS } from '../features/approvals/admin-v2/approval-admin-v2-command-model';
+
+function productionTypeScriptFiles(root: string): string[] {
+  return fs.readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
+    const absolute = path.join(root, entry.name);
+    if (entry.isDirectory()) return productionTypeScriptFiles(absolute);
+    return /\.tsx?$/u.test(entry.name) && !/\.test\.tsx?$/u.test(entry.name) ? [absolute] : [];
+  });
+}
 
 describe('Approval governed mutation contract coverage', () => {
   it('maps every canonical Approval ACTION binding to exactly one frontend API wrapper', () => {
@@ -34,9 +44,13 @@ describe('Approval governed mutation contract coverage', () => {
         .sort((left, right) => left.routeContractKey.localeCompare(right.routeContractKey));
 
     expect(new Set(frontend.map((contract) => contract.apiFunction)).size).toBe(frontend.length);
-    expect(new Set(frontend.map((contract) => contract.routeContractKey)).size).toBe(
-      frontend.length
-    );
+    expect(
+      new Set(
+        frontend.map(
+          (contract) => `${contract.routeContractKey}\u0000${contract.method}\u0000${contract.path}`
+        )
+      ).size
+    ).toBe(frontend.length);
     expect(comparable(frontend)).toEqual(comparable(canonical));
   });
 
@@ -82,10 +96,8 @@ describe('Approval governed mutation contract coverage', () => {
     const found = new Map<string, string[]>();
     const featureRoot = path.resolve(process.cwd(), 'apps/dwp/src/features/approvals');
 
-    for (const filename of fs
-      .readdirSync(featureRoot)
-      .filter((name) => /\.tsx?$/u.test(name) && !/\.test\.tsx?$/u.test(name))) {
-      const absolute = path.join(featureRoot, filename);
+    for (const absolute of productionTypeScriptFiles(featureRoot)) {
+      const filename = path.relative(featureRoot, absolute);
       const source = ts.createSourceFile(
         absolute,
         fs.readFileSync(absolute, 'utf8'),
@@ -110,7 +122,11 @@ describe('Approval governed mutation contract coverage', () => {
       visit(source);
     }
 
-    expect([...found.keys()].sort()).toEqual([...expected].sort());
+    const unsupported = new Set<string>(APPROVAL_ADMIN_V2_UNSUPPORTED_MUTATION_API_FUNCTIONS);
+    expect([...unsupported].every((apiFunction) => expected.has(apiFunction))).toBe(true);
+    expect([...found.keys()].sort()).toEqual(
+      [...expected].filter((apiFunction) => !unsupported.has(apiFunction)).sort()
+    );
     for (const [apiFunction, executionArguments] of found) {
       expect(executionArguments, apiFunction).not.toHaveLength(0);
       if (apiFunction === 'updateApprovalDelegation') {
@@ -120,6 +136,15 @@ describe('Approval governed mutation contract coverage', () => {
               argument.includes('...execution') &&
               argument.includes('objectVersion: input.expectedVersion') &&
               argument.includes('idempotencyKey: attempt.idempotencyKey')
+          ),
+          apiFunction
+        ).toBe(true);
+        continue;
+      }
+      if (apiFunction === 'executeApprovalAdminV2HighRiskCommand') {
+        expect(
+          executionArguments.every(
+            (argument) => argument === 'approvalAdminV2SecureExecution(candidate)'
           ),
           apiFunction
         ).toBe(true);
@@ -224,6 +249,7 @@ describe('Approval governed mutation contract coverage', () => {
       };
       visit(source);
     }
+    operations.push(...APPROVAL_ADMIN_V2_HIGH_RISK_OPERATIONS.map(({ operation }) => operation));
     expect(new Set(operations).size).toBe(operations.length);
     expect(operations.sort()).toEqual(catalog.map((entry) => entry.operation).sort());
   });

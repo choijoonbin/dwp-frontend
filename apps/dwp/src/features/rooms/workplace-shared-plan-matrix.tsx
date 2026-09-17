@@ -3,9 +3,37 @@ import { Temporal } from 'temporal-polyfill';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { workplaceMemberSoftSurface } from './workplace-member-surfaces';
 
 import type { WorkplaceSharedWorkPlan } from '@dwp-frontend/shared-utils';
 import type { ReactNode } from 'react';
+
+export function WorkplaceTeamSourceCard({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <Stack
+      spacing={0.5}
+      sx={(theme) => ({ ...workplaceMemberSoftSurface(theme), minWidth: 0, p: 1.5 })}
+    >
+      <Typography variant="overline" color="primary.main">
+        {eyebrow}
+      </Typography>
+      <Typography variant="body2" fontWeight="fontWeightBold">
+        {title}
+      </Typography>
+      <Typography variant="caption" color="text.secondary">
+        {description}
+      </Typography>
+    </Stack>
+  );
+}
 
 export function workplacePublicPlansForWeek(
   plans: readonly WorkplaceSharedWorkPlan[],
@@ -60,6 +88,7 @@ export function WorkplaceSharedPlanMatrix({
       sx={{
         display: { xs: 'none', lg: 'table' },
         width: 1,
+        minWidth: 720,
         tableLayout: 'fixed',
         borderCollapse: 'collapse',
         '& th, & td': {
@@ -87,7 +116,17 @@ export function WorkplaceSharedPlanMatrix({
       </Box>
       <Box component="thead">
         <Box component="tr">
-          <Box component="th" scope="col" sx={{ width: '22%', bgcolor: 'var(--dwp-product-soft)' }}>
+          <Box
+            component="th"
+            scope="col"
+            sx={{
+              width: 156,
+              position: 'sticky',
+              left: 0,
+              zIndex: 2,
+              bgcolor: 'var(--dwp-product-soft)',
+            }}
+          >
             <Typography variant="caption" fontWeight="fontWeightBold">
               {t('workplace.member.team.colleague')}
             </Typography>
@@ -109,7 +148,11 @@ export function WorkplaceSharedPlanMatrix({
       <Box component="tbody">
         {people.map((person) => (
           <Box component="tr" key={person.userId}>
-            <Box component="th" scope="row">
+            <Box
+              component="th"
+              scope="row"
+              sx={{ position: 'sticky', left: 0, zIndex: 1, bgcolor: 'background.paper' }}
+            >
               <Typography variant="body2" fontWeight="fontWeightBold">
                 {person.name}
               </Typography>
@@ -118,11 +161,23 @@ export function WorkplaceSharedPlanMatrix({
               const cellPlans = publicPlans.filter(
                 (plan) => plan.userId === person.userId && plan.planDate === date
               );
+              const primaryMode = cellPlans[0]?.mode;
               return (
                 <Box
                   component="td"
                   key={date}
-                  sx={{ bgcolor: date === today ? 'var(--dwp-product-soft)' : undefined }}
+                  sx={{
+                    bgcolor:
+                      primaryMode === 'OFFICE'
+                        ? 'action.selected'
+                        : primaryMode === 'REMOTE'
+                          ? 'var(--dwp-product-soft)'
+                          : date === today
+                            ? 'var(--dwp-product-soft)'
+                            : undefined,
+                    borderLeft: primaryMode === 'OFFICE' ? 3 : undefined,
+                    borderLeftColor: 'var(--dwp-product-accent)',
+                  }}
                 >
                   {cellPlans.length ? (
                     <Stack spacing={0.75}>

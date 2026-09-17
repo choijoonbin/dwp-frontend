@@ -47,13 +47,13 @@ export function ApprovalPageHeader({ view, icon: Icon }: { view: string; icon: L
           <Icon size={19} strokeWidth={1.8} />
         </GlyphSurface>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="overline" color="primary.main" fontWeight={740}>
+          <Typography variant="overline" color="primary.main" fontWeight="fontWeightBold">
             {t(`pages.${view}.eyebrow`)}
           </Typography>
           <Typography
             component="h1"
             variant="h5"
-            fontWeight={760}
+            fontWeight="fontWeightBold"
             sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
           >
             {t(`pages.${view}.title`)}
@@ -74,7 +74,7 @@ export function ApprovalPageHeader({ view, icon: Icon }: { view: string; icon: L
           color: 'text.secondary',
           bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.1 : 0.04),
           borderColor: alpha(theme.palette.primary.main, 0.2),
-          '& .MuiChip-label': { fontWeight: 700 },
+          '& .MuiChip-label': { fontWeight: 'fontWeightBold' },
         })}
       />
     </Box>
@@ -109,12 +109,7 @@ export function ApprovalSurface({
           appearance === 'executive'
             ? alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.16 : 0.08)
             : 'divider',
-        boxShadow:
-          appearance === 'executive'
-            ? 'none'
-            : theme.palette.mode === 'dark'
-              ? '0 8px 24px rgba(0, 0, 0, 0.16)'
-              : '0 8px 24px rgba(16, 25, 35, 0.055)',
+        boxShadow: appearance === 'executive' ? 'none' : theme.shadows[1],
         '@media (forced-colors: active)': { boxShadow: 'none' },
       })}
     >
@@ -143,7 +138,7 @@ export function ApprovalSurface({
           <Typography
             component="h2"
             variant={appearance === 'executive' ? 'subtitle2' : 'subtitle1'}
-            fontWeight={760}
+            fontWeight="fontWeightBold"
           >
             {title}
           </Typography>
@@ -181,20 +176,24 @@ export function StatusChip({
       color={color}
       label={t(`status.${normalized}`, { defaultValue: normalized.split('_').join(' ') })}
       sx={(theme) => {
-        const tone =
+        const palette =
           color === 'success'
-            ? theme.palette.success.main
+            ? theme.palette.success
             : color === 'error'
-              ? theme.palette.error.main
+              ? theme.palette.error
               : color === 'warning'
-                ? theme.palette.warning.main
-                : theme.palette.text.secondary;
+                ? theme.palette.warning
+                : undefined;
+        const tone = palette
+          ? palette[theme.palette.mode === 'dark' ? 'light' : 'dark']
+          : theme.palette.text.primary;
+        const surfaceTone = palette?.main ?? theme.palette.text.secondary;
         return {
           height: 24,
           color: tone,
-          bgcolor: alpha(tone, theme.palette.mode === 'dark' ? 0.14 : 0.065),
-          borderColor: alpha(tone, 0.28),
-          '& .MuiChip-label': { px: 0.9, fontWeight: 720 },
+          bgcolor: alpha(surfaceTone, theme.palette.mode === 'dark' ? 0.14 : 0.065),
+          borderColor: alpha(surfaceTone, 0.32),
+          '& .MuiChip-label': { px: 0.9, fontWeight: 'fontWeightBold' },
         };
       }}
     />
@@ -211,18 +210,22 @@ export function PriorityChip({ priority }: { priority: ApprovalPriority }) {
       color={color}
       label={t(`priority.${priority}`, { defaultValue: priority })}
       sx={(theme) => {
-        const tone =
+        const palette =
           color === 'error'
-            ? theme.palette.error.main
+            ? theme.palette.error
             : color === 'warning'
-              ? theme.palette.warning.main
-              : theme.palette.text.secondary;
+              ? theme.palette.warning
+              : undefined;
+        const tone = palette
+          ? palette[theme.palette.mode === 'dark' ? 'light' : 'dark']
+          : theme.palette.text.primary;
+        const surfaceTone = palette?.main ?? theme.palette.text.secondary;
         return {
           height: 24,
           color: tone,
-          bgcolor: alpha(tone, theme.palette.mode === 'dark' ? 0.14 : 0.06),
-          borderColor: alpha(tone, 0.3),
-          '& .MuiChip-label': { px: 0.9, fontWeight: 720 },
+          bgcolor: alpha(surfaceTone, theme.palette.mode === 'dark' ? 0.14 : 0.06),
+          borderColor: alpha(surfaceTone, 0.32),
+          '& .MuiChip-label': { px: 0.9, fontWeight: 'fontWeightBold' },
         };
       }}
     />
@@ -281,7 +284,7 @@ export function ApprovalLinkRow({
           flex: '0 0 34px',
           display: 'grid',
           placeItems: 'center',
-          borderRadius: 1,
+          borderRadius: 'shape.borderRadius',
           color: tone,
           bgcolor: alpha(tone, 0.1),
           border: 1,
@@ -293,7 +296,7 @@ export function ApprovalLinkRow({
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography
           variant="body2"
-          fontWeight={720}
+          fontWeight="fontWeightBold"
           sx={{
             display: '-webkit-box',
             WebkitBoxOrient: 'vertical',

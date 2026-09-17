@@ -257,6 +257,7 @@ export async function setup(
     reportFailure?: boolean;
     impactFailure?: boolean;
     policyConflict?: boolean;
+    elevated?: boolean;
   } = {}
 ) {
   await mockShellSession(page, ['TENANT_ADMIN'], {
@@ -268,6 +269,43 @@ export async function setup(
         }
       : {}),
   });
+  if (options.elevated) {
+    await page.route('**/api/auth/product-surface-contexts', (route) =>
+      fulfillSuccess(route, {
+        contractVersion: 'product-surfaces/v3',
+        decisionRevision: 'workplace-facility-closure-elevated',
+        sourceRevisions: {
+          auth: 'auth-facility-closure',
+          policy: 'policy-facility-closure',
+          productRelationship: 'relationship-facility-closure',
+        },
+        activeAccessMode: 'ELEVATED',
+        generatedAt: metadata.generatedAt,
+        contexts: [],
+        rollouts: [
+          'approvals',
+          'calendar',
+          'communications',
+          'dwaion',
+          'hcm',
+          'mail',
+          'meetings',
+          'messaging',
+          'notifications',
+          'services',
+          'spaces',
+          'workplace',
+        ].map((productKey) => ({
+          productKey,
+          state: '000',
+          flags: { contextShadow: false, capabilityEnforcement: false, surfaceUi: false },
+          cohort: 'baseline',
+          opaqueRevision: `rollout-${productKey}-baseline`,
+          authorityStatus: 'NOT_EVALUATED',
+        })),
+      })
+    );
+  }
   const state = {
     reportFailure: options.reportFailure ?? false,
     impactFailure: options.impactFailure ?? false,
@@ -285,8 +323,14 @@ export async function setup(
     statusFailure: false,
     statusGate: null as Promise<void> | null,
     writes: [] as { path: string; body: Record<string, unknown>; key: string | undefined }[],
+    closurePreviews: [] as {
+      path: string;
+      body: Record<string, unknown>;
+      key: string | undefined;
+    }[],
   };
   let closures: Record<string, unknown>[] = [];
+  let closureCommand: Record<string, unknown> | null = null;
   await page.route('**/api/platform/v1/admin/rooms/**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
@@ -357,6 +401,11 @@ export async function setup(
     description: 'Fixture: the desk light needs repair.',
     status: 'OPEN',
     statusReason: null as string | null,
+    priority: 'NORMAL',
+    assignedTo: null as string | null,
+    serviceProvider: null as string | null,
+    externalWorkOrderReference: null as string | null,
+    slaDueAt: null as string | null,
     version: 0,
     createdAt: metadata.generatedAt,
     updatedAt: metadata.generatedAt,
@@ -377,6 +426,22 @@ export async function setup(
     if (path.endsWith('/sites')) return fulfillSuccess(route, [site]);
     if (path.endsWith('/floors')) return fulfillSuccess(route, [floor]);
     if (path.endsWith('/resources')) return fulfillSuccess(route, [resource]);
+    if (path.endsWith('/audit-events'))
+      return fulfillSuccess(
+        route,
+        pageData([
+          {
+            auditEventId: '70000000-0000-4000-8000-000000000001',
+            action: 'workplace.facility.closure_created',
+            aggregateType: 'FACILITY_CLOSURE',
+            aggregateId: '70000000-0000-4000-8000-000000000002',
+            actorUserId: 7,
+            correlationId: '70000000-0000-4000-8000-000000000003',
+            snapshot: { resourceId, siteId, floorId },
+            occurredAt: metadata.generatedAt,
+          },
+        ])
+      );
     if (path.endsWith('/governance/delegated-admin-scopes/effective'))
       return fulfillSuccess(route, []);
     if (
@@ -509,6 +574,137 @@ export async function setup(
     }
     if (path.endsWith('/experience/facilities/closures'))
       return fulfillSuccess(route, pageData(closures));
+    if (path.endsWith('/closure-impact-previews') && request.method() === 'POST') {
+      const body = request.postDataJSON();
+      state.closurePreviews.push({ path, body, key: request.headers()['idempotency-key'] });
+      return fulfillSuccess(route, {
+        previewId: '61000000-0000-0000-0000-000000000001',
+        resourceId,
+        siteId,
+        reservationOwner: 'WORKPLACE',
+        startsAt: body.startsAt,
+        endsAt: body.endsAt,
+        resourceVersion: body.resourceVersion,
+        previewVersion: 1,
+        confirmationToken: 'fixture-closure-snapshot',
+        affectedBookingCount: 1,
+        affectedRecipientCount: 1,
+        expiresAt: '2026-09-17T04:10:00Z',
+        generatedAt: metadata.generatedAt,
+        items: [
+          {
+            previewItemId: '62000000-0000-0000-0000-000000000001',
+            reservationOwner: 'WORKPLACE',
+            bookingId,
+            eventId: null,
+            sourceWorkplaceResourceId: resourceId,
+            sourceOwnerResourceId: resourceId,
+            startsAt: body.startsAt,
+            endsAt: body.endsAt,
+            bookingStatus: 'RESERVED',
+            bookingVersion: booking.version,
+            recipientUserIds: [7],
+            replacementBlockReason: null,
+            replacementCandidates: [],
+          },
+        ],
+      });
+    }
+    if (path.endsWith('/closure-impact-previews/61000000-0000-0000-0000-000000000001/commands')) {
+      const body = request.postDataJSON();
+      state.writes.push({ path, body, key: request.headers()['idempotency-key'] });
+      const previewBody = state.closurePreviews.at(-1)!.body;
+      const closure = {
+        closureId: '60000000-0000-0000-0000-000000000001',
+        resourceId,
+        siteId,
+        floorId,
+        resourceName: resource.name,
+        timeZone: site.timeZone,
+        startsAt: previewBody.startsAt,
+        endsAt: previewBody.endsAt,
+        status: 'ACTIVE',
+        reason: body.reason,
+        cancellationReason: null,
+        resourceVersionAtCreate: resource.version,
+        version: 0,
+        createdAt: metadata.generatedAt,
+        updatedAt: metadata.generatedAt,
+        affectedBookingsPath: '',
+      };
+      closures = [closure];
+      closureCommand = {
+        commandId: '63000000-0000-0000-0000-000000000001',
+        previewId: '61000000-0000-0000-0000-000000000001',
+        closureId: closure.closureId,
+        resourceId,
+        siteId,
+        state: 'SUCCEEDED',
+        expectedPreviewVersion: body.expectedPreviewVersion,
+        reason: body.reason,
+        keptCount: body.selections.filter((item: { action: string }) => item.action === 'KEEP')
+          .length,
+        cancelledCount: body.selections.filter(
+          (item: { action: string }) => item.action === 'CANCEL'
+        ).length,
+        replacedCount: body.selections.filter(
+          (item: { action: string }) => item.action === 'REPLACE'
+        ).length,
+        version: 1,
+        createdAt: metadata.generatedAt,
+        completedAt: metadata.generatedAt,
+        notifications: {
+          recipientCount: 1,
+          eventCount: 1,
+          state: 'PUBLISHED',
+          pendingCount: 0,
+          retryCount: 0,
+          sendingCount: 0,
+          publishedCount: 1,
+          resultUnknownCount: 0,
+          deadCount: 0,
+          eventTransportConfigured: true,
+          reconciliationRequired: false,
+          observedAt: metadata.generatedAt,
+        },
+        items: body.selections.map((selection: Record<string, unknown>, index: number) => ({
+          commandItemId: `64000000-0000-0000-0000-${String(index + 1).padStart(12, '0')}`,
+          previewItemId: selection.previewItemId,
+          reservationOwner: 'WORKPLACE',
+          bookingId,
+          selectedAction: selection.action,
+          expectedBookingVersion: selection.expectedBookingVersion,
+          replacementWorkplaceResourceId: selection.replacementResourceId ?? null,
+          replacementOwnerResourceId: null,
+          replacementResourceVersion: selection.expectedReplacementResourceVersion ?? null,
+          resultState: 'SUCCEEDED',
+          resultCode: null,
+          resultingBookingVersion: booking.version + 1,
+        })),
+      };
+      return fulfillSuccess(route, closureCommand);
+    }
+    if (path.endsWith('/closure-commands/63000000-0000-0000-0000-000000000001/receipt'))
+      return fulfillSuccess(route, {
+        command: closureCommand,
+        owner: 'PLATFORM',
+        bookingsMutated: false,
+        notificationScheduled: true,
+        notificationDispatchPublished: true,
+        externalDeliveryProven: false,
+        auditTrail: [
+          {
+            commandEventId: '65000000-0000-0000-0000-000000000001',
+            eventType: 'COMMAND_COMPLETED',
+            actorUserId: 7,
+            evidence: 'Fixture closure completed.',
+            correlationId: 'fixture-closure-command',
+            occurredAt: metadata.generatedAt,
+          },
+        ],
+      });
+    if (path.endsWith('/closure-commands/63000000-0000-0000-0000-000000000001'))
+      return fulfillSuccess(route, closureCommand);
     if (path.includes('/resources/') && path.endsWith('/closures') && request.method() === 'POST') {
       const body = request.postDataJSON();
       state.writes.push({ path, body, key: request.headers()['idempotency-key'] });
@@ -567,6 +763,18 @@ export async function setup(
         ...facility,
         status: body.status,
         statusReason: body.reason,
+        priority: body.priority ?? facility.priority,
+        assignedTo:
+          body.assignedTo === undefined ? facility.assignedTo : body.assignedTo.trim() || null,
+        serviceProvider:
+          body.serviceProvider === undefined
+            ? facility.serviceProvider
+            : body.serviceProvider.trim() || null,
+        externalWorkOrderReference:
+          body.externalWorkOrderReference === undefined
+            ? facility.externalWorkOrderReference
+            : body.externalWorkOrderReference.trim() || null,
+        slaDueAt: body.clearSla ? null : (body.slaDueAt ?? facility.slaDueAt),
         version: facility.version + 1,
       };
       return fulfillSuccess(route, facility);

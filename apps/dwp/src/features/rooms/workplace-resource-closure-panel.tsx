@@ -14,7 +14,6 @@ import {
 } from '@dwp-frontend/design-system';
 import {
   cancelWorkplaceResourceClosure,
-  createWorkplaceResourceClosure,
   getWorkplaceAdminResources,
   getWorkplaceFutureBookingImpact,
   getWorkplaceResourceClosure,
@@ -22,11 +21,7 @@ import {
   getWorkplaceRoomBookingImpact,
   HttpError,
 } from '@dwp-frontend/shared-utils';
-import type {
-  WorkplaceCreateClosure,
-  WorkplaceResource,
-  WorkplaceResourceClosure,
-} from '@dwp-frontend/shared-utils';
+import type { WorkplaceResource, WorkplaceResourceClosure } from '@dwp-frontend/shared-utils';
 import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import { WorkplaceAdminSection } from './workplace-admin-experience-ui';
@@ -37,6 +32,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useRoomsCapabilities, useWorkplaceGovernanceCapabilities } from './rooms-capabilities';
 import { WorkplaceExperienceQueryError } from './workplace-experience-ui';
+import { WorkplaceResourceClosureExecution } from './workplace-resource-closure-execution';
 
 export function workplaceClosureInterval(
   start: string | null,
@@ -62,11 +58,12 @@ type CommandTarget = {
   floorId: string;
   resourceId: string;
 };
-type Command = CommandTarget &
-  (
-    | { operation: 'create'; input: WorkplaceCreateClosure; key: string }
-    | { operation: 'cancel'; closureId: string; version: number; reason: string }
-  );
+type Command = CommandTarget & {
+  operation: 'cancel';
+  closureId: string;
+  version: number;
+  reason: string;
+};
 
 export function WorkplaceResourceClosurePanel({
   resource,
@@ -136,10 +133,6 @@ export function WorkplaceResourceClosurePanel({
   const [confirmed, setConfirmed] = useState(false);
   const [selectedClosure, setSelectedClosure] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<'conflict' | 'unknown' | 'denied' | null>(null);
-  const [unknownCreate, setUnknownCreate] = useState<Extract<
-    Command,
-    { operation: 'create' }
-  > | null>(null);
   const [reviewBookingId, setReviewBookingId] = useState<string | null>(null);
   useEffect(() => setReviewBookingId(null), [scope, selectedClosure, dates.start, dates.end]);
   const [page, setPage] = useState(0);
@@ -150,7 +143,6 @@ export function WorkplaceResourceClosurePanel({
     setConfirmed(false);
     setSelectedClosure(null);
     setOutcome(null);
-    setUnknownCreate(null);
     setPage(0);
   }, [scope, initial]);
   const range = workplaceClosureInterval(dates.start, dates.end, timeZone);
@@ -427,7 +419,6 @@ export function WorkplaceResourceClosurePanel({
       setReason('');
       setSelectedClosure(null);
       setReviewBookingId(null);
-      setUnknownCreate(null);
       setOutcome(null);
     }
   }, [canManage, sourceError]);
@@ -461,44 +452,25 @@ export function WorkplaceResourceClosurePanel({
     command.generation === commandContext.current.generation;
   const mutation = useMutation<WorkplaceResourceClosure, Error, Command>({
     mutationFn: async (command) => {
-      if (
-        !canManage ||
-        !fresh ||
-        !matchesCommand(command) ||
-        (command.operation === 'create' && !capabilities.canCreateWorkplaceAdmin)
-      )
+      if (!canManage || !fresh || !matchesCommand(command) || command.operation !== 'cancel')
         throw new Error('Closure scope changed');
-      const result =
-        command.operation === 'create'
-          ? await createWorkplaceResourceClosure(
-              command.siteId,
-              command.resourceId,
-              command.input,
-              command.key
-            )
-          : await cancelWorkplaceResourceClosure(command.siteId, command.closureId, {
-              version: command.version,
-              reason: command.reason,
-              confirmed: true,
-            });
+      const result = await cancelWorkplaceResourceClosure(command.siteId, command.closureId, {
+        version: command.version,
+        reason: command.reason,
+        confirmed: true,
+      });
       if (
         !validClosure(result) ||
         result.siteId !== command.siteId ||
         result.floorId !== command.floorId ||
         result.resourceId !== command.resourceId ||
-        (command.operation === 'cancel' && result.closureId !== command.closureId)
+        result.closureId !== command.closureId
       )
         throw new Error('Closure response scope changed');
       if (
-        command.operation === 'create'
-          ? result.status !== 'ACTIVE' ||
-            result.resourceVersionAtCreate !== command.input.version ||
-            result.reason !== command.input.reason ||
-            !sameInstant(result.startsAt, command.input.startsAt) ||
-            !sameInstant(result.endsAt, command.input.endsAt)
-          : result.status !== 'CANCELLED' ||
-            result.version <= command.version ||
-            result.cancellationReason !== command.reason
+        result.status !== 'CANCELLED' ||
+        result.version <= command.version ||
+        result.cancellationReason !== command.reason
       )
         throw new Error('Closure response does not match the issued command');
       return result;
@@ -508,7 +480,6 @@ export function WorkplaceResourceClosurePanel({
       setReason('');
       setConfirmed(false);
       setOutcome(null);
-      setUnknownCreate(null);
       setSelectedClosure(null);
       await queryClient.invalidateQueries({ queryKey: ['workplace'] });
     },
@@ -522,7 +493,6 @@ export function WorkplaceResourceClosurePanel({
             : 'unknown';
       setOutcome(state);
       setConfirmed(false);
-      if (state === 'unknown' && command.operation === 'create') setUnknownCreate(command);
     },
     onSettled: (_data, _error, command) => {
       if (inFlight.current === command) inFlight.current = null;
@@ -534,11 +504,10 @@ export function WorkplaceResourceClosurePanel({
       !canManage ||
       !fresh ||
       !matchesCommand(command) ||
-      (!ready && command !== unknownCreate) ||
-      (command.operation === 'cancel' &&
-        (closure?.closureId !== command.closureId ||
-          closure.version !== command.version ||
-          closure.status !== 'ACTIVE'))
+      !ready ||
+      closure?.closureId !== command.closureId ||
+      closure.version !== command.version ||
+      closure.status !== 'ACTIVE'
     )
       return;
     inFlight.current = command;
@@ -589,7 +558,6 @@ export function WorkplaceResourceClosurePanel({
       activeScope.current === scope &&
       activeNavigation.current.key === context &&
       activeNavigation.current.generation === navigationGeneration &&
-      !unknownCreate &&
       results.every((item) => item.isSuccess) &&
       Array.isArray(resourceRows) &&
       canonicalResource(resourceRows.find((item) => item?.resourceId === resource.resourceId)) &&
@@ -782,50 +750,37 @@ export function WorkplaceResourceClosurePanel({
           multiline
           minRows={2}
         />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={confirmed && confirmedContext.current === sourceContext}
-              disabled={!canManage || !fresh || blocked}
-              onChange={(event) => {
-                confirmedContext.current = event.target.checked ? sourceContext : null;
-                setConfirmed(event.target.checked);
-              }}
-            />
-          }
-          label={t('workplace.experience.confirmImpact')}
-        />
-        <Stack direction="row" gap={1} flexWrap="wrap">
-          <ActionButton
-            intent="danger"
-            disabled={
-              !ready ||
-              mutation.isPending ||
-              !capabilities.canCreateWorkplaceAdmin ||
-              Boolean(selectedClosure)
+        {selectedClosure ? (
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={confirmed && confirmedContext.current === sourceContext}
+                disabled={!canManage || !fresh || blocked}
+                onChange={(event) => {
+                  confirmedContext.current = event.target.checked ? sourceContext : null;
+                  setConfirmed(event.target.checked);
+                }}
+              />
             }
-            onClick={() => {
-              if (!ready || !range || !currentResource || selectedClosure) return;
-              dispatch({
-                operation: 'create',
-                siteId: resource.siteId,
-                floorId: resource.floorId,
-                resourceId: resource.resourceId,
-                scope,
-                generation: commandContext.current.generation,
-                key: crypto.randomUUID(),
-                input: {
-                  startsAt: range!.from,
-                  endsAt: range!.to,
-                  version: currentResource!.version,
-                  reason: reason.trim(),
-                  confirmed: true,
-                },
-              });
+            label={t('workplace.experience.confirmImpact')}
+          />
+        ) : null}
+        {!selectedClosure && range && currentResource ? (
+          <WorkplaceResourceClosureExecution
+            resource={currentResource}
+            range={range}
+            reason={reason}
+            canManage={canManage && capabilities.canCreateWorkplaceAdmin}
+            sourceFresh={fresh && !blocked}
+            timeZone={timeZone}
+            onCompleted={() => {
+              setReason('');
+              setConfirmed(false);
+              setOutcome(null);
             }}
-          >
-            {t('workplace.experience.closureCreate')}
-          </ActionButton>
+          />
+        ) : null}
+        <Stack direction="row" gap={1} flexWrap="wrap">
           {closure?.status === 'ACTIVE' ? (
             <ActionButton
               intent="secondary"
@@ -865,19 +820,10 @@ export function WorkplaceResourceClosurePanel({
               outcome === 'denied' ? undefined : (
                 <ActionButton
                   intent="secondary"
-                  disabled={
-                    mutation.isPending ||
-                    Boolean(
-                      unknownCreate && (!canManage || !fresh || !matchesCommand(unknownCreate))
-                    )
-                  }
-                  onClick={() => (unknownCreate ? dispatch(unknownCreate) : void recheck())}
+                  disabled={mutation.isPending || !canManage || !fresh}
+                  onClick={() => void recheck()}
                 >
-                  {t(
-                    unknownCreate
-                      ? 'workplace.experience.sameRequestRetry'
-                      : 'workplace.experience.recheck'
-                  )}
+                  {t('workplace.experience.recheck')}
                 </ActionButton>
               )
             }

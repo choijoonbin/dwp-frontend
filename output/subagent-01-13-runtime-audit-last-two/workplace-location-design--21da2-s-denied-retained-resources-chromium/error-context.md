@@ -1,0 +1,374 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: Skip to main content
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - button [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: Workplace administration
+            - paragraph [ref=e26]: SKAX
+          - navigation [ref=e27]:
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: Workplace administration
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - link [ref=e32] [cursor=pointer]:
+                    - /url: /workplace/admin/overview
+                    - img [ref=e34]
+                    - paragraph [ref=e40]: Operations overview
+                  - navigation [ref=e42]:
+                    - generic [ref=e43]:
+                      - link [ref=e44] [cursor=pointer]:
+                        - /url: /workplace/admin/overview?view=overview
+                        - img [ref=e46]
+                        - text: Operations
+                      - link [ref=e49] [cursor=pointer]:
+                        - /url: /workplace/admin/overview?view=insights
+                        - img [ref=e51]
+                        - text: Insights
+                - listitem [ref=e53]:
+                  - link [ref=e54] [cursor=pointer]:
+                    - /url: /workplace/admin/safety
+                    - img [ref=e56]
+                    - paragraph [ref=e62]: Safety response
+                - listitem [ref=e63]:
+                  - link [ref=e64] [cursor=pointer]:
+                    - /url: /workplace/admin/operations
+                    - img [ref=e66]
+                    - paragraph [ref=e70]: Booking operations
+                  - navigation [ref=e72]:
+                    - generic [ref=e73]:
+                      - link [ref=e74] [cursor=pointer]:
+                        - /url: /workplace/admin/operations?view=bookings
+                        - img [ref=e76]
+                        - text: Bookings
+                      - link [ref=e81] [cursor=pointer]:
+                        - /url: /workplace/admin/operations?view=facilities
+                        - img [ref=e83]
+                        - text: Space closures
+                      - link [ref=e85] [cursor=pointer]:
+                        - /url: /workplace/admin/operations?view=audit
+                        - img [ref=e87]
+                        - text: Audit trail
+                - listitem [ref=e92]:
+                  - link [ref=e93] [cursor=pointer]:
+                    - /url: /workplace/admin/exceptions
+                    - img [ref=e95]
+                    - paragraph [ref=e98]: Policy & exception control
+                - listitem [ref=e99]:
+                  - link [ref=e100] [cursor=pointer]:
+                    - /url: /workplace/admin/devices
+                    - img [ref=e102]
+                    - paragraph [ref=e106]: Workplace device operations
+                - listitem [ref=e107]:
+                  - link [ref=e108] [cursor=pointer]:
+                    - /url: /workplace/admin/space-planning
+                    - img [ref=e110]
+                    - paragraph [ref=e115]: Space planning
+                - listitem [ref=e116]:
+                  - link [ref=e117] [cursor=pointer]:
+                    - /url: /workplace/admin/assistant-governance
+                    - img [ref=e119]
+                    - paragraph [ref=e123]: Assistant governance
+                - listitem [ref=e124]:
+                  - link [ref=e125] [cursor=pointer]:
+                    - /url: /workplace/admin/governance
+                    - img [ref=e127]
+                    - paragraph [ref=e133]: Space governance
+                  - navigation [ref=e135]:
+                    - generic [ref=e136]:
+                      - link [ref=e137] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=hierarchy
+                        - img [ref=e139]
+                        - text: Spatial hierarchy
+                      - link [ref=e144] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=access
+                        - img [ref=e146]
+                        - text: Access control
+                      - link [ref=e149] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=policy
+                        - img [ref=e151]
+                        - text: Policy inheritance
+                      - link [ref=e154] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=floorPlans
+                        - img [ref=e156]
+                        - text: Floor-plan releases
+                      - link [ref=e159] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=delegation
+                        - img [ref=e161]
+                        - text: Admin delegation
+                      - link [ref=e164] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=experience
+                        - img [ref=e166]
+                        - text: Privacy and sharing
+                      - link [ref=e169] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=dataSources
+                        - img [ref=e171]
+                        - text: Data connections
+                - listitem [ref=e174]:
+                  - link [ref=e175] [cursor=pointer]:
+                    - /url: /workplace/admin/locations
+                    - img [ref=e177]
+                    - paragraph [ref=e182]: Sites and floor plans
+                - listitem [ref=e183]:
+                  - link [ref=e184] [cursor=pointer]:
+                    - /url: /workplace/admin/policies
+                    - img [ref=e186]
+                    - paragraph [ref=e190]: Space booking policy
+                - listitem [ref=e191]:
+                  - link [ref=e192] [cursor=pointer]:
+                    - /url: /workplace/admin/service-fulfillment
+                    - img [ref=e194]
+                    - paragraph [ref=e198]: Service fulfillment
+                - listitem [ref=e199]:
+                  - link [ref=e200] [cursor=pointer]:
+                    - /url: /workplace/admin/service-catalog
+                    - img [ref=e202]
+                    - paragraph [ref=e206]: Service catalog
+                - listitem [ref=e207]:
+                  - link [ref=e208] [cursor=pointer]:
+                    - /url: /workplace/admin/service-providers
+                    - img [ref=e210]
+                    - paragraph [ref=e214]: Service providers
+                - listitem [ref=e215]:
+                  - link [ref=e216] [cursor=pointer]:
+                    - /url: /workplace/admin/visits
+                    - img [ref=e218]
+                    - paragraph [ref=e223]: Visitor exceptions
+                - listitem [ref=e224]:
+                  - link [ref=e225] [cursor=pointer]:
+                    - /url: /workplace/admin/visit-policies
+                    - img [ref=e227]
+                    - paragraph [ref=e231]: Visitor policies
+                - listitem [ref=e232]:
+                  - link [ref=e233] [cursor=pointer]:
+                    - /url: /workplace/admin/access-zones
+                    - img [ref=e235]
+                    - paragraph [ref=e243]: Visitor access zones
+                - listitem [ref=e244]:
+                  - link [ref=e245] [cursor=pointer]:
+                    - /url: /workplace/admin/visit-providers
+                    - img [ref=e247]
+                    - paragraph [ref=e254]: Visitor providers
+                - listitem [ref=e255]:
+                  - link [ref=e256] [cursor=pointer]:
+                    - /url: /workplace/admin/kiosk-devices
+                    - img [ref=e258]
+                    - paragraph [ref=e262]: Kiosk devices
+            - generic [ref=e263]:
+              - paragraph [ref=e264]: Meeting room administration
+              - list [ref=e265]:
+                - listitem [ref=e266]:
+                  - link [ref=e267] [cursor=pointer]:
+                    - /url: /workplace/admin/meeting-operations
+                    - img [ref=e269]
+                    - paragraph [ref=e275]: Meeting approvals
+                - listitem [ref=e276]:
+                  - link [ref=e277] [cursor=pointer]:
+                    - /url: /workplace/admin/meeting-policy
+                    - img [ref=e279]
+                    - paragraph [ref=e283]: Meeting policy
+          - link [ref=e285] [cursor=pointer]:
+            - /url: /workplace/home
+            - img [ref=e287]
+            - text: Return to work
+      - banner [ref=e289]:
+        - generic [ref=e290]:
+          - generic [ref=e291]:
+            - img [ref=e293]
+            - generic [ref=e297]: Workplace management
+          - navigation [ref=e300]:
+            - generic [ref=e301]: Management mode
+            - link [ref=e303] [cursor=pointer]:
+              - /url: /workplace/home
+              - img [ref=e305]
+              - generic [ref=e307]: Return to work
+          - generic [ref=e308]:
+            - button [ref=e310] [cursor=pointer]:
+              - img [ref=e311]
+              - paragraph [ref=e314]: Search DWP
+              - generic [ref=e315]: ⌘K
+            - generic [ref=e316]:
+              - button [ref=e317] [cursor=pointer]:
+                - img [ref=e318]
+              - button [ref=e325] [cursor=pointer]:
+                - img [ref=e327]
+            - button [ref=e331] [cursor=pointer]:
+              - generic [ref=e332]: T
+              - img [ref=e333]
+      - main [ref=e335]:
+        - generic [ref=e336]:
+          - generic [ref=e337]:
+            - generic [ref=e338]:
+              - text: Spatial inventory and digital floor plans
+              - heading [level=1] [ref=e339]: Sites and floor plans
+              - paragraph [ref=e340]: Register headquarters and flexible offices, then place desks, rooms, lockers, and other reservable resources by floor.
+            - generic [ref=e342]:
+              - generic [ref=e344]: Last checked Sep 17, 2026, 9:54 AM
+              - button [ref=e345] [cursor=pointer]:
+                - img [ref=e347]
+                - text: Refresh
+              - button [ref=e352] [cursor=pointer]:
+                - img [ref=e354]
+                - text: Add site
+          - generic [ref=e355]:
+            - complementary [ref=e356]:
+              - generic [ref=e357]:
+                - paragraph [ref=e358]: Sites
+                - generic [ref=e360]: "1"
+              - generic [ref=e361]:
+                - button [pressed] [ref=e362] [cursor=pointer]:
+                  - img [ref=e364]
+                  - generic [ref=e368]:
+                    - generic [ref=e369]:
+                      - paragraph [ref=e370]: Pangyo HQ
+                      - generic [ref=e372]: Active
+                    - generic [ref=e373]: Headquarters · 1/20
+                - button [ref=e374] [cursor=pointer]:
+                  - img [ref=e375]
+                - button [pressed] [ref=e379] [cursor=pointer]:
+                  - img [ref=e381]
+                  - generic [ref=e385]: 12F
+                  - generic [ref=e386]: "1"
+              - region [ref=e387]:
+                - heading [level=2] [ref=e388]: Selected floor catalog
+                - generic [ref=e389]:
+                  - button [pressed] [ref=e390] [cursor=pointer]:
+                    - generic [ref=e391]: All spaces
+                    - generic [ref=e392]: "1"
+                  - button [ref=e393] [cursor=pointer]:
+                    - generic [ref=e394]: Desk
+                    - generic [ref=e395]: "1"
+            - generic [ref=e396]:
+              - generic [ref=e397]:
+                - generic [ref=e398]:
+                  - img [ref=e399]
+                  - generic [ref=e403]:
+                    - generic [ref=e404]:
+                      - paragraph [ref=e405]: Pangyo HQ
+                      - generic [ref=e407]: Active
+                    - text: Bundang-gu, Seongnam
+                - generic [ref=e408]:
+                  - button [ref=e409] [cursor=pointer]:
+                    - img [ref=e411]
+                    - text: Add floor
+                  - button [ref=e415] [cursor=pointer]:
+                    - img [ref=e417]
+                    - text: Add space
+              - generic [ref=e418]:
+                - tablist [ref=e422]:
+                  - tab [selected] [ref=e423] [cursor=pointer]: 12F (1) · Active
+                - button [ref=e426] [cursor=pointer]:
+                  - img [ref=e427]
+              - generic [ref=e431]:
+                - status [ref=e432]:
+                  - img [ref=e434]
+                  - generic [ref=e436]: Placement and background changes are allowed only through the auditable Draft, Review, and Publish workflow. This view shows the current catalog projection.
+                  - button [ref=e438] [cursor=pointer]:
+                    - img [ref=e440]
+                    - text: Manage floor-plan release
+                - group [ref=e444]:
+                  - button [ref=e445] [cursor=pointer]: List view
+                  - button [pressed] [ref=e446] [cursor=pointer]: Map view
+                - generic [ref=e447]:
+                  - generic [ref=e448]:
+                    - generic [ref=e451]: 1 resources
+                    - generic [ref=e452]:
+                      - button [ref=e454] [cursor=pointer]:
+                        - img [ref=e455]
+                      - generic [ref=e456]: 100%
+                      - button [ref=e458] [cursor=pointer]:
+                        - img [ref=e459]
+                      - generic [ref=e460]:
+                        - button [disabled]:
+                          - img
+                      - button [disabled]:
+                        - generic:
+                          - img
+                        - text: Save layout
+                  - generic [ref=e461]:
+                    - button [pressed] [ref=e464] [cursor=pointer]: D-1208
+                    - status [ref=e465]
+                  - generic [ref=e466]: Select a space to inspect its details.
+            - complementary [ref=e467]:
+              - generic [ref=e468]:
+                - generic [ref=e469]:
+                  - generic [ref=e470]:
+                    - text: Space information
+                    - heading [level=2] [ref=e471]: Focus desk 12
+                  - generic [ref=e473]: In service
+                - generic [ref=e475]:
+                  - img [ref=e476]
+                  - generic [ref=e478]: No space photo is registered.
+                - generic [ref=e479]:
+                  - generic [ref=e481]: Desk
+                  - generic [ref=e483]: Advance booking
+                - generic [ref=e484]:
+                  - generic [ref=e485]:
+                    - img [ref=e486]
+                    - paragraph [ref=e489]: Pangyo HQ · 12F
+                  - generic [ref=e490]:
+                    - img [ref=e491]
+                    - paragraph [ref=e495]: 1 people
+                - generic [ref=e496]:
+                  - generic [ref=e498]: Monitor
+                  - generic [ref=e500]: Standing desk
+                - region [ref=e501]:
+                  - text: Floor-plan coordinates
+                  - generic [ref=e502]:
+                    - term [ref=e503]: Horizontal position (%)
+                    - definition [ref=e504]: 12%
+                    - term [ref=e505]: Vertical position (%)
+                    - definition [ref=e506]: 18%
+                - generic [ref=e507]:
+                  - button [ref=e508] [cursor=pointer]:
+                    - img [ref=e510]
+                    - text: Edit
+                  - button [ref=e513] [cursor=pointer]:
+                    - img [ref=e515]
+                    - text: Print space QR
+                - generic [ref=e521]:
+                  - heading [level=3] [ref=e522]:
+                    - button [ref=e523] [cursor=pointer]:
+                      - paragraph [ref=e525]: Manage space photo
+                      - img [ref=e527]
+                  - generic: Photo file · PNG/JPEG, up to 10 MiB
+                  - generic: Photo description
+                  - generic: Reason for change
+                - generic [ref=e529]:
+                  - heading [level=3] [ref=e530]:
+                    - button [ref=e531] [cursor=pointer]:
+                      - paragraph [ref=e533]: Scheduled space closure
+                      - img [ref=e535]
+                  - generic: Start date and time
+                  - generic: End date and time
+                  - generic: Closure reason
+    - button [ref=e539] [cursor=pointer]
+  - dialog "Space QR print preview" [active] [ref=e544]:
+    - heading "Space QR print preview" [level=2] [ref=e545]
+    - generic [ref=e547]:
+      - img "QR code for Focus desk 12" [ref=e548]
+      - generic [ref=e551]:
+        - heading "Focus desk 12" [level=2] [ref=e552]
+        - paragraph [ref=e553]: Pangyo HQ · 12F · D-1208
+      - generic [ref=e554]: Scanning opens this exact site, floor, and space in Find and book a space. The code contains no credential or personal data.
+    - generic [ref=e555]:
+      - button "Close" [ref=e556] [cursor=pointer]
+      - button "Print QR" [ref=e557] [cursor=pointer]:
+        - img [ref=e559]
+        - text: Print QR
+```

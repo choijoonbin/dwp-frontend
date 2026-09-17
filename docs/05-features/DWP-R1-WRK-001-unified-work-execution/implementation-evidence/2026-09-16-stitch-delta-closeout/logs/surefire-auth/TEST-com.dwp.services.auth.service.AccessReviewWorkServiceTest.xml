@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.auth.service.AccessReviewWorkServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-16T02:53:41" hostname="MacBook-Pro" time="0.026">
+  <properties/>
+  <testcase name="foreignReviewerGetsTheSameNotAvailableResultAsAMissingItem()" classname="com.dwp.services.auth.service.AccessReviewWorkServiceTest" time="0.007"/>
+  <testcase name="revokedOrExpiredAssignmentCannotBeResurrectedByAClientFlag()" classname="com.dwp.services.auth.service.AccessReviewWorkServiceTest" time="0.008"/>
+  <testcase name="successfulDecisionEmitsOwnerEventAfterTheAtomicVersionCheck()" classname="com.dwp.services.auth.service.AccessReviewWorkServiceTest" time="0.006"/>
+  <testcase name="staleExpectedVersionProducesConflictBeforeDomainMutation()" classname="com.dwp.services.auth.service.AccessReviewWorkServiceTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

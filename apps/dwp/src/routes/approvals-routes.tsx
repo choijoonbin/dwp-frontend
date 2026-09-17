@@ -6,7 +6,7 @@ import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-produc
 import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { ApprovalLayout } from '../layouts/approval-layout';
 import { LegacyProductFirstAllowedIndex } from './legacy-product-first-allowed-index';
-import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
+import { productPageRelativePattern } from './product-page-route-contracts';
 import {
   authenticationFallback,
   ProductAnyRouteGuard,
@@ -69,16 +69,28 @@ const approvalManagementIndexCandidates = [
     path: '/approvals/admin/overview',
   },
   {
-    routeContractKey: 'route.approvals.admin.workflows.page',
-    path: '/approvals/admin/workflows',
-  },
-  {
     routeContractKey: 'route.approvals.admin.forms.page',
     path: '/approvals/admin/forms',
   },
   {
+    routeContractKey: 'route.approvals.admin.workflows.page',
+    path: '/approvals/admin/workflows',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.routing.page',
+    path: '/approvals/admin/routing',
+  },
+  {
     routeContractKey: 'route.approvals.admin.policies.page',
     path: '/approvals/admin/policies',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.integrations.page',
+    path: '/approvals/admin/integrations',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.audit.page',
+    path: '/approvals/admin/audit',
   },
   {
     routeContractKey: 'route.approvals.admin.operations.page',
@@ -88,6 +100,14 @@ const approvalManagementIndexCandidates = [
     routeContractKey: 'route.approvals.admin.signatures.page',
     path: '/approvals/admin/signatures',
   },
+  {
+    routeContractKey: 'route.approvals.admin.analytics.page',
+    path: '/approvals/admin/analytics',
+  },
+  {
+    routeContractKey: 'route.approvals.admin.deployments.page',
+    path: '/approvals/admin/deployments',
+  },
 ] as const;
 
 function approvalPageRoute(
@@ -96,7 +116,7 @@ function approvalPageRoute(
   basePath: '/approvals' | '/approvals/admin'
 ): RouteObject {
   return {
-    path: officialProductPageRelativePattern(routeContractKey, basePath),
+    path: productPageRelativePattern(routeContractKey, basePath),
     handle: { routeContractKey },
     element: (
       <ProductCanaryRouteBoundary
@@ -125,11 +145,16 @@ const approvalWorkRoutes = [
 
 const approvalManagementRoutes = [
   'overview',
-  'workflows',
   'forms',
+  'workflows',
+  'routing',
   'policies',
+  'integrations',
+  'audit',
   'operations',
   'signatures',
+  'analytics',
+  'deployments',
 ] as const;
 
 export const approvalsRoutes: RouteObject[] = [

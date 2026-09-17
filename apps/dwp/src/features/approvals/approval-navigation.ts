@@ -1,6 +1,8 @@
 import {
   Archive,
   BadgeCheck,
+  BarChart3,
+  Cable,
   CheckCircle2,
   ClipboardCheck,
   FileInput,
@@ -12,6 +14,9 @@ import {
   KeyRound,
   ListChecks,
   MessagesSquare,
+  Network,
+  Rocket,
+  ScrollText,
   Send,
   ShieldCheck,
 } from 'lucide-react';
@@ -35,9 +40,44 @@ export type ApprovalView =
   | 'admin-overview'
   | 'workflows'
   | 'forms'
+  | 'routing'
   | 'policies'
+  | 'integrations'
+  | 'audit'
   | 'operations'
-  | 'signatures';
+  | 'signatures'
+  | 'analytics'
+  | 'deployments';
+
+export type ApprovalAdminView = Extract<
+  ApprovalView,
+  | 'admin-overview'
+  | 'forms'
+  | 'workflows'
+  | 'routing'
+  | 'policies'
+  | 'integrations'
+  | 'audit'
+  | 'operations'
+  | 'signatures'
+  | 'analytics'
+  | 'deployments'
+>;
+
+const APPROVAL_ADMIN_V2_VIEWS: ReadonlySet<ApprovalAdminView> = new Set([
+  'forms',
+  'routing',
+  'policies',
+  'integrations',
+  'audit',
+  'operations',
+  'analytics',
+  'deployments',
+]);
+
+export function isApprovalAdminV2View(view: ApprovalView): view is ApprovalAdminView {
+  return APPROVAL_ADMIN_V2_VIEWS.has(view as ApprovalAdminView);
+}
 
 export type ApprovalNavigationItem = {
   view: ApprovalView;
@@ -176,6 +216,17 @@ export const APPROVAL_MANAGEMENT_NAVIGATION = [
         },
       },
       {
+        view: 'forms',
+        path: '/approvals/admin/forms',
+        icon: FileStack,
+        taskKind: 'administration',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: ['approvals.design.read', 'approvals.oversight.design.read'],
+        },
+      },
+      {
         view: 'workflows',
         path: '/approvals/admin/workflows',
         icon: GitBranch,
@@ -187,9 +238,9 @@ export const APPROVAL_MANAGEMENT_NAVIGATION = [
         },
       },
       {
-        view: 'forms',
-        path: '/approvals/admin/forms',
-        icon: FileStack,
+        view: 'routing',
+        path: '/approvals/admin/routing',
+        icon: Network,
         taskKind: 'administration',
         access: {
           type: 'capability-expression',
@@ -206,6 +257,34 @@ export const APPROVAL_MANAGEMENT_NAVIGATION = [
           type: 'capability-expression',
           mode: 'ANY',
           capabilityContractKeys: ['approvals.policy.read', 'approvals.oversight.policy.read'],
+        },
+      },
+      {
+        view: 'integrations',
+        path: '/approvals/admin/integrations',
+        icon: Cable,
+        taskKind: 'administration',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.operations.read',
+            'approvals.oversight.operations.read',
+          ],
+        },
+      },
+      {
+        view: 'audit',
+        path: '/approvals/admin/audit',
+        icon: ScrollText,
+        taskKind: 'operations',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.audit.operations.read',
+            'approvals.oversight.operations.read',
+          ],
         },
       },
       {
@@ -234,6 +313,37 @@ export const APPROVAL_MANAGEMENT_NAVIGATION = [
           capabilityContractKeys: [
             'approvals.signature.read',
             'approvals.oversight.signature.read',
+          ],
+        },
+      },
+      {
+        view: 'analytics',
+        path: '/approvals/admin/analytics',
+        icon: BarChart3,
+        taskKind: 'operations',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.operations.read',
+            'approvals.audit.operations.read',
+            'approvals.oversight.operations.read',
+          ],
+        },
+      },
+      {
+        view: 'deployments',
+        path: '/approvals/admin/deployments',
+        icon: Rocket,
+        taskKind: 'administration',
+        access: {
+          type: 'capability-expression',
+          mode: 'ANY',
+          capabilityContractKeys: [
+            'approvals.design.read',
+            'approvals.operations.read',
+            'approvals.oversight.design.read',
+            'approvals.oversight.operations.read',
           ],
         },
       },
@@ -280,7 +390,7 @@ export const APPROVAL_NAVIGATION = [
     items: group.items.map((item) => ({
       ...item,
       requiredResourceKey:
-        item.view === 'workflows' || item.view === 'forms'
+        item.view === 'workflows' || item.view === 'forms' || item.view === 'routing'
           ? 'ADMIN.APPROVAL_DESIGN'
           : item.view === 'policies'
             ? 'ADMIN.APPROVAL_POLICY'
@@ -303,9 +413,18 @@ export function findApprovalNavigationItem(pathname: string): ApprovalNavigation
   return undefined;
 }
 
-export function isApprovalAdminView(view: ApprovalView): boolean {
-  return (
-    view === 'admin-overview' ||
-    ['workflows', 'forms', 'policies', 'operations', 'signatures'].includes(view)
-  );
+export function isApprovalAdminView(view: ApprovalView): view is ApprovalAdminView {
+  return [
+    'admin-overview',
+    'forms',
+    'workflows',
+    'routing',
+    'policies',
+    'integrations',
+    'audit',
+    'operations',
+    'signatures',
+    'analytics',
+    'deployments',
+  ].includes(view);
 }

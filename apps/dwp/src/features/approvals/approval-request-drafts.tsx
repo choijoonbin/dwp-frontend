@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   ArrowLeft,
   ArrowRight,
@@ -49,6 +49,7 @@ import { useApprovalRequestRevisionHistory } from './use-approval-request-revisi
 import { ApprovalSurface, StatusChip } from './approval-ui';
 import { useApprovalExperience } from './use-approval-experience';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
+import { approvalRequestDraftListState } from './approval-request-draft-list-state';
 
 import type { ApprovalSearchFilters } from '@dwp-frontend/shared-utils';
 
@@ -99,11 +100,16 @@ export function ApprovalRequestDrafts() {
     retry: false,
     staleTime: 0,
     refetchInterval: 60_000,
+    placeholderData: keepPreviousData,
   });
-  const rows =
-    requestScope.ready && !pendingFilter && !list.isFetching && !list.isError
-      ? (list.data?.items ?? [])
-      : [];
+  const listState = approvalRequestDraftListState({
+    ready: requestScope.ready,
+    pendingFilter,
+    fetching: list.isFetching,
+    error: list.isError,
+    items: list.data?.items,
+  });
+  const rows = listState.rows;
   const selected = rows.find((request) => request.requestId === selectedId) ?? rows[0];
   const detail = useQuery({
     queryKey: [
@@ -183,12 +189,7 @@ export function ApprovalRequestDrafts() {
     detail: visibleDetail,
     onCreated: (draftId) => navigate(`/approvals/requests/new?draft=${draftId}`),
   });
-  const sourceReady =
-    requestScope.ready &&
-    !pendingFilter &&
-    !list.isFetching &&
-    !list.isError &&
-    commands.problem !== 'DENIED';
+  const sourceReady = listState.sourceReady && commands.problem !== 'DENIED';
   const navigationLocked =
     commands.pending ||
     commands.unresolved ||
@@ -206,8 +207,8 @@ export function ApprovalRequestDrafts() {
     await commands.refresh();
   };
   useEffect(() => {
-    if (!selected && !list.isFetching && !pendingFilter) setPreviewOpen(false);
-  }, [selected, list.isFetching, pendingFilter]);
+    if (!selected && !listState.busy) setPreviewOpen(false);
+  }, [selected, listState.busy]);
   const fields = formEvaluation.legacyFields.filter((field) => field.required);
   const missing =
     formEvaluation.kind === 'TYPED'
@@ -219,7 +220,7 @@ export function ApprovalRequestDrafts() {
   const total = formEvaluation.kind === 'TYPED' ? formEvaluation.required.length : fields.length;
   const completed = Math.max(0, total - missing.length);
 
-  const preview = selected && sourceReady && (
+  const preview = selected && (
     <Stack gap={2} sx={{ p: { xs: 2, md: 2.5 }, minWidth: 0 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
         <Box minWidth={0}>
@@ -247,7 +248,7 @@ export function ApprovalRequestDrafts() {
       <Typography variant="caption">
         {t('requests.autosave.saved', { version: selected.version })}
       </Typography>
-      {!commands.problem && (canViewRequests || canUpdateRequests) && (
+      {sourceReady && !commands.problem && (canViewRequests || canUpdateRequests) && (
         <Stack gap={1}>
           {deleted ? (
             canUpdateRequests && (
@@ -393,7 +394,12 @@ export function ApprovalRequestDrafts() {
       <ApprovalRequestRevisionHistory
         history={history}
         onRecover={
-          !deleted && visibleDetail && canUpdateRequests && !commands.problem && !commands.pending
+          sourceReady &&
+          !deleted &&
+          visibleDetail &&
+          canUpdateRequests &&
+          !commands.problem &&
+          !commands.pending
             ? (revision) => commands.open('recover', selected, revision)
             : undefined
         }
@@ -478,7 +484,7 @@ export function ApprovalRequestDrafts() {
         >
           {t('requests.loadError')}
         </InlineFeedback>
-      ) : list.isFetching || pendingFilter ? (
+      ) : listState.initialLoading ? (
         <LoadingState label={t('common:labels.loading')} embedded size="page" />
       ) : !rows.length ? (
         <Typography variant="body2" color="text.secondary" sx={{ p: 4 }}>
@@ -486,6 +492,7 @@ export function ApprovalRequestDrafts() {
         </Typography>
       ) : (
         <Box
+          aria-busy={listState.busy}
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: 'minmax(0,1fr)', lg: 'minmax(0,1.15fr) minmax(0,.85fr)' },
@@ -559,7 +566,7 @@ export function ApprovalRequestDrafts() {
       )}
       <Drawer
         anchor="right"
-        open={mobile && previewOpen && sourceReady}
+        open={mobile && previewOpen}
         onClose={() => {
           if (!navigationLocked) setPreviewOpen(false);
         }}

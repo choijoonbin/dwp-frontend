@@ -35,6 +35,7 @@ export function DwaionProposalDetail({
   onAccept,
   onSnooze,
   onDismiss,
+  onReviewAction,
 }: {
   proposal: DwaionProposal | null;
   open: boolean;
@@ -44,6 +45,7 @@ export function DwaionProposalDetail({
   onAccept: (proposal: DwaionProposal) => void;
   onSnooze: (proposal: DwaionProposal, until: string) => void;
   onDismiss: (proposal: DwaionProposal) => void;
+  onReviewAction: (proposal: DwaionProposal) => void;
 }) {
   const { t } = useTranslation('work');
   const detailRef = useRef<HTMLDivElement>(null);
@@ -513,6 +515,7 @@ export function DwaionProposalDetail({
           onAccept={onAccept}
           onSnooze={onSnooze}
           onDismiss={onDismiss}
+          onReviewAction={onReviewAction}
         />
       </Box>
 

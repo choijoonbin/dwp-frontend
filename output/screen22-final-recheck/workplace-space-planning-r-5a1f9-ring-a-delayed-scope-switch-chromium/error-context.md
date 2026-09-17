@@ -1,0 +1,395 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - text: Workplace planning
+      - heading "Space planning" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Compare demand, capacity, policy, and trusted emissions evidence before publishing a space plan.
+    - button "Refresh planning data" [ref=e9] [cursor=pointer]:
+      - img [ref=e11]
+      - text: Refresh planning data
+  - generic [ref=e16]:
+    - region "Planning scope" [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - img [ref=e20]
+          - generic [ref=e22]:
+            - heading "Planning scope" [level=2] [ref=e23]
+            - text: Select an authoritative site scope and analysis period.
+            - generic [ref=e24]: "Site time zone: Asia/Seoul"
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]: Site
+            - generic [ref=e28]:
+              - combobox "Site Seoul Workplace" [ref=e29] [cursor=pointer]: Seoul Workplace
+              - textbox: 22000000-0000-4000-8000-000000000001
+              - img
+              - group:
+                - generic: Site
+          - generic [ref=e30]:
+            - generic: Floor
+            - generic [ref=e31]:
+              - combobox "Floor" [ref=e32] [cursor=pointer]
+              - textbox
+              - img
+              - group:
+                - generic: Floor
+          - generic [ref=e33]:
+            - generic [ref=e34]: Neighborhood
+            - generic [ref=e35]:
+              - textbox "Neighborhood" [ref=e36]: North
+              - group:
+                - generic: Neighborhood
+          - generic [ref=e37]:
+            - generic [ref=e38]: Resource type
+            - generic [ref=e39]:
+              - combobox "Resource type Room" [ref=e40] [cursor=pointer]: Room
+              - textbox: ROOM
+              - img
+              - group:
+                - generic: Resource type
+          - generic [ref=e41]:
+            - generic [ref=e42]: From
+            - generic [ref=e43]:
+              - textbox "From" [ref=e44]: 2026-09-17
+              - group:
+                - generic: From
+          - generic [ref=e45]:
+            - generic [ref=e46]: To
+            - generic [ref=e47]:
+              - textbox "To" [ref=e48]: 2026-09-30
+              - group:
+                - generic: To
+          - button "Apply scope" [ref=e49] [cursor=pointer]:
+            - img [ref=e51]
+            - text: Apply scope
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e61]: Current capacity
+          - paragraph [ref=e62]: "12"
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e67]: Room capacity
+          - paragraph [ref=e68]: "12"
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - img [ref=e71]
+            - generic [ref=e77]: Accessible
+          - paragraph [ref=e78]: "2"
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - img [ref=e81]
+            - generic [ref=e86]: Resources
+          - paragraph [ref=e87]: "2"
+      - generic [ref=e88]: Resource catalog as of Sep 18, 2026, 7:00 AM
+      - region "Demand forecast" [ref=e89]:
+        - generic [ref=e90]:
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - heading "Demand forecast" [level=2] [ref=e93]
+              - paragraph [ref=e94]: Recommendations appear only when all six governed sources are ready.
+            - generic [ref=e96]: Partial
+          - alert [ref=e97]:
+            - img [ref=e99]
+            - generic [ref=e102]:
+              - paragraph [ref=e103]: Forecast recommendation is suppressed.
+              - paragraph [ref=e104]: Sensor occupancy coverage is partial.
+      - region "Governed source evidence" [ref=e105]:
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - heading "Governed source evidence" [level=2] [ref=e109]
+              - generic [ref=e110]: "Generated Sep 18, 2026, 8:30 AM · Site time zone: Asia/Seoul"
+            - button "Refresh" [ref=e111] [cursor=pointer]:
+              - img [ref=e113]
+              - text: Refresh
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - generic [ref=e120]:
+                - heading "Work plans" [level=6] [ref=e121]
+                - generic [ref=e123]: Available
+              - generic [ref=e124]:
+                - generic [ref=e125]: Coverage
+                - generic [ref=e126]: 100.0%
+              - progressbar "Coverage" [ref=e127]
+              - generic [ref=e129]:
+                - generic [ref=e130]: Freshness · Fresh
+                - generic [ref=e131]: Source Sep 18, 2026, 7:00 AM
+                - generic [ref=e132]: Received Sep 18, 2026, 7:01 AM
+                - generic [ref=e133]: "Evidence: evidence:WORK_PLAN:22"
+            - generic [ref=e134]:
+              - generic [ref=e135]:
+                - heading "Reservations" [level=6] [ref=e136]
+                - generic [ref=e138]: Available
+              - generic [ref=e139]:
+                - generic [ref=e140]: Coverage
+                - generic [ref=e141]: 100.0%
+              - progressbar "Coverage" [ref=e142]
+              - generic [ref=e144]:
+                - generic [ref=e145]: Freshness · Fresh
+                - generic [ref=e146]: Source Sep 18, 2026, 7:00 AM
+                - generic [ref=e147]: Received Sep 18, 2026, 7:01 AM
+                - generic [ref=e148]: "Evidence: evidence:RESERVATION:22"
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - heading "Check-ins" [level=6] [ref=e151]
+                - generic [ref=e153]: Available
+              - generic [ref=e154]:
+                - generic [ref=e155]: Coverage
+                - generic [ref=e156]: 100.0%
+              - progressbar "Coverage" [ref=e157]
+              - generic [ref=e159]:
+                - generic [ref=e160]: Freshness · Fresh
+                - generic [ref=e161]: Source Sep 18, 2026, 7:00 AM
+                - generic [ref=e162]: Received Sep 18, 2026, 7:01 AM
+                - generic [ref=e163]: "Evidence: evidence:CHECK_IN:22"
+            - generic [ref=e164]:
+              - generic [ref=e165]:
+                - heading "Access" [level=6] [ref=e166]
+                - generic [ref=e168]: Available
+              - generic [ref=e169]:
+                - generic [ref=e170]: Coverage
+                - generic [ref=e171]: 100.0%
+              - progressbar "Coverage" [ref=e172]
+              - generic [ref=e174]:
+                - generic [ref=e175]: Freshness · Fresh
+                - generic [ref=e176]: Source Sep 18, 2026, 7:00 AM
+                - generic [ref=e177]: Received Sep 18, 2026, 7:01 AM
+                - generic [ref=e178]: "Evidence: evidence:ACCESS:22"
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - heading "Sensor occupancy" [level=6] [ref=e181]
+                - generic [ref=e183]: Partial
+              - generic [ref=e184]:
+                - generic [ref=e185]: Coverage
+                - generic [ref=e186]: 72.0%
+              - progressbar "Coverage" [ref=e187]
+              - generic [ref=e189]:
+                - generic [ref=e190]: Freshness · Fresh
+                - generic [ref=e191]: Source Sep 18, 2026, 7:00 AM
+                - generic [ref=e192]: Received Sep 18, 2026, 7:01 AM
+                - generic [ref=e193]: "Evidence: evidence:SENSOR_OCCUPANCY:22"
+                - generic [ref=e194]: "Exclusions: ZONE_SENSOR_MAINTENANCE"
+            - generic [ref=e195]:
+              - generic [ref=e196]:
+                - heading "No-shows" [level=6] [ref=e197]
+                - generic [ref=e199]: Available
+              - generic [ref=e200]:
+                - generic [ref=e201]: Coverage
+                - generic [ref=e202]: 100.0%
+              - progressbar "Coverage" [ref=e203]
+              - generic [ref=e205]:
+                - generic [ref=e206]: Freshness · Fresh
+                - generic [ref=e207]: Source Sep 18, 2026, 7:00 AM
+                - generic [ref=e208]: Received Sep 18, 2026, 7:01 AM
+                - generic [ref=e209]: "Evidence: evidence:NO_SHOW:22"
+      - status [ref=e210]:
+        - img [ref=e212]
+        - generic [ref=e215]: No approved emissions evidence is available for this scope.
+    - generic [ref=e216]:
+      - region "Planning scenarios" [ref=e217]:
+        - generic [ref=e218]:
+          - generic [ref=e219]:
+            - heading "Planning scenarios" [level=2] [ref=e220]
+            - text: 1 scenarios
+          - button "New" [ref=e221] [cursor=pointer]:
+            - img [ref=e223]
+            - text: New
+        - list "Planning scenarios" [ref=e226]:
+          - listitem [ref=e227]:
+            - button "North room plan · Previewed · Version 2" [ref=e228] [cursor=pointer]:
+              - generic [ref=e229]:
+                - img [ref=e231]
+                - generic [ref=e233]:
+                  - generic [ref=e234]:
+                    - paragraph [ref=e235]: North room plan
+                    - generic [ref=e237]: Previewed
+                  - generic [ref=e238]: Version 2 · Sep 18, 2026 · Asia/Seoul
+                  - generic [ref=e239]: Evidence-backed capacity proposal.
+      - generic [ref=e240]:
+        - region "Scenario details" [ref=e241]:
+          - generic [ref=e242]:
+            - generic [ref=e243]:
+              - generic [ref=e244]:
+                - heading "Scenario details" [level=2] [ref=e245]
+                - paragraph [ref=e246]: Define capacity, resources, hours, policy, and evidence before previewing.
+              - generic [ref=e248]: Previewed
+            - generic [ref=e249]:
+              - generic [ref=e250]:
+                - generic [ref=e251]: Scenario name
+                - generic [ref=e252]:
+                  - textbox "Scenario name" [ref=e253]: North room plan
+                  - group:
+                    - generic: Scenario name
+              - generic [ref=e254]:
+                - generic [ref=e255]: Description
+                - generic [ref=e256]:
+                  - textbox "Description" [ref=e257]: Evidence-backed capacity proposal.
+                  - group:
+                    - generic: Description
+              - generic [ref=e258]:
+                - generic [ref=e259]: Proposed capacity
+                - generic [ref=e260]:
+                  - spinbutton "Proposed capacity" [ref=e261]: "12"
+                  - group:
+                    - generic: Proposed capacity
+              - generic [ref=e262]:
+                - generic [ref=e263]: Proposed room capacity
+                - generic [ref=e264]:
+                  - spinbutton "Proposed room capacity" [ref=e265]: "12"
+                  - group:
+                    - generic: Proposed room capacity
+              - generic [ref=e266]:
+                - generic [ref=e267]: Accessible resource count
+                - generic [ref=e268]:
+                  - spinbutton "Accessible resource count" [ref=e269]: "2"
+                  - group:
+                    - generic: Accessible resource count
+              - generic [ref=e270]:
+                - generic: Emissions evidence
+                - generic [ref=e271]:
+                  - combobox "Emissions evidence" [disabled] [ref=e272]
+                  - textbox [disabled]
+                  - img
+                  - group:
+                    - generic: Emissions evidence
+              - generic [ref=e273]:
+                - generic [ref=e274]: Operating start
+                - generic [ref=e275]:
+                  - textbox "Operating start" [ref=e276]: 08:00
+                  - group:
+                    - generic: Operating start
+              - generic [ref=e277]:
+                - generic [ref=e278]: Operating end
+                - generic [ref=e279]:
+                  - textbox "Operating end" [ref=e280]: 20:00
+                  - group:
+                    - generic: Operating end
+              - generic [ref=e281]:
+                - generic [ref=e282]: Policy reference
+                - generic [ref=e283]:
+                  - textbox "Policy reference" [ref=e284]: policy:hybrid-v4
+                  - group:
+                    - generic: Policy reference
+                - paragraph [ref=e285]: Reference the approved workplace policy used for this scenario.
+            - generic [ref=e286]:
+              - generic [ref=e287]:
+                - generic [ref=e288]:
+                  - heading "Affected resources" [level=6] [ref=e289]
+                  - text: Only authoritative resources in the scenario scope can be selected.
+                - generic [ref=e291]: 1 selected
+              - generic [ref=e293] [cursor=pointer]:
+                - generic [ref=e294]:
+                  - checkbox "North room · R-B · ROOM" [checked] [ref=e295]
+                  - img [ref=e296]
+                - generic [ref=e299]:
+                  - paragraph [ref=e300]: North room · R-B
+                  - generic [ref=e302]: Room
+            - generic [ref=e303]:
+              - generic [ref=e304]:
+                - generic [ref=e305]:
+                  - heading "Neighborhood allocations" [level=6] [ref=e306]
+                  - text: Allocate capacity by neighborhood without exceeding the proposed total.
+                - button "Add allocation" [ref=e307] [cursor=pointer]
+              - generic [ref=e309]:
+                - generic [ref=e310]:
+                  - generic [ref=e311]: Neighborhood
+                  - generic [ref=e312]:
+                    - textbox "Neighborhood" [ref=e313]: North
+                    - group:
+                      - generic: Neighborhood
+                - generic [ref=e314]:
+                  - generic [ref=e315]: Allocation capacity
+                  - generic [ref=e316]:
+                    - spinbutton "Allocation capacity" [ref=e317]: "12"
+                    - group:
+                      - generic: Allocation capacity
+                - button "Remove allocation 1" [ref=e318] [cursor=pointer]:
+                  - img [ref=e319]
+            - alert [ref=e322]:
+              - img [ref=e324]
+              - generic [ref=e326]: Create a current, eligible preview before submitting.
+            - generic [ref=e327]:
+              - generic: Change reason
+              - generic [ref=e328]:
+                - textbox "Change reason" [ref=e329]
+                - group:
+                  - generic: Change reason
+              - paragraph [ref=e330]: Provide at least 10 characters for the audit record.
+            - generic [ref=e331] [cursor=pointer]:
+              - generic [ref=e332]:
+                - checkbox "I confirm this governed change" [ref=e333]
+                - img [ref=e334]
+              - generic [ref=e336]: I confirm this governed change
+            - generic [ref=e337]:
+              - button "Save changes" [disabled]:
+                - generic:
+                  - img
+                - text: Save changes
+              - button "Preview" [disabled]:
+                - generic:
+                  - img
+                - text: Preview
+              - button "Preview booking impact" [disabled]:
+                - generic:
+                  - img
+                - text: Preview booking impact
+              - button "Submit for approval" [disabled]:
+                - generic:
+                  - img
+                - text: Submit for approval
+        - region "Scenario comparison" [ref=e338]:
+          - generic [ref=e339]:
+            - generic [ref=e340]:
+              - generic [ref=e341]:
+                - heading "Scenario comparison" [level=3] [ref=e342]
+                - text: Compare the current plan with this governed scenario.
+                - generic [ref=e343]: Valid until Sep 17, 2020, 10:00 AM · Asia/Seoul
+              - generic [ref=e345]: Not eligible
+            - generic [ref=e346]:
+              - generic [ref=e347]:
+                - text: Capacity
+                - generic [ref=e348]:
+                  - heading "12" [level=6] [ref=e349]
+                  - img [ref=e350]
+                  - heading "12" [level=6] [ref=e352]
+              - generic [ref=e353]:
+                - text: Room capacity
+                - generic [ref=e354]:
+                  - heading "12" [level=6] [ref=e355]
+                  - img [ref=e356]
+                  - heading "12" [level=6] [ref=e358]
+              - generic [ref=e359]:
+                - text: Accessible resources
+                - generic [ref=e360]:
+                  - heading "2" [level=6] [ref=e361]
+                  - img [ref=e362]
+                  - heading "2" [level=6] [ref=e364]
+              - generic [ref=e365]:
+                - text: Utilization
+                - generic [ref=e366]:
+                  - heading "—" [level=6] [ref=e367]
+                  - img [ref=e368]
+                  - heading "—" [level=6] [ref=e370]
+              - generic [ref=e371]:
+                - text: Excess demand
+                - generic [ref=e372]:
+                  - heading "—" [level=6] [ref=e373]
+                  - img [ref=e374]
+                  - heading "—" [level=6] [ref=e376]
+              - generic [ref=e377]:
+                - text: Impacted bookings
+                - generic [ref=e378]:
+                  - heading "—" [level=6] [ref=e379]
+                  - img [ref=e380]
+                  - heading "1" [level=6] [ref=e382]
+            - alert [ref=e383]:
+              - img [ref=e385]
+              - generic [ref=e387]: Sensor occupancy coverage is partial.
+```

@@ -222,7 +222,13 @@ describe('form workspace controller exact installation and source fencing', () =
       }
     );
     state.rejectReview.mockImplementation(
-      async (_formId, _requestId, body, _execution, options: ApprovalFormWorkspaceCommandOptions) => {
+      async (
+        _formId,
+        _requestId,
+        body,
+        _execution,
+        options: ApprovalFormWorkspaceCommandOptions
+      ) => {
         dispatchChecks(options);
         return {
           ...reviewFixture().reviewRequest,

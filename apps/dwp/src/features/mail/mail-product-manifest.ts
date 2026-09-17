@@ -10,6 +10,15 @@ const capability = (capabilityContractKey: string) => ({
 export const MAIL_WORK_NAVIGATION = projectProductSurfaceNavigation(MAIL_NAVIGATION, {
   home: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   inbox: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  search: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
+  'follow-up': {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
+  },
+  delivery: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
+  },
   sent: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   drafts: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
   archive: { taskKind: 'work', access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' } },
@@ -21,11 +30,19 @@ export const MAIL_WORK_NAVIGATION = projectProductSurfaceNavigation(MAIL_NAVIGAT
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
   },
+  actions: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
+  },
   organization: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
   },
   accounts: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
+  },
+  templates: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'mail.work-access.v1' },
   },
@@ -39,6 +56,11 @@ export const MAIL_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(MAIL_N
     access: capability('mail.shared-inboxes.read'),
   },
   'admin-policies': { taskKind: 'administration', access: capability('mail.policy.read') },
+  'admin-retention': { taskKind: 'administration', access: capability('mail.policy.read') },
+  'admin-delivery-audit': {
+    taskKind: 'operations',
+    access: capability('mail.operations.read'),
+  },
 });
 
 export const MAIL_PRODUCT_MANIFEST = defineProductManifest({

@@ -8,9 +8,7 @@ export function latestApprovalInformationRequestEvent(
 
   return detail.timeline
     .filter(
-      (event) =>
-        event.eventType === 'INFORMATION_REQUESTED' && event.message?.trim() === message
+      (event) => event.eventType === 'INFORMATION_REQUESTED' && event.message?.trim() === message
     )
     .sort((left, right) => right.occurredAt.localeCompare(left.occurredAt))[0];
 }
-

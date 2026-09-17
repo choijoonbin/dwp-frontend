@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Archive,
+  ArrowDown,
   ArrowRight,
+  ArrowUp,
   FolderPlus,
   ListFilter,
   Pencil,
@@ -12,13 +14,15 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   archiveMailFolder,
   archiveMailRule,
   createMailFolder,
   createMailRule,
   getMailOrganization,
+  reorderMailRules,
   updateMailFolder,
   updateMailRule,
   useToast,
@@ -44,12 +48,18 @@ import Typography from '@mui/material/Typography';
 import { MailPageHeading } from './mail-components';
 import { colorValue, MailFolderDialog, MailRuleDialog } from './mail-organization-dialogs';
 import { MailRuleBackfillPanel } from './mail-rule-backfill-panel';
+import {
+  mailRuleMoveAvailability,
+  mailRuleOrderAfterMove,
+  type MailRuleMoveDirection,
+} from './mail-rule-order';
 
 import type {
   MailFolder,
   MailFolderInput,
   MailRule,
   MailRuleInput,
+  MailRuleRun,
 } from '@dwp-frontend/shared-utils';
 
 type OrganizationTab = 'folders' | 'rules';
@@ -58,9 +68,16 @@ type PendingArchive = { kind: 'folder'; item: MailFolder } | { kind: 'rule'; ite
 export function MailOrganization() {
   const { t } = useTranslation('mail');
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [tab, setTab] = useState<OrganizationTab>('folders');
+  const tab: OrganizationTab = params.get('section') === 'rules' ? 'rules' : 'folders';
+  const selectTab = (nextTab: OrganizationTab) => {
+    const next = new URLSearchParams(params);
+    if (nextTab === 'rules') next.set('section', 'rules');
+    else next.delete('section');
+    setParams(next, { replace: true });
+  };
   const [folderEditor, setFolderEditor] = useState<MailFolder | 'new' | null>(null);
   const [ruleEditor, setRuleEditor] = useState<MailRule | 'new' | null>(null);
   const [pendingArchive, setPendingArchive] = useState<PendingArchive | null>(null);
@@ -85,7 +102,7 @@ export function MailOrganization() {
     },
     onSuccess: async () => {
       setFolderEditor(null);
-      setTab('folders');
+      selectTab('folders');
       await refresh();
       toast.success(t('organization.folder.saved'));
     },
@@ -109,7 +126,7 @@ export function MailOrganization() {
     },
     onSuccess: async () => {
       setRuleEditor(null);
-      setTab('rules');
+      selectTab('rules');
       await refresh();
       toast.success(t('organization.rule.saved'));
     },
@@ -129,6 +146,19 @@ export function MailOrganization() {
       toast.success(t('organization.archived'));
     },
     onError: () => toast.error(t('organization.archiveError')),
+  });
+  const reorderMutation = useMutation({
+    mutationFn: ({ ruleId, direction }: { ruleId: string; direction: MailRuleMoveDirection }) => {
+      const rules = query.data?.rules ?? [];
+      const order = mailRuleOrderAfterMove(rules, ruleId, direction);
+      if (!order) throw new Error('The rule cannot move in that direction.');
+      return reorderMailRules({ rules: order });
+    },
+    onSuccess: async () => {
+      await refresh();
+      toast.success(t('organization.rule.reordered'));
+    },
+    onError: () => toast.error(t('organization.rule.reorderError')),
   });
   const data = query.data;
   const customFolders = useMemo(
@@ -273,7 +303,7 @@ export function MailOrganization() {
           <Box component="section" sx={{ minWidth: 0 }}>
             <Tabs
               value={tab}
-              onChange={(_event, value: OrganizationTab) => setTab(value)}
+              onChange={(_event, value: OrganizationTab) => selectTab(value)}
               aria-label={t('organization.tabsLabel')}
               sx={{ borderBottom: 1, borderColor: 'divider' }}
             >
@@ -296,6 +326,7 @@ export function MailOrganization() {
                   rules={data.rules}
                   folders={data.folders}
                   busy={ruleMutation.isPending}
+                  reorderBusy={reorderMutation.isPending}
                   onEdit={setRuleEditor}
                   onToggle={(rule, enabled) =>
                     ruleMutation.mutate({
@@ -313,7 +344,11 @@ export function MailOrganization() {
                     })
                   }
                   onArchive={(item) => setPendingArchive({ kind: 'rule', item })}
+                  onMove={(rule, direction) =>
+                    reorderMutation.mutate({ ruleId: rule.ruleId, direction })
+                  }
                 />
+                <MailRuleRunLedger runs={data.recentRuns} />
               </Box>
             )}
           </Box>
@@ -361,6 +396,115 @@ export function MailOrganization() {
         }}
       />
     </PageCanvas>
+  );
+}
+
+function MailRuleRunLedger({ runs }: { runs: MailRuleRun[] }) {
+  const { t, i18n } = useTranslation('mail');
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
+  const recentRuns = [...runs]
+    .sort((left, right) => Date.parse(right.startedAt) - Date.parse(left.startedAt))
+    .slice(0, 10);
+  return (
+    <Box component="section" aria-labelledby="mail-rule-run-ledger-title" sx={{ mt: 3 }}>
+      <Typography
+        id="mail-rule-run-ledger-title"
+        component="h3"
+        variant="subtitle1"
+        fontWeight={850}
+      >
+        {t('organization.ledger.title', { defaultValue: 'Recent rule activity' })}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+        {t('organization.ledger.description', {
+          defaultValue: 'Review what each manual, incoming, or backfill run scanned and changed.',
+        })}
+      </Typography>
+      {recentRuns.length ? (
+        <Stack spacing={0} sx={{ mt: 1.25, borderBlock: 1, borderColor: 'divider' }}>
+          {recentRuns.map((run) => (
+            <Box
+              key={run.runId}
+              sx={{
+                py: 1.25,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'minmax(0, 1fr)',
+                  sm: 'minmax(180px, 1.2fr) repeat(3, minmax(72px, .45fr))',
+                },
+                gap: 1,
+                alignItems: 'center',
+                borderBottom: 1,
+                borderColor: 'divider',
+              }}
+            >
+              <Box sx={{ minWidth: 0 }}>
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  alignItems="center"
+                  flexWrap="wrap"
+                  useFlexGap
+                >
+                  <Chip
+                    size="small"
+                    color={
+                      run.status === 'FAILED'
+                        ? 'error'
+                        : run.status === 'SUCCEEDED'
+                          ? 'success'
+                          : 'default'
+                    }
+                    variant="outlined"
+                    label={t(`organization.ledger.status.${run.status}`, {
+                      defaultValue: run.status,
+                    })}
+                  />
+                  <Typography variant="body2" fontWeight={750}>
+                    {t(`organization.ledger.trigger.${run.triggerKind}`, {
+                      defaultValue: run.triggerKind,
+                    })}
+                  </Typography>
+                </Stack>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', mt: 0.4 }}
+                >
+                  {formatDate(run.startedAt, { dateStyle: 'medium', timeStyle: 'short' }, locale)}
+                  {run.completedAt
+                    ? ` – ${formatDate(run.completedAt, { timeStyle: 'short' }, locale)}`
+                    : ''}
+                </Typography>
+              </Box>
+              <RunMetric label={t('organization.backfill.scanned')} value={run.scannedCount} />
+              <RunMetric label={t('organization.backfill.matched')} value={run.matchedCount} />
+              <RunMetric
+                label={t('organization.ledger.changed', { defaultValue: 'Changed' })}
+                value={run.changedCount}
+              />
+            </Box>
+          ))}
+        </Stack>
+      ) : (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
+          {t('organization.ledger.empty', { defaultValue: 'No rule runs have been recorded yet.' })}
+        </Typography>
+      )}
+    </Box>
+  );
+}
+
+function RunMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <Box sx={{ minWidth: 0 }}>
+      <Typography variant="caption" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="body2" fontWeight={800}>
+        {value}
+      </Typography>
+    </Box>
   );
 }
 
@@ -475,16 +619,20 @@ function RuleList({
   rules,
   folders,
   busy,
+  reorderBusy,
   onEdit,
   onToggle,
   onArchive,
+  onMove,
 }: {
   rules: MailRule[];
   folders: MailFolder[];
   busy: boolean;
+  reorderBusy: boolean;
   onEdit: (rule: MailRule) => void;
   onToggle: (rule: MailRule, enabled: boolean) => void;
   onArchive: (rule: MailRule) => void;
+  onMove: (rule: MailRule, direction: MailRuleMoveDirection) => void;
 }) {
   const { t } = useTranslation('mail');
   if (!rules.length) {
@@ -499,81 +647,98 @@ function RuleList({
   const folderNames = new Map(folders.map((item) => [item.folderId, item.displayName]));
   return (
     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-      {rules.map((rule) => (
-        <Box
-          key={rule.ruleId}
-          sx={{
-            minHeight: 84,
-            display: 'grid',
-            gridTemplateColumns: { xs: 'minmax(0, 1fr) auto', lg: 'minmax(0, 1fr) 180px 180px' },
-            gap: 1.5,
-            alignItems: 'center',
-            px: 1.5,
-            py: 1.25,
-            borderTop: 1,
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
-          }}
-        >
-          <Box sx={{ minWidth: 0 }}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <ListFilter size={17} color="var(--dwp-product-accent)" />
-              <Typography fontWeight={800} noWrap>
-                {rule.displayName}
+      {rules.map((rule) => {
+        const move = mailRuleMoveAvailability(rules, rule.ruleId);
+        return (
+          <Box
+            key={rule.ruleId}
+            sx={{
+              minHeight: 84,
+              display: 'grid',
+              gridTemplateColumns: { xs: 'minmax(0, 1fr) auto', lg: 'minmax(0, 1fr) 180px 180px' },
+              gap: 1.5,
+              alignItems: 'center',
+              px: 1.5,
+              py: 1.25,
+              borderTop: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <ListFilter size={17} color="var(--dwp-product-accent)" />
+                <Typography fontWeight={800} noWrap>
+                  {rule.displayName}
+                </Typography>
+                <Chip size="small" label={rule.priority} variant="outlined" />
+              </Stack>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }} noWrap>
+                {ruleSummary(rule, folderNames, t)}
               </Typography>
-              <Chip size="small" label={rule.priority} variant="outlined" />
-            </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }} noWrap>
-              {ruleSummary(rule, folderNames, t)}
-            </Typography>
-            <Stack
-              direction="row"
-              spacing={1}
-              useFlexGap
-              flexWrap="wrap"
-              sx={{ display: { xs: 'flex', lg: 'none' }, mt: 0.5 }}
-            >
+              <Stack
+                direction="row"
+                spacing={1}
+                useFlexGap
+                flexWrap="wrap"
+                sx={{ display: { xs: 'flex', lg: 'none' }, mt: 0.5 }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  {rule.lastRunAt
+                    ? t('organization.rule.lastRun', { count: rule.lastMatchCount })
+                    : t('organization.rule.neverRun')}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t(`organization.sync.${rule.synchronizationState}`)}
+                </Typography>
+              </Stack>
+            </Box>
+            <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
               <Typography variant="caption" color="text.secondary">
                 {rule.lastRunAt
                   ? t('organization.rule.lastRun', { count: rule.lastMatchCount })
                   : t('organization.rule.neverRun')}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" display="block" color="text.secondary">
                 {t(`organization.sync.${rule.synchronizationState}`)}
               </Typography>
+            </Box>
+            <Stack direction="row" spacing={0.25} justifyContent="flex-end" alignItems="center">
+              <ActionIconButton
+                label={t('organization.rule.moveUp', { name: rule.displayName })}
+                disabled={!move.up || reorderBusy}
+                onClick={() => onMove(rule, 'UP')}
+              >
+                <ArrowUp size={15} />
+              </ActionIconButton>
+              <ActionIconButton
+                label={t('organization.rule.moveDown', { name: rule.displayName })}
+                disabled={!move.down || reorderBusy}
+                onClick={() => onMove(rule, 'DOWN')}
+              >
+                <ArrowDown size={15} />
+              </ActionIconButton>
+              <Switch
+                size="small"
+                checked={rule.enabled}
+                disabled={busy}
+                slotProps={{
+                  input: {
+                    'aria-label': `${rule.displayName}: ${t('organization.rule.enabled')}`,
+                  },
+                }}
+                onChange={(_event, enabled) => onToggle(rule, enabled)}
+              />
+              <ActionIconButton label={t('organization.edit')} onClick={() => onEdit(rule)}>
+                <Pencil size={16} />
+              </ActionIconButton>
+              <ActionIconButton label={t('organization.archive')} onClick={() => onArchive(rule)}>
+                <Trash2 size={16} />
+              </ActionIconButton>
             </Stack>
           </Box>
-          <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
-            <Typography variant="caption" color="text.secondary">
-              {rule.lastRunAt
-                ? t('organization.rule.lastRun', { count: rule.lastMatchCount })
-                : t('organization.rule.neverRun')}
-            </Typography>
-            <Typography variant="caption" display="block" color="text.secondary">
-              {t(`organization.sync.${rule.synchronizationState}`)}
-            </Typography>
-          </Box>
-          <Stack direction="row" spacing={0.25} justifyContent="flex-end" alignItems="center">
-            <Switch
-              size="small"
-              checked={rule.enabled}
-              disabled={busy}
-              slotProps={{
-                input: {
-                  'aria-label': `${rule.displayName}: ${t('organization.rule.enabled')}`,
-                },
-              }}
-              onChange={(_event, enabled) => onToggle(rule, enabled)}
-            />
-            <ActionIconButton label={t('organization.edit')} onClick={() => onEdit(rule)}>
-              <Pencil size={16} />
-            </ActionIconButton>
-            <ActionIconButton label={t('organization.archive')} onClick={() => onArchive(rule)}>
-              <Trash2 size={16} />
-            </ActionIconButton>
-          </Stack>
-        </Box>
-      ))}
+        );
+      })}
     </Box>
   );
 }

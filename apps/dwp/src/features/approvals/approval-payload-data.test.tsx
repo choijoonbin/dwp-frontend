@@ -64,6 +64,8 @@ describe('approval persisted payload presentation', () => {
     expect(container.textContent).toContain('<script>alert(1)</script>');
     expect(container.textContent).not.toContain('[object Object]');
     expect(container.querySelector('script')).toBeNull();
+    expect(container.querySelector('dl > div > ol')).toBeNull();
+    expect(container.querySelector('dl > div > dd > ol')).not.toBeNull();
   });
   it('preserves legacy fields and hides only explicitly requested system metadata', async () => {
     await act(async () =>
@@ -121,11 +123,36 @@ describe('approval persisted payload presentation', () => {
     expect(text.indexOf('alpha')).toBeLessThan(text.indexOf('tags'));
     expect(text.indexOf('tags')).toBeLessThan(text.indexOf('zeta'));
     expect(text).toContain('12345678901234567890.12345678');
+    expect(text).toContain('2026. 9. 30.');
     expect(text).toContain('security');
     expect(text).toContain('finance');
     expect(text).toContain('KRW');
     expect(text).toContain('예');
     expect(text.indexOf('a')).toBeLessThan(text.lastIndexOf('z'));
     expect(text).not.toContain('[object Object]');
+  });
+
+  it('renders a calendar DATE on the same day in a negative UTC offset timezone', async () => {
+    const originalTimezone = process.env.TZ;
+    process.env.TZ = 'America/Los_Angeles';
+    try {
+      await act(async () =>
+        root.render(
+          <ApprovalPayloadData
+            payload={{ neededBy: '2026-09-30' }}
+            formSchema={{
+              schemaContract: 'DWP_APPROVAL_FORM_TYPED_V2',
+              schemaVersion: 2,
+              fields: [
+                { key: 'neededBy', type: 'DATE', labelKo: '필요 일자', labelEn: 'Needed by' },
+              ],
+            }}
+          />
+        )
+      );
+      expect(container.textContent).toContain('2026. 9. 30.');
+    } finally {
+      process.env.TZ = originalTimezone;
+    }
   });
 });

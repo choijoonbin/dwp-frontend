@@ -40,6 +40,27 @@ const routine: DwaionRoutine = {
   notificationDeliveryAvailable: false,
   dryRunAvailable: true,
   proposalDeliveryAvailable: false,
+  activationAvailable: true,
+  nextRunAt: null,
+  budget: {
+    maximumRunsPerMonth: 31,
+    maximumTokensPerRun: 32_000,
+    maximumMinutesPerRun: 15,
+  },
+  retryPolicy: {
+    maximumAttempts: 3,
+    initialBackoffSeconds: 30,
+    backoffMultiplier: 2,
+  },
+  notificationPolicy: {
+    notifyOnPartial: true,
+    notifyOnFailure: true,
+    notifyOnRecovery: true,
+  },
+  compensationPolicy: {
+    enabled: true,
+    strategy: 'REVOKE_PENDING_HANDOFFS',
+  },
 };
 
 describe('DWAI personal routine governance model', () => {
@@ -86,6 +107,7 @@ describe('DWAI personal routine governance model', () => {
 
   it('validates governed sources, timezone, schedule, and every consent', () => {
     const draft: DwaionRoutineDraft = {
+      ...createEmptyRoutineDraft('Asia/Seoul'),
       title: '',
       description: '',
       sourceKeys: [],

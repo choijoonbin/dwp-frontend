@@ -1,0 +1,111 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "알림 탐색 열기" [ref=e8]:
+          - button "알림 탐색 열기" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "알림" [ref=e19]
+        - generic [ref=e20]:
+          - button "DWP 검색" [ref=e22] [cursor=pointer]:
+            - img [ref=e23]
+          - generic "조치 필요 알림 1건, 전체 새 알림 6건" [ref=e28]:
+            - button "조치 필요 알림 1건, 전체 새 알림 6건" [ref=e29] [cursor=pointer]:
+              - generic [ref=e30]:
+                - img [ref=e31]
+                - generic [ref=e34]: "6"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e36] [cursor=pointer]':
+            - generic [ref=e37]: T
+            - img [ref=e38]
+    - main [ref=e40]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e53]:
+              - heading "알림 센터" [level=1] [ref=e54]
+              - generic [ref=e57]: 주기적으로 동기화 중
+          - generic "알림 설정" [ref=e58]:
+            - button "알림 설정" [ref=e59] [cursor=pointer]:
+              - img [ref=e60]
+        - region "알림 보기 및 필터" [ref=e63]:
+          - navigation "알림 센터 보기" [ref=e64]:
+            - button "받은 알림6" [ref=e65] [cursor=pointer]:
+              - img [ref=e67]
+              - text: 받은 알림6
+            - button "조치 필요1" [ref=e70] [cursor=pointer]:
+              - img [ref=e72]
+              - text: 조치 필요1
+            - button "나를 멘션1" [ref=e74] [cursor=pointer]:
+              - img [ref=e76]
+              - text: 나를 멘션1
+            - button "저장됨0" [ref=e79] [cursor=pointer]:
+              - img [ref=e81]
+              - text: 저장됨0
+            - button "나중에0" [ref=e83] [cursor=pointer]:
+              - img [ref=e85]
+              - text: 나중에0
+            - button "정리됨0" [ref=e88] [cursor=pointer]:
+              - img [ref=e90]
+              - text: 정리됨0
+          - generic [ref=e93]:
+            - generic [ref=e95]:
+              - img [ref=e97]
+              - textbox "알림 검색" [ref=e100]:
+                - /placeholder: 제목, 소스 또는 안전한 미리보기 검색
+              - group
+            - button "상세 필터" [active] [ref=e102] [cursor=pointer]:
+              - img [ref=e103]
+            - 'button "저장된 뷰: 저장된 뷰" [ref=e105] [cursor=pointer]':
+              - img [ref=e107]
+              - text: 저장된 뷰
+              - img [ref=e110]
+        - region "알림 표시 방식" [ref=e112]:
+          - radiogroup "표시 밀도" [ref=e114]:
+            - radio [ref=e115] [cursor=pointer]:
+              - img [ref=e116]
+            - radio [checked] [ref=e118] [cursor=pointer]:
+              - img [ref=e119]
+          - 'button "알림 묶기: 묶지 않음" [ref=e122] [cursor=pointer]':
+            - img [ref=e124]
+            - text: 묶지 않음
+            - img [ref=e127]
+        - list "알림 목록" [ref=e131]:
+          - listitem [ref=e132]:
+            - list [ref=e133]:
+              - listitem [ref=e134]:
+                - article "수신 이유 MENTION, 읽지 않은 알림" [ref=e135]:
+                  - generic [ref=e136]:
+                    - generic [ref=e137] [cursor=pointer]:
+                      - checkbox "수신 이유 MENTION 선택" [ref=e138]
+                      - img [ref=e139]
+                    - img [ref=e142]
+                    - generic [ref=e145]:
+                      - generic [ref=e146]:
+                        - generic [ref=e147]:
+                          - generic [ref=e148]: 전자결재
+                          - generic [ref=e149]: 김민서
+                          - generic [ref=e151]: 긴급
+                        - time [ref=e152]: 28일 전
+                      - button "수신 이유 MENTION" [ref=e153] [cursor=pointer]:
+                        - heading "수신 이유 MENTION" [level=3] [ref=e154]
+                      - paragraph [ref=e155]: 김민서님이 오늘 안으로 검토를 요청했습니다.
+                      - generic [ref=e156]:
+                        - generic [ref=e157]: 나를 멘션함
+                        - generic [ref=e158]: · 8월 19일 오후 11:59까지
+                      - generic [ref=e159]:
+                        - button "검토하기" [ref=e161] [cursor=pointer]:
+                          - text: 검토하기
+                          - img [ref=e163]
+                        - generic "추가 작업" [ref=e166]:
+                          - button "추가 작업" [ref=e167] [cursor=pointer]:
+                            - img [ref=e168]
+        - status [ref=e172]
+```

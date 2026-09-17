@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ActionButton, LoadingState } from '@dwp-frontend/design-system';
 import {
   HttpError,
@@ -37,7 +37,8 @@ import { ApprovalCommandTaskList } from './approval-command-task-list';
 import { ApprovalCommandBatchResult } from './approval-command-batch-result';
 import {
   approvalBatchEligibleTaskIds,
-  buildApprovalBatchPreflight,
+  mergeApprovalBatchPreflightResult,
+  type ApprovalBatchPreflight,
 } from './approval-batch-preflight';
 import { ApprovalDecisionDetail, type ApprovalDecisionKind } from './approval-decision-detail';
 import {
@@ -57,6 +58,7 @@ import { useApprovalQueueClock } from './use-approval-queue-clock';
 import { useApprovalCommandTaskSearch } from './use-approval-command-task-search';
 import { useApprovalTaskDocuments } from './use-approval-task-documents';
 import { authorizedApprovalWorkReturnTarget } from './approval-return-target';
+import { useApprovalBatchPreflight } from './use-approval-batch-preflight';
 
 import type {
   ApprovalBatchResult,
@@ -262,42 +264,15 @@ export function ApprovalCommandCenter() {
 
   const tasksReady =
     requestScope.ready && tasks.isSuccess && !tasks.isFetching && tasks.failureCount === 0;
-  const batchDetailQueries = useQueries({
-    queries: selectedBatchIds.map((taskId) => ({
-      queryKey: ['approvals', 'command-task', taskId, ...requestScope.cacheKey],
-      queryFn: ({ signal }: { signal: AbortSignal }) =>
-        getApprovalTask(taskId, requestScope.contextScopeKey, signal),
-      enabled: batchDialogOpen && requestScope.ready && tasksReady,
-      staleTime: 0,
-      retry: 0,
-      meta: requestScope.queryMeta,
-    })),
+  const batch = useApprovalBatchPreflight({
+    selectedTaskIds: selectedBatchIds,
+    queueTasks: visibleTasks,
+    open: batchDialogOpen,
+    sourceReady: tasksReady,
+    requestScope,
   });
-  const batchPreflight = useMemo(
-    () =>
-      buildApprovalBatchPreflight({
-        selectedTaskIds: selectedBatchIds,
-        queueTasks: visibleTasks,
-        inspections: selectedBatchIds.map((taskId, index) => {
-          const query = batchDetailQueries[index];
-          const error = query?.failureReason ?? query?.error;
-          return {
-            taskId,
-            detail: query?.data,
-            state: query?.isFetching
-              ? 'LOADING'
-              : query?.isSuccess && query.failureCount === 0
-                ? 'READY'
-                : query?.isError
-                  ? 'ERROR'
-                  : 'LOADING',
-            denied: error instanceof HttpError && [401, 403, 404].includes(error.status),
-          };
-        }),
-      }),
-    [batchDetailQueries, selectedBatchIds, visibleTasks]
-  );
-  const batchPreflightRefreshing = batchDetailQueries.some((query) => query.isFetching);
+  const batchPreflight = batch.preflight;
+  const batchPreflightRefreshing = batch.refreshing;
   const selected =
     tasksReady &&
     detail.isSuccess &&
@@ -531,6 +506,7 @@ export function ApprovalCommandCenter() {
       taskIds: readonly string[];
       scopeIdentity: string;
       previousResult?: ApprovalBatchResult;
+      preflight?: ApprovalBatchPreflight;
     }) => {
       if (input.previousResult) {
         const latestQueue = await tasks.refetch();
@@ -580,8 +556,9 @@ export function ApprovalCommandCenter() {
           });
         },
       });
-      return input.previousResult
-        ? mergeApprovalBatchRetryResult(input.previousResult, attempt)
+      if (input.previousResult) return mergeApprovalBatchRetryResult(input.previousResult, attempt);
+      return input.preflight
+        ? mergeApprovalBatchPreflightResult(input.preflight, attempt)
         : attempt;
     },
     onSuccess: async (result, input) => {
@@ -999,13 +976,10 @@ export function ApprovalCommandCenter() {
             return;
           const taskIds = approvalBatchEligibleTaskIds(batchPreflight);
           if (taskIds.length === 0) return;
-          batchApprove.mutate({ taskIds, scopeIdentity });
+          batchApprove.mutate({ taskIds, scopeIdentity, preflight: batchPreflight });
         }}
         onBatchRefresh={() => {
-          void Promise.all([
-            tasks.refetch(),
-            ...batchDetailQueries.map((query) => query.refetch()),
-          ]);
+          void Promise.all([tasks.refetch(), batch.refetch()]);
         }}
       />
     </Paper>

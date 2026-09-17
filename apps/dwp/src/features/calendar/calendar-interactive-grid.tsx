@@ -8,6 +8,7 @@ import timeGridPlugin from '@fullcalendar/react/timegrid';
 import formaThemePlugin from '@fullcalendar/react/themes/forma';
 import koLocale from '@fullcalendar/react/locales/ko';
 import { LockKeyhole, MapPin, TriangleAlert } from 'lucide-react';
+import { foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -207,7 +208,7 @@ export function CalendarInteractiveGrid({
       aria-busy={loading || interactionLocked}
       sx={(theme) => ({
         minWidth: 0,
-        '--precision-calendar-primary': '#2563EB',
+        '--precision-calendar-primary': foundationTokens.color.product.primary,
         '--fc-border-color': alpha(theme.palette.divider, 0.72),
         '--fc-page-bg-color': theme.palette.background.paper,
         '--fc-neutral-bg-color': theme.palette.action.hover,
@@ -287,7 +288,7 @@ export function CalendarInteractiveGrid({
         '& .fc-event, & .precision-calendar-event': {
           borderRadius: '6px',
           bgcolor: 'transparent !important',
-          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+          boxShadow: theme.shadows[1],
           cursor: 'pointer',
           transition: theme.transitions.create(['filter', 'transform', 'box-shadow'], {
             duration: theme.transitions.duration.shorter,
@@ -297,7 +298,7 @@ export function CalendarInteractiveGrid({
           {
             filter: 'saturate(1.08)',
             transform: 'scale(1.02)',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04)',
+            boxShadow: theme.shadows[6],
             zIndex: 5,
           },
         '& .fc-timegrid-event .fc-event-resizer': { opacity: 0 },
@@ -449,7 +450,7 @@ export function CalendarInteractiveGrid({
                   component="span"
                   variant="caption"
                   color="text.secondary"
-                  fontWeight={650}
+                  fontWeight="fontWeightMedium"
                   sx={{ display: 'block', fontVariantNumeric: 'tabular-nums' }}
                 >
                   {info.timeText}
@@ -459,7 +460,7 @@ export function CalendarInteractiveGrid({
                 <Typography
                   component="span"
                   variant="body2"
-                  fontWeight={700}
+                  fontWeight="fontWeightBold"
                   sx={{
                     minWidth: 0,
                     display: '-webkit-box',
@@ -487,11 +488,16 @@ export function CalendarInteractiveGrid({
             <>
               <Stack direction="row" spacing={0.5} alignItems="center" sx={{ minWidth: 0 }}>
                 {info.timeText && (
-                  <Typography component="span" variant="caption" fontWeight={600} noWrap>
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    fontWeight="fontWeightMedium"
+                    noWrap
+                  >
                     {info.timeText}
                   </Typography>
                 )}
-                <Typography component="span" variant="caption" fontWeight={600} noWrap>
+                <Typography component="span" variant="caption" fontWeight="fontWeightMedium" noWrap>
                   {event.title}
                 </Typography>
                 {!editable && <LockKeyhole size={11} aria-hidden="true" />}

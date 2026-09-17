@@ -60,6 +60,11 @@ const DwaionAdminOverview = lazy(() =>
     default: module.DwaionAdminOverview,
   }))
 );
+const DwaionAdminModelsRouting = lazy(() =>
+  import('../features/dwaion/dwaion-admin-models-routing').then((module) => ({
+    default: module.DwaionAdminModelsRouting,
+  }))
+);
 const DwaionAdminAgents = lazy(() =>
   import('../features/dwaion/dwaion-admin-agents').then((module) => ({
     default: module.DwaionAdminAgents,
@@ -242,6 +247,8 @@ function dwaionRoutePage(pattern: string) {
       <DwaionArtifacts />
     ) : pattern === '/dwaion/admin/overview' ? (
       <DwaionAdminOverview />
+    ) : pattern === '/dwaion/admin/models' ? (
+      <DwaionAdminModelsRouting />
     ) : pattern === '/dwaion/admin/agents' ? (
       <DwaionAdminAgents />
     ) : pattern === '/dwaion/admin/sources' ? (
@@ -300,19 +307,21 @@ function dwaionLegacyRoutePage(pattern: string) {
   const resourceKey =
     pattern === '/dwaion/admin/overview'
       ? 'ADMIN.DWAION_OPERATIONS'
-      : pattern === '/dwaion/admin/agents'
-        ? 'ADMIN.DWAION_AGENTS'
-        : pattern === '/dwaion/admin/sources'
-          ? 'ADMIN.DWAION_SOURCES'
-          : pattern === '/dwaion/admin/actions'
-            ? 'ADMIN.DWAION_ACTIONS'
-            : pattern === '/dwaion/admin/safety'
-              ? 'ADMIN.DWAION_SAFETY'
-              : pattern === '/dwaion/admin/evaluation'
-                ? 'ADMIN.DWAION_EVALUATION'
-                : pattern === '/dwaion/admin/gates'
-                  ? 'ADMIN.DWAION_GATES'
-                  : undefined;
+      : pattern === '/dwaion/admin/models'
+        ? 'ADMIN.DWAION_OPERATIONS'
+        : pattern === '/dwaion/admin/agents'
+          ? 'ADMIN.DWAION_AGENTS'
+          : pattern === '/dwaion/admin/sources'
+            ? 'ADMIN.DWAION_SOURCES'
+            : pattern === '/dwaion/admin/actions'
+              ? 'ADMIN.DWAION_ACTIONS'
+              : pattern === '/dwaion/admin/safety'
+                ? 'ADMIN.DWAION_SAFETY'
+                : pattern === '/dwaion/admin/evaluation'
+                  ? 'ADMIN.DWAION_EVALUATION'
+                  : pattern === '/dwaion/admin/gates'
+                    ? 'ADMIN.DWAION_GATES'
+                    : undefined;
   if (resourceKey)
     return (
       <ProductRouteGuard resourceKey={resourceKey} localDeny>

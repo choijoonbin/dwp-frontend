@@ -1,0 +1,669 @@
+{
+  "schemaVersion": 2,
+  "sourceManifest": {
+    "path": "e2e/support/approval-stitch-extension-manifest.json",
+    "projectId": "13391261371843159731",
+    "delivery": "전자결재.zip",
+    "integritySha256": "773594493e14ebc8b935bfd9d2f318138212a9d54d58217a659a6aa53d040dcb",
+    "sourceTreeSha256": "c52947819084c336e8545092082817e6d747a4713a4516a9f78762f3164ae966",
+    "frameCount": 24
+  },
+  "numberingResolution": {
+    "authority": "immutable-source-manifest",
+    "rule": "The delivered archive names the visual APR frames. Prompt-pack taxonomy must not relabel source frames.",
+    "archiveSequence": [
+      "APR-17:template-library",
+      "APR-18:form-studio-v3",
+      "APR-19:routing-studio",
+      "APR-20:delegation-proxy-governance",
+      "APR-21:policy-sla-governance",
+      "APR-22:operations-incident-recovery",
+      "APR-23:audit-legal-compliance",
+      "APR-24:deployment-canary-release"
+    ],
+    "supplementalSurfaces": [
+      {
+        "id": "integration-automation",
+        "route": "/approvals/admin/integrations",
+        "runtimeExport": "ApprovalAdminIntegrationsRuntime",
+        "workspaceExport": "IntegrationAutomationWorkspace",
+        "sourceFrameIds": [],
+        "classification": "product-supplemental-no-stitch-frame"
+      },
+      {
+        "id": "analytics-insights",
+        "route": "/approvals/admin/analytics",
+        "runtimeExport": "ApprovalAdminAnalyticsRuntime",
+        "workspaceExport": "AnalyticsInsightsWorkspace",
+        "sourceFrameIds": [],
+        "classification": "product-supplemental-no-stitch-frame"
+      }
+    ]
+  },
+  "sharedStateContract": [
+    "loading",
+    "empty",
+    "forbidden",
+    "conflict",
+    "unavailable",
+    "stale",
+    "ready"
+  ],
+  "verificationProfiles": {
+    "desktop-1440": [
+      "1440x1000",
+      "dark",
+      "forced-colors",
+      "reduced-motion",
+      "keyboard-focus",
+      "axe-serious-critical-zero",
+      "horizontal-overflow-zero"
+    ],
+    "mobile-390": [
+      "390x844",
+      "320x720",
+      "text-zoom-200-percent",
+      "dark",
+      "forced-colors",
+      "reduced-motion",
+      "keyboard-focus",
+      "axe-serious-critical-zero",
+      "horizontal-overflow-zero"
+    ]
+  },
+  "visualEvidenceContract": {
+    "captureMode": "viewport",
+    "canonicalSurfaceIds": [
+      "APR-17",
+      "APR-18",
+      "APR-19",
+      "APR-20",
+      "APR-21",
+      "APR-22",
+      "APR-23",
+      "APR-24"
+    ],
+    "supplementalSurfaceIds": ["integration-automation", "analytics-insights"],
+    "viewports": ["desktop-1440", "mobile-390"],
+    "canonicalCaptureCount": 16,
+    "supplementalCaptureCount": 4,
+    "totalCaptureCount": 20,
+    "snapshotNames": [
+      "apr-17-canonical.png",
+      "apr-18-canonical.png",
+      "apr-19-canonical.png",
+      "apr-20-canonical.png",
+      "apr-21-canonical.png",
+      "apr-22-canonical.png",
+      "apr-23-canonical.png",
+      "apr-24-canonical.png",
+      "supplemental-integrations.png",
+      "supplemental-analytics.png"
+    ]
+  },
+  "commandEvidenceContract": {
+    "scope": "The supported inventory covers commands exercised by delivered APR-17..24 controls. Owner API contract coverage is verified independently and must not be presented as UI journey evidence.",
+    "ownerActionInventory": {
+      "source": "libs/shared-utils/src/api/approval-release15-action-contracts.ts",
+      "canonicalMutationSource": "libs/shared-utils/src/api/approval-admin-v2-canonical-mutation-api.ts",
+      "actionContractCount": 42,
+      "highRiskRouteCount": 16,
+      "canonicalMutationWrapperCount": 10,
+      "intentionallyUnboundMutationApiFunctionCount": 9
+    },
+    "supported": [
+      {
+        "id": "template.compare",
+        "method": "GET",
+        "path": "/api/approvals/v1/admin/forms/templates/{templateId}/comparison"
+      },
+      {
+        "id": "template.install",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/forms/templates/versions/{templateVersionId}/install"
+      },
+      {
+        "id": "form.save-draft",
+        "method": "PUT",
+        "path": "/api/approvals/v1/admin/forms/studio-v3/{formId}/draft"
+      },
+      {
+        "id": "form.validate",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/forms/studio-v3/validate"
+      },
+      {
+        "id": "form.submit-review",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/forms/studio-v3/{formId}/review"
+      },
+      {
+        "id": "routing.simulate",
+        "method": "GET",
+        "path": "/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/resolution"
+      },
+      {
+        "id": "routing.save-draft",
+        "method": "PUT",
+        "path": "/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}"
+      },
+      {
+        "id": "routing.publish",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/publish"
+      },
+      {
+        "id": "routing.retire",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/workflows/routing-directory/groups/{groupId}/retire"
+      },
+      {
+        "id": "connector.probe",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/operations/connectors/{connectorId}/probes"
+      },
+      {
+        "id": "incident.execute-stage",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/operations/incidents/{incidentId}/recovery-plans/{planId}/stages/{stageNumber}/start"
+      },
+      {
+        "id": "audit.prepare-export",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/operations/audit-records/exports"
+      },
+      {
+        "id": "deployment.activate",
+        "method": "POST",
+        "path": "/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/activation"
+      }
+    ],
+    "evidenceGatedUnavailable": [
+      "templates.importPackage",
+      "routing.requestRemediation",
+      "policies.editWithoutCompleteDraft",
+      "policies.publishWithoutIndependentReview",
+      "policies.reviewDelegationWithoutDisposition",
+      "incidents.prepareWithoutAuthoredPlan",
+      "incidents.pauseQueue",
+      "audit.verifyExternalIntegrity",
+      "audit.linkExternalAttestationWithoutSignedReceipt",
+      "audit.requestLegalHoldReview",
+      "deployments.pauseCanary",
+      "deployments.rollbackWithoutBoundReason"
+    ],
+    "unsupportedControlRule": "Controls without an owner command or complete evidence input are disabled on first render, expose a visible reason, and dispatch zero mutations."
+  },
+  "areas": {
+    "template-library": {
+      "route": "/approvals/admin/forms",
+      "routeContractKey": "route.approvals.admin.forms.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-form-routing-runtime.tsx",
+      "runtimeExport": "ApprovalAdminFormsRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/template-library-workspace.tsx",
+      "workspaceExport": "TemplateLibraryWorkspace",
+      "workspaceView": "templates",
+      "requiredHandlers": [
+        "onSearchChange",
+        "onCategoryChange",
+        "onSelectTemplate",
+        "onCompare",
+        "onInstall",
+        "onRetry",
+        "onResolveConflict"
+      ],
+      "unsupportedControlIds": ["templates.importPackage"]
+    },
+    "form-studio-v3": {
+      "route": "/approvals/admin/forms",
+      "routeContractKey": "route.approvals.admin.forms.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-form-routing-runtime.tsx",
+      "runtimeExport": "ApprovalAdminFormsRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/form-studio-v3-workspace.tsx",
+      "workspaceExport": "FormStudioV3Workspace",
+      "workspaceView": "studio",
+      "requiredHandlers": [
+        "onViewChange",
+        "onSelectField",
+        "onSaveDraft",
+        "onRunValidation",
+        "onSubmitReview",
+        "onRetry",
+        "onResolveConflict"
+      ],
+      "unsupportedControlIds": []
+    },
+    "routing-studio": {
+      "route": "/approvals/admin/routing",
+      "routeContractKey": "route.approvals.admin.routing.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-form-routing-runtime.tsx",
+      "runtimeExport": "ApprovalAdminRoutingRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/approver-routing-workspace.tsx",
+      "workspaceExport": "ApproverRoutingWorkspace",
+      "workspaceView": "directory-simulation-exceptions",
+      "requiredHandlers": [
+        "onViewChange",
+        "onSelectGroup",
+        "onRefreshDirectory",
+        "onRunSimulation",
+        "onRetireGroup",
+        "onRetry",
+        "onResolveConflict"
+      ],
+      "unsupportedControlIds": ["routing.requestRemediation"]
+    },
+    "delegation-proxy-governance": {
+      "route": "/approvals/admin/policies",
+      "routeContractKey": "route.approvals.admin.policies.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-runtime.tsx",
+      "runtimeExport": "ApprovalAdminPoliciesRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/policy-governance-workspace.tsx",
+      "workspaceExport": "PolicyGovernanceWorkspace",
+      "workspaceView": "delegation",
+      "requiredHandlers": ["onViewChange", "onReviewDelegation", "onRetry", "onResolveConflict"],
+      "unsupportedControlIds": ["policies.reviewDelegationWithoutDisposition"]
+    },
+    "policy-sla-governance": {
+      "route": "/approvals/admin/policies",
+      "routeContractKey": "route.approvals.admin.policies.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-runtime.tsx",
+      "runtimeExport": "ApprovalAdminPoliciesRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/policy-governance-workspace.tsx",
+      "workspaceExport": "PolicyGovernanceWorkspace",
+      "workspaceView": "catalog-calendar-delivery",
+      "requiredHandlers": [
+        "onViewChange",
+        "onSelectPolicy",
+        "onSelectCalendar",
+        "onEditPolicy",
+        "onRunSimulation",
+        "onSubmitReview",
+        "onRetry",
+        "onResolveConflict"
+      ],
+      "unsupportedControlIds": [
+        "policies.editWithoutCompleteDraft",
+        "policies.publishWithoutIndependentReview"
+      ]
+    },
+    "operations-incident-recovery": {
+      "route": "/approvals/admin/operations",
+      "routeContractKey": "route.approvals.admin.operations.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-runtime.tsx",
+      "runtimeExport": "ApprovalAdminOperationsRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/operations-incident-recovery-workspace.tsx",
+      "workspaceExport": "OperationsIncidentRecoveryWorkspace",
+      "workspaceView": "incidents-recovery-queues",
+      "requiredHandlers": [
+        "onViewChange",
+        "onSelectIncident",
+        "onRefresh",
+        "onPrepareRecovery",
+        "onExecuteRecovery",
+        "onRetry",
+        "onResolveConflict"
+      ],
+      "unsupportedControlIds": ["incidents.prepareWithoutAuthoredPlan", "incidents.pauseQueue"]
+    },
+    "audit-legal-compliance": {
+      "route": "/approvals/admin/audit",
+      "routeContractKey": "route.approvals.admin.audit.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-runtime.tsx",
+      "runtimeExport": "ApprovalAdminAuditRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/audit-records-evidence-workspace.tsx",
+      "workspaceExport": "AuditRecordsEvidenceWorkspace",
+      "workspaceView": "explorer-evidence-retention",
+      "requiredHandlers": [
+        "onViewChange",
+        "onSelectEvent",
+        "onRefresh",
+        "onPrepareExport",
+        "onRetry",
+        "onResolveConflict"
+      ],
+      "unsupportedControlIds": [
+        "audit.verifyExternalIntegrity",
+        "audit.linkExternalAttestationWithoutSignedReceipt",
+        "audit.requestLegalHoldReview"
+      ]
+    },
+    "deployment-canary-release": {
+      "route": "/approvals/admin/deployments",
+      "routeContractKey": "route.approvals.admin.deployments.page",
+      "runtimeFile": "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-runtime.tsx",
+      "runtimeExport": "ApprovalAdminDeploymentsRuntime",
+      "workspaceFile": "apps/dwp/src/features/approvals/admin-v2/deployment-canary-workspace.tsx",
+      "workspaceExport": "DeploymentCanaryWorkspace",
+      "workspaceView": "packages-promotion-canary-rollback",
+      "requiredHandlers": [
+        "onViewChange",
+        "onSelectPackage",
+        "onRefresh",
+        "onValidatePackage",
+        "onSubmitPromotion",
+        "onRequestRollback",
+        "onRetry",
+        "onResolveConflict"
+      ],
+      "unsupportedControlIds": ["deployments.pauseCanary", "deployments.rollbackWithoutBoundReason"]
+    }
+  },
+  "frames": [
+    {
+      "id": "APR-17A",
+      "pairPath": "apr_17a_template_library_1440_desktop_catalog",
+      "areaId": "template-library",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "catalog-search-category-filter-preview-install",
+      "requiredInteractionIds": [
+        "template.search",
+        "template.category",
+        "template.select",
+        "template.compare",
+        "template.install",
+        "template.import-unavailable"
+      ]
+    },
+    {
+      "id": "APR-17B",
+      "pairPath": "apr_17b_template_detail_and_install_1440_desktop",
+      "areaId": "template-library",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "template-detail-dependencies-comparison-draft-install",
+      "requiredInteractionIds": [
+        "template.select",
+        "template.compare",
+        "template.install",
+        "template.conflict-recovery"
+      ]
+    },
+    {
+      "id": "APR-17C",
+      "pairPath": "apr_17c_template_library_390_mobile_drill_in",
+      "areaId": "template-library",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-catalog-detail-install-drill-in",
+      "requiredInteractionIds": [
+        "template.search",
+        "template.select",
+        "template.install",
+        "mobile.read-only-governance"
+      ]
+    },
+    {
+      "id": "APR-18A",
+      "pairPath": "apr_18a_form_studio_v3_1440_desktop_builder_polished",
+      "areaId": "form-studio-v3",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "schema-v3-builder-field-inspector-save-validate-review",
+      "requiredInteractionIds": [
+        "form.select-field",
+        "form.save-draft",
+        "form.validate",
+        "form.submit-review",
+        "form.add-field-unavailable"
+      ]
+    },
+    {
+      "id": "APR-18B",
+      "pairPath": "apr_18b_form_studio_v3_schema_preview_inspector_polished",
+      "areaId": "form-studio-v3",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "schema-inspector-validation-preview-version-diff",
+      "requiredInteractionIds": [
+        "form.change-view",
+        "form.select-field",
+        "form.validate",
+        "form.save-draft",
+        "form.conflict-preserves-input"
+      ]
+    },
+    {
+      "id": "APR-18C",
+      "pairPath": "apr_18c_form_studio_v3_390_mobile_drill_in",
+      "areaId": "form-studio-v3",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-field-list-property-preview-draft",
+      "requiredInteractionIds": [
+        "form.change-view",
+        "form.select-field",
+        "form.save-draft",
+        "mobile.read-only-governance"
+      ]
+    },
+    {
+      "id": "APR-19A",
+      "pairPath": "apr_19a_routing_studio_v3_1440_desktop_builder",
+      "areaId": "routing-studio",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "routing-directory-members-simulation-and-retirement-governance",
+      "requiredInteractionIds": [
+        "routing.select-group",
+        "routing.refresh",
+        "routing.simulate",
+        "routing.retire"
+      ]
+    },
+    {
+      "id": "APR-19B",
+      "pairPath": "apr_19b_routing_studio_v3_simulation_validation_inspector",
+      "areaId": "routing-studio",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "simulation-validation-explanation-exceptions",
+      "requiredInteractionIds": [
+        "routing.change-view",
+        "routing.simulate",
+        "routing.remediation-unavailable",
+        "routing.stale-post-zero"
+      ]
+    },
+    {
+      "id": "APR-19C",
+      "pairPath": "apr_19c_routing_studio_v3_390_mobile_drill_in",
+      "areaId": "routing-studio",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-routing-detail-simulation-drill-in",
+      "requiredInteractionIds": [
+        "routing.change-view",
+        "routing.select-group",
+        "routing.simulate",
+        "mobile.read-only-governance"
+      ]
+    },
+    {
+      "id": "APR-20A",
+      "pairPath": "apr_20a_delegation_proxy_governance_1440_desktop_console",
+      "areaId": "delegation-proxy-governance",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "delegation-catalog-scope-period-chain-and-revocation-governance",
+      "requiredInteractionIds": [
+        "delegation.change-view",
+        "delegation.review",
+        "delegation.evidence-truth"
+      ]
+    },
+    {
+      "id": "APR-20B",
+      "pairPath": "apr_20b_delegation_inspector_audit_1440_desktop",
+      "areaId": "delegation-proxy-governance",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "delegation-inspector-sod-review-and-audit",
+      "requiredInteractionIds": [
+        "delegation.review",
+        "delegation.conflict-post-zero",
+        "delegation.forbidden-post-zero"
+      ]
+    },
+    {
+      "id": "APR-20C",
+      "pairPath": "apr_20c_delegation_drill_in_390_mobile",
+      "areaId": "delegation-proxy-governance",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-delegation-guardrail-and-audit-drill-in",
+      "requiredInteractionIds": [
+        "delegation.change-view",
+        "delegation.review",
+        "mobile.read-only-governance"
+      ]
+    },
+    {
+      "id": "APR-21A",
+      "pairPath": "apr_21a_policy_sla_governance_1440_desktop_console",
+      "areaId": "policy-sla-governance",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "policy-catalog-sla-sod-provider-and-calendar-governance",
+      "requiredInteractionIds": [
+        "policy.select",
+        "policy.change-view",
+        "policy.simulate",
+        "policy.submit-review"
+      ]
+    },
+    {
+      "id": "APR-21B",
+      "pairPath": "apr_21b_policy_diff_simulation_inspector_1440_desktop",
+      "areaId": "policy-sla-governance",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "policy-diff-dry-run-evidence-and-independent-review",
+      "requiredInteractionIds": [
+        "policy.select",
+        "policy.edit",
+        "policy.simulate",
+        "policy.conflict-preserves-input"
+      ]
+    },
+    {
+      "id": "APR-21C",
+      "pairPath": "apr_21c_policy_drill_in_390_mobile",
+      "areaId": "policy-sla-governance",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-policy-diff-simulation-audit-drill-in",
+      "requiredInteractionIds": [
+        "policy.change-view",
+        "policy.select",
+        "policy.simulate",
+        "mobile.read-only-governance"
+      ]
+    },
+    {
+      "id": "APR-22A",
+      "pairPath": "apr_22a_operations_incident_recovery_console_1440_desktop",
+      "areaId": "operations-incident-recovery",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "incident-catalog-diagnostics-recovery-and-queue-governance",
+      "requiredInteractionIds": [
+        "incident.select",
+        "incident.refresh",
+        "incident.prepare",
+        "incident.execute",
+        "incident.pause-unavailable"
+      ]
+    },
+    {
+      "id": "APR-22B",
+      "pairPath": "apr_22b_incident_deep_inspector_reprocessing_1440_desktop",
+      "areaId": "operations-incident-recovery",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "incident-payload-evidence-dry-run-staged-recovery",
+      "requiredInteractionIds": [
+        "incident.change-view",
+        "incident.prepare",
+        "incident.execute",
+        "incident.unknown-outcome"
+      ]
+    },
+    {
+      "id": "APR-22C",
+      "pairPath": "apr_22c_incident_recovery_drill_in_390_mobile",
+      "areaId": "operations-incident-recovery",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-incident-diagnostics-guardrail-audit-drill-in",
+      "requiredInteractionIds": [
+        "incident.change-view",
+        "incident.select",
+        "incident.execute",
+        "mobile.read-only-governance"
+      ]
+    },
+    {
+      "id": "APR-23A",
+      "pairPath": "apr_23a_audit_legal_compliance_console_1440_desktop",
+      "areaId": "audit-legal-compliance",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "audit-event-explorer-retention-linkage-and-governed-export",
+      "requiredInteractionIds": [
+        "audit.select-event",
+        "audit.refresh",
+        "audit.prepare-export",
+        "audit.external-verify-unavailable",
+        "audit.hold-unavailable"
+      ]
+    },
+    {
+      "id": "APR-23B",
+      "pairPath": "apr_23b_audit_forensic_deep_inspector_legal_proof_1440_desktop",
+      "areaId": "audit-legal-compliance",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "forensic-detail-manifest-timeline-and-signed-attestation-truth",
+      "requiredInteractionIds": [
+        "audit.change-view",
+        "audit.select-event",
+        "audit.prepare-export",
+        "audit.signed-attestation-only"
+      ]
+    },
+    {
+      "id": "APR-23C",
+      "pairPath": "apr_23c_audit_drill_in_compliance_mobile_390_mobile",
+      "areaId": "audit-legal-compliance",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-audit-evidence-timeline-and-legal-review",
+      "requiredInteractionIds": [
+        "audit.change-view",
+        "audit.select-event",
+        "audit.prepare-export",
+        "mobile.read-only-governance"
+      ]
+    },
+    {
+      "id": "APR-24A",
+      "pairPath": "apr_24a_deployment_canary_release_console_1440_desktop",
+      "areaId": "deployment-canary-release",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "package-catalog-promotion-canary-and-rollback-governance",
+      "requiredInteractionIds": [
+        "deployment.select-package",
+        "deployment.validate",
+        "deployment.promote",
+        "deployment.rollback",
+        "deployment.pause-unavailable"
+      ]
+    },
+    {
+      "id": "APR-24B",
+      "pairPath": "apr_24b_canary_deep_inspector_rollback_workbench_1440_desktop",
+      "areaId": "deployment-canary-release",
+      "viewportIntent": "desktop-1440",
+      "sourceIntent": "canary-evidence-gates-step-up-promotion-and-rollback",
+      "requiredInteractionIds": [
+        "deployment.change-view",
+        "deployment.promote",
+        "deployment.rollback",
+        "deployment.unknown-outcome"
+      ]
+    },
+    {
+      "id": "APR-24C",
+      "pairPath": "apr_24c_canary_deployment_mobile_drill_in_390_mobile",
+      "areaId": "deployment-canary-release",
+      "viewportIntent": "mobile-390",
+      "sourceIntent": "mobile-canary-telemetry-guardrails-and-rollback-audit",
+      "requiredInteractionIds": [
+        "deployment.change-view",
+        "deployment.select-package",
+        "deployment.rollback",
+        "mobile.read-only-governance"
+      ]
+    }
+  ]
+}

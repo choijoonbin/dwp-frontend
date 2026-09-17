@@ -43,7 +43,10 @@ import { ApprovalSurface } from './approval-ui';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import { useApprovalExperience } from './use-approval-experience';
 import { isProductSurfaceOperationCancelledError } from './use-approval-governed-mutation';
-import { approvalRequestBelongsToView } from './approval-request-lifecycle-deep-link';
+import {
+  mergeApprovalRequestSearchResults,
+  resolveApprovalRequestDeepLink,
+} from './approval-request-lifecycle-deep-link';
 import { latestApprovalInformationRequestEvent } from './approval-request-information-context';
 import {
   ApprovalRequestActionFeedback,
@@ -83,6 +86,8 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
   const identityKey = commandScope.binding.scopeIdentity;
 
   const openedRequestRef = useRef<string | undefined>(undefined);
+  const detailOpenerRef = useRef<HTMLElement | null>(null);
+  const detailOpenerIdRef = useRef<string | undefined>(undefined);
   const [selectedId, setSelectedId] = useState<string | undefined>(requestedId ?? undefined);
   const [detailId, setDetailId] = useState<string | undefined>(undefined);
   const [archiveBlocked, setArchiveBlocked] = useState(false);
@@ -120,44 +125,17 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
     staleTime: 0,
     retry: false,
   });
-  const requestedRequest =
-    requestedId &&
-    !requestedDetail.isFetching &&
-    !requestedDetail.isError &&
-    requestedDetail.data?.request.requestId === requestedId &&
-    approvalRequestBelongsToView(view, requestedDetail.data.request.status)
-      ? requestedDetail.data.request
-      : undefined;
-  const requestedProblem = (() => {
-    if (!requestedId || requestedDetail.isFetching || requestedRequest) return undefined;
-    if (requestedDetail.isError) {
-      if (requestedDetail.error instanceof HttpError && requestedDetail.error.status === 404)
-        return 'NOT_FOUND' as const;
-      if (
-        requestedDetail.error instanceof HttpError &&
-        [401, 403].includes(requestedDetail.error.status)
-      )
-        return 'DENIED' as const;
-      return 'ERROR' as const;
-    }
-    if (
-      requestedDetail.data?.request.requestId !== requestedId ||
-      !requestedDetail.data?.request.status ||
-      !approvalRequestBelongsToView(view, requestedDetail.data.request.status)
-    )
-      return 'WRONG_VIEW' as const;
-    return 'ERROR' as const;
-  })();
+  const { request: requestedRequest, problem: requestedProblem } = resolveApprovalRequestDeepLink(
+    view,
+    requestedId,
+    requestedDetail
+  );
   const searchedRequests = useMemo(
     () => (requests.isError || requests.isFetching ? [] : (requests.data ?? [])),
     [requests.data, requests.isError, requests.isFetching]
   );
   const visibleRequests = useMemo(
-    () =>
-      requestedRequest &&
-      !searchedRequests.some((request) => request.requestId === requestedRequest.requestId)
-        ? [requestedRequest, ...searchedRequests]
-        : searchedRequests,
+    () => mergeApprovalRequestSearchResults(requestedRequest, searchedRequests),
     [requestedRequest, searchedRequests]
   );
   const selectedRequest = visibleRequests.find((request) => request.requestId === selectedId);
@@ -512,7 +490,7 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
   const attachmentLocked = () =>
     attachments.controller.getSnapshot().busy || attachments.controller.unresolved;
 
-  const selectRequest = (request: ApprovalRequest, openDetails = false) => {
+  const selectRequest = (request: ApprovalRequest, openDetails = false, trigger?: HTMLElement) => {
     if (attachmentLocked() && request.requestId !== attachmentOwner.current?.requestId) return;
     openedRequestRef.current = request.requestId;
     setSelectedId(request.requestId);
@@ -524,11 +502,16 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
       },
       { replace: true }
     );
-    if (openDetails || mobile) setDetailId(request.requestId);
+    if (openDetails || mobile) {
+      detailOpenerRef.current = trigger ?? null;
+      detailOpenerIdRef.current = request.requestId;
+      setDetailId(request.requestId);
+    }
   };
 
   const closeDetail = () => {
     setDetailId(undefined);
+    if (detailOpenerRef.current) globalThis.setTimeout(restoreDetailFocus, 300);
     if (!requestedId) return;
     setSearchParams(
       (current) => {
@@ -538,6 +521,20 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
       },
       { replace: true }
     );
+  };
+
+  const restoreDetailFocus = () => {
+    const trigger = detailOpenerRef.current;
+    const requestId = detailOpenerIdRef.current;
+    detailOpenerRef.current = null;
+    detailOpenerIdRef.current = undefined;
+    globalThis.setTimeout(() => {
+      const fallback = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-approval-request-detail-id]')
+      ).find((candidate) => candidate.dataset.approvalRequestDetailId === requestId);
+      const target = trigger?.isConnected ? trigger : fallback;
+      target?.focus({ preventScroll: true });
+    }, 0);
   };
 
   const openAction = (kind: RequestAction['kind'], request: ApprovalRequest) => {
@@ -748,8 +745,8 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
         pending={act.isPending}
         attachments={attachments}
         onRetry={() => void requests.refetch()}
-        onSelect={(request) => selectRequest(request)}
-        onOpenDetails={(request) => selectRequest(request, true)}
+        onSelect={(request, trigger) => selectRequest(request, false, trigger)}
+        onOpenDetails={(request, trigger) => selectRequest(request, true, trigger)}
         onEdit={(request) => navigate(`/approvals/requests/new?draft=${request.requestId}`)}
         onRespond={(request) => openAction('respond', request)}
         onWithdraw={(request) => openAction('withdraw', request)}
@@ -981,12 +978,17 @@ export function ApprovalRequestLifecycle({ view }: { view: ApprovalRequestView }
         attachments={attachments}
         canUpdateRequests={requestActionsReady}
         onClose={closeDetail}
+        onClosed={restoreDetailFocus}
         onReturnToWork={returnTarget ? returnToWork : undefined}
         onRespond={(request) => {
+          detailOpenerRef.current = null;
+          detailOpenerIdRef.current = undefined;
           closeDetail();
           openAction('respond', request);
         }}
         onWithdraw={(request) => {
+          detailOpenerRef.current = null;
+          detailOpenerIdRef.current = undefined;
           closeDetail();
           openAction('withdraw', request);
         }}

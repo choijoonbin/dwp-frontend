@@ -48,6 +48,17 @@ describe('locale-aware formatters', () => {
     expect(formatNumber(1234.5, undefined, 'en')).toBe('1.234,5');
   });
 
+  it('lets an authoritative site time zone override the regional preference', () => {
+    writeRegionalPreference({
+      ...defaultRegionalPreference,
+      timeZone: 'America/Los_Angeles',
+    });
+
+    expect(
+      formatDate('2026-08-12T23:30:00.000Z', { dateStyle: 'medium', timeZone: 'Asia/Seoul' }, 'en')
+    ).toBe('Aug 13, 2026');
+  });
+
   it('resolves an ISO weekday and local clock for policy evaluation', () => {
     expect(resolveZonedClock('2026-08-21T00:30:00.000Z', 'Asia/Seoul')).toEqual({
       day: 5,

@@ -1860,6 +1860,101 @@
       "empty": "No support sessions exist for this tenant."
     }
   },
+  "settingsResolution": {
+    "title": "Effective configuration and application state",
+    "description": "Inspect the desired state, current effective value, observed application state, and value provenance for each tenant.",
+    "journey": "S17 · Configuration trace",
+    "catalog": {
+      "loading": "Loading readable configuration catalog",
+      "denied": "You do not have permission to read the configuration catalog.",
+      "error": "The configuration catalog could not be loaded.",
+      "stale": "The catalog refresh failed. The last confirmed entries remain visible.",
+      "emptyTitle": "No readable tenant configuration",
+      "emptyDescription": "No configuration owner is readable with your current permissions, or no setting has been registered."
+    },
+    "fields": {
+      "setting": "Setting",
+      "tenant": "Target tenant",
+      "selectTenant": "Select a tenant"
+    },
+    "tenant": {
+      "denied": "Tenant estate access is unavailable, so no target-specific effective value was requested.",
+      "loading": "Loading tenant estate",
+      "error": "The tenant estate could not be loaded.",
+      "empty": "No readable tenant is available for effective-value resolution.",
+      "searchHelp": "Search the complete tenant estate by company, tenant name, or key.",
+      "searchLoading": "Searching tenants…",
+      "searchEmpty": "No matching tenant.",
+      "searchError": "Tenant search is temporarily unavailable."
+    },
+    "lifecycle": {
+      "ACTIVE": "Active definition",
+      "DEPRECATED": "Deprecated",
+      "UNAVAILABLE": "Unavailable"
+    },
+    "definitionMeta": "{{id}} · definition v{{version}} · {{workflow}}",
+    "effective": {
+      "loading": "Resolving the target setting",
+      "denied": "You do not have permission to read this target's effective value.",
+      "error": "The target setting could not be resolved."
+    },
+    "resolution": {
+      "RESOLVED": "The effective value was resolved.",
+      "REDACTED": "The effective value is redacted by sensitivity policy. Reason: {{reason}}",
+      "UNSUPPORTED_SETTING": "This setting is unsupported or is not readable. Reason: {{reason}}",
+      "UNSUPPORTED_SCOPE": "This setting does not support the selected scope. Reason: {{reason}}",
+      "VALUE_UNAVAILABLE": "The effective value is currently unavailable. Reason: {{reason}}"
+    },
+    "observationUnsupported": "The published effective value is known, but no application receipt connector is available for its runtime targets. This is not treated as applied.",
+    "stages": {
+      "desired": "Desired state",
+      "effective": "Current effective value",
+      "applied": "Observed application"
+    },
+    "desiredStates": {
+      "NONE": "No desired change",
+      "DRAFT": "Draft",
+      "PENDING_APPROVAL": "Pending approval",
+      "APPROVED": "Approved",
+      "PUBLISH_REQUESTED": "Publish requested",
+      "PUBLISHED": "Published",
+      "FAILED": "Processing failed"
+    },
+    "version": "Version · {{value}}",
+    "publishAcceptedAt": "Publish accepted {{value}}",
+    "observedVersion": "Uniformly observed version · {{value}}",
+    "resolutionStates": {
+      "RESOLVED": "Resolved",
+      "REDACTED": "Redacted",
+      "UNSUPPORTED_SETTING": "Unsupported setting",
+      "UNSUPPORTED_SCOPE": "Unsupported scope",
+      "VALUE_UNAVAILABLE": "Value unavailable"
+    },
+    "applicationStates": {
+      "NOT_CONFIGURED": "No application state",
+      "DRAFT": "Draft",
+      "APPROVAL_PENDING": "Pending approval",
+      "READY_TO_PUBLISH": "Ready to publish",
+      "PUBLISH_PENDING": "Publishing",
+      "OBSERVATION_UNSUPPORTED": "Application observation unsupported",
+      "PUBLISHED_UNOBSERVED": "Published · unobserved",
+      "APPLYING": "Applying",
+      "CONVERGED": "Converged",
+      "PARTIAL": "Partially applied",
+      "DRIFTED": "Drift detected",
+      "FAILED": "Application failed",
+      "OBSERVATION_STALE": "Observation is stale"
+    },
+    "observationCounts": "Observed {{observed}}/{{expected}} · converged {{converged}} · failed {{failed}} · drifted {{drifted}}",
+    "resolvedAt": "Resolved {{resolvedAt}} · latest application observation {{observedAt}}",
+    "openOwner": "Manage in owner screen",
+    "provenance": {
+      "title": "Value provenance",
+      "description": "Sources that participated in resolution are shown from highest to lowest precedence.",
+      "version": "v{{version}} · {{date}}",
+      "empty": "No value provenance is available for display."
+    }
+  },
   "tenantExperiencePreview": {
     "title": "Tenant experience configuration preview",
     "description": "Inspect fixed tenant branding and home-experience configuration without opening a customer user session.",

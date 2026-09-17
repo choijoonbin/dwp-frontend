@@ -92,6 +92,22 @@
       "reviewCompact": "Review",
       "dismiss": "Dismiss briefing"
     },
+    "presentation": {
+      "label": "Notification presentation",
+      "density": {
+        "label": "Display density",
+        "dense": "Compact",
+        "detailed": "Detailed"
+      },
+      "grouping": {
+        "label": "Group notifications",
+        "none": "No grouping",
+        "source": "Source app",
+        "context": "Work context"
+      },
+      "contextGroup": "context",
+      "sourceFallback": "Other source"
+    },
     "groups": {
       "ACTION_REQUIRED": {
         "title": "Action required",
@@ -141,7 +157,13 @@
       "unread": "Unread",
       "mentions": "Mentions"
     },
-    "invalid": "This saved view uses an incompatible notification center format and was not applied."
+    "icon": "Identification icon",
+    "color": "Identification color",
+    "previewLoading": "Calculating the filtered result count.",
+    "previewUnavailable": "The current filtered result count is unavailable.",
+    "previewCount": "This saved view will include {{count}} notifications.",
+    "invalid": "This saved view uses an incompatible notification center format and was not applied.",
+    "capacity": "My saved views {{current}} / {{maximum}}"
   },
   "settings": {
     "eyebrow": "Personal notification settings",
@@ -150,8 +172,12 @@
   },
   "actions": {
     "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
     "complete": "Move to done",
     "detail": "View details",
+    "delete": "Delete",
+    "edit": "Edit",
     "loadMore": "Load more",
     "markRead": "Mark as read",
     "markUnread": "Mark as unread",
@@ -210,7 +236,10 @@
     "spaces": "Space",
     "messaging": "Messaging",
     "mail": "Mail",
-    "security": "Security"
+    "security": "Security",
+    "services": "IT Services",
+    "hr": "HR People",
+    "calendar": "Calendar"
   },
   "views": {
     "PRIORITY": "Action required",
@@ -308,7 +337,8 @@
     "description": "Assess important changes and organize them as read, saved, later, or done.",
     "viewsLabel": "Notification center views",
     "searchPlaceholder": "Search title, source, or safe preview",
-    "listLabel": "Notification list"
+    "listLabel": "Notification list",
+    "resultCount": "Showing {{visible}} of {{total}} filtered results"
   },
   "filters": {
     "reason": "Recipient reason",
@@ -316,6 +346,7 @@
     "reset": "Reset filters",
     "open": "More filters",
     "close": "Close filters",
+    "apply": "Show results",
     "viewCount": "{{count}} before additional filters",
     "emptyTitle": "No matching notifications",
     "emptyDescription": "Try a different search or recipient reason.",
@@ -323,6 +354,13 @@
     "allPriorities": "All priorities",
     "app": "App filter",
     "allApps": "All apps",
+    "context": "Work context filter",
+    "allContexts": "All work contexts",
+    "attentionEffect": "Priority rule filter",
+    "allAttention": "All notifications",
+    "prioritized": "Important people and priority rules",
+    "includedTypes": "Included notification types",
+    "allTypes": "All notification types",
     "readState": "Read status filter",
     "read": {
       "ALL": "All",
@@ -626,6 +664,9 @@
       "emptyTypesTitle": "No notification types to configure",
       "emptyTypesDescription": "This app has no active notification types yet.",
       "effectivePolicyUnavailable": "The current server does not expose effective policy composition. Only saved personal rules are shown; global settings still apply."
+    },
+    "attention": {
+      "title": "Focus rules"
     },
     "feedback": {
       "conflictRecovered": "Your change was reapplied while preserving newer settings from another window.",
@@ -961,6 +1002,63 @@
         "rejectFailed": "The policy draft could not be rejected. Check independent approval access and the current version."
       }
     },
+    "attentionGovernance": {
+      "title": "Attention policy governance",
+      "description": "Govern tenant limits for personal attention rules, approved topics, mandatory precedence, and analytics privacy through independent approval.",
+      "liveStatus": "Active in production",
+      "draftStatus": "Awaiting independent review",
+      "loading": "Loading attention policy governance",
+      "loadErrorTitle": "Attention policy governance could not be loaded",
+      "loadErrorDescription": "Check the connection and current policy version, then retry. The active configuration was not changed.",
+      "viewPermissionBlocked": "You do not have permission to view attention policy governance.",
+      "identityUnavailable": "A verified operator identity is required before policy information can be displayed.",
+      "emptyTitle": "Attention policy governance is not initialized",
+      "emptyDescription": "An effective tenant baseline must be supplied by the server before an approval draft can be created.",
+      "ruleLimitsTitle": "User attention rule limits",
+      "ruleLimitsDescription": "Keep personal and high-signal rules within explicit tenant operating limits.",
+      "maxActiveRules": "Maximum active rules",
+      "maxVipRules": "Maximum VIP rules",
+      "maxFollowRules": "Maximum follow rules",
+      "topicTitle": "Approved topic allowlist",
+      "topicDescription": "Register only canonical topics that TOPIC_TOKEN rules may use.",
+      "topicInputLabel": "Topic token",
+      "addTopic": "Add topic",
+      "removeTopic": "Remove {{topic}}",
+      "policyTitle": "Policy and privacy guardrails",
+      "mandatoryPrecedence": "Mandatory policy precedence",
+      "mandatoryPrecedenceDetail": "Mandatory company policies take precedence over user mute rules.",
+      "minimumCohort": "Minimum analytics cohort",
+      "minimumCohortDetail": "Analytics for smaller groups remain hidden to protect user privacy.",
+      "independentReviewer": "Independent reviewer required",
+      "independentReviewerDetail": "Only an approver other than the draft author may publish or reject it.",
+      "changeReason": "Change reason",
+      "saveDraft": "Create approval draft",
+      "pipelineTitle": "Independent approval pipeline",
+      "pipelineDescription": "Separate author and approver before activation and retain the decision rationale.",
+      "activeRevision": "Active production revision",
+      "noActiveRevision": "No revision is currently published.",
+      "draftRevision": "Revision awaiting review",
+      "createdBy": "Created by user #{{userId}}",
+      "approvedBy": "Approved by user #{{userId}}",
+      "version": "Revision {{revision}} · version {{version}}",
+      "states": {
+        "DRAFT": "Awaiting review",
+        "PUBLISHED": "Published",
+        "SUPERSEDED": "Superseded",
+        "REJECTED": "Rejected",
+        "WITHDRAWN": "Withdrawn"
+      },
+      "decisionReason": "Decision reason",
+      "publish": "Publish policy",
+      "reject": "Reject draft",
+      "withdraw": "Withdraw draft",
+      "selfApprovalBlocked": "You cannot publish or reject a revision that you authored.",
+      "guardrailBlocked": "Mandatory precedence and independent review must both be enabled before publication.",
+      "permissionBlocked": "Independent approval permission is required to publish or reject a policy.",
+      "pendingDraftBlocked": "The draft under review must be decided before another draft can be created.",
+      "staleMutation": "Another operator changed the policy first. The latest revision has been reloaded for review.",
+      "mutationError": "The attention policy change could not be completed. Check access, the current version, and the submitted values."
+    },
     "templates": {
       "catalogLabel": "Notification template list",
       "detailLabel": "Selected notification template details",
@@ -1244,6 +1342,411 @@
       "CLOSED": "Closed",
       "HALF_OPEN": "Recovery probe",
       "OPEN": "Open"
+    }
+  },
+  "attention": {
+    "title": "Focus rules",
+    "description": "Prioritize important people and work, follow governed topics, and mute exact scopes without hiding mandatory notifications.",
+    "summaryLabel": "Focus rule totals",
+    "ruleListLabel": "Focus rule list",
+    "ruleActions": "Rule actions",
+    "unavailable": "Unavailable",
+    "add": "Add rule",
+    "search": "Search focus rules",
+    "loadFailed": "Focus rules could not be loaded. Existing delivery behavior is unchanged.",
+    "emptyTitle": "No focus rules",
+    "emptyDescription": "Add a rule after the notification service confirms that the exact scope is eligible.",
+    "noMatchTitle": "No matching rules",
+    "noMatchDescription": "Change the search or category to see other rules.",
+    "capacityUnavailable": "Rule capacity is unavailable. New rules remain disabled until the server count is refreshed.",
+    "capacityUnavailableShort": "Active-rule capacity unavailable",
+    "capacityReached": "Rule limit reached ({{used}} of {{limit}}).",
+    "capacityUsed": "{{used}} of {{limit}} active-rule capacity used",
+    "blockingConflict": "This rule cannot take effect until the blocking conflict is resolved.",
+    "kinds": {
+      "VIP": {
+        "label": "Important people",
+        "short": "People",
+        "description": "Prioritize mentions and direct notifications from these people."
+      },
+      "FOLLOW_CONTEXT": {
+        "label": "Followed work",
+        "short": "Following",
+        "description": "Keep the next change in selected work contexts visible."
+      },
+      "MUTE_SCOPE": {
+        "label": "Muted scopes",
+        "short": "Muted",
+        "description": "Reduce noise from exact scopes while preserving mandatory policy."
+      },
+      "TOPIC_WATCH": {
+        "label": "Governed topics",
+        "short": "Topics",
+        "description": "Track updates from approved system topics."
+      }
+    },
+    "states": {
+      "ENABLED": "Enabled",
+      "PAUSED": "Paused",
+      "EXPIRED": "Expired"
+    },
+    "effects": {
+      "PRIORITIZE": "Prioritize",
+      "FOLLOW": "Follow",
+      "MUTE": "Mute"
+    },
+    "scopeKinds": {
+      "APP_TYPE": "App notification type",
+      "ACTOR": "Person",
+      "THREAD": "Conversation or thread",
+      "RESOURCE": "Work resource",
+      "TOPIC_TOKEN": "Governed topic"
+    },
+    "sources": {
+      "USER": "My setting",
+      "TENANT_POLICY": "Organization policy",
+      "SYSTEM_DEFAULT": "System default"
+    },
+    "filters": {
+      "all": "All rules",
+      "category": "Rule category"
+    },
+    "fields": {
+      "source": "Source",
+      "channels": "Channels",
+      "expiry": "Expiry",
+      "noChannelOverride": "No channel override",
+      "noExpiry": "No expiry",
+      "lastChanged": "Last changed {{date}}"
+    },
+    "actions": {
+      "pause": "Pause",
+      "resume": "Resume",
+      "extend": "Extend",
+      "MUTE_TYPE": "Mute type",
+      "MUTE_CONTEXT": "Mute context",
+      "FOLLOW_CONTEXT": "Follow context",
+      "PRIORITIZE_ACTOR": "Prioritize person"
+    },
+    "managed": {
+      "owner": "Organization policy",
+      "reason": "This rule is governed by organization policy.",
+      "exceptionAllowed": "Exception request available",
+      "noException": "No user exception"
+    },
+    "feedback": {
+      "saved": "The focus rule was saved.",
+      "deleted": "The focus rule was deleted.",
+      "previewFailed": "The service could not evaluate this rule. Check the exact scope and try again.",
+      "saveFailed": "The focus rule could not be saved.",
+      "deleteFailed": "The focus rule could not be deleted.",
+      "conflict": "The rule changed in another window. The latest server version has been loaded."
+    },
+    "delete": {
+      "title": "Delete focus rule",
+      "description": "Delete ‘{{label}}’? Future matching notifications will return to the effective organization and app policy.",
+      "unnamed": "Unnamed rule"
+    },
+    "dialog": {
+      "createTitle": "Add focus rule",
+      "editTitle": "Edit focus rule",
+      "description": "The notification service validates the exact target and organization policy before this rule can be saved.",
+      "scopeKind": "Scope type",
+      "scopeKey": "Exact scope key",
+      "scopeKeyHelp": "Use the canonical identifier supplied by the source app or notification detail.",
+      "legacyTarget": "Existing exact key · read only",
+      "targetSection": "Notification target",
+      "targetSectionDescription": "Choose from discoverable people, work contexts, or approved topics.",
+      "behaviorSection": "Delivery behavior and channels",
+      "behaviorSectionDescription": "Set the priority behavior and bounded channel overrides for this target.",
+      "scheduleSection": "Effective period",
+      "scheduleSectionDescription": "Apply immediately or constrain the start and automatic expiry.",
+      "discoveryHelp": "Only real targets available to the current user are returned by the notification service.",
+      "selectedTarget": "Selected target",
+      "displayLabel": "Display name",
+      "effect": "Behavior",
+      "channels": "Channel overrides",
+      "startsAt": "Effective start",
+      "expiresAt": "Automatic expiry",
+      "preview": "Preview impact",
+      "saving": "Saving rule",
+      "previewAllowed": "Policy check passed. Estimated affected notifications: {{count}}.",
+      "previewAllowedNoEstimate": "Policy validation passed. The estimate is hidden by the privacy threshold.",
+      "previewBlocked": "This rule is blocked by policy: {{reason}}",
+      "policyConflict": "A mandatory policy takes precedence."
+    },
+    "controls": {
+      "title": "Notification focus controls",
+      "openLabel": "Adjust future notifications like this",
+      "loading": "Loading available focus controls",
+      "loadFailed": "Contextual controls are temporarily unavailable. No setting was changed.",
+      "partial": "Some contextual controls are temporarily unavailable.",
+      "whyReceived": "Why you received this",
+      "availableScopes": "Available scopes",
+      "serverSupplied": "These choices are supplied and policy-checked by the notification service for this notification.",
+      "current": "Current",
+      "policyLocked": "Policy locked",
+      "scope": "Scope: {{scope}}",
+      "effectUnavailable": "This effect is not allowed for the supplied scope.",
+      "currentExpiry": "Keep current expiry",
+      "noExpiryChoice": "This server-provided action has no expiry choice.",
+      "serverExpiryOnly": "Only server-provided expiry options are available.",
+      "previewIdle": "Select an available scope and preview its server-evaluated impact.",
+      "previewLoading": "Checking policy impact",
+      "previewAction": "Preview impact",
+      "expectedImpact": "Expected impact",
+      "asOf": "As of {{date}}",
+      "conflictTitle": "Settings changed on the server",
+      "rebase": "Load latest",
+      "rebasing": "Loading latest setting",
+      "saving": "Saving control",
+      "apply": "Apply control",
+      "none": "No contextual control is available for this notification.",
+      "selectedExpiry": "Selected expiry: {{date}}",
+      "ongoing": "Ongoing",
+      "previewStatement": "{{action}} will apply to {{scope}}.",
+      "previewExpiry": "The control expires at {{date}}.",
+      "previewOngoing": "The control has no automatic expiry.",
+      "previewAuthoritative": "The notification service checked this impact against the current organization policy.",
+      "previewPolicyReason": "Policy decision: {{reason}}",
+      "previewOffline": "Reconnect before checking the policy impact. No setting was changed.",
+      "previewFailed": "The policy impact could not be verified. No setting was changed.",
+      "previewDenied": "Current policy or access no longer permits this control.",
+      "descriptions": {
+        "MUTE_TYPE": "Mute future notifications of this exact type.",
+        "MUTE_CONTEXT": "Mute future notifications from this exact work context.",
+        "FOLLOW_CONTEXT": "Prioritize future updates from this work context.",
+        "PRIORITIZE_ACTOR": "Prioritize future notifications from this person."
+      },
+      "feedback": {
+        "saved": "The focus control was applied.",
+        "conflict": "The control changed in another window. Review the latest server state and apply again.",
+        "denied": "Policy or access changed. Review the current server-provided choices.",
+        "failed": "The focus control could not be applied."
+      }
+    },
+    "diagnostics": {
+      "title": "Test notification diagnostics",
+      "description": "Verify configured delivery stages without creating a business notification.",
+      "exclusion": "Diagnostic only. Excluded from the inbox, business actions, and notification quality KPIs.",
+      "run": "Run test",
+      "starting": "Starting diagnostic",
+      "runFailed": "The diagnostic could not be started.",
+      "rateLimited": "The diagnostic rate limit has been reached. Try again after the server retry window.",
+      "partialDescription": "The safe in-app stages completed; unavailable external providers remain explicit.",
+      "summaryLabel": "Diagnostic summary",
+      "stateLabel": "State",
+      "supportedStages": "Supported stages",
+      "observedStages": "Observed stages",
+      "resultExpiry": "Result expiry",
+      "stageDetails": "Provider-aware stage details",
+      "pipelineLabel": "Test notification delivery stages",
+      "channelsTitle": "Active channels to test",
+      "selectChannel": "Select at least one available channel.",
+      "activeEndpoints": "Active endpoints: {{endpoints}}",
+      "noStages": "The provider returned no diagnostic stages.",
+      "notIssued": "Not issued",
+      "actionUnavailable": "Test action unavailable",
+      "retryAfter": "Retry after {{date}}",
+      "id": "Diagnostic ID: {{id}}",
+      "started": "Started {{date}}",
+      "channelAvailability": {
+        "AVAILABLE": "Available",
+        "CHECKING": "Checking",
+        "DISABLED": "Disabled",
+        "UNAVAILABLE": "Unavailable",
+        "PERMISSION_DENIED": "No access",
+        "EXPIRED": "Endpoint expired",
+        "OFFLINE": "Offline"
+      },
+      "channelReasons": {
+        "OFFLINE": "Channel state will be refreshed after the connection returns.",
+        "CHECKING": "Checking the channel, effective policy, and endpoint state.",
+        "CAPABILITY_DISABLED": "The current notification infrastructure does not offer this channel.",
+        "PROVIDER_DISABLED": "Delivery is disabled until the external provider completes operational approval.",
+        "POLICY_DISABLED": "The effective organization or user policy does not allow this channel.",
+        "NO_ENDPOINT": "No active endpoint is connected for this channel.",
+        "ENDPOINT_EXPIRED": "The registered endpoint expired and must be enrolled again.",
+        "PERMISSION_DENIED": "You do not have permission to inspect this channel or endpoint.",
+        "SOURCE_UNAVAILABLE": "The authoritative channel state is unavailable, so test delivery remains blocked."
+      },
+      "requestFailures": {
+        "RATE_LIMITED": {
+          "title": "Test notification rate limit reached",
+          "description": "Retry the same channels after the server-provided retry window."
+        },
+        "OFFLINE": {
+          "title": "Test notifications are unavailable offline",
+          "description": "Reconnect, refresh the channel state, and try again."
+        },
+        "FORBIDDEN": {
+          "title": "You cannot run this test notification",
+          "description": "Refresh your access or session, then retry. No delivery was recorded as successful."
+        },
+        "FAILED": {
+          "title": "The test notification could not be started",
+          "description": "Review channel and endpoint state, then try again."
+        }
+      },
+      "availability": {
+        "BUSY": "A diagnostic is already in progress.",
+        "RATE_LIMITED": "The server rate limit currently blocks another test.",
+        "OFFLINE": "Reconnect before running another test.",
+        "EXPIRED": "Refresh the test capability before running another test.",
+        "DISABLED": "The provider or organization policy has disabled test delivery."
+      },
+      "states": {
+        "IDLE": "Not run",
+        "QUEUED": "Diagnostic queued",
+        "RUNNING": "Diagnostic running",
+        "COMPLETE": "Diagnostic complete",
+        "PARTIAL": "Partial diagnostic",
+        "FAILED": "Diagnostic failed",
+        "RATE_LIMITED": "Rate limited",
+        "OFFLINE": "Offline",
+        "EXPIRED": "Result expired",
+        "DISABLED": "Testing disabled"
+      },
+      "capabilities": {
+        "SUPPORTED": "Supported",
+        "DISABLED": "Provider disabled",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "stageStates": {
+        "NOT_RUN": "Not run",
+        "QUEUED": "Queued",
+        "RUNNING": "Running",
+        "REACHED": "Reached",
+        "SKIPPED": "Skipped",
+        "BLOCKED": "Blocked",
+        "FAILED": "Failed",
+        "EXPIRED": "Expired"
+      },
+      "stages": {
+        "requestValidation": {
+          "label": "Request validation",
+          "description": "Validates the diagnostic request and rate limits."
+        },
+        "privacyFilter": {
+          "label": "Privacy filter",
+          "description": "Confirms that the safe preview contains no business payload."
+        },
+        "inAppPreview": {
+          "label": "In-app preview",
+          "description": "Verifies the in-app rendering pipeline without writing to the inbox."
+        },
+        "endpointDelivery": {
+          "label": "Endpoint delivery",
+          "description": "Reports external endpoint capability without fabricating delivery success."
+        }
+      }
+    }
+  },
+  "noiseQuality": {
+    "title": "Notification quality and fatigue",
+    "description": "Anonymous delivery, suppression, action, and fatigue signals for privacy-eligible cohorts.",
+    "asOf": "As of {{date}}",
+    "refreshing": "Refreshing quality data",
+    "loadFailed": "Notification quality data could not be loaded.",
+    "offline": "Reconnect to load current notification quality data.",
+    "partial": "Some notification quality sources are temporarily unavailable.",
+    "empty": "No privacy-eligible noisy notification types were reported for this period.",
+    "missingTitle": "No quality dataset",
+    "metricsLabel": "Notification quality metrics",
+    "metricsMissing": "Quality metrics were not provided. No KPI values are displayed.",
+    "metrics": {
+      "muted": { "label": "Muted rate", "description": "Recipients who muted an eligible type" },
+      "deduplication": {
+        "label": "Deduplication rate",
+        "description": "Repeated occurrences collapsed before delivery"
+      },
+      "actionConversion": {
+        "label": "Action conversion",
+        "description": "Source-owned actions completed after exposure"
+      },
+      "fatigue": {
+        "label": "Fatigue cohort",
+        "description": "Anonymous recipients exposed to burst risk"
+      }
+    },
+    "datum": {
+      "withheld": "Withheld",
+      "unavailable": "Unavailable",
+      "noData": "No data",
+      "privacyUnavailable": "The privacy threshold is unavailable, so this value remains withheld.",
+      "missing": "The analytics source did not provide a usable value."
+    },
+    "privacy": {
+      "explanation": "Small cohorts are withheld from administrators.",
+      "insufficient": "The current cohort is below the privacy threshold; all values remain withheld.",
+      "guard": "Privacy guard: minimum cohort {{count}}. {{explanation}}",
+      "unavailable": "Privacy threshold is unavailable. All analytics values remain withheld."
+    },
+    "types": {
+      "title": "Top noisy types",
+      "tableLabel": "Top noisy notification types",
+      "appType": "App / type",
+      "sent": "Sent",
+      "muted": "Muted",
+      "deduplicated": "Deduplicated",
+      "actionConversion": "Action conversion",
+      "owner": "Owner",
+      "finding": "Finding",
+      "notProvided": "Not provided",
+      "ownerNotProvided": "Owner not provided",
+      "inspect": "Inspect type",
+      "inspectLabel": "Inspect {{app}} {{type}}",
+      "emptyTitle": "No noisy types reported",
+      "emptyDescription": "The analytics source returned no type-level findings for this period."
+    },
+    "finding": {
+      "none": "No finding",
+      "label": "Quality finding",
+      "summary": "Review the governed notification contract and its delivery policy.",
+      "open": "Open {{target}}"
+    },
+    "findings": {
+      "HIGH_MUTE_RATE": {
+        "label": "Elevated mute rate",
+        "summary": "At least 25% of the privacy-eligible recipient cohort muted this type. Review its audience and frequency."
+      },
+      "LOW_ACTION_CONVERSION": {
+        "label": "Low action conversion",
+        "summary": "Fewer than 20% of actionable notifications led to source-owned completion. Review the action copy and target state."
+      },
+      "DEDUPLICATION_OPPORTUNITY": {
+        "label": "Deduplication opportunity",
+        "summary": "Repeated volume is high while few occurrences are collapsed. Review the thread key and merge contract."
+      },
+      "UNKNOWN": {
+        "label": "Quality finding",
+        "summary": "Review the governed notification contract and its delivery policy."
+      }
+    },
+    "targets": {
+      "CONTRACT": "Contract",
+      "POLICY": "Policy",
+      "TEMPLATE": "Template",
+      "DELIVERY_CONTROL": "Delivery control"
+    },
+    "fourEyes": {
+      "title": "Four-eyes policy",
+      "states": {
+        "ENFORCED": "Enforced",
+        "NOT_CONFIGURED": "Not configured",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "openPolicy": "Open policy",
+      "unavailableSummary": "Publication approval state is not exposed by this analytics endpoint.",
+      "enforcedSummary": "Drafter and approver separation protects {{published}} published policies; {{drafts}} drafts await review.",
+      "draft": "Create a bounded policy draft and preview impact.",
+      "draftCount": "{{count}} policy drafts awaiting review",
+      "review": "A different administrator approves or rejects the draft.",
+      "separationUnavailable": "Reviewer separation requirements are unavailable.",
+      "separationNotConfigured": "Reviewer separation is not configured.",
+      "separationRequired": "The drafter and reviewer must be different people.",
+      "separationNotRequired": "Reviewer separation is not required by the supplied policy.",
+      "updated": " Updated {{date}}."
     }
   }
 }

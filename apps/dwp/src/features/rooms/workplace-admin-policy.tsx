@@ -1,9 +1,17 @@
 import { useWorkplaceExperienceAuthority } from './workplace-experience-authority';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Armchair, CalendarRange, Clock3, Save, ShieldCheck, UserRoundCheck } from 'lucide-react';
+import {
+  Armchair,
+  CalendarRange,
+  Clock3,
+  History,
+  Save,
+  ShieldCheck,
+  UserRoundCheck,
+} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { useBlocker, useNavigate } from 'react-router-dom';
+import { Link, useBlocker, useNavigate } from 'react-router-dom';
 import { getWorkplacePolicy } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -28,7 +36,7 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import { RoomsAdminOperations } from './rooms-admin-operations';
 import { WorkplacePolicyRoomSettings } from './workplace-policy-room-settings';
-import { WorkplaceExperiencePanel } from './workplace-experience-ui';
+import { WorkplaceExperienceFreshness, WorkplaceExperiencePanel } from './workplace-experience-ui';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
@@ -203,16 +211,33 @@ export function WorkplaceAdminPolicy() {
         title={t('workplace.admin.policy.title')}
         description={t('workplace.admin.policy.description')}
         actions={
-          <ActionButton
-            intent="primary"
-            startIcon={<Save size={17} />}
-            disabled={
-              section === 'approval' || !dirty || !valid || !capabilities.canManageWorkplaceAdmin
-            }
-            onClick={() => setReviewOpen(true)}
-          >
-            {t('actions.save')}
-          </ActionButton>
+          <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+            {query.dataUpdatedAt ? (
+              <WorkplaceExperienceFreshness
+                at={new Date(query.dataUpdatedAt).toISOString()}
+                refreshing={query.isFetching}
+              />
+            ) : null}
+            <ActionButton
+              component={Link}
+              to="/workplace/admin/operations?view=audit&action=workplace.policy.updated&aggregateType=POLICY"
+              intent="secondary"
+              startIcon={<History size={17} />}
+              disabled={!capabilities.isLoaded || !capabilities.canViewWorkplaceAdmin}
+            >
+              {t('workplace.admin.policy.viewHistory')}
+            </ActionButton>
+            <ActionButton
+              intent="primary"
+              startIcon={<Save size={17} />}
+              disabled={
+                section === 'approval' || !dirty || !valid || !capabilities.canManageWorkplaceAdmin
+              }
+              onClick={() => setReviewOpen(true)}
+            >
+              {t('actions.save')}
+            </ActionButton>
+          </Stack>
         }
       />
       {capabilities.isLoaded && !capabilities.canManageWorkplaceAdmin && (
@@ -269,7 +294,24 @@ export function WorkplaceAdminPolicy() {
                 </Stack>
               </WorkplaceExperiencePanel>
             </Box>
-            <Stack gap={2} sx={{ minWidth: 0 }}>
+            <Stack
+              gap={2}
+              sx={{
+                minWidth: 0,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'minmax(0, 1fr)',
+                  lg:
+                    section === 'approval'
+                      ? 'minmax(0, 1fr)'
+                      : 'minmax(0, 1.55fr) minmax(280px, .85fr)',
+                },
+                alignItems: 'start',
+                '& > [data-testid="policy-room-approval-queue"], & > .MuiAlert-root': {
+                  gridColumn: '1 / -1',
+                },
+              }}
+            >
               {capabilities.canViewRoomsAdmin ? (
                 <RoomsAdminOperations embedded />
               ) : (
@@ -570,7 +612,14 @@ export function WorkplaceAdminPolicy() {
                   </ActionButton>
                 ) : null}
               </Stack>
-              <Stack spacing={2} sx={{ minWidth: 0 }}>
+              <Stack
+                spacing={2}
+                sx={{
+                  minWidth: 0,
+                  position: { lg: section === 'approval' ? 'static' : 'sticky' },
+                  top: { lg: 88 },
+                }}
+              >
                 {section !== 'approval' ? (
                   <WorkplacePolicyImpactPreview proposed={form} valid={valid} />
                 ) : null}

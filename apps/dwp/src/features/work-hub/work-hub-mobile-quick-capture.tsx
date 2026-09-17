@@ -1,7 +1,12 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, ListPlus } from 'lucide-react';
-import { ActionButton, FormField, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  FormField,
+  foundationTokens,
+  InlineFeedback,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -79,7 +84,7 @@ export function WorkHubMobileQuickCapture({
       component="section"
       variant="outlined"
       aria-labelledby="work-mobile-quick-capture-title"
-      sx={{ p: 1.5, borderRadius: 2 }}
+      sx={{ p: 1.5, borderRadius: foundationTokens.radius.surface * 2 + 'px' }}
     >
       <Stack gap={1.5}>
         <WorkTaskQuickFlow
@@ -149,7 +154,13 @@ export function WorkHubMobileQuickCapture({
               onFocus={() => setTitleFocused(true)}
               onBlur={() => setTitleFocused(false)}
             />
-            <Box sx={{ bgcolor: 'action.selected', borderRadius: 1, px: 1 }}>
+            <Box
+              sx={{
+                bgcolor: 'action.selected',
+                borderRadius: foundationTokens.radius.surface + 'px',
+                px: 1,
+              }}
+            >
               <FormControlLabel
                 control={
                   <Checkbox

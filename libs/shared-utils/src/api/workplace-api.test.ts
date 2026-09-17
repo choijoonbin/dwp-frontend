@@ -2,11 +2,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
 import {
+  cancelWorkplaceBooking,
+  checkInWorkplaceBooking,
   createWorkplaceBooking,
   createWorkplaceReleaseWindow,
   getWorkplaceExplore,
   getWorkplaceAdminBookings,
   relocateWorkplaceBooking,
+  releaseWorkplaceBooking,
   saveWorkplaceLayout,
   updateWorkplaceBookingLegalHold,
 } from './workplace-api';
@@ -134,13 +137,17 @@ describe('Workplace API boundary', () => {
       .mockResolvedValueOnce(jsonResponse({ bookingId: 'booking-1', version: 5 }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await relocateWorkplaceBooking('booking/1', {
-      resourceId: 'desk-2',
-      startsAt: '2026-08-19T02:00:00Z',
-      endsAt: '2026-08-19T03:00:00Z',
-      reason: 'Customer workshop moved',
-      version: 4,
-    });
+    await relocateWorkplaceBooking(
+      'booking/1',
+      {
+        resourceId: 'desk-2',
+        startsAt: '2026-08-19T02:00:00Z',
+        endsAt: '2026-08-19T03:00:00Z',
+        reason: 'Customer workshop moved',
+        version: 4,
+      },
+      'relocate-command-1'
+    );
 
     const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
@@ -153,6 +160,82 @@ describe('Workplace API boundary', () => {
       reason: 'Customer workshop moved',
       version: 4,
     });
+    expect(request.headers).toEqual(
+      expect.objectContaining({ 'Idempotency-Key': 'relocate-command-1' })
+    );
+  });
+
+  it('sends a stable caller-supplied idempotency key for booking lifecycle commands', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValue(jsonResponse({ bookingId: 'booking-1', version: 5 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await checkInWorkplaceBooking('booking-1', 4, 'check-in-command-1');
+    await cancelWorkplaceBooking('booking-1', 4, 'cancel-command-1');
+    await releaseWorkplaceBooking('booking-1', 4, 'release-command-1');
+
+    expect(fetchMock.mock.calls.slice(1).map((call) => [
+      call[0],
+      (call[1] as RequestInit).headers,
+    ])).toEqual([
+      [
+        '/api/platform/v1/workplace/bookings/booking-1/check-in',
+        expect.objectContaining({ 'Idempotency-Key': 'check-in-command-1' }),
+      ],
+      [
+        '/api/platform/v1/workplace/bookings/booking-1/cancel',
+        expect.objectContaining({ 'Idempotency-Key': 'cancel-command-1' }),
+      ],
+      [
+        '/api/platform/v1/workplace/bookings/booking-1/release',
+        expect.objectContaining({ 'Idempotency-Key': 'release-command-1' }),
+      ],
+    ]);
+  });
+
+  it('reuses the same default command identity after an ambiguous booking response', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockRejectedValueOnce(new TypeError('response lost'))
+      .mockResolvedValueOnce(jsonResponse({ bookingId: 'booking-1', version: 5 }))
+      .mockRejectedValueOnce(new TypeError('response lost'))
+      .mockResolvedValueOnce(jsonResponse({ bookingId: 'booking-1', version: 5 }))
+      .mockResolvedValueOnce(jsonResponse({ bookingId: 'booking-1', version: 5 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(cancelWorkplaceBooking('booking-1', 4)).rejects.toThrow('HTTP transport failed');
+    await cancelWorkplaceBooking('booking-1', 4);
+    await expect(
+      relocateWorkplaceBooking('booking-1', {
+        resourceId: 'desk-2',
+        startsAt: '2026-08-19T02:00:00Z',
+        endsAt: '2026-08-19T03:00:00Z',
+        reason: 'Moved',
+        version: 4,
+      })
+    ).rejects.toThrow('HTTP transport failed');
+    await relocateWorkplaceBooking('booking-1', {
+      resourceId: 'desk-2',
+      startsAt: '2026-08-19T02:00:00Z',
+      endsAt: '2026-08-19T03:00:00Z',
+      reason: 'Moved',
+      version: 4,
+    });
+    await cancelWorkplaceBooking('booking-1', 5);
+
+    const commandKeys = fetchMock.mock.calls.slice(1).map(
+      (call) => ((call[1] as RequestInit).headers as Record<string, string>)['Idempotency-Key']
+    );
+    expect(commandKeys).toEqual([
+      'workplace:booking-cancel:booking-1:v4',
+      'workplace:booking-cancel:booking-1:v4',
+      'workplace:booking-relocate:booking-1:v4',
+      'workplace:booking-relocate:booking-1:v4',
+      'workplace:booking-cancel:booking-1:v5',
+    ]);
   });
 
   it('records legal-hold changes through the admin booking boundary', async () => {

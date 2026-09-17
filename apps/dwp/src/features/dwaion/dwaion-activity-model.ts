@@ -1,6 +1,6 @@
 import type { DwaionUserRun } from '@dwp-frontend/shared-utils';
 
-export const DWAION_ACTIVITY_WINDOW_LIMIT = 100;
+export const DWAION_ACTIVITY_PAGE_LIMIT = 50;
 export const DWAION_ACTIVITY_FILTERS = [
   'ALL',
   'RUNNING',
@@ -21,6 +21,11 @@ export type DwaionActivityWindowSummary = {
   sample: number;
 };
 
+export function dwaionActivityPeriodStart(period: DwaionActivityPeriod, now = Date.now()): string {
+  const days = period === 'DAY' ? 1 : period === 'WEEK' ? 7 : 30;
+  return new Date(now - days * 24 * 60 * 60 * 1_000).toISOString();
+}
+
 export function resolveDwaionActivityFilter(value: string | null): DwaionActivityFilter {
   const normalized = value?.trim().toUpperCase();
   return DWAION_ACTIVITY_FILTERS.includes(normalized as DwaionActivityFilter)
@@ -40,8 +45,7 @@ export function filterDwaionActivityPeriod(
   period: DwaionActivityPeriod,
   now = Date.now()
 ): DwaionUserRun[] {
-  const days = period === 'DAY' ? 1 : period === 'WEEK' ? 7 : 30;
-  const cutoff = now - days * 24 * 60 * 60 * 1_000;
+  const cutoff = Date.parse(dwaionActivityPeriodStart(period, now));
   return runs.filter((run) => {
     const timestamp = Date.parse(run.createdAt);
     return Number.isFinite(timestamp) && timestamp >= cutoff && timestamp <= now + 60_000;
@@ -55,6 +59,10 @@ export function filterDwaionActivityWindow(
   if (filter === 'ALL') return [...runs];
   if (filter === 'ATTENTION') return runs.filter(needsAttention);
   return runs.filter((run) => run.runState === filter);
+}
+
+export function hasExpiredDwaionRunLease(run: DwaionUserRun): boolean {
+  return run.runState === 'RUNNING' && run.lease?.status === 'EXPIRED';
 }
 
 export function findExactDwaionRun(
@@ -82,7 +90,8 @@ function needsAttention(run: DwaionUserRun): boolean {
   return (
     run.runState === 'FAILED' ||
     run.policyOutcome === 'DENY' ||
-    run.answerState === 'CONFIGURATION_REQUIRED'
+    run.answerState === 'CONFIGURATION_REQUIRED' ||
+    hasExpiredDwaionRunLease(run)
   );
 }
 

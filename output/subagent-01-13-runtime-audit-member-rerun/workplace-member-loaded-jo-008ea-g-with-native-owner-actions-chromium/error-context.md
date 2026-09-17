@@ -1,0 +1,249 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+                - navigation "Workplace home" [ref=e40]:
+                  - generic [ref=e41]:
+                    - link "Today's workspace" [ref=e42] [cursor=pointer]:
+                      - /url: /workplace/home?view=home
+                      - img [ref=e44]
+                      - text: Today's workspace
+                    - link "Team work plans" [ref=e47] [cursor=pointer]:
+                      - /url: /workplace/home?view=team
+                      - img [ref=e49]
+                      - text: Team work plans
+                    - link "Facility requests" [ref=e53] [cursor=pointer]:
+                      - /url: /workplace/home?view=requests
+                      - img [ref=e55]
+                      - text: Facility requests
+              - listitem [ref=e57]:
+                - link "Find and book a space" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/find
+                  - img [ref=e60]
+                  - paragraph [ref=e65]: Find and book a space
+              - listitem [ref=e66]:
+                - link "Indoor wayfinding" [ref=e67] [cursor=pointer]:
+                  - /url: /workplace/navigation
+                  - img [ref=e69]
+                  - paragraph [ref=e74]: Indoor wayfinding
+              - listitem [ref=e75]:
+                - link "Weekly booking planner" [ref=e76] [cursor=pointer]:
+                  - /url: /workplace/planner
+                  - img [ref=e78]
+                  - paragraph [ref=e81]: Weekly booking planner
+              - listitem [ref=e82]:
+                - link "Workplace booking assistant" [ref=e83] [cursor=pointer]:
+                  - /url: /workplace/assistant
+                  - img [ref=e85]
+                  - paragraph [ref=e89]: Workplace booking assistant
+              - listitem [ref=e90]:
+                - link "My reservations" [ref=e91] [cursor=pointer]:
+                  - /url: /workplace/reservations
+                  - img [ref=e93]
+                  - paragraph [ref=e96]: My reservations
+              - listitem [ref=e97]:
+                - link "My service orders" [ref=e98] [cursor=pointer]:
+                  - /url: /workplace/service-orders
+                  - img [ref=e100]
+                  - paragraph [ref=e104]: My service orders
+              - listitem [ref=e105]:
+                - link "Safety check" [ref=e106] [cursor=pointer]:
+                  - /url: /workplace/safety
+                  - img [ref=e108]
+                  - paragraph [ref=e114]: Safety check
+        - link "Return to apps" [ref=e116] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e118]
+          - text: Return to apps
+    - banner [ref=e120]:
+      - generic [ref=e121]:
+        - generic [ref=e122]:
+          - img [ref=e124]
+          - generic "Workplace" [ref=e129]
+        - navigation "App area switcher" [ref=e132]:
+          - 'link "App management: Workplace" [ref=e134] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e136]
+            - generic [ref=e139]: App management
+        - generic [ref=e140]:
+          - button "Search DWP" [ref=e142] [cursor=pointer]:
+            - img [ref=e143]
+            - paragraph [ref=e146]: Search DWP
+            - generic [ref=e147]: ⌘K
+          - generic [ref=e148]:
+            - button "Enter full screen" [ref=e149] [cursor=pointer]:
+              - img [ref=e150]
+            - generic "0 actionable notifications, 0 total unread" [ref=e156]:
+              - button "0 actionable notifications, 0 total unread" [ref=e157] [cursor=pointer]:
+                - generic [ref=e158]:
+                  - img [ref=e159]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e163] [cursor=pointer]':
+            - generic [ref=e164]: T
+            - img [ref=e165]
+    - main [ref=e167]:
+      - generic [ref=e168]:
+        - generic [ref=e170]:
+          - text: My workplace plan
+          - heading "My reservations" [level=1] [ref=e171]
+          - paragraph [ref=e172]: Review meeting and workplace reservations in one timeline while each action stays with its authoritative source.
+        - generic [ref=e174]:
+          - generic [ref=e175]:
+            - generic [ref=e176]:
+              - generic [ref=e178]: Check-in required
+              - heading "Focus desk 12" [level=2] [ref=e179]
+            - paragraph [ref=e180]: Aug 19, 2026, 10:00 AM · Pangyo HQ · 12F
+          - button "Check in now" [ref=e181] [cursor=pointer]:
+            - img [ref=e183]
+            - text: Check in now
+        - generic [ref=e187]:
+          - generic [ref=e189]:
+            - generic [ref=e190]:
+              - paragraph [ref=e191]: Workplace
+              - text: "Last verified: 8/19/26, 9:00 AM"
+            - generic [ref=e193]: Current
+          - generic [ref=e195]:
+            - generic [ref=e196]:
+              - paragraph [ref=e197]: Calendar · Rooms
+              - text: "Last verified: Not verified yet"
+            - generic [ref=e199]: No access
+        - region "Reservation filters" [ref=e201]:
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - generic [ref=e204]: Search reservations
+              - generic [ref=e205]:
+                - img [ref=e207]
+                - textbox "Search reservations" [ref=e210]:
+                  - /placeholder: Resource or location
+                - group:
+                  - generic: Search reservations
+            - generic [ref=e211]:
+              - generic [ref=e212]:
+                - generic [ref=e213]: Period
+                - generic [ref=e214]:
+                  - combobox "Period Upcoming" [ref=e215] [cursor=pointer]: Upcoming
+                  - textbox: UPCOMING
+                  - img
+                  - group:
+                    - generic: Period
+              - generic [ref=e216]:
+                - generic [ref=e217]: Type
+                - generic [ref=e218]:
+                  - combobox "Type Workplace" [ref=e219] [cursor=pointer]: Workplace
+                  - textbox: WORKSPACE
+                  - img
+                  - group:
+                    - generic: Type
+              - generic [ref=e220]:
+                - generic [ref=e221]: Status
+                - generic [ref=e222]:
+                  - combobox "Status Active" [ref=e223] [cursor=pointer]: Active
+                  - textbox: ACTIVE
+                  - img
+                  - group:
+                    - generic: Status
+              - generic [ref=e224]:
+                - generic [ref=e225]: Source
+                - generic [ref=e226]:
+                  - combobox "Source Workplace" [ref=e227] [cursor=pointer]: Workplace
+                  - textbox: WORKPLACE
+                  - img
+                  - group:
+                    - generic: Source
+            - status [ref=e228]: 1 reservations
+        - status [ref=e229]:
+          - paragraph [ref=e230]: One reservation source is unavailable. Verified reservations from the other source remain visible, and stale-source changes are blocked.
+        - generic [ref=e231]:
+          - generic [ref=e232]:
+            - generic [ref=e233]:
+              - heading "Reservation timeline" [active] [level=2] [ref=e234]
+              - generic [ref=e236]: 1 shown
+            - separator [ref=e237]
+            - article [ref=e239]:
+              - generic [ref=e240]:
+                - generic [ref=e241]:
+                  - generic [ref=e242]:
+                    - generic [ref=e244]: Desks
+                    - generic [ref=e246]: Reserved
+                  - heading "Focus desk 12" [level=3] [ref=e247]
+                  - generic [ref=e248]:
+                    - generic [ref=e249]:
+                      - img [ref=e250]
+                      - paragraph [ref=e253]: Aug 19, 2026, 9:30 AM – Aug 19, 2026, 10:30 AM
+                    - generic [ref=e254]:
+                      - img [ref=e255]
+                      - paragraph [ref=e258]: Pangyo HQ · 12F
+                - generic [ref=e260]: Workplace
+              - generic [ref=e261]:
+                - button "View detail" [ref=e262] [cursor=pointer]
+                - link "View on map" [ref=e263] [cursor=pointer]:
+                  - /url: /workplace/find?v=1&types=DESK&resource=30000000-0000-4000-8000-000000000012
+          - complementary "Reservation inspector" [ref=e264]:
+            - generic [ref=e265]:
+              - generic [ref=e266]:
+                - generic [ref=e267]:
+                  - text: Reservation inspector
+                  - heading "Focus desk 12" [level=2] [ref=e268]
+                - generic [ref=e270]: Current
+              - generic [ref=e271]:
+                - generic [ref=e272]:
+                  - img [ref=e273]
+                  - paragraph [ref=e276]: Aug 19, 2026, 9:30 AM – Aug 19, 2026, 10:30 AM
+                - generic [ref=e277]:
+                  - img [ref=e278]
+                  - paragraph [ref=e281]: Pangyo HQ · 12F
+                - generic [ref=e282]:
+                  - img [ref=e283]
+                  - paragraph [ref=e286]: "Command authority: Workplace"
+            - generic [ref=e287]:
+              - generic:
+                - img
+              - tablist [ref=e290]:
+                - tab "Overview" [selected] [ref=e291] [cursor=pointer]
+                - tab "Visitors" [ref=e292] [cursor=pointer]
+                - tab "Services" [ref=e293] [cursor=pointer]
+                - tab "Access" [ref=e294] [cursor=pointer]
+                - tab "Audit" [ref=e295] [cursor=pointer]
+              - img [ref=e298] [cursor=pointer]
+            - generic [ref=e300]:
+              - paragraph [ref=e302]: "Source reference: 40000000-0000-0000-0000-000000000020"
+              - generic [ref=e303]:
+                - button "Check in now" [ref=e304] [cursor=pointer]:
+                  - img [ref=e306]
+                  - text: Check in now
+                - button "Change space" [ref=e309] [cursor=pointer]
+                - button "Cancel booking" [ref=e310] [cursor=pointer]
+  - generic "Open DWAI·ON" [ref=e312]:
+    - button "Open DWAI·ON" [ref=e313] [cursor=pointer]
+  - alert:
+    - generic:
+      - img
+    - generic: The workspace was booked.
+```

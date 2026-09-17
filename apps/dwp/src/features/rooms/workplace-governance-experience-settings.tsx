@@ -16,7 +16,7 @@ import {
   GovernanceQueryError,
 } from './workplace-admin-governance-ui';
 import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
-import { ConnectorEditor, SharingPolicyEditor } from './workplace-governance-experience-forms';
+import { SharingPolicyEditor } from './workplace-governance-experience-forms';
 
 export function WorkplaceGovernanceExperienceSettings({
   canManage,
@@ -124,25 +124,6 @@ export function WorkplaceGovernanceExperienceSettings({
           />
         </Box>
       </GovernancePanel>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) minmax(0, 1fr)' },
-          gap: 2,
-          alignItems: 'start',
-        }}
-      >
-        {overview.connectors.map((connector) => (
-          <ConnectorEditor
-            key={`${authorityKey}:${connector.kind}`}
-            connector={connector}
-            contextKey={`${authorityKey}:${connector.kind}`}
-            sourceReady={sourceReady}
-            canManage={canManage}
-            refresh={refresh}
-          />
-        ))}
-      </Box>
     </Stack>
   );
 }

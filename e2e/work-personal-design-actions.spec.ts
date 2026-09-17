@@ -97,6 +97,11 @@ for (const width of [1440, 1280, 390, 320]) {
     await page.getByRole('button', { name: '원천 연결 편집', exact: true }).click();
     const editor = page.getByRole('dialog', { name: '개인 할 일 편집' });
     await expect(editor).toBeVisible();
+    await expect(
+      editor
+        .getByRole('group', { name: '개인 할 일 작업 모드' })
+        .getByRole('button', { name: 'C. 기존 할 일 수정' })
+    ).toHaveAttribute('aria-pressed', 'true');
     await page.screenshot({
       path: testInfo.outputPath(`06-personal-edit-${width}.png`),
       fullPage: false,
@@ -177,12 +182,18 @@ test('05 checklist and 06 multiple-source edits persist through actual task APIs
 });
 
 for (const width of [390, 320]) {
-  test(`06 and M2 personal task keyboard capture at ${width}px`, async ({ page }, testInfo) => {
+  test(`F01 personal task keyboard capture at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 844 });
     const runtime = await mockWorkHubFoundation(page, { designDetails: true });
     await page.goto('/work/queue?compose=task');
     const editor = page.getByRole('dialog', { name: 'Add a personal task' });
     await expect(editor).toBeVisible({ timeout: 20_000 });
+    await expect(
+      editor
+        .getByRole('group', { name: 'Personal task mode' })
+        .getByRole('button', { name: 'A. Create new task' })
+    ).toHaveAttribute('aria-pressed', 'true');
+    await expect(editor.locator('ol[aria-label="Personal task creation progress"]')).toHaveCount(0);
     await editor
       .getByRole('textbox', { name: 'Title', exact: false })
       .fill('Confirm the customer delivery plan');

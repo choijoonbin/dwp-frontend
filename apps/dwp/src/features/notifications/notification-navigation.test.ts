@@ -4,8 +4,10 @@ import {
   NOTIFICATION_CENTER_VIEW_LINKS,
   NOTIFICATION_NAVIGATION,
   findNotificationNavigationItem,
+  notificationContextFiltersFromSearchParams,
   notificationCenterPath,
   notificationCenterSearchParams,
+  notificationIncludedTypesFromSearchParams,
 } from './notification-navigation';
 
 describe('notification navigation contract', () => {
@@ -85,5 +87,63 @@ describe('notification navigation contract', () => {
         priority: 'URGENT',
       }).toString()
     ).toBe('view=all&read=read&q=policy&app=security&priority=urgent');
+    expect(
+      notificationCenterSearchParams({ view: 'ALL', attentionEffect: 'PRIORITIZE' }).toString()
+    ).toBe('view=all&attentionEffect=prioritize');
+  });
+
+  it('round-trips ordered opaque context keys without putting labels in the URL', () => {
+    const parameters = notificationCenterSearchParams({
+      view: 'ALL',
+      contextFilters: [
+        { kind: 'THREAD', key: 'conversation:42', label: 'Private room name' },
+        { kind: 'ACTOR', key: 'user:7', label: 'Private person name' },
+        { kind: 'ACTOR', key: 'user:9', label: 'Another private name' },
+      ],
+    });
+
+    expect(parameters.toString()).toBe(
+      'view=all&context=actor&contextKey=user%3A7&context=actor&contextKey=user%3A9&context=thread&contextKey=conversation%3A42'
+    );
+    expect(parameters.toString()).not.toContain('Private');
+    expect(notificationContextFiltersFromSearchParams(parameters)).toEqual([
+      { kind: 'ACTOR', key: 'user:7', label: '' },
+      { kind: 'ACTOR', key: 'user:9', label: '' },
+      { kind: 'THREAD', key: 'conversation:42', label: '' },
+    ]);
+  });
+
+  it('round-trips included types in deterministic order', () => {
+    const parameters = notificationCenterSearchParams({
+      view: 'ALL',
+      includedTypes: ['MANDATORY_POLICY', 'DIRECT', 'ASSIGNED'],
+    });
+
+    expect(parameters.toString()).toBe('view=all&type=direct&type=assigned&type=mandatory_policy');
+    expect(notificationIncludedTypesFromSearchParams(parameters)).toEqual([
+      'DIRECT',
+      'ASSIGNED',
+      'MANDATORY_POLICY',
+    ]);
+  });
+
+  it('rejects duplicate or oversized included types while preserving untrusted URL input', () => {
+    expect(() =>
+      notificationCenterSearchParams({ view: 'ALL', includedTypes: ['DIRECT', 'DIRECT'] })
+    ).toThrow('not canonical');
+    expect(
+      notificationIncludedTypesFromSearchParams(new URLSearchParams('type=direct&type=unknown'))
+    ).toEqual(['DIRECT', 'UNKNOWN']);
+  });
+
+  it('preserves malformed pairs as untrusted input so the API can fail closed', () => {
+    const parameters = new URLSearchParams(
+      'view=all&context=thread&contextKey=conversation%3A42&contextKey=orphan'
+    );
+
+    expect(notificationContextFiltersFromSearchParams(parameters)).toEqual([
+      { kind: 'THREAD', key: 'conversation:42', label: '' },
+      { kind: '', key: 'orphan', label: '' },
+    ]);
   });
 });

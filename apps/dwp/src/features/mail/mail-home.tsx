@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
@@ -13,7 +13,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   decideMailProposal,
   getMailAddressBook,
@@ -28,6 +28,7 @@ import {
   FormField,
   GuidedEmptyState,
   PageCanvas,
+  SelectField,
   foundationTokens,
 } from '@dwp-frontend/design-system';
 
@@ -40,6 +41,7 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { MailPageHeading, MailThreadListItem } from './mail-components';
+import { mailAccountScopedPath, validMailAccountScope } from './mail-account-scope';
 import { MailDailyFlow } from './mail-home-journey';
 import { MailProposalCard, MailProposalReviewDialog } from './mail-proposal-card';
 
@@ -61,12 +63,14 @@ export function MailHome() {
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [params, setParams] = useSearchParams();
+  const requestedAccountId = params.get('accountId');
   const [search, setSearch] = useState('');
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
   const [proposalsExpanded, setProposalsExpanded] = useState(false);
   const query = useQuery({
-    queryKey: ['mail', 'home'],
-    queryFn: getMailHome,
+    queryKey: ['mail', 'home', requestedAccountId],
+    queryFn: () => getMailHome({ accountId: requestedAccountId ?? undefined }),
     staleTime: 30_000,
     retry: 1,
   });
@@ -95,7 +99,9 @@ export function MailHome() {
       setProposalToAccept(null);
       if (variables.decision === 'ACCEPT') {
         toast.success(t('proposal.accepted'));
-        if (proposal.targetRoute) navigate(proposal.targetRoute);
+        if (proposal.targetRoute) {
+          navigate(mailAccountScopedPath(proposal.targetRoute, requestedAccountId));
+        }
       } else {
         toast.success(t('proposal.dismissed'));
       }
@@ -103,6 +109,17 @@ export function MailHome() {
     onError: () => toast.error(t('proposal.error')),
   });
   const data = query.data;
+  const accountScope = data
+    ? validMailAccountScope(requestedAccountId, data.accounts)
+    : requestedAccountId;
+  const navigateInScope = (path: string) => navigate(mailAccountScopedPath(path, accountScope));
+
+  useEffect(() => {
+    if (!data || !requestedAccountId || accountScope) return;
+    const next = new URLSearchParams(params);
+    next.delete('accountId');
+    setParams(next, { replace: true });
+  }, [accountScope, data, params, requestedAccountId, setParams]);
   const visibleProposals = proposalsExpanded
     ? (data?.proposals ?? [])
     : (data?.proposals.slice(0, HOME_PROPOSAL_PREVIEW_LIMIT) ?? []);
@@ -140,14 +157,14 @@ export function MailHome() {
             <ActionButton
               intent="quiet"
               startIcon={<ContactRound size={17} />}
-              onClick={() => navigate('/mail/contacts')}
+              onClick={() => navigateInScope('/mail/contacts')}
             >
               {t('home.addressBook.open')}
             </ActionButton>
             <ActionButton
               intent="primary"
               startIcon={<MailPlus size={17} />}
-              onClick={() => navigate('/mail/inbox?compose=open')}
+              onClick={() => navigateInScope('/mail/inbox?compose=open')}
             >
               {t('actions.compose')}
             </ActionButton>
@@ -155,18 +172,40 @@ export function MailHome() {
         }
       />
 
+      {data?.accounts.length ? (
+        <SelectField<string>
+          size="small"
+          label={t('home.accountScope')}
+          value={accountScope ?? ''}
+          options={[
+            { value: '', label: t('home.allAccounts') },
+            ...data.accounts.map((account) => ({
+              value: account.accountId,
+              label: `${account.displayName} · ${account.emailAddress}`,
+            })),
+          ]}
+          onValueChange={(accountId) => {
+            const next = new URLSearchParams(params);
+            if (accountId) next.set('accountId', accountId);
+            else next.delete('accountId');
+            setParams(next, { replace: true });
+          }}
+          sx={{ mt: 2.25, maxWidth: 420 }}
+        />
+      ) : null}
+
       <Box
         component="form"
         role="search"
         onSubmit={(event) => {
           event.preventDefault();
           const queryValue = search.trim();
-          navigate(
+          navigateInScope(
             queryValue ? `/mail/inbox?query=${encodeURIComponent(queryValue)}` : '/mail/inbox'
           );
         }}
         sx={(theme) => ({
-          mt: 2.25,
+          mt: data?.accounts.length ? 1.25 : 2.25,
           maxWidth: 760,
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
@@ -226,7 +265,7 @@ export function MailHome() {
             metrics={data.metrics}
             accounts={data.accounts}
             generatedAt={data.generatedAt}
-            onNavigate={navigate}
+            onNavigate={navigateInScope}
           />
 
           <Box
@@ -277,7 +316,7 @@ export function MailHome() {
                   intent="quiet"
                   size="small"
                   endIcon={<ArrowRight size={15} />}
-                  onClick={() => navigate('/mail/inbox')}
+                  onClick={() => navigateInScope('/mail/inbox')}
                 >
                   {t('home.focus.openInbox')}
                 </ActionButton>
@@ -290,7 +329,7 @@ export function MailHome() {
                       thread={thread}
                       compact
                       presentation="focus"
-                      onSelect={() => navigate(`/mail/inbox?thread=${thread.threadId}`)}
+                      onSelect={() => navigateInScope(`/mail/inbox?thread=${thread.threadId}`)}
                     />
                   ))
                 ) : (
@@ -379,7 +418,7 @@ export function MailHome() {
                 organization={organizationQuery.data}
                 organizationLoading={organizationQuery.isLoading}
                 organizationError={organizationQuery.isError}
-                onNavigate={navigate}
+                onNavigate={navigateInScope}
               />
             </Box>
           </Box>

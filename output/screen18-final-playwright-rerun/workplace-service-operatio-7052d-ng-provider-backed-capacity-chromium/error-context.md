@@ -1,0 +1,579 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - generic "Collapse navigation" [ref=e14]:
+              - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+                - img [ref=e17]
+                - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: Workplace administration
+            - paragraph [ref=e26]: SKAX
+          - navigation "Workplace navigation" [ref=e27]:
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: Workplace administration
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - link "Operations overview" [ref=e32] [cursor=pointer]:
+                    - /url: /workplace/admin/overview
+                    - img [ref=e34]
+                    - paragraph [ref=e40]: Operations overview
+                  - navigation "Operations overview" [ref=e42]:
+                    - generic [ref=e43]:
+                      - link "Operations" [ref=e44] [cursor=pointer]:
+                        - /url: /workplace/admin/overview?view=overview
+                        - img [ref=e46]
+                        - text: Operations
+                      - link "Insights" [ref=e49] [cursor=pointer]:
+                        - /url: /workplace/admin/overview?view=insights
+                        - img [ref=e51]
+                        - text: Insights
+                - listitem [ref=e53]:
+                  - link "Safety response" [ref=e54] [cursor=pointer]:
+                    - /url: /workplace/admin/safety
+                    - img [ref=e56]
+                    - paragraph [ref=e62]: Safety response
+                - listitem [ref=e63]:
+                  - link "Booking operations" [ref=e64] [cursor=pointer]:
+                    - /url: /workplace/admin/operations
+                    - img [ref=e66]
+                    - paragraph [ref=e70]: Booking operations
+                  - navigation "Booking operations" [ref=e72]:
+                    - generic [ref=e73]:
+                      - link "Bookings" [ref=e74] [cursor=pointer]:
+                        - /url: /workplace/admin/operations?view=bookings
+                        - img [ref=e76]
+                        - text: Bookings
+                      - link "Space closures" [ref=e81] [cursor=pointer]:
+                        - /url: /workplace/admin/operations?view=facilities
+                        - img [ref=e83]
+                        - text: Space closures
+                      - link "Audit trail" [ref=e85] [cursor=pointer]:
+                        - /url: /workplace/admin/operations?view=audit
+                        - img [ref=e87]
+                        - text: Audit trail
+                - listitem [ref=e92]:
+                  - link "Space governance" [ref=e93] [cursor=pointer]:
+                    - /url: /workplace/admin/governance
+                    - img [ref=e95]
+                    - paragraph [ref=e101]: Space governance
+                  - navigation "Space governance" [ref=e103]:
+                    - generic [ref=e104]:
+                      - link "Spatial hierarchy" [ref=e105] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=hierarchy
+                        - img [ref=e107]
+                        - text: Spatial hierarchy
+                      - link "Access control" [ref=e112] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=access
+                        - img [ref=e114]
+                        - text: Access control
+                      - link "Policy inheritance" [ref=e117] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=policy
+                        - img [ref=e119]
+                        - text: Policy inheritance
+                      - link "Floor-plan releases" [ref=e122] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=floorPlans
+                        - img [ref=e124]
+                        - text: Floor-plan releases
+                      - link "Admin delegation" [ref=e127] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=delegation
+                        - img [ref=e129]
+                        - text: Admin delegation
+                      - link "Privacy and sharing" [ref=e132] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=experience
+                        - img [ref=e134]
+                        - text: Privacy and sharing
+                      - link "Data connections" [ref=e137] [cursor=pointer]:
+                        - /url: /workplace/admin/governance?area=dataSources
+                        - img [ref=e139]
+                        - text: Data connections
+                - listitem [ref=e142]:
+                  - link "Sites and floor plans" [ref=e143] [cursor=pointer]:
+                    - /url: /workplace/admin/locations
+                    - img [ref=e145]
+                    - paragraph [ref=e150]: Sites and floor plans
+                - listitem [ref=e151]:
+                  - link "Space booking policy" [ref=e152] [cursor=pointer]:
+                    - /url: /workplace/admin/policies
+                    - img [ref=e154]
+                    - paragraph [ref=e158]: Space booking policy
+                - listitem [ref=e159]:
+                  - link "Service fulfillment" [ref=e160] [cursor=pointer]:
+                    - /url: /workplace/admin/service-fulfillment
+                    - img [ref=e162]
+                    - paragraph [ref=e166]: Service fulfillment
+                - listitem [ref=e167]:
+                  - link "Service catalog" [ref=e168] [cursor=pointer]:
+                    - /url: /workplace/admin/service-catalog
+                    - img [ref=e170]
+                    - paragraph [ref=e174]: Service catalog
+                - listitem [ref=e175]:
+                  - link "Visitor exceptions" [ref=e176] [cursor=pointer]:
+                    - /url: /workplace/admin/visits
+                    - img [ref=e178]
+                    - paragraph [ref=e183]: Visitor exceptions
+                - listitem [ref=e184]:
+                  - link "Visitor policies" [ref=e185] [cursor=pointer]:
+                    - /url: /workplace/admin/visit-policies
+                    - img [ref=e187]
+                    - paragraph [ref=e191]: Visitor policies
+                - listitem [ref=e192]:
+                  - link "Visitor access zones" [ref=e193] [cursor=pointer]:
+                    - /url: /workplace/admin/access-zones
+                    - img [ref=e195]
+                    - paragraph [ref=e203]: Visitor access zones
+                - listitem [ref=e204]:
+                  - link "Visitor providers" [ref=e205] [cursor=pointer]:
+                    - /url: /workplace/admin/visit-providers
+                    - img [ref=e207]
+                    - paragraph [ref=e214]: Visitor providers
+                - listitem [ref=e215]:
+                  - link "Kiosk devices" [ref=e216] [cursor=pointer]:
+                    - /url: /workplace/admin/kiosk-devices
+                    - img [ref=e218]
+                    - paragraph [ref=e222]: Kiosk devices
+            - generic [ref=e223]:
+              - paragraph [ref=e224]: Meeting room administration
+              - list [ref=e225]:
+                - listitem [ref=e226]:
+                  - link "Meeting approvals" [ref=e227] [cursor=pointer]:
+                    - /url: /workplace/admin/meeting-operations
+                    - img [ref=e229]
+                    - paragraph [ref=e235]: Meeting approvals
+                - listitem [ref=e236]:
+                  - link "Meeting policy" [ref=e237] [cursor=pointer]:
+                    - /url: /workplace/admin/meeting-policy
+                    - img [ref=e239]
+                    - paragraph [ref=e243]: Meeting policy
+          - link "Return to work" [ref=e245] [cursor=pointer]:
+            - /url: /workplace/home
+            - img [ref=e247]
+            - text: Return to work
+      - banner [ref=e249]:
+        - generic [ref=e250]:
+          - generic [ref=e251]:
+            - img [ref=e253]
+            - generic "Workplace management" [ref=e257]
+          - navigation "App area switcher" [ref=e260]:
+            - generic [ref=e261]: Management mode
+            - 'link "Return to work: Workplace" [ref=e263] [cursor=pointer]':
+              - /url: /workplace/home
+              - img [ref=e265]
+              - generic [ref=e267]: Return to work
+          - generic [ref=e268]:
+            - button "Search DWP" [ref=e270] [cursor=pointer]:
+              - img [ref=e271]
+              - paragraph [ref=e274]: Search DWP
+              - generic [ref=e275]: ⌘K
+            - generic [ref=e276]:
+              - button "Enter full screen" [ref=e277] [cursor=pointer]:
+                - img [ref=e278]
+              - generic "0 actionable notifications, 0 total unread" [ref=e284]:
+                - button "0 actionable notifications, 0 total unread" [ref=e285] [cursor=pointer]:
+                  - generic [ref=e286]:
+                    - img [ref=e287]
+                    - generic: "0"
+            - 'button "Account: Tenant Admin, Tenant administrator" [ref=e291] [cursor=pointer]':
+              - generic [ref=e292]: T
+              - img [ref=e293]
+      - main [ref=e295]:
+        - generic [ref=e296]:
+          - generic [ref=e297]:
+            - generic [ref=e298]:
+              - text: Workplace operations
+              - heading "Service catalog" [level=1] [ref=e299]
+              - paragraph [ref=e300]: Manage service scope, options, pricing, cutoffs, cancellation policy, and provider evidence.
+            - button "New catalog item" [ref=e301] [cursor=pointer]:
+              - img [ref=e303]
+              - text: New catalog item
+          - generic [ref=e304]:
+            - list [ref=e305]:
+              - listitem [ref=e306]:
+                - generic [ref=e307]:
+                  - generic [ref=e308]:
+                    - heading "AV readiness" [level=2] [ref=e309]
+                    - text: AV_ASSIST
+                  - generic [ref=e310]:
+                    - generic [ref=e312]: Active
+                    - generic [ref=e314]: Ready
+                - generic [ref=e315]: Response within 15 min · ready 45 min before reservation
+                - generic [ref=e316]:
+                  - button "Edit" [ref=e317] [cursor=pointer]: Edit
+                  - button "Deactivate" [ref=e318] [cursor=pointer]
+            - complementary [ref=e319]:
+              - generic [ref=e320]:
+                - generic [ref=e321]:
+                  - generic [ref=e322]:
+                    - generic [ref=e323]: Service code
+                    - generic [ref=e324]:
+                      - textbox "Service code" [disabled] [ref=e325]: AV_ASSIST
+                      - group:
+                        - generic: Service code
+                  - generic [ref=e326]:
+                    - generic [ref=e327]: Category
+                    - generic [ref=e328]:
+                      - combobox "Category AV readiness" [ref=e329] [cursor=pointer]: AV readiness
+                      - textbox: AV
+                      - img
+                      - group:
+                        - generic: Category
+                  - generic [ref=e330]:
+                    - generic [ref=e331]: Korean name
+                    - generic [ref=e332]:
+                      - textbox "Korean name" [ref=e333]: AV 사전 점검
+                      - group:
+                        - generic: Korean name
+                  - generic [ref=e334]:
+                    - generic [ref=e335]: English name
+                    - generic [ref=e336]:
+                      - textbox "English name" [ref=e337]: AV readiness
+                      - group:
+                        - generic: English name
+                  - generic [ref=e338]:
+                    - generic [ref=e339]: Provider code
+                    - generic [ref=e340]:
+                      - textbox "Provider code" [ref=e341]: DWP_NATIVE_FULFILLMENT
+                      - group:
+                        - generic: Provider code
+                  - generic [ref=e342]:
+                    - generic [ref=e343]: Currency
+                    - generic [ref=e344]:
+                      - textbox "Currency" [ref=e345]: KRW
+                      - group:
+                        - generic: Currency
+                  - generic [ref=e346]:
+                    - generic [ref=e347]: Unit price
+                    - generic [ref=e348]:
+                      - spinbutton "Unit price" [ref=e349]: "25000"
+                      - group:
+                        - generic: Unit price
+                  - generic [ref=e350]:
+                    - generic [ref=e351]: Order cutoff (minutes)
+                    - generic [ref=e352]:
+                      - spinbutton "Order cutoff (minutes)" [ref=e353]: "90"
+                      - group:
+                        - generic: Order cutoff (minutes)
+                  - generic [ref=e354]:
+                    - generic [ref=e355]: Cancellation cutoff (minutes)
+                    - generic [ref=e356]:
+                      - spinbutton "Cancellation cutoff (minutes)" [ref=e357]: "60"
+                      - group:
+                        - generic: Cancellation cutoff (minutes)
+                  - generic [ref=e358]:
+                    - generic [ref=e359]: Provider response SLA (minutes)
+                    - generic [ref=e360]:
+                      - spinbutton "Provider response SLA (minutes)" [ref=e361]: "15"
+                      - group:
+                        - generic: Provider response SLA (minutes)
+                  - generic [ref=e362]:
+                    - generic [ref=e363]: Fulfillment lead time (minutes before reservation)
+                    - generic [ref=e364]:
+                      - spinbutton "Fulfillment lead time (minutes before reservation)" [ref=e365]: "45"
+                      - group:
+                        - generic: Fulfillment lead time (minutes before reservation)
+                  - generic [ref=e366]:
+                    - generic [ref=e367]: Minimum quantity
+                    - generic [ref=e368]:
+                      - spinbutton "Minimum quantity" [ref=e369]: "1"
+                      - group:
+                        - generic: Minimum quantity
+                  - generic [ref=e370]:
+                    - generic [ref=e371]: Maximum quantity
+                    - generic [ref=e372]:
+                      - spinbutton "Maximum quantity" [ref=e373]: "10"
+                      - group:
+                        - generic: Maximum quantity
+                - generic [ref=e374]:
+                  - generic [ref=e375]: Korean description
+                  - generic [ref=e376]:
+                    - textbox "Korean description" [ref=e377]: 회의 전 장비 점검
+                    - group:
+                      - generic: Korean description
+                - generic [ref=e378]:
+                  - generic [ref=e379]: English description
+                  - generic [ref=e380]:
+                    - textbox "English description" [ref=e381]: Equipment readiness before the meeting
+                    - group:
+                      - generic: English description
+                - heading "Supported resource types" [level=3] [ref=e382]
+                - generic [ref=e383]:
+                  - generic [ref=e384] [cursor=pointer]:
+                    - generic [ref=e385]:
+                      - checkbox "ROOM" [checked] [ref=e386]
+                      - img [ref=e387]
+                    - generic [ref=e389]: ROOM
+                  - generic [ref=e390] [cursor=pointer]:
+                    - generic [ref=e391]:
+                      - checkbox "DESK" [checked] [ref=e392]
+                      - img [ref=e393]
+                    - generic [ref=e395]: DESK
+                  - generic [ref=e396] [cursor=pointer]:
+                    - generic [ref=e397]:
+                      - checkbox "POD" [ref=e398]
+                      - img [ref=e399]
+                    - generic [ref=e401]: POD
+                  - generic [ref=e402] [cursor=pointer]:
+                    - generic [ref=e403]:
+                      - checkbox "PARKING" [ref=e404]
+                      - img [ref=e405]
+                    - generic [ref=e407]: PARKING
+                  - generic [ref=e408] [cursor=pointer]:
+                    - generic [ref=e409]:
+                      - checkbox "LOCKER" [ref=e410]
+                      - img [ref=e411]
+                    - generic [ref=e413]: LOCKER
+                  - generic [ref=e414] [cursor=pointer]:
+                    - generic [ref=e415]:
+                      - checkbox "EQUIPMENT" [ref=e416]
+                      - img [ref=e417]
+                    - generic [ref=e419]: EQUIPMENT
+                - heading "Service site scope" [level=3] [ref=e420]
+                - generic [ref=e421]: No selected site means every tenant site. A selected scope is verified against tenant-owned sites.
+                - generic "Option schema (JSON)" [ref=e422]:
+                  - generic [ref=e423]:
+                    - generic [ref=e424]:
+                      - heading "Option schema (JSON)" [level=3] [ref=e425]
+                      - text: Build typed, localized fields. Invalid or duplicate keys remain blocked.
+                    - button "Add option" [ref=e426] [cursor=pointer]:
+                      - img [ref=e428]
+                      - text: Add option
+                  - alert [ref=e429]:
+                    - img [ref=e431]
+                    - generic [ref=e433]: Use a JSON array of option field objects.
+                  - generic [ref=e434]:
+                    - generic [ref=e435]:
+                      - heading "microphoneCount" [level=4] [ref=e436]
+                      - generic [ref=e437]:
+                        - button "Move option up" [disabled]:
+                          - img
+                        - button "Move option down" [ref=e438] [cursor=pointer]:
+                          - img [ref=e439]
+                        - button "Delete option" [ref=e441] [cursor=pointer]:
+                          - img [ref=e442]
+                    - generic [ref=e445]:
+                      - generic [ref=e446]:
+                        - generic [ref=e447]: Stable key
+                        - generic [ref=e448]:
+                          - textbox "Stable key" [ref=e449]: microphoneCount
+                          - group:
+                            - generic: Stable key
+                      - generic [ref=e450]:
+                        - generic [ref=e451]: Field type
+                        - generic [ref=e452]:
+                          - combobox "Field type Number" [ref=e453] [cursor=pointer]: Number
+                          - textbox: NUMBER
+                          - img
+                          - group:
+                            - generic: Field type
+                      - generic [ref=e454]:
+                        - generic: Korean label
+                        - generic [ref=e455]:
+                          - textbox "Korean label" [ref=e456]
+                          - group:
+                            - generic: Korean label
+                      - generic [ref=e457]:
+                        - generic: English label
+                        - generic [ref=e458]:
+                          - textbox "English label" [ref=e459]
+                          - group:
+                            - generic: English label
+                      - generic [ref=e460]:
+                        - generic [ref=e461]: Minimum
+                        - generic [ref=e462]:
+                          - spinbutton "Minimum" [ref=e463]: "1"
+                          - group:
+                            - generic: Minimum
+                      - generic [ref=e464]:
+                        - generic [ref=e465]: Maximum
+                        - generic [ref=e466]:
+                          - spinbutton "Maximum" [ref=e467]: "8"
+                          - group:
+                            - generic: Maximum
+                      - generic [ref=e468]:
+                        - generic: Default value
+                        - generic [ref=e469]:
+                          - textbox "Default value" [ref=e470]
+                          - group:
+                            - generic: Default value
+                    - generic [ref=e471] [cursor=pointer]:
+                      - generic [ref=e472]:
+                        - checkbox "Required" [checked] [ref=e473]
+                        - img [ref=e474]
+                      - generic [ref=e476]: Required
+                  - generic [ref=e477]:
+                    - generic [ref=e478]:
+                      - heading "layout" [level=4] [ref=e479]
+                      - generic [ref=e480]:
+                        - button "Move option up" [ref=e481] [cursor=pointer]:
+                          - img [ref=e482]
+                        - button "Move option down" [disabled]:
+                          - img
+                        - button "Delete option" [ref=e484] [cursor=pointer]:
+                          - img [ref=e485]
+                    - generic [ref=e488]:
+                      - generic [ref=e489]:
+                        - generic [ref=e490]: Stable key
+                        - generic [ref=e491]:
+                          - textbox "Stable key" [ref=e492]: layout
+                          - group:
+                            - generic: Stable key
+                      - generic [ref=e493]:
+                        - generic [ref=e494]: Field type
+                        - generic [ref=e495]:
+                          - combobox "Field type Single select" [ref=e496] [cursor=pointer]: Single select
+                          - textbox: SINGLE_SELECT
+                          - img
+                          - group:
+                            - generic: Field type
+                      - generic [ref=e497]:
+                        - generic: Korean label
+                        - generic [ref=e498]:
+                          - textbox "Korean label" [ref=e499]
+                          - group:
+                            - generic: Korean label
+                      - generic [ref=e500]:
+                        - generic: English label
+                        - generic [ref=e501]:
+                          - textbox "English label" [ref=e502]
+                          - group:
+                            - generic: English label
+                      - generic [ref=e503]:
+                        - generic [ref=e504]: Allowed values
+                        - generic [ref=e505]:
+                          - textbox "Allowed values" [ref=e506]: BOARDROOM, CLASSROOM
+                          - group:
+                            - generic: Allowed values
+                        - paragraph [ref=e507]: Separate values with commas.
+                      - generic [ref=e508]:
+                        - generic: Default value
+                        - generic [ref=e509]:
+                          - textbox "Default value" [ref=e510]
+                          - group:
+                            - generic: Default value
+                    - generic [ref=e511] [cursor=pointer]:
+                      - generic [ref=e512]:
+                        - checkbox "Required" [ref=e513]
+                        - img [ref=e514]
+                      - generic [ref=e516]: Required
+                - generic [ref=e517]:
+                  - generic [ref=e518]:
+                    - generic [ref=e519]: Capacity mode
+                    - generic [ref=e520]:
+                      - combobox "Capacity mode Time buckets" [active] [ref=e521] [cursor=pointer]: Time buckets
+                      - textbox: BUCKETED
+                      - img
+                      - group:
+                        - generic: Capacity mode
+                  - generic [ref=e522]:
+                    - generic [ref=e523]: Capacity freshness (seconds)
+                    - generic [ref=e524]:
+                      - spinbutton "Capacity freshness (seconds)" [ref=e525]: "900"
+                      - group:
+                        - generic: Capacity freshness (seconds)
+                  - generic [ref=e526]:
+                    - generic [ref=e527]: Inspection owner
+                    - generic [ref=e528]:
+                      - combobox "Inspection owner No final inspection" [ref=e529] [cursor=pointer]: No final inspection
+                      - textbox: NONE
+                      - img
+                      - group:
+                        - generic: Inspection owner
+                - generic [ref=e530]:
+                  - generic [ref=e531]:
+                    - img [ref=e532]
+                    - heading "Capacity by time slot" [level=3] [ref=e534]
+                  - generic [ref=e535]:
+                    - generic [ref=e536]:
+                      - generic [ref=e537]:
+                        - generic [ref=e538]: Bucket starts at (ISO 8601)
+                        - generic [ref=e539]:
+                          - textbox "Bucket starts at (ISO 8601)" [ref=e540]: 2026-09-17T01:00:00Z
+                          - group:
+                            - generic: Bucket starts at (ISO 8601)
+                      - generic [ref=e541]:
+                        - generic [ref=e542]: Bucket ends at (ISO 8601)
+                        - generic [ref=e543]:
+                          - textbox "Bucket ends at (ISO 8601)" [ref=e544]: 2026-09-17T02:00:00Z
+                          - group:
+                            - generic: Bucket ends at (ISO 8601)
+                      - generic [ref=e545]:
+                        - generic [ref=e546]: Capacity limit
+                        - generic [ref=e547]:
+                          - spinbutton "Capacity limit" [ref=e548]: "10"
+                          - group:
+                            - generic: Capacity limit
+                        - paragraph [ref=e549]: 4 already reserved
+                      - generic [ref=e550]:
+                        - generic [ref=e551]: Source version
+                        - generic [ref=e552]:
+                          - textbox "Source version" [ref=e553]: capacity-v18
+                          - group:
+                            - generic: Source version
+                    - button "Add capacity bucket" [ref=e554] [cursor=pointer]:
+                      - img [ref=e556]
+                      - text: Add capacity bucket
+                    - generic [ref=e557]:
+                      - generic: Change reason
+                      - generic [ref=e558]:
+                        - textbox "Change reason" [ref=e559]
+                        - group:
+                          - generic: Change reason
+                    - generic [ref=e560] [cursor=pointer]:
+                      - generic [ref=e561]:
+                        - checkbox "I confirm these totals match the provider-backed capacity source." [ref=e562]
+                        - img [ref=e563]
+                      - generic [ref=e565]: I confirm these totals match the provider-backed capacity source.
+                    - button "Save capacity" [disabled]
+                - generic [ref=e566]:
+                  - generic [ref=e567]: Korean cancellation policy
+                  - generic [ref=e568]:
+                    - textbox "Korean cancellation policy" [ref=e569]: 시작 1시간 전까지 취소
+                    - group:
+                      - generic: Korean cancellation policy
+                - generic [ref=e570]:
+                  - generic [ref=e571]: English cancellation policy
+                  - generic [ref=e572]:
+                    - textbox "English cancellation policy" [ref=e573]: Cancel until one hour before
+                    - group:
+                      - generic: English cancellation policy
+                - generic [ref=e574]:
+                  - generic [ref=e575] [cursor=pointer]:
+                    - generic [ref=e576]:
+                      - checkbox "Require attendee count" [checked] [ref=e577]
+                      - img [ref=e578]
+                    - generic [ref=e580]: Require attendee count
+                  - generic [ref=e581] [cursor=pointer]:
+                    - generic [ref=e582]:
+                      - checkbox "Require cost center" [checked] [ref=e583]
+                      - img [ref=e584]
+                    - generic [ref=e586]: Require cost center
+                - generic [ref=e587]:
+                  - generic: Change reason
+                  - generic [ref=e588]:
+                    - textbox "Change reason" [ref=e589]
+                    - group:
+                      - generic: Change reason
+                - generic [ref=e590] [cursor=pointer]:
+                  - generic [ref=e591]:
+                    - checkbox "I verified provider truth, site scope, options, pricing, cutoff, and cancellation policy." [ref=e592]
+                    - img [ref=e593]
+                  - generic [ref=e595]: I verified provider truth, site scope, options, pricing, cutoff, and cancellation policy.
+                - button "Save" [disabled]
+    - generic "Open DWAI·ON" [ref=e597]:
+      - button "Open DWAI·ON" [ref=e598] [cursor=pointer]
+  - listbox [ref=e604]:
+    - option [ref=e605] [cursor=pointer]: Unbounded
+    - option [selected] [ref=e606] [cursor=pointer]: Time buckets
+```

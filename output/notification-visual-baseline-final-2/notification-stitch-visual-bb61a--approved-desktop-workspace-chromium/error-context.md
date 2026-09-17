@@ -1,0 +1,214 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 테넌트 운영
+          - paragraph [ref=e26]: SKAX
+        - navigation "알림 탐색" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 테넌트 운영
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "운영 개요" [ref=e32] [cursor=pointer]:
+                  - /url: /notifications/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: 운영 개요
+              - listitem [ref=e39]:
+                - link "알림 계약" [ref=e40] [cursor=pointer]:
+                  - /url: /notifications/admin/contracts
+                  - img [ref=e42]
+                  - paragraph [ref=e48]: 알림 계약
+              - listitem [ref=e49]:
+                - link "정책 스튜디오" [ref=e50] [cursor=pointer]:
+                  - /url: /notifications/admin/policies
+                  - img [ref=e52]
+                  - paragraph [ref=e54]: 정책 스튜디오
+              - listitem [ref=e55]:
+                - link "템플릿 스튜디오" [ref=e56] [cursor=pointer]:
+                  - /url: /notifications/admin/templates
+                  - img [ref=e58]
+                  - paragraph [ref=e63]: 템플릿 스튜디오
+              - listitem [ref=e64]:
+                - link "전달 운영" [ref=e65] [cursor=pointer]:
+                  - /url: /notifications/admin/operations
+                  - img [ref=e67]
+                  - paragraph [ref=e75]: 전달 운영
+              - listitem [ref=e76]:
+                - link "전달 통제" [ref=e77] [cursor=pointer]:
+                  - /url: /notifications/admin/suppressions
+                  - img [ref=e79]
+                  - paragraph [ref=e83]: 전달 통제
+        - link "업무로 돌아가기" [ref=e85] [cursor=pointer]:
+          - /url: /notifications/home
+          - img [ref=e87]
+          - text: 업무로 돌아가기
+    - banner [ref=e89]:
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - img [ref=e93]
+          - generic "알림 관리" [ref=e97]
+        - navigation "앱 영역 전환" [ref=e100]:
+          - generic [ref=e101]: 관리 모드
+          - 'link "업무로 돌아가기: 알림" [ref=e103] [cursor=pointer]':
+            - /url: /notifications/home
+            - img [ref=e105]
+            - generic [ref=e107]: 업무로 돌아가기
+        - generic [ref=e108]:
+          - button "DWP 검색" [ref=e110] [cursor=pointer]:
+            - img [ref=e111]
+            - paragraph [ref=e114]: DWP 검색
+            - generic [ref=e115]: ⌘K
+          - generic [ref=e116]:
+            - button "전체 화면" [ref=e117] [cursor=pointer]:
+              - img [ref=e118]
+            - generic "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e124]:
+              - button "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e125] [cursor=pointer]:
+                - generic [ref=e126]:
+                  - img [ref=e127]
+                  - generic [ref=e130]: "4"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e132] [cursor=pointer]':
+            - generic [ref=e133]: T
+            - img [ref=e134]
+    - main [ref=e136]:
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - img [ref=e142]
+          - generic [ref=e147]:
+            - paragraph [ref=e148]: 알림 운영
+            - heading "알림 계약" [level=1] [ref=e149]
+            - paragraph [ref=e150]: Provider가 등록한 원천 이벤트, 우선순위, 채널과 스키마 계약을 조회합니다.
+        - generic [ref=e152]:
+          - generic [ref=e153]:
+            - generic [ref=e155]:
+              - img [ref=e157]
+              - textbox "알림 유형, 앱 또는 소유자 검색" [ref=e160]
+              - group
+            - generic [ref=e161]:
+              - generic: 업무 앱
+              - generic [ref=e162]:
+                - combobox "업무 앱" [ref=e163] [cursor=pointer]
+                - textbox
+                - img
+                - group:
+                  - generic: 업무 앱
+            - generic [ref=e164]:
+              - generic [ref=e165]: 계약 상태
+              - generic [ref=e166]:
+                - combobox "계약 상태 모든 상태" [ref=e167] [cursor=pointer]: 모든 상태
+                - textbox: ALL
+                - img
+                - group:
+                  - generic: 계약 상태
+          - generic [ref=e168]:
+            - region "알림 계약 목록" [ref=e169]:
+              - generic [ref=e170]: 알림 계약 목록
+              - generic [ref=e171]:
+                - generic [ref=e172]: 원천 이벤트
+                - generic [ref=e173]: 허용 스키마 범위
+                - generic [ref=e174]: 기본 우선순위
+              - button "Space 메시지 Space · MESSAGING.DIRECT_MESSAGE 활성 정상 v1-v1 보통" [pressed] [ref=e175] [cursor=pointer]:
+                - generic [ref=e176]:
+                  - heading "Space 메시지" [level=6] [ref=e177]
+                  - generic [ref=e178]: Space · MESSAGING.DIRECT_MESSAGE
+                  - generic [ref=e179]:
+                    - generic [ref=e181]: 활성
+                    - generic [ref=e183]: 정상
+                - code [ref=e184]: v1-v1
+                - generic [ref=e185]: 보통
+            - region "선택한 알림 계약 상세" [ref=e186]:
+              - complementary "선택한 알림 계약 상세" [ref=e187]:
+                - generic [ref=e188]:
+                  - generic [ref=e190]: Space
+                  - generic [ref=e192]: 활성
+                  - generic [ref=e194]: 정상
+                - heading "Space 메시지" [level=3] [ref=e195]
+                - paragraph [ref=e196]: 대화방 참여자에게 전달되는 새 메시지 알림입니다.
+                - code [ref=e197]: MESSAGING.DIRECT_MESSAGE
+                - generic [ref=e198]:
+                  - generic [ref=e199]:
+                    - term [ref=e200]: 소유자
+                    - definition [ref=e201]: Space Team
+                  - generic [ref=e202]:
+                    - term [ref=e203]: 원천 이벤트
+                    - definition [ref=e204]: messaging.message.sent.v1
+                  - generic [ref=e205]:
+                    - term [ref=e206]: 기본 우선순위
+                    - definition [ref=e207]: 보통
+                  - generic [ref=e208]:
+                    - term [ref=e209]: 허용 스키마 범위
+                    - definition [ref=e210]: v1-v1
+                  - generic [ref=e211]:
+                    - term [ref=e212]: 정보 등급
+                    - definition [ref=e213]: INTERNAL
+                  - generic [ref=e214]:
+                    - term [ref=e215]: 대상 범위
+                    - definition [ref=e216]: 지정 수신자
+                  - generic [ref=e217]:
+                    - term [ref=e218]: 방해 수준
+                    - definition [ref=e219]: 조용히 전달
+                  - generic [ref=e220]:
+                    - term [ref=e221]: 필수 알림 여부
+                    - definition [ref=e222]: 선택
+                  - generic [ref=e223]:
+                    - term [ref=e224]: 사용자 제어
+                    - definition [ref=e225]: 사용자 변경 가능
+                  - generic [ref=e226]:
+                    - term [ref=e227]: 미리보기 정책
+                    - definition [ref=e228]: 제목만 표시
+                  - generic [ref=e229]:
+                    - term [ref=e230]: 중복 제거
+                    - definition [ref=e231]: 원천 이벤트·수신자 기준
+                  - generic [ref=e232]:
+                    - term [ref=e233]: 종료 이벤트
+                    - definition [ref=e234]: 없음
+                  - generic [ref=e235]:
+                    - term [ref=e236]: 보존 정책
+                    - definition [ref=e237]: 테넌트 기본 보존·법적 보존 준수
+                  - generic [ref=e238]:
+                    - term [ref=e239]: 동시성 버전
+                    - definition [ref=e240]: v1
+                  - generic [ref=e241]:
+                    - term [ref=e242]: 최근 24시간
+                    - definition [ref=e243]: "20"
+                  - generic [ref=e244]:
+                    - term [ref=e245]: 최종 변경
+                    - definition [ref=e246]: 2026. 9. 8. 오후 6:24
+                - generic [ref=e248]:
+                  - generic [ref=e249]:
+                    - generic [ref=e250]:
+                      - img [ref=e251]
+                      - heading "허용 전달 채널" [level=4] [ref=e254]
+                    - generic [ref=e257]: 앱 내 알림
+                  - generic [ref=e258]:
+                    - generic [ref=e259]:
+                      - img [ref=e260]
+                      - heading "필수 템플릿 변수" [level=4] [ref=e263]
+                    - generic [ref=e264]:
+                      - generic [ref=e266]: "{{conversationId}}"
+                      - generic [ref=e268]: "{{messageId}}"
+                - generic [ref=e269]:
+                  - generic [ref=e270]:
+                    - img [ref=e271]
+                    - heading "원천 업무 딥링크" [level=4] [ref=e274]
+                  - paragraph [ref=e275]: "/messages/inbox?conversation={{conversationId}}&message={{messageId}}"
+                  - link "운영 런북 열기" [ref=e276] [cursor=pointer]:
+                    - /url: /notifications/admin/operations?typeKey=MESSAGING.DIRECT_MESSAGE
+                    - img [ref=e277]
+                    - generic [ref=e279]: 운영 런북 열기
+```

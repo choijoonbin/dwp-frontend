@@ -1,7 +1,9 @@
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MapPin } from 'lucide-react';
+import { ArrowDown, ArrowRight, LockKeyhole, MapPin } from 'lucide-react';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { workplaceMemberSoftSurface } from './workplace-member-surfaces';
@@ -39,6 +41,8 @@ export function WorkplaceRelocationComparison({
       location: `${booking.siteName} · ${booking.floorName}`,
       from: booking.startsAt,
       to: booking.endsAt,
+      version: booking.version,
+      features: [] as string[],
     },
     ...(resource
       ? [
@@ -48,6 +52,8 @@ export function WorkplaceRelocationComparison({
             location: [siteName, floorName, resource.neighborhood].filter(Boolean).join(' · '),
             from: startsAt,
             to: endsAt,
+            version: resource.version,
+            features: resource.features.slice(0, 3),
           },
         ]
       : []),
@@ -55,34 +61,78 @@ export function WorkplaceRelocationComparison({
   return (
     <Box
       data-testid="workplace-relocation-comparison"
-      sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.25 }}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto minmax(0, 1fr)' },
+        alignItems: 'stretch',
+        gap: 1,
+      }}
     >
-      {details.map((detail) => (
-        <Stack
-          key={detail.title}
-          spacing={0.75}
-          sx={(theme) => ({
-            ...workplaceMemberSoftSurface(theme),
-            p: 1.5,
-            border: 1,
-            borderColor: 'divider',
-            minWidth: 0,
-          })}
-        >
-          <Typography variant="caption" color="primary.main" fontWeight="fontWeightBold">
-            {detail.title}
-          </Typography>
-          <Typography variant="subtitle1" fontWeight="fontWeightBold">
-            {detail.name}
-          </Typography>
-          <Stack direction="row" gap={0.75} alignItems="flex-start">
-            <MapPin size={15} aria-hidden="true" />
-            <Typography variant="body2">{detail.location}</Typography>
+      {details.map((detail, index) => (
+        <Fragment key={detail.title}>
+          {index === 1 ? (
+            <Box
+              aria-hidden="true"
+              sx={{
+                display: 'grid',
+                placeItems: 'center',
+                color: 'primary.main',
+                minHeight: { xs: 28, sm: 'auto' },
+              }}
+            >
+              <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                <ArrowDown size={20} />
+              </Box>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <ArrowRight size={20} />
+              </Box>
+            </Box>
+          ) : null}
+          <Stack
+            spacing={0.75}
+            sx={(theme) => ({
+              ...workplaceMemberSoftSurface(theme),
+              p: 1.5,
+              border: 1,
+              borderColor: index === 1 ? 'primary.main' : 'divider',
+              borderLeftWidth: index === 1 ? 3 : 1,
+              minWidth: 0,
+            })}
+          >
+            <Stack direction="row" justifyContent="space-between" gap={1} alignItems="center">
+              <Typography variant="caption" color="primary.main" fontWeight="fontWeightBold">
+                {detail.title}
+              </Typography>
+              <Chip
+                size="small"
+                variant="outlined"
+                icon={index === 0 ? <LockKeyhole size={13} /> : undefined}
+                label={`${t('workplace.experience.version')} ${detail.version}`}
+              />
+            </Stack>
+            <Typography variant="subtitle1" fontWeight="fontWeightBold">
+              {detail.name}
+            </Typography>
+            <Stack direction="row" gap={0.75} alignItems="flex-start">
+              <MapPin size={15} aria-hidden="true" />
+              <Typography variant="body2">{detail.location}</Typography>
+            </Stack>
+            <Typography variant="body2">
+              {format(detail.from)} – {format(detail.to)}
+            </Typography>
+            {detail.features.length ? (
+              <Stack direction="row" gap={0.5} useFlexGap flexWrap="wrap">
+                {detail.features.map((feature) => (
+                  <Chip
+                    key={feature}
+                    size="small"
+                    label={t(`features.${feature}`, { defaultValue: feature })}
+                  />
+                ))}
+              </Stack>
+            ) : null}
           </Stack>
-          <Typography variant="body2">
-            {format(detail.from)} – {format(detail.to)}
-          </Typography>
-        </Stack>
+        </Fragment>
       ))}
     </Box>
   );

@@ -138,6 +138,8 @@ export type WorkspaceActivityExecutionSummary = {
   unknown?: number;
   generatedAt: string;
   coverage: WorkspaceActivityCoverage;
+  /** Current, authorized executions requiring review; never reconstructed from history. */
+  attentionItems?: WorkspaceActivityEvent[];
 };
 
 export type WorkspaceAppCategory =
@@ -229,6 +231,13 @@ export type RawWorkspaceActivityEvent = Omit<WorkspaceActivityEvent, 'actor' | '
 
 export type RawWorkspaceActivityFeed = Omit<WorkspaceActivityFeed, 'events'> & {
   events: RawWorkspaceActivityEvent[];
+};
+
+export type RawWorkspaceActivityExecutionSummary = Omit<
+  WorkspaceActivityExecutionSummary,
+  'attentionItems'
+> & {
+  attentionItems?: RawWorkspaceActivityEvent[];
 };
 
 type RawWorkspaceApp = Omit<WorkspaceApp, 'category' | 'launchMode' | 'health'> & {
@@ -461,11 +470,17 @@ export async function getWorkspaceActivityEvent(
 export async function getWorkspaceActivityExecutionSummary(
   signal?: AbortSignal
 ): Promise<WorkspaceActivityExecutionSummary> {
-  const response = await axiosInstance.get<ApiResponse<WorkspaceActivityExecutionSummary>>(
+  const response = await axiosInstance.get<ApiResponse<RawWorkspaceActivityExecutionSummary>>(
     '/api/platform/v1/workspace/activity/executions/summary',
     { timeoutMs: 8000, signal }
   );
-  return response.data.data;
+  const summary = response.data.data;
+  if (summary.attentionItems === undefined) return { ...summary, attentionItems: undefined };
+  if (!Array.isArray(summary.attentionItems)) throw invalidActivityResponse();
+  return {
+    ...summary,
+    attentionItems: summary.attentionItems.map(normalizeWorkspaceActivityEvent),
+  };
 }
 
 export function normalizeWorkspaceActivityFeed(

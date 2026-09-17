@@ -38,6 +38,8 @@ export type AskDwpRequest = Omit<
   agentKey?: string;
   conversationId?: string;
   pageContext?: AskPageContext;
+  /** Security-scanned attachment identifiers bound to this request. */
+  attachmentIds?: string[];
 };
 
 export type AskDwpOptions = {

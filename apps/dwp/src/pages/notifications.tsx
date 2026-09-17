@@ -4,7 +4,11 @@ import {
   NotificationCenter,
   type NotificationCenterScope,
 } from '../features/notifications/notification-center';
-import { notificationCenterSearchParams } from '../features/notifications/notification-navigation';
+import {
+  notificationCenterSearchParams,
+  notificationContextFiltersFromSearchParams,
+  notificationIncludedTypesFromSearchParams,
+} from '../features/notifications/notification-navigation';
 import { NOTIFICATION_REASONS } from '../features/notifications/notification-filter-model';
 
 import type {
@@ -51,11 +55,29 @@ export default function NotificationsPage() {
       : (NOTIFICATION_REASONS.find(
           (reason) => reason.toLowerCase() === searchParams.get('reason')
         ) ?? 'ALL');
+  const attentionEffectQuery = searchParams.get('attentionEffect');
+  const initialAttentionEffect = attentionEffectQuery
+    ? (attentionEffectQuery.toLocaleUpperCase('en-US') as 'PRIORITIZE')
+    : 'ALL';
+  const initialContextFilters = notificationContextFiltersFromSearchParams(searchParams);
+  const initialIncludedTypes = notificationIncludedTypesFromSearchParams(searchParams);
   const handleScopeChange = useCallback(
     (scope: NotificationCenterScope) => {
       const next = new URLSearchParams(searchParams);
-      for (const key of ['view', 'read', 'q', 'app', 'priority', 'reason']) next.delete(key);
-      notificationCenterSearchParams(scope).forEach((value, key) => next.set(key, value));
+      for (const key of [
+        'view',
+        'read',
+        'q',
+        'app',
+        'priority',
+        'reason',
+        'attentionEffect',
+        'type',
+        'context',
+        'contextKey',
+      ])
+        next.delete(key);
+      notificationCenterSearchParams(scope).forEach((value, key) => next.append(key, value));
       if (next.toString() === searchParams.toString()) return;
       setSearchParams(next, { replace: scope.view === initialView });
     },
@@ -82,6 +104,9 @@ export default function NotificationsPage() {
       initialAppKey={initialAppKey}
       initialPriority={initialPriority}
       initialReason={initialReason}
+      initialAttentionEffect={initialAttentionEffect}
+      initialIncludedTypes={initialIncludedTypes}
+      initialContextFilters={initialContextFilters}
       onOpenSettings={() => navigate('/notifications/settings')}
       onOpenTarget={(href) => navigate(href)}
       onScopeChange={handleScopeChange}

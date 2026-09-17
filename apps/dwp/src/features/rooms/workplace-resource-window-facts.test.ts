@@ -78,6 +78,7 @@ describe('native selected-window resource facts', () => {
     expect(JSON.stringify(facts)).not.toContain('private-booking');
     expect(JSON.stringify(facts)).not.toContain('Confidential person');
     expect(facts?.policy?.autoReleaseMinutes).toBe(30);
+    expect(facts?.minutesByKind).toEqual({ RESERVED: 8, UNRESERVED: 32, CLOSED: 5 });
   });
   it('uses the actual queried empty window without manufacturing reservation intervals', () => {
     expect(

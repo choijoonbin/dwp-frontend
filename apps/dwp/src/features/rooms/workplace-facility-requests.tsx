@@ -6,13 +6,22 @@ import { formatWorkplaceExperienceInstant } from './workplace-experience-format'
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, EmptyState, FormField, SelectField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  DateTimePickerField,
+  EmptyState,
+  FormField,
+  SelectField,
+} from '@dwp-frontend/design-system';
 import {
   changeWorkplaceFacilityRequestStatus,
   getWorkplaceFacilityRequests,
   HttpError,
 } from '@dwp-frontend/shared-utils';
-import type { WorkplaceFacilityRequestStatus } from '@dwp-frontend/shared-utils';
+import type {
+  WorkplaceFacilityRequestPriority,
+  WorkplaceFacilityRequestStatus,
+} from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
@@ -29,8 +38,15 @@ import {
 } from './workplace-authorized-floor-metadata';
 import type { AuthorizedFloorMetadata } from './workplace-authorized-floor-metadata';
 import { WorkplaceExperiencePanel, WorkplaceExperienceQueryError } from './workplace-experience-ui';
+import {
+  facilityDateTimeIsoValue,
+  facilityDateTimeLocalValue,
+  facilityWorkOrderChanged,
+  facilityWorkOrderDraft,
+} from './workplace-facility-work-order-model';
 
 const STATES = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CANCELLED'] as const;
+const PRIORITIES = ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'] as const;
 type StatusCommand = {
   scope: string;
   generation: number;
@@ -39,6 +55,12 @@ type StatusCommand = {
   version: number;
   status: WorkplaceFacilityRequestStatus;
   reason: string;
+  priority: WorkplaceFacilityRequestPriority;
+  assignedTo: string;
+  serviceProvider: string;
+  externalWorkOrderReference: string;
+  slaDueAt?: string;
+  clearSla: boolean;
 };
 export function WorkplaceFacilityRequests({
   admin = false,
@@ -64,6 +86,11 @@ export function WorkplaceFacilityRequests({
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [status, setStatus] = useState<WorkplaceFacilityRequestStatus>('IN_PROGRESS');
+  const [priority, setPriority] = useState<WorkplaceFacilityRequestPriority>('NORMAL');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [serviceProvider, setServiceProvider] = useState('');
+  const [externalWorkOrderReference, setExternalWorkOrderReference] = useState('');
+  const [slaDueAt, setSlaDueAt] = useState('');
   const [filter, setFilter] = useState<'' | WorkplaceFacilityRequestStatus>('');
   const [reason, setReason] = useState('');
   const [confirmed, setConfirmed] = useState(false);
@@ -120,8 +147,28 @@ export function WorkplaceFacilityRequests({
   useEffect(() => {
     setReason('');
     setConfirmed(false);
-  }, [selectedId]);
-  useEffect(() => setConfirmed(false), [selected?.version, status, reason]);
+    if (!selected) return;
+    const draft = facilityWorkOrderDraft(selected);
+    setStatus(draft.status);
+    setPriority(draft.priority);
+    setAssignedTo(draft.assignedTo);
+    setServiceProvider(draft.serviceProvider);
+    setExternalWorkOrderReference(draft.externalWorkOrderReference);
+    setSlaDueAt(draft.slaDueAt);
+  }, [selected, selectedId]);
+  const slaDueAtIso = facilityDateTimeIsoValue(slaDueAt);
+  const workOrderChanged = Boolean(
+    selected &&
+    facilityWorkOrderChanged(selected, {
+      status,
+      priority,
+      assignedTo,
+      serviceProvider,
+      externalWorkOrderReference,
+      slaDueAt,
+    })
+  );
+  useEffect(() => setConfirmed(false), [selected?.version, workOrderChanged, reason]);
   const canManage =
     admin &&
     capabilities.canUpdateWorkplaceAdmin &&
@@ -140,7 +187,8 @@ export function WorkplaceFacilityRequests({
     !outcome &&
     confirmed &&
     reason.trim().length > 0 &&
-    status !== selected.status;
+    workOrderChanged &&
+    (!slaDueAt || Boolean(slaDueAtIso));
   const matchesCommand = (command: StatusCommand) =>
     command.scope === activeScope.current &&
     command.generation === commandContext.current.generation;
@@ -153,6 +201,12 @@ export function WorkplaceFacilityRequests({
         status: command.status,
         reason: command.reason,
         confirmed: true,
+        priority: command.priority,
+        assignedTo: command.assignedTo,
+        serviceProvider: command.serviceProvider,
+        externalWorkOrderReference: command.externalWorkOrderReference,
+        ...(command.slaDueAt ? { slaDueAt: command.slaDueAt } : {}),
+        clearSla: command.clearSla,
       });
     },
     onSuccess: async (_saved, command) => {
@@ -189,6 +243,12 @@ export function WorkplaceFacilityRequests({
       version: selected.version,
       status,
       reason: reason.trim(),
+      priority,
+      assignedTo,
+      serviceProvider,
+      externalWorkOrderReference,
+      ...(slaDueAtIso ? { slaDueAt: slaDueAtIso } : {}),
+      clearSla: Boolean(selected.slaDueAt && !slaDueAt),
     };
     inFlight.current = command;
     mutation.mutate(command);
@@ -301,11 +361,19 @@ export function WorkplaceFacilityRequests({
                     {formatWorkplaceExperienceInstant(request.createdAt, timeZone)}
                   </Typography>
                 </Stack>
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  label={t(`workplace.experience.requestStates.${request.status}`)}
-                />
+                <Stack direction="row" gap={0.5} alignItems="center">
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t(`workplace.experience.requestPriorities.${request.priority}`)}
+                    color={request.priority === 'CRITICAL' ? 'error' : 'default'}
+                  />
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t(`workplace.experience.requestStates.${request.status}`)}
+                  />
+                </Stack>
               </ActionButton>
             ))}
           </Stack>
@@ -330,6 +398,43 @@ export function WorkplaceFacilityRequests({
                   {selected.statusReason}
                 </Typography>
               ) : null}
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                  gap: 1,
+                }}
+              >
+                {[
+                  [
+                    t('workplace.experience.assignedTo'),
+                    selected.assignedTo || t('workplace.experience.notAssigned'),
+                  ],
+                  [
+                    t('workplace.experience.serviceProvider'),
+                    selected.serviceProvider || t('workplace.experience.notConnected'),
+                  ],
+                  [
+                    t('workplace.experience.externalWorkOrderReference'),
+                    selected.externalWorkOrderReference || t('workplace.experience.notConnected'),
+                  ],
+                  [
+                    t('workplace.experience.slaDueAt'),
+                    selected.slaDueAt
+                      ? formatWorkplaceExperienceInstant(selected.slaDueAt, timeZone)
+                      : t('workplace.experience.notSet'),
+                  ],
+                ].map(([label, value]) => (
+                  <Stack key={label} gap={0.25} sx={{ minWidth: 0 }}>
+                    <Typography variant="caption" color="text.secondary">
+                      {label}
+                    </Typography>
+                    <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
+                      {value}
+                    </Typography>
+                  </Stack>
+                ))}
+              </Box>
               <Typography variant="caption">
                 {formatWorkplaceExperienceInstant(selected.updatedAt, timeZone)}
               </Typography>
@@ -344,6 +449,52 @@ export function WorkplaceFacilityRequests({
                       value,
                       label: t(`workplace.experience.requestStates.${value}`),
                     }))}
+                  />
+                  <SelectField
+                    label={t('workplace.experience.priority')}
+                    value={priority}
+                    disabled={mutation.isPending || Boolean(outcome)}
+                    onValueChange={(value) =>
+                      setPriority(value as WorkplaceFacilityRequestPriority)
+                    }
+                    options={PRIORITIES.map((value) => ({
+                      value,
+                      label: t(`workplace.experience.requestPriorities.${value}`),
+                    }))}
+                  />
+                  <FormField
+                    label={t('workplace.experience.assignedTo')}
+                    value={assignedTo}
+                    inputProps={{ maxLength: 160 }}
+                    disabled={mutation.isPending || Boolean(outcome)}
+                    onChange={(event) => setAssignedTo(event.target.value)}
+                  />
+                  <FormField
+                    label={t('workplace.experience.serviceProvider')}
+                    value={serviceProvider}
+                    inputProps={{ maxLength: 160 }}
+                    disabled={mutation.isPending || Boolean(outcome)}
+                    onChange={(event) => setServiceProvider(event.target.value)}
+                  />
+                  <FormField
+                    label={t('workplace.experience.externalWorkOrderReference')}
+                    value={externalWorkOrderReference}
+                    inputProps={{ maxLength: 160 }}
+                    disabled={mutation.isPending || Boolean(outcome)}
+                    onChange={(event) => setExternalWorkOrderReference(event.target.value)}
+                  />
+                  <DateTimePickerField
+                    label={t('workplace.experience.slaDueAt')}
+                    value={slaDueAtIso}
+                    errorMessage={
+                      slaDueAt && !slaDueAtIso
+                        ? t('workplace.experience.invalidSlaDueAt')
+                        : undefined
+                    }
+                    disabled={mutation.isPending || Boolean(outcome)}
+                    onValueChange={(value) =>
+                      setSlaDueAt(value ? facilityDateTimeLocalValue(value) : '')
+                    }
                   />
                   <FormField
                     required
@@ -370,7 +521,7 @@ export function WorkplaceFacilityRequests({
                     disabled={!ready || mutation.isPending}
                     onClick={dispatch}
                   >
-                    {t('workplace.experience.changeStatus')}
+                    {t('workplace.experience.saveWorkOrder')}
                   </ActionButton>
                 </>
               ) : null}

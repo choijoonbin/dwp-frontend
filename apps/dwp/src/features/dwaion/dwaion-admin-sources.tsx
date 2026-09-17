@@ -54,6 +54,7 @@ import {
   useAdminRegistryCopy,
 } from './dwaion-admin-registry';
 import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
+import { DwaionConnectorOperationsPanel } from './admin-advancement/dwaion-connector-operations-panel';
 
 type SourceEditor = DwaionDataSourcePolicy & { changeReason: string };
 type BootstrapEditor = BootstrapDwaionGovernancePoliciesRequest;
@@ -178,10 +179,20 @@ export function DwaionAdminSources() {
         description={t('dwaionAdmin.sources.description')}
         actions={
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="stretch">
-            <ActionButton intent="secondary" startIcon={<RefreshCw size={16} />} disabled>
+            <ActionButton
+              intent="secondary"
+              startIcon={<RefreshCw size={16} />}
+              loading={query.isFetching}
+              onClick={() => void query.refetch()}
+            >
               {t('dwaionAdmin.sources.healthCheckUnavailable')}
             </ActionButton>
-            <ActionButton intent="secondary" startIcon={<FileDown size={16} />} disabled>
+            <ActionButton
+              intent="secondary"
+              startIcon={<FileDown size={16} />}
+              disabled={!sources.length}
+              onClick={() => downloadSourcePolicies(sources)}
+            >
               {t('dwaionAdmin.sources.exportUnavailable')}
             </ActionButton>
             {!query.isLoading && !query.isError && sources.length === 0 && canManage ? (
@@ -199,7 +210,11 @@ export function DwaionAdminSources() {
                 {t('dwaionAdmin.sources.initialize')}
               </ActionButton>
             ) : (
-              <ActionButton intent="primary" startIcon={<PlugZap size={16} />} disabled>
+              <ActionButton
+                intent="primary"
+                startIcon={<PlugZap size={16} />}
+                onClick={() => window.dispatchEvent(new Event('dwaion:open-connector-wizard'))}
+              >
                 {t('dwaionAdmin.sources.newConnectorUnavailable')}
               </ActionButton>
             )}
@@ -212,6 +227,7 @@ export function DwaionAdminSources() {
           {t(`dwaionAdmin.sources.${notice}`)}
         </Alert>
       )}
+      <DwaionConnectorOperationsPanel />
       {(mutation.isError || bootstrapMutation.isError) && !editor && !bootstrap && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {t('dwaionAdmin.sources.error')}
@@ -558,6 +574,19 @@ export function DwaionAdminSources() {
       </FormDialog>
     </PageCanvas>
   );
+}
+
+function downloadSourcePolicies(sources: DwaionDataSourcePolicy[]) {
+  const blob = new Blob(
+    [JSON.stringify({ exportedAt: new Date().toISOString(), sources }, null, 2)],
+    { type: 'application/json' }
+  );
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `dwaion-source-policies-${new Date().toISOString().slice(0, 10)}.json`;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 function SourceContractBoundary({

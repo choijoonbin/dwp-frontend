@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:46" hostname="MacBook-Pro" time="0.862">
+  <properties/>
+  <testcase name="v4DraftContractExposesExactCalendarConsumerMetadata()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.409"/>
+  <testcase name="duplicateCalendarAuthorityHeadersFailClosed()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.065"/>
+  <testcase name="springMatrixParameterSemanticsCannotBypassCalendarOwnerPep()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.018"/>
+  <testcase name="nonCanonicalCalendarRoleAndPermissionEvidenceFailsClosed()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.018"/>
+  <testcase name="supportSessionCannotBorrowNormalCalendarAuthorityAtOwnerPolicy()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.015"/>
+  <testcase name="nonCanonicalCalendarIdentityNumbersFailClosed()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.015"/>
+  <testcase name="springPercentEncodedRouteAliasCannotBypassCalendarOwnerPep()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.014"/>
+  <testcase name="spoofedInternalAuthorityHeadersCannotBypassPlatformServiceIdentity()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.014"/>
+  <testcase name="calendarRolloutTransitionPreservesLegacyAndFailsClosedAtExactEnforcement()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.071"/>
+  <testcase name="exactCalendarEnforcementRejectsMalformedRolloutAndDecisionEvidence()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.017"/>
+  <testcase name="springHeadSemanticsCannotBypassCalendarOwnerPep()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.013"/>
+  <testcase name="crossTenantScopeCannotReachCalendarPublicRoute()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.011"/>
+  <testcase name="staleAuthorityRevisionFailsClosedBeforeCalendarMutation()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.012"/>
+  <testcase name="encodedSlashInsideMatrixValueCannotBypassCalendarOwnerPep()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.01"/>
+  <testcase name="normalAndSupportModesCannotBorrowEachOthersCalendarAuthority()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.012"/>
+  <testcase name="pageDataAndActionExecuteThroughPlatformSecurityAndCalendarOwnerPep()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.111"/>
+  <testcase name="canonicalOpaqueScopeEscapeCannotReachCalendarPublicRoute()" classname="com.dwp.services.platform.calendar.CalendarProductSurfacePepEvidenceTest" time="0.016"/>
+  <system-out><![CDATA[12:00:46.989 [Test worker] INFO org.hibernate.validator.internal.util.Version -- HV000001: Hibernate Validator 8.0.3.Final
+12:00:47.228 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.228 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.229 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.258 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.258 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.258 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.323 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.323 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.323 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.340 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.340 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.340 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.359 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.359 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.359 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.373 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.373 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.373 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.390 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.390 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.390 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.407 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.407 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.407 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.422 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.422 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.422 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.433 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.433 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.434 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 1 ms
+12:00:47.496 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.496 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.496 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.511 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.511 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.511 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.524 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.524 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.524 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.537 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.537 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.537 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.548 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.548 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.548 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.561 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.561 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.561 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.575 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.575 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.575 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.689 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.689 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.689 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

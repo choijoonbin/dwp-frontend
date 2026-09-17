@@ -32,6 +32,11 @@ import {
 } from './route-support';
 
 const AdminPage = lazy(() => import('../pages/admin'));
+const AdminSettingsHome = lazy(() =>
+  import('../features/admin/admin-settings-home').then((module) => ({
+    default: module.AdminSettingsHome,
+  }))
+);
 const AdminLayout = lazy(() =>
   import('../layouts/admin-layout').then((module) => ({ default: module.AdminLayout }))
 );
@@ -76,7 +81,15 @@ export function TenantAdminLegacyRedirect() {
       resourceRoles: auth.user?.resourceRoles,
     })
   );
+  if (items.length === 0) return <Navigate to="/403" replace />;
   const requestedView = searchParams.get('view');
+  if (!requestedView) {
+    return (
+      <Suspense fallback={routeFallback}>
+        <AdminSettingsHome />
+      </Suspense>
+    );
+  }
   const destination = items.find((item) => item.view === requestedView)?.path ?? items[0]?.path;
   return <Navigate to={destination ?? '/403'} replace />;
 }

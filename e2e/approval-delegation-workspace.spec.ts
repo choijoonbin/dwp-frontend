@@ -162,8 +162,7 @@ test('발신 위임은 고정된 대행자와 최신 버전으로 수정하고 �
     (route) => success(route, items)
   );
   await page.route(
-    (url) =>
-      url.pathname === '/api/approvals/v1/delegations/delegation-outgoing',
+    (url) => url.pathname === '/api/approvals/v1/delegations/delegation-outgoing',
     (route) => {
       if (route.request().method() !== 'PUT') return route.fallback();
       const body = route.request().postDataJSON() as Record<string, unknown>;

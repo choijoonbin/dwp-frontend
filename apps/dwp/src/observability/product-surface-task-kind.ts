@@ -6,6 +6,17 @@ export type ProductSurfaceTaskBinding = Readonly<{
   routeContractKey: string;
 }>;
 
+const WORKPLACE_OPERATIONS_ACTIONS = new Set([
+  'route.workplace.management.connector-replay-preview.action',
+  'route.workplace.management.connector-replay-start.action',
+  'route.workplace.management.service-catalog-create.action',
+  'route.workplace.management.service-catalog-state.action',
+  'route.workplace.management.service-catalog-update.action',
+  'route.workplace.management.service-fulfillment-attachment-upload.action',
+  'route.workplace.management.service-fulfillment-message.action',
+  'route.workplace.management.service-fulfillment-task-update.action',
+]);
+
 /**
  * Closed telemetry classification for governed mutations. Authority registries stay the source of
  * truth for access; this projection only selects a privacy-safe KPI dimension and fails closed when
@@ -44,6 +55,14 @@ export function resolveProductSurfaceTaskKind(
     (productKey === 'workplace' && surfaceKey === 'workplace.work')
   ) {
     return 'WORK';
+  }
+
+  if (
+    productKey === 'workplace' &&
+    surfaceKey === 'workplace.management' &&
+    WORKPLACE_OPERATIONS_ACTIONS.has(routeContractKey)
+  ) {
+    return 'OPERATIONS';
   }
 
   if (productKey === 'communications') {

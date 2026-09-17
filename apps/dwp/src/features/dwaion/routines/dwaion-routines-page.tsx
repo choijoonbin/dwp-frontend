@@ -29,6 +29,11 @@ import type {
   DwaionRoutineDryRunReceipt,
   DwaionRoutineViewState,
 } from './dwaion-routine-model';
+import type {
+  DwaionRoutineExecutionRun,
+  DwaionRoutineRunCommand,
+  DwaionRoutineRuntimeCapabilities,
+} from '@dwp-frontend/shared-utils';
 
 export function DwaionRoutinesPage({
   state,
@@ -37,6 +42,11 @@ export function DwaionRoutinesPage({
   partialError,
   commandError,
   dryRunReceipt,
+  runtimeCapabilities,
+  runtimeCapabilitiesError,
+  runs = [],
+  runsLoading,
+  runsError,
   busy = false,
   canManage = true,
   canCreate = canManage,
@@ -48,6 +58,10 @@ export function DwaionRoutinesPage({
   onEdit,
   onSetLifecycle,
   onArchive,
+  onActivate,
+  onTriggerRun,
+  onRunCommand,
+  onRetryRuntime,
   copy = DWAION_ROUTINE_COPY_KO,
   formatTimestamp,
 }: {
@@ -57,6 +71,11 @@ export function DwaionRoutinesPage({
   partialError?: string;
   commandError?: 'REVISION_CONFLICT' | 'COMMAND_FAILED';
   dryRunReceipt?: DwaionRoutineDryRunReceipt | null;
+  runtimeCapabilities?: DwaionRoutineRuntimeCapabilities;
+  runtimeCapabilitiesError?: boolean;
+  runs?: readonly DwaionRoutineExecutionRun[];
+  runsLoading?: boolean;
+  runsError?: boolean;
   busy?: boolean;
   canManage?: boolean;
   canCreate?: boolean;
@@ -68,6 +87,14 @@ export function DwaionRoutinesPage({
   onEdit: (routine: DwaionRoutine) => void;
   onSetLifecycle: (routineId: string, expectedRevision: number, action: 'PAUSE' | 'RESUME') => void;
   onArchive: (routineId: string, expectedRevision: number) => void;
+  onActivate: (routine: DwaionRoutine, action: 'ACTIVATE' | 'DEACTIVATE') => void;
+  onTriggerRun: (routine: DwaionRoutine) => void;
+  onRunCommand: (
+    routine: DwaionRoutine,
+    run: DwaionRoutineExecutionRun,
+    action: DwaionRoutineRunCommand['action']
+  ) => void;
+  onRetryRuntime: () => void;
   copy?: DwaionRoutineCopy;
   formatTimestamp?: (value: string) => string;
 }) {
@@ -84,7 +111,9 @@ export function DwaionRoutinesPage({
     () => ({
       total: routines.length,
       ready: routines.filter(
-        (routine) => routine.status === 'DRAFT' && routineConsentComplete(routine.consents)
+        (routine) =>
+          (routine.status === 'DRAFT' || routine.status === 'ACTIVE') &&
+          routineConsentComplete(routine.consents)
       ).length,
       attention: routines.filter(
         (routine) => routine.status === 'DRAFT' && !routineConsentComplete(routine.consents)
@@ -99,7 +128,10 @@ export function DwaionRoutinesPage({
         if (filter === 'ALL') return true;
         if (filter === 'PAUSED') return routine.status === 'PAUSED';
         if (filter === 'READY') {
-          return routine.status === 'DRAFT' && routineConsentComplete(routine.consents);
+          return (
+            (routine.status === 'DRAFT' || routine.status === 'ACTIVE') &&
+            routineConsentComplete(routine.consents)
+          );
         }
         return routine.status === 'DRAFT' && !routineConsentComplete(routine.consents);
       }),
@@ -205,9 +237,9 @@ export function DwaionRoutinesPage({
               },
               {
                 key: 'paused',
-                value: '—',
-                label: copy.engineUnavailable,
-                detail: copy.notificationUnavailable,
+                value: metrics.paused,
+                label: copy.metrics.paused,
+                detail: copy.metrics.pausedDetail,
                 tone: 'info',
               },
             ]}
@@ -283,18 +315,22 @@ export function DwaionRoutinesPage({
                     label={`${copy.timeZone} · ${timeZoneLabel}`}
                   />
                 ) : null}
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  icon={<TimerOff size={14} />}
-                  label={copy.engineUnavailable}
-                />
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  icon={<BellOff size={14} />}
-                  label={copy.notificationUnavailable}
-                />
+                {!runtimeCapabilities?.activationAvailable ? (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    icon={<TimerOff size={14} />}
+                    label={copy.engineUnavailable}
+                  />
+                ) : null}
+                {!runtimeCapabilities?.notificationDeliveryAvailable ? (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    icon={<BellOff size={14} />}
+                    label={copy.notificationUnavailable}
+                  />
+                ) : null}
               </Stack>
             </Stack>
 
@@ -333,6 +369,11 @@ export function DwaionRoutinesPage({
                       open
                       variant="inline"
                       dryRunReceipt={dryRunReceipt}
+                      runtimeCapabilities={runtimeCapabilities}
+                      runtimeCapabilitiesError={runtimeCapabilitiesError}
+                      runs={runs}
+                      runsLoading={runsLoading}
+                      runsError={runsError}
                       busy={busy}
                       canManage={canManage}
                       onClose={onCloseSelection}
@@ -340,6 +381,10 @@ export function DwaionRoutinesPage({
                       onEdit={onEdit}
                       onToggleStatus={setStatusTarget}
                       onArchive={setArchiveTarget}
+                      onActivate={onActivate}
+                      onTriggerRun={onTriggerRun}
+                      onRunCommand={onRunCommand}
+                      onRetryRuntime={onRetryRuntime}
                       copy={copy}
                       formatTimestamp={formatTimestamp}
                     />
@@ -374,6 +419,11 @@ export function DwaionRoutinesPage({
           open={Boolean(selected) && compactInspectorOpen}
           variant="drawer"
           dryRunReceipt={dryRunReceipt}
+          runtimeCapabilities={runtimeCapabilities}
+          runtimeCapabilitiesError={runtimeCapabilitiesError}
+          runs={runs}
+          runsLoading={runsLoading}
+          runsError={runsError}
           busy={busy}
           canManage={canManage}
           onClose={() => {
@@ -384,6 +434,10 @@ export function DwaionRoutinesPage({
           onEdit={onEdit}
           onToggleStatus={setStatusTarget}
           onArchive={setArchiveTarget}
+          onActivate={onActivate}
+          onTriggerRun={onTriggerRun}
+          onRunCommand={onRunCommand}
+          onRetryRuntime={onRetryRuntime}
           copy={copy}
           formatTimestamp={formatTimestamp}
         />

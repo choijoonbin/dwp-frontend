@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Search, UsersRound } from 'lucide-react';
 import { ActionButton, FormDialog, FormField } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
@@ -300,6 +301,7 @@ type MailGroupMessageSnapshot = {
     classification: MailClassification;
     idempotencyKey: string;
     groupVersion: number;
+    recipientMode: 'BCC' | 'TO';
   };
 };
 
@@ -313,6 +315,7 @@ export function MailGroupMessageDialog({
   group,
   busy,
   retryFailed = false,
+  rejected = false,
   conflict = false,
   refreshFailed = false,
   attempt,
@@ -325,6 +328,7 @@ export function MailGroupMessageDialog({
   group: MailContactGroup | null;
   busy: boolean;
   retryFailed?: boolean;
+  rejected?: boolean;
   conflict?: boolean;
   refreshFailed?: boolean;
   attempt: MailGroupMessageAttempt | null;
@@ -337,16 +341,18 @@ export function MailGroupMessageDialog({
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [classification, setClassification] = useState<MailClassification>('INTERNAL');
+  const [recipientMode, setRecipientMode] = useState<'BCC' | 'TO'>('TO');
   const [confirmed, setConfirmed] = useState(false);
   useEffect(() => {
     if (!open || !group) return;
     setSubject(attempt?.input.subject ?? '');
     setBody(attempt?.input.body ?? '');
     setClassification(attempt?.input.classification ?? 'INTERNAL');
+    setRecipientMode(attempt?.input.recipientMode ?? 'TO');
     setConfirmed(Boolean(attempt) && !attempt?.reviewRequired);
   }, [open, group, attempt]);
   const reviewedGroup = attempt?.group ?? group;
-  const locked = busy || Boolean(attempt);
+  const locked = busy || Boolean(attempt && !attempt.reviewRequired);
   const valid = Boolean(
     reviewedGroup?.members.length && subject.trim() && body.trim() && confirmed
   );
@@ -365,7 +371,22 @@ export function MailGroupMessageDialog({
       submittingLabel={t('addressBook.send.sending')}
       submitDisabled={!valid}
       onSubmit={() => {
-        if (attempt) {
+        if (attempt?.reviewRequired) {
+          const reviewedAttempt = {
+            ...attempt,
+            input: {
+              ...attempt.input,
+              subject: subject.trim(),
+              body: body.trim(),
+              classification,
+              recipientMode,
+              groupVersion: reviewedGroup!.version,
+            },
+            reviewRequired: false,
+          };
+          onAttempt(reviewedAttempt);
+          onSubmit(reviewedAttempt.input);
+        } else if (attempt) {
           onAttempt({ ...attempt, reviewRequired: false });
           onSubmit(attempt.input);
         } else if (group && valid) {
@@ -375,6 +396,7 @@ export function MailGroupMessageDialog({
               subject,
               body,
               classification,
+              recipientMode,
               groupVersion: group.version,
               idempotencyKey: crypto.randomUUID(),
             },
@@ -396,6 +418,39 @@ export function MailGroupMessageDialog({
             {t('addressBook.send.recipients', { count: reviewedGroup?.members.length ?? 0 })}
           </Typography>
         </Stack>
+        <FormControl disabled={locked}>
+          <InputLabel id="mail-group-recipient-mode-label">
+            {t('addressBook.send.recipientMode')}
+          </InputLabel>
+          <Select
+            labelId="mail-group-recipient-mode-label"
+            label={t('addressBook.send.recipientMode')}
+            value={recipientMode}
+            onChange={(event) => {
+              setRecipientMode(event.target.value as 'BCC' | 'TO');
+              setConfirmed(false);
+            }}
+          >
+            <MenuItem value="TO">{t('addressBook.send.mode.TO')}</MenuItem>
+            <MenuItem value="BCC">{t('addressBook.send.mode.BCC')}</MenuItem>
+          </Select>
+        </FormControl>
+        <Alert severity={recipientMode === 'TO' ? 'warning' : 'info'}>
+          <Typography variant="body2" fontWeight={750}>
+            {t(
+              recipientMode === 'TO'
+                ? 'addressBook.send.recipientVisibilityTitle'
+                : 'addressBook.send.privateVisibilityTitle'
+            )}
+          </Typography>
+          <Typography variant="body2">
+            {t(
+              recipientMode === 'TO'
+                ? 'addressBook.send.recipientVisibilityDescription'
+                : 'addressBook.send.privateVisibilityDescription'
+            )}
+          </Typography>
+        </Alert>
         <Box
           component="ul"
           aria-label={t('addressBook.send.recipientList')}
@@ -418,11 +473,20 @@ export function MailGroupMessageDialog({
               onChange={(event) => setConfirmed(event.target.checked)}
             />
           }
-          label={t('addressBook.send.confirmRecipients')}
+          label={t(
+            recipientMode === 'TO'
+              ? 'addressBook.send.confirmRecipients'
+              : 'addressBook.send.confirmPrivateRecipients'
+          )}
         />
-        {(retryFailed || attempt) && !busy && (
+        {(retryFailed || (attempt && !attempt.reviewRequired)) && !busy && (
           <Typography role="alert" variant="body2" color="warning.main">
             {t('addressBook.send.retryNotice')}
+          </Typography>
+        )}
+        {rejected && !busy && (
+          <Typography role="alert" variant="body2" color="error.main">
+            {t('addressBook.send.rejectedNotice')}
           </Typography>
         )}
         {(conflict || attempt?.original) && (
@@ -438,7 +502,15 @@ export function MailGroupMessageDialog({
                 <ActionButton
                   intent="quiet"
                   disabled={busy}
-                  onClick={() => onSubmit(attempt.original!.input)}
+                  onClick={() => {
+                    const originalAttempt = {
+                      ...attempt.original!,
+                      original: attempt.original,
+                      reviewRequired: false,
+                    };
+                    onAttempt(originalAttempt);
+                    onSubmit(originalAttempt.input);
+                  }}
                 >
                   {t('addressBook.send.checkOriginal')}
                 </ActionButton>

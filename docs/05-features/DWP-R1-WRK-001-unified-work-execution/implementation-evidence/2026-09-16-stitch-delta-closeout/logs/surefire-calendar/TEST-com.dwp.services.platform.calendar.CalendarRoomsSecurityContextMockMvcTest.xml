@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarRoomsSecurityContextMockMvcTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:47" hostname="MacBook-Pro" time="0.096">
+  <properties/>
+  <testcase name="roomAvailabilityForwardsVerifiedUserAndGroupContext()" classname="com.dwp.services.platform.calendar.CalendarRoomsSecurityContextMockMvcTest" time="0.067"/>
+  <testcase name="calendarCreateForwardsVerifiedGroupContext()" classname="com.dwp.services.platform.calendar.CalendarRoomsSecurityContextMockMvcTest" time="0.028"/>
+  <system-out><![CDATA[12:00:47.797 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.797 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.797 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:00:47.825 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:00:47.825 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:00:47.825 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

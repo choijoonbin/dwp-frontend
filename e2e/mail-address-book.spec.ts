@@ -2,7 +2,13 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { detail, fulfill, mailAddressBook, mockMailMember, thread } from './support/mail-fixtures';
 
-for (const recovery of ['none', 'response-loss', 'stale-group', 'original-replay'] as const) {
+for (const recovery of [
+  'none',
+  'response-loss',
+  'rejected',
+  'stale-group',
+  'original-replay',
+] as const) {
   test(`personal groups require recipient review and replay safely (${recovery})`, async ({
     page,
   }) => {
@@ -55,7 +61,10 @@ for (const recovery of ['none', 'response-loss', 'stale-group', 'original-replay
     await page.route('**/api/platform/v1/mail/contact-groups**', async (route) => {
       const request = route.request();
       const path = new URL(request.url()).pathname;
-      const input = (await request.postDataJSON()) as Record<string, unknown>;
+      if (request.method() === 'GET' && path.endsWith(`/${groupId}/messages/history`)) {
+        return fulfill(route, []);
+      }
+      const input = ((await request.postDataJSON()) ?? {}) as Record<string, unknown>;
       if (request.method() === 'POST' && path.endsWith('/contact-groups')) {
         const group = {
           groupId,
@@ -103,6 +112,13 @@ for (const recovery of ['none', 'response-loss', 'stale-group', 'original-replay
       if (request.method() === 'POST' && path.endsWith(`/${groupId}/messages`)) {
         sends.push(input);
         if (recovery === 'response-loss' && sends.length === 1) return route.abort('failed');
+        if (recovery === 'rejected' && sends.length === 1) {
+          return route.fulfill({
+            status: 422,
+            contentType: 'application/json',
+            body: JSON.stringify({ message: 'Review the message.' }),
+          });
+        }
         if (
           ((recovery === 'stale-group' || recovery === 'original-replay') && sends.length === 1) ||
           (recovery === 'original-replay' && sends.length === 2)
@@ -118,15 +134,25 @@ for (const recovery of ['none', 'response-loss', 'stale-group', 'original-replay
             }),
           });
         }
-        return fulfill(
-          route,
-          detail(
-            thread('63000000-0000-0000-0000-000000000001', {
-              subject: String(input.subject),
-            }),
-            'SENT'
-          )
+        const sentThread = detail(
+          thread('63000000-0000-0000-0000-000000000001', {
+            subject: String(input.subject),
+          }),
+          'SENT'
         );
+        return fulfill(route, {
+          thread: sentThread,
+          receipt: {
+            receiptId: '64000000-0000-0000-0000-000000000001',
+            groupId,
+            groupVersion: Number(input.groupVersion),
+            recipientMode: input.recipientMode,
+            recipientCount: 1,
+            threadId: sentThread.thread.threadId,
+            acceptedAt: '2026-09-03T03:03:00Z',
+            state: 'ACCEPTED',
+          },
+        });
       }
       return route.fallback();
     });
@@ -163,20 +189,40 @@ for (const recovery of ['none', 'response-loss', 'stale-group', 'original-replay
     await expect(
       sendDialog.getByRole('list', { name: 'Recipients of this group message' })
     ).toContainText('mina.partner@example.com');
+    if (recovery === 'none') {
+      await sendDialog.getByLabel('Recipient privacy').click();
+      await page.getByRole('option', { name: 'Private recipients (Bcc)' }).click();
+      await expect(sendDialog.getByText('Recipients stay private from one another')).toBeVisible();
+      await expect(sendDialog.getByText(/placed in Bcc/u)).toBeVisible();
+    } else {
+      await expect(
+        sendDialog.getByText('Recipient names and email addresses will be visible to everyone')
+      ).toBeVisible();
+      await expect(
+        sendDialog.getByText(/places every group member in the To field/u)
+      ).toBeVisible();
+    }
     await expect(sendDialog.getByRole('button', { name: 'Send to group' })).toBeDisabled();
     await sendDialog
-      .getByRole('checkbox', { name: 'I have reviewed every recipient name and email address.' })
+      .getByRole('checkbox', {
+        name:
+          recovery === 'none'
+            ? 'I have reviewed every private recipient and the current group version.'
+            : 'I understand the recipient list is public to this group and have reviewed every name and email address.',
+      })
       .check();
     await sendDialog.getByRole('button', { name: 'Send to group' }).click();
     if (recovery === 'response-loss') {
-      await expect(sendDialog.getByRole('alert')).toContainText(
-        'The delivery result is not confirmed.'
-      );
+      await expect(sendDialog.getByText(/The delivery result is not confirmed\./u)).toBeVisible();
       await expect(sendDialog.getByLabel('Subject')).toBeDisabled();
-      await sendDialog.getByRole('button', { name: 'Cancel' }).click();
+      await page.reload();
+      await expect(page.getByRole('heading', { name: 'Contacts and mail groups' })).toBeVisible();
+      await page.getByRole('tab', { name: 'My mail groups' }).click();
+      await expect(page.getByRole('button', { name: 'Send mail' })).toHaveCount(2);
       await page.getByRole('button', { name: 'Send mail' }).last().click();
       const otherDialog = page.getByRole('dialog', { name: 'Send mail to Other project' });
       await expect(otherDialog).toBeVisible();
+      await expect(otherDialog.getByLabel('Subject')).toHaveValue('');
       await otherDialog.getByRole('button', { name: 'Cancel' }).click();
       await page.getByRole('button', { name: 'Send mail' }).first().click();
       await expect(sendDialog.getByLabel('Subject')).toHaveValue('Launch review');
@@ -184,6 +230,15 @@ for (const recovery of ['none', 'response-loss', 'stale-group', 'original-replay
         sendDialog.getByRole('list', { name: 'Recipients of this group message' })
       ).toContainText('mina.partner@example.com');
       await sendDialog.getByRole('button', { name: 'Retry the same message' }).click();
+    }
+    if (recovery === 'rejected') {
+      await expect(sendDialog.getByText(/The request was rejected/u)).toBeVisible();
+      await expect(sendDialog.getByLabel('Subject')).toBeEnabled();
+      await sendDialog
+        .getByRole('textbox', { name: 'Message', exact: true })
+        .fill('Please review the corrected decision package.');
+      await sendDialog.getByRole('checkbox').check();
+      await sendDialog.getByRole('button', { name: 'Send to group' }).click();
     }
     if (recovery === 'stale-group' || recovery === 'original-replay') {
       await sendDialog.getByRole('button', { name: 'Review latest recipients' }).click();
@@ -207,14 +262,25 @@ for (const recovery of ['none', 'response-loss', 'stale-group', 'original-replay
       .poll(() => sends.length)
       .toBe(recovery === 'none' ? 1 : recovery === 'original-replay' ? 3 : 2);
     if (recovery === 'response-loss') expect(sends[1]).toEqual(sends[0]);
+    if (recovery === 'rejected') {
+      expect(sends[1]).toMatchObject({
+        body: 'Please review the corrected decision package.',
+        groupVersion: 1,
+      });
+      expect(sends[1]?.idempotencyKey).not.toBe(sends[0]?.idempotencyKey);
+    }
     if (recovery === 'stale-group' || recovery === 'original-replay') {
-      expect(sends[1]).toEqual({ ...sends[0], groupVersion: 2 });
+      const { idempotencyKey: originalKey, ...originalPayload } = sends[0] ?? {};
+      expect(sends[1]).toMatchObject({ ...originalPayload, groupVersion: 2 });
+      expect(sends[1]?.idempotencyKey).toEqual(expect.any(String));
+      expect(sends[1]?.idempotencyKey).not.toBe(originalKey);
       if (recovery === 'original-replay') expect(sends[2]).toEqual(sends[0]);
     }
     expect(sends[0]).toMatchObject({
       subject: 'Launch review',
       body: 'Please review the decision package.',
       classification: 'INTERNAL',
+      recipientMode: recovery === 'none' ? 'BCC' : 'TO',
       groupVersion: 1,
     });
     expect(sends[0]?.idempotencyKey).toEqual(expect.any(String));

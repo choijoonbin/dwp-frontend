@@ -241,7 +241,15 @@ test('sharing policy and connector configuration save actual versioned fields an
     reason: 'Enable consent-based plans',
     confirmed: true,
   });
-  const connector = settings.getByRole('region', { name: 'Calendar connector', exact: true });
+  await page.goto('/workplace/admin/governance?area=dataSources');
+  const dataSources = page.getByTestId('workplace-data-sources');
+  await expect(
+    dataSources.getByRole('heading', { name: 'Workplace data connections' })
+  ).toBeVisible();
+  const connector = dataSources.getByRole('region', {
+    name: 'Calendar connector',
+    exact: true,
+  });
   await connector.getByRole('textbox', { name: 'Provider identifier' }).fill('calendar-adapter');
   await connector.getByRole('checkbox', { name: 'Enable connector configuration' }).check();
   await connector
@@ -284,7 +292,7 @@ test('mobile delegation shows current and proposed values before impact review',
   await page.screenshot({ path: '/tmp/workplace-governance-delegation-390.png', fullPage: true });
 });
 
-test('privacy settings and access review reflow at desktop, mobile and 200 percent equivalent viewport', async ({
+test('privacy settings, data connections and access review reflow at desktop, mobile and 200 percent equivalent viewport', async ({
   page,
 }) => {
   await setup(page);
@@ -292,9 +300,6 @@ test('privacy settings and access review reflow at desktop, mobile and 200 perce
   const settings = page.getByTestId('governance-experience-settings');
   await expect(settings.getByRole('heading', { name: 'Privacy retention status' })).toBeVisible();
   await expect(settings.getByText('Bookings under legal hold')).toBeVisible();
-  await expect(
-    settings.getByText('Not configured. No external status data is available.')
-  ).toHaveCount(5);
   for (const width of [1440, 1280, 390, 320, 640]) {
     await page.setViewportSize({ width, height: 900 });
     await expectStableShell(page);
@@ -336,6 +341,28 @@ test('privacy settings and access review reflow at desktop, mobile and 200 perce
       path: `/tmp/workplace-governance-settings-${width}.png`,
       fullPage: true,
     });
+  }
+  await page.goto('/workplace/admin/governance?area=dataSources');
+  const dataSources = page.getByTestId('workplace-data-sources');
+  await expect(
+    dataSources.getByRole('heading', { name: 'Workplace data connections' })
+  ).toBeVisible();
+  await expect(
+    dataSources.getByText('Not configured. No external status data is available.')
+  ).toHaveCount(1);
+  for (const width of [1440, 1280, 390, 320, 640]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expectStableShell(page);
+    const sizing = await dataSources.evaluate((element) => ({
+      width: element.clientWidth,
+      scroll: element.scrollWidth,
+    }));
+    expect(sizing.scroll, JSON.stringify({ viewport: width, ...sizing })).toBeLessThanOrEqual(
+      sizing.width + 1
+    );
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)
+    ).toBe(true);
   }
   await page.goto('/workplace/admin/governance?area=access');
   await page
@@ -534,8 +561,19 @@ test('global viewer can read privacy and connector status while all settings wri
   await expect(
     settings.getByRole('button', { name: 'Save reviewed change' }).first()
   ).toBeDisabled();
+  await page.goto('/workplace/admin/governance?area=dataSources');
+  const dataSources = page.getByTestId('workplace-data-sources');
   await expect(
-    settings.getByText('Not configured. No external status data is available.', { exact: true })
-  ).toHaveCount(5);
+    dataSources.getByRole('heading', { name: 'Workplace data connections' })
+  ).toBeVisible();
+  await expect(
+    dataSources.getByText('Not configured. No external status data is available.', { exact: true })
+  ).toHaveCount(1);
+  await expect(
+    dataSources.getByRole('textbox', { name: 'Provider identifier' }).first()
+  ).toBeDisabled();
+  await expect(
+    dataSources.getByRole('button', { name: 'Save reviewed change' }).first()
+  ).toBeDisabled();
   expect(writes).toHaveLength(0);
 });

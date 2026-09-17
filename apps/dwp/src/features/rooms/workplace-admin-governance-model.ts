@@ -5,7 +5,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 export type WorkplaceGovernanceTab =
-  'hierarchy' | 'access' | 'policy' | 'floorPlans' | 'delegation' | 'experience';
+  'hierarchy' | 'access' | 'policy' | 'floorPlans' | 'delegation' | 'experience' | 'dataSources';
 
 export const WORKPLACE_GOVERNANCE_TABS = [
   'hierarchy',
@@ -14,6 +14,7 @@ export const WORKPLACE_GOVERNANCE_TABS = [
   'floorPlans',
   'delegation',
   'experience',
+  'dataSources',
 ] as const satisfies readonly WorkplaceGovernanceTab[];
 
 export function parseWorkplaceGovernanceTab(value: string | null): WorkplaceGovernanceTab {

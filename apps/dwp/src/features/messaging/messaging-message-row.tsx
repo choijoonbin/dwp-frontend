@@ -267,10 +267,7 @@ export function MessagingMessageRow({
                 ? 'var(--msg-mine-surface)'
                 : 'var(--msg-other-surface)'
               : 'transparent',
-            boxShadow:
-              conversational && !mine
-                ? `0 5px 18px ${alpha(theme.palette.common.black, 0.035)}`
-                : 'none',
+            boxShadow: conversational && !mine ? 1 : 0,
             whiteSpace: 'pre-wrap',
             overflowWrap: 'anywhere',
           })}
@@ -362,7 +359,7 @@ export function MessagingMessageRow({
             className="dwp-message-actions"
             direction="row"
             spacing={0.1}
-            sx={(theme) => ({
+            sx={{
               position: 'absolute',
               top: { xs: groupedWithPrevious ? -3 : -5, md: groupedWithPrevious ? -7 : -4 },
               right: alignRight ? 'auto' : 0,
@@ -376,11 +373,8 @@ export function MessagingMessageRow({
               borderColor: { xs: 'transparent', md: 'divider' },
               borderRadius: 1.25,
               bgcolor: { xs: 'transparent', md: 'background.paper' },
-              boxShadow: {
-                xs: 'none',
-                md: `0 8px 24px ${alpha(theme.palette.common.black, 0.09)}`,
-              },
-            })}
+              boxShadow: { xs: 0, md: 3 },
+            }}
           >
             <ActionIconButton
               label={t('message.addReaction')}

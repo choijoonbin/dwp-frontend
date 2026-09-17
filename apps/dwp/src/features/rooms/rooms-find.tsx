@@ -226,7 +226,7 @@ function RoomTimeline({
   );
 }
 
-export function RoomsFind() {
+export default function RoomsFind() {
   const { t } = useTranslation('rooms');
   const theme = useTheme();
   const compactFilters = useMediaQuery(theme.breakpoints.down('md'));

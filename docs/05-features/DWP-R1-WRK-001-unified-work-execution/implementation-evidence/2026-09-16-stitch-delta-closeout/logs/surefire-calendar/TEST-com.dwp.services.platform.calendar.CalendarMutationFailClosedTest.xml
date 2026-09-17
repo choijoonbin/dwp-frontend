@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarMutationFailClosedTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:36" hostname="MacBook-Pro" time="0.159">
+  <properties/>
+  <testcase name="freeBusyProjectionDoesNotLeakEventIdentityOrDetails()" classname="com.dwp.services.platform.calendar.CalendarMutationFailClosedTest" time="0.13"/>
+  <testcase name="unauthorizedVisibleAttendeeCannotUpdateAnEvent()" classname="com.dwp.services.platform.calendar.CalendarMutationFailClosedTest" time="0.01"/>
+  <testcase name="viewerCannotCreateOrEscalateACalendarShare()" classname="com.dwp.services.platform.calendar.CalendarMutationFailClosedTest" time="0.006"/>
+  <testcase name="unauthorizedVisibleAttendeeCannotReachTheCurrentCancellationPath()" classname="com.dwp.services.platform.calendar.CalendarMutationFailClosedTest" time="0.003"/>
+  <testcase name="inaccessibleOrCrossTenantEventIdsRemainNonEnumerableBeforeMutation()" classname="com.dwp.services.platform.calendar.CalendarMutationFailClosedTest" time="0.003"/>
+  <testcase name="viewerCannotTrashAnEvent()" classname="com.dwp.services.platform.calendar.CalendarMutationFailClosedTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

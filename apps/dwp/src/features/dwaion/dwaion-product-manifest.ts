@@ -55,6 +55,7 @@ export const DWAION_WORK_NAVIGATION = projectProductSurfaceNavigation(DWAION_NAV
 
 export const DWAION_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(DWAION_NAVIGATION, {
   'admin-overview': { taskKind: 'operations', access: capability('dwaion.operations.read') },
+  'admin-models': { taskKind: 'administration', access: capability('dwaion.operations.read') },
   'admin-agents': { taskKind: 'administration', access: capability('dwaion.agents.read') },
   'admin-sources': { taskKind: 'administration', access: capability('dwaion.sources.read') },
   'admin-actions': { taskKind: 'administration', access: capability('dwaion.actions.read') },

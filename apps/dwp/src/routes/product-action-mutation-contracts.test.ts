@@ -51,6 +51,7 @@ function comparable(values: readonly ComparableContract[]) {
 const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   createApprovalRequest: ['approvalRequestExecutionConfig'],
   updateApprovalDraft: ['approvalRequestExecutionConfig'],
+  preflightApprovalRequest: ['approvalRequestExecutionConfig'],
   submitApprovalRequest: ['approvalRequestExecutionConfig'],
   respondToApprovalInformationRequest: ['approvalRequestExecutionConfig'],
   recoverApprovalDraft: ['draftCommand'],
@@ -110,6 +111,20 @@ const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   saveApprovalSignaturePolicyDraft: ['commandConfig'],
   publishApprovalSignaturePolicy: ['commandConfig'],
   inspectApprovalSignatureWorm: ['commandConfig'],
+  installApprovalTemplateDraft: ['settings'],
+  saveApprovalFormStudioDraft: ['settings'],
+  cloneApprovalFormStudioDraft: ['settings'],
+  saveApprovalRoutingGroup: ['settings'],
+  archiveApprovalFormStudioDraft: ['approvalAdminV2CanonicalMutation'],
+  saveApprovalAutomationCalendar: ['approvalAdminV2CanonicalMutation'],
+  saveApprovalAutomationChannel: ['approvalAdminV2CanonicalMutation'],
+  recordApprovalAutomationChannelObservation: ['approvalAdminV2CanonicalMutation'],
+  saveApprovalAutomationPolicyDraft: ['approvalAdminV2CanonicalMutation'],
+  reviewApprovalAutomationDelegation: ['approvalAdminV2CanonicalMutation'],
+  saveApprovalRoutingResolver: ['approvalAdminV2CanonicalMutation'],
+  recordApprovalRoutingResolverObservation: ['approvalAdminV2CanonicalMutation'],
+  recordApprovalRoutingGroupUsage: ['approvalAdminV2CanonicalMutation'],
+  cloneApprovalTemplateDraft: ['approvalAdminV2CanonicalMutation'],
 };
 
 // Shared transports must forward the same authority at every AST call edge.
@@ -264,6 +279,9 @@ describe('Generated product ACTION mutation closure', () => {
       'approval-external-signature-api.ts',
       'approval-signature-policy-api.ts',
       'approval-signature-provider-api.ts',
+      'approval-admin-v2-governed-api.ts',
+      'approval-admin-v2-canonical-mutation-api.ts',
+      'approval-admin-v2-command-api.ts',
       'approval-delegation-api.ts',
       'approval-resubmit-draft-api.ts',
       'approval-policy-create-api.ts',

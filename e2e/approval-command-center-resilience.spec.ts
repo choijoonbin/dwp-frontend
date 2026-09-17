@@ -10,6 +10,8 @@ import {
   APPROVAL_MEMBER_PERMISSIONS,
 } from './support/approval-command-center-fixtures';
 import { APPROVAL_TASK_DETAIL_FIXTURE } from './support/product-area-fixtures';
+import { approvalDocumentTools } from './support/approval-request-document-fixtures';
+import { openApprovalQueueSidebar as openQueueSidebar } from './support/approval-sidebar';
 
 test.use({ timezoneId: 'Asia/Seoul' });
 
@@ -57,18 +59,6 @@ async function prepare(page: Page, dark = false) {
       return success(route, { ...APPROVAL_TASK_DETAIL_FIXTURE, task, canDecide: true });
     }
   );
-}
-
-async function openQueueSidebar(page: Page) {
-  const mobile = (page.viewportSize()?.width ?? 1280) < 1200;
-  const sidebar = page.getByTestId(mobile ? 'approvals-mobile-sidebar' : 'approvals-sidebar');
-  const trigger = page.getByRole('button', { name: '전자결재 메뉴 열기' });
-  if (mobile && (await trigger.getAttribute('aria-expanded')) !== 'true') {
-    await expect(sidebar).not.toBeVisible();
-    await trigger.click();
-  }
-  await expect(sidebar).toBeVisible();
-  return sidebar;
 }
 
 for (const outcome of ['fresh', 'revoked', 'new-version'] as const) {
@@ -136,7 +126,8 @@ test('내 완료함은 서버 106건의 마지막 페이지·검색을 조회하
   await prepare(page);
   const tasks = Array.from({ length: 106 }, (_, index) => ({
     ...APPROVAL_HOME_FIXTURE.focusQueue[0],
-    taskId: `completed-search-${index}`,
+    taskId: `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`,
+    requestId: `10000000-0000-4000-8000-${String(index).padStart(12, '0')}`,
     requestNumber: `APR-COMPLETED-${index + 1}`,
     title: index === 105 ? '완료된 정산 최종 결정' : `완료 결정 ${index + 1}`,
     status: 'APPROVED',
@@ -148,13 +139,44 @@ test('내 완료함은 서버 106건의 마지막 페이지·검색을 조회하
     searches.push(url);
     return success(route, approvalTaskSearchPage(url, tasks));
   });
-  await page.route('**/api/approvals/v1/tasks/completed-search-*', (route) =>
-    success(route, {
-      ...APPROVAL_TASK_DETAIL_FIXTURE,
-      task: tasks.find((candidate) => route.request().url().endsWith(candidate.taskId)),
-      canClaim: false,
-      canDecide: false,
-    })
+  await page.route(
+    (url) => /^\/api\/approvals\/v1\/tasks\/[0-9a-f-]{36}$/u.test(url.pathname),
+    (route) => {
+      const taskId = new URL(route.request().url()).pathname.split('/').at(-1) ?? '';
+      return success(route, {
+        ...APPROVAL_TASK_DETAIL_FIXTURE,
+        task: tasks.find((candidate) => candidate.taskId === taskId),
+        canClaim: false,
+        canDecide: false,
+      });
+    }
+  );
+  await page.route(
+    (url) =>
+      /^\/api\/approvals\/v1\/tasks\/[0-9a-f-]{36}\/document-tools$/u.test(
+        url.pathname
+      ),
+    (route) => {
+      const taskId = new URL(route.request().url()).pathname.split('/').at(-2) ?? '';
+      const task = tasks.find((candidate) => candidate.taskId === taskId);
+      return success(route, {
+        ...approvalDocumentTools(task?.requestId),
+        taskId,
+        taskVersion: task?.version ?? 0,
+      });
+    }
+  );
+  await page.route(
+    (url) => /^\/api\/approvals\/v1\/tasks\/[0-9a-f-]{36}\/comments$/u.test(url.pathname),
+    (route) =>
+      success(route, {
+        items: [],
+        totalElements: 0,
+        page: 0,
+        size: 25,
+        commentsVersion: 0,
+        evaluatedAt: new Date().toISOString(),
+      })
   );
   await page.goto('/approvals/completed');
   const next = page.getByRole('button', { name: '다음', exact: true });
@@ -187,6 +209,10 @@ test('내 완료함은 서버 106건의 마지막 페이지·검색을 조회하
     1
   );
   await expect(page.getByRole('button', { name: /^(승인|반려|검토 시작)$/u })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: '결정 증적 문서', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '문서 인쇄', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'JSON 다운로드', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: '댓글', exact: true })).toHaveCount(0);
 });
 
 test('서버 전체 106건에서 마지막 페이지와 검색·상태 필터를 조회한다', async ({ page }) => {
@@ -212,8 +238,8 @@ test('서버 전체 106건에서 마지막 페이지와 검색·상태 필터를
     return success(route, { ...APPROVAL_TASK_DETAIL_FIXTURE, task, canDecide: true });
   });
   await page.goto('/approvals/inbox');
-  const list = page.getByLabel('검토 대기 결재 목록');
-  await expect(list.getByRole('listitem')).toHaveCount(25);
+  const list = page.getByRole('grid', { name: '검토 대기 결재 목록' });
+  await expect(list.getByRole('row')).toHaveCount(25);
   for (let pageNumber = 1; pageNumber <= 4; pageNumber += 1) {
     await page.getByRole('button', { name: '다음 페이지', exact: true }).click();
     await expect(page).toHaveURL((url) => url.searchParams.get('page') === String(pageNumber));
@@ -222,11 +248,11 @@ test('서버 전체 106건에서 마지막 페이지와 검색·상태 필터를
       page.getByRole('status').filter({ hasText: `${pageNumber + 1}/5 페이지` })
     ).toBeVisible();
   }
-  await expect(list.getByRole('listitem')).toHaveCount(6);
+  await expect(list.getByRole('row')).toHaveCount(6);
   await expect(list.getByText('정산 증빙 최종 검토')).toBeVisible();
   await expect(page.getByRole('button', { name: '다음 페이지', exact: true })).toBeDisabled();
   await page.getByRole('textbox', { name: '결재 검색', exact: true }).fill('정산 증빙');
-  await expect(list.getByRole('listitem')).toHaveCount(1);
+  await expect(list.getByRole('row')).toHaveCount(1);
   await expect.poll(() => searches.at(-1)?.searchParams.get('query')).toBe('정산 증빙');
   await expect(page).toHaveURL((url) => url.searchParams.get('page') === '0');
   await page.getByRole('combobox', { name: '상태', exact: true }).click();
@@ -664,14 +690,18 @@ test('완료 문서 권한이 회수되면 본문과 이력을 가리고 단건�
 
   await page.getByLabel('고객 분석 환경 접근 연장 배치 승인 선택').check();
   await page.getByRole('button', { name: '선택 항목 승인' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
+  const batchDialog = page.getByRole('dialog', { name: '선택한 결재를 승인할까요?' });
+  await expect(batchDialog.getByText('처리 제외', { exact: true }).last()).toBeVisible();
   await expect(
-    page.getByRole('status').filter({ hasText: '승인 0건 · 처리 불가 1건' })
-  ).toBeVisible();
+    batchDialog.getByRole('button', {
+      name: '배치 승인 시작 · 처리 가능 0건',
+      exact: true,
+    })
+  ).toBeDisabled();
   expect(posts).toBe(0);
 });
 
-test('처리 불가 결과는 쓰기 없이 해당 결재의 최신 상세를 연다', async ({ page }) => {
+test('처리 불가 사전검증은 쓰기 없이 해당 결재의 최신 상세를 유지한다', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 });
   await prepare(page);
   let posts = 0;
@@ -690,12 +720,17 @@ test('처리 불가 결과는 쓰기 없이 해당 결재의 최신 상세를 �
   await page.goto('/approvals/inbox');
   await page.getByLabel('고객 분석 환경 접근 연장 배치 승인 선택').check();
   await page.getByRole('button', { name: '선택 항목 승인' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
-  const result = page.getByRole('status').filter({ hasText: '배치 처리 결과' });
-  await expect(result).toContainText('처리 불가 1건');
+  const batchDialog = page.getByRole('dialog', { name: '선택한 결재를 승인할까요?' });
+  await expect(batchDialog).toContainText('현재 사용자에게 이 결재의 결정 권한이 없습니다.');
+  await expect(
+    batchDialog.getByRole('button', {
+      name: '배치 승인 시작 · 처리 가능 0건',
+      exact: true,
+    })
+  ).toBeDisabled();
   expect(posts).toBe(0);
 
-  await result.getByRole('button', { name: '결재 상세 열기' }).click();
+  await batchDialog.getByRole('button', { name: '취소', exact: true }).click();
   await expect(page).toHaveURL(/task=approval-task-1/u);
   await expect(page.getByRole('heading', { name: '고객 분석 환경 접근 연장' })).toBeVisible();
   await expect(page.getByRole('button', { name: '승인', exact: true })).toBeDisabled();
@@ -799,11 +834,12 @@ test('배치가 확인한 권한 회수는 우측 상세에도 즉시 반영된�
   await prepare(page);
   let revoked = false;
   let posts = 0;
+  const queueTask = APPROVAL_HOME_FIXTURE.focusQueue[0];
   await page.route('**/api/approvals/v1/tasks/approval-task-1', (route) =>
     success(route, {
       ...APPROVAL_TASK_DETAIL_FIXTURE,
       canDecide: !revoked,
-      task: { ...APPROVAL_HOME_FIXTURE.focusQueue[0], version: revoked ? 2 : 1 },
+      task: { ...queueTask, version: queueTask.version + (revoked ? 1 : 0) },
     })
   );
   await page.route('**/api/approvals/v1/tasks/*/decisions', (route) => {
@@ -812,13 +848,18 @@ test('배치가 확인한 권한 회수는 우측 상세에도 즉시 반영된�
   });
   await page.goto('/approvals/inbox?task=approval-task-1');
   await expect(page.getByRole('button', { name: '승인', exact: true })).toBeEnabled();
+  revoked = true;
   await page.getByLabel('고객 분석 환경 접근 연장 배치 승인 선택').check();
   await page.getByRole('button', { name: '선택 항목 승인' }).click();
-  revoked = true;
-  await page.getByRole('dialog').getByRole('button', { name: '배치 승인 시작' }).click();
+  const batchDialog = page.getByRole('dialog', { name: '선택한 결재를 승인할까요?' });
   await expect(
-    page.getByRole('status').filter({ hasText: '승인 0건 · 처리 불가 1건' })
-  ).toBeVisible();
+    batchDialog.getByRole('button', {
+      name: '배치 승인 시작 · 처리 가능 0건',
+      exact: true,
+    })
+  ).toBeDisabled();
+  await expect(batchDialog).toContainText('목록과 상세의 버전이 달라 다시 확인해야 합니다.');
+  await batchDialog.getByRole('button', { name: '취소', exact: true }).click();
   await expect(page.getByRole('button', { name: '승인', exact: true })).toBeDisabled();
   expect(posts).toBe(0);
 });

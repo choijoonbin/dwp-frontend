@@ -166,6 +166,8 @@ export function WorkTaskChecklistEditor({
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
           <FormField
             label={t('workHub.checklist.newTitle')}
+            placeholder={t('workHub.checklist.newTitle')}
+            slotProps={{ inputLabel: { shrink: true } }}
             size="small"
             value={title}
             disabled={disabled}
@@ -181,7 +183,17 @@ export function WorkTaskChecklistEditor({
                 add();
               }
             }}
-            sx={{ flex: 1 }}
+            sx={{
+              flex: 1,
+              '& .MuiInputBase-input': {
+                backgroundColor: 'background.paper',
+                color: 'text.primary',
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: 'text.secondary',
+                opacity: 1,
+              },
+            }}
           />
           <ActionButton
             intent="secondary"

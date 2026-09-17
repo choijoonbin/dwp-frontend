@@ -161,24 +161,148 @@ async function setup(page: Page, allowClosureCreation = false) {
     locale: 'en',
     permissions: FULL_PRODUCT_PERMISSIONS,
   });
+  if (allowClosureCreation) {
+    await page.route('**/api/auth/product-surface-contexts', (route) =>
+      fulfillSuccess(route, {
+        contractVersion: 'product-surfaces/v3',
+        decisionRevision: 'facility-pagination-elevated',
+        sourceRevisions: {
+          auth: 'auth-facility-pagination',
+          policy: 'policy-facility-pagination',
+          productRelationship: 'relationship-facility-pagination',
+        },
+        activeAccessMode: 'ELEVATED',
+        generatedAt,
+        contexts: [],
+        rollouts: [
+          'approvals',
+          'calendar',
+          'communications',
+          'dwaion',
+          'hcm',
+          'mail',
+          'meetings',
+          'messaging',
+          'notifications',
+          'services',
+          'spaces',
+          'workplace',
+        ].map((productKey) => ({
+          productKey,
+          state: '000',
+          flags: { contextShadow: false, capabilityEnforcement: false, surfaceUi: false },
+          cohort: 'baseline',
+          opaqueRevision: `rollout-${productKey}-baseline`,
+          authorityStatus: 'NOT_EVALUATED',
+        })),
+      })
+    );
+  }
   const reads: ImpactRead[] = [];
   const writes: string[] = [];
   const creates: { body: Record<string, unknown>; key: string | undefined }[] = [];
+  let closurePreview: Record<string, unknown> | null = null;
+  let closureCommand: Record<string, unknown> | null = null;
   await page.route('**/api/platform/v1/admin/workplace/**', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
     const path = url.pathname;
-    if (request.method() !== 'GET') {
+    if (
+      allowClosureCreation &&
+      request.method() === 'POST' &&
+      path.endsWith(`/resources/${deskId}/closure-impact-previews`)
+    ) {
+      const body = request.postDataJSON() as Record<string, unknown>;
+      closurePreview = {
+        previewId: '61000000-0000-0000-0000-000000000001',
+        resourceId: deskId,
+        siteId,
+        reservationOwner: 'WORKPLACE',
+        startsAt: body.startsAt,
+        endsAt: body.endsAt,
+        resourceVersion: body.resourceVersion,
+        previewVersion: 1,
+        confirmationToken: 'pagination-snapshot',
+        affectedBookingCount: 1,
+        affectedRecipientCount: 1,
+        expiresAt: '2026-09-17T04:10:00Z',
+        generatedAt,
+        items: [
+          {
+            previewItemId: '62000000-0000-0000-0000-000000000001',
+            reservationOwner: 'WORKPLACE',
+            bookingId: deskBookings[0].bookingId,
+            eventId: null,
+            sourceWorkplaceResourceId: deskId,
+            sourceOwnerResourceId: deskId,
+            startsAt: body.startsAt,
+            endsAt: body.endsAt,
+            bookingStatus: 'RESERVED',
+            bookingVersion: 1,
+            recipientUserIds: [7],
+            replacementBlockReason: null,
+            replacementCandidates: [],
+          },
+        ],
+      };
+      return fulfillSuccess(route, closurePreview);
+    }
+    if (
+      allowClosureCreation &&
+      request.method() === 'POST' &&
+      path.endsWith('/closure-impact-previews/61000000-0000-0000-0000-000000000001/commands')
+    ) {
+      const body = request.postDataJSON() as Record<string, unknown>;
       writes.push(path);
-      if (
-        allowClosureCreation &&
-        request.method() === 'POST' &&
-        path.endsWith(`/resources/${deskId}/closures`)
-      ) {
-        const body = request.postDataJSON() as Record<string, unknown>;
-        creates.push({ body, key: request.headers()['idempotency-key'] });
-        return fulfillSuccess(route, { ...selectedClosure, ...body });
-      }
+      creates.push({ body, key: request.headers()['idempotency-key'] });
+      const selections = body.selections as Array<Record<string, unknown>>;
+      closureCommand = {
+        commandId: '63000000-0000-0000-0000-000000000001',
+        previewId: '61000000-0000-0000-0000-000000000001',
+        closureId,
+        resourceId: deskId,
+        siteId,
+        state: 'SUCCEEDED',
+        expectedPreviewVersion: 1,
+        reason: body.reason,
+        keptCount: selections.filter((item) => item.action === 'KEEP').length,
+        cancelledCount: selections.filter((item) => item.action === 'CANCEL').length,
+        replacedCount: selections.filter((item) => item.action === 'REPLACE').length,
+        version: 1,
+        createdAt: generatedAt,
+        completedAt: generatedAt,
+        notifications: {
+          recipientCount: 1,
+          eventCount: 1,
+          state: 'PUBLISHED',
+          pendingCount: 0,
+          retryCount: 0,
+          sendingCount: 0,
+          publishedCount: 1,
+          resultUnknownCount: 0,
+          deadCount: 0,
+          eventTransportConfigured: true,
+          reconciliationRequired: false,
+          observedAt: generatedAt,
+        },
+        items: selections.map((selection) => ({
+          commandItemId: '64000000-0000-0000-0000-000000000001',
+          previewItemId: selection.previewItemId,
+          reservationOwner: 'WORKPLACE',
+          bookingId: deskBookings[0].bookingId,
+          selectedAction: selection.action,
+          expectedBookingVersion: selection.expectedBookingVersion,
+          replacementWorkplaceResourceId: null,
+          replacementOwnerResourceId: null,
+          replacementResourceVersion: null,
+          resultState: 'SUCCEEDED',
+          resultCode: null,
+          resultingBookingVersion: 2,
+        })),
+      };
+      return fulfillSuccess(route, closureCommand);
+    }
+    if (request.method() !== 'GET') {
       return route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -239,6 +363,27 @@ async function setup(page: Page, allowClosureCreation = false) {
       );
     if (path.endsWith(`/experience/facilities/closures/${closureId}`))
       return fulfillSuccess(route, selectedClosure);
+    if (path.endsWith('/closure-commands/63000000-0000-0000-0000-000000000001/receipt'))
+      return fulfillSuccess(route, {
+        command: closureCommand,
+        owner: 'PLATFORM',
+        bookingsMutated: false,
+        notificationScheduled: true,
+        notificationDispatchPublished: true,
+        externalDeliveryProven: false,
+        auditTrail: [
+          {
+            commandEventId: '65000000-0000-0000-0000-000000000001',
+            eventType: 'COMMAND_COMPLETED',
+            actorUserId: 7,
+            evidence: 'Pagination closure fixture completed.',
+            correlationId: 'pagination-closure-command',
+            occurredAt: generatedAt,
+          },
+        ],
+      });
+    if (path.endsWith('/closure-commands/63000000-0000-0000-0000-000000000001'))
+      return fulfillSuccess(route, closureCommand);
     if (path.endsWith('/experience/facilities/requests'))
       return fulfillSuccess(route, nativePage([]));
     if (path.endsWith('/photo') || path.endsWith('/photo/metadata'))
@@ -251,7 +396,6 @@ async function setup(page: Page, allowClosureCreation = false) {
   });
   return { reads, writes, creates };
 }
-const acknowledgement = 'I have reviewed the current values, proposed values and known impact.';
 async function selectSpace(page: Page, name: string) {
   await page
     .getByRole('region', { name: 'Spaces to work on', exact: true })
@@ -269,8 +413,7 @@ test('closure impact paginates native WP and Rooms owners and resets review on p
   await selectSpace(page, desk.name);
   const panel = page.getByRole('region', { name: 'Scheduled space closure', exact: true });
   const nav = panel.getByRole('navigation', { name: 'Future booking impact', exact: true });
-  const check = panel.getByRole('checkbox', { name: acknowledgement });
-  const schedule = panel.getByRole('button', { name: 'Schedule closure', exact: true });
+  const preview = panel.getByRole('button', { name: 'Create impact preview', exact: true });
   const latest = (kind: ImpactRead['kind']) =>
     state.reads.filter((read) => read.kind === kind).at(-1);
   await expect(panel.getByText('21 affected bookings', { exact: true })).toBeVisible();
@@ -283,29 +426,22 @@ test('closure impact paginates native WP and Rooms owners and resets review on p
   await panel
     .getByRole('textbox', { name: 'Closure reason', exact: true })
     .fill('Reviewed maintenance');
-  await check.check();
-  await expect(schedule).toBeEnabled();
+  await expect(preview).toBeEnabled();
   await nav.getByRole('button', { name: 'Next', exact: true }).click();
   await expect
     .poll(() => latest('WP'))
     .toMatchObject({ resourceId: deskId, siteId, page: 1, size: 20, ...initialInterval });
   await expect(panel.getByText(/^Affected desk booking /u)).toHaveCount(1);
   await expect(panel.getByText(/^Affected desk booking 21 ·/u)).toBeVisible();
-  await expect(check).not.toBeChecked();
-  await expect(check).toBeEnabled();
-  await expect(schedule).toBeDisabled();
+  await expect(preview).toBeEnabled();
   await expect(nav.getByRole('button', { name: 'Next', exact: true })).toBeDisabled();
-  await check.check();
-  await expect(schedule).toBeEnabled();
   // Expire the cached first page so Previous also proves the native page=0 request.
   await page.clock.fastForward(31_000);
   await nav.getByRole('button', { name: 'Previous', exact: true }).click();
   await expect(panel.getByText(/^Affected desk booking /u)).toHaveCount(20);
   await expect.poll(() => latest('WP')).toMatchObject({ page: 0, size: 20, ...initialInterval });
-  await expect(check).not.toBeChecked();
   await nav.getByRole('button', { name: 'Next', exact: true }).click();
   await expect(panel.getByText(/^Affected desk booking /u)).toHaveCount(1);
-  await check.check();
   await panel.getByRole('button', { name: /Fixture selected maintenance interval/u }).click();
   await expect
     .poll(() => latest('WP'))
@@ -316,7 +452,10 @@ test('closure impact paginates native WP and Rooms owners and resets review on p
       to: selectedClosure.endsAt,
     });
   await expect(panel.getByText(/^Affected desk booking /u)).toHaveCount(20);
-  await expect(check).not.toBeChecked();
+  const cancellationConfirmation = panel.getByRole('checkbox', {
+    name: 'I have reviewed the current values, proposed values and known impact.',
+  });
+  await expect(cancellationConfirmation).not.toBeChecked();
   await expect(panel.getByRole('button', { name: 'Cancel closure', exact: true })).toBeDisabled();
   await nav.getByRole('button', { name: 'Next', exact: true }).click();
   await expect(panel.getByText(/^Affected desk booking /u)).toHaveCount(1);
@@ -327,20 +466,18 @@ test('closure impact paginates native WP and Rooms owners and resets review on p
   const roomRows = panel.getByText(/ · CONFIRMED$/u);
   await expect(roomRows).toHaveCount(20);
   await expect(panel.getByText(/^Affected desk booking /u)).toHaveCount(0);
-  await expect(check).not.toBeChecked();
   await panel
     .getByRole('textbox', { name: 'Closure reason', exact: true })
     .fill('Reviewed room maintenance');
-  await check.check();
-  await expect(schedule).toBeEnabled();
+  await expect(
+    panel.getByRole('button', { name: 'Create impact preview', exact: true })
+  ).toBeEnabled();
   await nav.getByRole('button', { name: 'Next', exact: true }).click();
   await expect
     .poll(() => latest('ROOMS'))
     .toMatchObject({ resourceId: roomId, siteId, page: 1, size: 20 });
   await expect(roomRows).toHaveCount(1);
   await expect(roomRows).toContainText('1:45 PM');
-  await expect(check).not.toBeChecked();
-  await expect(schedule).toBeDisabled();
   await page.clock.fastForward(31_000);
   await nav.getByRole('button', { name: 'Previous', exact: true }).click();
   await expect(roomRows).toHaveCount(20);
@@ -357,7 +494,7 @@ test('closure impact paginates native WP and Rooms owners and resets review on p
   });
 });
 
-test('same-tick closure scheduling dispatches one confirmed native command and idempotency key', async ({
+test('closure execution dispatches one snapshot-bound booking decision with elevated access', async ({
   page,
 }) => {
   const state = await setup(page, true);
@@ -366,26 +503,38 @@ test('same-tick closure scheduling dispatches one confirmed native command and i
   const panel = page.getByRole('region', { name: 'Scheduled space closure', exact: true });
   const reason = panel.getByRole('textbox', { name: 'Closure reason', exact: true });
   await reason.fill('One reviewed maintenance command');
-  await panel.getByRole('checkbox', { name: acknowledgement }).check();
-  const schedule = panel.getByRole('button', { name: 'Schedule closure', exact: true });
-  await expect(schedule).toBeEnabled();
-  const issuedInterval = state.reads.at(-1)!;
-  await schedule.evaluate((element) => {
-    element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-    element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+  await panel.getByRole('button', { name: 'Create impact preview', exact: true }).click();
+  await panel.getByRole('combobox', { name: 'Booking decision', exact: true }).click();
+  await page.getByRole('option', { name: 'Keep booking', exact: true }).click();
+  await panel
+    .getByRole('checkbox', {
+      name: 'I reviewed the current snapshot and confirm every booking decision and notification impact.',
+    })
+    .check();
+  const execute = panel.getByRole('button', {
+    name: 'Execute closure and booking decisions',
+    exact: true,
   });
+  await expect(execute).toBeEnabled();
+  await execute.click();
+  await expect(panel.getByText('Closure execution receipt', { exact: true })).toBeVisible();
   await expect(reason).toHaveValue('');
   expect(state.creates).toHaveLength(1);
   expect(state.writes).toEqual([
-    `/api/platform/v1/admin/workplace/experience/facilities/resources/${deskId}/closures`,
+    '/api/platform/v1/admin/workplace/experience/facilities/closure-impact-previews/61000000-0000-0000-0000-000000000001/commands',
   ]);
   expect(state.creates[0]?.body).toEqual({
-    startsAt: issuedInterval.from,
-    endsAt: issuedInterval.to,
-    version: 1,
+    expectedPreviewVersion: 1,
+    confirmationToken: 'pagination-snapshot',
     reason: 'One reviewed maintenance command',
     confirmed: true,
+    selections: [
+      {
+        previewItemId: '62000000-0000-0000-0000-000000000001',
+        action: 'KEEP',
+        expectedBookingVersion: 1,
+      },
+    ],
   });
-  expect(state.creates[0]?.key).toMatch(/^[0-9a-f-]{36}$/);
-  await expect(schedule).toBeDisabled();
+  expect(state.creates[0]?.key).toMatch(/^workplace:facility-closure-execute:/u);
 });

@@ -22,6 +22,8 @@ import { NotificationTemplateStudio } from './notification-template-studio';
 import { NotificationSuppressionStudio } from './notification-suppression-studio';
 import { NotificationPageFrame } from './notification-page-frame';
 import { NotificationPageHeading } from './notification-ui';
+import { NotificationAdminNoiseQualityRuntime } from './notification-noise-quality-runtime';
+import { NotificationAttentionGovernanceRuntime } from './notification-attention-governance-runtime';
 
 const ADMIN_VIEW_ICONS = {
   overview: ShieldCheck,
@@ -43,9 +45,19 @@ function NotificationAdminSurface({
 }) {
   const { t } = useTranslation('notifications');
   const content = {
-    overview: <NotificationAdminOverviewPage />,
+    overview: (
+      <>
+        <NotificationAdminOverviewPage />
+        <NotificationAdminNoiseQualityRuntime />
+      </>
+    ),
     contracts: <NotificationTypeCatalogPage />,
-    policies: <NotificationPolicyStudio />,
+    policies: (
+      <Box sx={{ display: 'grid', gap: 3, minWidth: 0 }}>
+        <NotificationPolicyStudio />
+        <NotificationAttentionGovernanceRuntime />
+      </Box>
+    ),
     templates: <NotificationTemplateStudio />,
     operations: <NotificationDeliveryOperationsPage />,
     suppressions: <NotificationSuppressionStudio />,

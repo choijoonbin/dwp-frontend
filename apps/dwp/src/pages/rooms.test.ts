@@ -5,18 +5,33 @@ import { describe, expect, it } from 'vitest';
 const source = readFileSync(new URL('./rooms.tsx', import.meta.url), 'utf8');
 
 const roomsViews = [
-  'room-bookings',
   'rooms-admin-operations',
   'rooms-admin-policies',
-  'rooms-find',
   'workplace-admin-locations',
   'workplace-admin-governance',
   'workplace-admin-facilities',
   'workplace-admin-overview',
   'workplace-admin-policy',
-  'workplace-bookings',
+  'workplace-unified-reservations',
+  'workplace-service-orders',
+  'workplace-navigation-pages',
+  'workplace-navigation-pages',
+  'workplace-space-planning',
+  'workplace-service-provider-admin',
+  'workplace-assistant-user',
+  'workplace-assistant-admin',
+  'workplace-safety-user',
+  'workplace-safety-admin',
+  'workplace-service-fulfillment',
+  'workplace-service-catalog-admin',
+  'workplace-visit-admin',
+  'workplace-visit-management',
+  'workplace-visit-management',
+  'workplace-visit-management',
+  'workplace-visit-management',
   'workplace-explore',
   'workplace-member-workspace',
+  'workplace-planner',
 ] as const;
 
 describe('Rooms page loading boundary', () => {

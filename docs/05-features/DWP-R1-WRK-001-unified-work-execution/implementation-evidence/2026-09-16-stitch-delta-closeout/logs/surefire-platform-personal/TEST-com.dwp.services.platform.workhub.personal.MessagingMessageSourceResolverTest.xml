@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.workhub.personal.MessagingMessageSourceResolverTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-16T02:58:13" hostname="MacBook-Pro" time="0.25">
+  <properties/>
+  <testcase name="nonIntegralVersionAndOversizedOwnerResponseFailClosed()" classname="com.dwp.services.platform.workhub.personal.MessagingMessageSourceResolverTest" time="0.214"/>
+  <testcase name="serviceCredentialRejectionIsAnOperationalFailureNotAccessRevocation()" classname="com.dwp.services.platform.workhub.personal.MessagingMessageSourceResolverTest" time="0.007"/>
+  <testcase name="accessRevocationDeletionAndIdentityMismatchNeverExposeMetadata()" classname="com.dwp.services.platform.workhub.personal.MessagingMessageSourceResolverTest" time="0.013"/>
+  <testcase name="malformedIdentityMissingPermissionAndUnconfiguredCredentialsFailClosed()" classname="com.dwp.services.platform.workhub.personal.MessagingMessageSourceResolverTest" time="0.001"/>
+  <testcase name="hydratesOnlyAuthoritativeBoundedMetadataWithCanonicalInternalRoute()" classname="com.dwp.services.platform.workhub.personal.MessagingMessageSourceResolverTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

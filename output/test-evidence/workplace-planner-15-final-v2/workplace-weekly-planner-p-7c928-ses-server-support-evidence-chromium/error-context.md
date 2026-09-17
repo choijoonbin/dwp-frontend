@@ -1,0 +1,203 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - generic "0 actionable notifications, 0 total unread" [ref=e27]:
+            - button "0 actionable notifications, 0 total unread" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]:
+                - img [ref=e30]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+          - generic "Open DWAI·ON" [ref=e39]:
+            - button "Open DWAI·ON" [ref=e40] [cursor=pointer]
+    - main [ref=e43]:
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - text: Multi-day workplace planning
+            - heading "Weekly booking planner" [level=1] [ref=e48]
+            - paragraph [ref=e49]: Plan desks, parking and lockers for yourself or authorized beneficiaries, then confirm one server-held batch.
+          - button "Refresh" [ref=e51] [cursor=pointer]
+        - generic [ref=e53]:
+          - paragraph [ref=e54]: Planner progress
+          - generic [ref=e56]: 1. Plan
+          - generic [ref=e58]: 2. Hold and review
+          - generic [ref=e60]: 3. Results
+          - generic [ref=e62]: Current
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - generic [ref=e66]:
+                - heading "Schedule and beneficiaries" [level=2] [ref=e67]
+                - paragraph [ref=e68]: Only people returned by the authorized-beneficiaries source can be selected.
+              - generic [ref=e70]: 5-day package
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - img [ref=e73]
+                - paragraph [ref=e77]: Actor and beneficiary scope
+              - paragraph [ref=e78]: "Booking actor: Tenant Admin"
+              - generic [ref=e79]:
+                - generic [ref=e80]:
+                  - generic [ref=e81]: Reservation target
+                  - generic [ref=e82]:
+                    - combobox "Reservation target Team package" [ref=e83] [cursor=pointer]: Team package
+                    - textbox: TEAM
+                    - img
+                    - group:
+                      - generic: Reservation target
+                - generic [ref=e84]:
+                  - text: Authorized beneficiaries
+                  - generic [ref=e85]:
+                    - button "Tenant Admin" [pressed] [ref=e86] [cursor=pointer]:
+                      - generic [ref=e87]: Tenant Admin
+                    - button "Authorized colleague" [pressed] [ref=e88] [cursor=pointer]:
+                      - generic [ref=e89]: Authorized colleague
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - img [ref=e92]
+                - paragraph [ref=e94]: Dates and time
+              - generic [ref=e95]:
+                - generic [ref=e96]:
+                  - generic [ref=e97]: Week of
+                  - group "Week of" [ref=e98]:
+                    - generic [ref=e99]:
+                      - generic [ref=e100]:
+                        - spinbutton "Month" [ref=e101]: "09"
+                        - text: /
+                      - generic [ref=e102]:
+                        - spinbutton "Day" [ref=e103]: "14"
+                        - text: /
+                      - spinbutton "Year" [ref=e105]: "2026"
+                    - button "Choose date, selected date is Sep 14, 2026" [ref=e107] [cursor=pointer]:
+                      - img [ref=e108]
+                    - group:
+                      - generic: Week of
+                    - textbox [ref=e110]: 09/14/2026
+                - generic [ref=e111]:
+                  - generic [ref=e112]: Start time
+                  - group "Start time" [ref=e113]:
+                    - generic [ref=e114]:
+                      - generic [ref=e115]:
+                        - spinbutton "Hours" [ref=e116]: "09"
+                        - text: ":"
+                      - spinbutton "Minutes" [ref=e118]: "00"
+                      - spinbutton "Meridiem" [ref=e120]: AM
+                    - button "Choose time, selected time is 09:00 AM" [ref=e122] [cursor=pointer]:
+                      - img [ref=e123]
+                    - group:
+                      - generic: Start time
+                    - textbox [ref=e126]: 09:00 AM
+                - generic [ref=e127]:
+                  - generic [ref=e128]: Daily duration
+                  - generic [ref=e129]:
+                    - combobox "Daily duration 9 hours" [ref=e130] [cursor=pointer]: 9 hours
+                    - textbox: "540"
+                    - img
+                    - group:
+                      - generic: Daily duration
+              - generic [ref=e131]:
+                - generic [ref=e132] [cursor=pointer]:
+                  - generic [ref=e133]:
+                    - checkbox "2026-09-14" [checked] [ref=e134]
+                    - img [ref=e135]
+                  - generic [ref=e137]: 2026-09-14
+                - generic [ref=e138] [cursor=pointer]:
+                  - generic [ref=e139]:
+                    - checkbox "2026-09-15" [checked] [ref=e140]
+                    - img [ref=e141]
+                  - generic [ref=e143]: 2026-09-15
+            - generic [ref=e144]:
+              - generic [ref=e145]:
+                - generic [ref=e146]: Site
+                - generic [ref=e147]:
+                  - combobox "Site Pangyo HQ" [ref=e148] [cursor=pointer]: Pangyo HQ
+                  - textbox: 10000000-0000-4000-8000-000000000001
+                  - img
+                  - group:
+                    - generic: Site
+              - generic [ref=e149]:
+                - generic [ref=e150]: Floor
+                - generic [ref=e151]:
+                  - combobox "Floor 12F" [ref=e152] [cursor=pointer]: 12F
+                  - textbox: 20000000-0000-4000-8000-000000000012
+                  - img
+                  - group:
+                    - generic: Floor
+            - generic [ref=e153]:
+              - paragraph [ref=e154]: Package resources
+              - generic [ref=e155]:
+                - generic [ref=e156] [cursor=pointer]:
+                  - generic [ref=e157]:
+                    - checkbox "Desk" [checked] [ref=e158]
+                    - img [ref=e159]
+                  - generic [ref=e161]: Desk
+                - generic [ref=e162] [cursor=pointer]:
+                  - generic [ref=e163]:
+                    - checkbox "Parking" [ref=e164]
+                    - img [ref=e165]
+                  - generic [ref=e167]: Parking
+                - generic [ref=e168] [cursor=pointer]:
+                  - generic [ref=e169]:
+                    - checkbox "Locker" [ref=e170]
+                    - img [ref=e171]
+                  - generic [ref=e173]: Locker
+            - generic [ref=e174]:
+              - paragraph [ref=e175]: Team placement conditions
+              - generic [ref=e176]:
+                - generic [ref=e177] [cursor=pointer]:
+                  - generic [ref=e178]:
+                    - checkbox "Keep team seats adjacent" [checked] [ref=e179]
+                    - img [ref=e180]
+                  - generic [ref=e182]: Keep team seats adjacent
+                - generic [ref=e183] [cursor=pointer]:
+                  - generic [ref=e184]:
+                    - checkbox "Keep the team in one Neighborhood" [checked] [ref=e185]
+                    - img [ref=e186]
+                  - generic [ref=e188]: Keep the team in one Neighborhood
+              - generic [ref=e189]:
+                - generic [ref=e190]:
+                  - generic [ref=e191]: Minimum distance (m)
+                  - generic [ref=e192]:
+                    - spinbutton "Minimum distance (m)" [ref=e193]: "1"
+                    - group:
+                      - generic: Minimum distance (m)
+                - generic [ref=e194]:
+                  - generic [ref=e195]: Maximum distance (m)
+                  - generic [ref=e196]:
+                    - spinbutton "Maximum distance (m)" [ref=e197]: "8"
+                    - group:
+                      - generic: Maximum distance (m)
+            - generic [ref=e198]:
+              - paragraph [ref=e199]: Waitlist conditions
+              - paragraph [ref=e200]: "Maximum alternative distance: 8 m. The requested booking window is retained."
+              - generic [ref=e202]: "Price limit: not applicable for this resource"
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - generic [ref=e205]: Booking purpose
+                - generic [ref=e206]:
+                  - textbox "Booking purpose" [ref=e207]: Weekly workplace plan
+                  - group:
+                    - generic: Booking purpose
+              - generic [ref=e208] [cursor=pointer]:
+                - generic [ref=e209]:
+                  - checkbox "Accessible resources only" [ref=e210]
+                  - img [ref=e211]
+                - generic [ref=e213]: Accessible resources only
+          - button "Preview package availability" [ref=e216] [cursor=pointer]
+```

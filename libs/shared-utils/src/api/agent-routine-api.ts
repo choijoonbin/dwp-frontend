@@ -4,6 +4,7 @@ import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 import {
+  assertAgentRevision,
   assertAgentUuid,
   expectAgentData,
   isAgentDate,
@@ -14,11 +15,23 @@ import {
   productSurfaceGovernedMutationConfig,
   type ProductSurfaceGovernedMutationAuthority,
 } from './product-surface-governed-mutation';
+import type {
+  DwaionRoutineActivationCommand,
+  DwaionRoutineExecutionPolicyDefinition,
+} from './agent-routine-execution-contract';
 
 type AgentSchemas = AgentComponents['schemas'];
 
-export type DwaionRoutineDefinition = AgentSchemas['RoutineDefinition'];
-export type DwaionPersonalRoutine = AgentSchemas['PersonalRoutine'];
+export type DwaionRoutineDefinition = AgentSchemas['RoutineDefinition'] &
+  DwaionRoutineExecutionPolicyDefinition;
+export type DwaionPersonalRoutine = Omit<
+  AgentSchemas['PersonalRoutine'],
+  'definition' | 'executionMode' | 'lifecycleState'
+> & {
+  definition: DwaionRoutineDefinition;
+  lifecycleState: 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED';
+  executionMode: 'DRY_RUN_ONLY' | 'SCHEDULED';
+};
 export type DwaionRoutineDryRunReceipt = AgentSchemas['RoutineDryRunReceipt'];
 export type DwaionRoutineConsentScope = AgentSchemas['RoutineConsentScope'];
 export type DwaionRoutineConsentState = AgentSchemas['RoutineConsentState'];
@@ -108,6 +121,30 @@ export async function changeDwaionRoutineLifecycle(
   );
 }
 
+export async function changeDwaionRoutineActivation(
+  routineId: string,
+  command: DwaionRoutineActivationCommand
+): Promise<DwaionPersonalRoutine> {
+  assertAgentUuid(command.commandId, 'Routine activation command identifier');
+  assertAgentRevision(command.expectedRevision, 'Routine activation revision', 1);
+  const body = {
+    commandId: command.commandId,
+    expectedRevision: command.expectedRevision,
+    reasonCode: command.reasonCode,
+    changeReason: command.changeReason.trim(),
+    action: command.action,
+    startAt: command.startAt ?? null,
+  };
+  if (!/^[A-Z][A-Z0-9_.-]{1,63}$/u.test(body.reasonCode) || body.changeReason.length < 5)
+    throw new TypeError('Routine activation reason is invalid.');
+  return mutateRoutine(
+    `${ROUTINE_BASE}/${encodeRoutineId(routineId)}/activation`,
+    body,
+    'post',
+    command.authority ?? LEGACY_AUTHORITY
+  );
+}
+
 export async function dryRunDwaionRoutine(
   routineId: string,
   expectedRevision: number,
@@ -187,12 +224,39 @@ function isRoutine(value: unknown): value is DwaionPersonalRoutine {
     typeof value.definition.name === 'string' &&
     typeof value.definition.objective === 'string' &&
     Array.isArray(value.definition.sources) &&
+    isRoutineExecutionPolicy(value.definition) &&
     typeof value.capabilities.backgroundExecutionAvailable === 'boolean' &&
     typeof value.capabilities.dryRunAvailable === 'boolean' &&
     typeof value.capabilities.notificationDeliveryAvailable === 'boolean' &&
     typeof value.capabilities.proposalDeliveryAvailable === 'boolean' &&
     isAgentDate(value.createdAt) &&
     isAgentDate(value.updatedAt)
+  );
+}
+
+function isRoutineExecutionPolicy(value: Record<string, unknown>): boolean {
+  if (
+    !isAgentRecord(value.budget) ||
+    !isAgentRecord(value.retryPolicy) ||
+    !isAgentRecord(value.notificationPolicy) ||
+    !isAgentRecord(value.compensationPolicy)
+  ) {
+    return false;
+  }
+  return (
+    Number.isInteger(value.budget.maximumRunsPerMonth) &&
+    Number.isInteger(value.budget.maximumTokensPerRun) &&
+    Number.isInteger(value.budget.maximumMinutesPerRun) &&
+    Number.isInteger(value.retryPolicy.maximumAttempts) &&
+    Number.isInteger(value.retryPolicy.initialBackoffSeconds) &&
+    typeof value.retryPolicy.backoffMultiplier === 'number' &&
+    typeof value.notificationPolicy.notifyOnPartial === 'boolean' &&
+    typeof value.notificationPolicy.notifyOnFailure === 'boolean' &&
+    typeof value.notificationPolicy.notifyOnRecovery === 'boolean' &&
+    typeof value.compensationPolicy.enabled === 'boolean' &&
+    ['REVOKE_PENDING_HANDOFFS', 'PROVIDER_MANAGED'].includes(
+      String(value.compensationPolicy.strategy)
+    )
   );
 }
 

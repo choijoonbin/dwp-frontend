@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.messaging.domain.MessagingServiceTest" tests="21" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:09:23" hostname="MacBook-Pro" time="0.23">
+  <properties/>
+  <testcase name="moderatorCanSoftDeleteAnotherAuthorsMessage()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.147"/>
+  <testcase name="moderatorCannotRewriteAnotherAuthorsMessage()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.005"/>
+  <testcase name="messageRequestFingerprintIncludesMentionRecipients()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.006"/>
+  <testcase name="authorCanEditWithExpectedVersion()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.003"/>
+  <testcase name="nestedReplyIsRejectedToKeepThreadRootStable()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.002"/>
+  <testcase name="idempotentSendReplayReturnsTheOriginalMessageDeltaWithoutAnotherEvent()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.003"/>
+  <testcase name="nonPositiveMessageCursorIsRejectedAfterConversationVisibilityCheck()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.003"/>
+  <testcase name="messageHistoryUsesAValidatedConversationScopedCursor()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.002"/>
+  <testcase name="structuredMentionsAreValidatedAndPersistedWithTheMessage()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.008"/>
+  <testcase name="sendReturnsOnlyTheCreatedMessageDelta()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.004"/>
+  <testcase name="idempotencyConflictIsReportedBeforeMutableReplyValidation()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.005"/>
+  <testcase name="staleMessageVersionIsRejectedBeforeMutation()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.002"/>
+  <testcase name="reactionsReturnOnlyTheUpdatedMessageDelta()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.004"/>
+  <testcase name="replyCannotReferenceMessageOutsideVisibleConversation()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.004"/>
+  <testcase name="invisibleConversationHistoryIsReportedAsNotFoundWithoutQueryingMessages()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.002"/>
+  <testcase name="workSourceFailsClosedAfterDeleteMembershipLossOrTenantMismatch()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.003"/>
+  <testcase name="messageRequestFingerprintUsesNormalizedBodyAndConversationScope()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.005"/>
+  <testcase name="workSourceReturnsCurrentEditedMessageFromTheExactAuthorizedConversation()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.003"/>
+  <testcase name="ordinaryMembersCannotNotifyEveryone()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.004"/>
+  <testcase name="olderReadCursorRequestIsAnIdempotentNoOp()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.004"/>
+  <testcase name="directConversationCommandReturnsOnlyTheConversationSummary()" classname="com.dwp.services.messaging.domain.MessagingServiceTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

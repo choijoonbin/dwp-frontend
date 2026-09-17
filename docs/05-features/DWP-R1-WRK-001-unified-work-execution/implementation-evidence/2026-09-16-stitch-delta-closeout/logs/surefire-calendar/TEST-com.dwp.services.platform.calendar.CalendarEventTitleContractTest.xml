@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarEventTitleContractTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:12" hostname="MacBook-Pro" time="0.061">
+  <properties/>
+  <testcase name="createAndUpdateAcceptTheThreeHundredCharacterWorkHandoffTitleContract()" classname="com.dwp.services.platform.calendar.CalendarEventTitleContractTest" time="0.061"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

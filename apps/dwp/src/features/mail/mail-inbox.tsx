@@ -10,16 +10,18 @@ import {
   Search,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   applyMailThreadAction,
   applyMailLifecycle,
   dwaionHandoffStrings,
   dwaionHandoffText,
+  getMailHome,
   getMailThreads,
   getMailOrganization,
   parseDwaionHandoff,
   snoozeMailThread,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -45,10 +47,14 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import type { Theme } from '@mui/material/styles';
 
 import { MailCommandPalette, type MailCommand } from './mail-command-palette';
+import { validMailAccountScope } from './mail-account-scope';
+import { parseMailComposeNavigationState } from './mail-compose-navigation';
 import { MailComposeDialog } from './mail-compose-dialog';
 import { MailPageHeading, MailThreadListItem } from './mail-components';
 import { isMailShortcutTargetInteractive } from './mail-keyboard';
 import { MailLifecycleUndo, type MailLifecycleUndoState } from './mail-lifecycle-undo';
+import { mailSendCustodyOwner } from './mail-send-attempt';
+import { mailSharedAssignmentFilter, updateMailSharedFilters } from './mail-shared-filter';
 import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadDetailPane } from './mail-thread-detail';
 
@@ -60,33 +66,59 @@ type MailQuickCommand = Extract<MailCommand, 'mark-read' | 'star' | 'archive'>;
 const LANES: readonly MailTriageLane[] = ['PRIORITY', 'NEEDS_REPLY', 'ASSIGNED', 'UPDATES'];
 const PAGE_SIZE = 30;
 
-function resolveLane(value: string | null, mode: MailboxMode): MailTriageLane {
+function requestedPage(value: string | null) {
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : 0;
+}
+
+function resolveLane(value: string | null, mode: MailboxMode): MailTriageLane | null {
   if (value && LANES.includes(value as MailTriageLane)) return value as MailTriageLane;
-  return mode === 'shared' ? 'ASSIGNED' : 'PRIORITY';
+  return mode === 'shared' ? null : 'PRIORITY';
 }
 
 export function MailInbox({ mode }: { mode: MailboxMode }) {
   const { t } = useTranslation('mail');
+  const auth = useAuth();
+  const custodyOwner = mailSendCustodyOwner(auth.user);
+  const custodyOwnerRef = useRef(custodyOwner);
+  custodyOwnerRef.current = custodyOwner;
   const toast = useToast();
   const queryClient = useQueryClient();
   const location = useLocation();
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const lane = resolveLane(params.get('lane'), mode);
+  const requestedAccountId = params.get('accountId');
+  const requestedSharedInboxId = params.get('sharedInboxId');
+  const sharedAssignment = mailSharedAssignmentFilter(params.get('assignment'));
   const requestedQuery = params.get('query') ?? '';
   const [search, setSearch] = useState(requestedQuery);
   const [debouncedSearch, setDebouncedSearch] = useState(requestedQuery.trim());
-  const [page, setPage] = useState(0);
+  const page = requestedPage(params.get('page'));
   const [commandOpen, setCommandOpen] = useState(false);
   const [snoozeTarget, setSnoozeTarget] = useState<MailThread | null>(null);
   const [undoState, setUndoState] = useState<MailLifecycleUndoState | null>(null);
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const restoreListContextRef = useRef(false);
   const desktopSplitView = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const selectedId = params.get('thread');
   const composeOpen = params.get('compose') === 'open';
   const requestedFolderId = params.get('folderId');
-  const [dwaionHandoff, setDwaionHandoff] = useState(() =>
-    parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE')
-  );
+  const [dwaionHandoffState, setDwaionHandoffState] = useState(() => ({
+    owner: custodyOwner,
+    handoff: parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE'),
+  }));
+  const dwaionHandoff =
+    dwaionHandoffState.owner === custodyOwner ? dwaionHandoffState.handoff : null;
+  const [composeNavigationState, setComposeNavigationState] = useState(() => ({
+    owner: custodyOwner,
+    ...parseMailComposeNavigationState(location.state),
+  }));
+  const composeNavigation =
+    composeNavigationState.owner === custodyOwner
+      ? composeNavigationState
+      : { seed: null, returnTo: null };
   const organizationQuery = useQuery({
     queryKey: ['mail', 'organization'],
     queryFn: getMailOrganization,
@@ -94,6 +126,15 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     staleTime: 30_000,
     retry: 1,
   });
+  const scopeOptionsQuery = useQuery({
+    queryKey: ['mail', 'home', 'scope-options'],
+    queryFn: () => getMailHome(),
+    staleTime: 60_000,
+    retry: 1,
+  });
+  const accountScope = scopeOptionsQuery.data
+    ? validMailAccountScope(requestedAccountId, scopeOptionsQuery.data.accounts)
+    : requestedAccountId;
   const customFolders = useMemo(
     () => organizationQuery.data?.folders.filter((item) => item.folderType === 'CUSTOM') ?? [],
     [organizationQuery.data?.folders]
@@ -133,16 +174,22 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
       activeLane,
       state,
       requestedFolderId,
+      accountScope,
+      requestedSharedInboxId,
+      sharedAssignment,
       debouncedSearch,
       page,
     ],
     queryFn: () =>
       getMailThreads({
-        lane: activeLane,
+        lane: activeLane ?? undefined,
         state,
         folder,
         folderId: mode === 'custom' ? (requestedFolderId ?? undefined) : undefined,
         sharedOnly: mode === 'shared',
+        accountId: accountScope ?? undefined,
+        sharedInboxId: mode === 'shared' ? (requestedSharedInboxId ?? undefined) : undefined,
+        assignment: mode === 'shared' && sharedAssignment !== 'ALL' ? sharedAssignment : undefined,
         query: debouncedSearch,
         page,
         pageSize: PAGE_SIZE,
@@ -153,7 +200,18 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     retry: 1,
   });
   const selectedThread = query.data?.items.find((item) => item.threadId === selectedId);
-  const contextKey = [mode, activeLane, state, requestedFolderId, debouncedSearch, page].join('|');
+  const contextKey = [
+    mode,
+    activeLane,
+    state,
+    requestedFolderId,
+    accountScope,
+    requestedSharedInboxId,
+    sharedAssignment,
+    debouncedSearch,
+    page,
+  ].join('|');
+  const listContextStorageKey = `dwp:mail:list-context:${custodyOwner}:${contextKey}`;
   const previousContextRef = useRef(contextKey);
   const quickMutation = useMutation({
     mutationFn: async ({ command, thread }: { command: MailQuickCommand; thread: MailThread }) => {
@@ -194,20 +252,51 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
 
   useEffect(() => {
     const nextHandoff = parseDwaionHandoff(location.state, 'MAIL.DRAFT.CREATE');
-    if (nextHandoff) setDwaionHandoff(nextHandoff);
+    if (nextHandoff) {
+      setDwaionHandoffState({ owner: custodyOwnerRef.current, handoff: nextHandoff });
+    }
+    const composeState = parseMailComposeNavigationState(location.state);
+    if (composeState.seed || composeState.returnTo) {
+      setComposeNavigationState({ owner: custodyOwnerRef.current, ...composeState });
+    }
   }, [location.state]);
+
+  useEffect(() => {
+    const options = scopeOptionsQuery.data;
+    if (!options) return;
+    const invalidAccount = Boolean(requestedAccountId) && !accountScope;
+    const invalidSharedInbox =
+      mode === 'shared' &&
+      Boolean(requestedSharedInboxId) &&
+      !options.sharedInboxes.some((inbox) => inbox.sharedInboxId === requestedSharedInboxId);
+    if (!invalidAccount && !invalidSharedInbox) return;
+    const next = new URLSearchParams(params);
+    if (invalidAccount) next.delete('accountId');
+    if (invalidSharedInbox) next.delete('sharedInboxId');
+    next.delete('thread');
+    next.delete('page');
+    setParams(next, { replace: true });
+  }, [
+    accountScope,
+    mode,
+    params,
+    requestedAccountId,
+    requestedSharedInboxId,
+    scopeOptionsQuery.data,
+    setParams,
+  ]);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       const nextQuery = search.trim();
       setDebouncedSearch(nextQuery);
       if (nextQuery === requestedQuery) return;
-      setPage(0);
       setParams(
         (current) => {
           const next = new URLSearchParams(current);
           if (nextQuery) next.set('query', nextQuery);
           else next.delete('query');
+          next.delete('page');
           return next;
         },
         { replace: true }
@@ -221,10 +310,6 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     setSearch(requestedQuery);
     setDebouncedSearch(requestedQuery.trim());
   }, [requestedQuery, search]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [mode]);
 
   useEffect(() => {
     if (previousContextRef.current === contextKey) return;
@@ -249,6 +334,31 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     next.set('thread', query.data.items[0]!.threadId);
     setParams(next, { replace: true });
   }, [desktopSplitView, params, query.data?.items, query.isFetching, selectedId, setParams]);
+
+  useEffect(() => {
+    if (
+      selectedId ||
+      query.isFetching ||
+      !query.data?.items.length ||
+      !restoreListContextRef.current
+    )
+      return;
+    restoreListContextRef.current = false;
+    try {
+      const stored = window.sessionStorage.getItem(listContextStorageKey);
+      if (!stored) return;
+      const context = JSON.parse(stored) as { scrollTop?: unknown; threadId?: unknown };
+      if (typeof context.scrollTop === 'number')
+        listRef.current?.scrollTo({ top: context.scrollTop });
+      if (typeof context.threadId === 'string') {
+        window.requestAnimationFrame(() => {
+          document.getElementById(`mail-thread-${context.threadId}`)?.focus();
+        });
+      }
+    } catch {
+      window.sessionStorage.removeItem(listContextStorageKey);
+    }
+  }, [listContextStorageKey, query.data?.items, query.isFetching, selectedId]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -287,28 +397,51 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     setParams(next, { replace: true });
   };
   const closeCompose = () => {
-    setDwaionHandoff(null);
+    setDwaionHandoffState({ owner: custodyOwnerRef.current, handoff: null });
+    const returnTo = composeNavigation.returnTo;
+    setComposeNavigationState({ owner: custodyOwnerRef.current, seed: null, returnTo: null });
+    if (returnTo) {
+      navigate(returnTo, { replace: true, state: null });
+      return;
+    }
     const next = new URLSearchParams(params);
     next.delete('compose');
     setParams(next, { replace: true, state: null });
   };
   const selectThread = (threadId: string) => {
+    try {
+      window.sessionStorage.setItem(
+        listContextStorageKey,
+        JSON.stringify({ scrollTop: listRef.current?.scrollTop ?? 0, threadId })
+      );
+    } catch {
+      // Browsing still works when storage is unavailable.
+    }
     const next = new URLSearchParams(params);
     next.set('thread', threadId);
-    setParams(next, { replace: true });
+    setParams(next);
   };
   const clearSelection = () => {
+    restoreListContextRef.current = true;
     const next = new URLSearchParams(params);
     next.delete('thread');
     setParams(next, { replace: true });
   };
-  const selectLane = (nextLane: MailTriageLane) => {
+  const selectLane = (nextLane: MailTriageLane | null) => {
     const next = new URLSearchParams(params);
-    next.set('lane', nextLane);
+    if (nextLane) next.set('lane', nextLane);
+    else next.delete('lane');
     next.delete('state');
     next.delete('thread');
-    setPage(0);
+    next.delete('page');
     setParams(next, { replace: true });
+  };
+  const selectPage = (nextPage: number) => {
+    const next = new URLSearchParams(params);
+    if (nextPage > 0) next.set('page', String(nextPage));
+    else next.delete('page');
+    next.delete('thread');
+    setParams(next);
   };
   const runCommand = (command: MailCommand) => {
     if (command === 'compose') return openCompose();
@@ -373,6 +506,77 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           }}
         >
           <Box sx={{ px: 1.5, pt: 1.5, pb: 1, borderBottom: 1, borderColor: 'divider' }}>
+            {scopeOptionsQuery.data?.accounts.length ? (
+              <SelectField<string>
+                size="small"
+                label={t('home.accountScope')}
+                value={accountScope ?? ''}
+                options={[
+                  { value: '', label: t('home.allAccounts') },
+                  ...scopeOptionsQuery.data.accounts.map((account) => ({
+                    value: account.accountId,
+                    label: `${account.displayName} · ${account.emailAddress}`,
+                  })),
+                ]}
+                sx={{ mb: 1 }}
+                onValueChange={(accountId) => {
+                  const next = new URLSearchParams(params);
+                  if (accountId) next.set('accountId', accountId);
+                  else next.delete('accountId');
+                  next.delete('thread');
+                  next.delete('page');
+                  setParams(next, { replace: true });
+                }}
+              />
+            ) : null}
+            {mode === 'shared' && (
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) minmax(0, 1fr)' },
+                  gap: 1,
+                  mb: 1,
+                }}
+              >
+                <SelectField<string>
+                  size="small"
+                  label={t('mailbox.shared.inboxFilter')}
+                  value={requestedSharedInboxId ?? ''}
+                  options={[
+                    { value: '', label: t('mailbox.shared.allInboxes') },
+                    ...(scopeOptionsQuery.data?.sharedInboxes ?? []).map((inbox) => ({
+                      value: inbox.sharedInboxId,
+                      label: inbox.name,
+                    })),
+                  ]}
+                  onValueChange={(sharedInboxId) =>
+                    setParams(
+                      updateMailSharedFilters(params, {
+                        sharedInboxId: sharedInboxId || null,
+                      }),
+                      { replace: true }
+                    )
+                  }
+                />
+                <SelectField<string>
+                  size="small"
+                  label={t('mailbox.shared.assignmentFilter')}
+                  value={sharedAssignment}
+                  options={(['ALL', 'MINE', 'UNASSIGNED'] as const).map((assignment) => ({
+                    value: assignment,
+                    label: t(`mailbox.shared.assignment.${assignment}`),
+                  }))}
+                  onValueChange={(assignment) =>
+                    setParams(
+                      updateMailSharedFilters(params, {
+                        assignment: mailSharedAssignmentFilter(assignment),
+                      }),
+                      { replace: true }
+                    )
+                  }
+                />
+              </Box>
+            )}
             {mode === 'custom' && (
               <SelectField<string>
                 size="small"
@@ -412,12 +616,15 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
             />
             {(mode === 'inbox' || mode === 'shared') && !snoozedView && (
               <Tabs
-                value={lane}
-                onChange={(_event, value: MailTriageLane) => selectLane(value)}
+                value={lane ?? 'ALL'}
+                onChange={(_event, value: MailTriageLane | 'ALL') =>
+                  selectLane(value === 'ALL' ? null : value)
+                }
                 variant="scrollable"
                 scrollButtons={false}
                 sx={{ mt: 1, minHeight: 34, '& .MuiTab-root': { minHeight: 34, px: 1.25 } }}
               >
+                {mode === 'shared' && <Tab value="ALL" label={t('mailbox.shared.allLanes')} />}
                 {LANES.map((item) => (
                   <Tab key={item} value={item} label={t(`lane.${item}`)} />
                 ))}
@@ -427,7 +634,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           {query.isFetching && !query.isLoading && (
             <LinearProgress aria-label={t('mailbox.updating')} sx={{ height: 2 }} />
           )}
-          <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+          <Box ref={listRef} sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
             {mode === 'custom' && organizationQuery.isError ? (
               <Alert
                 severity="error"
@@ -458,6 +665,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
               query.data.items.map((thread) => (
                 <MailThreadListItem
                   key={thread.threadId}
+                  buttonId={`mail-thread-${thread.threadId}`}
                   thread={thread}
                   selected={selectedId === thread.threadId}
                   disabled={query.isFetching}
@@ -486,7 +694,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                     size="small"
                     label={t('mailbox.previousPage')}
                     disabled={page === 0 || query.isFetching}
-                    onClick={() => setPage((current) => Math.max(0, current - 1))}
+                    onClick={() => selectPage(Math.max(0, page - 1))}
                   >
                     <ChevronLeft size={16} />
                   </ActionIconButton>
@@ -497,7 +705,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                     size="small"
                     label={t('mailbox.nextPage')}
                     disabled={page + 1 >= pageCount || query.isFetching}
-                    onClick={() => setPage((current) => Math.min(pageCount - 1, current + 1))}
+                    onClick={() => selectPage(Math.min(pageCount - 1, page + 1))}
                   >
                     <ChevronRight size={16} />
                   </ActionIconButton>
@@ -532,9 +740,17 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
 
       <MailComposeDialog
         open={composeOpen}
-        initialToEmail={dwaionHandoffStrings(dwaionHandoff, 'to')[0]}
-        initialSubject={dwaionHandoffText(dwaionHandoff, 'subject') ?? undefined}
-        initialBody={dwaionHandoffText(dwaionHandoff, 'body') ?? undefined}
+        initialToEmail={
+          composeNavigation.seed?.toEmail ?? dwaionHandoffStrings(dwaionHandoff, 'to')[0]
+        }
+        initialSubject={
+          composeNavigation.seed?.subject ??
+          dwaionHandoffText(dwaionHandoff, 'subject') ??
+          undefined
+        }
+        initialBody={
+          composeNavigation.seed?.body ?? dwaionHandoffText(dwaionHandoff, 'body') ?? undefined
+        }
         fromDwaion={Boolean(dwaionHandoff)}
         onClose={closeCompose}
         onCompleted={(threadId, deliveryMode) => {

@@ -41,8 +41,6 @@ import { notificationQueryKeys } from './integration-contract';
 import { scheduleNotificationCacheInvalidation } from './notification-cache-policy';
 import { NotificationBulkUndoBanner } from './notification-bulk-undo-banner';
 import { NotificationPageFrame } from './notification-page-frame';
-import { notificationArrivalContent } from '../../components/notification-arrival-policy';
-import { GovernedSavedViewControl } from '../../components/governed-saved-view-control';
 import {
   defaultSnoozeTime,
   flattenNotificationPages,
@@ -51,8 +49,8 @@ import {
   optimisticTriageItem,
 } from './notification-model';
 import {
-  groupNotificationStream,
   isNotificationShortcutTarget,
+  orderNotificationItemsForPresentation,
   optimisticNotificationSummary,
 } from './notification-inbox-model';
 import {
@@ -60,22 +58,20 @@ import {
   updateInboxCache,
   type NotificationInboxCache,
 } from './notification-center-cache';
-import { NotificationActionCard } from './notification-action-card';
 import { NotificationFilterBar } from './notification-filter-bar';
+import { NotificationResultCount } from './notification-result-count';
 import {
   EMPTY_NOTIFICATION_FILTERS,
   hasNotificationFilters,
   notificationFiltersForView,
+  notificationQueryFacets,
 } from './notification-filter-model';
 import type { CenterFilters } from './notification-filter-model';
 export type { CenterFilters, NotificationCenterScope } from './notification-filter-model';
 import { NotificationCenterDetail } from './notification-center-detail';
 import { useNotificationInspectorHeight } from './use-notification-inspector-height';
 import type { NotificationCenterProps } from './notification-center-contract';
-import {
-  NotificationStreamGroupHeading,
-  NotificationWorkbenchHeader,
-} from './notification-inbox-chrome';
+import { NotificationWorkbenchHeader } from './notification-inbox-chrome';
 import {
   NotificationConnectionNotice,
   NotificationSyncResetNotice,
@@ -88,11 +84,22 @@ import {
 } from './use-notification-runtime';
 import { useNotificationBulkActions } from './use-notification-bulk-actions';
 import {
+  DEFAULT_NOTIFICATION_CENTER_PRESENTATION,
   NOTIFICATION_SAVED_VIEW_SURFACE,
-  notificationSavedViewConfiguration,
+  notificationBuiltInSavedViews,
   parseNotificationSavedViewConfiguration,
   selectedNotificationBuiltInViewId,
 } from './notification-saved-view-model';
+import { NotificationSavedViewControl } from './notification-saved-view-control';
+import { useNotificationContextCatalog } from './use-notification-context-catalog';
+import {
+  NotificationCenterPresentationControls,
+  NotificationCenterPresentationList,
+  type NotificationCenterPresentationLabels,
+  useNotificationCenterPresentationLabels,
+} from './notification-center-presentation';
+
+import type { NotificationCenterPresentation } from './notification-saved-view-model';
 
 const PAGE_SIZE = 30;
 
@@ -104,12 +111,18 @@ export function NotificationCenter({
   initialAppKey = '',
   initialPriority = 'ALL',
   initialReason = 'ALL',
+  initialAttentionEffect = 'ALL',
+  initialIncludedTypes = EMPTY_NOTIFICATION_FILTERS.includedTypes,
+  initialContextFilters = EMPTY_NOTIFICATION_FILTERS.contextFilters,
   onOpenSettings,
   onOpenTarget,
   onViewChange,
   onScopeChange,
   onDetailChange,
-}: NotificationCenterProps) {
+  presentationLabels,
+}: NotificationCenterProps & {
+  presentationLabels?: Partial<NotificationCenterPresentationLabels>;
+}) {
   const { t } = useTranslation('notifications');
   const theme = useTheme();
   const compactDetail = useMediaQuery(theme.breakpoints.down('lg'));
@@ -117,6 +130,7 @@ export function NotificationCenter({
   const queryClient = useQueryClient();
   const online = useOnlineStatus();
   const notificationClock = useNotificationClock();
+  const localizedPresentationLabels = useNotificationCenterPresentationLabels(presentationLabels);
   const [localView, setView] = useState<NotificationView>(initialView);
   const [localFilters, setFilters] = useState<CenterFilters>(() => ({
     ...EMPTY_NOTIFICATION_FILTERS,
@@ -125,6 +139,12 @@ export function NotificationCenter({
     appKey: initialAppKey,
     priority: initialPriority,
     reason: initialReason,
+    attentionEffect: initialAttentionEffect,
+    includedTypes: [...initialIncludedTypes],
+    contextFilters: [...initialContextFilters],
+  }));
+  const [presentation, setPresentation] = useState<NotificationCenterPresentation>(() => ({
+    ...DEFAULT_NOTIFICATION_CENTER_PRESENTATION,
   }));
   const view = onScopeChange ? initialView : localView;
   // Route-controlled facets cannot lag browser history. Keep only the search draft local.
@@ -135,6 +155,9 @@ export function NotificationCenter({
         priority: initialPriority,
         readState: initialReadState,
         reason: initialReason,
+        attentionEffect: initialAttentionEffect,
+        includedTypes: initialIncludedTypes,
+        contextFilters: initialContextFilters,
       }
     : localFilters;
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery.trim());
@@ -159,6 +182,10 @@ export function NotificationCenter({
     return () => window.clearTimeout(timer);
   }, [filters.query]);
 
+  const queryFacets = useMemo(
+    () => notificationQueryFacets(filters.includedTypes, filters.contextFilters),
+    [filters.contextFilters, filters.includedTypes]
+  );
   const scopeKey = JSON.stringify([
     view,
     debouncedQuery,
@@ -166,6 +193,9 @@ export function NotificationCenter({
     filters.priority,
     filters.readState,
     filters.reason,
+    filters.attentionEffect,
+    queryFacets.includedTypes,
+    queryFacets.contexts,
   ]);
   const previousScopeKeyRef = useRef(scopeKey);
 
@@ -181,8 +211,20 @@ export function NotificationCenter({
       appKey: initialAppKey,
       priority: initialPriority,
       reason: initialReason,
+      attentionEffect: initialAttentionEffect,
+      includedTypes: [...initialIncludedTypes],
+      contextFilters: [...initialContextFilters],
     }));
-  }, [initialAppKey, initialPriority, initialQuery, initialReadState, initialReason]);
+  }, [
+    initialAppKey,
+    initialAttentionEffect,
+    initialContextFilters,
+    initialPriority,
+    initialQuery,
+    initialReadState,
+    initialReason,
+    initialIncludedTypes,
+  ]);
 
   useEffect(() => {
     if (initialNotificationId) {
@@ -202,8 +244,20 @@ export function NotificationCenter({
       priority: filters.priority,
       readState: filters.readState,
       reason: view === 'MENTIONS' ? ('ALL' as const) : filters.reason,
+      attentionEffect: filters.attentionEffect,
+      includedTypes: view === 'MENTIONS' ? [] : queryFacets.includedTypes,
+      contexts: queryFacets.contexts,
     }),
-    [debouncedQuery, filters.appKey, filters.priority, filters.readState, filters.reason, view]
+    [
+      debouncedQuery,
+      filters.appKey,
+      filters.attentionEffect,
+      filters.priority,
+      filters.readState,
+      filters.reason,
+      queryFacets,
+      view,
+    ]
   );
 
   const inboxKey = notificationQueryKeys.inbox(queryScope);
@@ -259,6 +313,11 @@ export function NotificationCenter({
     [inboxQuery.data?.pages]
   );
   const items = loadedItems;
+  const contextOptions = useNotificationContextCatalog(loadedItems, filters.contextFilters);
+  const navigationItems = useMemo(
+    () => orderNotificationItemsForPresentation(items, presentation.grouping),
+    [items, presentation.grouping]
+  );
   const selectedItem = items.find((item) => item.notificationId === selectedId) ?? null;
   const routedDetailQuery = useQuery({
     queryKey: notificationQueryKeys.detail(selectedId),
@@ -301,8 +360,14 @@ export function NotificationCenter({
 
   useEffect(() => {
     if (selectedId || items.length === 0) return;
-    setSelectedId(items[0].notificationId);
-  }, [items, selectedId]);
+    const firstItem = items[0];
+    setSelectedId(firstItem.notificationId);
+    if (!compactDetail) {
+      setRetainedDetailItem(firstItem);
+      setDetailOpen(true);
+      onDetailChange?.(firstItem.notificationId);
+    }
+  }, [compactDetail, items, onDetailChange, selectedId]);
 
   useEffect(() => {
     if (previousScopeKeyRef.current === scopeKey) return;
@@ -496,14 +561,14 @@ export function NotificationCenter({
       ?.getAttribute('data-notification-focus-id');
     if (!focusedId) return;
     event.preventDefault();
-    const currentIndex = items.findIndex((item) => item.notificationId === focusedId);
+    const currentIndex = navigationItems.findIndex((item) => item.notificationId === focusedId);
     const next = moveNotificationSelection(
       currentIndex,
       event.key as 'ArrowDown' | 'ArrowUp' | 'Home' | 'End',
-      items.length
+      navigationItems.length
     );
     if (next < 0) return;
-    const item = items[next];
+    const item = navigationItems[next];
     if (!item) return;
     previewItem(item);
     rowRefs.current[next]?.focus();
@@ -530,33 +595,34 @@ export function NotificationCenter({
           : null;
       const currentIndex = Math.max(
         0,
-        items.findIndex((item) => item.notificationId === (focusedId ?? selectedId))
+        navigationItems.findIndex((item) => item.notificationId === (focusedId ?? selectedId))
       );
       if (key === 'j' || key === 'k') {
         event.preventDefault();
         const nextIndex = Math.max(
           0,
-          Math.min(items.length - 1, currentIndex + (key === 'j' ? 1 : -1))
+          Math.min(navigationItems.length - 1, currentIndex + (key === 'j' ? 1 : -1))
         );
-        const nextItem = items[nextIndex];
+        const nextItem = navigationItems[nextIndex];
         if (!nextItem) return;
         setSelectedId(nextItem.notificationId);
         rowRefs.current[nextIndex]?.focus();
         return;
       }
       if ((key !== 'e' && key !== 's') || triageMutation.isPending || !online) return;
-      const currentItem = items[currentIndex];
+      const currentItem = navigationItems[currentIndex];
       if (!currentItem) return;
       event.preventDefault();
-      const nextItem = items[currentIndex + 1] ?? items[currentIndex - 1] ?? null;
+      const nextItem =
+        navigationItems[currentIndex + 1] ?? navigationItems[currentIndex - 1] ?? null;
       setSelectedId(nextItem?.notificationId ?? null);
       triageItem(currentItem, key === 'e' ? 'COMPLETE' : 'SNOOZE');
       window.setTimeout(() => {
         const nextIndex = nextItem
           ? Math.max(
               0,
-              items.findIndex((item) => item.notificationId === nextItem.notificationId) -
-                (currentIndex < items.length - 1 ? 1 : 0)
+              navigationItems.findIndex((item) => item.notificationId === nextItem.notificationId) -
+                (currentIndex < navigationItems.length - 1 ? 1 : 0)
             )
           : -1;
         if (nextIndex >= 0) rowRefs.current[nextIndex]?.focus();
@@ -564,7 +630,7 @@ export function NotificationCenter({
     };
     window.addEventListener('keydown', handleShortcut);
     return () => window.removeEventListener('keydown', handleShortcut);
-  }, [items, online, selectedId, triageItem, triageMutation.isPending]);
+  }, [navigationItems, online, selectedId, triageItem, triageMutation.isPending]);
 
   const partial = inboxQuery.data?.pages.some((page) => page.partial) || summaryQuery.data?.partial;
   const unavailableSources = [
@@ -573,8 +639,6 @@ export function NotificationCenter({
       ...(inboxQuery.data?.pages.flatMap((page) => page.unavailableSources) ?? []),
     ]),
   ];
-  const streamGroups = groupNotificationStream(items);
-  const itemIndexById = new Map(items.map((item, index) => [item.notificationId, index]));
   const privacyReady = Boolean(profileQuery.data);
 
   const selectView = (nextView: NotificationView) => {
@@ -592,45 +656,23 @@ export function NotificationCenter({
     onScopeChange?.({ ...nextFilters, view });
   };
   const currentScope = { ...filters, view };
-  const savedViewConfiguration = notificationSavedViewConfiguration(currentScope);
-  const selectedBuiltInViewId = selectedNotificationBuiltInViewId(currentScope);
-  const builtInSavedViews = [
-    {
-      id: 'notification-priority',
-      name: t('savedViews.builtIn.priority'),
-      configuration: notificationSavedViewConfiguration({
-        ...EMPTY_NOTIFICATION_FILTERS,
-        view: 'PRIORITY',
-      }),
-      isDefault: true,
-    },
-    {
-      id: 'notification-unread',
-      name: t('savedViews.builtIn.unread'),
-      configuration: notificationSavedViewConfiguration({
-        ...EMPTY_NOTIFICATION_FILTERS,
-        view: 'ALL',
-        readState: 'UNREAD',
-      }),
-    },
-    {
-      id: 'notification-mentions',
-      name: t('savedViews.builtIn.mentions'),
-      configuration: notificationSavedViewConfiguration({
-        ...EMPTY_NOTIFICATION_FILTERS,
-        view: 'MENTIONS',
-      }),
-    },
-  ];
+  const selectedBuiltInViewId = selectedNotificationBuiltInViewId(currentScope, presentation);
+  const builtInSavedViews = notificationBuiltInSavedViews({
+    priority: t('savedViews.builtIn.priority'),
+    unread: t('savedViews.builtIn.unread'),
+    mentions: t('savedViews.builtIn.mentions'),
+  });
 
   const applySavedView = (configuration: Record<string, unknown>) => {
-    const nextScope = parseNotificationSavedViewConfiguration(configuration);
-    if (!nextScope) {
+    const nextSavedView = parseNotificationSavedViewConfiguration(configuration);
+    if (!nextSavedView) {
       toast.error(t('savedViews.invalid'));
       return;
     }
+    const { scope: nextScope, presentation: nextPresentation } = nextSavedView;
     setView(nextScope.view);
     setFilters(nextScope);
+    setPresentation(nextPresentation);
     onScopeChange?.(nextScope);
     onViewChange?.(nextScope.view);
   };
@@ -665,10 +707,14 @@ export function NotificationCenter({
           filters={filters}
           summary={summaryQuery.data}
           appOptions={appOptions}
+          contextOptions={contextOptions}
           savedViewControl={
-            <GovernedSavedViewControl
+            <NotificationSavedViewControl
               surfaceKey={NOTIFICATION_SAVED_VIEW_SURFACE}
-              currentConfiguration={savedViewConfiguration}
+              currentScope={currentScope}
+              currentPresentation={presentation}
+              appOptions={appOptions}
+              contextOptions={contextOptions}
               builtInViews={builtInSavedViews}
               selectedBuiltInViewId={selectedBuiltInViewId}
               onApply={applySavedView}
@@ -676,6 +722,13 @@ export function NotificationCenter({
           }
           onViewChange={selectView}
           onChange={changeFilters}
+        />
+
+        <NotificationCenterPresentationControls
+          presentation={presentation}
+          labels={localizedPresentationLabels}
+          onDensityChange={(density) => setPresentation((current) => ({ ...current, density }))}
+          onGroupingChange={(grouping) => setPresentation((current) => ({ ...current, grouping }))}
         />
 
         {selectedIds.size > 0 && (
@@ -747,13 +800,17 @@ export function NotificationCenter({
             display: 'grid',
             gridTemplateColumns: {
               xs: 'minmax(0, 1fr)',
-              lg: 'minmax(0, 1.1fr) minmax(360px, 1fr)',
+              lg: 'minmax(0, 1.27fr) minmax(360px, 1fr)',
             },
             gap: { lg: 1.5 },
             alignItems: 'start',
           }}
         >
           <Box minWidth={0}>
+            <NotificationResultCount
+              visible={items.length}
+              total={inboxQuery.data?.pages[0]?.approximateTotal}
+            />
             {inboxQuery.isLoading || profileQuery.isLoading ? (
               <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={7} />
             ) : (inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error)) ||
@@ -784,81 +841,36 @@ export function NotificationCenter({
                 )}
               />
             ) : (
-              <Box
-                component="ul"
-                aria-label={t('center.listLabel')}
+              <NotificationCenterPresentationList
+                items={items}
+                presentation={presentation}
+                labels={localizedPresentationLabels}
+                listLabel={t('center.listLabel')}
+                profile={profileQuery.data}
+                protectedTitle={t('arrival.protectedContent')}
+                now={notificationClock}
+                selectedId={selectedId}
+                selectedIds={selectedIds}
+                detailItemId={detailItem?.notificationId ?? null}
+                detailOpen={detailOpen}
+                compactDetail={compactDetail}
+                busy={triageMutation.isPending || !online}
+                rowRefs={rowRefs}
                 onKeyDown={handleListKeyDown}
-                sx={{ p: 0, m: 0, listStyle: 'none' }}
-              >
-                {streamGroups.map((group) => (
-                  <Box component="li" key={group.key} sx={{ listStyle: 'none' }}>
-                    <NotificationStreamGroupHeading
-                      groupKey={group.key}
-                      count={group.items.length}
-                    />
-                    <Stack component="ul" gap={0.85} sx={{ p: 0, m: 0, listStyle: 'none' }}>
-                      {group.items.map((item) => {
-                        const index = itemIndexById.get(item.notificationId) ?? 0;
-                        const content = notificationArrivalContent(
-                          item,
-                          profileQuery.data,
-                          t('arrival.protectedContent')
-                        );
-                        const displayItem = {
-                          ...item,
-                          title: content.title,
-                          preview: content.preview,
-                        };
-                        const concealContext =
-                          item.sensitive ||
-                          !profileQuery.data ||
-                          profileQuery.data?.presentation.previewMode === 'HIDDEN';
-                        return (
-                          <Box component="li" key={item.notificationId}>
-                            <NotificationActionCard
-                              item={displayItem}
-                              now={notificationClock}
-                              active={item.notificationId === selectedId}
-                              checked={selectedIds.has(item.notificationId)}
-                              busy={triageMutation.isPending || !online}
-                              concealContext={concealContext}
-                              tabIndex={
-                                item.notificationId === selectedId || (!selectedId && index === 0)
-                                  ? 0
-                                  : -1
-                              }
-                              rowRef={(element) => {
-                                rowRefs.current[index] = element;
-                              }}
-                              onFocus={() => previewItem(item)}
-                              onToggleChecked={(checked) => {
-                                setSelectedIds((current) => {
-                                  const next = new Set(current);
-                                  if (checked) next.add(item.notificationId);
-                                  else next.delete(item.notificationId);
-                                  return next;
-                                });
-                              }}
-                              onOpenDetails={() => openItemDetails(item)}
-                              onTriage={(action) => triageItem(item, action)}
-                              onOpenTarget={onOpenTarget}
-                              onQuickReply={(target, body, idempotencyKey) =>
-                                quickReply(item, target, body, idempotencyKey)
-                              }
-                              showPrimaryActions={
-                                compactDetail ||
-                                !detailOpen ||
-                                item.notificationId !== detailItem?.notificationId
-                              }
-                              density="compact"
-                            />
-                          </Box>
-                        );
-                      })}
-                    </Stack>
-                  </Box>
-                ))}
-              </Box>
+                onFocusItem={previewItem}
+                onToggleChecked={(item, checked) => {
+                  setSelectedIds((current) => {
+                    const next = new Set(current);
+                    if (checked) next.add(item.notificationId);
+                    else next.delete(item.notificationId);
+                    return next;
+                  });
+                }}
+                onOpenDetails={openItemDetails}
+                onTriage={triageItem}
+                onOpenTarget={onOpenTarget}
+                onQuickReply={quickReply}
+              />
             )}
 
             {inboxQuery.hasNextPage && (

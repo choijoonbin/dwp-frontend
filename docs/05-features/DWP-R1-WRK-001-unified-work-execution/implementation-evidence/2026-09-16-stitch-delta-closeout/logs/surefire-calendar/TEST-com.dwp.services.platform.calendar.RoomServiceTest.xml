@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.RoomServiceTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:01:03" hostname="MacBook-Pro" time="0.02">
+  <properties/>
+  <testcase name="availabilityCannotExcludeARoomEventWithoutEditAuthority()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.002"/>
+  <testcase name="availabilityUsesTheTenantBufferForAdjacentRoomConflicts()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.005"/>
+  <testcase name="availabilityExcludesOnlyAnEditableRoomEventFromEligibility()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.003"/>
+  <testcase name="revokedGroupContextFailsBeforeAnyRoomMutation()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.002"/>
+  <testcase name="groupManageContextReachesRoomCancelAndResponseMutations()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.002"/>
+  <testcase name="availabilityReturnsOnlyRoomOccupancyWithoutEventDetails()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.002"/>
+  <testcase name="groupEditContextReachesRoomUpdatePreflightAndMutation()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.001"/>
+  <testcase name="availabilityRejectsUnboundedSearchWindows()" classname="com.dwp.services.platform.calendar.RoomServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

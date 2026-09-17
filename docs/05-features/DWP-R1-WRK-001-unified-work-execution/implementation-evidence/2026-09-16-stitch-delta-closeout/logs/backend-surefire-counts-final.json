@@ -1,0 +1,43 @@
+{
+  "messaging": {
+    "tests": 34,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xmlFiles": 4
+  },
+  "platform-personal": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xmlFiles": 4
+  },
+  "auth": {
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xmlFiles": 4
+  },
+  "people": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xmlFiles": 1
+  },
+  "calendar": {
+    "tests": 131,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xmlFiles": 21
+  },
+  "total": {
+    "tests": 208,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

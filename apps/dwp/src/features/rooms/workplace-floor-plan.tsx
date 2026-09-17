@@ -35,6 +35,57 @@ import type { Theme } from '@mui/material/styles';
 export type WorkplaceResourceAvailability =
   'AVAILABLE' | 'OCCUPIED' | 'MINE' | 'ASSIGNED' | 'DROP_IN' | 'UNAVAILABLE';
 
+export type WorkplaceFloorPlanZone = {
+  key: string;
+  label: string;
+  resourceCount: number;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+const clampPercent = (value: number) => Math.min(100, Math.max(0, value));
+
+/**
+ * Builds visual zones only from the registered resource projection. It never infers rooms,
+ * walls, sensor coverage, or live presence that the floor-plan contract did not return.
+ */
+export function workplaceFloorPlanZones(
+  resources: readonly WorkplaceResource[]
+): WorkplaceFloorPlanZone[] {
+  const grouped = new Map<string, WorkplaceResource[]>();
+  for (const resource of resources) {
+    const label = resource.neighborhood?.trim();
+    if (!label) continue;
+    grouped.set(label, [...(grouped.get(label) ?? []), resource]);
+  }
+  return [...grouped.entries()]
+    .map(([label, zoneResources]) => {
+      const left = Math.min(...zoneResources.map((resource) => resource.positionX));
+      const top = Math.min(...zoneResources.map((resource) => resource.positionY));
+      const right = Math.max(
+        ...zoneResources.map((resource) => resource.positionX + resource.widthPercent)
+      );
+      const bottom = Math.max(
+        ...zoneResources.map((resource) => resource.positionY + resource.heightPercent)
+      );
+      const padding = 1.5;
+      const zoneLeft = clampPercent(left - padding);
+      const zoneTop = clampPercent(top - padding);
+      return {
+        key: label,
+        label,
+        resourceCount: zoneResources.length,
+        left: zoneLeft,
+        top: zoneTop,
+        width: Math.min(100 - zoneLeft, Math.max(4, clampPercent(right + padding) - zoneLeft)),
+        height: Math.min(100 - zoneTop, Math.max(4, clampPercent(bottom + padding) - zoneTop)),
+      };
+    })
+    .sort((left, right) => left.top - right.top || left.left - right.left);
+}
+
 const RESOURCE_ICONS: Record<WorkplaceResourceType, LucideIcon> = {
   ROOM: UsersRound,
   DESK: Monitor,
@@ -171,6 +222,19 @@ export function WorkplaceFloorPlan({
     }
     return values;
   }, [occupancy]);
+  const zones = useMemo(() => workplaceFloorPlanZones(resources), [resources]);
+  const availabilityCounts = useMemo(() => {
+    const counts = new Map<WorkplaceResourceAvailability, number>();
+    for (const resource of resources) {
+      const status = workplaceResourceAvailability(
+        resource,
+        occupancyByResource.get(resource.resourceId) ?? [],
+        closures
+      );
+      counts.set(status, (counts.get(status) ?? 0) + 1);
+    }
+    return counts;
+  }, [closures, occupancyByResource, resources]);
 
   const moveFocus = (currentId: string, direction: -1 | 1) => {
     const currentIndex = resources.findIndex((resource) => resource.resourceId === currentId);
@@ -184,26 +248,50 @@ export function WorkplaceFloorPlan({
 
   return (
     <Box>
-      <Stack direction="row" justifyContent="flex-end" gap={0.25} sx={{ mb: 0.75 }}>
-        <ActionIconButton
-          label={zoomOutLabel}
-          tooltip={zoomOutLabel}
-          disabled={zoom <= 1}
-          onClick={() => setZoom((value) => Math.max(1, value - 0.25))}
-        >
-          <ZoomOut size={17} />
-        </ActionIconButton>
-        <ActionIconButton label={fitLabel} tooltip={fitLabel} onClick={() => setZoom(1)}>
-          <Maximize2 size={17} />
-        </ActionIconButton>
-        <ActionIconButton
-          label={zoomInLabel}
-          tooltip={zoomInLabel}
-          disabled={zoom >= 2}
-          onClick={() => setZoom((value) => Math.min(2, value + 0.25))}
-        >
-          <ZoomIn size={17} />
-        </ActionIconButton>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        gap={1}
+        sx={{ mb: 0.75 }}
+      >
+        <Stack direction="row" gap={0.75} useFlexGap flexWrap="wrap">
+          {([...availabilityCounts.entries()] as [WorkplaceResourceAvailability, number][]).map(
+            ([status, count]) => {
+              const colors = availabilityColors(theme, status);
+              return (
+                <Chip
+                  key={status}
+                  size="small"
+                  label={`${statusLabels[status]} ${count}`}
+                  sx={{ bgcolor: colors.fill, color: colors.text, borderColor: colors.border }}
+                  variant="outlined"
+                />
+              );
+            }
+          )}
+        </Stack>
+        <Stack direction="row" justifyContent="flex-end" gap={0.25}>
+          <ActionIconButton
+            label={zoomOutLabel}
+            tooltip={zoomOutLabel}
+            disabled={zoom <= 1}
+            onClick={() => setZoom((value) => Math.max(1, value - 0.25))}
+          >
+            <ZoomOut size={17} />
+          </ActionIconButton>
+          <ActionIconButton label={fitLabel} tooltip={fitLabel} onClick={() => setZoom(1)}>
+            <Maximize2 size={17} />
+          </ActionIconButton>
+          <ActionIconButton
+            label={zoomInLabel}
+            tooltip={zoomInLabel}
+            disabled={zoom >= 2}
+            onClick={() => setZoom((value) => Math.min(2, value + 0.25))}
+          >
+            <ZoomIn size={17} />
+          </ActionIconButton>
+        </Stack>
       </Stack>
       <Box sx={{ overflow: 'auto', maxHeight: 660, minHeight: { xs: 320, md: 420 }, pb: 0.5 }}>
         <Box
@@ -221,12 +309,53 @@ export function WorkplaceFloorPlan({
             bgcolor: 'background.default',
             backgroundImage: backgroundAssetPath
               ? `linear-gradient(${alpha(theme.palette.background.paper, 0.04)}, ${alpha(theme.palette.background.paper, 0.04)}), url(${backgroundAssetPath})`
-              : 'none',
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
+              : `linear-gradient(${alpha(theme.palette.divider, 0.35)} 1px, transparent 1px), linear-gradient(90deg, ${alpha(theme.palette.divider, 0.35)} 1px, transparent 1px)`,
+            backgroundSize: backgroundAssetPath ? 'contain' : '24px 24px',
+            backgroundRepeat: backgroundAssetPath ? 'no-repeat' : 'repeat',
             backgroundPosition: 'center',
           }}
         >
+          {zones.map((zone) => (
+            <Box
+              key={zone.key}
+              aria-hidden="true"
+              sx={{
+                pointerEvents: 'none',
+                position: 'absolute',
+                zIndex: 0,
+                left: `${zone.left}%`,
+                top: `${zone.top}%`,
+                width: `${zone.width}%`,
+                height: `${zone.height}%`,
+                border: 1,
+                borderColor: alpha(theme.palette.primary.main, 0.22),
+                bgcolor: alpha(
+                  theme.palette.primary.main,
+                  theme.palette.mode === 'dark' ? 0.05 : 0.025
+                ),
+                borderRadius: foundationTokens.radius.surface + 'px',
+              }}
+            >
+              <Typography
+                component="span"
+                variant="caption"
+                sx={{
+                  position: 'absolute',
+                  top: 4,
+                  left: 6,
+                  maxWidth: 'calc(100% - 12px)',
+                  color: 'text.secondary',
+                  bgcolor: alpha(theme.palette.background.paper, 0.88),
+                  px: 0.5,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {zone.label} · {zone.resourceCount}
+              </Typography>
+            </Box>
+          ))}
           {resources.map((resource) => {
             const status = workplaceResourceAvailability(
               resource,
@@ -281,6 +410,7 @@ export function WorkplaceFloorPlan({
                   }}
                   sx={{
                     position: 'absolute',
+                    zIndex: 1,
                     left: `${resource.positionX}%`,
                     top: `${resource.positionY}%`,
                     width: `${resource.widthPercent}%`,

@@ -33,6 +33,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationAttentionDetailRuntime } from './notification-attention-detail-runtime';
 import { NotificationDetailReply } from './notification-detail-reply';
 import {
   displayNotificationActorLabel,
@@ -493,6 +494,11 @@ export function NotificationDetailPane({
                     })}
                   </Typography>
                 </Box>
+
+                <NotificationAttentionDetailRuntime
+                  notificationId={detail.item.notificationId}
+                  notificationTitle={detail.item.title}
+                />
 
                 {detail.timeline.length > 0 && (
                   <Box

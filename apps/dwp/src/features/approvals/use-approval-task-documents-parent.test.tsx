@@ -346,6 +346,7 @@ describe('Stable task controller with actual conditional detail and parent query
       expect(state.pending?.key).toBe(original.idempotencyKey);
       expect(state.ready).toBe(false);
       expect(state.sourceDenied).toBe(status === 403);
+      if (status === 403) expect(state.dialog).toBeNull();
       expect(state.text).toBe(status === 403 ? '' : 'Original private comment');
       expect(container.textContent).not.toContain('Private existing comment');
       await act(async () => {

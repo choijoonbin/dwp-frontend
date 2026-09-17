@@ -24,6 +24,39 @@
     "notifications": "Notifications",
     "managed": "Managed settings"
   },
+  "settingsHome": {
+    "eyebrow": "My account",
+    "title": "Personal settings",
+    "description": "Search and manage your account, security, display, and work preferences.",
+    "providerDescription": "Manage the personal experience and security settings allowed for your Provider operator account.",
+    "providerBoundary": "Customer tenant home, notification, and organization-managed values are not shown in these account settings.",
+    "availableCount": "{{count}} available in this scope",
+    "searchLabel": "Search personal settings",
+    "searchPlaceholder": "Search security, language, notifications, and more",
+    "searchHelp": "Only settings available to your current identity and scope are searched.",
+    "emptyTitle": "No settings match",
+    "emptyDescription": "Use fewer words or try a different term.",
+    "items": {
+      "profile": "Review the authoritative sources and scope of your profile.",
+      "security": "Review sign-in policy, active sessions, and temporary privileged access.",
+      "appearance": "Choose color mode and working density.",
+      "accessibility": "Adjust contrast, motion, and persistent link cues.",
+      "language": "Choose product language, time zone, and date and number formats.",
+      "home": "Manage the apps and widgets on your personal home.",
+      "notifications": "Manage channels, focus time, and per-app delivery rules.",
+      "managed": "Review organization-managed values and supported exception requests."
+    },
+    "keywords": {
+      "profile": "account personal data source HR IdP",
+      "security": "MFA passkey sign-in session JIT privileged",
+      "appearance": "theme dark light density",
+      "accessibility": "high contrast reduce motion links",
+      "language": "region time zone date number format",
+      "home": "home apps widgets",
+      "notifications": "notifications channels focus quiet hours",
+      "managed": "organization policy exception effective value"
+    }
+  },
   "sections": {
     "appearance": {
       "title": "Appearance",

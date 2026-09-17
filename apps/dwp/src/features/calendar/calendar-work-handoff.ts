@@ -1,9 +1,9 @@
-import {
-  isAppPermissionEntitled,
-  type CalendarEvent,
-  type CreateCalendarEventInput,
-  type IdempotentMutationIntent,
-  type PermissionDTO,
+import { isAppPermissionEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
+import type {
+  CalendarEvent,
+  CreateCalendarEventInput,
+  IdempotentMutationIntent,
+  PermissionDTO,
 } from '@dwp-frontend/shared-utils';
 import {
   isExactWorkCalendarLinkReceipt,

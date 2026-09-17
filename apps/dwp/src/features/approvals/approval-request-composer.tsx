@@ -1,4 +1,5 @@
-import { Braces, FileCheck2, Save, Send, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Braces, FileCheck2, Save, X } from 'lucide-react';
 import {
   ActionButton,
   FormDialog,
@@ -27,6 +28,7 @@ import { useApprovalRequestComposer } from './use-approval-request-composer';
 import { ApprovalAttachmentPanel } from './approval-attachment-panel';
 import { useApprovalAttachmentClient } from './use-approval-attachment-client';
 import { ApprovalAttachmentNavigationGuard } from './approval-attachment-navigation-guard';
+import { focusApprovalRequestIssue } from './approval-request-preflight-focus';
 
 import type { ApprovalPriority } from '@dwp-frontend/shared-utils';
 
@@ -51,10 +53,15 @@ export function ApprovalRequestComposer() {
     missingFields,
     dwaionDraft,
     pendingFormId,
+    pendingFormChange,
     preflightOpen,
+    serverPreflight,
+    preflight,
     recovery,
     submissionUnknown,
     contextReady,
+    reviewReady,
+    validationIssues,
     contentMasked,
     fieldsDisabled,
     submissionReady,
@@ -69,12 +76,14 @@ export function ApprovalRequestComposer() {
     setPayloadValues,
     setPendingFormId,
     setPreflightOpen,
+    prepareReview,
     requestFormChange,
     applyFormChange,
     saveDraft,
     saveAndClose,
     submit,
   } = useApprovalRequestComposer();
+  const [validationRevealed, setValidationRevealed] = useState(false);
   const attachments = useApprovalAttachmentClient({
     owner: { type: 'REQUEST', id: draftId ?? '' },
     version: draft.data?.request.version,
@@ -93,13 +102,28 @@ export function ApprovalRequestComposer() {
           required: formEvaluation.required.length,
         }
       : undefined;
+  const invalidPaths = useMemo(
+    () => new Set(validationRevealed ? validationIssues.map((issue) => issue.path) : []),
+    [validationRevealed, validationIssues]
+  );
+  const openPreflight = () => {
+    if (!reviewReady || save.isPending || preflight.isPending || attachmentPending) return;
+    setValidationRevealed(true);
+    prepareReview();
+  };
+  const focusIssue = (path: string) => {
+    setPreflightOpen(false);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => focusApprovalRequestIssue(path));
+    });
+  };
 
   return (
     <Box
       component="form"
       onSubmit={(event) => {
         event.preventDefault();
-        if (submissionReady && !save.isPending && !attachmentPending) setPreflightOpen(true);
+        openPreflight();
       }}
       sx={{
         display: 'grid',
@@ -213,16 +237,16 @@ export function ApprovalRequestComposer() {
                   {recovery.kind === 'CONFLICT' &&
                     recovery.latestLoaded &&
                     autosave.conflicts.length === 0 && (
-                    <ActionButton
-                      type="button"
-                      intent="secondary"
-                      size="small"
-                      disabled={save.isPending}
-                      onClick={() => void reapply()}
-                    >
-                      {t('requests.autosave.reapply')}
-                    </ActionButton>
-                  )}
+                      <ActionButton
+                        type="button"
+                        intent="secondary"
+                        size="small"
+                        disabled={save.isPending}
+                        onClick={() => void reapply()}
+                      >
+                        {t('requests.autosave.reapply')}
+                      </ActionButton>
+                    )}
                 </Stack>
               }
             >
@@ -244,14 +268,21 @@ export function ApprovalRequestComposer() {
             </InlineFeedback>
           )}
           <FormField
+            id="approval-request-title"
             required
             label={t('requests.fields.title')}
             value={title}
             disabled={fieldsDisabled || attachmentPending}
             onChange={(event) => setTitle(event.target.value)}
             inputProps={{ maxLength: 300 }}
+            errorMessage={
+              invalidPaths.has('$title')
+                ? t('requests.typed.fieldInvalid', { field: t('requests.fields.title') })
+                : undefined
+            }
           />
           <FormField
+            id="approval-request-summary"
             required
             multiline
             minRows={5}
@@ -261,6 +292,11 @@ export function ApprovalRequestComposer() {
             onChange={(event) => setSummary(event.target.value)}
             inputProps={{ maxLength: 2000 }}
             supportingText={t('requests.fields.summaryHelp')}
+            errorMessage={
+              invalidPaths.has('$summary')
+                ? t('requests.typed.fieldInvalid', { field: t('requests.fields.summary') })
+                : undefined
+            }
           />
           <SelectField
             label={t('requests.fields.priority')}
@@ -273,7 +309,12 @@ export function ApprovalRequestComposer() {
             onValueChange={(value) => value && setPriority(value as ApprovalPriority)}
           />
           {fieldCount > 0 && !contentMasked && (
-            <Box component="fieldset" sx={{ m: 0, p: 0, border: 0 }}>
+            <Box
+              id="approval-request-business-fields"
+              component="fieldset"
+              tabIndex={-1}
+              sx={{ m: 0, p: 0, border: 0 }}
+            >
               <Stack direction="row" gap={1} alignItems="center" sx={{ mb: 1.5 }}>
                 <Box sx={{ color: 'primary.main', display: 'flex' }}>
                   <Braces size={17} aria-hidden="true" />
@@ -287,6 +328,9 @@ export function ApprovalRequestComposer() {
                   label={t('requests.template.fieldCount', { count: fieldCount })}
                 />
               </Stack>
+              {invalidPaths.has('$business-fields') && (
+                <InlineFeedback severity="error">{t('requests.typed.inputInvalid')}</InlineFeedback>
+              )}
               {formEvaluation.compiled ? (
                 <ApprovalRequestTypedFields
                   compiled={formEvaluation.compiled}
@@ -294,6 +338,7 @@ export function ApprovalRequestComposer() {
                   values={payloadValues}
                   korean={korean}
                   disabled={fieldsDisabled || attachmentPending}
+                  invalidPaths={invalidPaths}
                   userBinding={userSource.binding}
                   onUserSourceReadyChange={userSource.report}
                   onChange={(key, value) =>
@@ -314,6 +359,7 @@ export function ApprovalRequestComposer() {
                     korean={korean}
                     idPrefix="approval-request"
                     disabled={fieldsDisabled || attachmentPending}
+                    invalidPaths={invalidPaths}
                     onChange={(key, value) =>
                       setPayloadValues((current) => ({ ...current, [key]: value }))
                     }
@@ -361,11 +407,11 @@ export function ApprovalRequestComposer() {
             <ActionButton
               type="submit"
               intent="primary"
-              startIcon={<Send size={17} />}
-              loading={save.isPending && save.variables?.input.intent === 'SUBMIT'}
-              disabled={!submissionReady || save.isPending || attachmentPending}
+              startIcon={<FileCheck2 size={17} />}
+              loading={preflight.isPending}
+              disabled={!reviewReady || save.isPending || preflight.isPending || attachmentPending}
             >
-              {t('actions.submitRequest')}
+              {t('common:actions.review')}
             </ActionButton>
           </Stack>
         </Stack>
@@ -417,23 +463,87 @@ export function ApprovalRequestComposer() {
         submitLabel={t('actions.edit')}
         onClose={() => setPendingFormId('')}
         onSubmit={applyFormChange}
+        submitDisabled={!pendingFormChange || save.isPending || autosave.status === 'SAVING'}
       >
-        <></>
+        {pendingFormChange ? (
+          <Stack gap={2}>
+            <Box
+              component="dl"
+              sx={{ m: 0, display: 'grid', gridTemplateColumns: 'auto minmax(0,1fr)', gap: 1 }}
+            >
+              <Typography component="dt" variant="caption" color="text.secondary">
+                {t('requests.drafts.migrationSource')}
+              </Typography>
+              <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+                {t('requests.compose.formVersionLabel', {
+                  name: pendingFormChange.source.label,
+                  version: pendingFormChange.source.version,
+                })}
+              </Typography>
+              <Typography component="dt" variant="caption" color="text.secondary">
+                {t('requests.drafts.migrationTarget')}
+              </Typography>
+              <Typography component="dd" variant="body2" sx={{ m: 0 }}>
+                {t('requests.compose.formVersionLabel', {
+                  name: pendingFormChange.target.label,
+                  version: pendingFormChange.target.version,
+                })}
+              </Typography>
+            </Box>
+            <InlineFeedback severity="info">
+              <Typography component="p" variant="caption" fontWeight="fontWeightBold">
+                {t('requests.drafts.migrationMapped')}
+              </Typography>
+              <Typography variant="caption">
+                {[
+                  t('requests.fields.title'),
+                  t('requests.fields.summary'),
+                  t('requests.fields.priority'),
+                ].join(' · ')}
+              </Typography>
+            </InlineFeedback>
+            <InlineFeedback severity={pendingFormChange.excluded.length ? 'warning' : 'success'}>
+              <Typography component="p" variant="caption" fontWeight="fontWeightBold">
+                {t('requests.drafts.migrationDropped')} · {pendingFormChange.excluded.length}
+              </Typography>
+              {pendingFormChange.excluded.length > 0 && (
+                <Box component="ul" sx={{ m: 0, pl: 2.25 }}>
+                  {pendingFormChange.excluded.map((field) => (
+                    <Typography component="li" variant="caption" key={field.path}>
+                      {field.label}
+                    </Typography>
+                  ))}
+                </Box>
+              )}
+            </InlineFeedback>
+          </Stack>
+        ) : (
+          <InlineFeedback severity="error">{t('requests.templateError')}</InlineFeedback>
+        )}
       </FormDialog>
       <FormDialog
         open={preflightOpen}
         title={t('requests.assurance.title')}
         description={t('requests.assurance.description')}
         cancelLabel={t('actions.cancel')}
-        submitLabel={t('actions.submitRequest')}
+        submitLabel={submissionReady ? t('actions.submitRequest') : t('common:actions.review')}
         busy={save.isPending}
-        submitDisabled={!submissionReady || save.isPending || attachmentPending}
+        submitDisabled={
+          !reviewReady ||
+          preflight.isPending ||
+          save.isPending ||
+          attachmentPending ||
+          (submissionReady && (!serverPreflight?.ready || preflight.isError)) ||
+          (!submissionReady && validationIssues.length === 0)
+        }
         onClose={() => {
           if (!save.isPending) setPreflightOpen(false);
         }}
         onSubmit={() => {
           if (submissionReady && !save.isPending && !attachmentPending) {
             submit();
+          } else if (validationIssues[0]) {
+            focusIssue(validationIssues[0].path);
           }
         }}
       >
@@ -452,6 +562,10 @@ export function ApprovalRequestComposer() {
               template={template.data}
               missingFields={missingFields}
               validation={typedValidation}
+              issues={validationIssues}
+              onIssueFocus={focusIssue}
+              serverPreflight={serverPreflight}
+              serverError={preflight.isError}
               compact
             />
           </Stack>

@@ -54,6 +54,18 @@ export type ApprovalOperationsQueryState = Readonly<{
   data?: ApprovalOperations;
 }>;
 
+export function approvalOperationsFullData(
+  data: ApprovalOperations | undefined
+): ApprovalOperations | null {
+  if (!data) return null;
+  try {
+    const projection = parseApprovalOperationsProjection(data);
+    return projection.kind === 'full' ? projection.data : null;
+  } catch {
+    return null;
+  }
+}
+
 export function approvalOperationsSourceCurrent(
   state: ApprovalOperationsQueryState | undefined,
   now = Date.now()
@@ -67,14 +79,10 @@ export function approvalOperationsSourceCurrent(
     !state.data
   )
     return false;
-  try {
-    const projection = parseApprovalOperationsProjection(state.data);
-    if (projection.kind !== 'full') return false;
-    const generatedAt = Date.parse(projection.data.generatedAt);
-    return Number.isFinite(generatedAt) && generatedAt <= now && now - generatedAt < 45_000;
-  } catch {
-    return false;
-  }
+  const data = approvalOperationsFullData(state.data);
+  if (!data) return false;
+  const generatedAt = Date.parse(data.generatedAt);
+  return Number.isFinite(generatedAt) && generatedAt <= now && now - generatedAt < 45_000;
 }
 
 export function approvalOperationsRetrySnapshotCurrent(
@@ -96,7 +104,7 @@ export function approvalOperationsRetrySnapshotCurrent(
     !approvalOperationsSourceCurrent(state, now)
   )
     return false;
-  const delivery = state?.data?.integrationDeliveries.find(
+  const delivery = approvalOperationsFullData(state?.data)?.integrationDeliveries.find(
     (item) => item.outboxId === original.outboxId
   );
   if (!delivery || JSON.stringify(delivery) !== original.deliveryFingerprint) return false;

@@ -1,0 +1,231 @@
+import { useTranslation } from 'react-i18next';
+
+const COPY = {
+  ko: {
+    refresh: '새로고침',
+    retry: '다시 시도',
+    loading: '운영 데이터를 불러오는 중입니다.',
+    unavailableTitle: '운영 데이터를 확인할 수 없습니다',
+    unavailableDescription:
+      '관리 API가 아직 연결되지 않았거나 현재 범위에서 사용할 수 없습니다. 연결 상태와 권한을 확인한 뒤 다시 시도하세요.',
+    notConfigured: '설정 필요',
+    partial: '부분 가용',
+    unavailable: '사용 불가',
+    live: '실시간 운영 데이터',
+    generatedAt: '마지막 생성',
+    command: {
+      authorityUnavailable:
+        '현재 관리자 범위의 보안 권한을 검증할 수 없어 명령 실행을 차단했습니다.',
+      reason: '변경 사유',
+      reasonHelp: '감사자가 판단할 수 있도록 10자 이상 입력하세요.',
+      ticket: '티켓 또는 사건 번호',
+      evidence: '증거 참조',
+      evidenceHelp: '쉼표로 구분된 감사 이벤트, 평가 실행, 문서 참조를 입력하세요.',
+      acknowledgement: '영향 범위와 복구 방법을 검토했습니다.',
+      submit: '승인 요청',
+      submitting: '명령을 등록하는 중',
+      cancel: '닫기',
+      title: 'Governed Command 검토',
+      description: '변경 전후, 영향 범위, 사유와 증거를 확인한 뒤 Maker-Checker 승인을 요청합니다.',
+      pendingApproval: 'Checker 승인 대기',
+      approve: '승인',
+      reject: '거절',
+      cancelCommand: '실행 취소',
+      retryCommand: '재시도',
+      rollback: '롤백',
+      refreshStatus: '상태 새로고침',
+      receipt: '완료 영수증',
+      noReceipt: '실제 업무 완료 영수증이 아직 발급되지 않았습니다.',
+      transitionReason: '결정 또는 후속 조치 사유',
+      failed: '명령을 처리하지 못했습니다. 문제 세부정보와 복구 안내를 확인하세요.',
+      statusFailed:
+        '최신 명령 상태를 검증하지 못했습니다. 기존 상태를 완료로 간주하지 않습니다.',
+      transitionConflict:
+        '다른 결정이 먼저 기록되어 명령 version이 바뀌었습니다. 최신 상태를 다시 검토하세요.',
+      conflict: '대상 버전이 변경되었습니다. 최신 상태를 다시 불러온 뒤 변경 내용을 재검토하세요.',
+      reconcile: '최신 버전 다시 불러오기',
+    },
+    models: {
+      eyebrow: 'A-01 · AI Control Plane',
+      title: '모델 및 라우팅',
+      description:
+        'Provider, 모델, 업무별 라우팅, 예산과 장애 복구를 하나의 운영 경계에서 관리합니다.',
+      providers: 'Provider 및 모델 상태',
+      policies: '업무 라우팅 정책',
+      simulator: '라우팅 시뮬레이터',
+      approvals: '승인 대기',
+      canaries: 'Canary',
+      emergency: '긴급 중단',
+      recovery: '서비스 복구',
+      updatePolicy: '정책 변경',
+      startCanary: 'Canary 시작',
+      rollback: '이전 버전 복구',
+    },
+    agents: {
+      title: 'Builder · 평가 · 배포 Governance',
+      description:
+        'Prompt diff, source/tool binding, memory policy와 평가 결과를 검토한 뒤 승격·롤백합니다.',
+      promote: '승격 요청',
+      rollback: '롤백',
+      kill: 'Kill switch',
+    },
+    connectors: {
+      title: 'Connector · ACL 운영',
+      description: '소유자와 범위, 저장소, 그룹 매핑, secret, sync 및 삭제 수명주기를 운영합니다.',
+      create: 'Connector 추가',
+      probe: 'ACL Probe',
+      sync: '동기화',
+      reindex: '재색인',
+      rotate: 'Secret 교체',
+      reduce: '범위 축소',
+      revoke: '회수',
+      delete: '삭제',
+    },
+    evaluation: {
+      title: '지속 평가 및 Production Monitoring',
+      description:
+        'Dataset, PII 검토, 버전 고정 비교 실행과 운영 Drift를 release Gate 증거로 연결합니다.',
+      importDataset: 'Dataset 가져오기',
+      compare: '비교 실행',
+      attachEvidence: 'Gate 증거 연결',
+    },
+    incidents: {
+      title: 'AI Incident Workbench',
+      description: '영향부터 확인하고 격리, replay, 보상, 검증, 재개 승인과 사후보고를 수행합니다.',
+      contain: 'Containment',
+      quarantine: 'Run 격리',
+      replay: 'Replay',
+      compensate: '보상 실행',
+      recover: '복구 승인',
+      close: '사고 종료',
+    },
+    outcomes: {
+      title: 'Outcome · Quality · Cost',
+      description:
+        '분모와 freshness, privacy threshold를 보존하며 성과·품질·비용과 개선 Backlog를 연결합니다.',
+      export: '집계 내보내기',
+      simulate: '비용 시뮬레이션',
+      createBacklog: 'Backlog 생성',
+      backlog: 'Backlog 변경',
+      budget: '예산 정책 변경',
+    },
+  },
+  en: {
+    refresh: 'Refresh',
+    retry: 'Retry',
+    loading: 'Loading operational data.',
+    unavailableTitle: 'Operational data is unavailable',
+    unavailableDescription:
+      'The management API is not connected or is unavailable for this scope. Check the connection and authority, then retry.',
+    notConfigured: 'Configuration required',
+    partial: 'Partially available',
+    unavailable: 'Unavailable',
+    live: 'Live operational data',
+    generatedAt: 'Generated',
+    command: {
+      authorityUnavailable:
+        'Command execution is blocked because secure authority for this management scope cannot be verified.',
+      reason: 'Change reason',
+      reasonHelp: 'Enter at least 10 characters so an auditor can assess the decision.',
+      ticket: 'Ticket or incident',
+      evidence: 'Evidence references',
+      evidenceHelp:
+        'Enter audit events, evaluation runs, or document references separated by commas.',
+      acknowledgement: 'I reviewed the impact and recovery plan.',
+      submit: 'Request approval',
+      submitting: 'Registering command',
+      cancel: 'Close',
+      title: 'Governed command review',
+      description:
+        'Review the before/after state, impact, reason, and evidence before requesting Maker-Checker approval.',
+      pendingApproval: 'Awaiting checker approval',
+      approve: 'Approve',
+      reject: 'Reject',
+      cancelCommand: 'Cancel execution',
+      retryCommand: 'Retry',
+      rollback: 'Rollback',
+      refreshStatus: 'Refresh status',
+      receipt: 'Completion receipt',
+      noReceipt: 'No verified domain completion receipt has been issued yet.',
+      transitionReason: 'Decision or follow-up reason',
+      failed: 'The command failed. Review the problem and recovery guidance.',
+      statusFailed:
+        'The latest command state could not be verified. The last known state is not treated as complete.',
+      transitionConflict:
+        'Another decision changed the command version. Refresh and review the latest state before acting.',
+      conflict: 'The target version changed. Reload the latest state and review the diff again.',
+      reconcile: 'Reload latest version',
+    },
+    models: {
+      eyebrow: 'A-01 · AI Control Plane',
+      title: 'Models & routing',
+      description:
+        'Operate providers, models, workload routing, budgets, and recovery within one governed boundary.',
+      providers: 'Provider and model health',
+      policies: 'Workload routing policies',
+      simulator: 'Routing simulator',
+      approvals: 'Pending approval',
+      canaries: 'Canaries',
+      emergency: 'Emergency stop',
+      recovery: 'Recover service',
+      updatePolicy: 'Change policy',
+      startCanary: 'Start canary',
+      rollback: 'Restore previous version',
+    },
+    agents: {
+      title: 'Builder, evaluation & rollout governance',
+      description:
+        'Review prompt diffs, source/tool bindings, memory policy, and evaluations before promotion or rollback.',
+      promote: 'Request promotion',
+      rollback: 'Rollback',
+      kill: 'Kill switch',
+    },
+    connectors: {
+      title: 'Connector & ACL operations',
+      description:
+        'Operate ownership, scope, repositories, group mapping, secrets, sync, and deletion lifecycle.',
+      create: 'Add connector',
+      probe: 'ACL probe',
+      sync: 'Sync',
+      reindex: 'Reindex',
+      rotate: 'Rotate secret',
+      reduce: 'Reduce scope',
+      revoke: 'Revoke',
+      delete: 'Delete',
+    },
+    evaluation: {
+      title: 'Continuous evaluation & production monitoring',
+      description:
+        'Connect datasets, PII review, pinned comparisons, and production drift to release-gate evidence.',
+      importDataset: 'Import dataset',
+      compare: 'Run comparison',
+      attachEvidence: 'Attach gate evidence',
+    },
+    incidents: {
+      title: 'AI incident workbench',
+      description:
+        'Assess impact, contain, quarantine, replay, compensate, validate, approve recovery, and close.',
+      contain: 'Contain',
+      quarantine: 'Quarantine run',
+      replay: 'Replay',
+      compensate: 'Compensate',
+      recover: 'Approve recovery',
+      close: 'Close incident',
+    },
+    outcomes: {
+      title: 'Outcome, quality & cost',
+      description:
+        'Connect outcome, quality, cost, and the improvement backlog with denominators, freshness, and privacy thresholds.',
+      export: 'Export aggregate',
+      simulate: 'Simulate cost',
+      createBacklog: 'Create backlog',
+      backlog: 'Update backlog',
+      budget: 'Change budget policy',
+    },
+  },
+} as const;
+
+export function useDwaionAdminAdvancementCopy() {
+  const { i18n } = useTranslation();
+  return i18n.resolvedLanguage?.toLowerCase().startsWith('ko') ? COPY.ko : COPY.en;
+}

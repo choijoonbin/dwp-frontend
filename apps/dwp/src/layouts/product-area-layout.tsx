@@ -880,7 +880,9 @@ export function ProductAreaLayout({
           ml: { xs: 0, lg: `${desktopOffset}px` },
           minWidth: 0,
           minHeight: '100dvh',
-          pb: specializedMobileShell?.footer ? { xs: 7, lg: 0 } : 0,
+          pb: specializedMobileShell?.footer
+            ? { xs: 'calc(58px + env(safe-area-inset-bottom, 0px))', lg: 0 }
+            : 0,
           overflowX: 'clip',
           outline: 'none',
           bgcolor: 'var(--dwp-product-canvas)',

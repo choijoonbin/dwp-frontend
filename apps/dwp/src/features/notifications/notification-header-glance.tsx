@@ -87,6 +87,7 @@ export function NotificationHeaderGlance({
   const [resynchronizing, setResynchronizing] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
   const bufferedArrivalIdsRef = useRef(new Set<string>());
+  const focusedNotificationIdRef = useRef<string | null>(null);
 
   const summaryQuery = useQuery({
     queryKey: notificationQueryKeys.summary(),
@@ -112,6 +113,14 @@ export function NotificationHeaderGlance({
 
   const handleLiveSignal = useCallback(
     (signal: NotificationLiveSignal) => {
+      const activeElement = document.activeElement;
+      if (
+        open &&
+        activeElement instanceof HTMLElement &&
+        activeElement.dataset.notificationFocusId
+      ) {
+        focusedNotificationIdRef.current = activeElement.dataset.notificationFocusId;
+      }
       if (open && view === 'ALL') {
         for (const notificationId of signal.arrivalIds) {
           bufferedArrivalIdsRef.current.add(notificationId);
@@ -126,6 +135,11 @@ export function NotificationHeaderGlance({
 
   useEffect(() => {
     if (!open) return;
+    const list = listRef.current;
+    const focusedId =
+      list?.contains(document.activeElement) && document.activeElement instanceof HTMLElement
+        ? document.activeElement.dataset.notificationFocusId
+        : (focusedNotificationIdRef.current ?? undefined);
     setGlance((current) => {
       const reconciled = reconcileGlanceItems(
         current.visible,
@@ -141,11 +155,24 @@ export function NotificationHeaderGlance({
         ),
       };
     });
+    if (focusedId) focusedNotificationIdRef.current = focusedId;
   }, [inboxQuery.data?.items, open]);
+
+  useEffect(() => {
+    if (!open || glance.bufferedCount <= 0 || !focusedNotificationIdRef.current) return;
+    const focusedId = focusedNotificationIdRef.current;
+    const frame = requestAnimationFrame(() => {
+      listRef.current
+        ?.querySelector<HTMLElement>(`[data-notification-focus-id="${CSS.escape(focusedId)}"]`)
+        ?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [glance.bufferedCount, open]);
 
   useEffect(() => {
     if (open) return;
     bufferedArrivalIdsRef.current.clear();
+    focusedNotificationIdRef.current = null;
     setGlance({
       visible: inboxQuery.data?.items.slice(0, GLANCE_LIMIT) ?? [],
       buffered: [],
@@ -155,6 +182,7 @@ export function NotificationHeaderGlance({
 
   useEffect(() => {
     bufferedArrivalIdsRef.current.clear();
+    focusedNotificationIdRef.current = null;
     setGlance(EMPTY_GLANCE);
   }, [view]);
 
@@ -263,6 +291,17 @@ export function NotificationHeaderGlance({
           role: 'dialog',
           'aria-labelledby': dialogTitleId,
           'aria-modal': true,
+          onFocus: (event) => {
+            if (event.target !== event.currentTarget || !focusedNotificationIdRef.current) return;
+            const focusedId = focusedNotificationIdRef.current;
+            requestAnimationFrame(() => {
+              listRef.current
+                ?.querySelector<HTMLElement>(
+                  `[data-notification-focus-id="${CSS.escape(focusedId)}"]`
+                )
+                ?.focus({ preventScroll: true });
+            });
+          },
           sx: {
             width: compact ? 'calc(100vw - 24px)' : 420,
             maxWidth: 420,
@@ -368,7 +407,34 @@ export function NotificationHeaderGlance({
           </ActionButton>
         </Box>
       )}
-      <Box ref={listRef} sx={{ maxHeight: 440, overflowY: 'auto' }}>
+      <Box
+        ref={listRef}
+        onFocusCapture={(event) => {
+          const target = event.target as HTMLElement;
+          const row = target.closest<HTMLElement>('[data-notification-focus-id]');
+          if (row?.dataset.notificationFocusId) {
+            focusedNotificationIdRef.current = row.dataset.notificationFocusId;
+          }
+        }}
+        onBlurCapture={(event) => {
+          const target = event.target as HTMLElement;
+          const row = target.closest<HTMLElement>('[data-notification-focus-id]');
+          const focusedId = row?.dataset.notificationFocusId;
+          if (!focusedId) return;
+          focusedNotificationIdRef.current = focusedId;
+          const dialog = event.currentTarget.closest<HTMLElement>('[role="dialog"]');
+          const next = event.relatedTarget as HTMLElement | null;
+          if (next && dialog?.contains(next) && next !== dialog) return;
+          requestAnimationFrame(() => {
+            listRef.current
+              ?.querySelector<HTMLElement>(
+                `[data-notification-focus-id="${CSS.escape(focusedId)}"]`
+              )
+              ?.focus({ preventScroll: true });
+          });
+        }}
+        sx={{ maxHeight: 440, overflowY: 'auto' }}
+      >
         {inboxQuery.isLoading && glance.visible.length === 0 ? (
           <LoadingState
             label={t('states.loading')}

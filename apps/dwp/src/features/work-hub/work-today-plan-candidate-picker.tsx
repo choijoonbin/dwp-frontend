@@ -5,6 +5,7 @@ import {
   ActionButton,
   ContentDialog,
   FormField,
+  foundationTokens,
   InlineFeedback,
   SelectField,
 } from '@dwp-frontend/design-system';
@@ -135,9 +136,22 @@ export function WorkTodayPlanCandidatePicker({
           inputRef={searchInput}
           size="small"
           label={t('workHub.todayPlan.searchLabel')}
+          placeholder={t('workHub.todayPlan.searchLabel')}
+          slotProps={{ inputLabel: { shrink: true } }}
           value={filters.query}
           onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))}
-          sx={{ flex: 1, minWidth: 0 }}
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            '& .MuiInputBase-input': {
+              backgroundColor: 'background.paper',
+              color: 'text.primary',
+            },
+            '& .MuiInputBase-input::placeholder': {
+              color: 'text.secondary',
+              opacity: 1,
+            },
+          }}
         />
         <ActionButton
           intent="quiet"
@@ -211,7 +225,8 @@ export function WorkTodayPlanCandidatePicker({
                   px: 0.75,
                   py: 0.25,
                   bgcolor: 'background.paper',
-                  borderRadius: 0.75,
+                  borderRadius:
+                    foundationTokens.radius.surface - foundationTokens.radius.compact + 'px',
                   fontWeight: 'fontWeightBold',
                 }}
               >
@@ -390,7 +405,7 @@ export function WorkTodayPlanCandidatePicker({
               height: 8,
               overflow: 'hidden',
               bgcolor: 'action.disabledBackground',
-              borderRadius: 999,
+              borderRadius: foundationTokens.radius.control + 'px',
             }}
           >
             <Box

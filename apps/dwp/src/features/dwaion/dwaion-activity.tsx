@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -7,7 +7,6 @@ import { LiveStatus, PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   getDwaionUserRun,
-  getDwaionUserRuns,
   HttpError,
   useAuth,
   usePermissions,
@@ -20,8 +19,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import {
-  DWAION_ACTIVITY_WINDOW_LIMIT,
-  filterDwaionActivityPeriod,
+  dwaionActivityPeriodStart,
   filterDwaionActivityWindow,
   findExactDwaionRun,
   resolveDwaionActivityFilter,
@@ -36,6 +34,7 @@ import { DwaionActivityLatency } from './dwaion-activity-latency';
 import { DwaionActivitySummary } from './dwaion-activity-summary';
 import { ActivityListBody, ActivityListHeader, EmptyInspector } from './dwaion-activity-view';
 import { DWAION_ACTIVITY_REFRESH_EVENT } from './dwaion-mobile-shell-profile';
+import { useDwaionRunPages } from './use-dwaion-run-pages';
 
 import type { DwaionActivityFilter, DwaionActivityPeriod } from './dwaion-activity-model';
 
@@ -53,29 +52,34 @@ export function DwaionActivity() {
   const selectedRunId = params.get('run')?.trim().toLowerCase() ?? '';
   const filter = resolveDwaionActivityFilter(params.get('state'));
   const period = resolveDwaionActivityPeriod(params.get('period'));
+  const [periodAnchor, setPeriodAnchor] = useState(() => Date.now());
+  const periodFrom = useMemo(
+    () => dwaionActivityPeriodStart(period, periodAnchor),
+    [period, periodAnchor]
+  );
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
   const canLoadRuns =
     isAuthenticated && Boolean(user) && isLoaded && hasPermission('APP.ASK', 'VIEW');
   const identity = `${user?.tenantId ?? ''}:${user?.userId ?? ''}`;
-  const runs = useQuery({
-    queryKey: ['dwaion', 'user-runs', 'recent-window', identity, DWAION_ACTIVITY_WINDOW_LIMIT],
-    queryFn: () => getDwaionUserRuns(undefined, DWAION_ACTIVITY_WINDOW_LIMIT),
+  const runs = useDwaionRunPages({
+    identity,
+    period,
+    periodFrom,
     enabled: canLoadRuns,
-    staleTime: 15_000,
-    refetchInterval: 60_000,
-    retry: 1,
-    meta: { accessSensitive: true },
   });
   const accessResponseDenied =
     runs.isError && runs.error instanceof HttpError && [401, 403].includes(runs.error.status);
   const runDataUsable = canLoadRuns && !accessResponseDenied;
-  const allRuns = runDataUsable ? (runs.data ?? EMPTY_RUNS) : EMPTY_RUNS;
-  const periodRuns = useMemo(() => filterDwaionActivityPeriod(allRuns, period), [allRuns, period]);
-  const visibleRuns = useMemo(
-    () => filterDwaionActivityWindow(periodRuns, filter),
-    [filter, periodRuns]
-  );
-  const metrics = useMemo(() => summarizeDwaionActivityWindow(periodRuns), [periodRuns]);
+  const allRuns = useMemo(() => {
+    if (!runDataUsable || !runs.data) return EMPTY_RUNS;
+    const unique = new Map<string, DwaionUserRun>();
+    for (const page of runs.data.pages) {
+      for (const run of page.runs) unique.set(run.runId.toLowerCase(), run);
+    }
+    return [...unique.values()];
+  }, [runDataUsable, runs.data]);
+  const visibleRuns = useMemo(() => filterDwaionActivityWindow(allRuns, filter), [allRuns, filter]);
+  const metrics = useMemo(() => summarizeDwaionActivityWindow(allRuns), [allRuns]);
   const selectedWindowRun = findExactDwaionRun(allRuns, selectedRunId);
   const selectedRunDetail = useQuery({
     queryKey: ['dwaion', 'user-run', 'detail', identity, selectedRunId],
@@ -101,18 +105,18 @@ export function DwaionActivity() {
       selectedRunDetail.isError &&
       selectedRunDetail.error instanceof HttpError &&
       [401, 403].includes(selectedRunDetail.error.status));
-  const retrievalError = runs.isError || (exactSelectionActive && selectedRunDetail.isError);
+  const retrievalError =
+    runs.isError ||
+    runs.isFetchNextPageError ||
+    (exactSelectionActive && selectedRunDetail.isError);
   const retrievalPending =
     runs.isPending || runs.isFetching || (exactSelectionActive && selectedRunDetail.isFetching);
-  const refetchRuns = runs.refetch;
   const refetchSelectedRun = selectedRunDetail.refetch;
-  const refreshRuns = useCallback(
-    () =>
-      canLoadRuns
-        ? Promise.all([refetchRuns(), ...(exactSelectionActive ? [refetchSelectedRun()] : [])])
-        : Promise.resolve([]),
-    [canLoadRuns, exactSelectionActive, refetchRuns, refetchSelectedRun]
-  );
+  const refreshRuns = useCallback(() => {
+    if (!canLoadRuns) return Promise.resolve([]);
+    setPeriodAnchor((current) => Math.max(Date.now(), current + 1));
+    return exactSelectionActive ? Promise.all([refetchSelectedRun()]) : Promise.resolve([]);
+  }, [canLoadRuns, exactSelectionActive, refetchSelectedRun]);
   useEffect(() => {
     const handleRefresh = () => void refreshRuns();
     globalThis.addEventListener(DWAION_ACTIVITY_REFRESH_EVENT, handleRefresh);
@@ -128,8 +132,10 @@ export function DwaionActivity() {
   const selectRun = (runId: string) => setParams(updateDwaionActivitySelection(params, runId));
   const selectFilter = (value: DwaionActivityFilter) =>
     setParams(updateDwaionActivityFilter(params, value), { replace: true });
-  const selectPeriod = (value: DwaionActivityPeriod) =>
+  const selectPeriod = (value: DwaionActivityPeriod) => {
+    setPeriodAnchor(Date.now());
     setParams(updateDwaionActivityPeriod(params, value), { replace: true });
+  };
   const lastRetrieved = runs.dataUpdatedAt
     ? formatDate(
         new Date(runs.dataUpdatedAt).toISOString(),
@@ -222,7 +228,7 @@ export function DwaionActivity() {
         <ActivityListHeader
           filter={filter}
           period={period}
-          total={periodRuns.length}
+          total={allRuns.length}
           visible={visibleRuns.length}
           onFilter={selectFilter}
           onPeriod={selectPeriod}
@@ -244,7 +250,12 @@ export function DwaionActivity() {
         >
           <Box component="section" aria-labelledby="dwaion-activity-list" sx={{ minWidth: 0 }}>
             <ActivityListBody
-              runs={runs}
+              runs={{
+                data: runs.data ? allRuns : undefined,
+                isPending: runs.isPending,
+                isError: runs.isError,
+                isFetching: runs.isFetching,
+              }}
               visibleRuns={visibleRuns}
               selectedRunId={selectedRunId}
               filter={filter}
@@ -254,6 +265,10 @@ export function DwaionActivity() {
               onStart={() => navigate('/dwaion/new')}
               accessDenied={accessResponseDenied || (isLoaded && !canLoadRuns)}
               onRefresh={canLoadRuns ? () => void refreshRuns() : undefined}
+              hasMore={Boolean(runs.hasNextPage)}
+              loadingMore={runs.isFetchingNextPage}
+              loadMoreError={runs.isFetchNextPageError}
+              onLoadMore={() => void runs.fetchNextPage()}
             />
             {runDataUsable && !runs.isError && !runs.isPending && (
               <DwaionActivityLatency

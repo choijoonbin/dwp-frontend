@@ -6,6 +6,7 @@ import {
   Clock3,
   Hand,
   MessageSquareText,
+  RefreshCw,
   ShieldAlert,
   X,
 } from 'lucide-react';
@@ -166,6 +167,17 @@ export function ApprovalDecisionDetail({
                 }),
               })}
             </Typography>
+          )}
+          {documents.sourceDenied && (
+            <ActionButton
+              intent="secondary"
+              startIcon={<RefreshCw size={17} />}
+              loading={documents.refreshing}
+              disabled={documents.busy || documents.refreshing}
+              onClick={() => void documents.refreshSource().catch(() => undefined)}
+            >
+              {t('home.commandCenter.contentAccess.recheck')}
+            </ActionButton>
           )}
         </Stack>
       </DetailStateShell>
@@ -463,7 +475,7 @@ export function ApprovalDecisionDetail({
           borderTop: 1,
           borderColor: 'divider',
           bgcolor: 'background.paper',
-          boxShadow: { xs: '0 -8px 20px rgba(15, 23, 42, 0.08)', md: 'none' },
+          boxShadow: { xs: 4, md: 0 },
         }}
       >
         {detail.canClaim && (

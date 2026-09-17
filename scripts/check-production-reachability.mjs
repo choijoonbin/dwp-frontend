@@ -17,7 +17,8 @@ const DEFAULT_ENTRY_ROOTS = [
   'libs/shared-utils/src/index.ts',
 ];
 const VERIFICATION_FILE_PATTERN = /\.(?:test|spec|stories)\.[cm]?[jt]sx?$/u;
-const SUPPORT_FILE_PATTERN = /(?:^|\/)(?:test-utils)(?:\/|$)|\.test-support\.[cm]?[jt]sx?$/u;
+const SUPPORT_FILE_PATTERN =
+  /(?:^|\/)(?:test-utils)(?:\/|$)|(?:\.test-support|-test-(?:fixtures|harness))\.[cm]?[jt]sx?$/u;
 
 const normalize = (value) => value.split(path.sep).join('/');
 

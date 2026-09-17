@@ -119,6 +119,9 @@ async function viewer(page: Page, policyAllowed = true) {
     deny: (status: number) => {
       toolsStatus = status;
     },
+    allow: () => {
+      toolsStatus = 200;
+    },
     uncertain: () => {
       unknown = true;
     },
@@ -163,14 +166,26 @@ for (const status of [403, 503])
     const dialog = await comment(page);
     state.deny(status);
     await dialog.getByRole('button', { name: '댓글 등록', exact: true }).click();
-    await expect(dialog.getByRole('button', { name: '댓글 등록', exact: true })).toBeDisabled();
-    await expect(dialog.getByRole('button', { name: '새로고침', exact: true })).toBeVisible();
-    await expect(
-      dialog.getByText('문서 도구 확인에 실패했습니다. 새로고침 후 다시 확인하세요.', {
-        exact: true,
-      })
-    ).toBeVisible();
-    if (status === 403) await expect(page.getByRole('heading', { name: state.title })).toBeHidden();
+    if (status === 403) {
+      await expect(dialog).toHaveCount(0);
+      await expect(page.getByText('원래 결재 검토 의견', { exact: true })).toHaveCount(0);
+      await expect(page.getByRole('heading', { name: state.title })).toBeHidden();
+      const recheck = page.getByRole('button', { name: '최신 권한 확인', exact: true });
+      await expect(recheck).toBeVisible();
+      state.allow();
+      await recheck.click();
+      await expect(page.getByRole('heading', { name: state.title })).toBeVisible({
+        timeout: 10000,
+      });
+    } else {
+      await expect(dialog.getByRole('button', { name: '댓글 등록', exact: true })).toBeDisabled();
+      await expect(dialog.getByRole('button', { name: '새로고침', exact: true })).toBeVisible();
+      await expect(
+        dialog.getByText('문서 도구 확인에 실패했습니다. 새로고침 후 다시 확인하세요.', {
+          exact: true,
+        })
+      ).toBeVisible();
+    }
     expect(state.writes).toHaveLength(0);
   });
 test('결재함 JSON은 명시적 다운로드와 최종 권한 검증 뒤 실제 UTF8 파일을 전달한다', async ({

@@ -571,11 +571,8 @@ for (const issue of ['maker', 'partial history', 'partial diff'] as const)
       await expect(panel.getByRole('button', { name: '발행 검토', exact: true })).toHaveCount(0);
       expect(state.writes).toEqual([]);
       expect(
-        (
-          await new AxeBuilder({ page })
-            .include('[aria-label="양식 버전 작업 공간"]')
-            .analyze()
-        ).violations
+        (await new AxeBuilder({ page }).include('[aria-label="양식 버전 작업 공간"]').analyze())
+          .violations
       ).toEqual([]);
       return;
     }

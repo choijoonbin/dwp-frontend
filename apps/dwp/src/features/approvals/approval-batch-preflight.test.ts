@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   approvalBatchEligibleTaskIds,
   buildApprovalBatchPreflight,
+  mergeApprovalBatchPreflightResult,
 } from './approval-batch-preflight';
 
 import type { ApprovalTask, ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
@@ -127,5 +128,30 @@ describe('approval batch preflight', () => {
       ['EXCLUDED', 'CONTENT_ACCESS_DENIED'],
       ['RECHECK', 'DETAIL_UNAVAILABLE'],
     ]);
+  });
+
+  it('retains preflight exclusions in the final auditable batch result', () => {
+    const preflight = buildApprovalBatchPreflight({
+      selectedTaskIds: ['ready', 'denied'],
+      queueTasks: [task('ready'), task('denied')],
+      inspections: [
+        { taskId: 'ready', state: 'READY', detail: detail('ready') },
+        { taskId: 'denied', state: 'READY', detail: detail('denied', { canDecide: false }) },
+      ],
+    });
+
+    expect(
+      mergeApprovalBatchPreflightResult(preflight, {
+        requestedTaskIds: ['ready'],
+        approvedTaskIds: ['ready'],
+        ineligibleTaskIds: [],
+        remainingTaskIds: [],
+      })
+    ).toEqual({
+      requestedTaskIds: ['ready', 'denied'],
+      approvedTaskIds: ['ready'],
+      ineligibleTaskIds: ['denied'],
+      remainingTaskIds: [],
+    });
   });
 });

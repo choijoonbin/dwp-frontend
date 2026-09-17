@@ -460,9 +460,7 @@
       "RawTypography": 2
     },
     "apps/dwp/src/features/approvals/approval-ui.tsx": {
-      "HardcodedColor": 5,
-      "RawTypography": 2,
-      "RawRadius": 1
+      "HardcodedColor": 5
     },
     "apps/dwp/src/features/calendar/calendar-admin-booking-inbox.tsx": {
       "RawRadius": 1,
@@ -496,11 +494,10 @@
     "apps/dwp/src/features/calendar/calendar-components.tsx": {
       "HardcodedColor": 10,
       "RawRadius": 1,
-      "RawTypography": 17,
+      "RawTypography": 15,
       "Alert": 1
     },
     "apps/dwp/src/features/calendar/calendar-event-dialog.tsx": {
-      "Alert": 5,
       "RawTypography": 2,
       "RawRadius": 3
     },
@@ -519,7 +516,7 @@
       "RawRadius": 2
     },
     "apps/dwp/src/features/calendar/calendar-interactive-grid.tsx": {
-      "RawTypography": 11,
+      "RawTypography": 8,
       "RawRadius": 3
     },
     "apps/dwp/src/features/calendar/calendar-invitations.tsx": {

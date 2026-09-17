@@ -50,7 +50,7 @@ export function NotificationWorkbenchHeader({
       alignItems="center"
       gap={1}
       sx={{
-        p: { xs: 1.25, md: 1.5 },
+        p: { xs: 1, md: 1.25 },
         border: 1,
         borderColor: 'divider',
         borderRadius: (theme) => `${theme.shape.borderRadius}px`,
@@ -86,7 +86,11 @@ export function NotificationWorkbenchHeader({
             />
           </Stack>
           {generatedAt && (
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.6 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: { xs: 'none', sm: 'block' }, mt: 0.4 }}
+            >
               {t('workbench.syncedAt', {
                 time: formatDate(generatedAt, { hour: '2-digit', minute: '2-digit' }),
               })}

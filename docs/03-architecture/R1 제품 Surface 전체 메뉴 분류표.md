@@ -1,22 +1,22 @@
 # R1 제품 Surface 전체 메뉴 분류표
 
-- 상태: Governed ledger v1.11
-- 기준일: 2026-09-07
+- 상태: Governed ledger v1.14
+- 기준일: 2026-09-17
 - 기준 Frontend Commit: `7e87ba2174b8f4de6ef69ff91f183191df61359b` + 본 공통 변경 단위
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
-- Ledger SHA-256: `725beb19e3661a0d10b9a4ffc8f0cf7f09b66a0e0060dcb0d70a797e6aa6db6b`
+- Ledger SHA-256: `5b463f7e320ec585f453dad99fa0660d095496fc6327fe022b080554e147effc`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
 ## 1. 범위와 판정
 
-이 표는 현재 Runtime의 정적 Menu Route **198개 전부**를 분류한다. Detail Route, Query View,
+이 표는 현재 Runtime의 정적 Menu Route **225개 전부**를 분류한다. Detail Route, Query View,
 Context Menu와 아직 Navigation Source에 없는 예정 메뉴는 수량에 포함하지 않는다. 각 행의
 `목표 Plane/Task`와 `목표 Surface`는 구현 시 Product Manifest와 자동 Test의 Golden Source가
 된다.
 
-전체 198개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
-Surface`는 12개 업무 앱 146개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
+전체 225개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
+Surface`는 12개 업무 앱 173개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
 52개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
 `work.work`, `activity.work`, `tenant.admin`, `provider.control`, `account.settings`다.
 모든 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간 문법을 사용한다. 비제품 Governed
@@ -27,25 +27,39 @@ Route Key가 필요할 때는 점을 `__`로 치환한 가역 Token만 사용하
 `meetings.preferences`에 이어 `dwaion.routines`, `dwaion.personal-controls`,
 `dwaion.artifacts`를 정식 사용자 메뉴로 추가한다. 일곱 메뉴 모두 기존 업무 Surface·Policy의
 `W3`/`DRAFT PAGE`이며 관리 메뉴나 승인 Authorization Bundle을 변경하지 않는다. DWAI·ON의 기존
-15개 메뉴는 계속 `W2`이고 신규 확장 세 메뉴만 항목 단위 `W3`이다. 정적 DRAFT PAGE는 86개,
-기존 동적 Detail 5개를 포함한 DRAFT PAGE는 91개다.
-이는 메뉴 분류이며 운영 권한 승격을 뜻하지 않는다.
+15개 메뉴는 계속 `W2`이고 신규 확장 세 메뉴만 항목 단위 `W3`이다. PAGE 구현·운영 승격 상태는
+각 Product Manifest와 Authorization Bundle의 자동 검증 결과를 따른다. 이는 메뉴 분류이며 운영
+권한 승격을 뜻하지 않는다.
 
 2026-09-07 사용자 디자인 확인에 따라 Work의 통합업무함·내 조치 대기·오늘 계획·진행 중·
 응답 대기·완료된 업무를 6개 정적 메뉴로 복원했다. 각 경로는 업무 범위를 소유하며 검색 조건과
 상세 복귀를 유지한다. `/work`와 `/work/home`은 `/work/queue`로 이동하는 호환 경로이며
 정적 메뉴 수에는 포함하지 않는다.
 
-| 목표 Plane          |    수량 | 의미                                    |
-| ------------------- | ------: | --------------------------------------- |
-| `work`              |      95 | 개인·참여 업무 92 + 관계 기반 팀 업무 3 |
-| `management`        |      61 | 제품 운영 33 + 제품 설정 28             |
-| `tenant-governance` |      24 | 회사 공통 운영 8 + 회사 공통 설정 16    |
-| `provider-control`  |      10 | Provider 운영 6 + Provider 설정·통제 4  |
-| `account`           |       8 | 개인 계정·선호                          |
-| **합계**            | **198** |                                         |
+2026-09-16에는 Workplace의 공간 탐색과 회의실 탐색을 `/workplace/find` 한 메뉴로 통합하고,
+Approvals 관리 Surface에 결재선 라우팅, 통합 및 자동화, 감사 및 기록, 분석 및 인사이트, 배포
+관리 다섯 메뉴를 공식 PAGE로 반영했다. 기존 `/workplace/explore`와 `/workplace/rooms`는 검색
+조건을 정규화해 Canonical Finder로 한 번 이동한다.
 
-Task 기준 합계는 `work 100`, `team 3`, `operations 47`, `administration 48`이다. Account의
+같은 날 Workplace의 내 공간 예약과 내 회의 예약을 `/workplace/reservations` 한 메뉴로 통합했다.
+Workplace와 Calendar의 권위·상세·변경 명령은 분리한 채 하나의 시간순 Timeline으로 제공하며,
+기존 `/workplace/my-bookings`와 `/workplace/my-meetings`는 Query·Hash를 보존해 이동한다.
+
+2026-09-17에는 Workplace의 안전·실내 길찾기·예약 도우미와 안전 운영, 장치 운영, 공간 계획,
+도우미 거버넌스, 서비스 제공자, 방문·출입·키오스크 운영 13개 화면을 정식 메뉴로 등록했다. 같은
+변경 단위에서 Mail의 검색·후속 조치·전달 상태·작업·템플릿·보존 정책·전달 감사 7개 화면도 정식
+메뉴로 등록했다. 이 20개는 모두 기존 Product Surface와 정확한 PAGE 권한 계약에 귀속된다.
+
+| 목표 Plane          |    수량 | 의미                                     |
+| ------------------- | ------: | ---------------------------------------- |
+| `work`              |     103 | 개인·참여 업무 100 + 관계 기반 팀 업무 3 |
+| `management`        |      80 | 제품 운영 40 + 제품 설정 40              |
+| `tenant-governance` |      24 | 회사 공통 운영 8 + 회사 공통 설정 16     |
+| `provider-control`  |      10 | Provider 운영 6 + Provider 설정·통제 4   |
+| `account`           |       8 | 개인 계정·선호                           |
+| **합계**            | **225** |                                          |
+
+Task 기준 합계는 `work 108`, `team 3`, `operations 54`, `administration 60`이다. Account의
 개인 설정 8개는 Plane은 `account`, Task 집계에서는 `work`로 센다.
 
 ### 표기
@@ -65,12 +79,12 @@ Task 기준 합계는 `work 100`, `team 3`, `operations 47`, `administration 48`
 | -------- | -------------: | ------------------------------------------------------------------ |
 | `W0`     |              0 | 공통 Manifest·Resolver·Guard·Shell·Context API·Telemetry           |
 | `W0.5`   |             12 | Communications·Services Technical Canary                           |
-| `W1a`    |             15 | Approvals 대표 Pilot                                               |
+| `W1a`    |             20 | Approvals 대표 Pilot                                               |
 | `W1b`    |             25 | HCM 대표 Pilot                                                     |
 | `W2`     |             35 | DWAI·ON, Notifications, Spaces                                     |
-| `W3`     |             59 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
+| `W3`     |             81 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
 | `Keep`   |             52 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
-| **합계** |        **198** |                                                                    |
+| **합계** |        **225** |                                                                    |
 
 ## 2. Workspace, Work와 Activity — 10
 
@@ -176,27 +190,42 @@ Parent는 `APP.CALENDAR`다.
 | `calendar.admin-company-calendars` | 운영 관리 › 회사 캘린더    | `/calendar/admin/company-calendars` | M/O        | `calendar.management` | I: `ADMIN.CALENDAR:VIEW+` | Management Nav; Guard 정합화 |
 | `calendar.admin-policies`          | 운영 관리 › 일정 정책      | `/calendar/admin/policies`          | M/A        | `calendar.management` | I: `ADMIN.CALENDAR:VIEW+` | Management Nav; Guard 정합화 |
 
-## 8. Workplace/Rooms — 12 (`W3`)
+## 8. Workplace/Rooms — 27 (`W3`)
 
 현재 Parent는 `APP.WORKPLACE` 하나이고 일부 항목은 `APP.ROOMS` 또는 `ADMIN.ROOMS`를 추가로
 요구한다. Surface Guard에서 두 App Boundary를 독립 판정한다.
 
-| Menu ID                       | 현재 그룹 › 메뉴                 | Path                                  | Plane/Task | 목표 Surface           | Item 조건                  | 결정                                |
-| ----------------------------- | -------------------------------- | ------------------------------------- | ---------- | ---------------------- | -------------------------- | ----------------------------------- |
-| `rooms.home`                  | 내 공간 예약 › 근무 공간 홈      | `/workplace/home`                     | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Guard 정합화              |
-| `rooms.explore`               | 내 공간 예약 › 공간 찾기         | `/workplace/explore`                  | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Guard 정합화              |
-| `rooms.find-rooms`            | 내 공간 예약 › 회의실 찾기       | `/workplace/rooms`                    | W/W        | `workplace.work`       | I: `APP.ROOMS:VIEW+`       | Work Nav; Parent·Guard 정합화       |
-| `rooms.my-bookings`           | 내 공간 예약 › 내 공간 예약      | `/workplace/my-bookings`              | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Guard 정합화              |
-| `rooms.my-meetings`           | 내 공간 예약 › 내 회의 예약      | `/workplace/my-meetings`              | W/W        | `workplace.work`       | I: `APP.ROOMS:VIEW+`       | Work Nav; Parent·Guard 정합화       |
-| `rooms.admin-overview`        | 근무공간 관리 › 운영 현황        | `/workplace/admin/overview`           | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
-| `rooms.admin-operations`      | 근무공간 관리 › 예약 운영·감사   | `/workplace/admin/operations`         | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
-| `rooms.admin-governance`      | 근무공간 관리 › 공간 거버넌스    | `/workplace/admin/governance`         | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
-| `rooms.admin-locations`       | 근무공간 관리 › 사업장 및 배치도 | `/workplace/admin/locations`          | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
-| `rooms.admin-policy`          | 근무공간 관리 › 공간 예약 정책   | `/workplace/admin/policies`           | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
-| `rooms.admin-room-operations` | 회의실 관리 › 회의 승인 운영     | `/workplace/admin/meeting-operations` | M/O        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
-| `rooms.admin-room-policy`     | 회의실 관리 › 회의 예약 정책     | `/workplace/admin/meeting-policy`     | M/A        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
+| Menu ID                            | 현재 그룹 › 메뉴                 | Path                                    | Plane/Task | 목표 Surface           | Item 조건                  | 결정                                |
+| ---------------------------------- | -------------------------------- | --------------------------------------- | ---------- | ---------------------- | -------------------------- | ----------------------------------- |
+| `rooms.home`                       | 내 공간 예약 › 근무 공간 홈      | `/workplace/home`                       | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Guard 정합화              |
+| `rooms.find`                       | 내 공간 예약 › 공간 찾기 및 예약 | `/workplace/find`                       | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Canonical PAGE            |
+| `rooms.wayfinding`                 | 내 공간 예약 › 실내 길찾기       | `/workplace/navigation`                 | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Canonical PAGE            |
+| `rooms.planner`                    | 내 공간 예약 › 주간 예약 플래너  | `/workplace/planner`                    | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Canonical PAGE            |
+| `rooms.assistant`                  | 내 공간 예약 › 예약 도우미       | `/workplace/assistant`                  | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Canonical PAGE            |
+| `rooms.reservations`               | 내 공간 예약 › 내 예약           | `/workplace/reservations`               | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Canonical PAGE            |
+| `rooms.service-orders`             | 내 공간 예약 › 서비스 요청       | `/workplace/service-orders`             | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Canonical PAGE            |
+| `rooms.safety`                     | 내 공간 예약 › 안전 센터         | `/workplace/safety`                     | W/W        | `workplace.work`       | I: `APP.WORKPLACE:VIEW+`   | Work Nav; Canonical PAGE            |
+| `rooms.admin-overview`             | 근무공간 관리 › 운영 현황        | `/workplace/admin/overview`             | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
+| `rooms.admin-safety`               | 근무공간 관리 › 안전 운영        | `/workplace/admin/safety`               | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-operations`           | 근무공간 관리 › 예약 운영·감사   | `/workplace/admin/operations`           | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
+| `rooms.admin-devices`              | 근무공간 관리 › 장치 운영        | `/workplace/admin/devices`              | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-space-planning`       | 근무공간 관리 › 공간 계획        | `/workplace/admin/space-planning`       | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-assistant-governance` | 근무공간 관리 › 도우미 거버넌스  | `/workplace/admin/assistant-governance` | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-governance`           | 근무공간 관리 › 공간 거버넌스    | `/workplace/admin/governance`           | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
+| `rooms.admin-locations`            | 근무공간 관리 › 사업장 및 배치도 | `/workplace/admin/locations`            | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
+| `rooms.admin-policy`               | 근무공간 관리 › 공간 예약 정책   | `/workplace/admin/policies`             | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Guard 정합화        |
+| `rooms.admin-service-fulfillment`  | 근무공간 관리 › 서비스 이행      | `/workplace/admin/service-fulfillment`  | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-service-catalog`      | 근무공간 관리 › 서비스 카탈로그  | `/workplace/admin/service-catalog`      | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-service-providers`    | 근무공간 관리 › 서비스 제공자    | `/workplace/admin/service-providers`    | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-visits`               | 근무공간 관리 › 방문 운영        | `/workplace/admin/visits`               | M/O        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-visit-policies`       | 근무공간 관리 › 방문 정책        | `/workplace/admin/visit-policies`       | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-access-zones`         | 근무공간 관리 › 출입 구역        | `/workplace/admin/access-zones`         | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-visit-providers`      | 근무공간 관리 › 방문 제공자      | `/workplace/admin/visit-providers`      | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-kiosk-devices`        | 근무공간 관리 › 키오스크 장치    | `/workplace/admin/kiosk-devices`        | M/A        | `workplace.management` | I: `ADMIN.WORKPLACE:VIEW+` | Management Nav; Canonical PAGE      |
+| `rooms.admin-room-operations`      | 회의실 관리 › 회의 승인 운영     | `/workplace/admin/meeting-operations`   | M/O        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
+| `rooms.admin-room-policy`          | 회의실 관리 › 회의 예약 정책     | `/workplace/admin/meeting-policy`       | M/A        | `workplace.management` | I: `ADMIN.ROOMS:VIEW+`     | Management Nav; Parent·Guard 정합화 |
 
-## 9. Mail — 16 (`W3`)
+## 9. Mail — 23 (`W3`)
 
 Parent는 `APP.MAIL`이다.
 
@@ -204,7 +233,10 @@ Parent는 `APP.MAIL`이다.
 | --------------------------- | --------------------------- | ---------------------------- | ---------- | ----------------- | ----------------------------- | --------------------------------- |
 | `mail.home`                 | 시작 › 메일 홈              | `/mail/home`                 | W/W        | `mail.work`       | P: App                        | Work Nav                          |
 | `mail.inbox`                | 메일함 › 받은 메일          | `/mail/inbox`                | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.follow-up`            | 메일함 › 후속 조치          | `/mail/follow-up`            | W/W        | `mail.work`       | P: App; `mail.work-access.v1` | Work Nav; Canonical PAGE          |
+| `mail.search`               | 메일함 › 메일 검색          | `/mail/search`               | W/W        | `mail.work`       | P: App; `mail.work-access.v1` | Work Nav; Canonical PAGE          |
 | `mail.sent`                 | 메일함 › 보낸 메일          | `/mail/sent`                 | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.delivery`             | 메일함 › 전달 상태          | `/mail/delivery`             | W/W        | `mail.work`       | P: App; `mail.work-access.v1` | Work Nav; Canonical PAGE          |
 | `mail.drafts`               | 메일함 › 임시 보관함        | `/mail/drafts`               | W/W        | `mail.work`       | P: App                        | Work Nav                          |
 | `mail.archive`              | 메일함 › 보관함             | `/mail/archive`              | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
 | `mail.spam`                 | 메일함 › 스팸               | `/mail/spam`                 | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
@@ -212,12 +244,16 @@ Parent는 `APP.MAIL`이다.
 | `mail.folders`              | 메일함 › 내 폴더            | `/mail/folders`              | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
 | `mail.contacts`             | 협업 › 주소록               | `/mail/contacts`             | W/W        | `mail.work`       | P: App; `mail.work-access.v1` | Work Nav; ACTIVE Menu; DRAFT PAGE |
 | `mail.shared`               | 협업 › 공유 메일함          | `/mail/shared`               | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.actions`              | 협업 › 메일 작업            | `/mail/actions`              | W/W        | `mail.work`       | P: App; `mail.work-access.v1` | Work Nav; Canonical PAGE          |
 | `mail.organization`         | 개인 설정 › 폴더 및 규칙    | `/mail/organization`         | W/W        | `mail.work`       | P: App                        | Work Nav; ACTIVE Menu; DRAFT PAGE |
 | `mail.accounts`             | 개인 설정 › 연결된 계정     | `/mail/accounts`             | W/W        | `mail.work`       | P: App                        | Work Nav                          |
+| `mail.templates`            | 개인 설정 › 템플릿          | `/mail/templates`            | W/W        | `mail.work`       | P: App; `mail.work-access.v1` | Work Nav; Canonical PAGE          |
 | `mail.admin-overview`       | 메일 운영 › 운영 현황       | `/mail/admin/overview`       | M/O        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
 | `mail.admin-connections`    | 메일 운영 › 메일 연결       | `/mail/admin/connections`    | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
 | `mail.admin-shared-inboxes` | 메일 운영 › 공유함 운영     | `/mail/admin/shared-inboxes` | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
 | `mail.admin-policies`       | 메일 운영 › 보안 및 AI 정책 | `/mail/admin/policies`       | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Guard 정합화      |
+| `mail.admin-retention`      | 메일 운영 › 보존 정책       | `/mail/admin/retention`      | M/A        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Canonical PAGE    |
+| `mail.admin-delivery-audit` | 메일 운영 › 전달 감사       | `/mail/admin/delivery-audit` | M/O        | `mail.management` | I: `ADMIN.MAIL:VIEW+`         | Management Nav; Canonical PAGE    |
 
 위 보관함·스팸·휴지통·내 폴더·폴더 및 규칙·주소록 6개 메뉴는 Runtime Navigation에서는
 `ACTIVE`이고 `APP.MAIL` Entitlement와
@@ -263,7 +299,7 @@ Parent는 `APP.MEETINGS`이며 운영 정책은 `ADMIN.MEETINGS`로 분리한다
 예약·준비·개인 회의실은 `/meetings/mine?view=schedule|preparation|personal-room`의 Contextual
 View이며 정적 메뉴를 추가하지 않는다. 준비 View는 해당 `meetingId`를 함께 검증한다.
 
-## 12. Approvals — 15 (`W1a` Pilot)
+## 12. Approvals — 20 (`W1a` Pilot)
 
 Parent는 현재 `APP.APPROVALS`다. Pilot에서 `approvals.work`와 `approvals.admin` Guard를
 독립시킨다.
@@ -282,9 +318,14 @@ Parent는 현재 `APP.APPROVALS`다. Pilot에서 `approvals.work`와 `approvals.
 | `approvals.admin-overview` | 결재 관리 › 운영 개요        | `/approvals/admin/overview`      | M/O        | `approvals.admin` | I: `ADMIN.APPROVAL_OPERATIONS:VIEW+`                           | Management Nav |
 | `approvals.workflows`      | 결재 관리 › 프로세스 설계    | `/approvals/admin/workflows`     | M/A        | `approvals.admin` | I: `ADMIN.APPROVAL_DESIGN:VIEW+`                               | Management Nav |
 | `approvals.forms`          | 결재 관리 › 양식 카탈로그    | `/approvals/admin/forms`         | M/A        | `approvals.admin` | I: `ADMIN.APPROVAL_DESIGN:VIEW+`                               | Management Nav |
+| `approvals.routing`        | 결재 관리 › 결재선 라우팅    | `/approvals/admin/routing`       | M/A        | `approvals.admin` | I: Design read capability expression                           | Management Nav |
 | `approvals.policies`       | 결재 관리 › 결재 정책        | `/approvals/admin/policies`      | M/A        | `approvals.admin` | I: `ADMIN.APPROVAL_POLICY:VIEW+`                               | Management Nav |
+| `approvals.integrations`   | 결재 관리 › 통합 및 자동화   | `/approvals/admin/integrations`  | M/A        | `approvals.admin` | I: Operations read capability expression                       | Management Nav |
+| `approvals.audit`          | 결재 관리 › 감사 및 기록     | `/approvals/admin/audit`         | M/O        | `approvals.admin` | I: Audit or oversight read capability expression               | Management Nav |
 | `approvals.operations`     | 결재 관리 › SLA 및 전달 운영 | `/approvals/admin/operations`    | M/O        | `approvals.admin` | I: `ADMIN.APPROVAL_OPERATIONS:VIEW+`                           | Management Nav |
 | `approvals.signatures`     | 결재 관리 › 전자서명 연계    | `/approvals/admin/signatures`    | M/A        | `approvals.admin` | I: `ADMIN.APPROVAL_SIGNATURE:VIEW+`                            | Management Nav |
+| `approvals.analytics`      | 결재 관리 › 분석 및 인사이트 | `/approvals/admin/analytics`     | M/O        | `approvals.admin` | I: Operations, audit or oversight capability expression        | Management Nav |
+| `approvals.deployments`    | 결재 관리 › 배포 관리        | `/approvals/admin/deployments`   | M/A        | `approvals.admin` | I: Design or operations capability expression                  | Management Nav |
 
 ## 13. Spaces — 11 (`W2`)
 
@@ -444,15 +485,19 @@ Preset 승인이 회사 센터에 제품별 생성·수정·게시·운영 Actio
 HCM 미등록 Legacy Subpath는 자기 Redirect 대신 HCM Surface 404로 종료한다. `/rooms`는
 `/workplace/home`, `/rooms/<suffix>`는 동일한 `/workplace/<suffix>` Canonical Route가 있을 때만
 Query·Hash를 보존해 한 번 Redirect하며 대상이 없으면 Workplace Surface 404로 종료한다.
+`/workplace/explore`는 `types=ALL`, `/workplace/rooms`는 `types=ROOM` 의미를 보존해
+`/workplace/find`로 한 번 이동한다.
+`/workplace/my-bookings`와 `/workplace/my-meetings`는 각 권위와 선택 항목을 보존해
+`/workplace/reservations`로 한 번 이동한다.
 
 ## 19. 검증 불변식
 
-1. 정적 Menu ID와 Path는 각각 198개이고 중복이 없다.
-2. Plane 합계는 `95 + 61 + 24 + 10 + 8 = 198`다.
-3. Task 합계는 `100 + 3 + 47 + 48 = 198`다.
-4. `management` 61개가 Work Sidebar에 나타나지 않는다.
-5. 12개 주요 업무 앱의 Work·Team 85개가 Product Management Sidebar에 나타나지 않는다.
-6. 전체 198개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 146개는 정확히 한
+1. 정적 Menu ID와 Path는 각각 225개이고 중복이 없다.
+2. Plane 합계는 `103 + 80 + 24 + 10 + 8 = 225`이다.
+3. Task 합계는 `108 + 3 + 54 + 60 = 225`이다.
+4. `management` 80개가 Work Sidebar에 나타나지 않는다.
+5. 12개 주요 업무 앱의 Work·Team 93개가 Product Management Sidebar에 나타나지 않는다.
+6. 전체 225개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 173개는 정확히 한
    `productSurfaceId`도 가진다.
 7. Legacy Alias는 정적 Menu를 추가하지 않고 대상 Canonical Route와 같은 Surface를 해석한다.
 8. 동적 Detail Route는 Parent Menu의 Surface를 상속하되 Object 권한을 서버에서 다시 검사한다.

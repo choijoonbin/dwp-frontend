@@ -81,6 +81,15 @@ const BOOKING_STATUSES: readonly WorkplaceBookingStatus[] = [
 const EMPTY_BOOKING_FILTERS: BookingFilters = { status: 'ALL', userId: '' };
 const EMPTY_AUDIT_FILTERS: AuditFilters = { action: '', aggregateType: '', actorUserId: '' };
 
+function auditFiltersFromSearchParams(searchParams: URLSearchParams): AuditFilters {
+  const actor = searchParams.get('actorUserId')?.trim() ?? '';
+  return {
+    action: (searchParams.get('action') ?? '').slice(0, 120),
+    aggregateType: (searchParams.get('aggregateType') ?? '').slice(0, 80),
+    actorUserId: /^\d{1,15}$/u.test(actor) ? actor : '',
+  };
+}
+
 export function initialOperationsRange(timeZone: string, now = Temporal.Now.instant().toString()) {
   const today = Temporal.Instant.from(now).toZonedDateTimeISO(timeZone).toPlainDate();
   return { start: today.subtract({ days: 7 }).toString(), end: today.add({ days: 30 }).toString() };
@@ -178,8 +187,12 @@ export function WorkplaceAdminOperations() {
   const [appliedRange, setAppliedRange] = useState<DateRangeValue>(draftRange);
   const [bookingDraft, setBookingDraft] = useState<BookingFilters>(EMPTY_BOOKING_FILTERS);
   const [bookingFilters, setBookingFilters] = useState<BookingFilters>(EMPTY_BOOKING_FILTERS);
-  const [auditDraft, setAuditDraft] = useState<AuditFilters>(EMPTY_AUDIT_FILTERS);
-  const [auditFilters, setAuditFilters] = useState<AuditFilters>(EMPTY_AUDIT_FILTERS);
+  const [auditDraft, setAuditDraft] = useState<AuditFilters>(() =>
+    auditFiltersFromSearchParams(searchParams)
+  );
+  const [auditFilters, setAuditFilters] = useState<AuditFilters>(() =>
+    auditFiltersFromSearchParams(searchParams)
+  );
   const [bookingPage, setBookingPage] = useState(0);
   const [bookingSize, setBookingSize] = useState(25);
   const [auditPage, setAuditPage] = useState(0);

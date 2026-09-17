@@ -125,14 +125,24 @@ function ExperienceOverview() {
         title={t('workplace.admin.overview.title')}
         description={t('workplace.experience.overviewDescription')}
         actions={
-          <ActionButton
-            component={NavLink}
-            to="/workplace/admin/locations"
-            intent="primary"
-            startIcon={<ArrowUpRight size={16} />}
-          >
-            {t('workplace.admin.overview.manageLocations')}
-          </ActionButton>
+          <Stack direction="row" gap={1} flexWrap="wrap">
+            <ActionButton
+              component={NavLink}
+              to="/workplace/admin/operations?view=bookings"
+              intent="secondary"
+              startIcon={<Wrench size={16} />}
+            >
+              {t('workplace.admin.operations.title')}
+            </ActionButton>
+            <ActionButton
+              component={NavLink}
+              to="/workplace/admin/locations"
+              intent="primary"
+              startIcon={<ArrowUpRight size={16} />}
+            >
+              {t('workplace.admin.overview.manageLocations')}
+            </ActionButton>
+          </Stack>
         }
       />
       {scope.sitesQuery.isError ? (

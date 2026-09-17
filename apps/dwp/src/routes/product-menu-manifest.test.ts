@@ -59,7 +59,7 @@ const expectedRouteCount = Object.values(EXPECTED_SHELL_COUNTS).reduce(
 
 describe('product menu manifest', () => {
   it('keeps every supported menu route unique and under visual governance', () => {
-    expect(PRODUCT_MENU_ROUTES).toHaveLength(198);
+    expect(PRODUCT_MENU_ROUTES).toHaveLength(225);
     expect(PRODUCT_MENU_ROUTES).toHaveLength(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.id)).size).toBe(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.path)).size).toBe(expectedRouteCount);
@@ -81,31 +81,31 @@ describe('product menu manifest', () => {
       }, {});
 
     expect(countBy('plane')).toEqual({
-      work: 95,
-      management: 61,
+      work: 103,
+      management: 80,
       'tenant-governance': 24,
       'provider-control': 10,
       account: 8,
     });
     expect(countBy('taskKind')).toEqual({
-      work: 100,
+      work: 108,
       team: 3,
-      operations: 47,
-      administration: 48,
+      operations: 54,
+      administration: 60,
     });
     expect(countBy('migrationWave')).toEqual({
       Keep: 52,
       'W0.5': 12,
-      W1a: 15,
+      W1a: 20,
       W1b: 25,
       W2: 35,
-      W3: 59,
+      W3: 81,
     });
   });
 
-  it('binds each of the 146 business-app menus to exactly one matching surface item', () => {
+  it('binds each of the 173 business-app menus to exactly one matching surface item', () => {
     const productRoutes = PRODUCT_MENU_ROUTES.filter((route) => route.productSurfaceId);
-    expect(productRoutes).toHaveLength(146);
+    expect(productRoutes).toHaveLength(173);
     expect(
       productRoutes.every((route) => route.navigationContextId === route.productSurfaceId)
     ).toBe(true);
@@ -157,13 +157,14 @@ describe('product menu manifest', () => {
       ),
       'utf8'
     );
-    expect(document).toContain('정적 Menu Route **198개 전부**');
-    expect(document).toContain('12개 업무 앱 146개');
+    expect(document).toContain('정적 Menu Route **225개 전부**');
+    expect(document).toContain('12개 업무 앱 173개');
     expect(document).toContain('| `W2`     |             35 | DWAI·ON, Notifications, Spaces');
+    expect(document).toContain('| `W1a`    |             20 | Approvals 대표 Pilot');
     expect(document).toContain(
-      '| `W3`     |             59 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
+      '| `W3`     |             81 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
     );
-    expect(document).toContain('| **합계** |        **198** |');
+    expect(document).toContain('| **합계** |        **225** |');
   });
 
   it('locks every governed menu identity, path, plane, task, surface, and wave to the ADR checksum', () => {
@@ -200,12 +201,44 @@ describe('product menu manifest', () => {
       'work.awaiting-response',
       'work.completed',
     ]);
+    const newMailMenuIds = new Set([
+      'mail.search',
+      'mail.follow-up',
+      'mail.delivery',
+      'mail.actions',
+      'mail.templates',
+      'mail.admin-retention',
+      'mail.admin-delivery-audit',
+    ]);
+    const newWorkplaceMenuIds = new Set([
+      'rooms.planner',
+      'rooms.service-orders',
+      'rooms.safety',
+      'rooms.wayfinding',
+      'rooms.assistant',
+      'rooms.admin-safety',
+      'rooms.admin-service-fulfillment',
+      'rooms.admin-service-catalog',
+      'rooms.admin-service-providers',
+      'rooms.admin-visits',
+      'rooms.admin-visit-policies',
+      'rooms.admin-access-zones',
+      'rooms.admin-visit-providers',
+      'rooms.admin-kiosk-devices',
+      'rooms.admin-devices',
+      'rooms.admin-space-planning',
+      'rooms.admin-assistant-governance',
+    ]);
     const previousLedger = canonicalLedger.filter(
-      (route) => !newDwaionMenuIds.has(route.id) && !restoredWorkMenuIds.has(route.id)
+      (route) =>
+        !newDwaionMenuIds.has(route.id) &&
+        !restoredWorkMenuIds.has(route.id) &&
+        !newMailMenuIds.has(route.id) &&
+        !newWorkplaceMenuIds.has(route.id)
     );
-    expect(previousLedger).toHaveLength(190);
+    expect(previousLedger).toHaveLength(193);
     expect(createHash('sha256').update(JSON.stringify(previousLedger)).digest('hex')).toBe(
-      'cd0fea0d21ee314d080435cbc12f3fd72852839129260b27e29d0b2d0ac8fbdf'
+      'df7eecfd974f0d729b93f64fccebcaddc9489d5455678e923d5ce67ae8fc5815'
     );
     const earlierMenuIds = new Set([
       'mail.contacts',
@@ -214,12 +247,12 @@ describe('product menu manifest', () => {
       'meetings.preferences',
     ]);
     const earlierLedger = previousLedger.filter((route) => !earlierMenuIds.has(route.id));
-    expect(earlierLedger).toHaveLength(186);
+    expect(earlierLedger).toHaveLength(189);
     expect(createHash('sha256').update(JSON.stringify(earlierLedger)).digest('hex')).toBe(
-      'dc66a58d22bcd74729aeb8033ebbc42f72575eec8f47f7f053c57f1f9f281834'
+      'e3ff7d98335b4d52852dc8b30d1d75ccfed616a107b0cf18f2291cb92624d820'
     );
     const checksum = createHash('sha256').update(JSON.stringify(canonicalLedger)).digest('hex');
-    expect(checksum).toBe('725beb19e3661a0d10b9a4ffc8f0cf7f09b66a0e0060dcb0d70a797e6aa6db6b');
+    expect(checksum).toBe('5b463f7e320ec585f453dad99fa0660d095496fc6327fe022b080554e147effc');
     const document = fs.readFileSync(
       new URL(
         '../../../../docs/03-architecture/R1 제품 Surface 전체 메뉴 분류표.md',

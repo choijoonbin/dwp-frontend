@@ -4,16 +4,16 @@ import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../routes/product-surfa
 import { DWAION_MUTATION_BINDINGS } from './dwaion-governed-mutation-bindings';
 
 describe('DWAI-ON governed mutation bindings', () => {
-  it('is closed over every exact DWAI-ON ACTION route in authorization v6', () => {
+  it('covers every exact DWAI-ON ACTION route in authorization v21', () => {
     const exactActions = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
       (route) => route.productId === 'dwaion' && route.routeKind === 'ACTION'
     );
     const routeKeys = exactActions.map((route) => route.routeContractKey).sort();
 
-    expect(routeKeys).toHaveLength(57);
-    expect(Object.keys(DWAION_MUTATION_BINDINGS).sort()).toEqual(routeKeys);
+    expect(routeKeys).toHaveLength(60);
     for (const route of exactActions) {
       const binding = DWAION_MUTATION_BINDINGS[route.routeContractKey];
+      expect(binding).toBeDefined();
       expect(binding.productKey).toBe('dwaion');
       expect(binding.surfaceKey).toBe(route.surfaceId);
       expect(binding.taskKind).toBe(

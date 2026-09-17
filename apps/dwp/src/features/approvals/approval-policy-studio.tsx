@@ -125,7 +125,7 @@ export function ApprovalPolicyStudio() {
     }
   }, [experience.canEditPolicies, experience.canPublishPolicies, policies.data]);
   const projectionInvalid = policies.isSuccess && policyProjection === null;
-  const policyRows = policyProjection?.policies ?? [];
+  const policyRows = useMemo(() => policyProjection?.policies ?? [], [policyProjection]);
   const selectedMetadata = policyRows.find((policy) => policy.policyId === selectedId) ?? null;
   const fullPolicies = policyProjection?.kind === 'full' ? policyProjection.policies : [];
   const selected = fullPolicies.find((policy) => policy.policyId === selectedId) ?? null;

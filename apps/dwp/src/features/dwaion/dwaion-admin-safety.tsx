@@ -46,6 +46,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
+import { DwaionAIRuntimeControl } from './dwaion-ai-runtime-control';
 import { useDwaionGovernedMutation } from '../../components/use-dwaion-governed-mutation';
 
 const OUTCOME_OPTIONS = (['HANDOFF', 'DENY'] as const).map((value) => ({
@@ -507,6 +508,8 @@ export function DwaionAdminSafety() {
           </Box>
         </>
       )}
+
+      <DwaionAIRuntimeControl />
 
       <FormDialog
         open={Boolean(bootstrap)}

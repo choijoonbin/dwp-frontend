@@ -1,6 +1,13 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
-import { ActionIconButton, FormField, SelectField } from '@dwp-frontend/design-system';
+import { ArrowLeft, ArrowRight, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import {
+  ActionButton,
+  ActionIconButton,
+  FormDialog,
+  FormField,
+  SelectField,
+} from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -23,6 +30,12 @@ export function ApprovalRequestSearchControls({
   isLocked?: () => boolean;
 }) {
   const { t } = useTranslation('approvals');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [mobileFilters, setMobileFilters] = useState<{
+    status: string;
+    priority: ApprovalSearchFilters['priority'];
+    sort: 'NEWEST' | 'OLDEST';
+  }>({ status: search.status, priority: search.priority, sort: search.sort });
   const statuses =
     view === 'archive'
       ? ['APPROVED', 'REJECTED', 'WITHDRAWN', 'CANCELLED']
@@ -30,12 +43,42 @@ export function ApprovalRequestSearchControls({
         ? ['NEEDS_INFO']
         : ['SUBMITTED', 'IN_REVIEW', 'NEEDS_INFO'];
   const data = !search.result.isFetching && !search.result.isError ? search.result.data : undefined;
+  const statusOptions = [
+    { value: '', label: t('requests.search.allStatus') },
+    ...statuses.map((value) => ({ value, label: t(`status.${value}`) })),
+  ];
+  const priorityOptions = [
+    { value: '', label: t('requests.search.allPriority') },
+    ...(['LOW', 'NORMAL', 'HIGH', 'URGENT'] as const).map((value) => ({
+      value,
+      label: t(`priority.${value}`),
+    })),
+  ];
+  const sortOptions = (['NEWEST', 'OLDEST'] as const).map((value) => ({
+    value,
+    label: t(value === 'NEWEST' ? 'requests.search.newest' : 'requests.search.oldest'),
+  }));
+  const openFilters = () => {
+    if (locked || isLocked?.()) return;
+    setMobileFilters({ status: search.status, priority: search.priority, sort: search.sort });
+    setFiltersOpen(true);
+  };
+  const applyFilters = () => {
+    if (locked || isLocked?.()) return;
+    search.setStatus(mobileFilters.status);
+    search.setPriority(mobileFilters.priority);
+    search.setSort(mobileFilters.sort);
+    setFiltersOpen(false);
+  };
   return (
     <Box sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: 'minmax(0,1fr)', md: 'minmax(0,1fr) 150px 150px 130px' },
+          gridTemplateColumns: {
+            xs: 'minmax(0,1fr) auto',
+            md: 'minmax(0,1fr) 150px 150px 130px',
+          },
           gap: 1.5,
         }}
       >
@@ -49,46 +92,47 @@ export function ApprovalRequestSearchControls({
           inputProps={{ maxLength: 200 }}
           sx={{ minWidth: 0 }}
         />
+        <ActionButton
+          type="button"
+          intent="secondary"
+          startIcon={<SlidersHorizontal size={17} />}
+          disabled={locked}
+          onClick={openFilters}
+          sx={{ display: { xs: 'flex', md: 'none' }, minWidth: 44, minHeight: 44 }}
+        >
+          {t('requests.search.filters')}
+        </ActionButton>
         <SelectField
           label={t('requests.search.status')}
           value={search.status}
           disabled={locked}
-          options={[
-            { value: '', label: t('requests.search.allStatus') },
-            ...statuses.map((value) => ({ value, label: t(`status.${value}`) })),
-          ]}
+          options={statusOptions}
           onValueChange={(value) => {
             if (!locked && !isLocked?.()) search.setStatus(value ?? '');
           }}
+          sx={{ display: { xs: 'none', md: 'flex' } }}
         />
         <SelectField
           label={t('requests.search.priority')}
           value={search.priority ?? ''}
           disabled={locked}
-          options={[
-            { value: '', label: t('requests.search.allPriority') },
-            ...(['LOW', 'NORMAL', 'HIGH', 'URGENT'] as const).map((value) => ({
-              value,
-              label: t(`priority.${value}`),
-            })),
-          ]}
+          options={priorityOptions}
           onValueChange={(value) => {
             if (!locked && !isLocked?.())
               search.setPriority((value || undefined) as ApprovalSearchFilters['priority']);
           }}
+          sx={{ display: { xs: 'none', md: 'flex' } }}
         />
         <SelectField
           label={t('requests.search.sort')}
           value={search.sort}
           disabled={locked}
-          options={(['NEWEST', 'OLDEST'] as const).map((value) => ({
-            value,
-            label: t(value === 'NEWEST' ? 'requests.search.newest' : 'requests.search.oldest'),
-          }))}
+          options={sortOptions}
           onValueChange={(value) => {
             if (!locked && !isLocked?.() && (value === 'NEWEST' || value === 'OLDEST'))
               search.setSort(value);
           }}
+          sx={{ display: { xs: 'none', md: 'flex' } }}
         />
       </Box>
       <Stack
@@ -142,6 +186,61 @@ export function ApprovalRequestSearchControls({
           </ActionIconButton>
         </Stack>
       </Stack>
+      <FormDialog
+        open={filtersOpen}
+        title={t('requests.search.filters')}
+        cancelLabel={t('common:actions.cancel')}
+        submitLabel={t('requests.search.applyFilters')}
+        submitDisabled={locked}
+        mobileFullScreen
+        onClose={() => setFiltersOpen(false)}
+        onSubmit={applyFilters}
+        secondaryActions={
+          <ActionButton
+            type="button"
+            intent="quiet"
+            startIcon={<RotateCcw size={16} />}
+            disabled={locked}
+            onClick={() => setMobileFilters({ status: '', priority: undefined, sort: 'NEWEST' })}
+          >
+            {t('requests.search.reset')}
+          </ActionButton>
+        }
+      >
+        <Stack gap={2}>
+          <SelectField
+            label={t('requests.search.status')}
+            value={mobileFilters.status}
+            disabled={locked}
+            options={statusOptions}
+            onValueChange={(value) =>
+              setMobileFilters((current) => ({ ...current, status: value ?? '' }))
+            }
+          />
+          <SelectField
+            label={t('requests.search.priority')}
+            value={mobileFilters.priority ?? ''}
+            disabled={locked}
+            options={priorityOptions}
+            onValueChange={(value) =>
+              setMobileFilters((current) => ({
+                ...current,
+                priority: (value || undefined) as ApprovalSearchFilters['priority'],
+              }))
+            }
+          />
+          <SelectField
+            label={t('requests.search.sort')}
+            value={mobileFilters.sort}
+            disabled={locked}
+            options={sortOptions}
+            onValueChange={(value) => {
+              if (value === 'NEWEST' || value === 'OLDEST')
+                setMobileFilters((current) => ({ ...current, sort: value }));
+            }}
+          />
+        </Stack>
+      </FormDialog>
     </Box>
   );
 }

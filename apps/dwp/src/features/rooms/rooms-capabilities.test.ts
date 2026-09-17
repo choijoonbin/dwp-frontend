@@ -57,6 +57,18 @@ describe('rooms capabilities', () => {
     expect(capabilities.access.canView).toBe(false);
     expect(capabilities.policy.canView).toBe(false);
     expect(capabilities.delegation.canManage).toBe(false);
+    expect(capabilities.dataSources).toEqual({ canView: false, canManage: false });
+  });
+
+  it('keeps data-source configuration restricted to a global Workplace administrator', () => {
+    const capabilities = resolveWorkplaceGovernanceCapabilities({
+      globalAdministrator: true,
+      canViewWorkplaceAdmin: true,
+      canManageWorkplaceAdmin: true,
+      effectiveScopes: [],
+    });
+
+    expect(capabilities.dataSources).toEqual({ canView: true, canManage: true });
   });
 
   it('keeps assignment management global even when delegation status is visible', () => {

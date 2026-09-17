@@ -1,0 +1,224 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 테넌트 운영
+          - paragraph [ref=e26]: SKAX
+        - navigation "알림 탐색" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 테넌트 운영
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "운영 개요" [ref=e32] [cursor=pointer]:
+                  - /url: /notifications/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: 운영 개요
+              - listitem [ref=e39]:
+                - link "알림 계약" [ref=e40] [cursor=pointer]:
+                  - /url: /notifications/admin/contracts
+                  - img [ref=e42]
+                  - paragraph [ref=e48]: 알림 계약
+              - listitem [ref=e49]:
+                - link "정책 스튜디오" [ref=e50] [cursor=pointer]:
+                  - /url: /notifications/admin/policies
+                  - img [ref=e52]
+                  - paragraph [ref=e54]: 정책 스튜디오
+              - listitem [ref=e55]:
+                - link "템플릿 스튜디오" [ref=e56] [cursor=pointer]:
+                  - /url: /notifications/admin/templates
+                  - img [ref=e58]
+                  - paragraph [ref=e63]: 템플릿 스튜디오
+              - listitem [ref=e64]:
+                - link "전달 운영" [ref=e65] [cursor=pointer]:
+                  - /url: /notifications/admin/operations
+                  - img [ref=e67]
+                  - paragraph [ref=e75]: 전달 운영
+              - listitem [ref=e76]:
+                - link "전달 통제" [ref=e77] [cursor=pointer]:
+                  - /url: /notifications/admin/suppressions
+                  - img [ref=e79]
+                  - paragraph [ref=e83]: 전달 통제
+        - link "업무로 돌아가기" [ref=e85] [cursor=pointer]:
+          - /url: /notifications/home
+          - img [ref=e87]
+          - text: 업무로 돌아가기
+    - banner [ref=e89]:
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - img [ref=e93]
+          - generic "알림 관리" [ref=e97]
+        - navigation "앱 영역 전환" [ref=e100]:
+          - generic [ref=e101]: 관리 모드
+          - 'link "업무로 돌아가기: 알림" [ref=e103] [cursor=pointer]':
+            - /url: /notifications/home
+            - img [ref=e105]
+            - generic [ref=e107]: 업무로 돌아가기
+        - generic [ref=e108]:
+          - button "DWP 검색" [ref=e110] [cursor=pointer]:
+            - img [ref=e111]
+            - paragraph [ref=e114]: DWP 검색
+            - generic [ref=e115]: ⌘K
+          - generic [ref=e116]:
+            - button "전체 화면" [ref=e117] [cursor=pointer]:
+              - img [ref=e118]
+            - generic "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e124]:
+              - button "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e125] [cursor=pointer]:
+                - generic [ref=e126]:
+                  - img [ref=e127]
+                  - generic [ref=e130]: "4"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e132] [cursor=pointer]':
+            - generic [ref=e133]: T
+            - img [ref=e134]
+    - main [ref=e136]:
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - img [ref=e142]
+          - generic [ref=e146]:
+            - paragraph [ref=e147]: 알림 운영
+            - heading "알림 템플릿 스튜디오" [level=1] [ref=e148]
+            - paragraph [ref=e149]: Provider 기본 문구를 보존하면서 회사별 표현을 검증하고 독립 승인으로 게시합니다.
+        - generic [ref=e151]:
+          - alert [ref=e152]:
+            - img [ref=e154]
+            - generic [ref=e157]: Provider 기본 템플릿은 변경할 수 없습니다. 회사 템플릿은 허용된 변수와 평문만 사용하며 검증, 초안, 독립 승인과 감사 증적을 거쳐 적용됩니다.
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - generic [ref=e160]:
+                - heading "템플릿 승인 대기" [level=2] [ref=e161]
+                - paragraph [ref=e162]: 작성자와 다른 승인자가 실제 렌더링 결과와 변경 목적을 확인합니다.
+              - generic [ref=e164]: "2"
+            - generic [ref=e165]:
+              - generic [ref=e166]:
+                - generic [ref=e167]:
+                  - generic [ref=e168]:
+                    - heading "APPROVAL.ACTION_REQUIRED" [level=6] [ref=e169]
+                    - generic [ref=e171]: r3
+                  - paragraph [ref=e172]: 업무 맥락과 마감 시각이 더 잘 보이도록 문구 개선
+                  - generic [ref=e173]: IN_APP · ko · 2026. 9. 8. 오후 12:00
+                - generic [ref=e174]:
+                  - button "반려" [ref=e175] [cursor=pointer]:
+                    - img [ref=e177]
+                    - text: 반려
+                  - button "검토 및 게시" [ref=e181] [cursor=pointer]:
+                    - img [ref=e183]
+                    - text: 검토 및 게시
+              - generic [ref=e186]:
+                - generic [ref=e187]:
+                  - generic [ref=e188]:
+                    - heading "SECURITY.ACCESS_REVIEW" [level=6] [ref=e189]
+                    - generic [ref=e191]: r2
+                  - paragraph [ref=e192]: 업무 맥락과 마감 시각이 더 잘 보이도록 문구 개선
+                  - generic [ref=e193]: IN_APP · ko · 2026. 9. 8. 오후 12:00
+                - generic [ref=e194]:
+                  - button "반려" [ref=e195] [cursor=pointer]:
+                    - img [ref=e197]
+                    - text: 반려
+                  - button "검토 및 게시" [ref=e201] [cursor=pointer]:
+                    - img [ref=e203]
+                    - text: 검토 및 게시
+          - generic [ref=e206]:
+            - region "알림 템플릿 목록" [ref=e207]:
+              - generic [ref=e208]: 알림 템플릿 목록
+              - button "결재 조치 필요 전자결재 · IN_APP · ko Provider 기본값 초안" [pressed] [ref=e209] [cursor=pointer]:
+                - generic [ref=e210]:
+                  - heading "결재 조치 필요" [level=6] [ref=e211]
+                  - generic [ref=e212]: 전자결재 · IN_APP · ko
+                  - generic [ref=e213]:
+                    - generic [ref=e215]: Provider 기본값
+                    - generic [ref=e217]: 초안
+                - img [ref=e219]
+              - button "접근 권한 재검토 보안 · IN_APP · ko Provider 기본값 초안" [ref=e221] [cursor=pointer]:
+                - generic [ref=e222]:
+                  - heading "접근 권한 재검토" [level=6] [ref=e223]
+                  - generic [ref=e224]: 보안 · IN_APP · ko
+                  - generic [ref=e225]:
+                    - generic [ref=e227]: Provider 기본값
+                    - generic [ref=e229]: 초안
+                - img [ref=e231]
+              - button "업무 일간 요약 업무 · IN_APP · ko Provider 기본값" [ref=e233] [cursor=pointer]:
+                - generic [ref=e234]:
+                  - heading "업무 일간 요약" [level=6] [ref=e235]
+                  - generic [ref=e236]: 업무 · IN_APP · ko
+                  - generic [ref=e239]: Provider 기본값
+                - img [ref=e241]
+            - region "선택한 알림 템플릿 상세" [ref=e243]:
+              - generic [ref=e244]:
+                - generic [ref=e245]:
+                  - generic [ref=e246]:
+                    - generic [ref=e247]:
+                      - generic [ref=e249]: 전자결재
+                      - generic [ref=e251]: IN_APP
+                      - generic [ref=e253]: ko
+                    - heading "결재 조치 필요" [level=2] [ref=e254]
+                    - code [ref=e255]: APPROVAL.ACTION_REQUIRED
+                    - paragraph [ref=e256]: 회사 재정의가 없어 Provider 기본값이 적용됩니다.
+                    - link "초안 · r3" [ref=e257] [cursor=pointer]:
+                      - /url: "#notification-template-review-template-review-draft"
+                  - button "승인 대기 중" [disabled]:
+                    - generic:
+                      - img
+                    - text: 승인 대기 중
+                - generic [ref=e258]:
+                  - img [ref=e259]
+                  - generic [ref=e263]: "{{actorName}}"
+                  - generic [ref=e265]: "{{documentTitle}}"
+                  - generic [ref=e267]: "{{dueAt}}"
+                - generic [ref=e268]:
+                  - generic [ref=e269]:
+                    - heading "본문 템플릿" [level=3] [ref=e270]
+                    - generic [ref=e271]:
+                      - generic [ref=e272]:
+                        - term [ref=e273]: 제목 템플릿
+                        - definition [ref=e274]: "{{actorName}}님이 결재를 요청했습니다"
+                      - generic [ref=e275]:
+                        - term [ref=e276]: 짧은 미리보기
+                        - definition [ref=e277]: "{{documentTitle}} 검토가 필요합니다."
+                      - generic [ref=e278]:
+                        - term [ref=e279]: 본문 템플릿
+                        - definition [ref=e280]: "{{documentTitle}} 문서를 {{dueAt}}까지 검토해 주세요."
+                      - generic [ref=e281]:
+                        - term [ref=e282]: 주요 작업 레이블
+                        - definition [ref=e283]: 결재 검토
+                  - region "현재 사용자에게 보이는 내용" [ref=e286]:
+                    - generic [ref=e287]:
+                      - heading "현재 사용자에게 보이는 내용" [level=3] [ref=e288]
+                      - generic [ref=e290]: 앱 내 알림
+                    - generic [ref=e291]:
+                      - img [ref=e293]
+                      - generic [ref=e296]:
+                        - generic [ref=e297]:
+                          - generic [ref=e298]: 전자결재
+                          - generic [ref=e299]: ko
+                        - heading "합성 사용자님이 결재를 요청했습니다" [level=6] [ref=e300]
+                        - paragraph [ref=e301]: 클라우드 운영 예산 검토가 필요합니다.
+                        - paragraph [ref=e302]: 클라우드 운영 예산 문서를 오늘 오후 5시까지 검토해 주세요.
+                        - generic [ref=e303]:
+                          - generic [ref=e304]: 결재 검토
+                          - img [ref=e305]
+                - generic [ref=e308]:
+                  - generic [ref=e309]:
+                    - term [ref=e310]: 적용 출처
+                    - definition [ref=e311]: Provider 기본값
+                  - generic [ref=e312]:
+                    - term [ref=e313]: 적용 리비전
+                    - definition [ref=e314]: Provider
+                  - generic [ref=e315]:
+                    - term [ref=e316]: 승인 시각
+                    - definition [ref=e317]: —
+```

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarServiceTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:47" hostname="MacBook-Pro" time="0.06">
+  <properties/>
+  <testcase name="governedBookingDecisionIsOptimisticAndAudited()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="responsibilitySplitPreservesPublicApiAndTransactionBoundaries()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.005"/>
+  <testcase name="recurringResourceReservationRequiresFiniteEndDateBeforeLocking()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.003"/>
+  <testcase name="organizerAuthorizationUsesStablePeopleIdentityAfterIamIdChanges()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.003"/>
+  <testcase name="availabilityHorizonUsesLocalCalendarDaysAcrossDaylightSavingTime()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.005"/>
+  <testcase name="workplaceRoomAuthorizationRunsBeforeEventInsertion()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.008"/>
+  <testcase name="calendarCancellationCannotBypassWorkplaceBookAccess()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="calendarEventQueriesExcludeWorkplaceRoomsWithoutViewAccess()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="unknownOrCrossTenantSchedulingParticipantsFailClosed()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="schedulingEvaluationUsesOneFreshnessEnvelopeForPeopleAndRooms()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.005"/>
+  <testcase name="eventAdvanceWindowIncludesTheEntireLastLocalDay()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="homeFindsTheNextEventBeyondTheCurrentWeek()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.004"/>
+  <testcase name="recurrenceKeepsLocalWallClockAcrossDaylightSavingTime()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.003"/>
+  <testcase name="deterministicReplayReturnsTheExistingEventAndRechecksRoomAccess()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="workplaceManagedRoomRejectsDirectCalendarAdministration()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="sameIdempotencyKeyWithDifferentPayloadIsRejectedAfterLocking()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.002"/>
+  <testcase name="availabilityUsesPeopleIdentifiersWithoutRevealingEventDetails()" classname="com.dwp.services.platform.calendar.CalendarServiceTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

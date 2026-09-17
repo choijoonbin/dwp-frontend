@@ -47,7 +47,13 @@ export type WorkplaceSharingPolicy = {
   version: number;
 };
 export type WorkplaceConnectorKind =
-  'CALENDAR' | 'ACTUAL_PRESENCE' | 'SIGNAGE' | 'VISITOR' | 'VEHICLE';
+  | 'CALENDAR'
+  | 'ACTUAL_PRESENCE'
+  | 'ACCESS_CONTROL'
+  | 'SIGNAGE'
+  | 'VISITOR'
+  | 'VEHICLE'
+  | 'FACILITY_WORK_ORDER';
 export type WorkplaceConnectorStatus = {
   kind: WorkplaceConnectorKind;
   provider: string | null;

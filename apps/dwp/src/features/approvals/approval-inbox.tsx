@@ -9,7 +9,7 @@ import {
   MessageSquareText,
   ShieldCheck,
 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
   ActionIconButton,
@@ -24,7 +24,7 @@ import {
   resolveSupportedLocale,
   useDisplayDictionary,
 } from '@dwp-frontend/shared-i18n';
-import { getApprovalTask } from '@dwp-frontend/shared-utils';
+import { getApprovalTask, HttpError } from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -45,9 +45,12 @@ import {
   approvalTimelineEventDetail,
 } from './approval-timeline-copy';
 import { ApprovalSurface, PriorityChip, StatusChip, approvalTone } from './approval-ui';
+import { ApprovalCompletedDecisionEvidence } from './approval-completed-decision-evidence';
+import { ApprovalTaskDocumentTools } from './approval-task-document-tools';
+import { useApprovalTaskDocuments } from './use-approval-task-documents';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
-import type { ApprovalTask } from '@dwp-frontend/shared-utils';
+import type { ApprovalTask, ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
 
 export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED' }) {
   return view === 'INBOX' ? <ApprovalCommandCenter /> : <ApprovalTaskArchive />;
@@ -56,6 +59,7 @@ export function ApprovalInbox({ view = 'INBOX' }: { view?: 'INBOX' | 'COMPLETED'
 function ApprovalTaskArchive() {
   const { t, i18n } = useTranslation('approvals');
   const display = useDisplayDictionary();
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTaskId = searchParams.get('task') ?? undefined;
   const [selectedId, setSelectedId] = useState<string>();
@@ -124,6 +128,58 @@ function ApprovalTaskArchive() {
       ? undefined
       : detail.data;
   const selectedContentAccess = selected ? approvalTaskContentAccess(selected) : undefined;
+  const cachedDocumentDetail = detail.data?.task.taskId === selectedId ? detail.data : undefined;
+  const assertDocumentCurrent = () => {
+    const queue = queryClient.getQueryState(tasks.queryKey);
+    const current = queryClient.getQueryState<ApprovalTaskDetail>([
+      'approvals',
+      'task',
+      selectedId,
+      ...requestScope.cacheKey,
+    ]);
+    const latest = current?.data;
+    if (
+      !requestScope.ready ||
+      !selectedId ||
+      !cachedDocumentDetail ||
+      queue?.status !== 'success' ||
+      queue.error ||
+      queue.fetchStatus !== 'idle' ||
+      queue.fetchFailureCount > 0 ||
+      current?.status !== 'success' ||
+      current.error ||
+      current.fetchStatus !== 'idle' ||
+      current.fetchFailureCount > 0 ||
+      !latest ||
+      latest.task.taskId !== selectedId ||
+      latest.task.requestId !== cachedDocumentDetail.task.requestId ||
+      latest.task.version !== cachedDocumentDetail.task.version ||
+      !approvalTaskContentAccess(latest).full
+    )
+      throw new HttpError('completed approval evidence source unavailable', 409);
+  };
+  const taskDocuments = useApprovalTaskDocuments(cachedDocumentDetail, assertDocumentCurrent, {
+    taskId: selectedId,
+    ready: Boolean(selected && selectedContentAccess?.full),
+    error:
+      [detail.failureReason, detail.error, tasks.failureReason, tasks.error].find(
+        (error) => error instanceof HttpError && [401, 403, 404].includes(error.status)
+      ) ??
+      detail.failureReason ??
+      detail.error ??
+      tasks.failureReason ??
+      tasks.error,
+    refreshOwner: async () => {
+      const expectedId = selectedId;
+      const queue = await tasks.refetch();
+      if (selectedId !== expectedId || !queue.isSuccess || queue.error)
+        throw queue.error ?? new HttpError('completed approval queue refresh failed', 503);
+      const refreshed = await detail.refetch();
+      if (selectedId !== expectedId || !refreshed.isSuccess || refreshed.error || !refreshed.data)
+        throw refreshed.error ?? new HttpError('completed approval evidence refresh failed', 503);
+      return refreshed.data;
+    },
+  });
 
   return (
     <Paper
@@ -398,6 +454,16 @@ function ApprovalTaskArchive() {
               }}
             >
               <Stack gap={2}>
+                <ApprovalCompletedDecisionEvidence detail={selected} />
+                <ApprovalSurface
+                  title={t('completed.evidence.documentTitle')}
+                  meta={t('completed.evidence.documentMeta')}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    {t('completed.evidence.documentDescription')}
+                  </Typography>
+                  <ApprovalTaskDocumentTools controller={taskDocuments} mode="evidence" />
+                </ApprovalSurface>
                 <ApprovalSurface title={t('inbox.context')} meta={selected.task.requestNumber}>
                   <Box
                     sx={{

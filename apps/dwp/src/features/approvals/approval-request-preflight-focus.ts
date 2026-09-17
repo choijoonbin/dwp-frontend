@@ -10,11 +10,13 @@ export function approvalRequestIssueTarget(
         : path === '$business-fields'
           ? 'approval-request-business-fields'
           : `approval-request-${path}`;
-  const direct = root.querySelector<HTMLElement>(`#${CSS.escape(fixedId)}`);
+  const direct = Array.from(root.querySelectorAll<HTMLElement>('[id]')).find(
+    (candidate) => candidate.id === fixedId
+  );
   if (direct) return direct;
-  const field = Array.from(
-    root.querySelectorAll<HTMLElement>('[data-approval-field-path]')
-  ).find((candidate) => candidate.dataset.approvalFieldPath === path);
+  const field = Array.from(root.querySelectorAll<HTMLElement>('[data-approval-field-path]')).find(
+    (candidate) => candidate.dataset.approvalFieldPath === path
+  );
   return (
     field?.querySelector<HTMLElement>(
       'input:not(:disabled), textarea:not(:disabled), button:not(:disabled), [tabindex]:not([tabindex="-1"])'

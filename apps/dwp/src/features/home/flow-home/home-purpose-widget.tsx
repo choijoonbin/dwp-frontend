@@ -4,25 +4,45 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ActionButton, ContentDialog } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
-
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-
 import { resolveHomePriorityTone } from '../../../components/home-surface-tokens';
-
 import type { LucideIcon } from 'lucide-react';
 import type { HomeContributionBucketState, NormalizedHomeContribution } from '../contributions';
 import type { HomeWidgetHeight } from '@dwp-frontend/shared-utils';
 import type { FlowSignal } from './flow-home-model';
-
 import { RolePulseInsight } from './home-purpose-role-pulse-insight';
 import { HomePurposeContextualVisual } from './home-purpose-contextual-visual';
 import { HomePurposeStatus } from './home-purpose-status';
 import { RequestEmptyJourney } from './home-purpose-request-empty-journey';
+import {
+  homeContributionDomAttributes,
+  homePurposeContentPolicy,
+  homePurposeVisibleLimit,
+  type HomePurposeContentDensity,
+  type HomePurposeContentPolicy,
+} from './home-purpose-content-policy';
+import {
+  filterHomeWorkActions,
+  homeWorkActionCta,
+  type HomeWorkActionCta,
+  type HomeWorkFilter,
+} from './home-work-action-policy';
+import {
+  HomePurposeAllRouteButton,
+  HomeWorkActionCtaCue,
+  HomeWorkActionFilterTabs,
+} from './home-work-action-controls';
+
+export {
+  homeContributionDomAttributes,
+  homePurposeContentPolicy,
+  homePurposeVisibleLimit,
+} from './home-purpose-content-policy';
 
 type HomePurposeWidgetProps = Readonly<{
   sectionKey: 'action' | 'timeline' | 'response' | 'request' | 'pulse';
@@ -47,41 +67,6 @@ type HomePurposeWidgetProps = Readonly<{
   headerAccessory?: ReactNode;
   onRetry?: () => void;
 }>;
-
-export type HomePurposeContentDensity = 'short' | 'standard' | 'tall';
-
-export type HomePurposeContentPolicy = Readonly<{
-  density: HomePurposeContentDensity;
-  showSectionDescription: boolean;
-  showItemDescription: boolean;
-  showOwner: boolean;
-  showScope: boolean;
-}>;
-
-export function homePurposeContentPolicy(
-  footprintHeight?: HomeWidgetHeight,
-  supportStack = false
-): HomePurposeContentPolicy {
-  const density: HomePurposeContentDensity =
-    footprintHeight === 'short'
-      ? 'short'
-      : footprintHeight === 'tall' || footprintHeight === 'expanded'
-        ? 'tall'
-        : 'standard';
-  return {
-    density,
-    showSectionDescription: density !== 'short' && !supportStack,
-    showItemDescription: density === 'tall' && !supportStack,
-    showOwner: density !== 'short',
-    showScope: density === 'tall' && !supportStack,
-  };
-}
-
-export function homeContributionDomAttributes(): Readonly<Record<string, string>> {
-  // Presence is useful for layout/E2E selectors, but business identifiers,
-  // dedupe semantics, titles and source references must never enter DOM metadata.
-  return { 'data-home-contribution': 'present' };
-}
 
 function prioritySignal(item: NormalizedHomeContribution) {
   const status = item.status.toLocaleLowerCase();
@@ -179,6 +164,7 @@ function ContributionRow({
   featuredCue,
   timeline,
   policy,
+  workCta,
 }: {
   item: NormalizedHomeContribution;
   index: number;
@@ -186,9 +172,11 @@ function ContributionRow({
   featuredCue: boolean;
   timeline: boolean;
   policy: HomePurposeContentPolicy;
+  workCta?: HomeWorkActionCta;
 }) {
   const { t } = useTranslation('home');
   const interactive = Boolean(item.route);
+  const workCtaLabel = workCta ? t(`flow.purpose.action.cta.${workCta}`) : undefined;
   const content = (
     <>
       {timeline && (
@@ -337,13 +325,15 @@ function ContributionRow({
           <ContributionMeta item={item} timeline={timeline} policy={policy} />
         </Box>
       </Box>
-      {interactive && (
+      {interactive && workCta && workCtaLabel ? (
+        <HomeWorkActionCtaCue cta={workCta} label={workCtaLabel} featuredCue={featuredCue} />
+      ) : interactive ? (
         <ArrowRight
           size={16}
           aria-hidden="true"
           style={{ flex: '0 0 auto', marginTop: featured ? 0 : 4 }}
         />
-      )}
+      ) : null}
     </>
   );
 
@@ -351,12 +341,17 @@ function ContributionRow({
     <Box
       component={interactive ? Link : 'div'}
       to={interactive ? item.route : undefined}
+      aria-label={
+        interactive && workCtaLabel
+          ? t('flow.purpose.action.cta.ariaLabel', {
+              action: workCtaLabel,
+              title: item.title,
+            })
+          : undefined
+      }
       {...homeContributionDomAttributes()}
       sx={(theme) => ({
         minWidth: 0,
-        // The assistant is intentionally a fixed bottom-right affordance on
-        // compact screens. Keep only the actionable row out of that hit-test
-        // lane; the widget plane and its supporting copy remain full width.
         maxWidth: 'none',
         minHeight: featuredCue
           ? 52
@@ -369,10 +364,12 @@ function ContributionRow({
                 : 54,
         px: featuredCue ? 0.75 : featured ? (policy.density === 'short' ? 0.5 : 1) : 0.25,
         py: policy.density === 'tall' ? 0.25 : 0,
-        display: 'flex',
-        // A single contribution can share a row with a denser neighbour.
-        // Centre its information instead of leaving it stranded at the top of
-        // an intentionally equal-height surface.
+        display: workCtaLabel ? 'grid' : 'flex',
+        gridTemplateColumns: workCtaLabel
+          ? featuredCue
+            ? '3px 24px minmax(0, 1fr) auto'
+            : '8px minmax(0, 1fr) auto'
+          : undefined,
         alignItems: featured || featuredCue ? 'center' : 'flex-start',
         gap: 1,
         color: 'text.primary',
@@ -520,18 +517,6 @@ function PurposeLoading({ rows, density }: { rows: number; density: HomePurposeC
   );
 }
 
-export function homePurposeVisibleLimit(
-  maxItems: number,
-  _footprintHeight?: HomeWidgetHeight,
-  _supportStack = false
-): number {
-  // Height changes information density, not which records exist. Four is the
-  // bounded read-mode allowance used by the adaptive wide action/timeline
-  // treatment; existing callers still request at most three.
-  const requestedLimit = Number.isFinite(maxItems) ? Math.floor(maxItems) : 1;
-  return Math.min(4, Math.max(1, requestedLimit));
-}
-
 export function HomePurposeWidget({
   sectionKey,
   icon: Icon,
@@ -557,18 +542,22 @@ export function HomePurposeWidget({
 }: HomePurposeWidgetProps) {
   const { t } = useTranslation(['home', 'common']);
   const [overflowOpen, setOverflowOpen] = useState(false);
+  const [actionFilter, setActionFilter] = useState<HomeWorkFilter>('all');
   const contentPolicy = homePurposeContentPolicy(footprintHeight);
   const presentationPolicy = homePurposeContentPolicy(footprintHeight, supportStack);
   const resolvedState = state ?? (items.length > 0 ? 'AVAILABLE' : 'EMPTY');
   const degraded = resolvedState === 'PARTIAL' || resolvedState === 'UNAVAILABLE';
+  const showActionFilters = sectionKey === 'action' && resolvedState !== 'RESTRICTED';
+  const presentedItems =
+    sectionKey === 'action' ? filterHomeWorkActions(items, actionFilter) : items;
   const visibleLimit = homePurposeVisibleLimit(maxItems, footprintHeight, supportStack);
   const resolvedVisibleLimit =
     sectionKey === 'pulse' && roleSignals.length > 0 && !referenceLayout
       ? Math.min(1, visibleLimit)
       : visibleLimit;
-  const visible = items.slice(0, resolvedVisibleLimit);
-  const overflow = Math.max(0, items.length - visible.length);
-  const overflowItems = items.slice(visible.length);
+  const visible = presentedItems.slice(0, resolvedVisibleLimit);
+  const overflow = Math.max(0, presentedItems.length - visible.length);
+  const overflowItems = presentedItems.slice(visible.length);
   const compactActionGrid = featuredFirst && wideFeatured && visible.length > 1;
   const showRoleInsight = sectionKey === 'pulse' && roleSignals.length > 0;
   const roleVisualOnly = showRoleInsight && items.length === 0;
@@ -690,38 +679,11 @@ export function HomePurposeWidget({
             />
           )}
           {allRoute && (
-            <ActionButton
-              component={Link}
-              to={allRoute}
-              intent="quiet"
-              size="small"
-              endIcon={<ArrowRight size={15} aria-hidden="true" />}
-              aria-label={
-                overflow > 0
-                  ? t('flow.purpose.viewAllWithCount', { count: overflow })
-                  : t('flow.viewAll')
-              }
-              sx={{
-                minHeight: 44,
-                px: 1,
-                whiteSpace: 'nowrap',
-                borderColor: 'transparent',
-                bgcolor: 'transparent',
-              }}
-            >
-              <Box component="span" sx={{ '@media (max-width:599.95px)': { display: 'none' } }}>
-                {overflow > 0
-                  ? t('flow.purpose.viewAllWithCount', { count: overflow })
-                  : t('flow.viewAll')}
-              </Box>
-              <Box
-                component="span"
-                aria-hidden="true"
-                sx={{ display: 'none', '@media (max-width:599.95px)': { display: 'inline' } }}
-              >
-                {overflow > 0 ? `+${overflow}` : t('flow.viewAll')}
-              </Box>
-            </ActionButton>
+            <HomePurposeAllRouteButton
+              sectionKey={sectionKey}
+              route={allRoute}
+              overflow={overflow}
+            />
           )}
           {!allRoute && overflow > 0 && (
             <ActionButton
@@ -768,6 +730,17 @@ export function HomePurposeWidget({
         </Stack>
       </Stack>
 
+      {showActionFilters && (
+        <HomeWorkActionFilterTabs
+          items={items}
+          value={actionFilter}
+          onChange={(value) => {
+            setOverflowOpen(false);
+            setActionFilter(value);
+          }}
+        />
+      )}
+
       {showRoleInsight && (
         <Box
           data-home-role-insight-lane
@@ -806,6 +779,12 @@ export function HomePurposeWidget({
 
       {!roleVisualOnly && !compactRoleException && (
         <Box
+          id={showActionFilters ? 'flow-purpose-action-filter-panel' : undefined}
+          role={showActionFilters ? 'tabpanel' : undefined}
+          aria-labelledby={
+            showActionFilters ? `flow-purpose-action-filter-${actionFilter}` : undefined
+          }
+          data-home-work-filter-panel={showActionFilters ? actionFilter : undefined}
           sx={{
             mt: showContextualVisual ? 1 : defaultListMarginTop,
             flex: referenceLayout ? '0 0 auto' : '1 1 auto',
@@ -827,7 +806,7 @@ export function HomePurposeWidget({
               data-home-purpose-timeline={timeline ? 'true' : undefined}
               sx={{
                 width: 1,
-                height: 1,
+                height: sectionKey === 'action' ? 'auto' : 1,
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
@@ -844,19 +823,19 @@ export function HomePurposeWidget({
                     }
                   : undefined,
                 '& > [role="listitem"]': {
-                  // Match the outer flex row to the rendered contribution's
-                  // density floor. A smaller outer row lets tall content paint
-                  // over the following record even when the section itself is
-                  // content-adaptive.
-                  minHeight: featuredFirst ? 52 : contentPolicy.density === 'tall' ? 58 : 44,
-                  flex: referenceLayout ? '0 0 auto' : '1 1 0',
+                  minHeight:
+                    sectionKey === 'action'
+                      ? 52
+                      : featuredFirst
+                        ? 52
+                        : contentPolicy.density === 'tall'
+                          ? 58
+                          : 44,
+                  flex: sectionKey === 'action' || referenceLayout ? '0 0 auto' : '1 1 0',
                   position: 'relative',
                   zIndex: 1,
                 },
                 "[data-workspace-widget-content-state='editing-preview'] & > [role='listitem']": {
-                  // Edit mode is an inert preview, so the 44px interactive hit
-                  // target is not required. Preserve all three records inside
-                  // the semantic short footprint instead of clipping the last.
                   minHeight:
                     contentPolicy.density === 'short'
                       ? 36
@@ -865,7 +844,7 @@ export function HomePurposeWidget({
                         : 44,
                 },
                 '& > [role="listitem"] > [data-home-contribution]': {
-                  height: 1,
+                  height: sectionKey === 'action' ? 'auto' : 1,
                   justifyContent: 'center',
                 },
                 ...(compactActionGrid
@@ -923,6 +902,7 @@ export function HomePurposeWidget({
                     featuredCue={featuredFirst}
                     timeline={timeline}
                     policy={presentationPolicy}
+                    workCta={sectionKey === 'action' ? homeWorkActionCta(item) : undefined}
                   />
                 </Box>
               ))}
@@ -935,14 +915,18 @@ export function HomePurposeWidget({
                   ? 'flow.purpose.restrictedEmpty'
                   : degraded
                     ? 'flow.purpose.partialEmpty'
-                    : `flow.purpose.${sectionKey}.empty`
+                    : sectionKey === 'action' && actionFilter !== 'all'
+                      ? 'flow.purpose.action.filteredEmpty'
+                      : `flow.purpose.${sectionKey}.empty`
               )}
               description={t(
                 resolvedState === 'RESTRICTED'
                   ? 'flow.purpose.restrictedEmptyDescription'
                   : degraded
                     ? 'flow.purpose.partialEmptyDescription'
-                    : `flow.purpose.${sectionKey}.emptyDescription`
+                    : sectionKey === 'action' && actionFilter !== 'all'
+                      ? 'flow.purpose.action.filteredEmptyDescription'
+                      : `flow.purpose.${sectionKey}.emptyDescription`
               )}
               supportStack={supportStack}
               fetching={fetching}
@@ -981,6 +965,7 @@ export function HomePurposeWidget({
                 featuredCue={false}
                 timeline={timeline}
                 policy={homePurposeContentPolicy('tall')}
+                workCta={sectionKey === 'action' ? homeWorkActionCta(item) : undefined}
               />
             </Box>
           ))}

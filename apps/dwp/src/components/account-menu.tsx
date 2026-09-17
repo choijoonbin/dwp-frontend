@@ -35,6 +35,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { exitSessionWithTransition } from '../features/auth/session-exit-transition';
+import { ACCOUNT_SETTINGS_HOME_PATH } from '../features/account/settings-navigation';
 import {
   isProviderSupportSessionActive,
   useProviderSupportContext,
@@ -388,7 +389,7 @@ export function AccountMenu({
             <MenuItem
               aria-label={t('account.menu.settings')}
               aria-describedby={settingsDescriptionId}
-              onClick={() => goTo('/account/profile')}
+              onClick={() => goTo(ACCOUNT_SETTINGS_HOME_PATH)}
               sx={{ mx: 1, mt: 1, px: 1, py: 1, gap: 1.25, alignItems: 'center' }}
             >
               <Box

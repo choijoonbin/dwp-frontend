@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:55" hostname="MacBook-Pro" time="0.077">
+  <properties/>
+  <testcase name="unionsOverlappingAndAdjacentBusyIntervalsWithoutDoubleCountingOrExposingEventIds()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.053"/>
+  <testcase name="clipsCrossMidnightBusyTimeAndDoesNotInventAvailabilityBeyondTheObservedDay()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.001"/>
+  <testcase name="preservesLocalWallClockAcrossDstAndUsesTheActualTwentyFiveHourDay()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.001"/>
+  <testcase name="revokedSharesProduceAnEmptyReplacementInsteadOfRememberingPriorMembers()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.002"/>
+  <testcase name="knownShareExpiryAndLocalMidnightShortenTheSnapshotTtl()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.002"/>
+  <testcase name="expandsAnOldDailySeriesWithoutAFalseFreeResultFromAHistoricalIterationCap()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.001"/>
+  <testcase name="appliesCancelledAndMovedOccurrenceOverrides()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.002"/>
+  <testcase name="rejectsInvalidTimezonesAndOverfullDataInsteadOfReturningFalseAvailability()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.004"/>
+  <testcase name="classifiesOnlyTheAlreadyRedactedCalendarTypeAtTheHalfOpenCurrentInstant()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.003"/>
+  <testcase name="mismatchedTenantUserPersonFailsBeforeMemberOrScheduleQueries()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.002"/>
+  <testcase name="emptyNativeScheduleIsAvailableWithoutPretendingToBeOnline()" classname="com.dwp.services.platform.calendar.CalendarTeamAvailabilityServiceTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

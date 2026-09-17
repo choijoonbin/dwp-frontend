@@ -46,7 +46,8 @@ describe('Approval view loading boundaries', () => {
         new RegExp(`import\\s+\\{[^}]+\\}\\s+from\\s+['"]\\./approval-${view}['"]`)
       );
     }
-    expect(admin.match(/const Approval\w+ = lazy\(/g)).toHaveLength(7);
+    expect(admin.match(/const Approval\w+ = lazy\(/g)).toHaveLength(15);
+    expect(admin).toContain("const adminV2 = () => import('./admin-v2/approval-admin-v2-runtime')");
     expect(admin).toContain('<ApprovalPolicyStudio />');
     expect(admin).toContain('<ApprovalAdminDocumentController />');
   });

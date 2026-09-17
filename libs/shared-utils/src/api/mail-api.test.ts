@@ -2,14 +2,30 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
 import {
+  approveMailPurge,
+  createMailDeliveryAuditExport,
+  executeMailPurge,
+  getMailAdminOperations,
+  getMailDeliveryAudit,
+  previewMailPurge,
+  removeMailSharedInboxMember,
+  runMailConnectionDiagnostic,
+} from './mail-admin-completion-api';
+import {
   applyMailLifecycle,
   createMailDraft,
   createMailFolder,
   createMailRule,
+  getMailHome,
+  getMailProposals,
   getMailRuleBackfillPreview,
   getMailThreads,
+  previewMailLifecycle,
+  reorderMailRules,
+  replyToMailThread,
   runMailRuleBackfill,
   saveMailDraft,
+  updateMailProposal,
 } from './mail-api';
 
 function jsonResponse(data: unknown): Response {
@@ -177,6 +193,197 @@ describe('mail organization API boundary', () => {
     expect((fetchMock.mock.calls[2]?.[1] as RequestInit).method).toBe('PUT');
     expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual(
       saveInput
+    );
+  });
+});
+
+describe('mail collaboration API boundary', () => {
+  afterEach(() => {
+    resetCsrfToken();
+    vi.unstubAllGlobals();
+  });
+
+  it('keeps account, shared inbox, and assignment scopes in read URLs', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ accounts: [], focusQueue: [], proposals: [] }))
+      .mockResolvedValueOnce(jsonResponse({ items: [], total: 0, page: 0, pageSize: 30 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getMailHome({ accountId: 'account/1' });
+    await getMailThreads({
+      accountId: 'account/1',
+      sharedInboxId: 'shared/1',
+      assignment: 'UNASSIGNED',
+    });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/platform/v1/mail/home?accountId=account%2F1');
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/mail/threads?accountId=account%2F1&sharedInboxId=shared%2F1&assignment=UNASSIGNED&page=0&pageSize=30'
+    );
+  });
+
+  it('sends reply-all, lifecycle preview, and versioned rule order contracts', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ thread: { threadId: 'thread-1' } }))
+      .mockResolvedValueOnce(jsonResponse({ threadId: 'thread-1', allowed: true, blockers: [] }))
+      .mockResolvedValueOnce(jsonResponse({ rules: [] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await replyToMailThread('thread/1', 'Reply', 'request-1', {
+      mode: 'REPLY_ALL',
+      recipients: [{ type: 'CC', name: 'Partner', email: 'partner@example.com' }],
+    });
+    await previewMailLifecycle('thread/1', {
+      action: 'MOVE',
+      targetFolderId: 'folder/1',
+      version: 4,
+    });
+    await reorderMailRules({ rules: [{ ruleId: 'rule/1', version: 7 }] });
+
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
+      body: 'Reply',
+      idempotencyKey: 'request-1',
+      mode: 'REPLY_ALL',
+      recipients: [{ type: 'CC', name: 'Partner', email: 'partner@example.com' }],
+    });
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      '/api/platform/v1/mail/threads/thread%2F1/lifecycle/preview'
+    );
+    expect(fetchMock.mock.calls[3]?.[0]).toBe('/api/platform/v1/mail/organization/rules/order');
+  });
+
+  it('filters and updates governed proposals without putting payload data in the URL', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ proposalId: 'proposal-1' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getMailProposals({ status: 'PROPOSED', type: 'CREATE_TASK' });
+    await updateMailProposal('proposal/1', {
+      proposedPayload: { title: 'Review launch', requiresConfirmation: true },
+      version: 3,
+    });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/platform/v1/mail/proposals?status=PROPOSED&type=CREATE_TASK'
+    );
+    expect(fetchMock.mock.calls[2]?.[0]).toBe('/api/platform/v1/mail/proposals/proposal%2F1');
+  });
+});
+
+describe('mail administration API boundary', () => {
+  afterEach(() => {
+    resetCsrfToken();
+    vi.unstubAllGlobals();
+  });
+
+  it('keeps operations and delivery audit filters on dedicated administrative reads', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ sources: [], exceptions: [], commands: [] }))
+      .mockResolvedValueOnce(jsonResponse({ items: [], total: 0, page: 0, pageSize: 50 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getMailAdminOperations();
+    await getMailDeliveryAudit({ page: 0, pageSize: 50, correlationId: 'corr/42' });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/platform/v1/admin/mail/operations');
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/admin/mail/delivery-audit?page=0&pageSize=50&correlationId=corr%2F42'
+    );
+  });
+
+  it('sends connection diagnostics as an idempotent versioned command', async () => {
+    const input = {
+      capability: 'SYNC' as const,
+      idempotencyKey: '4fbe6fef-343c-43eb-a739-17d8ed78b8f4',
+      version: 8,
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ operationId: 'operation-1', state: 'ACCEPTED' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await runMailConnectionDiagnostic('connection/1', input);
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/admin/mail/connections/connection%2F1/diagnostics'
+    );
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual(input);
+  });
+
+  it('revokes shared access with an explicit impact acknowledgement in the request body', async () => {
+    const input = {
+      impactAcknowledged: true,
+      idempotencyKey: '5eb905b4-7f6a-4ac8-91b0-7728ccdbd768',
+      version: 3,
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ sharedInboxId: 'inbox-1', members: [] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await removeMailSharedInboxMember('inbox/1', 'member/2', input);
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/platform/v1/admin/mail/shared-inboxes/inbox%2F1/members/member%2F2/revoke'
+    );
+    expect((fetchMock.mock.calls[1]?.[1] as RequestInit).method).toBe('POST');
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual(input);
+  });
+
+  it('preserves the candidate fingerprint and policy version through purge approval and execution', async () => {
+    const previewInput = {
+      scope: { tenant: true },
+      resourceTypes: ['MESSAGE'],
+      before: '2026-09-16T06:00:00.000Z',
+      idempotencyKey: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      policyVersion: 9,
+    };
+    const approvalInput = {
+      decision: 'APPROVE' as const,
+      idempotencyKey: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      policyVersion: 9,
+    };
+    const executionInput = {
+      idempotencyKey: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      policyVersion: 9,
+      fingerprint: 'd'.repeat(64),
+    };
+    const exportInput = {
+      filters: { state: 'UNKNOWN' },
+      purpose: 'Incident review',
+      idempotencyKey: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ candidateSnapshotId: 'candidate-1' }))
+      .mockResolvedValueOnce(jsonResponse({ distinctApproverCount: 2 }))
+      .mockResolvedValueOnce(jsonResponse({ jobId: 'job-1', state: 'ACCEPTED' }))
+      .mockResolvedValueOnce(jsonResponse({ exportId: 'export-1', state: 'ACCEPTED' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await previewMailPurge(previewInput);
+    await approveMailPurge('candidate/1', approvalInput);
+    await executeMailPurge('candidate/1', executionInput);
+    await createMailDeliveryAuditExport(exportInput);
+
+    expect(fetchMock.mock.calls.slice(1).map((call) => call[0])).toEqual([
+      '/api/platform/v1/admin/mail/retention/purge-previews',
+      '/api/platform/v1/admin/mail/retention/purges/candidate%2F1/approvals',
+      '/api/platform/v1/admin/mail/retention/purges/candidate%2F1/execute',
+      '/api/platform/v1/admin/mail/delivery-audit/exports',
+    ]);
+    expect(JSON.parse(String((fetchMock.mock.calls[3]?.[1] as RequestInit).body))).toEqual(
+      executionInput
     );
   });
 });

@@ -4,6 +4,7 @@ import { axiosInstance } from '../axios-instance';
 import {
   createMailContact,
   getMailAddressBook,
+  getMailGroupSendHistory,
   replaceMailContactGroupMembers,
   sendMailContactGroupMessage,
 } from './mail-address-book-api';
@@ -68,6 +69,7 @@ describe('mail address book API boundary', () => {
       subject: 'Launch review',
       body: 'Please review.',
       classification: 'INTERNAL',
+      recipientMode: 'BCC',
       idempotencyKey: 'send-request',
       groupVersion: 8,
     });
@@ -81,8 +83,19 @@ describe('mail address book API boundary', () => {
       subject: 'Launch review',
       body: 'Please review.',
       classification: 'INTERNAL',
+      recipientMode: 'BCC',
       idempotencyKey: 'send-request',
       groupVersion: 8,
     });
+  });
+
+  it('reads group delivery receipts without exposing a message body in the URL', async () => {
+    const get = vi.spyOn(axiosInstance, 'get').mockResolvedValue({ data: { data: [] } });
+
+    await getMailGroupSendHistory('group/1');
+
+    expect(get).toHaveBeenCalledWith(
+      '/api/platform/v1/mail/contact-groups/group%2F1/messages/history'
+    );
   });
 });

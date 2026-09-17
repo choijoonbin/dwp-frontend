@@ -90,6 +90,19 @@ test('location catalog supports keyboard inspection, responsive map/list and cle
   await expect(
     inspector.getByRole('heading', { name: locationResource.name, exact: true })
   ).toBeVisible();
+  await inspector.getByRole('button', { name: 'Print space QR', exact: true }).click();
+  const qrPreview = page.getByRole('dialog', { name: 'Space QR print preview', exact: true });
+  await expect(qrPreview.getByTestId('workplace-resource-qr-card').locator('svg')).toBeVisible();
+  await expect(qrPreview.getByRole('heading', { name: locationResource.name })).toBeVisible();
+  await page.evaluate(() => {
+    window.print = () => {
+      document.documentElement.dataset.workplaceQrPrinted = 'true';
+    };
+  });
+  await qrPreview.getByRole('button', { name: 'Print QR', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-workplace-qr-printed', 'true');
+  await qrPreview.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(qrPreview).toHaveCount(0);
   const node = page
     .getByTestId(`layout-resource-${locationResource.resourceId}`)
     .getByRole('button', { name: locationResource.name, exact: true });

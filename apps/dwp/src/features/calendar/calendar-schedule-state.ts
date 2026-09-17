@@ -1,4 +1,4 @@
-import { isAppReadEntitled } from '@dwp-frontend/shared-utils';
+import { isAppReadEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 
 import type { PermissionDTO, SavedViewConfiguration } from '@dwp-frontend/shared-utils';
 

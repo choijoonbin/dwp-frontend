@@ -162,6 +162,7 @@
     "TENANT_LIFECYCLE": "Tenant lifecycle"
   },
   "auditActions": {
+    "SUBMITTED": "Service order submitted",
     "ACCEPT": "Assignment accepted",
     "ARCHIVE": "Archived mail",
     "ARCHIVE_NOW": "Archived immediately",
@@ -523,6 +524,7 @@
     "SYSTEM_TABLE": "System table",
     "TABLE": "Table",
     "VIEW": "View",
-    "WORK_ITEM": "Work item"
+    "WORK_ITEM": "Work item",
+    "WORKSPACE_APP": "Workspace app"
   }
 }

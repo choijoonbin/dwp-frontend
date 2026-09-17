@@ -28,6 +28,19 @@ async function setup(page: Page) {
 }
 const queryLabel = '결재 번호·제목·요약 검색';
 
+async function selectRequestStatus(page: Page, status: string) {
+  if ((page.viewportSize()?.width ?? 1280) < 900) {
+    await page.getByRole('button', { name: '필터', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: '필터', exact: true });
+    await dialog.getByLabel('요청 상태', { exact: true }).click();
+    await page.getByRole('option', { name: status, exact: true }).click();
+    await dialog.getByRole('button', { name: '필터 적용', exact: true }).click();
+    return;
+  }
+  await page.getByLabel('요청 상태', { exact: true }).click();
+  await page.getByRole('option', { name: status, exact: true }).click();
+}
+
 test('요청 검색은 실제 서버 조건·페이지를 사용하고 검색 없음과 완료 보관의 읽기 전용 의미를 구분한다', async ({
   page,
 }) => {
@@ -60,8 +73,7 @@ test('요청 검색은 실제 서버 조건·페이지를 사용하고 검색 �
   expect(seen.at(-1)!.searchParams.get('query')).toBe('존재하지 않는 결재');
   await page.getByRole('button', { name: '필터 초기화' }).click();
   await expect(page.getByText('1/2 페이지')).toBeVisible();
-  await page.getByLabel('요청 상태', { exact: true }).click();
-  await page.getByRole('option', { name: '보완 필요', exact: true }).click();
+  await selectRequestStatus(page, '보완 필요');
   await expect(page.getByText('조건에 맞는 요청이 없습니다.')).toBeVisible();
   expect(seen.at(-1)!.searchParams.get('status')).toBe('NEEDS_INFO');
 });

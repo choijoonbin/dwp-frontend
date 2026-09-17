@@ -1,0 +1,114 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+                - navigation "Workplace home" [ref=e40]:
+                  - generic [ref=e41]:
+                    - link "Today's workspace" [ref=e42] [cursor=pointer]:
+                      - /url: /workplace/home?view=home
+                      - img [ref=e44]
+                      - text: Today's workspace
+                    - link "Team work plans" [ref=e47] [cursor=pointer]:
+                      - /url: /workplace/home?view=team
+                      - img [ref=e49]
+                      - text: Team work plans
+                    - link "Facility requests" [ref=e53] [cursor=pointer]:
+                      - /url: /workplace/home?view=requests
+                      - img [ref=e55]
+                      - text: Facility requests
+              - listitem [ref=e57]:
+                - link "Find and book a space" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/find
+                  - img [ref=e60]
+                  - paragraph [ref=e65]: Find and book a space
+              - listitem [ref=e66]:
+                - link "Weekly booking planner" [ref=e67] [cursor=pointer]:
+                  - /url: /workplace/planner
+                  - img [ref=e69]
+                  - paragraph [ref=e72]: Weekly booking planner
+              - listitem [ref=e73]:
+                - link "My reservations" [ref=e74] [cursor=pointer]:
+                  - /url: /workplace/reservations
+                  - img [ref=e76]
+                  - paragraph [ref=e79]: My reservations
+              - listitem [ref=e80]:
+                - link "My service orders" [ref=e81] [cursor=pointer]:
+                  - /url: /workplace/service-orders
+                  - img [ref=e83]
+                  - paragraph [ref=e87]: My service orders
+        - link "Return to apps" [ref=e89] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e91]
+          - text: Return to apps
+    - banner [ref=e93]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - img [ref=e97]
+          - generic "Workplace" [ref=e102]
+        - navigation "App area switcher" [ref=e105]:
+          - 'link "App management: Workplace" [ref=e107] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e109]
+            - generic [ref=e112]: App management
+        - generic [ref=e113]:
+          - button "Search DWP" [ref=e115] [cursor=pointer]:
+            - img [ref=e116]
+          - generic [ref=e119]:
+            - button "Enter full screen" [ref=e120] [cursor=pointer]:
+              - img [ref=e121]
+            - generic "0 actionable notifications, 0 total unread" [ref=e127]:
+              - button "0 actionable notifications, 0 total unread" [ref=e128] [cursor=pointer]:
+                - generic [ref=e129]:
+                  - img [ref=e130]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e134] [cursor=pointer]':
+            - generic [ref=e135]: T
+            - img [ref=e136]
+    - main [ref=e138]:
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - text: Multi-day workplace planning
+            - heading "Weekly booking planner" [active] [level=1] [ref=e143]
+            - paragraph [ref=e144]: Plan desks, parking and lockers for yourself or authorized beneficiaries, then confirm one server-held batch.
+          - button "Refresh" [ref=e146] [cursor=pointer]
+        - generic [ref=e148]:
+          - paragraph [ref=e149]: Planner progress
+          - generic [ref=e151]: 1. Plan
+          - generic [ref=e153]: 2. Hold and review
+          - generic [ref=e155]: 3. Results
+          - generic [ref=e157]: No access
+        - generic [ref=e159]:
+          - img [ref=e161]
+          - heading "Planner access is unavailable" [level=2] [ref=e164]
+          - paragraph [ref=e165]: You do not have access to the authoritative workplace planning source.
+  - generic "Open DWAI·ON" [ref=e167]:
+    - button "Open DWAI·ON" [ref=e168] [cursor=pointer]
+```

@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "rootPackage": "@dwp-frontend/workspace",
-  "dependencyCount": 161,
+  "dependencyCount": 162,
   "licenseCounts": {
     "(Apache-2.0 AND BSD-3-Clause)": 1,
     "0BSD": 1,
     "Apache-2.0": 10,
     "BSD-3-Clause": 5,
     "ISC": 12,
-    "MIT": 132
+    "MIT": 133
   },
   "packages": [
     {
@@ -574,6 +574,12 @@
       "version": "4.4.3",
       "license": "MIT",
       "repository": "git://github.com/debug-js/debug.git"
+    },
+    {
+      "name": "decimal.js",
+      "version": "10.6.0",
+      "license": "MIT",
+      "repository": "https://github.com/MikeMcl/decimal.js.git"
     },
     {
       "name": "dom-helpers",

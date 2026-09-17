@@ -61,10 +61,19 @@ export const APPROVAL_FORM_WORKSPACE_ROUTE_BINDINGS = {
   'form-version-diff.data': ['GET', `${prefix}/diff`],
   'form-publish-review.data': ['GET', `${prefix}/publish-review`],
   'form-publish-review-request.data': ['GET', `${prefix}/publish-review-request`],
-  'form-publish-review-candidates.data': ['GET', '/api/approvals/v1/admin/forms/publish-review-candidates'],
-  'form-publish-review-queue.data': ['GET', '/api/approvals/v1/admin/forms/publish-review-requests'],
+  'form-publish-review-candidates.data': [
+    'GET',
+    '/api/approvals/v1/admin/forms/publish-review-candidates',
+  ],
+  'form-publish-review-queue.data': [
+    'GET',
+    '/api/approvals/v1/admin/forms/publish-review-requests',
+  ],
   'form-publish-review-request.action': ['POST', `${prefix}/publish-review-request`],
-  'form-publish-review-reject.action': ['POST', `${prefix}/publish-review-requests/{requestId}/reject`],
+  'form-publish-review-reject.action': [
+    'POST',
+    `${prefix}/publish-review-requests/{requestId}/reject`,
+  ],
   'form-working-draft-update.action': ['PUT', `${prefix}/working-draft`],
   'form-version-branch.action': ['POST', `${prefix}/versions/{formVersionId}/branch`],
   'form-retire.action': ['POST', `${prefix}/retire`],

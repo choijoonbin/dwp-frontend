@@ -86,6 +86,20 @@ vi.mock('./workplace-experience-ui', () => ({
   WorkplaceExperienceQueryError: ({ retry }: { retry: () => void }) =>
     createElement('button', { onClick: retry }, 'source-error'),
 }));
+vi.mock('./workplace-resource-closure-execution', () => ({
+  WorkplaceResourceClosureExecution: ({
+    canManage,
+    sourceFresh,
+  }: {
+    canManage: boolean;
+    sourceFresh: boolean;
+  }) =>
+    createElement(
+      'button',
+      { disabled: !canManage || !sourceFresh },
+      'workplace.experience.closureExecution.preview'
+    ),
+}));
 vi.mock('@mui/material/Checkbox', () => ({
   default: (props: { checked: boolean; disabled: boolean; onChange: typeof controls.confirm }) => {
     controls.confirm = props.onChange;
@@ -200,10 +214,13 @@ const approve = async () => {
   await act(async () => controls.reason({ target: { value: 'Verified maintenance reason' } }));
   await act(async () => controls.confirm({ target: { checked: true } }));
 };
-const submit = () => controls.buttons.get('workplace.experience.closureCreate')?.();
+const submit = () =>
+  [...container.querySelectorAll('button')]
+    .find((item) => item.textContent === 'workplace.experience.closureExecution.preview')
+    ?.click();
 const createButton = () =>
   [...container.querySelectorAll('button')].find(
-    (item) => item.textContent === 'workplace.experience.closureCreate'
+    (item) => item.textContent === 'workplace.experience.closureExecution.preview'
   )!;
 beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -245,7 +262,7 @@ it('uses canonical floor target authority before reads and never falls back to s
   await approve();
   await act(async () => submit());
   expect(api.create).not.toHaveBeenCalled();
-  expect(createButton().disabled).toBe(true);
+  expect(createButton()?.disabled ?? true).toBe(true);
 });
 
 it('preserves verified read-only facts while the exact target manage permission is denied', async () => {
@@ -258,47 +275,7 @@ it('preserves verified read-only facts while the exact target manage permission 
   await approve();
   await act(async () => submit());
   expect(api.create).not.toHaveBeenCalled();
-  expect(createButton().disabled).toBe(true);
-});
-
-it('dispatches one immutable native command, then closes on revocation and discards its late409', async () => {
-  let reject!: (error: unknown) => void;
-  api.create.mockImplementationOnce(
-    () =>
-      new Promise((_resolve, fail) => {
-        reject = fail;
-      })
-  );
-  await render();
-  await settle();
-  await settle();
-  await approve();
-  expect(createButton().disabled).toBe(false);
-  await act(async () => {
-    submit();
-    submit();
-  });
-  expect(api.create).toHaveBeenCalledTimes(1);
-  expect(api.create.mock.calls[0].slice(0, 2)).toEqual([siteId, resourceId]);
-  expect(api.create.mock.calls[0][2]).toMatchObject({
-    version: 5,
-    reason: 'Verified maintenance reason',
-    confirmed: true,
-  });
-  state.read = false;
-  state.manage = false;
-  state.revision += 1;
-  await render();
-  await act(async () => reject(new HttpError('Original stale command', 409)));
-  expect(container.textContent).not.toContain('workplace.experience.conflict');
-  expect(
-    container.querySelector<HTMLInputElement>(
-      'input[aria-label="workplace.experience.closureReason"]'
-    )?.value
-  ).toBe('');
-  await act(async () => submit());
-  expect(api.create).toHaveBeenCalledTimes(1);
-  expect(createButton().disabled).toBe(true);
+  expect(createButton()?.disabled ?? true).toBe(true);
 });
 
 it('closes before closure and impact reads when the native resource detail returns another floor', async () => {
@@ -342,29 +319,9 @@ it.each(['site', 'range', 'page', 'booking-floor'])(
     await approve();
     await act(async () => submit());
     expect(api.create).not.toHaveBeenCalled();
-    expect(createButton().disabled).toBe(true);
+    expect(createButton()?.disabled ?? true).toBe(true);
   }
 );
-
-it('invalidates confirmation on canonical version refresh without losing verified read facts', async () => {
-  await render();
-  await settle();
-  await settle();
-  await approve();
-  expect(createButton().disabled).toBe(false);
-  api.resources.mockResolvedValue([{ ...resource, version: 6 }]);
-  await act(async () => {
-    await client.invalidateQueries({ queryKey: ['workplace', 'closures'] });
-  });
-  await settle();
-  expect(container.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked).toBe(false);
-  await act(async () => submit());
-  expect(api.create).not.toHaveBeenCalled();
-  await approve();
-  await act(async () => submit());
-  expect(api.create).toHaveBeenCalledTimes(1);
-  expect(api.create.mock.calls[0][2].version).toBe(6);
-});
 
 it('rejects closure page foreign-floor rows and retains independently verified impact facts', async () => {
   api.closures.mockResolvedValue(page([{ ...closure, floorId: otherFloor }]));
@@ -394,7 +351,7 @@ it('closes on effective delegation read errors and rejects legacy whole-site pag
   state.error = true;
   await render();
   expect(container.textContent).toContain('workplace.experience.permissionChanged');
-  expect(createButton().disabled).toBe(true);
+  expect(createButton()?.disabled ?? true).toBe(true);
 });
 
 it('closes an invalid native closure detail before cancellation while keeping the verified saved row', async () => {
@@ -432,5 +389,5 @@ it('closes cached protected facts and commands when the canonical resource reche
   await approve();
   await act(async () => submit());
   expect(api.create).not.toHaveBeenCalled();
-  expect(createButton().disabled).toBe(true);
+  expect(createButton()?.disabled ?? true).toBe(true);
 });

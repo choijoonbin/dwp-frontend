@@ -1,4 +1,4 @@
-import { createElement, isValidElement, type ReactNode } from 'react';
+import { createElement, isValidElement, Suspense, type ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Navigate } from 'react-router-dom';
 import type * as ReactRouterDom from 'react-router-dom';
@@ -106,6 +106,43 @@ describe('administration identity-plane route boundary', () => {
     expect(TenantAdminRouteGuard({ children: createElement('span') })).toBe(routeFallback);
     expect(TenantAdminLegacyRedirect()).toBe(routeFallback);
     expect(TenantAdminSectionRedirect()).toBe(routeFallback);
+  });
+
+  it('renders the authorized tenant settings home when no legacy view is requested', () => {
+    routeMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'TENANT', roles: ['ADMIN'], resourceRoles: [] },
+    });
+    routeMocks.usePermissions.mockReturnValue({
+      permissions: [],
+      isLoaded: true,
+      hasPermission: vi.fn(() => true),
+    });
+    routeMocks.useSearchParams.mockReturnValue([new URLSearchParams()]);
+
+    const result = TenantAdminLegacyRedirect();
+    expect(isValidElement(result)).toBe(true);
+    if (!isValidElement(result)) throw new Error('Expected the tenant settings home element.');
+    expect(result.type).toBe(Suspense);
+  });
+
+  it('keeps the settings home closed when no administration item is authorized', () => {
+    routeMocks.useAuth.mockReturnValue({
+      user: { identityPlane: 'TENANT', roles: [], resourceRoles: [] },
+    });
+    routeMocks.usePermissions.mockReturnValue({
+      permissions: [],
+      isLoaded: true,
+      hasPermission: vi.fn(() => false),
+    });
+    routeMocks.useSearchParams.mockReturnValue([new URLSearchParams()]);
+
+    const result = TenantAdminLegacyRedirect();
+    expect(isValidElement(result)).toBe(true);
+    if (!isValidElement<{ to: string; replace: boolean }>(result)) {
+      throw new Error('Expected an access-denied redirect.');
+    }
+    expect(result.type).toBe(Navigate);
+    expect(result.props).toMatchObject({ to: '/403', replace: true });
   });
 
   it('resolves the top-level Spaces legacy index from its management authority', () => {

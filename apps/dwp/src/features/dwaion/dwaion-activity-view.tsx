@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { UseQueryResult } from '@tanstack/react-query';
 import {
   Bot,
   CheckCircle2,
@@ -13,6 +12,7 @@ import {
   ShieldX,
 } from 'lucide-react';
 import {
+  ActionButton,
   foundationTokens,
   GuidedEmptyState,
   LoadingState,
@@ -35,6 +35,7 @@ import { alpha } from '@mui/material/styles';
 import {
   DWAION_ACTIVITY_FILTERS,
   DWAION_ACTIVITY_PERIODS,
+  hasExpiredDwaionRunLease,
   type DwaionActivityFilter,
   type DwaionActivityPeriod,
 } from './dwaion-activity-model';
@@ -246,8 +247,17 @@ export function ActivityListBody({
   onStart,
   accessDenied,
   onRefresh,
+  hasMore = false,
+  loadingMore = false,
+  loadMoreError = false,
+  onLoadMore,
 }: {
-  runs: Pick<UseQueryResult<DwaionUserRun[]>, 'data' | 'isPending' | 'isError' | 'isFetching'>;
+  runs: {
+    data: DwaionUserRun[] | undefined;
+    isPending: boolean;
+    isError: boolean;
+    isFetching: boolean;
+  };
   visibleRuns: DwaionUserRun[];
   selectedRunId: string;
   filter: DwaionActivityFilter;
@@ -257,6 +267,10 @@ export function ActivityListBody({
   onStart: () => void;
   accessDenied: boolean;
   onRefresh?: () => void;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  loadMoreError?: boolean;
+  onLoadMore?: () => void;
 }) {
   const { t } = useTranslation('work');
   const selectedSample = visibleRuns.some(
@@ -302,16 +316,33 @@ export function ActivityListBody({
   }
   if (!visibleRuns.length) {
     const filtered = filter !== 'ALL';
+    const canSearchOlder = filtered && hasMore && Boolean(onLoadMore);
     return (
       <Box sx={{ mt: 1.25 }}>
         <GuidedEmptyState
           kind={filtered ? 'no-results' : 'empty'}
           title={t(filtered ? 'dwaionActivity.noResultsTitle' : 'dwaionActivity.emptyTitle')}
           description={t(
-            filtered ? 'dwaionActivity.noResultsDescription' : 'dwaionActivity.emptyDescription'
+            canSearchOlder && loadMoreError
+              ? 'dwaionActivity.pagination.error'
+              : canSearchOlder
+                ? 'dwaionActivity.noLoadedResultsDescription'
+                : filtered
+                  ? 'dwaionActivity.noResultsDescription'
+                  : 'dwaionActivity.emptyDescription'
           )}
-          actionLabel={t(filtered ? 'dwaionActivity.resetFilter' : 'dwaionActivity.start')}
-          onAction={filtered ? onResetFilter : onStart}
+          actionLabel={t(
+            canSearchOlder
+              ? loadMoreError
+                ? 'dwaionActivity.pagination.retry'
+                : loadingMore
+                  ? 'dwaionActivity.pagination.loading'
+                  : 'dwaionActivity.pagination.loadOlder'
+              : filtered
+                ? 'dwaionActivity.resetFilter'
+                : 'dwaionActivity.start'
+          )}
+          onAction={canSearchOlder ? onLoadMore : filtered ? onResetFilter : onStart}
         />
       </Box>
     );
@@ -416,6 +447,42 @@ export function ActivityListBody({
           </AccordionDetails>
         </Accordion>
       )}
+      {onLoadMore && (hasMore || loadingMore || loadMoreError) && (
+        <Box
+          sx={{
+            px: 1.5,
+            py: 1.25,
+            borderTop: 1,
+            borderColor: 'divider',
+            display: 'grid',
+            justifyItems: 'center',
+            gap: 0.75,
+          }}
+        >
+          {loadMoreError && (
+            <Typography role="alert" variant="caption" color="warning.main" textAlign="center">
+              {t('dwaionActivity.pagination.error')}
+            </Typography>
+          )}
+          <ActionButton
+            intent="secondary"
+            size="small"
+            disabled={loadingMore}
+            aria-busy={loadingMore}
+            startIcon={<ChevronDown size={16} aria-hidden="true" />}
+            onClick={onLoadMore}
+            sx={{ minHeight: 40 }}
+          >
+            {t(
+              loadingMore
+                ? 'dwaionActivity.pagination.loading'
+                : loadMoreError
+                  ? 'dwaionActivity.pagination.retry'
+                  : 'dwaionActivity.pagination.loadOlder'
+            )}
+          </ActionButton>
+        </Box>
+      )}
     </Box>
   );
 }
@@ -432,14 +499,23 @@ function RunRow({
   onSelect: () => void;
 }) {
   const { t } = useTranslation('work');
-  const Icon =
-    run.runState === 'RUNNING' ? Clock3 : run.runState === 'COMPLETED' ? CheckCircle2 : CircleAlert;
+  const leaseExpired = hasExpiredDwaionRunLease(run);
+  const Icon = leaseExpired
+    ? CircleAlert
+    : run.runState === 'RUNNING'
+      ? Clock3
+      : run.runState === 'COMPLETED'
+        ? CheckCircle2
+        : CircleAlert;
   const agentName = t(`dwaionActivity.agents.${run.agentKey}`, { defaultValue: run.agentKey });
-  const stateColor = run.policyOutcome === 'DENY' ? 'error' : runStateColor(run.runState);
+  const stateColor =
+    run.policyOutcome === 'DENY' ? 'error' : leaseExpired ? 'warning' : runStateColor(run.runState);
   const statusLabel =
     run.policyOutcome === 'DENY'
       ? t('dwaionActivity.outcomes.DENY')
-      : t(`dwaionActivity.states.${run.runState}`);
+      : leaseExpired
+        ? t('dwaionActivity.attentionSignals.leaseExpired')
+        : t(`dwaionActivity.states.${run.runState}`);
   const displayTimestamp = formatDate(
     run.completedAt ?? run.createdAt,
     { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
@@ -461,6 +537,7 @@ function RunRow({
         ...(run.dataProvenance === 'SAMPLE'
           ? [t('dwaionActivity.observability.sample.title')]
           : []),
+        ...(leaseExpired ? [t('dwaionActivity.attentionSignals.leaseExpiredDescription')] : []),
         t(`dwaionActivity.outcomes.${run.policyOutcome}`),
         run.runId,
       ].join(' · ')}
@@ -481,9 +558,11 @@ function RunRow({
           ? 'primary.main'
           : run.policyOutcome === 'DENY'
             ? 'error.main'
-            : run.runState === 'RUNNING'
-              ? 'info.main'
-              : 'divider',
+            : leaseExpired
+              ? 'warning.main'
+              : run.runState === 'RUNNING'
+                ? 'info.main'
+                : 'divider',
         borderRadius: (theme) => ({ xs: Number(theme.shape.borderRadius) * 1.5 + 'px', md: 0 }),
         bgcolor: selected ? 'var(--dwp-product-soft)' : 'background.paper',
         color: 'text.primary',

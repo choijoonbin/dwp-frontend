@@ -323,6 +323,14 @@ export function createWorkplaceIdempotencyKey(scope = 'booking'): string {
   return `workplace:${scope}:${Date.now().toString(36)}:${Math.random().toString(36).slice(2)}`;
 }
 
+function bookingCommandIdempotencyKey(
+  action: 'check-in' | 'cancel' | 'release' | 'relocate',
+  bookingId: string,
+  version: number
+): string {
+  return `workplace:booking-${action}:${bookingId}:v${version}`;
+}
+
 export async function createWorkplaceBooking(
   input: WorkplaceBookingInput,
   idempotencyKey: string
@@ -337,33 +345,47 @@ export async function createWorkplaceBooking(
 
 export async function relocateWorkplaceBooking(
   bookingId: string,
-  input: WorkplaceRelocateBookingInput
+  input: WorkplaceRelocateBookingInput,
+  idempotencyKey = bookingCommandIdempotencyKey('relocate', bookingId, input.version)
 ): Promise<WorkplaceBooking> {
   const response = await axiosInstance.post<
     ApiResponse<WorkplaceBooking>,
     WorkplaceRelocateBookingInput
-  >(`/api/platform/v1/workplace/bookings/${encodeURIComponent(bookingId)}/relocate`, input);
+  >(`/api/platform/v1/workplace/bookings/${encodeURIComponent(bookingId)}/relocate`, input, {
+    headers: { 'Idempotency-Key': idempotencyKey },
+  });
   return response.data.data;
 }
 
 async function changeBooking(
   bookingId: string,
   action: 'check-in' | 'cancel' | 'release',
-  version: number
+  version: number,
+  idempotencyKey: string
 ) {
   const response = await axiosInstance.post<ApiResponse<WorkplaceBooking>, { version: number }>(
     `/api/platform/v1/workplace/bookings/${encodeURIComponent(bookingId)}/${action}`,
-    { version }
+    { version },
+    { headers: { 'Idempotency-Key': idempotencyKey } }
   );
   return response.data.data;
 }
 
-export const checkInWorkplaceBooking = (bookingId: string, version: number) =>
-  changeBooking(bookingId, 'check-in', version);
-export const cancelWorkplaceBooking = (bookingId: string, version: number) =>
-  changeBooking(bookingId, 'cancel', version);
-export const releaseWorkplaceBooking = (bookingId: string, version: number) =>
-  changeBooking(bookingId, 'release', version);
+export const checkInWorkplaceBooking = (
+  bookingId: string,
+  version: number,
+  idempotencyKey = bookingCommandIdempotencyKey('check-in', bookingId, version)
+) => changeBooking(bookingId, 'check-in', version, idempotencyKey);
+export const cancelWorkplaceBooking = (
+  bookingId: string,
+  version: number,
+  idempotencyKey = bookingCommandIdempotencyKey('cancel', bookingId, version)
+) => changeBooking(bookingId, 'cancel', version, idempotencyKey);
+export const releaseWorkplaceBooking = (
+  bookingId: string,
+  version: number,
+  idempotencyKey = bookingCommandIdempotencyKey('release', bookingId, version)
+) => changeBooking(bookingId, 'release', version, idempotencyKey);
 
 export async function getWorkplaceReleaseWindows(
   from: string,

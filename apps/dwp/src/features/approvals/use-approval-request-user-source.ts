@@ -67,6 +67,15 @@ export function useApprovalRequestUserSource({
       );
     });
   }, []);
+  const unreadyPath = paths.find((path) => {
+    const value = approvalRequestFieldValue(values, path) ?? '';
+    const state = reported.get(JSON.stringify([generation, path, value]));
+    return !(
+      state?.ready &&
+      (!state.isCurrent || state.isCurrent()) &&
+      (!value || (state.validUntil && Date.parse(state.validUntil) > Date.now()))
+    );
+  });
   const report = useCallback(
     (path: string, value: unknown, state: ApprovalRequestUserSourceState) => {
       if (current.current.generation !== generation) return;
@@ -102,5 +111,5 @@ export function useApprovalRequestUserSource({
       503
     );
   };
-  return { binding, ready: isReady(), isReady, report, waitForOwner };
+  return { binding, ready: isReady(), unreadyPath, isReady, report, waitForOwner };
 }

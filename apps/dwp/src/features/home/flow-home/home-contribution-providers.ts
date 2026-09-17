@@ -798,7 +798,8 @@ export const workplaceContributionProvider = createHomeContributionProvider<
           title: booking.resourceName,
           description: [booking.siteName, booking.floorName].filter(Boolean).join(' · '),
           dueAt: booking.startsAt,
-          deepLink: '/workplace/my-bookings',
+          deepLink:
+            '/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE',
           dedupeKey: `WORKPLACE:${booking.bookingId}`,
           generatedAt: context.snapshotAt ?? '',
           privacy: {

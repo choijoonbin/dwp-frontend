@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { DWAION_ACTIVITY_WINDOW_LIMIT } from './dwaion-activity-model';
+import { DWAION_ACTIVITY_PAGE_LIMIT } from './dwaion-activity-model';
 
 import type { DwaionActivityFilter, DwaionActivityWindowSummary } from './dwaion-activity-model';
 
@@ -149,7 +149,7 @@ export function DwaionActivitySummary({
         component="p"
         sx={{ mt: 0.55, display: { xs: 'none', lg: 'block' }, lineHeight: 'button.lineHeight' }}
       >
-        {t('dwaionActivity.windowNotice', { count: DWAION_ACTIVITY_WINDOW_LIMIT })}
+        {t('dwaionActivity.windowNotice', { count: DWAION_ACTIVITY_PAGE_LIMIT })}
       </Typography>
       {metrics.sample > 0 && (
         <Stack

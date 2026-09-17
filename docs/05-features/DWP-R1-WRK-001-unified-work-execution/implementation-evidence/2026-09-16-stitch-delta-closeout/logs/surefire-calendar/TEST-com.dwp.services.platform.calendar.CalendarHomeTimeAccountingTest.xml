@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:13" hostname="MacBook-Pro" time="0.306">
+  <properties/>
+  <testcase name="localDateBoundsAreHalfOpen()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.135"/>
+  <testcase name="emptyHomeHasZeroMinutesAndZeroLoad()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.012"/>
+  <testcase name="bothWeekEdgesAreClippedAndCoachUsesTheSameFocusTotal()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.012"/>
+  <testcase name="tenantSundayWeekStartIsRespected()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.007"/>
+  <testcase name="overlappingEventsStillMeasurePerEventWorkloadRatherThanFreeBusyUnion()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.021"/>
+  <testcase name="overnightMeetingsAndFocusAreSplitAcrossLocalDates()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.01"/>
+  <testcase name="recurringOvernightOccurrencesAreEachClippedAfterExpansion()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.01"/>
+  <testcase name="[1] date=2026-03-08, expectedDayMinutes=1380, expectedWeekMinutes=10020" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.025"/>
+  <testcase name="[2] date=2026-11-01, expectedDayMinutes=1500, expectedWeekMinutes=10140" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.006"/>
+  <testcase name="meetingLimitPercentageRemainsAccurateAboveOneHundredAndSixty()" classname="com.dwp.services.platform.calendar.CalendarHomeTimeAccountingTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/Users/a10697/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.17.8/f09415827a71be7ed621c7bd02550678f28bc81c/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>

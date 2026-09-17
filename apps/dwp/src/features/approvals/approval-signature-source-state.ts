@@ -20,12 +20,7 @@ export function approvalSignatureSourceState(source: SignatureSource) {
     approvalManagementReadDenied(failure)
   )
     return 'DENIED';
-  if (
-    source.data === undefined &&
-    source.isPending &&
-    source.isFetching &&
-    failure == null
-  )
+  if (source.data === undefined && source.isPending && source.isFetching && failure == null)
     return 'LOADING';
   if (source.isError || failure != null || (source.failureCount ?? 0) > 0 || source.isFetching) {
     return source.data === undefined ? 'UNAVAILABLE' : 'STALE';

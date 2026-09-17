@@ -1,0 +1,223 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 개요
+          - paragraph [ref=e26]: SKAX
+        - navigation "알림 탐색" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 개요
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "알림 홈" [ref=e32] [cursor=pointer]:
+                  - /url: /notifications/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: 알림 홈
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: 알림 정리
+            - list [ref=e41]:
+              - listitem [ref=e42]:
+                - link "알림 센터" [ref=e43] [cursor=pointer]:
+                  - /url: /notifications/center
+                  - img [ref=e45]
+                  - paragraph [ref=e49]: 알림 센터
+              - listitem [ref=e50]:
+                - link "알림 설정" [ref=e51] [cursor=pointer]:
+                  - /url: /notifications/settings
+                  - img [ref=e53]
+                  - paragraph [ref=e57]: 알림 설정
+        - link "앱 목록으로 돌아가기" [ref=e59] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e61]
+          - text: 앱 목록으로 돌아가기
+    - banner [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - img [ref=e67]
+          - generic "알림" [ref=e73]
+        - navigation "앱 영역 전환" [ref=e76]:
+          - 'link "앱 관리: 알림" [ref=e78] [cursor=pointer]':
+            - /url: /notifications/admin/overview
+            - img [ref=e80]
+            - generic [ref=e83]: 앱 관리
+        - generic [ref=e84]:
+          - button "DWP 검색" [ref=e86] [cursor=pointer]:
+            - img [ref=e87]
+            - paragraph [ref=e90]: DWP 검색
+            - generic [ref=e91]: ⌘K
+          - generic [ref=e92]:
+            - button "전체 화면" [ref=e93] [cursor=pointer]:
+              - img [ref=e94]
+            - generic "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e100]:
+              - button "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e101] [cursor=pointer]:
+                - generic [ref=e102]:
+                  - img [ref=e103]
+                  - generic [ref=e106]: "4"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e108] [cursor=pointer]':
+            - generic [ref=e109]: T
+            - img [ref=e110]
+    - main [ref=e112]:
+      - generic [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - img [ref=e118]
+            - generic [ref=e123]:
+              - heading "알림 설정" [level=1] [ref=e124]
+              - paragraph [ref=e125]: 전역 설정을 기준으로 앱, 알림 유형, 전달 채널별 예외를 관리합니다.
+          - status [ref=e126]:
+            - img [ref=e127]
+            - generic [ref=e129]: 변경 사항 자동 저장
+        - tablist "알림 설정" [ref=e132]:
+          - tab "알림 설정" [selected] [ref=e133] [cursor=pointer]:
+            - img [ref=e134]
+            - text: 알림 설정
+          - tab "내 수신 상태" [ref=e135] [cursor=pointer]:
+            - img [ref=e136]
+            - text: 내 수신 상태
+        - tabpanel "알림 설정" [ref=e139]:
+          - navigation "알림 설정 바로가기" [ref=e140]:
+            - generic [ref=e141]:
+              - button "전역 전달 채널" [ref=e142] [cursor=pointer]:
+                - img [ref=e144]
+                - text: 전역 전달 채널
+              - button "앱별 알림" [ref=e149] [cursor=pointer]:
+                - img [ref=e151]
+                - text: 앱별 알림
+              - button "수신 집중 규칙" [ref=e154] [cursor=pointer]:
+                - img [ref=e156]
+                - text: 수신 집중 규칙
+              - button "집중 시간" [ref=e162] [cursor=pointer]:
+                - img [ref=e164]
+                - text: 집중 시간
+              - button "도착 알림 및 개인정보" [ref=e166] [cursor=pointer]:
+                - img [ref=e168]
+                - text: 도착 알림 및 개인정보
+              - button "요약 알림" [ref=e172] [cursor=pointer]:
+                - img [ref=e174]
+                - text: 요약 알림
+          - generic [ref=e180]:
+            - region "수신 집중 규칙" [ref=e181]:
+              - generic [ref=e182]:
+                - generic [ref=e183]:
+                  - heading "수신 집중 규칙" [level=2] [ref=e184]
+                  - paragraph [ref=e185]: 중요한 사람과 업무를 우선하고, 관리 주제를 팔로우하며, 필수 알림을 숨기지 않는 범위 안에서 정확한 대상을 음소거합니다.
+                - button "규칙 추가" [ref=e186] [cursor=pointer]:
+                  - img [ref=e188]
+                  - text: 규칙 추가
+              - generic "수신 집중 규칙 요약" [ref=e189]:
+                - generic [ref=e190]:
+                  - img [ref=e192]
+                  - generic [ref=e196]:
+                    - text: 중요한 사람
+                    - paragraph [ref=e197]: "1"
+                - generic [ref=e198]:
+                  - img [ref=e200]
+                  - generic [ref=e202]:
+                    - text: 팔로우 중인 업무
+                    - paragraph [ref=e203]: "0"
+                - generic [ref=e204]:
+                  - img [ref=e206]
+                  - generic [ref=e210]:
+                    - text: 음소거 범위
+                    - paragraph [ref=e211]: "0"
+                - generic [ref=e212]:
+                  - img [ref=e214]
+                  - generic [ref=e217]:
+                    - text: 관리 주제
+                    - paragraph [ref=e218]: "0"
+              - generic [ref=e219]:
+                - group "규칙 분류" [ref=e220]:
+                  - button "전체 규칙" [pressed] [ref=e221] [cursor=pointer]
+                  - button "사람" [ref=e222] [cursor=pointer]
+                  - button "팔로우" [ref=e223] [cursor=pointer]
+                  - button "음소거" [ref=e224] [cursor=pointer]
+                  - button "주제" [ref=e225] [cursor=pointer]
+                - generic [ref=e226]:
+                  - generic [ref=e227]: 수신 집중 규칙 검색
+                  - generic [ref=e228]:
+                    - img [ref=e230]
+                    - textbox "수신 집중 규칙 검색" [ref=e233]
+                    - group:
+                      - generic: 수신 집중 규칙 검색
+              - article [ref=e235]:
+                - generic [ref=e236]:
+                  - img [ref=e238]
+                  - generic [ref=e242]:
+                    - generic [ref=e243]:
+                      - heading "김민서" [level=3] [ref=e244]
+                      - generic [ref=e246]: 사용 중
+                      - generic [ref=e248]: 우선 표시
+                    - paragraph [ref=e249]: 김민서
+                    - generic [ref=e250]:
+                      - generic [ref=e251]:
+                        - term [ref=e252]: 출처
+                        - definition [ref=e253]: 내 설정
+                      - generic [ref=e254]:
+                        - term [ref=e255]: 채널
+                        - definition [ref=e256]: 앱 내 알림
+                      - generic [ref=e257]:
+                        - term [ref=e258]: 만료
+                        - definition [ref=e259]: 만료 없음
+                    - generic [ref=e260]: 마지막 변경 2026. 9. 16. 오전 10:00
+                  - generic [ref=e261]:
+                    - button "편집" [ref=e262] [cursor=pointer]:
+                      - img [ref=e264]
+                      - text: 편집
+                    - button "일시 중지" [ref=e267] [cursor=pointer]:
+                      - img [ref=e269]
+                      - text: 일시 중지
+                    - button "삭제" [ref=e271] [cursor=pointer]:
+                      - img [ref=e273]
+                      - text: 삭제
+              - generic [ref=e276]:
+                - img [ref=e277]
+                - generic [ref=e282]: 활성 규칙 25개 중 1개 사용
+            - region "테스트 알림 진단" [ref=e283]:
+              - generic [ref=e285]:
+                - generic [ref=e286]:
+                  - img [ref=e287]
+                  - generic [ref=e289]:
+                    - heading "테스트 알림 진단" [level=2] [ref=e290]
+                    - paragraph [ref=e291]: 실제 업무 알림을 만들지 않고 구성된 전달 단계를 검증합니다.
+                - button "테스트 실행" [ref=e293] [cursor=pointer]:
+                  - img [ref=e295]
+                  - text: 테스트 실행
+              - status [ref=e298]:
+                - img [ref=e300]
+                - generic [ref=e303]: 진단 전용입니다. 받은 알림, 업무 처리 및 알림 품질 KPI에 포함되지 않습니다.
+              - group "진단 요약" [ref=e304]:
+                - generic [ref=e305]:
+                  - text: 상태
+                  - generic [ref=e308]: 실행 전
+                - generic [ref=e309]:
+                  - text: 지원 단계
+                  - paragraph [ref=e310]: "0"
+                - generic [ref=e311]:
+                  - text: 확인된 단계
+                  - paragraph [ref=e312]: 0 / 0
+                - generic [ref=e313]:
+                  - text: 결과 만료
+                  - paragraph [ref=e314]: 발급되지 않음
+              - heading "Provider별 단계 상세" [level=3] [ref=e316]:
+                - button "Provider별 단계 상세" [ref=e317] [cursor=pointer]:
+                  - generic [ref=e319]:
+                    - img [ref=e320]
+                    - heading "Provider별 단계 상세" [level=6] [ref=e329]
+                  - img [ref=e331]
+```

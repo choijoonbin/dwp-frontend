@@ -145,7 +145,7 @@ test('loaded list and map inspection lead to the server-confirmed personal booki
     });
   };
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto(`/workplace/explore?view=list&resource=${locationResource.resourceId}`);
+  await page.goto(`/workplace/find?view=list&resource=${locationResource.resourceId}`);
   const inspector = page.getByRole('complementary', { name: locationResource.name, exact: true });
   await expect(inspector).toBeVisible();
   await expect(inspector.getByText('No space photo is registered.', { exact: true })).toBeVisible();
@@ -165,14 +165,19 @@ test('loaded list and map inspection lead to the server-confirmed personal booki
   await dialog.getByLabel('Purpose', { exact: true }).fill('Loaded native owner journey');
   await capture('workplace-native-booking-dialog', 320);
   await dialog.getByRole('button', { name: 'Book', exact: true }).click();
-  await expect(page).toHaveURL(
-    new RegExp(`/workplace/my-bookings\\?booking=${actualBookingId}`, 'u')
-  );
-  const row = page.getByTestId(`workplace-booking-${actualBookingId}`);
-  await expect(row).toBeFocused();
-  await expect(row.getByRole('button', { name: 'Check in', exact: true })).toBeVisible();
-  await expect(row.getByRole('button', { name: 'Change reservation', exact: true })).toBeVisible();
-  await expect(row.getByRole('button', { name: 'Cancel booking', exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/workplace\/reservations\?/u);
+  expect(new URL(page.url()).searchParams.get('reservation')).toBe(actualBookingId);
+  const mobileInspector = page.getByRole('dialog', { name: 'Reservation inspector', exact: true });
+  await expect(mobileInspector.getByRole('heading', { name: locationResource.name })).toBeVisible();
+  await expect(
+    mobileInspector.getByRole('button', { name: 'Check in now', exact: true })
+  ).toBeVisible();
+  await expect(
+    mobileInspector.getByRole('button', { name: 'Change space', exact: true })
+  ).toBeVisible();
+  await expect(
+    mobileInspector.getByRole('button', { name: 'Cancel booking', exact: true })
+  ).toBeVisible();
   expect(creates).toHaveLength(1);
   expect(creates[0].key).toMatch(/^workplace:booking:[0-9a-f-]{36}$/u);
   expect(creates[0].input).toMatchObject({
@@ -183,7 +188,9 @@ test('loaded list and map inspection lead to the server-confirmed personal booki
     if (width >= 1280) {
       await page.setViewportSize({ width, height: 1000 });
       await expect(
-        page.getByRole('complementary').getByText('No space photo is registered.', { exact: true })
+        page
+          .getByRole('complementary', { name: 'Reservation inspector', exact: true })
+          .getByRole('heading', { name: locationResource.name, exact: true })
       ).toBeVisible();
     }
     await capture('workplace-confirmed-my-bookings', width);
@@ -192,16 +199,16 @@ test('loaded list and map inspection lead to the server-confirmed personal booki
   expect(
     axe.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))
   ).toEqual([]);
-  await row.getByRole('button', { name: 'Cancel booking', exact: true }).click();
+  await mobileInspector.getByRole('button', { name: 'Cancel booking', exact: true }).click();
   const cancellation = page.getByRole('alertdialog', {
-    name: 'Cancel this space booking?',
+    name: 'Cancel this reservation?',
     exact: true,
   });
   await expect(cancellation).toBeVisible();
   await capture('workplace-cancel-review', 320);
   await cancellation.getByRole('button', { name: 'Keep', exact: true }).click();
   await expect(cancellation).toHaveCount(0);
-  await row.getByRole('button', { name: 'Change reservation', exact: true }).click();
+  await mobileInspector.getByRole('button', { name: 'Change space', exact: true }).click();
   const relocation = page.getByRole('dialog', { name: 'Change space or time', exact: true });
   await expect(relocation).toBeVisible();
   await expect(
@@ -298,8 +305,13 @@ test('relocation compares the original and target and requires an authoritative 
     return route.fallback();
   });
   await page.setViewportSize({ width: 320, height: 1000 });
-  await page.goto(`/workplace/my-bookings?booking=${actualBookingId}`);
-  await page.getByRole('button', { name: 'Change reservation', exact: true }).click();
+  await page.goto(
+    `/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE&reservation=${actualBookingId}&reservationAuthority=WORKPLACE`
+  );
+  await page
+    .getByRole('dialog', { name: 'Reservation inspector', exact: true })
+    .getByRole('button', { name: 'Change space', exact: true })
+    .click();
   const dialog = page.getByRole('dialog', { name: 'Change space or time', exact: true });
   await dialog.getByRole('combobox', { name: /Space passing initial checks/u }).click();
   await page.getByRole('option', { name: /Actual alternative desk/u }).click();
@@ -361,7 +373,7 @@ test('relocation compares the original and target and requires an authoritative 
   await expect(dialog).toHaveCount(0);
   await expect(
     page
-      .getByTestId(`workplace-booking-${actualBookingId}`)
+      .getByRole('dialog', { name: 'Reservation inspector', exact: true })
       .getByRole('heading', { name: target.name, exact: true })
   ).toBeVisible();
   expect(writes).toHaveLength(3);
@@ -451,12 +463,21 @@ test('mobile cancellation and release use bottom sheets with restored focus and 
     return route.fallback();
   });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`/workplace/my-bookings?booking=${futureId}`);
-  const futureRow = page.getByTestId(`workplace-booking-${futureId}`);
-  const cancelTrigger = futureRow.getByRole('button', { name: 'Cancel booking', exact: true });
+  await page.goto(
+    `/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE&reservation=${futureId}&reservationAuthority=WORKPLACE`
+  );
+  const futureRow = page.getByTestId(`workplace-reservation-workplace-${futureId}`);
+  const reservationInspector = page.getByRole('dialog', {
+    name: 'Reservation inspector',
+    exact: true,
+  });
+  const cancelTrigger = reservationInspector.getByRole('button', {
+    name: 'Cancel booking',
+    exact: true,
+  });
   await cancelTrigger.click();
   const cancellation = page.getByRole('alertdialog', {
-    name: 'Cancel this space booking?',
+    name: 'Cancel this reservation?',
     exact: true,
   });
   const checkSheet = async (
@@ -511,16 +532,27 @@ test('mobile cancellation and release use bottom sheets with restored focus and 
   commandGate = new Promise<void>((resolve) => {
     releaseCommand = resolve;
   });
-  const activeRow = page.getByTestId(`workplace-booking-${activeId}`);
-  const releaseTrigger = activeRow.getByRole('button', { name: 'Release', exact: true });
+  const activeRow = page.getByTestId(`workplace-reservation-workplace-${activeId}`);
+  await activeRow.getByRole('button', { name: 'View detail', exact: true }).click();
+  const activeInspector = page.getByRole('dialog', {
+    name: 'Reservation inspector',
+    exact: true,
+  });
+  const releaseTrigger = activeInspector.getByRole('button', {
+    name: 'Release space',
+    exact: true,
+  });
   await releaseTrigger.click();
-  const release = page.getByRole('dialog', { name: 'Release this space?', exact: true });
+  const release = page.getByRole('alertdialog', {
+    name: 'Release this workplace space?',
+    exact: true,
+  });
   await checkSheet(release, 320, 'workplace-release-sheet');
   await release.getByRole('button', { name: 'Keep', exact: true }).click();
   await expect(release).toHaveCount(0);
   await expect(releaseTrigger).toBeFocused();
   await releaseTrigger.click();
-  await release.getByRole('button', { name: 'Release', exact: true }).evaluate((button) => {
+  await release.getByRole('button', { name: 'Release space', exact: true }).evaluate((button) => {
     (button as HTMLButtonElement).click();
     (button as HTMLButtonElement).click();
   });
@@ -603,8 +635,8 @@ test('a known booking conflict preserves native filters and the draft while the 
     return route.fallback();
   });
   await page.setViewportSize({ width: 390, height: 844 });
-  const criteria = `site=${locationSite.siteId}&floor=${floor.floorId}&type=DESK&feature=MONITOR&accessible=true&date=2026-08-19&time=09%3A01&duration=60&view=list`;
-  await page.goto(`/workplace/explore?${criteria}&resource=${locationResource.resourceId}`);
+  const criteria = `v=1&sites=${locationSite.siteId}&floors=${floor.floorId}&types=DESK&features=MONITOR&accessible=true&date=2026-08-19&start=09%3A01&duration=60&view=list`;
+  await page.goto(`/workplace/find?${criteria}&resource=${locationResource.resourceId}`);
   const inspector = page.getByRole('complementary', { name: locationResource.name, exact: true });
   await inspector.getByRole('button', { name: 'Book this space', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Book a workspace', exact: true });
@@ -654,12 +686,11 @@ test('a known booking conflict preserves native filters and the draft while the 
     endsAt: writes[0].input.endsAt,
   });
   expect(writes[1].key).not.toBe(writes[0].key);
-  await expect(page).toHaveURL(
-    new RegExp(`/workplace/my-bookings\\?booking=${actualBookingId}`, 'u')
-  );
+  await expect(page).toHaveURL(/\/workplace\/reservations\?/u);
+  expect(new URL(page.url()).searchParams.get('reservation')).toBe(actualBookingId);
   await expect(
     page
-      .getByTestId(`workplace-booking-${actualBookingId}`)
+      .getByRole('dialog', { name: 'Reservation inspector', exact: true })
       .getByRole('heading', { name: target.name, exact: true })
   ).toBeVisible();
 });
@@ -694,7 +725,7 @@ test('explicit start minutes and custom duration remain native query scope and i
     }
     return route.fallback();
   });
-  const route = `/workplace/explore?site=${locationSite.siteId}&floor=${floor.floorId}&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A17&type=DESK&view=list&resource=${locationResource.resourceId}&duration=`;
+  const route = `/workplace/find?v=1&sites=${locationSite.siteId}&floors=${floor.floorId}&tz=Asia%2FSeoul&date=2026-08-19&start=09%3A17&types=DESK&view=list&resource=${locationResource.resourceId}&duration=`;
   await page.goto(`${route}45`);
   const inspector = page.getByRole('complementary', { name: locationResource.name, exact: true });
   const book = inspector.getByRole('button', { name: 'Book this space', exact: true });
@@ -702,14 +733,14 @@ test('explicit start minutes and custom duration remain native query scope and i
   await expect
     .poll(() => ranges.at(-1))
     .toEqual({ from: '2026-08-19T00:17:00Z', to: '2026-08-19T01:02:00Z' });
-  expect(new URL(page.url()).searchParams.get('time')).toBe('09:17');
+  expect(new URL(page.url()).searchParams.get('start')).toBe('09:17');
   expect(new URL(page.url()).searchParams.get('duration')).toBe('45');
   await page.goto(`${route}15`);
   await expect(book).toBeDisabled();
   await expect
     .poll(() => ranges.at(-1))
     .toEqual({ from: '2026-08-19T00:17:00Z', to: '2026-08-19T00:32:00Z' });
-  expect(new URL(page.url()).searchParams.get('time')).toBe('09:17');
+  expect(new URL(page.url()).searchParams.get('start')).toBe('09:17');
   expect(new URL(page.url()).searchParams.get('duration')).toBe('15');
   await expect(
     inspector.getByText(

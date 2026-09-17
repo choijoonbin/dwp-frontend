@@ -1,6 +1,7 @@
 import { resolveApprovalContentAccess } from '@dwp-frontend/shared-utils';
 
 import type { ApprovalTask, ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
+import type { ApprovalBatchResult } from './approval-command-center-model';
 
 export type ApprovalBatchPreflightOutcome = 'ELIGIBLE' | 'EXCLUDED' | 'RECHECK';
 
@@ -102,4 +103,31 @@ export function approvalBatchEligibleTaskIds(preflight: ApprovalBatchPreflight) 
   return preflight.entries
     .filter(({ outcome }) => outcome === 'ELIGIBLE')
     .map(({ taskId }) => taskId);
+}
+
+export function mergeApprovalBatchPreflightResult(
+  preflight: ApprovalBatchPreflight,
+  execution: ApprovalBatchResult
+): ApprovalBatchResult {
+  const requestedTaskIds = preflight.entries.map(({ taskId }) => taskId);
+  const eligibleTaskIds = approvalBatchEligibleTaskIds(preflight);
+  if (
+    preflight.recheckCount > 0 ||
+    new Set(requestedTaskIds).size !== requestedTaskIds.length ||
+    eligibleTaskIds.length !== execution.requestedTaskIds.length ||
+    eligibleTaskIds.some((taskId, index) => execution.requestedTaskIds[index] !== taskId)
+  ) {
+    throw new Error('Invalid approval batch preflight result');
+  }
+  const ineligible = new Set([
+    ...preflight.entries
+      .filter(({ outcome }) => outcome === 'EXCLUDED')
+      .map(({ taskId }) => taskId),
+    ...execution.ineligibleTaskIds,
+  ]);
+  return {
+    ...execution,
+    requestedTaskIds,
+    ineligibleTaskIds: requestedTaskIds.filter((taskId) => ineligible.has(taskId)),
+  };
 }

@@ -188,13 +188,28 @@ test('invalid time filters suppress feed requests and can be corrected without l
 
   await expandActivityFilters(page);
   await page.getByText('Advanced filters', { exact: true }).click();
-  await page
-    .getByRole('textbox', { name: 'Until (exclusive · ISO 8601)' })
-    .fill('2026-09-04T14:00:00Z');
+  await expect(page.getByRole('combobox', { name: /^Object type/ })).toContainText('Work item');
+  const localEnd = await page.evaluate(() => {
+    const date = new Date('2026-09-04T14:00:00Z');
+    const pad = (value: number) => String(value).padStart(2, '0');
+    const hours = date.getHours();
+    return {
+      Month: pad(date.getMonth() + 1),
+      Day: pad(date.getDate()),
+      Year: String(date.getFullYear()),
+      Hours: pad(((hours + 11) % 12) + 1),
+      Minutes: pad(date.getMinutes()),
+      Meridiem: hours >= 12 ? 'PM' : 'AM',
+    };
+  });
+  const untilPicker = page.getByRole('group', { name: 'Until (exclusive)' });
+  for (const [section, value] of Object.entries(localEnd)) {
+    await untilPicker.getByRole('spinbutton', { name: section }).fill(value);
+  }
   await expect(page.getByText('Historical running event', { exact: true })).toBeVisible();
   await expect(page).toHaveURL(
     (url) =>
-      url.searchParams.get('to') === '2026-09-04T14:00:00Z' &&
+      url.searchParams.get('to') === '2026-09-04T14:00:00.000Z' &&
       url.searchParams.get('objectType') === 'WORK_ITEM' &&
       url.searchParams.get('objectId') === 'work-99'
   );
@@ -202,7 +217,7 @@ test('invalid time filters suppress feed requests and can be corrected without l
     requested.some(
       (url) =>
         url.pathname.endsWith('/activity') &&
-        url.searchParams.get('to') === '2026-09-04T14:00:00Z' &&
+        url.searchParams.get('to') === '2026-09-04T14:00:00.000Z' &&
         url.searchParams.get('objectType') === 'WORK_ITEM' &&
         url.searchParams.get('objectId') === 'work-99'
     )

@@ -1,13 +1,13 @@
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ContactRound,
+  History,
   MailPlus,
   Pencil,
   Plus,
   Search,
-  Star,
   Trash2,
   UserPlus,
   UsersRound,
@@ -19,12 +19,15 @@ import {
   createMailContact,
   createMailContactGroup,
   getMailAddressBook,
+  getMailGroupSendHistory,
   HttpError,
   listPeople,
   replaceMailContactGroupMembers,
+  resolveIdempotentMutationIntent,
   sendMailContactGroupMessage,
   updateMailContact,
   updateMailContactGroup,
+  useAuth,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -55,7 +58,19 @@ import {
   MailGroupMembersDialog,
   MailGroupMessageDialog,
 } from './mail-address-book-dialogs';
+import { MailAddressBookContactWorkspace } from './mail-address-book-contact-workspace';
+import { MailGroupReceiptDialog } from './mail-group-receipt-dialog';
 import { MailPageHeading } from './mail-components';
+import { mailComposeNavigationState } from './mail-compose-navigation';
+import {
+  clearMailSendAttempt,
+  listMailSendAttempts,
+  mailGroupSendScope,
+  mailSendCustodyOwner,
+  mailSendErrorDisposition,
+  readMailSendAttempt,
+  rememberMailSendAttempt,
+} from './mail-send-attempt';
 
 import type { MailGroupMessageAttempt } from './mail-address-book-dialogs';
 
@@ -63,6 +78,7 @@ import type {
   MailContact,
   MailContactGroup,
   MailContactInput,
+  MailGroupSendReceipt,
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
@@ -72,6 +88,54 @@ type ArchiveTarget =
   { kind: 'contact'; value: MailContact } | { kind: 'group'; value: MailContactGroup };
 
 const AVATAR_TONES = ['success.dark', 'info.dark', 'error.dark', 'warning.dark'] as const;
+const MAIL_CLASSIFICATIONS = new Set(['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED']);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isMailGroupMessageAttempt(value: unknown): value is MailGroupMessageAttempt {
+  if (!isRecord(value) || !isRecord(value.group) || !isRecord(value.input)) return false;
+  return (
+    typeof value.group.groupId === 'string' &&
+    Array.isArray(value.group.members) &&
+    typeof value.input.subject === 'string' &&
+    typeof value.input.body === 'string' &&
+    typeof value.input.classification === 'string' &&
+    MAIL_CLASSIFICATIONS.has(value.input.classification) &&
+    (value.input.recipientMode === 'TO' || value.input.recipientMode === 'BCC') &&
+    typeof value.input.idempotencyKey === 'string' &&
+    Number.isInteger(value.input.groupVersion)
+  );
+}
+
+function restoredGroupSendAttempts(owner: string) {
+  return Object.fromEntries(
+    listMailSendAttempts<unknown>(owner, 'group').flatMap(({ scope, attempt }) => {
+      if (
+        !isMailGroupMessageAttempt(attempt.payload) ||
+        attempt.intent.key !== attempt.payload.input.idempotencyKey ||
+        scope !== mailGroupSendScope(owner, attempt.payload.group.groupId)
+      ) {
+        clearMailSendAttempt(scope);
+        return [];
+      }
+      return [[attempt.payload.group.groupId, attempt.payload] as const];
+    })
+  );
+}
+
+function persistGroupSendAttempt(owner: string, attempt: MailGroupMessageAttempt) {
+  const { idempotencyKey, ...request } = attempt.input;
+  rememberMailSendAttempt(mailGroupSendScope(owner, attempt.group.groupId), {
+    intent: resolveIdempotentMutationIntent(
+      null,
+      { groupId: attempt.group.groupId, ...request },
+      () => idempotencyKey
+    ),
+    payload: attempt,
+  });
+}
 
 function initials(value: string) {
   const words = value.trim().split(/\s+/u);
@@ -99,10 +163,15 @@ function directorySeed(person: PersonSummary): MailContactInput | null {
 
 export function MailAddressBook() {
   const { t } = useTranslation('mail');
+  const auth = useAuth();
+  const custodyOwner = mailSendCustodyOwner(auth.user);
+  const hasCustodyOwner = Boolean(auth.user);
   const toast = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const tab = params.get('view') === 'groups' ? 1 : params.get('view') === 'directory' ? 2 : 0;
+  const selectedContactId = params.get('contact');
   const [search, setSearch] = useState('');
   const deferredSearch = useDeferredValue(search);
   const [contactDialog, setContactDialog] = useState<{
@@ -113,8 +182,14 @@ export function MailAddressBook() {
   const [membersGroup, setMembersGroup] = useState<MailContactGroup | null>(null);
   const [sendGroup, setSendGroup] = useState<MailContactGroup | null>(null);
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
+  const [receiptGroup, setReceiptGroup] = useState<MailContactGroup | null>(null);
+  const [latestReceipt, setLatestReceipt] = useState<MailGroupSendReceipt | null>(null);
   const [sendAttempts, setSendAttempts] = useState<Record<string, MailGroupMessageAttempt>>({});
   const [archiveTarget, setArchiveTarget] = useState<ArchiveTarget | null>(null);
+
+  useEffect(() => {
+    setSendAttempts(hasCustodyOwner ? restoredGroupSendAttempts(custodyOwner) : {});
+  }, [custodyOwner, hasCustodyOwner]);
 
   const addressBookQuery = useQuery({
     queryKey: ['mail', 'address-book', tab === 0 ? deferredSearch.trim() : ''],
@@ -133,6 +208,13 @@ export function MailAddressBook() {
       }),
     enabled: tab === 2 && deferredSearch.trim().length >= 2,
     staleTime: 30_000,
+  });
+  const receiptHistoryQuery = useQuery({
+    queryKey: ['mail', 'address-book', 'group-send-history', receiptGroup?.groupId],
+    queryFn: () => getMailGroupSendHistory(receiptGroup!.groupId),
+    enabled: Boolean(receiptGroup),
+    staleTime: 10_000,
+    retry: 1,
   });
 
   const refresh = async () => {
@@ -198,6 +280,14 @@ export function MailAddressBook() {
       }
     },
     onSuccess: async () => {
+      if (
+        archiveTarget?.kind === 'contact' &&
+        archiveTarget.value.contactId === selectedContactId
+      ) {
+        const next = new URLSearchParams(params);
+        next.delete('contact');
+        setParams(next, { replace: true });
+      }
       setArchiveTarget(null);
       await refresh();
       toast.success(t('addressBook.archived'));
@@ -212,9 +302,14 @@ export function MailAddressBook() {
       group: MailContactGroup;
       input: Parameters<typeof sendMailContactGroupMessage>[1];
     }) => sendMailContactGroupMessage(group.groupId, input),
-    onSuccess: async (_result, { group }) => {
+    onSuccess: async (result, { group }) => {
+      clearMailSendAttempt(mailGroupSendScope(custodyOwner, group.groupId));
       setSendDialogOpen(false);
       setSendGroup(null);
+      if (result.receipt) {
+        setLatestReceipt(result.receipt);
+        setReceiptGroup(group);
+      }
       setSendAttempts((current) => {
         const next = { ...current };
         delete next[group.groupId];
@@ -222,6 +317,25 @@ export function MailAddressBook() {
       });
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
       toast.success(t('addressBook.send.sent'));
+    },
+    onError: (error, { group }) => {
+      if (
+        mailSendErrorDisposition(error) !== 'REJECTED' ||
+        (error instanceof HttpError && error.status === 409)
+      ) {
+        return;
+      }
+      const scope = mailGroupSendScope(custodyOwner, group.groupId);
+      const attempt = readMailSendAttempt<MailGroupMessageAttempt>(scope)?.payload;
+      if (!attempt) return;
+      const nextAttempt = {
+        ...attempt,
+        input: { ...attempt.input, idempotencyKey: crypto.randomUUID() },
+        original: attempt.original ?? attempt,
+        reviewRequired: true,
+      };
+      persistGroupSendAttempt(custodyOwner, nextAttempt);
+      setSendAttempts((current) => ({ ...current, [group.groupId]: nextAttempt }));
     },
   });
   const reviewRecipientsMutation = useMutation({
@@ -232,12 +346,17 @@ export function MailAddressBook() {
       return {
         ...attempt,
         group,
-        input: { ...attempt.input, groupVersion: group.version },
+        input: {
+          ...attempt.input,
+          groupVersion: group.version,
+          idempotencyKey: crypto.randomUUID(),
+        },
         original: attempt.original ?? { group: attempt.group, input: attempt.input },
         reviewRequired: true,
       };
     },
     onSuccess: (attempt) => {
+      persistGroupSendAttempt(custodyOwner, attempt);
       setSendAttempts((current) => ({ ...current, [attempt.group.groupId]: attempt }));
       sendMutation.reset();
     },
@@ -373,6 +492,7 @@ export function MailAddressBook() {
                 const view = value === 1 ? 'groups' : value === 2 ? 'directory' : null;
                 if (view) next.set('view', view);
                 else next.delete('view');
+                next.delete('contact');
                 setParams(next, { replace: true });
                 setSearch('');
               }}
@@ -400,8 +520,29 @@ export function MailAddressBook() {
           </Box>
 
           {tab === 0 && (
-            <ContactList
+            <MailAddressBookContactWorkspace
               contacts={addressBook.contacts.items}
+              selectedId={selectedContactId}
+              onSelect={(contact) => {
+                const next = new URLSearchParams(params);
+                next.set('contact', contact.contactId);
+                setParams(next);
+              }}
+              onBack={() => {
+                const next = new URLSearchParams(params);
+                next.delete('contact');
+                setParams(next, { replace: true });
+              }}
+              onCompose={(contact) => {
+                const next = new URLSearchParams(params);
+                next.set('contact', contact.contactId);
+                navigate('/mail/inbox?compose=open', {
+                  state: mailComposeNavigationState(
+                    { toEmail: contact.emailAddress },
+                    `/mail/contacts?${next.toString()}`
+                  ),
+                });
+              }}
               onEdit={(contact) => setContactDialog({ contact })}
               onArchive={(contact) => setArchiveTarget({ kind: 'contact', value: contact })}
             />
@@ -416,6 +557,10 @@ export function MailAddressBook() {
                 setSendDialogOpen(true);
                 sendMutation.reset();
                 reviewRecipientsMutation.reset();
+              }}
+              onHistory={(group) => {
+                setLatestReceipt(null);
+                setReceiptGroup(group);
               }}
               onArchive={(group) => setArchiveTarget({ kind: 'group', value: group })}
             />
@@ -465,13 +610,21 @@ export function MailAddressBook() {
         open={sendDialogOpen}
         group={sendGroup}
         busy={sendMutation.isPending || reviewRecipientsMutation.isPending}
-        retryFailed={sendMutation.isError}
+        retryFailed={
+          sendMutation.isError && mailSendErrorDisposition(sendMutation.error) === 'UNCONFIRMED'
+        }
+        rejected={
+          sendMutation.isError &&
+          mailSendErrorDisposition(sendMutation.error) === 'REJECTED' &&
+          !(sendMutation.error instanceof HttpError && sendMutation.error.status === 409)
+        }
         conflict={sendMutation.error instanceof HttpError && sendMutation.error.status === 409}
         refreshFailed={reviewRecipientsMutation.isError}
         attempt={sendGroup ? (sendAttempts[sendGroup.groupId] ?? null) : null}
-        onAttempt={(attempt) =>
-          setSendAttempts((current) => ({ ...current, [attempt.group.groupId]: attempt }))
-        }
+        onAttempt={(attempt) => {
+          persistGroupSendAttempt(custodyOwner, attempt);
+          setSendAttempts((current) => ({ ...current, [attempt.group.groupId]: attempt }));
+        }}
         onClose={() => setSendDialogOpen(false)}
         onReviewLatest={() => {
           const attempt = sendGroup && sendAttempts[sendGroup.groupId];
@@ -483,6 +636,17 @@ export function MailAddressBook() {
             group: sendGroup,
             input,
           });
+        }}
+      />
+      <MailGroupReceiptDialog
+        group={receiptGroup}
+        receipts={receiptHistoryQuery.data ?? []}
+        latestReceipt={latestReceipt}
+        loading={receiptHistoryQuery.isLoading}
+        error={receiptHistoryQuery.isError}
+        onClose={() => {
+          setReceiptGroup(null);
+          setLatestReceipt(null);
         }}
       />
       <ConfirmDialog
@@ -507,107 +671,19 @@ export function MailAddressBook() {
   );
 }
 
-function ContactList({
-  contacts,
-  onEdit,
-  onArchive,
-}: {
-  contacts: MailContact[];
-  onEdit: (contact: MailContact) => void;
-  onArchive: (contact: MailContact) => void;
-}) {
-  const { t } = useTranslation('mail');
-  if (!contacts.length) {
-    return (
-      <GuidedEmptyState
-        kind="empty"
-        title={t('addressBook.contact.emptyTitle')}
-        description={t('addressBook.contact.emptyDescription')}
-      />
-    );
-  }
-  return (
-    <Box component="section" aria-labelledby="mail-contact-list-title">
-      <Typography
-        id="mail-contact-list-title"
-        component="h2"
-        variant="h6"
-        fontWeight="fontWeightBold"
-      >
-        {t('addressBook.contact.listTitle')}
-      </Typography>
-      <Box sx={{ mt: 1, borderTop: 1, borderColor: 'divider' }}>
-        {contacts.map((contact) => (
-          <Box
-            key={contact.contactId}
-            sx={{
-              minHeight: 76,
-              py: 1.25,
-              display: 'grid',
-              gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-              alignItems: 'center',
-              gap: 1.5,
-              borderBottom: 1,
-              borderColor: 'divider',
-            }}
-          >
-            <Avatar
-              sx={{
-                bgcolor: toneFor(contact.displayName),
-                width: 40,
-                height: 40,
-                fontSize: 'caption.fontSize',
-              }}
-            >
-              {initials(contact.displayName)}
-            </Avatar>
-            <Box sx={{ minWidth: 0 }}>
-              <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
-                <Typography fontWeight="fontWeightBold">{contact.displayName}</Typography>
-                {contact.favorite && (
-                  <Box component="span" sx={{ display: 'inline-flex', color: 'warning.dark' }}>
-                    <Star size={14} fill="currentColor" />
-                  </Box>
-                )}
-              </Stack>
-              <Typography variant="body2" noWrap>
-                {contact.emailAddress}
-              </Typography>
-              {(contact.organizationName || contact.jobTitle) && (
-                <Typography variant="caption" color="text.secondary" noWrap>
-                  {[contact.organizationName, contact.jobTitle].filter(Boolean).join(' · ')}
-                </Typography>
-              )}
-            </Box>
-            <Stack direction="row" spacing={0.25}>
-              <ActionIconButton
-                label={t('addressBook.contact.edit')}
-                onClick={() => onEdit(contact)}
-              >
-                <Pencil size={17} />
-              </ActionIconButton>
-              <ActionIconButton label={t('addressBook.archive')} onClick={() => onArchive(contact)}>
-                <Trash2 size={17} />
-              </ActionIconButton>
-            </Stack>
-          </Box>
-        ))}
-      </Box>
-    </Box>
-  );
-}
-
 function GroupList({
   groups,
   onEdit,
   onMembers,
   onSend,
+  onHistory,
   onArchive,
 }: {
   groups: MailContactGroup[];
   onEdit: (group: MailContactGroup) => void;
   onMembers: (group: MailContactGroup) => void;
   onSend: (group: MailContactGroup) => void;
+  onHistory: (group: MailContactGroup) => void;
   onArchive: (group: MailContactGroup) => void;
 }) {
   const { t } = useTranslation('mail');
@@ -700,6 +776,14 @@ function GroupList({
               startIcon={<Plus size={15} />}
             >
               {t('addressBook.group.members')}
+            </ActionButton>
+            <ActionButton
+              intent="quiet"
+              size="small"
+              onClick={() => onHistory(group)}
+              startIcon={<History size={15} />}
+            >
+              {t('addressBook.group.history')}
             </ActionButton>
             <ActionButton
               intent="primary"

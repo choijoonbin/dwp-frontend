@@ -500,9 +500,7 @@ describe('ApprovalRequestLifecycle mutation binding', () => {
       Promise.resolve(requestId === 'request-b' ? detail('b') : detail('a'))
     );
 
-    await act(async () =>
-      renderLifecycle('/approvals/requests/needs-info?request=request-b')
-    );
+    await act(async () => renderLifecycle('/approvals/requests/needs-info?request=request-b'));
 
     await vi.waitFor(() =>
       expect(getByTestId(container, 'selected-request').textContent).toBe('request-b')
@@ -521,13 +519,9 @@ describe('ApprovalRequestLifecycle mutation binding', () => {
       request: { ...request('b'), status: 'IN_REVIEW' },
     });
 
-    await act(async () =>
-      renderLifecycle('/approvals/requests/needs-info?request=request-b')
-    );
+    await act(async () => renderLifecycle('/approvals/requests/needs-info?request=request-b'));
 
-    await vi.waitFor(() =>
-      expect(container.textContent).toContain('requests.draftLoadError')
-    );
+    await vi.waitFor(() => expect(container.textContent).toContain('requests.draftLoadError'));
     expect(getByTestId(container, 'selected-request').textContent).toBe('');
     expect(container.textContent).toContain('status.IN_REVIEW');
   });
@@ -535,13 +529,9 @@ describe('ApprovalRequestLifecycle mutation binding', () => {
   it('does not fall back after an owner-scoped deep link denial', async () => {
     dependencies.getApprovalRequestDetail.mockRejectedValue(new HttpError('Denied', 403));
 
-    await act(async () =>
-      renderLifecycle('/approvals/requests/needs-info?request=request-b')
-    );
+    await act(async () => renderLifecycle('/approvals/requests/needs-info?request=request-b'));
 
-    await vi.waitFor(() =>
-      expect(container.textContent).toContain('requests.draftLoadError')
-    );
+    await vi.waitFor(() => expect(container.textContent).toContain('requests.draftLoadError'));
     expect(getByTestId(container, 'selected-request').textContent).toBe('');
   });
 

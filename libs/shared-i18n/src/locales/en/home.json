@@ -136,7 +136,31 @@
         "description": "See the work to handle now, ranked across your apps.",
         "listLabel": "Priority work",
         "empty": "Nothing needs action right now",
-        "emptyDescription": "New work will appear here based on deadline and risk."
+        "emptyDescription": "New work will appear here based on deadline and risk.",
+        "filteredEmpty": "No work matches this filter",
+        "filteredEmptyDescription": "Choose another work type or view all work.",
+        "openWorkHub": "Open Work Hub",
+        "filters": {
+          "label": "Work type filters",
+          "all": "All",
+          "urgentApproval": "Urgent approvals",
+          "accessReview": "Access reviews",
+          "personalTask": "Personal tasks",
+          "tabLabel": "{{label}}, {{count}} items",
+          "tabLabel_one": "{{label}}, {{count}} item",
+          "tabLabel_other": "{{label}}, {{count}} items",
+          "resultCount": "{{label}}: {{count}} items",
+          "resultCount_one": "{{label}}: {{count}} item",
+          "resultCount_other": "{{label}}: {{count}} items"
+        },
+        "cta": {
+          "approvalReview": "Review in Approvals",
+          "accessReview": "Review access",
+          "start": "Start",
+          "supplement": "Add reason",
+          "open": "Open work",
+          "ariaLabel": "{{action}}: {{title}}"
+        }
       },
       "timeline": {
         "title": "Today's schedule",
@@ -462,6 +486,8 @@
         "total": "All executions",
         "count": "{{count}} items",
         "reviewTitle": "Executions to review",
+        "currentItemsNotice": "Current ledger records are shown first. Open one to review its evidence and continue in the owning app.",
+        "reviewItem": "Review and continue",
         "viewHistory": "View related history",
         "openTimeline": "Full activity timeline",
         "historyNotice": "These are current execution counts. Related history filters past events recorded in that state, so the list count may differ.",

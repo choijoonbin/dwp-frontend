@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:01:05" hostname="MacBook-Pro" time="1.094">
+  <properties/>
+  <testcase name="linkAndUnlinkDoNotChangeSourceTaskOrCalendarOwnedStateAndDoNotVerifyEventAccess()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest" time="0.29"/>
+  <testcase name="concurrentLinkCreationCannotBypassActiveEventUniqueness()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest" time="0.11"/>
+  <testcase name="tenantAndOwnerIsolationAppliesToLinkIdentityListAndRemoval()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest" time="0.205"/>
+  <testcase name="onlyOneActiveLinkCanOwnAnEventButADeletedLinkDoesNotPreventRelinking()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest" time="0.143"/>
+  <testcase name="auditFailureRollsBackInsertionAndUnlink()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest" time="0.155"/>
+  <testcase name="replayPayloadConflictAndTombstoneRetriesHaveStableSemantics()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarPostgresIntegrationTest" time="0.19"/>
+  <system-out><![CDATA[12:01:03.816 [Test worker] INFO tc.postgres:16-alpine -- Creating container for image: postgres:16-alpine
+12:01:03.917 [Test worker] INFO tc.postgres:16-alpine -- Container postgres:16-alpine is starting: faa35b51ee3a5bff9aab1aec99605dbc0be8b095bbbb17a28579cb2344a0e72d
+12:01:05.437 [Test worker] INFO tc.postgres:16-alpine -- Container postgres:16-alpine started in PT1.620908S
+12:01:05.439 [Test worker] INFO tc.postgres:16-alpine -- Container is started (JDBC URL: jdbc:postgresql://localhost:57056/test?loggerLevel=OFF)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

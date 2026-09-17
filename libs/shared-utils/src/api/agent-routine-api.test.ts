@@ -30,6 +30,25 @@ const definition = {
   activeUntil: null,
   quietHoursStart: null,
   quietHoursEnd: null,
+  budget: {
+    maximumRunsPerMonth: 31,
+    maximumTokensPerRun: 32_000,
+    maximumMinutesPerRun: 15,
+  },
+  retryPolicy: {
+    maximumAttempts: 3,
+    initialBackoffSeconds: 30,
+    backoffMultiplier: 2,
+  },
+  notificationPolicy: {
+    notifyOnPartial: true,
+    notifyOnFailure: true,
+    notifyOnRecovery: true,
+  },
+  compensationPolicy: {
+    enabled: true,
+    strategy: 'REVOKE_PENDING_HANDOFFS' as const,
+  },
 };
 
 function routine() {

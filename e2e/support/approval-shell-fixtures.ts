@@ -81,13 +81,22 @@ const APPROVAL_COMPLETED_TASK_FIXTURE = {
 const APPROVAL_COMPLETED_TASK_DETAIL_FIXTURE = {
   ...APPROVAL_TASK_DETAIL_FIXTURE,
   task: APPROVAL_COMPLETED_TASK_FIXTURE,
-  timeline: APPROVAL_TASK_DETAIL_FIXTURE.timeline.map((event) => ({
-    ...event,
-    actorDisplayName: '박지호',
-    stepName: '보안 검토',
-    stepSequence: 2,
-    delegated: false,
-  })),
+  timeline: [
+    ...APPROVAL_TASK_DETAIL_FIXTURE.timeline,
+    {
+      eventId: 'approval-event-completed-001',
+      eventType: 'TASK_APPROVED',
+      actorType: 'USER',
+      actorId: '42',
+      actorDisplayName: '박지호',
+      stepName: 'Security review',
+      stepSequence: 2,
+      delegated: false,
+      outcome: 'SUCCESS',
+      message: 'Current security evidence was reviewed and approved.',
+      occurredAt: '2026-08-11T00:15:00Z',
+    },
+  ],
   canDecide: false,
 } as const;
 

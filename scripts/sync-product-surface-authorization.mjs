@@ -559,7 +559,9 @@ function readOfficialSnapshot(artifactDirectory) {
     }
     return value;
   };
-  const expectedBundles = VERSIONS.map((version) => `product-surfaces-v1.bundle-v${version}.json`).sort();
+  const expectedBundles = VERSIONS.map(
+    (version) => `product-surfaces-v1.bundle-v${version}.json`
+  ).sort();
   const packagedBundles = fs
     .readdirSync(artifactDirectory)
     .filter((fileName) =>

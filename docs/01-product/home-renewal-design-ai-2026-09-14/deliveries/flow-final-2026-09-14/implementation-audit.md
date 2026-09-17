@@ -8,13 +8,13 @@
 
 ## 화면 대응
 
-| Stitch 폴더 | 정본 |
-|---|---|
-| `flow_1920px_3` | `FLOW-BASE-DESKTOP-FINAL` |
-| `flow_390px_1` | `FLOW-BASE-MOBILE-FINAL` |
-| `flow_1920px` | `FLOW-PERSONALIZED-DESKTOP-FINAL` |
-| `flow_390px_2` | `FLOW-PERSONALIZED-MOBILE-FINAL` |
-| `flow_12_1920px` | `FLOW-EDITOR-DESKTOP` |
+| Stitch 폴더      | 정본                              |
+| ---------------- | --------------------------------- |
+| `flow_1920px_3`  | `FLOW-BASE-DESKTOP-FINAL`         |
+| `flow_390px_1`   | `FLOW-BASE-MOBILE-FINAL`          |
+| `flow_1920px`    | `FLOW-PERSONALIZED-DESKTOP-FINAL` |
+| `flow_390px_2`   | `FLOW-PERSONALIZED-MOBILE-FINAL`  |
+| `flow_12_1920px` | `FLOW-EDITOR-DESKTOP`             |
 
 ## 확보한 내용
 

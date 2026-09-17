@@ -139,14 +139,7 @@ export function ApprovalFormStudio() {
   );
   const referenceWorkflowsQueryKey = useMemo(
     () =>
-      [
-        'approvals',
-        'admin',
-        'workflows',
-        'view',
-        'reference',
-        ...requestScope.cacheKey,
-      ] as const,
+      ['approvals', 'admin', 'workflows', 'view', 'reference', ...requestScope.cacheKey] as const,
     [requestScope.cacheKey]
   );
 

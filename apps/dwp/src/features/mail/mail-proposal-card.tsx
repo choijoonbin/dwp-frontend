@@ -5,7 +5,6 @@ import {
   BellRing,
   Bot,
   CalendarDays,
-  CheckCircle2,
   ClipboardCheck,
   Clock3,
   MailPlus,
@@ -73,7 +72,6 @@ export function MailProposalCard({
   const presentation = mailProposalPresentation(proposal);
   const tone = useProposalTone(presentation.tone);
   const Icon = tone.icon;
-  const confidence = normalizedConfidence(proposal.confidence);
   const blocked = presentation.reviewBlock !== null;
   const language = i18n.resolvedLanguage ?? i18n.language;
 
@@ -121,12 +119,7 @@ export function MailProposalCard({
             <Icon size={18} strokeWidth={1.9} />
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="flex-start"
-              justifyContent="space-between"
-            >
+            <Stack direction="row" spacing={1} alignItems="flex-start">
               <Box sx={{ minWidth: 0 }}>
                 <Stack
                   direction="row"
@@ -162,23 +155,6 @@ export function MailProposalCard({
                   {proposal.title}
                 </Typography>
               </Box>
-              <Chip
-                size="small"
-                icon={<CheckCircle2 size={13} />}
-                label={t('proposal.match', { value: confidence })}
-                sx={{
-                  flexShrink: 0,
-                  height: 23,
-                  color: tone.accent,
-                  bgcolor: tone.soft,
-                  '& .MuiChip-icon': { color: 'inherit', ml: 0.65 },
-                  '& .MuiChip-label': {
-                    px: 0.75,
-                    fontSize: 'caption.fontSize',
-                    fontWeight: 'fontWeightBold',
-                  },
-                }}
-              />
             </Stack>
 
             <Typography
@@ -470,8 +446,3 @@ const proposalValueKeys: Record<string, string> = {
   MEDIUM: 'medium',
   PROFESSIONAL: 'professional',
 };
-
-function normalizedConfidence(value: number) {
-  if (!Number.isFinite(value)) return 0;
-  return Math.min(100, Math.max(0, Math.round(value * 100)));
-}

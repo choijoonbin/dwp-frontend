@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - generic "0 actionable notifications, 0 total unread" [ref=e27]:
+            - button "0 actionable notifications, 0 total unread" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]:
+                - img [ref=e30]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+          - generic "Open DWAI·ON" [ref=e39]:
+            - button "Open DWAI·ON" [ref=e40] [cursor=pointer]
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e46]:
+          - text: My workplace plan
+          - heading "My reservations" [level=1] [ref=e47]
+          - paragraph [ref=e48]: Review meeting and workplace reservations in one timeline while each action stays with its authoritative source.
+        - generic [ref=e50]:
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - paragraph [ref=e54]: Workplace
+              - text: "Last verified: 8/19/26, 9:00 AM"
+            - generic [ref=e56]: Current
+          - generic [ref=e58]:
+            - generic [ref=e59]:
+              - paragraph [ref=e60]: Calendar · Rooms
+              - text: "Last verified: Not verified yet"
+            - generic [ref=e62]: No access
+        - region "Reservation filters" [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - generic [ref=e67]: Search reservations
+              - generic [ref=e68]:
+                - img [ref=e70]
+                - textbox "Search reservations" [ref=e73]:
+                  - /placeholder: Resource or location
+                - group:
+                  - generic: Search reservations
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - generic [ref=e76]: Period
+                - generic [ref=e77]:
+                  - combobox "Period Upcoming" [ref=e78] [cursor=pointer]: Upcoming
+                  - textbox: UPCOMING
+                  - img
+                  - group:
+                    - generic: Period
+              - generic [ref=e79]:
+                - generic [ref=e80]: Type
+                - generic [ref=e81]:
+                  - combobox "Type Workplace" [ref=e82] [cursor=pointer]: Workplace
+                  - textbox: WORKSPACE
+                  - img
+                  - group:
+                    - generic: Type
+              - generic [ref=e83]:
+                - generic [ref=e84]: Status
+                - generic [ref=e85]:
+                  - combobox "Status Active" [ref=e86] [cursor=pointer]: Active
+                  - textbox: ACTIVE
+                  - img
+                  - group:
+                    - generic: Status
+              - generic [ref=e87]:
+                - generic [ref=e88]: Source
+                - generic [ref=e89]:
+                  - combobox "Source Workplace" [ref=e90] [cursor=pointer]: Workplace
+                  - textbox: WORKPLACE
+                  - img
+                  - group:
+                    - generic: Source
+            - status [ref=e91]: 2 reservations
+        - status [ref=e92]:
+          - paragraph [ref=e93]: One reservation source is unavailable. Verified reservations from the other source remain visible, and stale-source changes are blocked.
+        - dialog "Reservation inspector" [ref=e94]:
+          - button "Close" [active] [ref=e96] [cursor=pointer]: Close
+          - generic [ref=e97]:
+            - generic [ref=e99]:
+              - text: Reservation inspector
+              - heading "Focus desk 12" [level=2] [ref=e100]
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - img [ref=e103]
+                - paragraph [ref=e106]: Aug 19, 2026, 9:30 AM – Aug 19, 2026, 10:30 AM
+              - generic [ref=e107]:
+                - img [ref=e108]
+                - paragraph [ref=e111]: Pangyo HQ · 12F
+              - generic [ref=e112]:
+                - img [ref=e113]
+                - paragraph [ref=e116]: "Command authority: Workplace"
+          - tablist [ref=e120]:
+            - tab "Overview" [selected] [ref=e121] [cursor=pointer]
+            - tab "Visitors" [ref=e122] [cursor=pointer]
+            - tab "Services" [ref=e123] [cursor=pointer]
+            - tab "Access" [ref=e124] [cursor=pointer]
+            - tab "Audit" [ref=e125] [cursor=pointer]
+          - generic [ref=e127]:
+            - paragraph [ref=e129]: "Source reference: 40000000-0000-0000-0000-000000000020"
+            - generic [ref=e130]:
+              - button "Change space" [ref=e131] [cursor=pointer]
+              - button "Cancel booking" [ref=e132] [cursor=pointer]
+```

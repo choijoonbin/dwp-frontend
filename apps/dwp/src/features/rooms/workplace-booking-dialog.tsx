@@ -2,7 +2,7 @@ import { useWorkplaceMemberScopeRevision } from './workplace-member-scope-revisi
 import { foundationTokens } from '@dwp-frontend/design-system';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, Eye, MapPin, ShieldCheck } from 'lucide-react';
+import { Armchair, CheckCircle2, Clock3, Eye, MapPin, ShieldCheck } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   createWorkplaceBooking,
@@ -18,6 +18,7 @@ import {
   FormDialog,
   FormField,
 } from '@dwp-frontend/design-system';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
@@ -155,6 +156,7 @@ export function WorkplaceBookingDialog({
     rangeTo: endsAt,
     policyVersion: policy?.version,
   });
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage);
   const mutation = useMutation({
     mutationFn: (submission: BookingSubmission) => {
       if (!componentActiveRef.current || submission.scopeKey !== activeScopeRef.current)
@@ -262,7 +264,33 @@ export function WorkplaceBookingDialog({
       maxWidth="sm"
       mobileFullScreen
     >
-      <Stack spacing={2}>
+      <Stack spacing={2.25}>
+        {resource && sourceVerified ? (
+          <Stack
+            data-testid="workplace-booking-verified-source"
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={1.5}
+            sx={{
+              px: 1.5,
+              py: 1,
+              borderRadius: foundationTokens.radius.surface + 'px',
+              bgcolor: 'var(--dwp-product-soft)',
+              color: 'primary.main',
+            }}
+          >
+            <Stack direction="row" gap={0.75} alignItems="center" minWidth={0}>
+              <CheckCircle2 size={17} aria-hidden="true" />
+              <Typography variant="body2" fontWeight="fontWeightBold">
+                {t('workplace.explore.bookingEligibility.eligible')}
+              </Typography>
+            </Stack>
+            <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+              {t('workplace.experience.version')} {resource.version} · {siteTimeZone}
+            </Typography>
+          </Stack>
+        ) : null}
         {mutation.variables?.scopeKey === scopeKey &&
         mutation.error instanceof HttpError &&
         mutation.error.status === 409 &&
@@ -311,16 +339,36 @@ export function WorkplaceBookingDialog({
         {resource && (
           <Box
             sx={{
-              p: 1.5,
+              p: { xs: 1.5, sm: 2 },
               borderRadius: foundationTokens.radius.surface + 'px',
               border: 1,
               borderColor: 'divider',
-              bgcolor: 'var(--dwp-product-soft)',
+              bgcolor: 'background.paper',
             }}
           >
-            <Stack direction="row" justifyContent="space-between" gap={1.5}>
+            <Stack direction="row" justifyContent="space-between" gap={1.5} alignItems="flex-start">
+              <Box
+                aria-hidden="true"
+                sx={{
+                  width: 44,
+                  height: 44,
+                  flex: '0 0 44px',
+                  display: 'grid',
+                  placeItems: 'center',
+                  borderRadius: foundationTokens.radius.control + 'px',
+                  bgcolor: 'var(--dwp-product-soft)',
+                  color: 'primary.main',
+                }}
+              >
+                <Armchair size={22} />
+              </Box>
               <Box sx={{ minWidth: 0 }}>
-                <Typography fontWeight="fontWeightBold">{resource.name}</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {resource.code}
+                </Typography>
+                <Typography component="h3" variant="h6" fontWeight="fontWeightBold">
+                  {resource.name}
+                </Typography>
                 <Stack direction="row" gap={0.6} alignItems="flex-start" sx={{ mt: 0.35 }}>
                   <MapPin size={14} />
                   <Typography
@@ -334,6 +382,52 @@ export function WorkplaceBookingDialog({
               </Box>
               <Chip size="small" label={t(`workplace.resourceTypes.${resource.type}`)} />
             </Stack>
+            <Box
+              component="dl"
+              sx={{
+                m: 0,
+                mt: 1.5,
+                pt: 1.5,
+                borderTop: 1,
+                borderColor: 'divider',
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                gap: 1.25,
+              }}
+            >
+              {[
+                [
+                  t('workplace.booking.start'),
+                  formatDate(
+                    startsAt,
+                    { dateStyle: 'medium', timeStyle: 'short', timeZone: siteTimeZone },
+                    locale
+                  ),
+                ],
+                [
+                  t('workplace.booking.end'),
+                  formatDate(
+                    endsAt,
+                    { dateStyle: 'medium', timeStyle: 'short', timeZone: siteTimeZone },
+                    locale
+                  ),
+                ],
+              ].map(([label, value]) => (
+                <Box key={label}>
+                  <Typography component="dt" variant="caption" color="text.secondary">
+                    {label}
+                  </Typography>
+                  <Typography
+                    component="dd"
+                    variant="body2"
+                    fontWeight="fontWeightBold"
+                    sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
+                  >
+                    {value}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
           </Box>
         )}
 
@@ -410,6 +504,9 @@ export function WorkplaceBookingDialog({
             </Stack>
           }
         />
+        <InlineFeedback severity="info" icon={<ShieldCheck size={18} />}>
+          {t('workplace.explore.policyApplied')}
+        </InlineFeedback>
       </Stack>
     </FormDialog>
   );

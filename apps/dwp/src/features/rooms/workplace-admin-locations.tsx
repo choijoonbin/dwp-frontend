@@ -45,6 +45,7 @@ import { WorkplaceLayoutEditor } from './workplace-layout-editor';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { useWorkplaceGovernanceTargetScope } from './workplace-governance-target-scope';
 import { RoomsPageHeading, RoomsPermissionNotice } from './rooms-ui';
+import { WorkplaceExperienceFreshness } from './workplace-experience-ui';
 
 import type {
   WorkplaceFloor,
@@ -259,6 +260,11 @@ export function WorkplaceAdminLocations() {
   const requestLocation = (nextSiteId: string, nextFloorId: string | null) => {
     changeParams({ site: nextSiteId, floor: nextFloorId, resource: null });
   };
+  const catalogUpdatedAt = Math.max(
+    sitesQuery.dataUpdatedAt,
+    floorsQuery.dataUpdatedAt,
+    resourcesQuery.dataUpdatedAt
+  );
 
   return (
     <PageCanvas>
@@ -267,7 +273,15 @@ export function WorkplaceAdminLocations() {
         title={t('workplace.admin.locations.title')}
         description={t('workplace.admin.locations.description')}
         actions={
-          <Stack direction="row" gap={1} flexWrap="wrap">
+          <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+            {catalogUpdatedAt ? (
+              <WorkplaceExperienceFreshness
+                at={new Date(catalogUpdatedAt).toISOString()}
+                refreshing={
+                  sitesQuery.isFetching || floorsQuery.isFetching || resourcesQuery.isFetching
+                }
+              />
+            ) : null}
             <ActionButton
               intent="secondary"
               startIcon={<RefreshCw size={17} />}

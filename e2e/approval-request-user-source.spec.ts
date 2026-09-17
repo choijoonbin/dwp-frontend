@@ -7,6 +7,7 @@ import {
   mockApprovalProductSurfaceAuthority,
 } from './support/product-surface-authority';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
+import { assertApprovalSubmissionBlocked } from './support/approval-request-submission';
 import {
   APPROVAL_FORM_FIXTURE,
   APPROVAL_FORM_DETAIL_FIXTURE,
@@ -188,7 +189,7 @@ test('USER 게시 양식은 실제 최소 조회로 선택한 UUID를 저장하�
   await expect(input).toBeEnabled();
   await input.fill('현재');
   await page.getByRole('option', { name: person.displayName }).click();
-  await page.getByRole('button', { name: '결재 상신', exact: true }).click();
+  await page.getByRole('button', { name: '검토', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: '결재 상신', exact: true }).click();
   await expect.poll(() => state.writes.map((write) => write.type)).toEqual(['draft', 'submit']);
   await expect(page).toHaveURL(/\/approvals\/requests\/submitted(?:\?|$)/u);
@@ -218,7 +219,7 @@ for (const status of [403, 503]) {
     await expect(page.getByText(/현재 사용자 조회 권한을 확인할 수 없습니다/u)).toBeVisible();
     await expect(page.getByRole('option', { name: person.displayName })).toHaveCount(0);
     await expect(page.getByRole('button', { name: '임시 저장', exact: true })).toBeDisabled();
-    await expect(page.getByRole('button', { name: '결재 상신', exact: true })).toBeDisabled();
+    await assertApprovalSubmissionBlocked(page);
     await expect(page.getByRole('textbox', { name: '제목', exact: true })).toHaveValue(
       APPROVAL_REQUEST_FIXTURE.title
     );

@@ -248,7 +248,10 @@ for (const variant of variants) {
         .getByRole('article')
         .getByRole('button', { name: '수행 시간 잡기', exact: true });
       await scheduleTrigger.click();
-      let calendar = page.getByRole('dialog', { name: '수행 시간 잡기', exact: true });
+      let calendar = page.getByRole('dialog', {
+        name: '수행 시간 잡기 (집중시간 예약)',
+        exact: true,
+      });
       await expect(calendar).toBeVisible();
       await expect(calendar).toContainText('WRK-C01');
       await expect(calendar).toContainText('DWP Calendar Handoff Service');
@@ -288,7 +291,10 @@ for (const variant of variants) {
       await expect(calendar).not.toBeVisible();
       await expect(scheduleTrigger).toBeFocused();
       await scheduleTrigger.click();
-      calendar = page.getByRole('dialog', { name: '수행 시간 잡기', exact: true });
+      calendar = page.getByRole('dialog', {
+        name: '수행 시간 잡기 (집중시간 예약)',
+        exact: true,
+      });
       await expect(calendar).toBeVisible();
       expect(runtime.calendarCommands).toHaveLength(0);
       await capture(page, testInfo, '08-calendar-handoff');
@@ -551,7 +557,10 @@ for (const appearance of [
       .getByRole('article')
       .getByRole('button', { name: '수행 시간 잡기', exact: true })
       .click();
-    const scheduleDialog = page.getByRole('dialog', { name: '수행 시간 잡기', exact: true });
+    const scheduleDialog = page.getByRole('dialog', {
+      name: '수행 시간 잡기 (집중시간 예약)',
+      exact: true,
+    });
     await expect(scheduleDialog).toBeVisible();
     await expect(scheduleDialog).toContainText('WRK-C01');
     await expect(

@@ -155,6 +155,66 @@ describe('activity federated API boundary', () => {
     expect(result.sourceStates).toContainEqual({ sourceScope: 'DWAI_ON', status: 'FORBIDDEN' });
   });
 
+  it('merges current attention records by observation time and namespaces Agent IDs', async () => {
+    const workspaceId = 'bbbbbbbb-0000-4000-8000-000000000002';
+    const workspaceAttention = {
+      ...workspaceEvent,
+      id: workspaceId,
+      occurredAt: '2026-09-04T00:58:00Z',
+      state: 'NEEDS_INPUT' as const,
+      eventKind: 'EXECUTION' as const,
+    };
+    const agentAttention = {
+      id: RUN,
+      occurredAt: NOW,
+      actor: 'AGENT' as const,
+      actorName: 'DWAI·ON',
+      state: 'POLICY_BLOCKED' as const,
+      title: 'Policy review required',
+      summary: 'The source ledger denied this run.',
+      objectType: 'AGENT_RUN',
+      objectLabel: 'Agent run',
+      objectId: RUN,
+      source: 'DWAI_ON',
+      sourceRoute: `/dwaion/activity?run=${RUN}`,
+      sourceEventId: RUN,
+      executionId: RUN,
+      executionVersion: 2,
+      attempt: 1,
+      progress: null,
+      sourceObservedAt: NOW,
+      auditId: null,
+      auditRecordId: null,
+      auditStatus: 'NOT_LINKED' as const,
+      auditAccess: 'RESTRICTED' as const,
+      eventKind: 'EXECUTION_SNAPSHOT' as const,
+      dataProvenance: 'LIVE' as const,
+      sourceAccess: 'AVAILABLE' as const,
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((input) =>
+        Promise.resolve(
+          String(input).includes('/api/agent/')
+            ? response({
+                ...summary(0),
+                total: 1,
+                policyBlocked: 1,
+                attentionItems: [agentAttention],
+              })
+            : response({
+                ...summary(0),
+                total: 1,
+                needsInput: 1,
+                attentionItems: [workspaceAttention],
+              })
+        )
+      )
+    );
+    const result = await getActivityExecutionSummary();
+    expect(result.attentionItems?.map(({ id }) => id)).toEqual([`dwaion:${RUN}`, workspaceId]);
+  });
+
   it('preserves source cursor rejection instead of silently restarting that source', async () => {
     vi.stubGlobal(
       'fetch',

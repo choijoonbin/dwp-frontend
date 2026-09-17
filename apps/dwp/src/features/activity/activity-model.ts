@@ -21,6 +21,14 @@ export const ACTIVITY_STATES = [
   'cancelled',
   'unknown',
 ] as const;
+export const ACTIVITY_SOURCES = [
+  'WORKSPACE',
+  'DWP_WORKSPACE',
+  'PERSONAL_TASK',
+  'DWP Apps',
+  'DWAI_ON',
+] as const;
+export const ACTIVITY_OBJECT_TYPES = ['WORK_ITEM', 'WORKSPACE_APP', 'AGENT_RUN'] as const;
 export type ActorFilter = 'all' | WorkspaceActivityActor;
 export type StateFilter = 'all' | WorkspaceActivityState;
 

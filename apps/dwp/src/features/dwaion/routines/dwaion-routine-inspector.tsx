@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import { ActionButton, DetailInspector, InlineFeedback } from '@dwp-frontend/design-system';
 
 import { DWAION_ROUTINE_COPY_KO } from './dwaion-routine-copy';
+import { DwaionRoutineExecutionPanel } from './dwaion-routine-execution-panel';
 import {
   routineCommandState,
   routineConsentComplete,
@@ -25,12 +26,22 @@ import {
 
 import type { DwaionRoutineCopy } from './dwaion-routine-copy';
 import type { DwaionRoutine, DwaionRoutineDryRunReceipt } from './dwaion-routine-model';
+import type {
+  DwaionRoutineExecutionRun,
+  DwaionRoutineRunCommand,
+  DwaionRoutineRuntimeCapabilities,
+} from '@dwp-frontend/shared-utils';
 
 export function DwaionRoutineInspector({
   routine,
   open,
   variant,
   dryRunReceipt,
+  runtimeCapabilities,
+  runtimeCapabilitiesError = false,
+  runs = [],
+  runsLoading = false,
+  runsError = false,
   busy = false,
   canManage = true,
   onClose,
@@ -38,6 +49,10 @@ export function DwaionRoutineInspector({
   onEdit,
   onToggleStatus,
   onArchive,
+  onActivate,
+  onTriggerRun,
+  onRunCommand,
+  onRetryRuntime,
   copy = DWAION_ROUTINE_COPY_KO,
   formatTimestamp = (value) => value,
 }: {
@@ -45,6 +60,11 @@ export function DwaionRoutineInspector({
   open: boolean;
   variant: 'inline' | 'drawer';
   dryRunReceipt?: DwaionRoutineDryRunReceipt | null;
+  runtimeCapabilities?: DwaionRoutineRuntimeCapabilities;
+  runtimeCapabilitiesError?: boolean;
+  runs?: readonly DwaionRoutineExecutionRun[];
+  runsLoading?: boolean;
+  runsError?: boolean;
   busy?: boolean;
   canManage?: boolean;
   onClose: () => void;
@@ -52,6 +72,14 @@ export function DwaionRoutineInspector({
   onEdit: (routine: DwaionRoutine) => void;
   onToggleStatus: (routine: DwaionRoutine) => void;
   onArchive: (routine: DwaionRoutine) => void;
+  onActivate: (routine: DwaionRoutine, action: 'ACTIVATE' | 'DEACTIVATE') => void;
+  onTriggerRun: (routine: DwaionRoutine) => void;
+  onRunCommand: (
+    routine: DwaionRoutine,
+    run: DwaionRoutineExecutionRun,
+    action: DwaionRoutineRunCommand['action']
+  ) => void;
+  onRetryRuntime: () => void;
   copy?: DwaionRoutineCopy;
   formatTimestamp?: (value: string) => string;
 }) {
@@ -78,17 +106,26 @@ export function DwaionRoutineInspector({
       } ${copy.separator} ${copy.revisionPrefix}${routine.revision}`}
       closeLabel={copy.close}
       onClose={onClose}
-      status={<Chip size="small" variant="outlined" color="info" label={copy.proposalOnly} />}
+      status={
+        <Chip
+          size="small"
+          variant="outlined"
+          color={routine.executionMode === 'SCHEDULED' ? 'success' : 'info'}
+          label={routine.executionMode === 'SCHEDULED' ? copy.status.ACTIVE : copy.proposalOnly}
+        />
+      }
     >
       <Stack gap={2}>
-        <InlineFeedback severity="info">
-          <Typography variant="body2" fontWeight="fontWeightBold">
-            {copy.schedulerUnavailable}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {copy.schedulerUnavailableHelp}
-          </Typography>
-        </InlineFeedback>
+        {!runtimeCapabilities?.activationAvailable ? (
+          <InlineFeedback severity="info">
+            <Typography variant="body2" fontWeight="fontWeightBold">
+              {copy.schedulerUnavailable}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {runtimeCapabilities?.recoveryHint ?? copy.schedulerUnavailableHelp}
+            </Typography>
+          </InlineFeedback>
+        ) : null}
 
         <Box component="section" aria-labelledby="routine-consent-title">
           <Stack direction="row" alignItems="center" gap={0.75}>
@@ -131,7 +168,7 @@ export function DwaionRoutineInspector({
             <ContractStep
               number={5}
               title={copy.contractSteps.guardrail}
-              value={copy.contractValues.guardrail}
+              value={`${copy.maximumRuns}: ${routine.budget.maximumRunsPerMonth} · ${copy.maximumTokens}: ${routine.budget.maximumTokensPerRun} · ${copy.maximumMinutes}: ${routine.budget.maximumMinutesPerRun}`}
             />
             <ContractStep
               number={6}
@@ -208,6 +245,23 @@ export function DwaionRoutineInspector({
           </Box>
         ) : null}
 
+        <DwaionRoutineExecutionPanel
+          routine={routine}
+          capabilities={runtimeCapabilities}
+          capabilitiesError={runtimeCapabilitiesError}
+          runs={runs}
+          runsLoading={runsLoading}
+          runsError={runsError}
+          busy={busy}
+          canManage={canManage}
+          copy={copy}
+          formatTimestamp={formatTimestamp}
+          onActivate={(action) => onActivate(routine, action)}
+          onTrigger={() => onTriggerRun(routine)}
+          onRunCommand={(run, action) => onRunCommand(routine, run, action)}
+          onRetry={onRetryRuntime}
+        />
+
         {!archived ? (
           <Stack gap={1}>
             <ActionButton
@@ -227,7 +281,7 @@ export function DwaionRoutineInspector({
                 intent="secondary"
                 fullWidth
                 startIcon={<Pencil size={16} aria-hidden="true" />}
-                disabled={busy || !canManage}
+                disabled={busy || !canManage || routine.status === 'ACTIVE'}
                 onClick={() => onEdit(routine)}
                 sx={{ minHeight: 44 }}
               >
@@ -243,7 +297,7 @@ export function DwaionRoutineInspector({
                     <PauseCircle size={16} aria-hidden="true" />
                   )
                 }
-                disabled={busy || !canManage}
+                disabled={busy || !canManage || routine.status === 'ACTIVE'}
                 onClick={() => onToggleStatus(routine)}
                 sx={{ minHeight: 44 }}
               >

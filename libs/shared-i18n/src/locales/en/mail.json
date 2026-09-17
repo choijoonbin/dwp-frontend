@@ -21,33 +21,103 @@
     },
     "items": {
       "mail": {
-        "home": { "label": "Mail home" },
-        "inbox": { "label": "Inbox" },
-        "sent": { "label": "Sent" },
-        "drafts": { "label": "Drafts" },
-        "archive": { "label": "Archive" },
-        "spam": { "label": "Spam" },
-        "trash": { "label": "Trash" },
-        "folders": { "label": "My folders" },
-        "contacts": { "label": "Contacts" },
-        "shared": { "label": "Shared inboxes" },
-        "organization": { "label": "Folders and rules" },
-        "accounts": { "label": "Connected accounts" },
-        "admin-overview": { "label": "Operations overview" },
-        "admin-connections": { "label": "Mail connections" },
-        "admin-shared-inboxes": { "label": "Shared inbox operations" },
-        "admin-policies": { "label": "Security and AI policies" }
+        "home": {
+          "label": "Mail home"
+        },
+        "inbox": {
+          "label": "Inbox"
+        },
+        "search": {
+          "label": "Search"
+        },
+        "follow-up": {
+          "label": "Follow-up"
+        },
+        "delivery": {
+          "label": "Delivery status"
+        },
+        "sent": {
+          "label": "Sent"
+        },
+        "drafts": {
+          "label": "Drafts"
+        },
+        "archive": {
+          "label": "Archive"
+        },
+        "spam": {
+          "label": "Spam"
+        },
+        "trash": {
+          "label": "Trash"
+        },
+        "folders": {
+          "label": "My folders"
+        },
+        "contacts": {
+          "label": "Contacts"
+        },
+        "shared": {
+          "label": "Shared inboxes"
+        },
+        "actions": {
+          "label": "Action proposals"
+        },
+        "organization": {
+          "label": "Folders and rules"
+        },
+        "accounts": {
+          "label": "Connected accounts"
+        },
+        "templates": {
+          "label": "Templates and signatures"
+        },
+        "admin-overview": {
+          "label": "Operations overview"
+        },
+        "admin-connections": {
+          "label": "Mail connections"
+        },
+        "admin-shared-inboxes": {
+          "label": "Shared inbox operations"
+        },
+        "admin-policies": {
+          "label": "Security and AI policies"
+        },
+        "admin-retention": {
+          "label": "Retention and legal hold"
+        },
+        "admin-delivery-audit": {
+          "label": "Delivery audit"
+        }
       }
+    }
+  },
+  "mobileNavigation": {
+    "userLabel": "Mail shortcuts",
+    "adminLabel": "Mail administration shortcuts",
+    "items": {
+      "home": "Home",
+      "inbox": "Inbox",
+      "shared": "Shared",
+      "operations": "Operations",
+      "connections": "Connections",
+      "access": "Access",
+      "policies": "Policies",
+      "retentionAudit": "Retention & audit",
+      "more": "More"
     }
   },
   "actions": {
     "back": "Back",
     "cancel": "Cancel",
+    "close": "Close",
     "compose": "New message",
     "refresh": "Refresh",
     "retry": "Try again",
     "save": "Save",
-    "saving": "Saving"
+    "saving": "Saving",
+    "done": "Done"
   },
   "home": {
     "eyebrow": "Today's mail signals",
@@ -57,6 +127,8 @@
     "member": "Member",
     "title": "{{name}}, {{greeting}}",
     "description": "Mail is organized by business impact and next action rather than arrival order.",
+    "accountScope": "Mail account",
+    "allAccounts": "All accounts",
     "searchLabel": "Search my mail",
     "searchPlaceholder": "Search sender, subject, or message content",
     "searchAction": "Search",
@@ -86,7 +158,7 @@
       "clearTitle": "Your priority mail is under control",
       "description": "The shortest path through your mail is organized by business impact and next action, not arrival time.",
       "accountWarning": "{{count}} connections need attention",
-      "accountHealthy": "All accounts are syncing normally",
+      "accountHealthy": "No connection warnings for the accounts shown",
       "updatedAt": "Updated {{value}}",
       "start": "Start focused triage",
       "openInbox": "Open inbox",
@@ -191,6 +263,9 @@
       "phone": "Phone",
       "favorite": "Add to favorites",
       "edit": "Edit contact",
+      "compose": "Write message",
+      "selectTitle": "Select a contact",
+      "selectDescription": "Choose a contact to see details or start a message.",
       "saved": "Contact saved.",
       "emptyTitle": "No saved contacts",
       "emptyDescription": "Add a contact directly or find someone in the company directory."
@@ -207,6 +282,7 @@
       "members": "Members",
       "edit": "Edit",
       "send": "Send mail",
+      "history": "Delivery history",
       "saved": "Mail group saved.",
       "emptyTitle": "No mail groups yet",
       "emptyDescription": "Create a group for recurring projects or workflows to avoid entering recipients repeatedly."
@@ -222,9 +298,20 @@
       "title": "Send mail to {{name}}",
       "recipients": "Review the {{count}} recipients in the current group version before sending.",
       "recipientList": "Recipients of this group message",
-      "confirmRecipients": "I have reviewed every recipient name and email address.",
+      "recipientMode": "Recipient privacy",
+      "mode": {
+        "TO": "Visible recipient list (To)",
+        "BCC": "Private recipients (Bcc)"
+      },
+      "recipientVisibilityTitle": "Recipient names and email addresses will be visible to everyone",
+      "recipientVisibilityDescription": "This message places every group member in the To field.",
+      "privateVisibilityTitle": "Recipients stay private from one another",
+      "privateVisibilityDescription": "Each group member is placed in Bcc. Review the snapshot because the group version is locked when you send.",
+      "confirmRecipients": "I understand the recipient list is public to this group and have reviewed every name and email address.",
+      "confirmPrivateRecipients": "I have reviewed every private recipient and the current group version.",
       "retry": "Retry the same message",
       "retryNotice": "The delivery result is not confirmed. The reviewed recipients and message are locked; retrying uses the same request and will not queue a duplicate.",
+      "rejectedNotice": "The request was rejected. Review or change the recipients and message before sending a new command.",
       "conflictNotice": "The group or request has changed. Review the latest recipients before continuing. This does not confirm that the original message was unsent; its original request remains available for verification.",
       "reviewLatest": "Review latest recipients",
       "checkOriginal": "Check original request",
@@ -234,6 +321,22 @@
       "sending": "Queuing message",
       "sent": "The group message was safely added to the delivery queue.",
       "error": "The group changed or cannot be sent. Review the recipients and try again."
+    },
+    "receipts": {
+      "title": "{{name}} delivery history",
+      "description": "Receipts show the exact group version, privacy mode, and recipient count accepted for delivery.",
+      "latest": "Latest request",
+      "recipientCount": "{{count}} recipients",
+      "groupVersion": "Group version {{version}}",
+      "empty": "No group delivery receipts have been recorded.",
+      "error": "Delivery history could not be loaded.",
+      "state": {
+        "ACCEPTED": "Accepted",
+        "DELIVERED": "Delivered",
+        "FAILED": "Failed",
+        "UNKNOWN": "Outcome unknown",
+        "CANCELLED": "Cancelled"
+      }
     },
     "directory": {
       "title": "Company directory results",
@@ -319,6 +422,15 @@
       "eyebrow": "Team Inbox",
       "title": "Shared inboxes",
       "description": "Assign team requests, discuss privately, and prevent duplicate responses.",
+      "inboxFilter": "Shared inbox",
+      "allInboxes": "All shared inboxes",
+      "assignmentFilter": "Ownership",
+      "assignment": {
+        "ALL": "Everyone",
+        "MINE": "Assigned to me",
+        "UNASSIGNED": "Unassigned"
+      },
+      "allLanes": "All",
       "emptyTitle": "No shared mail",
       "emptyDescription": "Conversations from shared inboxes you belong to will appear here."
     }
@@ -341,15 +453,32 @@
     "assign": "Assign",
     "assignmentSaved": "The shared mail owner was assigned.",
     "assignmentError": "The owner could not be assigned. Refresh and try again.",
+    "sharedActionPermissionUnavailable": "Some shared inbox actions are unavailable because permission for this conversation was not provided.",
+    "changedElsewhere": "This conversation changed elsewhere. The latest version is now shown; review it before trying again.",
+    "complete": "Complete",
+    "reopen": "Reopen",
     "markRead": "Mark as read",
     "markUnread": "Mark as unread",
     "star": "Star",
     "unstar": "Remove star",
     "snooze": "Remind me later",
     "snoozed": "The message was snoozed.",
+    "showNow": "Show now",
     "archive": "Archive",
     "externalSender": "This message came from outside your organization. Verify the sender before opening links or attachments.",
     "attachment": "Attachment",
+    "recipientType": {
+      "TO": "To",
+      "CC": "Cc",
+      "BCC": "Bcc"
+    },
+    "remoteImagesBlocked": "{{count}} remote images were blocked to protect your privacy.",
+    "loadRemoteImages": "Load images",
+    "forward": "Forward",
+    "forwardedMessage": "Forwarded message",
+    "from": "From",
+    "sentAt": "Date",
+    "subject": "Subject",
     "proposals": "Next actions found in this message",
     "internalComments": "Internal collaboration",
     "internalCommentsDescription": "These comments are never sent to the external sender.",
@@ -359,11 +488,19 @@
     "commentAdded": "The internal comment was added.",
     "commentError": "The internal comment could not be added.",
     "reply": "Reply",
+    "replyMode": "Reply recipients",
+    "replyAll": "Reply all",
+    "replyAllRecipients": "This reply will be sent to {{recipients}}.",
     "replyPlaceholder": "Write a response",
     "replyIdentity": "Replying as {{name}}.",
     "sendReply": "Send reply",
+    "sendReplyAll": "Send reply to all",
     "replySent": "The reply was added to the governed delivery queue.",
     "replyError": "The reply could not be sent.",
+    "replyOutcomeUnconfirmed": "The reply result could not be confirmed.",
+    "replyRetrySameCommand": "The reply text is locked because the previous result is unknown. Retry this exact reply to reuse the same command identity and avoid a duplicate.",
+    "replyRejected": "The mail service rejected the reply.",
+    "replyRejectedReview": "Review or change the reply before sending a new command. The rejected command will not be replayed.",
     "actionError": "The message state could not be changed. Refresh and try again."
   },
   "snoozeDialog": {
@@ -410,6 +547,15 @@
   },
   "lifecycle": {
     "move": "Move to folder",
+    "moving": "Moving",
+    "foldersUnavailable": "Folders are temporarily unavailable",
+    "previewTitle": "Move this conversation?",
+    "previewDescription": "Review the destination before moving this conversation to {{target}}.",
+    "previewTarget": "Destination",
+    "previewAffected": "{{count}} conversation will be affected.",
+    "previewConfirm": "Confirm move",
+    "previewBlocked": "This move is blocked by the current folder or retention policy.",
+    "previewError": "The move preview could not be verified. Nothing was changed.",
     "restore": "Restore to previous location",
     "spam": "Move to spam",
     "trash": "Move to trash",
@@ -436,7 +582,10 @@
     "description": "Create folders and rules around your work, then preview and safely apply them to existing mail.",
     "loadError": "Folders and rules could not be loaded.",
     "tabsLabel": "Mail organization mode",
-    "tabs": { "folders": "My folders", "rules": "Organization rules" },
+    "tabs": {
+      "folders": "My folders",
+      "rules": "Organization rules"
+    },
     "edit": "Edit",
     "archive": "Archive item",
     "remove": "Remove item",
@@ -446,7 +595,9 @@
     "archiveDescription": "{{name}} will be hidden from the list. Resolve child folders or active rule references first.",
     "archiveConfirm": "Archive",
     "archiving": "Archiving",
-    "validation": { "required": "This field is required." },
+    "validation": {
+      "required": "This field is required."
+    },
     "pulse": {
       "title": "Your mail organization posture",
       "description": "Rule storage and provider synchronization are shown separately. Incoming automatic execution is disabled; applying rules to existing mail requires explicit approval.",
@@ -528,10 +679,33 @@
       "lastRun": "Last run · {{count}} matched",
       "neverRun": "Not run yet",
       "moveSummary": "Move to {{folder}}",
+      "moveUp": "Move {{name}} up",
+      "moveDown": "Move {{name}} down",
+      "reordered": "Rule priority order was updated.",
+      "reorderError": "Rule priority changed elsewhere or could not be saved. Refresh and try again.",
       "emptyTitle": "No organization rules yet",
       "emptyDescription": "Automate the first message pattern you repeatedly move or mark."
     },
-    "matchMode": { "ALL": "Match all", "ANY": "Match any" },
+    "ledger": {
+      "title": "Recent rule activity",
+      "description": "Review what each manual, incoming, or backfill run scanned and changed.",
+      "changed": "Changed",
+      "empty": "No rule runs have been recorded yet.",
+      "status": {
+        "RUNNING": "Running",
+        "SUCCEEDED": "Completed",
+        "FAILED": "Failed"
+      },
+      "trigger": {
+        "MANUAL": "Manual run",
+        "INCOMING": "Incoming mail",
+        "BACKFILL": "Existing mail"
+      }
+    },
+    "matchMode": {
+      "ALL": "Match all",
+      "ANY": "Match any"
+    },
     "fields": {
       "SENDER": "Sender",
       "RECIPIENT": "Recipient",
@@ -557,7 +731,10 @@
       "MARK_READ": "Mark matching conversations as read.",
       "STAR": "Add a star to matching conversations."
     },
-    "boolean": { "yes": "Yes", "no": "No" },
+    "boolean": {
+      "yes": "Yes",
+      "no": "No"
+    },
     "colors": {
       "NEUTRAL": "Neutral",
       "BLUE": "Blue",
@@ -576,9 +753,37 @@
   },
   "proposal": {
     "assistant": "DWP action proposal",
-    "confidence": "{{value}}% confidence",
-    "match": "{{value}}% match",
     "source": "Source message: {{source}}",
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "type": "Action type",
+      "allTypes": "All action types"
+    },
+    "status": {
+      "PROPOSED": "Awaiting review",
+      "ACCEPTED": "Accepted",
+      "DISMISSED": "Dismissed",
+      "EXPIRED": "Expired",
+      "EXECUTED": "Completed in owner app"
+    },
+    "typeFilter": {
+      "DRAFT_REPLY": "Email reply draft",
+      "CREATE_CALENDAR_EVENT": "Calendar event",
+      "CREATE_LEAVE_REQUEST": "Leave request",
+      "CREATE_TASK": "Work item",
+      "ESCALATE_NOTIFICATION": "Urgent notification"
+    },
+    "payloadEditor": {
+      "title": "Edit proposal details",
+      "description": "Update reviewable details before accepting. Policy and confirmation fields remain locked.",
+      "edit": "Edit details",
+      "save": "Save changes",
+      "saving": "Saving",
+      "error": "The proposal changed or could not be saved. Refresh and review it again.",
+      "noFields": "This proposal has no editable details.",
+      "safety": "Saving changes creates a new proposal version. Final execution still happens in the responsible app."
+    },
     "risk": {
       "LOW": "Low risk",
       "MEDIUM": "Review needed",
@@ -649,7 +854,7 @@
       "handled": "This proposal has already been handled.",
       "policyMismatch": "The policy and action scope must be checked again.",
       "unsupportedType": "This proposal type is not supported.",
-      "unsupportedVersion": "Regenerate this proposal with the current contract."
+      "unsupportedVersion": "This proposal is outdated. Create a new proposal before continuing."
     },
     "reviewDialog": {
       "description": "Review the evidence and destination. This step does not create or send business data.",
@@ -673,14 +878,90 @@
     "description": "Start with any field and the draft saves automatically. A valid recipient, subject, and message are required to send.",
     "dwaionDraftNotice": "This is a review email draft handed off by DWAI·ON. Check the recipients and content; only you can decide to send it.",
     "to": "Recipient email",
+    "from": "From account",
+    "cc": "Cc",
+    "bcc": "Bcc",
+    "showCcBcc": "Add Cc or Bcc",
+    "hideCcBcc": "Hide Cc and Bcc",
+    "recipientHelp": "Separate multiple addresses with commas. Name <email@example.com> is also supported.",
+    "invalidRecipients": "One or more email addresses are invalid.",
+    "bccPrivacy": "Bcc addresses are hidden from the other recipients.",
+    "format": "Message format",
+    "formatText": "Plain text",
+    "formatRich": "Rich text",
+    "formatBold": "Bold",
+    "formatItalic": "Italic",
+    "formatBulletList": "Bulleted list",
+    "formatNumberedList": "Numbered list",
+    "template": "Template",
+    "signature": "Signature",
+    "noTemplate": "No template",
+    "noSignature": "No signature",
+    "insert": "Insert",
+    "replaceWithTemplateTitle": "Replace the current message with this template?",
+    "replaceWithTemplateDescription": "The current message will be replaced with the selected template content.",
+    "appendSignatureTitle": "Append this signature?",
+    "appendSignatureDescription": "The selected signature will be added below the current message.",
+    "optionsLoadError": "Sender accounts and writing settings could not be loaded.",
+    "schedule": "Scheduled send",
+    "scheduleDescription": "You can change or cancel the message until the scheduled time.",
+    "scheduleAction": "Schedule send time",
+    "sendNow": "Send now instead",
+    "scheduledAt": "Scheduled send time",
+    "futureScheduleRequired": "Choose a time in the future.",
+    "attachments": {
+      "title": "Attachments",
+      "add": "Add files",
+      "limit": "Up to {{value}} MB per file",
+      "remove": "Remove {{name}}",
+      "uploadError": "The attachment could not be uploaded.",
+      "deleteError": "The attachment could not be removed.",
+      "pendingBlocksSend": "Every attachment must pass security scanning before sending.",
+      "state": {
+        "UPLOADING": "Uploading",
+        "SCANNING": "Security scan in progress",
+        "READY": "Scan complete",
+        "BLOCKED": "Blocked by policy",
+        "FAILED": "Scan failed"
+      }
+    },
     "subject": "Subject",
     "body": "Message",
     "send": "Send",
+    "scheduleSend": "Schedule send",
+    "scheduling": "Scheduling",
     "sending": "Sending",
     "saveDraft": "Save draft",
     "sent": "The message was added to the governed delivery queue.",
+    "scheduled": "The message was added to scheduled delivery.",
     "saved": "The message was saved to drafts.",
-    "error": "The message could not be saved or sent."
+    "error": "The message could not be saved or sent.",
+    "outcomeUnconfirmed": "The send result could not be confirmed.",
+    "retrySameCommand": "Recipients and content are locked because the previous result is unknown. Retry this exact message to reuse the same command identity and avoid a duplicate.",
+    "resolveBeforeLeaving": "Resolve the unconfirmed send by retrying the exact message before leaving this editor.",
+    "requestRejected": "The mail service rejected the send request.",
+    "requestRejectedReview": "Review or change the message before sending a new command. Refresh the draft first if it changed elsewhere.",
+    "recipientPicker": {
+      "open": "Address book",
+      "title": "Choose recipients",
+      "description": "Add personal contacts or groups from the address book to To, Cc, or Bcc.",
+      "role": "Add to",
+      "roleValue": {
+        "TO": "To",
+        "CC": "Cc",
+        "BCC": "Bcc"
+      },
+      "search": "Search contacts or groups",
+      "loadError": "The address book could not be loaded. Try again.",
+      "emptyTitle": "No addresses to show",
+      "emptyDescription": "Change the search or add contacts to the address book.",
+      "groups": "Groups",
+      "contacts": "Contacts",
+      "memberCount": "{{count}} members",
+      "addGroup": "Add all",
+      "added": "Added",
+      "add": "Add"
+    }
   },
   "draft": {
     "title": "Drafts",
@@ -699,6 +980,26 @@
       "error": "The draft could not be saved. Your text remains in this window.",
       "conflict": "This draft changed elsewhere. Your text is still here, but sending and saving are paused to prevent overwriting newer work.",
       "retry": "Retry save"
+    },
+    "conflictReview": {
+      "title": "This draft changed on the server",
+      "description": "Your input is preserved. Compare the version you started from, your message, and the latest server draft before choosing what to review next.",
+      "loading": "Loading the latest server draft…",
+      "loadFailed": "The latest server draft could not be loaded. Sending remains paused.",
+      "empty": "Empty",
+      "fields": {
+        "toEmail": "Recipient",
+        "subject": "Subject",
+        "body": "Message",
+        "delivery": "Recipients, attachments, and schedule"
+      },
+      "versions": {
+        "base": "Base when editing began",
+        "local": "Your version",
+        "server": "Latest server version"
+      },
+      "useServer": "Use latest server draft",
+      "keepLocal": "Keep my version for review"
     },
     "discard": {
       "title": "Discard unsaved changes?",
@@ -776,13 +1077,14 @@
       "SUSPENDED": "Suspended"
     },
     "runtime": {
-      "AVAILABLE": "Adapter available",
-      "DEPLOYMENT_REQUIRED": "Runtime adapter deployment required"
+      "AVAILABLE": "Connection service available",
+      "DEPLOYMENT_REQUIRED": "Connection service setup required"
     }
   },
   "capability": {
     "READ": "Read",
     "SEND": "Send",
+    "SYNC": "Synchronize",
     "THREADS": "Conversation threads",
     "DELTA_SYNC": "Delta sync",
     "HISTORY_SYNC": "History sync",
@@ -794,13 +1096,279 @@
     "SHARED_INBOX": "Shared inbox",
     "COMMENTS": "Internal comments"
   },
+  "secondary": {
+    "threadList": "Message list",
+    "refreshing": "Refreshing messages",
+    "loadError": "Messages could not be loaded.",
+    "search": {
+      "eyebrow": "Mail search",
+      "title": "Search mail",
+      "description": "Search only messages the current account is allowed to read.",
+      "state": "Message state",
+      "allStates": "All states",
+      "open": "Open",
+      "done": "Done",
+      "lane": "Work queue",
+      "allQueues": "All queues",
+      "priority": "Priority",
+      "assigned": "Assigned",
+      "advanced": "Advanced filters",
+      "account": "Mail account",
+      "allAccounts": "All accounts",
+      "scopeLabel": "Account scope",
+      "scope": {
+        "ALL": "Personal and shared",
+        "PERSONAL": "Personal accounts",
+        "SHARED": "Shared accounts"
+      },
+      "from": "From",
+      "to": "To",
+      "dateFrom": "Start date",
+      "dateTo": "End date",
+      "readState": "Read state",
+      "allReadStates": "All read states",
+      "unreadOnly": "Unread only",
+      "attachment": "Attachment state",
+      "allAttachments": "All messages",
+      "attachmentOnly": "Has attachments",
+      "clearFilters": "Clear filters",
+      "startTitle": "Search your mail",
+      "startDescription": "Enter a sender, subject, or phrase to find messages you can access.",
+      "emptyTitle": "No messages matched",
+      "emptyDescription": "Try a different phrase or remove a filter."
+    },
+    "savedViews": {
+      "saveCurrent": "Save current view",
+      "dialogTitle": "Save search view",
+      "dialogDescription": "Name the current query and filters. The view runs again with your current access each time you open it.",
+      "name": "View name",
+      "rename": "Rename {{name}}",
+      "renameTitle": "Rename saved view",
+      "personalOnly": "This view is saved only for your account.",
+      "save": "Save view",
+      "saved": "The search view was saved.",
+      "saveError": "The search view could not be saved.",
+      "delete": "Delete view",
+      "deleteTitle": "Delete this saved view?",
+      "deleteDescription": "Only the stored search criteria will be deleted. Messages are not affected.",
+      "deleted": "The saved view was deleted.",
+      "deleteError": "The saved view could not be deleted."
+    },
+    "followUp": {
+      "eyebrow": "Response planning",
+      "title": "Follow-up",
+      "description": "Review messages that need a reply or are scheduled to return later.",
+      "tabsLabel": "Follow-up queues",
+      "emptyTitle": "Nothing needs follow-up",
+      "emptyDescription": "Messages will appear here when a reply is needed or a reminder becomes active.",
+      "waitingTab": "Waiting for reply",
+      "waitingTitle": "Messages waiting for a reply",
+      "waitingDescription": "Review the expected reply time and the latest reply-detection status.",
+      "waitingEmptyTitle": "No messages are waiting for a reply",
+      "waitingEmptyDescription": "Select a message and add reply tracking.",
+      "addTracking": "Add reply tracking",
+      "selectBeforeTracking": "Select a message in Needs reply or Later, then open Waiting for reply.",
+      "openMail": "Open message",
+      "changeTracking": "Change time",
+      "cancelTracking": "Cancel tracking",
+      "trackingDialogTitle": "Set expected reply time",
+      "trackingDialogDescription": "The message will need follow-up if no reply arrives by this time.",
+      "expectedReplyAt": "Expected reply time",
+      "futureRequired": "Choose a time in the future.",
+      "note": "Follow-up note",
+      "timeZone": "Time zone: {{value}}",
+      "expectedBy": "Expected by {{value}} · {{timeZone}}",
+      "trackingSaved": "Reply tracking was saved.",
+      "trackingSaveError": "Reply tracking could not be saved.",
+      "trackingLoadError": "The waiting-for-reply list could not be loaded.",
+      "trackingCancelled": "Reply tracking was cancelled.",
+      "trackingCancelError": "Reply tracking could not be cancelled.",
+      "cancelTitle": "Cancel reply tracking?",
+      "cancelDescription": "The message remains unchanged and only this follow-up stops.",
+      "status": {
+        "WAITING": "Waiting for reply",
+        "OVERDUE": "Overdue",
+        "REPLIED": "Reply detected",
+        "CANCELLED": "Cancelled"
+      }
+    },
+    "delivery": {
+      "eyebrow": "Outbound mail",
+      "title": "Delivery status",
+      "description": "Inspect the latest state reported by the mail delivery service.",
+      "sentUnconfirmed": "Sent from DWP; recipient delivery is not confirmed",
+      "limitTitle": "Delivery evidence is limited",
+      "limitDescription": "Scheduled changes, cancellation, and safe retry stay unavailable until the service can verify provider acceptance and retry eligibility.",
+      "emptyTitle": "No sent messages",
+      "emptyDescription": "Messages appear after they enter the outbound flow.",
+      "acceptedAt": "Delivery service accepted the message",
+      "failureDescription": "The delivery service could not complete this message. Technical details are available to authorized mail administrators.",
+      "retryBlockedTitle": "Retry needs verification",
+      "retryBlockedDescription": "Retry remains disabled until acceptance and duplicate-delivery risk can be verified.",
+      "noOutboundTitle": "No outbound delivery",
+      "noOutboundDescription": "This conversation has no outbound message to inspect.",
+      "tabsLabel": "Delivery status sections",
+      "bucket": {
+        "SCHEDULED": "Scheduled",
+        "PROCESSING": "Processing",
+        "COMPLETED": "Completed",
+        "ATTENTION": "Needs attention"
+      },
+      "state": {
+        "SCHEDULED": "Scheduled",
+        "QUEUED": "Queued",
+        "SENDING": "Sending",
+        "ACCEPTED": "Accepted by provider",
+        "DELIVERED": "Delivery confirmed",
+        "BOUNCED": "Bounced",
+        "FAILED": "Failed",
+        "UNKNOWN": "Outcome needs verification",
+        "CANCELLED": "Cancelled"
+      },
+      "listLabel": "Delivery requests",
+      "loadError": "Delivery requests could not be loaded.",
+      "loadingDetail": "Loading delivery details",
+      "detailError": "Delivery details could not be loaded.",
+      "selectTitle": "Select a delivery request",
+      "selectDescription": "Select a scheduled or outbound request to inspect its stages and available actions.",
+      "personal": "Personal delivery",
+      "group": "Group delivery",
+      "recipients": "Recipient snapshot",
+      "timeline": "Delivery timeline",
+      "unknownGuidance": "Reconcile the provider outcome before treating this as failed or sending again.",
+      "reschedule": "Change send time",
+      "rescheduleTitle": "Change scheduled send time",
+      "rescheduleDescription": "The time can change only before a worker begins sending.",
+      "scheduledAt": "New send time",
+      "rescheduled": "The scheduled send time was changed.",
+      "cancel": "Cancel schedule",
+      "cancelTitle": "Cancel this scheduled message?",
+      "cancelDescription": "If sending has already begun, the server rejects cancellation and returns the latest state.",
+      "cancelled": "The scheduled message was cancelled.",
+      "reconcile": "Reconcile outcome",
+      "reconcileStarted": "Provider outcome reconciliation was requested.",
+      "retryTitle": "Retry this failed delivery?",
+      "retryDescription": "The server verified that the provider did not accept this message and no delivery worker holds it. The same message will be queued again.",
+      "commandError": "The state changed or the request could not be processed. Refresh and review it again."
+    },
+    "shared": {
+      "eyebrow": "Team mail",
+      "description": "Assign, discuss, and reply to team mail in one workspace.",
+      "emptyTitle": "No shared messages need action",
+      "emptyDescription": "New conversations assigned to your team will appear here."
+    },
+    "groups": {
+      "description": "Review the current group version and recipients before sending."
+    },
+    "rules": {
+      "description": "Preview rule impact before applying rules to existing messages."
+    },
+    "actions": {
+      "eyebrow": "Review queue",
+      "ownerNotice": "Accepting a proposal opens the responsible app for final review. It does not complete the action here."
+    },
+    "templates": {
+      "eyebrow": "Writing preferences",
+      "title": "Templates and signatures",
+      "description": "Create reusable mail templates and account-specific signatures.",
+      "unavailableTitle": "Setup is still required",
+      "unavailableDescription": "Template editing, version history, and required signature rules remain unavailable until managed setup is ready.",
+      "emptyTitle": "No managed writing assets",
+      "emptyDescription": "Create your first writing asset to select it from new messages and drafts.",
+      "tabsLabel": "Writing asset type",
+      "templateTab": "Mail templates",
+      "signatureTab": "Signatures",
+      "search": "Search templates or signatures",
+      "newTemplate": "New template",
+      "newSignature": "New signature",
+      "templateList": "Mail template list",
+      "signatureList": "Mail signature list",
+      "emptyTemplateTitle": "No saved templates",
+      "emptySignatureTitle": "No saved signatures",
+      "templateDialogTitle": "Edit mail template",
+      "signatureDialogTitle": "Edit mail signature",
+      "dialogDescription": "Saved content can be inserted and reviewed again in the message editor.",
+      "name": "Name",
+      "account": "Sender account",
+      "allAccounts": "All personal accounts",
+      "subject": "Default subject",
+      "body": "Content",
+      "bodyFormat": "Content format",
+      "variablesHelp": "Allowed variables: {{displayName}}, {{department}}, {{recipientName}}. Missing values render as empty text.",
+      "applyNew": "Apply by default to new mail",
+      "applyReply": "Apply by default to replies and forwards",
+      "defaultNew": "New mail default",
+      "defaultReply": "Reply default",
+      "scope": {
+        "PERSONAL": "Personal",
+        "ACCOUNT": "Account",
+        "ORGANIZATION": "Organization provided"
+      },
+      "mandatoryContent": "Required organization notice",
+      "edit": "Edit",
+      "archive": "Archive",
+      "archiveTitle": "Archive this writing asset?",
+      "archiveDescription": "Existing drafts remain unchanged. The asset will be hidden from new message pickers.",
+      "saved": "The writing asset was saved.",
+      "saveError": "The writing asset could not be saved. Review the latest version.",
+      "archived": "The writing asset was archived.",
+      "archiveError": "The writing asset could not be archived.",
+      "loadError": "Templates and signatures could not be loaded."
+    },
+    "accounts": {
+      "title": "My accounts and preferences",
+      "description": "Review connected account health and manage personal reading, writing, and notification preferences.",
+      "listLabel": "Connected accounts",
+      "readOnly": "Needs attention",
+      "tabsLabel": "Mail accounts and preference sections",
+      "accountTab": "Connected accounts",
+      "readingTab": "Reading and writing",
+      "notificationTab": "Notifications",
+      "shortcutTab": "Shortcuts",
+      "defaultSender": "Default sender account",
+      "manageWritingAssets": "Manage templates and signatures",
+      "densityTitle": "Message list density",
+      "densityDescription": "Choose the row spacing and amount of mail visible at once.",
+      "density": "List display",
+      "densityComfortable": "Comfortable",
+      "densityCompact": "Compact",
+      "remoteImagesTitle": "External remote images",
+      "remoteImagesDescription": "Choose how tracking pixels and images hosted by external servers are loaded.",
+      "remoteImages": "Image handling",
+      "remoteImagesBlock": "Always block",
+      "remoteImagesAsk": "Ask for each message",
+      "remoteImagesAllow": "Show automatically",
+      "sendDelayTitle": "Undo-send delay",
+      "sendDelayDescription": "Add a short cancellation window before immediate messages enter delivery.",
+      "sendDelay": "Delay",
+      "sendImmediately": "Send immediately",
+      "seconds": "{{count}} seconds",
+      "defaultSignatureTitle": "Default signature",
+      "defaultSignatureDescription": "Choose the personal signature suggested in the message editor.",
+      "defaultSignature": "Default signature",
+      "noDefaultSignature": "No default signature",
+      "notifyNewMail": "New mail notifications",
+      "notifyNewMailDescription": "Notify me when a new message arrives in my personal inbox.",
+      "notifySharedAssignment": "Shared assignment notifications",
+      "notifySharedAssignmentDescription": "Notify me when a shared message is assigned to me.",
+      "notifyFollowUpDue": "Follow-up due notifications",
+      "notifyFollowUpDueDescription": "Notify me when a Later or waiting-for-reply time arrives.",
+      "notificationBoundary": "These settings affect notifications created by Mail. Global channels and quiet hours remain in Notification settings.",
+      "keyboardShortcuts": "Enable mail keyboard shortcuts",
+      "keyboardShortcutsDescription": "Use mail navigation and compose shortcuts only outside text inputs.",
+      "shortcutList": "Mail keyboard shortcuts",
+      "preferencesSaved": "Personal mail preferences were saved.",
+      "preferencesSaveError": "Preferences changed or could not be saved. Refresh and try again.",
+      "preferencesLoadError": "Accounts and personal preferences could not be loaded."
+    }
+  },
   "admin": {
     "loadError": "Mail operations data could not be loaded.",
     "metrics": {
       "accounts": "Personal accounts",
       "accountsDetail": "Accounts assigned to SKAX members",
       "connections": "Active connections",
-      "connectionsDetail": "Providers operating normally",
+      "connectionsDetail": "Connections reporting an active state",
       "shared": "Shared inbox open",
       "sharedDetail": "Conversations waiting for an owner response",
       "proposals": "AI proposals",
@@ -819,13 +1387,13 @@
       "controlPosture": "Control posture",
       "controlPostureDescription": "Core security and AI action boundaries.",
       "externalBanner": "External sender warnings enabled",
-      "retention": "{{count}} day retention",
-      "aiApproval": "AI auto-execution blocked with user approval"
+      "retention": "Configured retention: {{count}} days",
+      "aiApproval": "Cross-app AI actions require user approval"
     },
     "connections": {
-      "eyebrow": "Provider Adapter",
+      "eyebrow": "Mail provider connection",
       "title": "Mail connections",
-      "description": "Manage Microsoft, Google, NAVER WORKS, and standard company mail servers through one contract.",
+      "description": "Manage Microsoft, Google, NAVER WORKS, and standard company mail connections in one place.",
       "configure": "Configure",
       "dialogTitle": "Configure mail connection",
       "dialogDescription": "Register only a reference to an external secret store, never the secret itself.",
@@ -834,8 +1402,10 @@
       "domainPlaceholder": "company.example",
       "credentialRef": "Secret-store reference",
       "credentialRefHelp": "For example, vault://tenant/mail/provider. Do not enter a secret value.",
-      "runtimeAvailable": "Runtime adapter {{version}} is available",
-      "runtimeRequired": "Only the provider contract is prepared. Activation is blocked until a verified runtime adapter is deployed.",
+      "runtimeAvailable": "Connection service {{version}} is verified",
+      "runtimeRequired": "This provider is not ready for activation. A verified connection service must be available first.",
+      "activationReady": "Activation evidence is current. Connection service {{version}} is verified.",
+      "activationBlocked": "Activation is blocked until current connection service, sign-in, and synchronization evidence is verified. External providers remain blocked while end-to-end readiness evidence is unavailable.",
       "state": "Connection state",
       "saved": "The mail connection was saved.",
       "saveError": "The mail connection could not be saved."
@@ -866,6 +1436,7 @@
       "eyebrow": "Security & AI Guardrails",
       "title": "Security and AI policies",
       "description": "Control external content, retention, and the work actions AI may propose at tenant scope.",
+      "configure": "Configure policies",
       "externalBanner": "External sender warning",
       "externalBannerDescription": "Clearly identify mail arriving from outside the organization.",
       "remoteImages": "Block remote images by default",
@@ -881,6 +1452,104 @@
       "humanApproval": "AI auto-execution is disabled at the system boundary. Every cross-app action requires user confirmation and target-app authorization.",
       "saved": "Mail policies were saved.",
       "saveError": "Mail policies could not be saved."
+    },
+    "operationsWorkspace": {
+      "sourceEvidence": "Updated {{time}}. The latest view does not include source-by-source coverage or a stale-since marker.",
+      "readOnly": "You have read-only access. Configuration and recovery actions require delegated mail administration.",
+      "notVerified": "Not verified",
+      "reportedConfigured": "Reported configured",
+      "reportedConfiguration": "Reported configuration",
+      "reportedAggregate": "Reported aggregate",
+      "configuredOn": "Configured on",
+      "configuredOff": "Configured off",
+      "unavailable": "Unavailable",
+      "evidence": {
+        "VERIFIED": "Evidence verified",
+        "REPORTED": "Reported value",
+        "PARTIAL": "Partial evidence",
+        "STALE": "Stale information",
+        "UNAVAILABLE": "Evidence unavailable"
+      },
+      "a01": {
+        "pageDescription": "Review customer and business impact first, then open connection details when needed.",
+        "exceptionsTitle": "Exceptions requiring review",
+        "exceptionsDescription": "Only conditions reported by the current operations view are shown.",
+        "failedDelivery": "Delivery failures reported",
+        "aggregateOnly": "Only a total is available; message-level outcome and recovery evidence are not available.",
+        "noReportedExceptions": "No exceptions were reported by the operations view.",
+        "noReportedExceptionsCaveat": "This does not verify provider health because source coverage is unavailable.",
+        "summaryTitle": "Reported workload"
+      },
+      "a02": {
+        "pageDescription": "Separate reported provider state from confirmed connection, sign-in, and synchronization readiness.",
+        "description": "Reported state is kept separate from confirmed connection, sign-in, and synchronization information.",
+        "runtime": "Connection service",
+        "credentials": "Sign-in readiness",
+        "lastSync": "Last synchronization",
+        "externalEvidenceMissing": "The available information cannot confirm that this external connection is ready to activate."
+      },
+      "a03": {
+        "title": "Shared inbox access",
+        "pageDescription": "Review workload and access information without treating a member role as permission for every action.",
+        "evidenceMissing": "Action permissions, delegated access status, and access-removal progress are unavailable. Access editing remains disabled here.",
+        "workload": "{{open}} open · {{overdue}} overdue"
+      },
+      "a04": {
+        "pageDescription": "Keep saved settings, effective values, and enforcement evidence visibly separate.",
+        "configuredNotEnforced": "These are saved configuration values. Enforcement and inspection evidence are unavailable, so no compliance percentage or enforced state is shown."
+      },
+      "a05": {
+        "eyebrow": "Retention governance",
+        "title": "Retention, legal hold, and purge",
+        "pageDescription": "Protect held content and require a current candidate list, separate approvals, and execution verification before purge.",
+        "unavailable": "Legal-hold inventory, purge candidates, two-person approval, execution, and verification evidence are unavailable. Destructive actions remain blocked.",
+        "retentionTitle": "Retention and legal hold",
+        "retentionDescription": "Saved policy is shown separately from enforcement evidence.",
+        "legalHolds": "Effective legal holds",
+        "holdDescription": "Held resources are excluded from purge. Releasing a hold never starts purge.",
+        "createHold": "Create legal hold",
+        "holdName": "Hold name",
+        "caseReference": "Case reference",
+        "scope": "Resource scope",
+        "expiresAt": "Expires at (optional)",
+        "releaseHold": "Release hold",
+        "noHolds": "No legal holds were returned.",
+        "configuredDays": "Configured {{count}} days",
+        "purge": "Purge candidates",
+        "purgeDescription": "A current immutable candidate snapshot and two distinct approvals are required.",
+        "purgeCandidates": "Purge candidates",
+        "preview": "Preview purge impact",
+        "approve": "Approve snapshot",
+        "execute": "Execute purge",
+        "gatesReady": "All destructive-action gates are satisfied.",
+        "blockers": {
+          "PURGE_API_UNAVAILABLE": "Purge execution path is unavailable",
+          "LEGAL_HOLD_ACTIVE": "Legal hold applies",
+          "LEGAL_HOLD_UNVERIFIED": "Legal-hold state is unverified",
+          "CANDIDATE_SNAPSHOT_REQUIRED": "Current candidate list required",
+          "POLICY_VERSION_REQUIRED": "Current policy version required",
+          "TWO_APPROVERS_REQUIRED": "Two distinct approvers required",
+          "AUTHORIZATION_STALE": "Current authorization required"
+        }
+      },
+      "a06": {
+        "eyebrow": "Delivery assurance",
+        "title": "Delivery audit and recovery",
+        "pageDescription": "Reconcile unknown outcomes first and preserve delivery outcome and duplicate-safety evidence.",
+        "aggregateOnly": "Only queue and failure totals are available. Message-level outcome and duplicate-safety evidence are required before recovery actions can be enabled.",
+        "unknown": "Unknown outcomes",
+        "evidenceBacked": "Evidence-backed delivery records",
+        "noEvidence": "No message-level recovery evidence is available.",
+        "reconcile": "Reconcile outcome",
+        "retryEvidenceReady": "Retry safety evidence is complete.",
+        "blockers": {
+          "RESULT_UNKNOWN_RECONCILE_FIRST": "Reconcile the outcome before deciding whether to retry",
+          "RECOVERY_EVIDENCE_NOT_CURRENT": "Refresh recovery evidence before deciding whether to retry",
+          "NOT_RETRYABLE": "Not eligible for retry",
+          "DUPLICATE_SAFETY_UNVERIFIED": "Duplicate-safety evidence is unverified",
+          "RECONCILIATION_UNAVAILABLE": "Outcome reconciliation is unavailable"
+        }
+      }
     }
   }
 }

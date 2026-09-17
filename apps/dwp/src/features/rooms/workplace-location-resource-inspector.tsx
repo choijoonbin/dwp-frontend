@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { WorkplaceResourcePhoto, WorkplaceResourceMediaEditor } from './workplace-resource-photo';
 import { WorkplaceResourceClosurePanel } from './workplace-resource-closure-panel';
+import { WorkplaceResourceQrPrint } from './workplace-resource-qr-print';
 import { useWorkplaceGovernanceTargetScope } from './workplace-governance-target-scope';
 import type { WorkplaceResource, WorkplaceSite, WorkplaceFloor } from '@dwp-frontend/shared-utils';
 
@@ -122,15 +123,23 @@ export function WorkplaceLocationResourceInspector({
             </Typography>
           </Box>
         </Box>
-        <ActionButton
-          intent="primary"
-          startIcon={<Pencil size={17} />}
-          disabled={!editAllowed}
-          onClick={onEdit}
-          sx={{ minHeight: 44 }}
-        >
-          {t('actions.edit')}
-        </ActionButton>
+        <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+          <ActionButton
+            intent="primary"
+            startIcon={<Pencil size={17} />}
+            disabled={!editAllowed}
+            onClick={onEdit}
+            sx={{ minHeight: 44, flex: 1 }}
+          >
+            {t('actions.edit')}
+          </ActionButton>
+          <WorkplaceResourceQrPrint
+            resource={resource}
+            site={site}
+            floor={floor}
+            disabled={!editAllowed}
+          />
+        </Stack>
         <Accordion
           disableGutters
           elevation={0}

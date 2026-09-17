@@ -1,18 +1,24 @@
 import {
+  Activity,
   Archive,
+  ArchiveX,
   Cable,
   CircleGauge,
+  Clock3,
   ContactRound,
+  FileText,
   FilePenLine,
   FolderTree,
   House,
   Inbox,
   ListFilter,
   MailCheck,
+  Search,
   Send,
   Settings2,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
   Trash2,
   UsersRound,
 } from 'lucide-react';
@@ -23,6 +29,9 @@ export type MailSection = 'start' | 'mailbox' | 'collaboration' | 'settings' | '
 export type MailView =
   | 'home'
   | 'inbox'
+  | 'search'
+  | 'follow-up'
+  | 'delivery'
   | 'sent'
   | 'drafts'
   | 'archive'
@@ -31,12 +40,16 @@ export type MailView =
   | 'folders'
   | 'shared'
   | 'contacts'
+  | 'actions'
   | 'accounts'
+  | 'templates'
   | 'organization'
   | 'admin-overview'
   | 'admin-connections'
   | 'admin-shared-inboxes'
-  | 'admin-policies';
+  | 'admin-policies'
+  | 'admin-retention'
+  | 'admin-delivery-audit';
 
 export type MailNavigationItem = ProductNavigationItem & {
   section: MailSection;
@@ -57,7 +70,10 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
     id: 'mailbox',
     items: [
       { section: 'mailbox', view: 'inbox', path: '/mail/inbox', icon: Inbox },
+      { section: 'mailbox', view: 'follow-up', path: '/mail/follow-up', icon: Clock3 },
+      { section: 'mailbox', view: 'search', path: '/mail/search', icon: Search },
       { section: 'mailbox', view: 'sent', path: '/mail/sent', icon: Send },
+      { section: 'mailbox', view: 'delivery', path: '/mail/delivery', icon: Activity },
       { section: 'mailbox', view: 'drafts', path: '/mail/drafts', icon: FilePenLine },
       { section: 'mailbox', view: 'archive', path: '/mail/archive', icon: Archive },
       { section: 'mailbox', view: 'spam', path: '/mail/spam', icon: ShieldAlert },
@@ -70,6 +86,7 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
     items: [
       { section: 'collaboration', view: 'contacts', path: '/mail/contacts', icon: ContactRound },
       { section: 'collaboration', view: 'shared', path: '/mail/shared', icon: UsersRound },
+      { section: 'collaboration', view: 'actions', path: '/mail/actions', icon: Sparkles },
     ],
   },
   {
@@ -82,6 +99,7 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
         icon: ListFilter,
       },
       { section: 'settings', view: 'accounts', path: '/mail/accounts', icon: MailCheck },
+      { section: 'settings', view: 'templates', path: '/mail/templates', icon: FileText },
     ],
   },
   {
@@ -116,6 +134,22 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
         view: 'admin-policies',
         path: '/mail/admin/policies',
         icon: Settings2,
+        requiredResourceKey: 'ADMIN.MAIL',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'admin',
+        view: 'admin-retention',
+        path: '/mail/admin/retention',
+        icon: ArchiveX,
+        requiredResourceKey: 'ADMIN.MAIL',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'admin',
+        view: 'admin-delivery-audit',
+        path: '/mail/admin/delivery-audit',
+        icon: Activity,
         requiredResourceKey: 'ADMIN.MAIL',
         requiredPermissionCode: 'VIEW',
       },

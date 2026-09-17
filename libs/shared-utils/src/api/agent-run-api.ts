@@ -63,6 +63,22 @@ export type DwaionUserRun = Omit<
 > &
   DwaionRunObservability;
 
+export type DwaionUserRunPage = {
+  runs: DwaionUserRun[];
+  snapshotAt: string | null;
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+export type DwaionUserRunPageOptions = {
+  state?: DwaionRunState;
+  limit?: number;
+  from?: string;
+  to?: string;
+  cursor?: string;
+  signal?: AbortSignal;
+};
+
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 const RUN_STATES = new Set<DwaionRunState>(['RUNNING', 'COMPLETED', 'FAILED']);
 const USER_RUN_KEYS = new Set([
@@ -95,17 +111,52 @@ export async function getDwaionUserRuns(
   state?: DwaionRunState,
   limit = 50
 ): Promise<DwaionUserRun[]> {
+  return (await getDwaionUserRunPage({ state, limit })).runs;
+}
+
+export async function getDwaionUserRunPage(
+  options: DwaionUserRunPageOptions = {}
+): Promise<DwaionUserRunPage> {
+  const { state, from, to, cursor, signal } = options;
   if (state && !RUN_STATES.has(state)) throw new TypeError('Agent run state is invalid.');
-  const boundedLimit = Math.max(1, Math.min(Math.trunc(limit), 100));
+  if (from && !isOffsetDate(from)) throw new TypeError('Agent run start time is invalid.');
+  if (to && !isOffsetDate(to)) throw new TypeError('Agent run end time is invalid.');
+  if (from && to && Date.parse(from) >= Date.parse(to)) {
+    throw new TypeError('Agent run time range is invalid.');
+  }
+  if (cursor !== undefined && (!cursor || cursor.length > 2048)) {
+    throw new TypeError('Agent run cursor is invalid.');
+  }
+  const boundedLimit = Math.max(1, Math.min(Math.trunc(options.limit ?? 50), 100));
   const params = new URLSearchParams({ limit: String(boundedLimit) });
   if (state) params.set('state', state);
-  const response = await axiosInstance.get<ApiResponse<unknown>>(
-    `/api/agent/v1/runs?${params.toString()}`
-  );
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+  if (cursor) params.set('cursor', cursor);
+  const response = await axiosInstance.get<
+    ApiResponse<unknown> & {
+      snapshotAt?: unknown;
+      nextCursor?: unknown;
+      hasMore?: unknown;
+    }
+  >(`/api/agent/v1/runs?${params.toString()}`, { signal });
   if (!Array.isArray(response.data.data) || !response.data.data.every(isUserRun)) {
     throw new HttpError('Agent activity response is invalid.', 502, response.data);
   }
-  return response.data.data;
+  const snapshotAt = response.data.snapshotAt ?? null;
+  const nextCursor = response.data.nextCursor ?? null;
+  const hasMore = response.data.hasMore ?? false;
+  if (
+    (snapshotAt !== null && !isDate(snapshotAt)) ||
+    (nextCursor !== null &&
+      (typeof nextCursor !== 'string' || !nextCursor || nextCursor.length > 2048)) ||
+    typeof hasMore !== 'boolean' ||
+    (hasMore && nextCursor === null) ||
+    (!hasMore && nextCursor !== null)
+  ) {
+    throw new HttpError('Agent activity page response is invalid.', 502, response.data);
+  }
+  return { runs: response.data.data, snapshotAt, nextCursor, hasMore };
 }
 
 export async function getDwaionUserRun(
@@ -310,4 +361,8 @@ function isNonnegativeInteger(value: unknown): value is number {
 
 function isDate(value: unknown): value is string {
   return typeof value === 'string' && !Number.isNaN(Date.parse(value));
+}
+
+function isOffsetDate(value: string): boolean {
+  return isDate(value) && /(Z|[+-]\d{2}:\d{2})$/iu.test(value);
 }

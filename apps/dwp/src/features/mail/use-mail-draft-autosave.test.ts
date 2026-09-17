@@ -10,8 +10,8 @@ const { createMailDraft, saveMailDraft } = vi.hoisted(() => ({
 }));
 
 vi.mock('@dwp-frontend/shared-utils', () => ({
-  createMailDraft,
-  saveMailDraft,
+  createAdvancedMailDraft: createMailDraft,
+  saveAdvancedMailDraft: saveMailDraft,
   HttpError: class HttpError extends Error {
     constructor(
       message: string,
@@ -30,7 +30,7 @@ import {
   type MailDraftFields,
 } from './use-mail-draft-autosave';
 
-import type { MailThreadDetail } from '@dwp-frontend/shared-utils';
+import { HttpError, type MailThreadDetail } from '@dwp-frontend/shared-utils';
 
 type Autosave = ReturnType<typeof useMailDraftAutosave>;
 
@@ -70,11 +70,13 @@ function Harness({
   initialThreadId,
   initialVersion,
   initiallySaved,
+  onSaved,
 }: {
   fields: MailDraftFields;
   initialThreadId?: string;
   initialVersion?: number;
   initiallySaved?: boolean;
+  onSaved?: (detail: MailThreadDetail) => void;
 }) {
   latest = useMailDraftAutosave({
     enabled: true,
@@ -83,6 +85,7 @@ function Harness({
     initialVersion,
     initiallySaved,
     delayMs: 1_750,
+    onSaved,
   });
   return null;
 }
@@ -164,6 +167,56 @@ describe('mail draft autosave', () => {
     expect(createMailDraft).toHaveBeenCalledTimes(2);
     expect(createMailDraft.mock.calls[1]?.[0].idempotencyKey).toBe(firstInput.idempotencyKey);
     expect(latest.identity).toEqual({ threadId: 'draft-2', version: 1 });
+  });
+
+  it('does not publish a late save result after its editor session unmounts', async () => {
+    let release!: (value: MailThreadDetail) => void;
+    const pending = new Promise<MailThreadDetail>((resolve) => {
+      release = resolve;
+    });
+    const onSaved = vi.fn();
+    createMailDraft.mockReturnValue(pending);
+
+    await act(async () =>
+      root.render(
+        strictHarness({
+          fields: { toEmail: '', subject: 'Owned by the old session', body: '' },
+          onSaved,
+        })
+      )
+    );
+    await act(async () => vi.advanceTimersByTimeAsync(1_750));
+    expect(createMailDraft).toHaveBeenCalledTimes(1);
+
+    await act(async () => root.render(null));
+    await act(async () => release(detail('draft-old-session', 1)));
+
+    expect(onSaved).not.toHaveBeenCalled();
+  });
+
+  it('creates a new command after a rejected payload is corrected', async () => {
+    const initial = { toEmail: 'invalid', subject: 'Planning note', body: 'Draft body' };
+    createMailDraft
+      .mockRejectedValueOnce(new HttpError('Invalid recipient', 400))
+      .mockResolvedValueOnce(detail('draft-3', 1));
+    await act(async () => root.render(strictHarness({ fields: initial })));
+    await act(async () => vi.advanceTimersByTimeAsync(1_750));
+    expect(latest.status).toBe('ERROR');
+    const rejectedInput = createMailDraft.mock.calls[0]?.[0];
+
+    await act(async () =>
+      root.render(strictHarness({ fields: { ...initial, toEmail: 'mina.kim@sk.com' } }))
+    );
+    await act(async () => vi.advanceTimersByTimeAsync(1_750));
+
+    expect(createMailDraft).toHaveBeenCalledTimes(2);
+    expect(createMailDraft.mock.calls[1]?.[0]).toMatchObject({
+      toEmail: 'mina.kim@sk.com',
+    });
+    expect(createMailDraft.mock.calls[1]?.[0].idempotencyKey).not.toBe(
+      rejectedInput.idempotencyKey
+    );
+    expect(latest.status).toBe('SAVED');
   });
 
   it('accepts partial draft content while retaining full send validation', () => {

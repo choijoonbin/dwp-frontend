@@ -267,7 +267,8 @@ describe('Home contribution provider route and date contracts', () => {
     expect(readOnly.buckets.action).toEqual([]);
     expect(readOnly.buckets.timeline[0]).toMatchObject({
       id: 'workplace:ready:readonly',
-      route: '/workplace/my-bookings',
+      route:
+        '/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE',
     });
 
     const writable = buildHomeContributionModel([result], {

@@ -459,17 +459,13 @@ export function useApprovalSignatureProviderDiagnostics() {
         assertPrepared(prepared);
         return await dispatchProbe((execution) => {
           assertPrepared(prepared);
-          return probeApprovalSignatureProviders(
-            prepared.input,
-            execution,
-            {
-              ...pinnedAuthority(prepared.overview, contextScopeKey!, expectedDecisionRevision),
-              beforeDispatch: () => {
-                assertPrepared(prepared);
-                checks += 1;
-              },
-            }
-          );
+          return probeApprovalSignatureProviders(prepared.input, execution, {
+            ...pinnedAuthority(prepared.overview, contextScopeKey!, expectedDecisionRevision),
+            beforeDispatch: () => {
+              assertPrepared(prepared);
+              checks += 1;
+            },
+          });
         });
       } catch (error) {
         if (mounted.current && commandScope.isCurrent(prepared.binding)) {
@@ -520,17 +516,13 @@ export function useApprovalSignatureProviderDiagnostics() {
         assertPrepared(prepared);
         return await dispatchKmsProbe((execution) => {
           assertPrepared(prepared);
-          return probeApprovalSignatureProviderKms(
-            prepared.input,
-            execution,
-            {
-              ...pinnedAuthority(prepared.overview, contextScopeKey!, expectedDecisionRevision),
-              beforeDispatch: () => {
-                assertPrepared(prepared);
-                checks += 1;
-              },
-            }
-          );
+          return probeApprovalSignatureProviderKms(prepared.input, execution, {
+            ...pinnedAuthority(prepared.overview, contextScopeKey!, expectedDecisionRevision),
+            beforeDispatch: () => {
+              assertPrepared(prepared);
+              checks += 1;
+            },
+          });
         });
       } catch (error) {
         if (mounted.current && commandScope.isCurrent(prepared.binding)) {

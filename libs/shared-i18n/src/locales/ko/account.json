@@ -24,6 +24,39 @@
     "notifications": "알림",
     "managed": "관리형 설정"
   },
+  "settingsHome": {
+    "eyebrow": "내 계정",
+    "title": "개인 설정",
+    "description": "내 계정, 보안, 화면과 업무 환경 설정을 검색하고 관리합니다.",
+    "providerDescription": "프로바이더 운영자 계정에 허용된 개인 환경과 보안 설정을 관리합니다.",
+    "providerBoundary": "고객 테넌트의 홈, 알림 및 조직 관리값은 이 계정 설정에 표시되지 않습니다.",
+    "availableCount": "현재 범위 {{count}}개",
+    "searchLabel": "개인 설정 검색",
+    "searchPlaceholder": "보안, 언어, 알림 등 검색",
+    "searchHelp": "현재 신원과 범위에서 열 수 있는 설정만 검색합니다.",
+    "emptyTitle": "일치하는 설정이 없습니다",
+    "emptyDescription": "검색어를 줄이거나 다른 표현으로 다시 검색하세요.",
+    "items": {
+      "profile": "내 프로필의 정본 출처와 계정 범위를 확인합니다.",
+      "security": "로그인 정책, 활성 세션과 임시 특권 접근을 확인합니다.",
+      "appearance": "색상 모드와 작업 밀도를 선택합니다.",
+      "accessibility": "대비, 움직임과 링크 표시 방식을 조정합니다.",
+      "language": "제품 언어, 시간대와 날짜·숫자 형식을 선택합니다.",
+      "home": "개인 홈의 앱과 위젯 구성을 관리합니다.",
+      "notifications": "알림 채널, 집중 시간과 앱별 전달 규칙을 관리합니다.",
+      "managed": "조직이 관리하는 값과 허용된 예외 요청을 확인합니다."
+    },
+    "keywords": {
+      "profile": "계정 개인정보 정본 HR IdP",
+      "security": "MFA 패스키 로그인 세션 JIT 특권",
+      "appearance": "테마 다크 라이트 밀도",
+      "accessibility": "고대비 동작 줄이기 링크",
+      "language": "지역 시간대 날짜 숫자 형식",
+      "home": "홈 앱 위젯",
+      "notifications": "알림 채널 집중 시간 조용한 시간",
+      "managed": "조직 정책 예외 적용값"
+    }
+  },
   "sections": {
     "appearance": {
       "title": "화면 모양",

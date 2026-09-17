@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   displayNotificationActorLabel,
+  groupNotificationItemsForPresentation,
   groupNotificationStream,
   isNotificationShortcutTarget,
   kpiView,
@@ -9,6 +10,7 @@ import {
   notificationKpiCount,
   notificationMatchesInboxScope,
   optimisticNotificationSummary,
+  orderNotificationItemsForPresentation,
   resolveMessagingReplyTarget,
 } from './notification-inbox-model';
 import { optimisticTriageItem } from './notification-model';
@@ -66,6 +68,51 @@ describe('notification inbox model', () => {
       'CONVERSATIONS',
       'UPDATES',
     ]);
+  });
+
+  it('groups presentation by source in a stable display order', () => {
+    const approvals = item({ notificationId: 'approval' });
+    const mail = item({
+      notificationId: 'mail',
+      source: { appKey: 'mail', appName: 'Mail' },
+    });
+
+    const groups = groupNotificationItemsForPresentation([mail, approvals], 'SOURCE');
+
+    expect(groups.map(({ key, label, items }) => ({ key, label, ids: items.map(itemId) }))).toEqual(
+      [
+        { key: 'source-0', label: 'Mail', ids: ['mail'] },
+        { key: 'source-1', label: '전자결재', ids: ['approval'] },
+      ]
+    );
+    expect(orderNotificationItemsForPresentation([mail, approvals], 'SOURCE').map(itemId)).toEqual([
+      'mail',
+      'approval',
+    ]);
+  });
+
+  it('groups by bounded context references without exposing opaque identifiers', () => {
+    const groups = groupNotificationItemsForPresentation(
+      [
+        item({ notificationId: 'first', threadKey: 'approval:budget-43' }),
+        item({ notificationId: 'second', threadKey: 'approval:budget-43' }),
+        item({ notificationId: 'third', threadKey: 'approval:budget-44' }),
+        item({ notificationId: 'fallback', threadKey: 'unsafe context key' }),
+      ],
+      'CONTEXT',
+      { context: 'related work' }
+    );
+
+    expect(groups.map(({ key, label, items }) => ({ key, label, ids: items.map(itemId) }))).toEqual(
+      [
+        { key: 'context-0', label: '전자결재', ids: ['fallback'] },
+        { key: 'context-1', label: '전자결재 related work 1', ids: ['first', 'second'] },
+        { key: 'context-2', label: '전자결재 related work 2', ids: ['third'] },
+      ]
+    );
+    const visibleGroupMetadata = groups.map(({ key, label }) => ({ key, label }));
+    expect(JSON.stringify(visibleGroupMetadata)).not.toContain('approval:budget-43');
+    expect(JSON.stringify(visibleGroupMetadata)).not.toContain('approval:budget-44');
   });
 
   it('shows human actor names but conceals internal actor references', () => {
@@ -208,3 +255,7 @@ describe('notification inbox model', () => {
     expect(isNotificationShortcutTarget(notificationTitle)).toBe(false);
   });
 });
+
+function itemId(notification: NotificationItem): string {
+  return notification.notificationId;
+}

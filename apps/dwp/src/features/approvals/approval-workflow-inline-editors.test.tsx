@@ -184,14 +184,14 @@ describe('approval workflow mobile inspector focus', () => {
     await act(async () =>
       fireEvent.click(getByRole(container, 'button', { name: 'admin.studio.backToRoute' }))
     );
-    expect(document.activeElement).toBe(
-      container.querySelector('[data-approval-stage="1"]')
-    );
+    expect(document.activeElement).toBe(container.querySelector('[data-approval-stage="1"]'));
 
     await act(async () =>
       fireEvent.click(getByRole(container, 'button', { name: 'admin.studio.stepName' }))
     );
-    expect(document.activeElement).toBe(getByLabelText(container, 'admin.studio.stepName'));
+    expect(document.activeElement).toBe(
+      getByRole(container, 'textbox', { name: 'admin.studio.stepName' })
+    );
   });
 
   it('focuses typed stage properties, restores the exact row and jumps to metadata errors', async () => {

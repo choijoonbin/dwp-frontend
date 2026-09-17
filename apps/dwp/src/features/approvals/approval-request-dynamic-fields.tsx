@@ -15,6 +15,7 @@ type ApprovalRequestDynamicFieldsProps = {
   korean: boolean;
   idPrefix: string;
   disabled?: boolean;
+  invalidPaths?: ReadonlySet<string>;
   onChange: (key: string, value: string) => void;
 };
 
@@ -32,6 +33,7 @@ export function ApprovalRequestDynamicField({
   korean,
   idPrefix,
   disabled,
+  invalid,
   onChange,
 }: {
   field: ApprovalFormField;
@@ -39,6 +41,7 @@ export function ApprovalRequestDynamicField({
   korean: boolean;
   idPrefix: string;
   disabled?: boolean;
+  invalid?: boolean;
   onChange: (value: string) => void;
 }) {
   const { t } = useTranslation('approvals');
@@ -47,11 +50,12 @@ export function ApprovalRequestDynamicField({
   );
   const help = korean ? field.helpKo : field.helpEn;
   const id = `${idPrefix}-${field.key}`;
+  const errorMessage = invalid ? t('requests.typed.fieldInvalid', { field: label }) : undefined;
 
   if (field.type === 'SELECT') {
     const labelId = `${id}-label`;
     return (
-      <FormControl fullWidth required={field.required} disabled={disabled}>
+      <FormControl fullWidth required={field.required} disabled={disabled} error={invalid}>
         <InputLabel id={labelId}>{label}</InputLabel>
         <Select
           id={id}
@@ -66,7 +70,9 @@ export function ApprovalRequestDynamicField({
             </MenuItem>
           ))}
         </Select>
-        <FormHelperText>{help || t('requests.template.fieldHelp.SELECT')}</FormHelperText>
+        <FormHelperText>
+          {errorMessage || help || t('requests.template.fieldHelp.SELECT')}
+        </FormHelperText>
       </FormControl>
     );
   }
@@ -80,6 +86,7 @@ export function ApprovalRequestDynamicField({
         value={value || null}
         onValueChange={(next) => onChange(next ?? '')}
         supportingText={help}
+        errorMessage={errorMessage}
       />
     );
   }
@@ -98,6 +105,7 @@ export function ApprovalRequestDynamicField({
       supportingText={
         help || (field.type === 'USER' ? t('requests.template.fieldHelp.USER') : undefined)
       }
+      errorMessage={errorMessage}
     />
   );
 }
@@ -108,17 +116,20 @@ export function ApprovalRequestDynamicFields({
   korean,
   idPrefix,
   disabled,
+  invalidPaths,
   onChange,
 }: ApprovalRequestDynamicFieldsProps) {
   return fields.map((field) => (
-    <ApprovalRequestDynamicField
-      key={field.key}
-      field={field}
-      value={values[field.key] ?? ''}
-      korean={korean}
-      idPrefix={idPrefix}
-      disabled={disabled}
-      onChange={(value) => onChange(field.key, value)}
-    />
+    <div key={field.key} data-approval-field-path={field.key}>
+      <ApprovalRequestDynamicField
+        field={field}
+        value={values[field.key] ?? ''}
+        korean={korean}
+        idPrefix={idPrefix}
+        disabled={disabled}
+        invalid={invalidPaths?.has(field.key)}
+        onChange={(value) => onChange(field.key, value)}
+      />
+    </div>
   ));
 }

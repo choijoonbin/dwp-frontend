@@ -12,7 +12,9 @@ import {
 import {
   expectNoHorizontalOverflow,
   fulfillSuccess,
+  mockNotificationAttentionR2,
   mockNotificationCenter,
+  mockNotificationNoiseQuality,
   mockNotificationPreferences,
   NOTIFICATION_PERMISSION,
 } from './support/notification-fixtures';
@@ -69,6 +71,7 @@ test('Mobile browser retains home, detail and receiving settings workflows', asy
 
 for (const width of [1440, 1280, 390, 320]) {
   test(`Notification design and controls at ${width}px`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
     test.skip(testInfo.project.name !== 'chromium', 'Explicit viewport matrix.');
     await mockShellSession(page, ['WORKSPACE_MEMBER', 'PRODUCT_ADMIN'], {
       locale: 'ko',
@@ -76,6 +79,8 @@ for (const width of [1440, 1280, 390, 320]) {
     });
     await mockNotificationCenter(page);
     await mockNotificationPreferences(page);
+    await mockNotificationAttentionR2(page);
+    await mockNotificationNoiseQuality(page);
     await mockNotificationAdminGovernance(page);
     await mockNotificationOperationsAndSuppressions(page);
     await page.setViewportSize({ width, height: 960 });
@@ -83,8 +88,8 @@ for (const width of [1440, 1280, 390, 320]) {
     for (const route of ROUTES) {
       await page.goto(route);
       const frame = page.getByTestId('notification-page-frame');
-      await expect(frame).toBeVisible();
-      await expect(frame.getByRole('heading', { level: 1 })).toBeVisible();
+      await expect(frame).toBeVisible({ timeout: 15_000 });
+      await expect(frame.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 15_000 });
       if (route === '/notifications/home') {
         const card = frame.locator('[data-notification-card]').first();
         await expect(card).toBeVisible();

@@ -215,6 +215,7 @@ async function session(page: Page, sealed = false) {
           'Content-Length': String(ATTACHMENT_BYTES.length),
           'X-Content-SHA256': ATTACHMENT_SHA,
           'X-Content-Type-Options': 'nosniff',
+          'Access-Control-Expose-Headers': 'X-Content-SHA256, X-Content-Type-Options',
         },
       })
   );

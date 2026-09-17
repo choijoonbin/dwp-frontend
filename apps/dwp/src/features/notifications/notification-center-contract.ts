@@ -1,6 +1,11 @@
 import type { NotificationView } from '@dwp-frontend/shared-utils/api/notification-api';
 
-import type { CenterFilters, NotificationCenterScope } from './notification-filter-model';
+import type {
+  CenterFilters,
+  NotificationCenterScope,
+  NotificationContextFilter,
+  NotificationIncludedType,
+} from './notification-filter-model';
 
 export type NotificationCenterProps = {
   initialView?: NotificationView;
@@ -10,6 +15,9 @@ export type NotificationCenterProps = {
   initialAppKey?: string;
   initialPriority?: CenterFilters['priority'];
   initialReason?: CenterFilters['reason'];
+  initialAttentionEffect?: CenterFilters['attentionEffect'];
+  initialIncludedTypes?: NotificationIncludedType[];
+  initialContextFilters?: NotificationContextFilter[];
   onOpenSettings: () => void;
   onOpenTarget?: (href: string) => void;
   onViewChange?: (view: NotificationView) => void;

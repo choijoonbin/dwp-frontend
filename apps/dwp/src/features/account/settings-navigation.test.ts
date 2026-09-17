@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  ACCOUNT_SETTINGS_HOME_PATH,
   getAccountNavigationGroups,
   isAccountSettingsSectionAvailable,
   resolveProviderAccountRouteDecision,
 } from './settings-navigation';
 
 describe('provider account settings navigation', () => {
+  it('keeps the settings entry on the searchable settings home', () => {
+    expect(ACCOUNT_SETTINGS_HOME_PATH).toBe('/account/settings');
+  });
+
   it('keeps only identity and provider-safe personal preferences for provider identities', () => {
     expect(
       getAccountNavigationGroups(true).flatMap((group) => group.items.map((item) => item.key))

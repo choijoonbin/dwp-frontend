@@ -97,7 +97,18 @@ export function WorkHubFilterControls({
               ),
             },
           }}
-          sx={{ flex: '1 1 190px', minWidth: 160 }}
+          sx={{
+            flex: '1 1 190px',
+            minWidth: 160,
+            '& .MuiInputBase-input': {
+              backgroundColor: 'background.paper',
+              color: 'text.primary',
+            },
+            '& .MuiInputBase-input::placeholder': {
+              color: 'text.secondary',
+              opacity: 1,
+            },
+          }}
         />
         <ToggleButtonGroup
           exclusive

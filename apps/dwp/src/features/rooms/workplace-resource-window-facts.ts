@@ -99,5 +99,20 @@ export function workplaceResourceWindowFacts(
         kind,
       });
   }
-  return { policy, segments, startsAt: context.startsAt, endsAt: context.endsAt };
+  const minutesByKind: Record<WorkplaceWindowSegment['kind'], number> = {
+    RESERVED: 0,
+    UNRESERVED: 0,
+    CLOSED: 0,
+  };
+  for (const segment of segments) {
+    minutesByKind[segment.kind] +=
+      (Date.parse(segment.endsAt) - Date.parse(segment.startsAt)) / 60_000;
+  }
+  return {
+    policy,
+    segments,
+    minutesByKind,
+    startsAt: context.startsAt,
+    endsAt: context.endsAt,
+  };
 }

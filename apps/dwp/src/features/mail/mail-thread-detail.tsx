@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
+  CheckCircle2,
   Clock3,
   MailOpen,
   MessageSquareText,
-  Paperclip,
   RotateCcw,
   Send,
   ShieldAlert,
@@ -13,15 +13,17 @@ import {
   UserRoundCheck,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   addMailComment,
   applyMailThreadAction,
   assignMailThread,
   decideMailProposal,
+  getMailHome,
   getMailThread,
+  HttpError,
   replyToMailThread,
-  retryMailDelivery,
+  resolveIdempotentMutationIntent,
   snoozeMailThread,
   useAuth,
   useToast,
@@ -44,12 +46,51 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { mailRelativeTime } from './mail-components';
+import { mailComposeNavigationState } from './mail-compose-navigation';
 import { MailDraftEditor } from './mail-draft-editor';
+import { mailForwardDraft } from './mail-message-presentation';
 import { MailProposalCard, MailProposalReviewDialog } from './mail-proposal-card';
+import { mailReplyAllRecipients } from './mail-reply-recipients';
+import {
+  clearMailRejectedReplyReview,
+  clearMailSendAttempt,
+  mailReplySendScope,
+  mailSendCustodyOwner,
+  mailSendErrorDisposition,
+  readMailRejectedReplyReview,
+  readMailSendAttempt,
+  rememberMailRejectedReplyReview,
+  rememberMailSendAttempt,
+} from './mail-send-attempt';
 import { MailSnoozeDialog } from './mail-snooze-dialog';
 import { MailThreadLifecycleActions } from './mail-thread-lifecycle-actions';
+import { MailThreadMessageCard } from './mail-thread-message-card';
 
-import type { MailActionProposal, MailThread, MailThreadAction } from '@dwp-frontend/shared-utils';
+import type {
+  IdempotentMutationIntent,
+  MailActionProposal,
+  MailRecipient,
+  MailSharedInboxAction,
+  MailThread,
+  MailThreadAction,
+  MailThreadDetail,
+} from '@dwp-frontend/shared-utils';
+
+function permitsSharedInboxAction(
+  detail: MailThreadDetail | undefined,
+  action: MailSharedInboxAction
+) {
+  if (!detail) return false;
+  if (!detail.thread.sharedInboxId) return true;
+  return detail.sharedInboxActions?.includes(action) === true;
+}
+
+type ReplySendPayload = Readonly<{
+  threadId: string;
+  body: string;
+  mode: 'REPLY' | 'REPLY_ALL';
+  recipients?: MailRecipient[];
+}>;
 
 export function MailThreadDetailPane({
   threadId,
@@ -64,14 +105,44 @@ export function MailThreadDetailPane({
 }) {
   const { t, i18n } = useTranslation('mail');
   const auth = useAuth();
+  const custodyOwner = mailSendCustodyOwner(auth.user);
   const toast = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
-  const [reply, setReply] = useState('');
+  const initialReplyScope = threadId ? mailReplySendScope(custodyOwner, threadId) : null;
+  const initialReplyAttempt = initialReplyScope
+    ? readMailSendAttempt<ReplySendPayload>(initialReplyScope)
+    : null;
+  const initialRejectedReply =
+    initialReplyScope && !initialReplyAttempt
+      ? readMailRejectedReplyReview(initialReplyScope)
+      : null;
+  const [reply, setReply] = useState(
+    initialReplyAttempt?.payload.body ?? initialRejectedReply?.body ?? ''
+  );
+  const [replyMode, setReplyMode] = useState<'REPLY' | 'REPLY_ALL'>(
+    initialReplyAttempt?.payload.mode ?? initialRejectedReply?.mode ?? 'REPLY'
+  );
+  const [replyResolutionPending, setReplyResolutionPending] = useState(
+    Boolean(initialReplyAttempt)
+  );
+  const [replyRejected, setReplyRejected] = useState(Boolean(initialRejectedReply));
   const [comment, setComment] = useState('');
   const [assigneeId, setAssigneeId] = useState<number | ''>('');
   const [snoozeOpen, setSnoozeOpen] = useState(false);
   const [proposalToAccept, setProposalToAccept] = useState<MailActionProposal | null>(null);
+  const [loadedRemoteImages, setLoadedRemoteImages] = useState<Set<string>>(() => new Set());
+  const [threadConflict, setThreadConflict] = useState(false);
+  const replyIdentityRef = useRef<IdempotentMutationIntent | null>(
+    initialReplyAttempt?.intent ?? null
+  );
+  const activeReplyScopeRef = useRef<string | null>(null);
+  const activeReplyOwnerRef = useRef<string | null>(null);
+  const currentThreadIdRef = useRef(threadId);
+  const currentCustodyOwnerRef = useRef(custodyOwner);
+  currentThreadIdRef.current = threadId;
+  currentCustodyOwnerRef.current = custodyOwner;
   const query = useQuery({
     queryKey: ['mail', 'thread', threadId],
     queryFn: () => getMailThread(threadId!),
@@ -80,28 +151,75 @@ export function MailThreadDetailPane({
     retry: 1,
     refetchInterval: (mailQuery) => {
       const detail = mailQuery.state.data;
-      return detail?.messages.some((message) =>
-        ['QUEUED', 'SENDING', 'RETRYING'].includes(message.deliveryState)
-      )
-        ? 1_500
-        : false;
+      if (
+        detail?.messages.some((message) =>
+          ['QUEUED', 'SENDING', 'RETRYING'].includes(message.deliveryState)
+        )
+      ) {
+        return 1_500;
+      }
+      return detail?.thread.sharedInboxId ? 5_000 : false;
     },
+  });
+  const replyAccountQuery = useQuery({
+    queryKey: ['mail', 'home', 'reply-account', query.data?.thread.accountId],
+    queryFn: () => getMailHome({ accountId: query.data!.thread.accountId }),
+    enabled: Boolean(query.data?.thread.accountId),
+    staleTime: 60_000,
+    retry: 1,
   });
   useEffect(() => {
     setAssigneeId(query.data?.thread.assignedUserId ?? '');
   }, [query.data?.thread.assignedUserId, query.data?.thread.threadId]);
+  useEffect(() => {
+    const scope = threadId ? mailReplySendScope(custodyOwner, threadId) : null;
+    const attempt = scope ? readMailSendAttempt<ReplySendPayload>(scope) : null;
+    const rejected = scope && !attempt ? readMailRejectedReplyReview(scope) : null;
+    replyIdentityRef.current = attempt?.intent ?? null;
+    setReply(attempt?.payload.body ?? rejected?.body ?? '');
+    setReplyMode(attempt?.payload.mode ?? rejected?.mode ?? 'REPLY');
+    setReplyResolutionPending(Boolean(attempt));
+    setReplyRejected(Boolean(rejected));
+    setLoadedRemoteImages(new Set());
+    setThreadConflict(false);
+  }, [custodyOwner, threadId]);
+  useEffect(() => {
+    const detail = query.data;
+    if (!threadId || !detail?.thread.sharedInboxId) return;
+    const canContinueReply =
+      permitsSharedInboxAction(detail, 'REPLY') && permitsSharedInboxAction(detail, 'SEND_AS');
+    if (!canContinueReply) {
+      const scope = mailReplySendScope(custodyOwner, threadId);
+      clearMailSendAttempt(scope);
+      clearMailRejectedReplyReview(scope);
+      replyIdentityRef.current = null;
+      setReply('');
+      setReplyMode('REPLY');
+      setReplyResolutionPending(false);
+      setReplyRejected(false);
+    }
+    if (!permitsSharedInboxAction(detail, 'COMMENT')) setComment('');
+    if (!permitsSharedInboxAction(detail, 'ASSIGN')) setAssigneeId('');
+  }, [custodyOwner, query.data, threadId]);
   const refresh = async (thread: MailThread) => {
     onUpdated?.(thread);
     await queryClient.invalidateQueries({ queryKey: ['mail'] });
   };
   const actionMutation = useMutation({
+    onMutate: () => setThreadConflict(false),
     mutationFn: (action: MailThreadAction) =>
       applyMailThreadAction(threadId!, action, query.data!.thread.version),
     onSuccess: async (detail) => {
       queryClient.setQueryData(['mail', 'thread', threadId], detail);
       await refresh(detail.thread);
     },
-    onError: () => toast.error(t('thread.actionError')),
+    onError: (error) => {
+      if (error instanceof HttpError && error.status === 409) {
+        setThreadConflict(true);
+        void query.refetch();
+      }
+      toast.error(t('thread.actionError'));
+    },
   });
   const snoozeMutation = useMutation({
     mutationFn: (until: string) => snoozeMailThread(threadId!, until, query.data!.thread.version),
@@ -114,17 +232,107 @@ export function MailThreadDetailPane({
     onError: () => toast.error(t('thread.actionError')),
   });
   const replyMutation = useMutation({
-    mutationFn: () => replyToMailThread(threadId!, reply.trim(), crypto.randomUUID()),
+    mutationFn: () => {
+      if (
+        !permitsSharedInboxAction(query.data, 'REPLY') ||
+        !permitsSharedInboxAction(query.data, 'SEND_AS')
+      ) {
+        throw new Error('Shared inbox reply permission is required.');
+      }
+      const scope = mailReplySendScope(custodyOwner, threadId!);
+      const storedAttempt = readMailSendAttempt<ReplySendPayload>(scope);
+      const replyAllRecipients = mailReplyAllRecipients(query.data!.messages, [
+        auth.user?.email,
+        replyAccountQuery.data?.accounts.find(
+          (account) => account.accountId === query.data!.thread.accountId
+        )?.emailAddress,
+      ]);
+      const payload = storedAttempt?.payload ?? {
+        threadId: threadId!,
+        body: reply.trim(),
+        mode: replyMode,
+        recipients: replyMode === 'REPLY_ALL' ? replyAllRecipients : undefined,
+      };
+      const replyIdentity =
+        storedAttempt?.intent ?? resolveIdempotentMutationIntent(replyIdentityRef.current, payload);
+      replyIdentityRef.current = replyIdentity;
+      activeReplyScopeRef.current = scope;
+      activeReplyOwnerRef.current = custodyOwner;
+      clearMailRejectedReplyReview(scope);
+      rememberMailSendAttempt(scope, { intent: replyIdentity, payload });
+      return replyToMailThread(payload.threadId, payload.body, replyIdentity.key, {
+        mode: payload.mode ?? 'REPLY',
+        recipients: payload.recipients,
+      });
+    },
     onSuccess: async (detail) => {
-      setReply('');
-      queryClient.setQueryData(['mail', 'thread', threadId], detail);
+      const completedScope = activeReplyScopeRef.current;
+      const completedOwner = activeReplyOwnerRef.current;
+      if (completedScope) clearMailSendAttempt(completedScope);
+      if (completedScope) clearMailRejectedReplyReview(completedScope);
+      activeReplyScopeRef.current = null;
+      activeReplyOwnerRef.current = null;
+      if (currentCustodyOwnerRef.current !== completedOwner) return;
+      if (currentThreadIdRef.current === detail.thread.threadId) {
+        setReplyResolutionPending(false);
+        setReplyRejected(false);
+        replyIdentityRef.current = null;
+        setReply('');
+        setReplyMode('REPLY');
+      }
+      queryClient.setQueryData(['mail', 'thread', detail.thread.threadId], detail);
       await refresh(detail.thread);
       toast.success(t('thread.replySent'));
     },
-    onError: () => toast.error(t('thread.replyError')),
+    onError: (error) => {
+      const failedScope = activeReplyScopeRef.current;
+      const failedOwner = activeReplyOwnerRef.current;
+      const failedPrefix = failedOwner ? `${failedOwner}:reply:` : null;
+      const failedThreadId =
+        failedPrefix && failedScope?.startsWith(failedPrefix)
+          ? failedScope.slice(failedPrefix.length)
+          : null;
+      if (mailSendErrorDisposition(error) === 'UNCONFIRMED') {
+        if (currentCustodyOwnerRef.current !== failedOwner) return;
+        if (currentThreadIdRef.current === failedThreadId) {
+          setReplyResolutionPending(true);
+        }
+        toast.error(t('thread.replyOutcomeUnconfirmed'));
+        return;
+      }
+      const rejectedAttempt = failedScope
+        ? readMailSendAttempt<ReplySendPayload>(failedScope)
+        : null;
+      if (failedScope && rejectedAttempt && failedThreadId) {
+        rememberMailRejectedReplyReview(failedScope, {
+          threadId: failedThreadId,
+          body: rejectedAttempt.payload.body,
+          mode: rejectedAttempt.payload.mode,
+          recipients: rejectedAttempt.payload.recipients,
+        });
+      }
+      if (failedScope) clearMailSendAttempt(failedScope);
+      activeReplyScopeRef.current = null;
+      activeReplyOwnerRef.current = null;
+      if (
+        currentCustodyOwnerRef.current === failedOwner &&
+        currentThreadIdRef.current === failedThreadId
+      ) {
+        replyIdentityRef.current = null;
+        setReplyResolutionPending(false);
+        if (rejectedAttempt) setReply(rejectedAttempt.payload.body);
+        if (rejectedAttempt) setReplyMode(rejectedAttempt.payload.mode ?? 'REPLY');
+        setReplyRejected(true);
+      }
+    },
   });
   const commentMutation = useMutation({
-    mutationFn: () => addMailComment(threadId!, comment.trim()),
+    mutationFn: () => {
+      if (!permitsSharedInboxAction(query.data, 'COMMENT')) {
+        throw new Error('Shared inbox comment permission is required.');
+      }
+      return addMailComment(threadId!, comment.trim());
+    },
     onSuccess: async (detail) => {
       setComment('');
       queryClient.setQueryData(['mail', 'thread', threadId], detail);
@@ -135,6 +343,9 @@ export function MailThreadDetailPane({
   });
   const assignmentMutation = useMutation({
     mutationFn: () => {
+      if (!permitsSharedInboxAction(query.data, 'ASSIGN')) {
+        throw new Error('Shared inbox assignment permission is required.');
+      }
       const member = query.data?.sharedInboxMembers.find((item) => item.userId === assigneeId);
       if (!member || !query.data) throw new Error('Shared inbox assignee is required.');
       return assignMailThread(
@@ -149,16 +360,13 @@ export function MailThreadDetailPane({
       await refresh(detail.thread);
       toast.success(t('thread.assignmentSaved'));
     },
-    onError: () => toast.error(t('thread.assignmentError')),
-  });
-  const retryMutation = useMutation({
-    mutationFn: (messageId: string) => retryMailDelivery(threadId!, messageId),
-    onSuccess: async (detail) => {
-      queryClient.setQueryData(['mail', 'thread', threadId], detail);
-      await refresh(detail.thread);
-      toast.success(t('delivery.retryQueued'));
+    onError: (error) => {
+      if (error instanceof HttpError && error.status === 409) {
+        setThreadConflict(true);
+        void query.refetch();
+      }
+      toast.error(t('thread.assignmentError'));
     },
-    onError: () => toast.error(t('delivery.retryError')),
   });
   const proposalMutation = useMutation({
     mutationFn: ({
@@ -181,6 +389,21 @@ export function MailThreadDetailPane({
     },
     onError: () => toast.error(t('proposal.error')),
   });
+
+  const openForward = (message: MailThreadDetail['messages'][number]) => {
+    const draft = mailForwardDraft(thread.subject, message, {
+      forwardedMessage: t('thread.forwardedMessage', { defaultValue: 'Forwarded message' }),
+      from: t('thread.from', { defaultValue: 'From' }),
+      sentAt: t('thread.sentAt', { defaultValue: 'Date' }),
+      subject: t('thread.subject', { defaultValue: 'Subject' }),
+    });
+    navigate('/mail/inbox?compose=open', {
+      state: mailComposeNavigationState(
+        draft,
+        `${location.pathname}${location.search}${location.hash}`
+      ),
+    });
+  };
 
   if (!threadId) {
     return (
@@ -218,11 +441,25 @@ export function MailThreadDetailPane({
   const detail = query.data;
   const thread = detail.thread;
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const isSharedInbox = Boolean(thread.sharedInboxId);
+  const canAssign = permitsSharedInboxAction(detail, 'ASSIGN');
+  const canComment = permitsSharedInboxAction(detail, 'COMMENT');
+  const canReply =
+    permitsSharedInboxAction(detail, 'REPLY') && permitsSharedInboxAction(detail, 'SEND_AS');
+  const hasRestrictedSharedInboxActions = isSharedInbox && (!canAssign || !canComment || !canReply);
+  const replyAccountEmail = replyAccountQuery.data?.accounts.find(
+    (account) => account.accountId === thread.accountId
+  )?.emailAddress;
+  const replyAllRecipients = mailReplyAllRecipients(detail.messages, [
+    auth.user?.email,
+    replyAccountEmail,
+  ]);
+  const replyAllAddsRecipients = replyAllRecipients.length > 1;
 
   if (thread.workflowState === 'DRAFT') {
     return (
       <MailDraftEditor
-        key={thread.threadId}
+        key={`${custodyOwner}:${thread.threadId}`}
         detail={detail}
         onBack={onBack}
         onUpdated={onUpdated}
@@ -278,6 +515,17 @@ export function MailThreadDetailPane({
             >
               <Clock3 size={18} />
             </ActionIconButton>
+            {thread.workflowState === 'SNOOZED' && (
+              <ActionButton
+                intent="secondary"
+                size="small"
+                loading={actionMutation.isPending}
+                startIcon={<RotateCcw size={15} />}
+                onClick={() => actionMutation.mutate('REOPEN')}
+              >
+                {t('thread.showNow')}
+              </ActionButton>
+            )}
             <MailThreadLifecycleActions
               thread={thread}
               onUpdated={(updated) => {
@@ -302,6 +550,19 @@ export function MailThreadDetailPane({
             {t('thread.externalSender')}
           </Alert>
         )}
+        {hasRestrictedSharedInboxActions && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            {t('thread.sharedActionPermissionUnavailable')}
+          </Alert>
+        )}
+        {threadConflict && (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            {t('thread.changedElsewhere', {
+              defaultValue:
+                'This conversation changed elsewhere. The latest version is now shown; review it before trying again.',
+            })}
+          </Alert>
+        )}
         <Typography component="h2" variant="h5" fontWeight={800}>
           {thread.subject}
         </Typography>
@@ -314,7 +575,7 @@ export function MailThreadDetailPane({
           )}
         </Stack>
 
-        {thread.sharedInboxId && detail.sharedInboxMembers.length > 0 && (
+        {thread.sharedInboxId && (
           <Box
             sx={{
               mt: 2,
@@ -330,115 +591,68 @@ export function MailThreadDetailPane({
               spacing={1}
               alignItems={{ xs: 'stretch', sm: 'center' }}
             >
-              <UserRoundCheck size={18} color="var(--dwp-product-accent)" />
-              <SelectField<number>
-                size="small"
-                label={t('thread.assignee')}
-                value={assigneeId}
-                placeholder={t('thread.assigneePlaceholder')}
-                options={detail.sharedInboxMembers.map((member) => ({
-                  value: member.userId,
-                  label: `${member.displayName} · ${member.emailAddress}`,
-                }))}
-                sx={{ flex: 1 }}
-                onValueChange={setAssigneeId}
-              />
+              {detail.sharedInboxMembers.length > 0 && (
+                <>
+                  <UserRoundCheck size={18} color="var(--dwp-product-accent)" />
+                  <SelectField<number>
+                    size="small"
+                    label={t('thread.assignee')}
+                    value={assigneeId}
+                    placeholder={t('thread.assigneePlaceholder')}
+                    disabled={!canAssign}
+                    options={detail.sharedInboxMembers.map((member) => ({
+                      value: member.userId,
+                      label: `${member.displayName} · ${member.emailAddress}`,
+                    }))}
+                    sx={{ flex: 1 }}
+                    onValueChange={setAssigneeId}
+                  />
+                  <ActionButton
+                    intent="secondary"
+                    disabled={!canAssign || !assigneeId || assigneeId === thread.assignedUserId}
+                    loading={assignmentMutation.isPending}
+                    onClick={() => assignmentMutation.mutate()}
+                  >
+                    {t('thread.assign')}
+                  </ActionButton>
+                </>
+              )}
               <ActionButton
-                intent="secondary"
-                disabled={!assigneeId || assigneeId === thread.assignedUserId}
-                loading={assignmentMutation.isPending}
-                onClick={() => assignmentMutation.mutate()}
+                intent={thread.workflowState === 'DONE' ? 'secondary' : 'primary'}
+                disabled={!canAssign}
+                loading={actionMutation.isPending}
+                startIcon={
+                  thread.workflowState === 'DONE' ? (
+                    <RotateCcw size={15} />
+                  ) : (
+                    <CheckCircle2 size={15} />
+                  )
+                }
+                onClick={() =>
+                  actionMutation.mutate(thread.workflowState === 'DONE' ? 'REOPEN' : 'COMPLETE')
+                }
               >
-                {t('thread.assign')}
+                {thread.workflowState === 'DONE'
+                  ? t('thread.reopen', { defaultValue: 'Reopen' })
+                  : t('thread.complete', { defaultValue: 'Complete' })}
               </ActionButton>
             </Stack>
           </Box>
         )}
 
         <Stack spacing={1.5} sx={{ mt: 2.5 }}>
-          {detail.messages.map((message) => {
-            const outgoing = message.direction === 'OUTBOUND' || message.direction === 'DRAFT';
-            return (
-              <Box
-                key={message.messageId}
-                sx={{
-                  width: { xs: 1, lg: 'min(92%, 820px)' },
-                  ml: outgoing ? 'auto' : 0,
-                  border: 1,
-                  borderColor: outgoing ? 'transparent' : 'divider',
-                  bgcolor: outgoing ? 'var(--dwp-product-soft)' : 'background.paper',
-                  borderRadius: 1,
-                  p: 2,
-                }}
-              >
-                <Stack direction="row" spacing={1.25} alignItems="center">
-                  <Avatar sx={{ width: 34, height: 34, fontSize: 13, bgcolor: 'primary.dark' }}>
-                    {message.senderName.slice(0, 2)}
-                  </Avatar>
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography variant="body2" fontWeight={800} noWrap>
-                      {message.senderName}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {message.senderEmail} · {mailRelativeTime(message.sentAt, language)}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    mt: 1.5,
-                    whiteSpace: 'pre-wrap',
-                    lineHeight: 1.75,
-                    overflowWrap: 'anywhere',
-                  }}
-                >
-                  {message.body}
-                </Typography>
-                {message.attachments.length > 0 && (
-                  <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mt: 1.5 }}>
-                    <Paperclip size={15} />
-                    <Typography variant="caption" fontWeight={650}>
-                      {String(message.attachments[0]?.name ?? t('thread.attachment'))}
-                    </Typography>
-                  </Stack>
-                )}
-                {outgoing && (
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    justifyContent="flex-end"
-                    alignItems="center"
-                    sx={{ mt: 1.5 }}
-                  >
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color={
-                        message.deliveryState === 'FAILED'
-                          ? 'error'
-                          : message.deliveryState === 'SENT'
-                            ? 'success'
-                            : 'default'
-                      }
-                      label={t(`delivery.state.${message.deliveryState}`)}
-                    />
-                    {message.deliveryState === 'FAILED' && (
-                      <ActionButton
-                        intent="quiet"
-                        size="small"
-                        startIcon={<RotateCcw size={14} />}
-                        loading={retryMutation.isPending}
-                        onClick={() => retryMutation.mutate(message.messageId)}
-                      >
-                        {t('delivery.retry')}
-                      </ActionButton>
-                    )}
-                  </Stack>
-                )}
-              </Box>
-            );
-          })}
+          {detail.messages.map((message) => (
+            <MailThreadMessageCard
+              key={message.messageId}
+              message={message}
+              language={language}
+              remoteImagesAllowed={loadedRemoteImages.has(message.messageId)}
+              onLoadRemoteImages={() =>
+                setLoadedRemoteImages((current) => new Set([...current, message.messageId]))
+              }
+              onForward={() => openForward(message)}
+            />
+          ))}
         </Stack>
 
         {detail.proposals.length > 0 && (
@@ -505,12 +719,13 @@ export function MailThreadDetailPane({
               size="small"
               label={t('thread.addComment')}
               value={comment}
+              disabled={!canComment}
               inputProps={{ maxLength: 4000 }}
               onChange={(event) => setComment(event.target.value)}
             />
             <ActionButton
               intent="secondary"
-              disabled={!comment.trim()}
+              disabled={!canComment || !comment.trim()}
               loading={commentMutation.isPending}
               onClick={() => commentMutation.mutate()}
             >
@@ -524,14 +739,63 @@ export function MailThreadDetailPane({
           <Typography component="h3" variant="subtitle2" fontWeight={800} sx={{ mb: 1 }}>
             {t('thread.reply')}
           </Typography>
+          {replyResolutionPending && (
+            <Alert severity="warning" sx={{ mb: 1.5 }}>
+              {t('thread.replyRetrySameCommand')}
+            </Alert>
+          )}
+          {replyRejected && (
+            <Alert severity="error" sx={{ mb: 1.5 }}>
+              {t('thread.replyRejectedReview')}
+            </Alert>
+          )}
+          <SelectField<'REPLY' | 'REPLY_ALL'>
+            size="small"
+            label={t('thread.replyMode')}
+            value={replyMode}
+            disabled={!canReply || replyResolutionPending}
+            options={[
+              { value: 'REPLY', label: t('thread.reply') },
+              {
+                value: 'REPLY_ALL',
+                label: t('thread.replyAll'),
+                disabled: !replyAllAddsRecipients,
+              },
+            ]}
+            supportingText={
+              replyMode === 'REPLY_ALL'
+                ? t('thread.replyAllRecipients', {
+                    recipients: replyAllRecipients
+                      .map((recipient) => recipient.name || recipient.email)
+                      .join(', '),
+                  })
+                : undefined
+            }
+            sx={{ mb: 1.25, maxWidth: 460 }}
+            onValueChange={(mode) => {
+              if (!mode) return;
+              if (threadId) {
+                clearMailRejectedReplyReview(mailReplySendScope(custodyOwner, threadId));
+              }
+              setReplyRejected(false);
+              setReplyMode(mode);
+            }}
+          />
           <FormField
             multiline
             minRows={4}
             maxRows={12}
             label={t('thread.replyPlaceholder')}
             value={reply}
+            disabled={!canReply || replyResolutionPending}
             inputProps={{ maxLength: 100_000 }}
-            onChange={(event) => setReply(event.target.value)}
+            onChange={(event) => {
+              if (threadId) {
+                clearMailRejectedReplyReview(mailReplySendScope(custodyOwner, threadId));
+              }
+              setReplyRejected(false);
+              setReply(event.target.value);
+            }}
           />
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -548,11 +812,11 @@ export function MailThreadDetailPane({
             <ActionButton
               intent="primary"
               startIcon={<Send size={16} />}
-              disabled={!reply.trim()}
+              disabled={!canReply || !reply.trim() || replyRejected}
               loading={replyMutation.isPending}
               onClick={() => replyMutation.mutate()}
             >
-              {t('thread.sendReply')}
+              {t(replyMode === 'REPLY_ALL' ? 'thread.sendReplyAll' : 'thread.sendReply')}
             </ActionButton>
           </Stack>
         </Box>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:01:03" hostname="MacBook-Pro" time="0.012">
+  <properties/>
+  <testcase name="roomEndpointRequiresMeetingEvents()" classname="com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest" time="0.001"/>
+  <testcase name="roomPolicyRejectsPastWrongZoneAndAfterHoursRanges()" classname="com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest" time="0.002"/>
+  <testcase name="roomAdvanceWindowIncludesTheEntireLastLocalDayAndRejectsTheNextDay()" classname="com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest" time="0.001"/>
+  <testcase name="updateExcludesTheCurrentEventFromBufferedConflictDetection()" classname="com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest" time="0.001"/>
+  <testcase name="bufferConflictUsesTheAlreadyLockedRoomWindow()" classname="com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest" time="0.001"/>
+  <testcase name="recurringBookingValidatesEveryOccurrenceInTheCanonicalZone()" classname="com.dwp.services.platform.calendar.RoomBookingPolicyServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

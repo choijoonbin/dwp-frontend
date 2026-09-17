@@ -1,14 +1,16 @@
 import { foundationTokens } from '@dwp-frontend/design-system';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   CalendarCheck2,
   CheckCircle2,
   Clock3,
+  Armchair,
   LogOut,
   MapPin,
   PencilLine,
+  UsersRound,
   XCircle,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -79,7 +81,7 @@ function bookingTargetId(bookingId: string) {
   return `workplace-booking-${bookingId.replace(/[^a-zA-Z0-9_-]/gu, '-')}`;
 }
 
-export function WorkplaceBookings() {
+export default function WorkplaceBookings() {
   const { t, i18n } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -457,29 +459,127 @@ export function WorkplaceBookings() {
       { dateStyle: 'medium', timeStyle: 'short' },
       resolveSupportedLocale(i18n.resolvedLanguage)
     );
+  const detailBooking =
+    bookings.find((booking) => booking.bookingId === requestedBookingId) ?? bookings[0] ?? null;
+  const bookingActions = (booking: WorkplaceBooking, mobileOnly: boolean): ReactNode => {
+    if (filter !== 'upcoming' || !capabilities.canUpdateWorkplaceBooking) return null;
+    const actionPolicy = bookingPolicies.get(booking.bookingId);
+    return (
+      <Stack
+        direction="row"
+        gap={1}
+        alignItems="center"
+        flexWrap="wrap"
+        sx={{
+          display: mobileOnly ? { xs: 'flex', lg: 'none' } : { xs: 'none', lg: 'flex' },
+          '& > .MuiButton-root': { flex: { xs: '1 1 calc(50% - 8px)', lg: '0 1 auto' } },
+        }}
+      >
+        {actionPolicy?.canCheckIn && (
+          <ActionButton
+            component={Link}
+            to="/workplace/my-bookings"
+            intent="primary"
+            startIcon={<CheckCircle2 size={16} />}
+            disabled={anyMutationPending}
+            loading={
+              activeMutationPending &&
+              changeMutation.variables?.action === 'check-in' &&
+              changeMutation.variables.booking.bookingId === booking.bookingId
+            }
+            onClick={() => submitBookingAction({ identityKey, booking, action: 'check-in' })}
+            {...workplaceDecisionActionProps(`check-in:${booking.bookingId}`)}
+          >
+            {t('workplace.my.checkIn')}
+          </ActionButton>
+        )}
+        {actionPolicy?.canRelease && (
+          <ActionButton
+            intent="secondary"
+            startIcon={<LogOut size={16} />}
+            disabled={anyMutationPending}
+            onClick={() => setConfirming({ identityKey, booking, action: 'release' })}
+            {...workplaceDecisionActionProps(`release:${booking.bookingId}`)}
+          >
+            {t('workplace.my.release')}
+          </ActionButton>
+        )}
+        {actionPolicy?.canCancel && (
+          <ActionButton
+            intent="secondary"
+            startIcon={<PencilLine size={16} />}
+            disabled={anyMutationPending}
+            onClick={(event) => {
+              relocateTriggerRef.current = event.currentTarget;
+              setRelocateDeniedNotice(null);
+              setRelocating({ identityKey, booking });
+            }}
+          >
+            {t('workplace.my.relocate.action')}
+          </ActionButton>
+        )}
+        {actionPolicy?.canCancel && (
+          <ActionButton
+            intent="danger"
+            startIcon={<XCircle size={16} />}
+            disabled={anyMutationPending}
+            onClick={() => setConfirming({ identityKey, booking, action: 'cancel' })}
+            {...workplaceDecisionActionProps(`cancel:${booking.bookingId}`)}
+          >
+            {t('actions.cancelBooking')}
+          </ActionButton>
+        )}
+      </Stack>
+    );
+  };
 
   return (
-    <PageCanvas>
+    <PageCanvas topInset="compact">
       <RoomsPageHeading
         eyebrow={t('workplace.my.eyebrow')}
         title={t('workplace.my.title')}
         description={t('workplace.my.description')}
         actions={
-          <ActionButton component={Link} to="/workplace/explore" intent="primary">
+          <ActionButton component={Link} to="/workplace/find?v=1&types=ALL" intent="primary">
             {t('workplace.home.findSpace')}
           </ActionButton>
         }
       />
-      {capabilities.canViewRooms && (
-        <InlineFeedback
-          severity="info"
-          sx={{ mb: 2 }}
-          action={
-            <ActionButton component={Link} to="/workplace/my-meetings" intent="quiet">
-              {t('workplace.member.bookings.openMeetings')}
-            </ActionButton>
-          }
+      {capabilities.canViewRooms ? (
+        <Box
+          component="nav"
+          aria-label={t('workplace.my.title')}
+          sx={(theme) => ({
+            ...workplaceMemberCard(theme),
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+            gap: 0.5,
+            p: 0.5,
+            mb: 2,
+            bgcolor: 'var(--dwp-product-soft)',
+          })}
         >
+          <ActionButton
+            intent="primary"
+            fullWidth
+            aria-current="page"
+            startIcon={<Armchair size={16} />}
+          >
+            {t('workplace.my.title')}
+          </ActionButton>
+          <ActionButton
+            component={Link}
+            to="/workplace/my-meetings"
+            intent="quiet"
+            fullWidth
+            startIcon={<UsersRound size={16} />}
+          >
+            {t('workplace.member.bookings.openMeetings')}
+          </ActionButton>
+        </Box>
+      ) : null}
+      {capabilities.canViewRooms && (
+        <InlineFeedback severity="info" sx={{ mb: 2 }}>
           {t('workplace.member.bookings.ownerNotice')}
         </InlineFeedback>
       )}
@@ -537,7 +637,7 @@ export function WorkplaceBookings() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.35fr) minmax(0, 1fr)' },
+          gridTemplateColumns: { xs: '1fr', lg: 'minmax(300px, .82fr) minmax(0, 1.18fr)' },
           gap: 2.5,
           alignItems: 'start',
         }}
@@ -584,7 +684,7 @@ export function WorkplaceBookings() {
             />
           )}
           {bookings.map((booking) => {
-            const selected = booking.bookingId === requestedBookingId;
+            const selected = booking.bookingId === detailBooking?.bookingId;
             const actionPolicy = bookingPolicies.get(booking.bookingId);
             return (
               <Box
@@ -598,9 +698,17 @@ export function WorkplaceBookings() {
                   m: 1.5,
                   border: 1,
                   borderRadius: foundationTokens.radius.surface + 'px',
-                  borderColor: selected ? 'primary.main' : 'divider',
-                  bgcolor: 'var(--dwp-product-soft)',
-                  boxShadow: selected ? `inset 3px 0 ${theme.palette.primary.main}` : 'none',
+                  borderColor: actionPolicy?.canCheckIn
+                    ? 'error.light'
+                    : selected
+                      ? 'primary.main'
+                      : 'divider',
+                  bgcolor: 'background.paper',
+                  boxShadow: actionPolicy?.canCheckIn
+                    ? `inset 3px 0 ${theme.palette.error.main}`
+                    : selected
+                      ? `inset 3px 0 ${theme.palette.primary.main}`
+                      : 'none',
                   '&:focus-visible': {
                     outline: '2px solid',
                     outlineColor: 'primary.main',
@@ -671,77 +779,17 @@ export function WorkplaceBookings() {
                       {t('workplace.member.bookings.openDetail')}
                     </ActionButton>
                   </Box>
-                  {filter === 'upcoming' && capabilities.canUpdateWorkplaceBooking && (
-                    <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                      {actionPolicy?.canCheckIn && (
-                        <ActionButton
-                          intent="primary"
-                          startIcon={<CheckCircle2 size={16} />}
-                          disabled={anyMutationPending}
-                          loading={
-                            activeMutationPending &&
-                            changeMutation.variables?.action === 'check-in' &&
-                            changeMutation.variables.booking.bookingId === booking.bookingId
-                          }
-                          onClick={() =>
-                            submitBookingAction({ identityKey, booking, action: 'check-in' })
-                          }
-                          {...workplaceDecisionActionProps(`check-in:${booking.bookingId}`)}
-                        >
-                          {t('workplace.my.checkIn')}
-                        </ActionButton>
-                      )}
-                      {actionPolicy?.canRelease && (
-                        <ActionButton
-                          intent="secondary"
-                          startIcon={<LogOut size={16} />}
-                          disabled={anyMutationPending}
-                          onClick={() => setConfirming({ identityKey, booking, action: 'release' })}
-                          {...workplaceDecisionActionProps(`release:${booking.bookingId}`)}
-                        >
-                          {t('workplace.my.release')}
-                        </ActionButton>
-                      )}
-                      {actionPolicy?.canCancel && (
-                        <ActionButton
-                          intent="secondary"
-                          startIcon={<PencilLine size={16} />}
-                          disabled={anyMutationPending}
-                          onClick={(event) => {
-                            relocateTriggerRef.current = event.currentTarget;
-                            setRelocateDeniedNotice(null);
-                            setRelocating({ identityKey, booking });
-                          }}
-                        >
-                          {t('workplace.my.relocate.action')}
-                        </ActionButton>
-                      )}
-                      {actionPolicy?.canCancel && (
-                        <ActionButton
-                          intent="danger"
-                          startIcon={<XCircle size={16} />}
-                          disabled={anyMutationPending}
-                          onClick={() => setConfirming({ identityKey, booking, action: 'cancel' })}
-                          {...workplaceDecisionActionProps(`cancel:${booking.bookingId}`)}
-                        >
-                          {t('actions.cancelBooking')}
-                        </ActionButton>
-                      )}
-                    </Stack>
-                  )}
+                  {bookingActions(booking, true)}
                 </Stack>
               </Box>
             );
           })}
         </Box>
         <WorkplaceBookingDetailPanel
-          booking={
-            bookings.find((booking) => booking.bookingId === requestedBookingId) ??
-            bookings[0] ??
-            null
-          }
+          booking={detailBooking}
           format={format}
           now={decisionNowInstant}
+          actions={detailBooking ? bookingActions(detailBooking, false) : null}
         />
       </Box>
       <WorkplaceReleaseWindows />

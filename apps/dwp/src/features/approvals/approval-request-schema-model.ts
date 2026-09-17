@@ -45,24 +45,32 @@ export function approvalRequestStoredEditingValues(
   detail: ApprovalRequestDetail,
   compiled?: CompiledApprovalTypedForm | null
 ): Record<string, unknown> {
-  const kind = approvalRequestSchemaKind(detail.formSchema);
+  return approvalRequestEditingValues(detail.payload, detail.formSchema, compiled);
+}
+
+export function approvalRequestEditingValues(
+  payload: Readonly<Record<string, unknown>>,
+  schema: ApprovalFormSchema | undefined,
+  compiled?: CompiledApprovalTypedForm | null
+): Record<string, unknown> {
+  const kind = approvalRequestSchemaKind(schema);
   if (kind === 'UNSUPPORTED') throw new ApprovalTypedFormError('Unsupported stored form schema.');
   if (
     kind === 'TYPED' &&
-    (!compiled || compiled.canonicalJson !== JSON.stringify(freezeTypedJson(detail.formSchema)))
+    (!compiled || compiled.canonicalJson !== JSON.stringify(freezeTypedJson(schema)))
   ) {
     throw new ApprovalTypedFormError('Stored editing base must use the exact compiled schema.');
   }
-  const payload =
+  const editingPayload =
     kind === 'TYPED'
       ? compiled
-        ? withoutApprovalTypedComputedValues(compiled, detail.payload)
+        ? withoutApprovalTypedComputedValues(compiled, payload)
         : (() => {
             throw new ApprovalTypedFormError('Stored typed form must be compiled first.');
           })()
-      : approvalRequestLegacyValues(detail.payload);
+      : approvalRequestLegacyValues(payload);
   return Object.fromEntries(
-    Object.entries(payload).filter(([key]) => !['summary', 'createdFrom'].includes(key))
+    Object.entries(editingPayload).filter(([key]) => !['summary', 'createdFrom'].includes(key))
   );
 }
 

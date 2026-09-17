@@ -74,6 +74,9 @@
         "admin-overview": {
           "label": "운영 현황"
         },
+        "admin-models": {
+          "label": "모델 및 라우팅"
+        },
         "admin-agents": {
           "label": "에이전트 및 게시 관리"
         },
@@ -366,19 +369,23 @@
     "summaryLabel": "AI 실행 상태 요약",
     "metrics": {
       "total": "조회된 실행",
-      "totalDetail": "최근 최대 100건 응답 범위",
+      "totalDetail": "선택 기간에서 현재까지 불러온 실행",
       "running": "처리 중",
       "runningDetail": "실행 상태가 RUNNING인 항목",
       "completed": "실행 완료",
       "completedDetail": "실행 상태가 COMPLETED인 항목",
       "attention": "확인 신호",
-      "attentionDetail": "실패·정책 거부·설정 필요(중복 제외)"
+      "attentionDetail": "실패·정책 거부·설정 필요·lease가 만료된 처리 중 실행(중복 제외)"
     },
-    "windowNotice": "최근 실행을 최대 {{count}}건까지 조회합니다. 요약과 상태 필터는 이 조회 응답에만 적용되며 전체 실행 이력이 아닙니다.",
+    "attentionSignals": {
+      "leaseExpired": "처리 중 · lease 만료",
+      "leaseExpiredDescription": "작업자 lease가 만료됐지만 서버는 이 실행을 아직 처리 중으로 보고합니다."
+    },
+    "windowNotice": "선택 기간의 실행을 페이지당 {{count}}건씩 조회합니다. 요약과 상태 필터는 현재까지 불러온 실행에 적용됩니다.",
     "listTitle": "내 실행 타임라인",
-    "listDescription": "최근 조회 응답에서 각 실행의 상태, 정책 결과, 위험 등급, 소스 수와 처리 시간을 확인합니다.",
-    "listLabel": "최근 조회된 AI 실행",
-    "filteredWindow": "조회된 {{total}}건 중 {{visible}}건 · 브라우저에서 상태 필터 적용",
+    "listDescription": "선택 기간에서 각 실행의 상태, 정책 결과, 위험 등급, 소스 수와 처리 시간을 확인합니다.",
+    "listLabel": "선택 기간에 조회된 AI 실행",
+    "filteredWindow": "불러온 {{total}}건 중 {{visible}}건 · 브라우저에서 상태 필터 적용",
     "columns": {
       "task": "작업명 / 실행 ID",
       "agent": "담당 에이전트",
@@ -428,9 +435,16 @@
     "emptyTitle": "표시할 AI 실행이 없습니다",
     "emptyDescription": "질문을 시작하면 개인정보를 최소화한 실행 증적이 이곳에 표시됩니다.",
     "noResultsTitle": "이 상태의 실행이 없습니다",
-    "noResultsDescription": "최근 조회 범위에 일치하는 실행이 없습니다. 전체 상태를 확인해 보세요.",
+    "noResultsDescription": "선택 기간에 일치하는 실행이 없습니다. 전체 상태를 확인해 보세요.",
+    "noLoadedResultsDescription": "현재 불러온 실행에는 일치하는 항목이 없습니다. 이전 실행을 더 불러와 확인할 수 있습니다.",
     "resetFilter": "전체 상태 보기",
     "start": "새 대화 시작",
+    "pagination": {
+      "loadOlder": "이전 실행 더 보기",
+      "loading": "이전 실행을 불러오는 중",
+      "retry": "이전 실행 다시 불러오기",
+      "error": "현재 목록은 유지했지만 이전 실행을 더 불러오지 못했습니다."
+    },
     "details": {
       "title": "선택 실행 상세",
       "inspectorLabel": "실행 트레이스 인스펙터",
@@ -936,14 +950,14 @@
       "retired": "에이전트를 사용 중지했습니다.",
       "error": "에이전트 레지스트리를 처리하지 못했습니다.",
       "create": "새 에이전트",
-      "deploymentHistoryUnavailable": "배포 이력 미지원",
-      "schemaExportUnavailable": "스키마 내보내기 미지원",
+      "deploymentHistoryUnavailable": "배포 이력",
+      "schemaExportUnavailable": "레지스트리 내보내기",
       "edit": "편집",
       "newRevision": "새 리비전",
       "activate": "게시",
       "retire": "사용 중지",
       "lifecycleNotice": "초안 작성과 게시 권한은 분리됩니다. 게시된 버전만 사용자 카탈로그에 노출되며 모든 상태 변경은 감사됩니다.",
-      "unsupportedNotice": "현재 레지스트리 API는 정의 메타데이터와 DRAFT·ACTIVE·RETIRED lifecycle만 제공합니다. 런타임 연결, 소스·액션 바인딩, 별도 검토 단계와 배포 이력은 제공하지 않습니다.",
+      "unsupportedNotice": "레지스트리 메타데이터와 배포 거버넌스는 검증된 API에서 조회합니다. 승격·롤백·Kill switch 변경은 항상 검토 가능한 Governed Command로 처리합니다.",
       "summaryLabel": "조회된 에이전트 상태 요약",
       "summary": {
         "active": "게시 상태",
@@ -1005,10 +1019,10 @@
       "error": "데이터 소스 정책을 처리하지 못했습니다.",
       "unavailableDescription": "확인되지 않은 소스 설정이나 연결 상태는 표시하지 않습니다. 다시 조회해 주세요.",
       "secretBoundary": "커넥터 자격 증명은 이 화면과 정책 저장소에 저장하지 않습니다. 비밀 저장소의 참조 ID만 연결할 수 있습니다.",
-      "healthCheckUnavailable": "연결 시험 미지원",
-      "exportUnavailable": "정책 내보내기 미지원",
-      "newConnectorUnavailable": "새 커넥터 등록 미지원",
-      "unsupportedNotice": "이 정책 API는 구성 상태와 정책 수정 시각만 제공합니다. 실시간 연결 시험, 마지막 동기화, 지연 시간, 자격 증명 상태는 제공하지 않습니다.",
+      "healthCheckUnavailable": "상태 새로고침",
+      "exportUnavailable": "정책 내보내기",
+      "newConnectorUnavailable": "새 커넥터",
+      "unsupportedNotice": "정책과 실시간 커넥터 근거는 서로 분리된 검증 API에서 조회합니다. Probe·동기화 시각·ACL 범위·자격 증명 상태가 없으면 명시적으로 사용 불가로 표시합니다.",
       "summaryLabel": "데이터 소스 정책 요약",
       "summary": {
         "registered": "등록 정책",
@@ -1232,6 +1246,180 @@
         "DENY": "차단"
       }
     },
+    "aiRuntime": {
+      "eyebrow": "AI 실행 통제 · S19",
+      "title": "모델·지식·사용량과 예산 집행",
+      "description": "회사별 DWAI·ON Ask 실행 경계를 실제 정책, 예약·측정 사용량, 평가 근거와 함께 관리합니다.",
+      "loading": "AI 실행 정책과 사용량을 불러오는 중입니다.",
+      "loadError": "AI 실행 통제를 불러오지 못했습니다",
+      "loadErrorDescription": "요청 실패를 정상 정책이나 집행 완료로 표시하지 않습니다. 연결과 권한을 확인한 뒤 다시 시도하세요.",
+      "commandError": "AI 실행 정책 변경을 완료하지 못했습니다.",
+      "unavailable": "확인할 수 없음",
+      "summaryLabel": "AI 실행 통제 요약",
+      "activationDisabled": "정책은 구성할 수 있지만 현재 배포 환경의 실행 집행 플래그가 꺼져 있습니다. 이 상태에서는 기존 Ask 실행이 계속됩니다.",
+      "emergencyActive": "새 DWAI·ON Ask 검색·모델 요청이 긴급 중단되었습니다. 이미 외부 Provider에 전송된 요청은 취소되지 않을 수 있습니다.",
+      "scopeBoundary": "통제 범위는 DWAI·ON Ask 실행입니다. 음성 STT/TTS, 회의 지능과 회의 미디어 Provider에는 적용되지 않습니다.",
+      "actions": {
+        "edit": "실행 정책 편집",
+        "stop": "Ask 실행 긴급 중단",
+        "release": "Ask 실행 중단 해제",
+        "initialize": "AI 실행 정책 초기화"
+      },
+      "notices": {
+        "bootstrapped": "회사 AI 실행 정책을 초기화했습니다.",
+        "saved": "회사 AI 실행 정책을 저장했습니다.",
+        "stopped": "새 Ask 실행을 긴급 중단했습니다.",
+        "released": "Ask 실행 중단을 해제했습니다."
+      },
+      "notConfigured": {
+        "title": "AI 실행 정책이 구성되지 않았습니다",
+        "description": "허용 모델, 지식 원천, 토큰 상한과 평가 조건의 회사 정본이 없습니다.",
+        "boundary": "집행 플래그를 켠 환경에서 정책이 없으면 Ask 실행은 실패 폐쇄됩니다. 실제 Provider 식별자와 회사 한도를 확인해 먼저 초기화하세요."
+      },
+      "states": {
+        "ENABLED": "실행 가능",
+        "EMERGENCY_DISABLED": "긴급 중단",
+        "POLICY_NOT_CONFIGURED": "정책 없음",
+        "CONTROL_UNAVAILABLE": "통제 불가"
+      },
+      "activation": {
+        "ENABLED": "집행 켜짐",
+        "DISABLED": "집행 꺼짐"
+      },
+      "toolStates": {
+        "NOT_CONNECTED": "도구 실행부 미연결"
+      },
+      "summary": {
+        "activation": "실행 집행",
+        "activationDetail": "배포 환경의 실제 활성화 상태",
+        "runtime": "Ask 실행 상태",
+        "runtimeDetail": "회사 정책과 긴급 중단 상태",
+        "usage": "측정 토큰",
+        "usageDetail": "진행·미측정 예약 {{reserved}}",
+        "version": "정책 버전"
+      },
+      "models": {
+        "title": "허용 Provider와 모델",
+        "description": "정확한 Provider·모델·리전 조합만 Ask 실행 경계에서 허용합니다.",
+        "count": "{{count}}개 경로",
+        "region": "구성 리전: {{region}}",
+        "regionUnspecified": "리전 제한이 구성되지 않음"
+      },
+      "externalStates": {
+        "VERIFIED": "확인됨",
+        "STALE": "오래된 확인",
+        "UNAVAILABLE": "연결되지 않음",
+        "UNVERIFIED": "미확인"
+      },
+      "access": {
+        "title": "지식과 도구 실행 조건",
+        "description": "검색 허용 원천과 향후 도구 실행 허용 목록을 구분합니다.",
+        "sources": "허용 지식 원천",
+        "tools": "허용 도구 키",
+        "noSources": "허용된 지식 원천이 없습니다.",
+        "noTools": "허용된 도구 키가 없습니다.",
+        "toolBoundary": "현재 Ask 런타임은 모델이 선택한 도구를 실행하지 않습니다. 도구 키는 향후 실행부 계약이며 지금은 집행 완료 상태가 아닙니다."
+      },
+      "budget": {
+        "title": "사용량·예약·예산",
+        "description": "로컬 실측, 진행·미측정 예약, 경보와 실제 상한 차단을 분리해 표시합니다.",
+        "maxOutput": "요청당 최대 출력 토큰",
+        "periodLimit": "현재 기간 토큰 상한",
+        "measured": "확정 측정 토큰",
+        "reserved": "진행·미측정 예약 토큰",
+        "unmeasured": "조정 대기 미측정 예약",
+        "pressure": "측정 + 예약 / 기간 상한",
+        "providerUsage": "Provider 사용량",
+        "pricing": "확인된 가격",
+        "billing": "실제 청구",
+        "costBoundary": "외부 Provider 사용량·가격·청구 연결이 없으면 추정 비용과 실제 청구액을 표시하지 않습니다. 예산 경보는 실행 차단과 다릅니다."
+      },
+      "budgetModes": {
+        "ALERT_ONLY": "경보만",
+        "ENFORCED": "실행 상한 집행"
+      },
+      "evaluation": {
+        "title": "평가 게이트",
+        "description": "정책 버전과 연결된 신뢰 가능한 평가 근거만 실행 허용에 사용합니다.",
+        "required": "평가 통과 요구",
+        "notRequired": "요구하지 않음",
+        "evidence": "평가 근거",
+        "open": "평가 관리 열기"
+      },
+      "evaluationStates": {
+        "NOT_REQUIRED": "요구하지 않음",
+        "PENDING": "평가 대기",
+        "PASSED": "통과",
+        "FAILED": "실패",
+        "STALE": "근거 만료"
+      },
+      "evaluationEvidence": {
+        "VERIFIED": "검증된 근거",
+        "STALE": "오래된 근거",
+        "UNAVAILABLE": "신뢰 근거 없음"
+      },
+      "warnings": {
+        "title": "운영 주의 상태",
+        "description": "정상 상태와 구분해야 하는 미연결·미측정·경보를 원본 코드 기준으로 표시합니다.",
+        "count": "{{count}}건"
+      },
+      "warningCodes": {
+        "AI_RUNTIME_POLICY_NOT_CONFIGURED": "회사 AI 실행 정책이 구성되지 않았습니다.",
+        "PROVIDER_USAGE_UNAVAILABLE": "외부 Provider 사용량이 연결되지 않았습니다.",
+        "PROVIDER_PRICING_UNAVAILABLE": "외부 Provider 가격 근거가 연결되지 않았습니다.",
+        "PROVIDER_BILLING_UNAVAILABLE": "외부 Provider 실제 청구가 연결되지 않았습니다.",
+        "AI_TOOL_EXECUTION_NOT_CONNECTED": "모델 도구 실행부가 아직 연결되지 않았습니다.",
+        "MODEL_USAGE_MEASUREMENT_MISSING": "Provider 응답 사용량이 없는 예약이 조정 대기 중입니다.",
+        "LOCAL_USAGE_MEASUREMENT_NOT_CURRENT": "로컬 사용량 측정이 최신 상태가 아닙니다.",
+        "AI_TOKEN_BUDGET_ALERT": "현재 기간 토큰 사용 압력이 경보 기준에 도달했습니다.",
+        "AI_TOKEN_BUDGET_EXCEEDED": "현재 기간 토큰 실행 상한에 도달했습니다."
+      },
+      "editor": {
+        "bootstrapTitle": "AI 실행 정책 초기화",
+        "updateTitle": "AI 실행 정책 편집",
+        "description": "회사 Ask 실행 경계만 변경합니다. 외부 Provider 가용성이나 평가 근거를 관리자가 직접 확인됨으로 입력할 수 없습니다.",
+        "bootstrap": "정책 초기화",
+        "save": "정책 저장",
+        "evidenceBoundary": "모델 가용성은 저장 시 미확인 상태가 됩니다. 평가 통과·실패·만료는 향후 신뢰 평가 수신 경로에서만 기록할 수 있습니다.",
+        "modelRoutes": "허용 모델 경로",
+        "modelRoutesDescription": "Provider, 정확한 모델 식별자와 선택적 처리 리전을 입력합니다. API 키나 비밀값을 입력하지 마세요.",
+        "addRoute": "모델 경로 추가",
+        "removeRoute": "{{index}}번째 모델 경로 제거",
+        "remove": "제거",
+        "provider": "Provider 식별자",
+        "model": "모델 식별자",
+        "region": "처리 리전",
+        "optional": "선택 사항",
+        "knowledgeSources": "허용 지식 원천 키",
+        "toolKeys": "허용 도구 키",
+        "identifierHelp": "쉼표 또는 줄바꿈으로 구분합니다. 각 키는 실행부의 정본 식별자와 일치해야 합니다.",
+        "toolBoundary": "쉼표 또는 줄바꿈으로 구분합니다. 현재 도구 실행부는 미연결 상태입니다.",
+        "maxOutputTokens": "요청당 최대 출력 토큰",
+        "budgetMode": "예산 처리 방식",
+        "periodTokenLimit": "현재 기간 토큰 상한",
+        "alertThreshold": "경보 기준 (%)",
+        "requireEvaluation": "현재 정책 버전의 검증된 평가 통과를 실행 조건으로 요구",
+        "evaluationPending": "저장 후 평가 상태는 대기가 됩니다. 검증된 평가 근거가 도착하기 전에는 실행이 실패 폐쇄됩니다.",
+        "evaluationNotRequired": "평가 통과를 실행 조건으로 요구하지 않습니다."
+      },
+      "validation": {
+        "MODEL_ROUTE_REQUIRED": "허용 모델 경로가 하나 이상 필요합니다.",
+        "MODEL_ROUTE_INVALID": "Provider·모델·리전 형식 또는 중복 경로를 확인하세요.",
+        "IDENTIFIER_INVALID": "지식 원천 또는 도구 키 형식을 확인하세요.",
+        "MAX_OUTPUT_INVALID": "최대 출력 토큰은 128~4096의 정수여야 합니다.",
+        "PERIOD_LIMIT_REQUIRED": "실행 상한 집행에는 기간 토큰 상한이 필요합니다.",
+        "PERIOD_LIMIT_INVALID": "기간 토큰 상한 범위를 확인하세요.",
+        "ALERT_THRESHOLD_INVALID": "경보 기준은 1~100의 정수여야 합니다.",
+        "CHANGE_REASON_REQUIRED": "변경 사유를 10~500자로 입력하세요."
+      },
+      "emergency": {
+        "stopTitle": "DWAI·ON Ask 실행 긴급 중단",
+        "releaseTitle": "DWAI·ON Ask 실행 중단 해제",
+        "description": "MANAGE 권한과 현재 정책 버전을 확인한 뒤 회사 범위의 Ask 신규 실행 상태를 변경합니다.",
+        "impact": "새 Ask 검색과 모델 요청에만 적용됩니다. 음성·회의 AI는 포함하지 않으며 이미 Provider에 전송된 요청을 취소하지 않습니다.",
+        "confirm": "영향 범위와 제외 범위를 확인했습니다."
+      }
+    },
     "evaluation": {
       "ruleBoundary": "결과는 근거 사용과 기대어만 검사하며 AI 정확도를 측정하지 않습니다.",
       "ruleSample": "제한된 규칙 검사: {{total}}개 사례 중 {{passed}}개 통과.",
@@ -1246,7 +1434,7 @@
       "detailUnavailable": "선택한 평가 세트를 불러오지 못했습니다.",
       "create": "평가 세트 생성",
       "importUnavailable": "CSV 가져오기 미지원",
-      "unsupportedNotice": "이 API는 벤치마크 정확도, 인용 정밀도, 첫 토큰 지연이나 서로 다른 실행이 동일한 데이터셋·모델·정책·규칙을 사용했다는 증거를 제공하지 않습니다.",
+      "unsupportedNotice": "데이터셋 checksum과 모델·프롬프트·정책·도구·평가기 버전을 고정한 경우에만 평가 근거로 사용합니다. 누락된 측정값은 명시적으로 사용 불가로 표시합니다.",
       "summaryLabel": "조회된 평가 계약 요약",
       "summary": {
         "loaded": "조회 세트",
@@ -3638,8 +3826,24 @@
       "objectType": "객체 유형",
       "objectId": "객체 ID",
       "executionId": "실행 ID",
-      "from": "시작 시각 (포함·ISO 8601)",
-      "to": "종료 시각 (미포함·ISO 8601)",
+      "from": "시작 시각 (포함)",
+      "to": "종료 시각 (미포함)",
+      "allSources": "모든 소스",
+      "allObjectTypes": "모든 객체 유형",
+      "preservedValue": "현재 링크 값 · {{value}}",
+      "localTimeNotice": "기기 시간대로 입력하며 활동 원장에는 시간대가 명시된 값으로 전달합니다.",
+      "sourceOptions": {
+        "workspace": "워크스페이스",
+        "dwpWorkspace": "DWP 워크스페이스",
+        "personalTask": "개인 업무",
+        "apps": "DWP 앱",
+        "dwaion": "DWAI·ON"
+      },
+      "objectTypeOptions": {
+        "workItem": "업무",
+        "workspaceApp": "워크스페이스 앱",
+        "agentRun": "에이전트 실행"
+      },
       "includeUsage": "앱 사용 기록 포함"
     }
   },

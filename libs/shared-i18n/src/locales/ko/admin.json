@@ -14,6 +14,33 @@
     "description": "관리 셸은 계속 사용할 수 있습니다. 페이지를 새로고침해 이 화면을 다시 불러오세요.",
     "reloadPage": "페이지 새로고침"
   },
+  "settingsHome": {
+    "eyebrow": "회사 관리",
+    "title": "회사 설정",
+    "description": "조직, 사람, 앱, 연동과 거버넌스 설정을 권한 범위 안에서 찾고 관리합니다.",
+    "availableCount": "현재 권한 {{count}}개",
+    "searchLabel": "회사 설정 검색",
+    "searchPlaceholder": "SSO, SCIM, 앱 접근, 감사 등 검색",
+    "searchHelp": "현재 역할과 위임 범위에서 허용된 설정만 결과에 표시합니다.",
+    "emptyTitle": "일치하는 회사 설정이 없습니다",
+    "emptyDescription": "검색어를 줄이거나 담당 관리자에게 필요한 권한을 확인하세요.",
+    "controlLoop": {
+      "title": "적용과 운영 확인",
+      "description": "설정 저장 여부와 실제 적용·관측 결과를 구분하여 담당 작업공간에서 확인합니다.",
+      "application": {
+        "title": "적용 상태와 미수렴",
+        "description": "API 관측에서 실패, 지연과 마지막 성공 근거를 확인합니다."
+      },
+      "connections": {
+        "title": "연동과 동기화",
+        "description": "연결 설정, 동의, 동기화 실행과 실패 결과를 확인합니다."
+      },
+      "ai": {
+        "title": "AI 정책과 운영",
+        "description": "DWAI·ON의 모델, 도구, 정보원, 안전과 평가 정책을 관리합니다."
+      }
+    }
+  },
   "navigation": {
     "groups": {
       "experience": "사용자 경험",

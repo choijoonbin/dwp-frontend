@@ -1,0 +1,328 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace administration
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace administration
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Operations overview" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e40]: Operations overview
+                - navigation "Operations overview" [ref=e42]:
+                  - generic [ref=e43]:
+                    - link "Operations" [ref=e44] [cursor=pointer]:
+                      - /url: /workplace/admin/overview?view=overview
+                      - img [ref=e46]
+                      - text: Operations
+                    - link "Insights" [ref=e49] [cursor=pointer]:
+                      - /url: /workplace/admin/overview?view=insights
+                      - img [ref=e51]
+                      - text: Insights
+              - listitem [ref=e53]:
+                - link "Safety response" [ref=e54] [cursor=pointer]:
+                  - /url: /workplace/admin/safety
+                  - img [ref=e56]
+                  - paragraph [ref=e62]: Safety response
+              - listitem [ref=e63]:
+                - link "Booking operations" [ref=e64] [cursor=pointer]:
+                  - /url: /workplace/admin/operations
+                  - img [ref=e66]
+                  - paragraph [ref=e70]: Booking operations
+                - navigation "Booking operations" [ref=e72]:
+                  - generic [ref=e73]:
+                    - link "Bookings" [ref=e74] [cursor=pointer]:
+                      - /url: /workplace/admin/operations?view=bookings
+                      - img [ref=e76]
+                      - text: Bookings
+                    - link "Space closures" [ref=e81] [cursor=pointer]:
+                      - /url: /workplace/admin/operations?view=facilities
+                      - img [ref=e83]
+                      - text: Space closures
+                    - link "Audit trail" [ref=e85] [cursor=pointer]:
+                      - /url: /workplace/admin/operations?view=audit
+                      - img [ref=e87]
+                      - text: Audit trail
+              - listitem [ref=e92]:
+                - link "Workplace device operations" [ref=e93] [cursor=pointer]:
+                  - /url: /workplace/admin/devices
+                  - img [ref=e95]
+                  - paragraph [ref=e99]: Workplace device operations
+              - listitem [ref=e100]:
+                - link "Space planning" [ref=e101] [cursor=pointer]:
+                  - /url: /workplace/admin/space-planning
+                  - img [ref=e103]
+                  - paragraph [ref=e108]: Space planning
+              - listitem [ref=e109]:
+                - link "Assistant governance" [ref=e110] [cursor=pointer]:
+                  - /url: /workplace/admin/assistant-governance
+                  - img [ref=e112]
+                  - paragraph [ref=e116]: Assistant governance
+              - listitem [ref=e117]:
+                - link "Space governance" [ref=e118] [cursor=pointer]:
+                  - /url: /workplace/admin/governance
+                  - img [ref=e120]
+                  - paragraph [ref=e126]: Space governance
+                - navigation "Space governance" [ref=e128]:
+                  - generic [ref=e129]:
+                    - link "Spatial hierarchy" [ref=e130] [cursor=pointer]:
+                      - /url: /workplace/admin/governance?area=hierarchy
+                      - img [ref=e132]
+                      - text: Spatial hierarchy
+                    - link "Access control" [ref=e137] [cursor=pointer]:
+                      - /url: /workplace/admin/governance?area=access
+                      - img [ref=e139]
+                      - text: Access control
+                    - link "Policy inheritance" [ref=e142] [cursor=pointer]:
+                      - /url: /workplace/admin/governance?area=policy
+                      - img [ref=e144]
+                      - text: Policy inheritance
+                    - link "Floor-plan releases" [ref=e147] [cursor=pointer]:
+                      - /url: /workplace/admin/governance?area=floorPlans
+                      - img [ref=e149]
+                      - text: Floor-plan releases
+                    - link "Admin delegation" [ref=e152] [cursor=pointer]:
+                      - /url: /workplace/admin/governance?area=delegation
+                      - img [ref=e154]
+                      - text: Admin delegation
+                    - link "Privacy and sharing" [ref=e157] [cursor=pointer]:
+                      - /url: /workplace/admin/governance?area=experience
+                      - img [ref=e159]
+                      - text: Privacy and sharing
+                    - link "Data connections" [ref=e162] [cursor=pointer]:
+                      - /url: /workplace/admin/governance?area=dataSources
+                      - img [ref=e164]
+                      - text: Data connections
+              - listitem [ref=e167]:
+                - link "Sites and floor plans" [ref=e168] [cursor=pointer]:
+                  - /url: /workplace/admin/locations
+                  - img [ref=e170]
+                  - paragraph [ref=e175]: Sites and floor plans
+              - listitem [ref=e176]:
+                - link "Space booking policy" [ref=e177] [cursor=pointer]:
+                  - /url: /workplace/admin/policies
+                  - img [ref=e179]
+                  - paragraph [ref=e183]: Space booking policy
+              - listitem [ref=e184]:
+                - link "Service fulfillment" [ref=e185] [cursor=pointer]:
+                  - /url: /workplace/admin/service-fulfillment
+                  - img [ref=e187]
+                  - paragraph [ref=e191]: Service fulfillment
+              - listitem [ref=e192]:
+                - link "Service catalog" [ref=e193] [cursor=pointer]:
+                  - /url: /workplace/admin/service-catalog
+                  - img [ref=e195]
+                  - paragraph [ref=e199]: Service catalog
+              - listitem [ref=e200]:
+                - link "Service providers" [ref=e201] [cursor=pointer]:
+                  - /url: /workplace/admin/service-providers
+                  - img [ref=e203]
+                  - paragraph [ref=e207]: Service providers
+              - listitem [ref=e208]:
+                - link "Visitor exceptions" [ref=e209] [cursor=pointer]:
+                  - /url: /workplace/admin/visits
+                  - img [ref=e211]
+                  - paragraph [ref=e216]: Visitor exceptions
+              - listitem [ref=e217]:
+                - link "Visitor policies" [ref=e218] [cursor=pointer]:
+                  - /url: /workplace/admin/visit-policies
+                  - img [ref=e220]
+                  - paragraph [ref=e224]: Visitor policies
+              - listitem [ref=e225]:
+                - link "Visitor access zones" [ref=e226] [cursor=pointer]:
+                  - /url: /workplace/admin/access-zones
+                  - img [ref=e228]
+                  - paragraph [ref=e236]: Visitor access zones
+              - listitem [ref=e237]:
+                - link "Visitor providers" [ref=e238] [cursor=pointer]:
+                  - /url: /workplace/admin/visit-providers
+                  - img [ref=e240]
+                  - paragraph [ref=e247]: Visitor providers
+              - listitem [ref=e248]:
+                - link "Kiosk devices" [ref=e249] [cursor=pointer]:
+                  - /url: /workplace/admin/kiosk-devices
+                  - img [ref=e251]
+                  - paragraph [ref=e255]: Kiosk devices
+          - generic [ref=e256]:
+            - paragraph [ref=e257]: Meeting room administration
+            - list [ref=e258]:
+              - listitem [ref=e259]:
+                - link "Meeting approvals" [ref=e260] [cursor=pointer]:
+                  - /url: /workplace/admin/meeting-operations
+                  - img [ref=e262]
+                  - paragraph [ref=e268]: Meeting approvals
+              - listitem [ref=e269]:
+                - link "Meeting policy" [ref=e270] [cursor=pointer]:
+                  - /url: /workplace/admin/meeting-policy
+                  - img [ref=e272]
+                  - paragraph [ref=e276]: Meeting policy
+        - link "Return to work" [ref=e278] [cursor=pointer]:
+          - /url: /workplace/home
+          - img [ref=e280]
+          - text: Return to work
+    - banner [ref=e282]:
+      - generic [ref=e283]:
+        - generic [ref=e284]:
+          - img [ref=e286]
+          - generic "Workplace management" [ref=e290]
+        - navigation "App area switcher" [ref=e293]:
+          - generic [ref=e294]: Management mode
+          - 'link "Return to work: Workplace" [ref=e296] [cursor=pointer]':
+            - /url: /workplace/home
+            - img [ref=e298]
+            - generic [ref=e300]: Return to work
+        - generic [ref=e301]:
+          - button "Search DWP" [ref=e303] [cursor=pointer]:
+            - img [ref=e304]
+            - paragraph [ref=e307]: Search DWP
+            - generic [ref=e308]: ⌘K
+          - generic [ref=e309]:
+            - button "Enter full screen" [ref=e310] [cursor=pointer]:
+              - img [ref=e311]
+            - generic "0 actionable notifications, 0 total unread" [ref=e317]:
+              - button "0 actionable notifications, 0 total unread" [ref=e318] [cursor=pointer]:
+                - generic [ref=e319]:
+                  - img [ref=e320]
+                  - generic: "0"
+          - 'button "Account: Workspace Member, Tenant administrator" [ref=e324] [cursor=pointer]':
+            - generic [ref=e325]: W
+            - img [ref=e326]
+    - main [ref=e328]:
+      - generic [ref=e329]:
+        - generic [ref=e331]:
+          - text: AI governance
+          - heading "Workplace Assistant governance" [level=1] [ref=e332]
+          - paragraph [ref=e333]: Control tenant availability, redaction, retention, governed versions, and auditable assistant activity.
+        - generic [ref=e334]:
+          - generic [ref=e336]:
+            - generic [ref=e337]:
+              - generic [ref=e338]:
+                - heading "Governed runtime evidence" [level=2] [ref=e339]
+                - text: Sep 17, 2026, 9:00 AM
+              - generic [ref=e341]: "Operating status: Available"
+            - generic [ref=e342]:
+              - generic [ref=e343]:
+                - generic [ref=e344]: Approved provider reference
+                - generic [ref=e345]:
+                  - textbox "Approved provider reference" [ref=e346]: approved-provider
+                  - group:
+                    - generic: Approved provider reference
+              - generic [ref=e347]:
+                - generic [ref=e348]: Governed model version
+                - generic [ref=e349]:
+                  - textbox "Governed model version" [ref=e350]: governed-model-23
+                  - group:
+                    - generic: Governed model version
+              - generic [ref=e351]:
+                - generic [ref=e352]: Prompt version
+                - generic [ref=e353]:
+                  - textbox "Prompt version" [ref=e354]: prompt-23
+                  - group:
+                    - generic: Prompt version
+              - generic [ref=e355]:
+                - generic [ref=e356]: Tool version
+                - generic [ref=e357]:
+                  - textbox "Tool version" [ref=e358]: booking-tool-23
+                  - group:
+                    - generic: Tool version
+              - generic [ref=e359]:
+                - generic [ref=e360]: Retention days
+                - generic [ref=e361]:
+                  - spinbutton "Retention days" [ref=e362]: "30"
+                  - group:
+                    - generic: Retention days
+              - generic [ref=e363]:
+                - generic [ref=e364]: Redaction readiness
+                - generic [ref=e365]:
+                  - combobox "Redaction readiness READY" [ref=e366] [cursor=pointer]: READY
+                  - textbox: READY
+                  - img
+                  - group:
+                    - generic: Redaction readiness
+            - generic [ref=e368]:
+              - generic [ref=e369] [cursor=pointer]:
+                - generic [ref=e370]:
+                  - checkbox "Tenant opt-in" [checked] [ref=e371]
+                  - img [ref=e372]
+                - generic [ref=e374]: Tenant opt-in
+              - generic [ref=e375] [cursor=pointer]:
+                - generic [ref=e376]:
+                  - checkbox "Global kill switch" [ref=e377]
+                  - img [ref=e378]
+                - generic [ref=e380]: Global kill switch
+              - generic [ref=e381] [cursor=pointer]:
+                - generic [ref=e382]:
+                  - checkbox "Allow consented feedback use" [checked] [ref=e383]
+                  - img [ref=e384]
+                - generic [ref=e386]: Allow consented feedback use
+            - generic [ref=e387]:
+              - generic: Command reason
+              - generic [ref=e388]:
+                - textbox "Command reason" [ref=e389]
+                - group:
+                  - generic: Command reason
+            - generic [ref=e390] [cursor=pointer]:
+              - generic [ref=e391]:
+                - checkbox "I reviewed the tenant-wide impact and explicitly confirm this governance change." [ref=e392]
+                - img [ref=e393]
+              - generic [ref=e395]: I reviewed the tenant-wide impact and explicitly confirm this governance change.
+            - button "Apply governance change" [disabled]:
+              - generic:
+                - img
+              - text: Apply governance change
+          - generic [ref=e397]:
+            - generic [ref=e398]:
+              - heading "Prompt and tool audit" [level=2] [ref=e399]
+              - paragraph [ref=e400]: Bounded, redacted events for assistant requests and governance commands.
+            - generic [ref=e401]:
+              - generic [ref=e402]:
+                - generic: Request UUID filter
+                - generic [ref=e403]:
+                  - textbox "Request UUID filter" [ref=e404]
+                  - group:
+                    - generic: Request UUID filter
+              - generic [ref=e405]:
+                - generic [ref=e406]: Maximum events
+                - generic [ref=e407]:
+                  - spinbutton "Maximum events" [ref=e408]: "100"
+                  - group:
+                    - generic: Maximum events
+              - button "Apply audit filter" [ref=e409] [cursor=pointer]
+            - generic [ref=e410]: Generated Sep 17, 2026, 9:00 AM
+            - generic "Prompt and tool audit" [ref=e411]:
+              - table [ref=e412]:
+                - rowgroup [ref=e413]:
+                  - row "Event Actor Correlation Timestamp" [ref=e414]:
+                    - columnheader "Event" [ref=e415]
+                    - columnheader "Actor" [ref=e416]
+                    - columnheader "Correlation" [ref=e417]
+                    - columnheader "Timestamp" [ref=e418]
+                - rowgroup [ref=e419]:
+                  - row "WorkplaceAssistantValidated 10001 screen-23-correlation 9/17/26, 9:00 AM" [ref=e420]:
+                    - cell "WorkplaceAssistantValidated" [ref=e421]
+                    - cell "10001" [ref=e422]
+                    - cell "screen-23-correlation" [ref=e423]
+                    - cell "9/17/26, 9:00 AM" [ref=e424]
+  - generic "Open DWAI·ON" [ref=e426]:
+    - button "Open DWAI·ON" [ref=e427] [cursor=pointer]
+```

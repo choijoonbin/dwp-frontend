@@ -1,7 +1,7 @@
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionButton, GuidedEmptyState } from '@dwp-frontend/design-system';
+import { ActionButton, GuidedEmptyState, InlineFeedback } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -151,15 +151,14 @@ export function MessagingTimelinePane({
         })}
       >
         {targetState === 'LOADING' ? (
-          <Alert
-            severity="info"
-            icon={<CircularProgress size={18} color="inherit" aria-hidden="true" />}
+          <InlineFeedback severity="info" sx={{ mb: 1.25 }}>
+            {labels.targetLoading}
+          </InlineFeedback>
+        ) : targetState === 'NOT_FOUND' || targetState === 'UNAVAILABLE' ? (
+          <InlineFeedback
+            severity={targetState === 'UNAVAILABLE' ? 'error' : 'warning'}
             sx={{ mb: 1.25 }}
           >
-            {labels.targetLoading}
-          </Alert>
-        ) : targetState === 'NOT_FOUND' || targetState === 'UNAVAILABLE' ? (
-          <Alert severity={targetState === 'UNAVAILABLE' ? 'error' : 'warning'} sx={{ mb: 1.25 }}>
             <Stack spacing={0.75} sx={{ minWidth: 0 }}>
               <Typography variant="body2">
                 {targetState === 'UNAVAILABLE' ? labels.targetUnavailable : labels.targetNotFound}
@@ -175,7 +174,7 @@ export function MessagingTimelinePane({
                 </ActionButton>
               </Stack>
             </Stack>
-          </Alert>
+          </InlineFeedback>
         ) : null}
         {hasOlder ? (
           <Box sx={{ display: 'grid', placeItems: 'center', pb: 1.25 }}>

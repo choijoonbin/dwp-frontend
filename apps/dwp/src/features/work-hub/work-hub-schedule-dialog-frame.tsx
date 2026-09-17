@@ -1,13 +1,8 @@
 import { useId } from 'react';
-import { CalendarCheck2, ExternalLink, X } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { CalendarCheck2, ExternalLink } from 'lucide-react';
+import { ActionButton, ContentDialog, foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha } from '@mui/material/styles';
@@ -55,19 +50,46 @@ export function WorkHubScheduleDialogFrame({
   onSubmit,
   onSecondaryAction,
 }: WorkHubScheduleDialogFrameProps) {
-  const titleId = useId();
-  const descriptionId = useId();
+  const formId = useId();
   const compact = useMediaQuery('(max-width:599.95px)', { noSsr: true });
 
   return (
-    <Dialog
-      data-testid="work-schedule-dialog"
+    <ContentDialog
       open={open}
+      title={`${title} ${subtitle}`.trim()}
+      description={description}
+      closeLabel={closeLabel}
+      onClose={onClose}
+      busy={busy}
       fullScreen={compact}
       maxWidth={false}
-      aria-labelledby={titleId}
-      aria-describedby={descriptionId}
-      onClose={busy ? undefined : onClose}
+      testId="work-schedule-dialog"
+      closeButtonSx={{ width: 44, height: 44, mt: -0.75, mr: -0.75 }}
+      titleStart={
+        <Box
+          component="span"
+          sx={(theme) => ({
+            px: 0.75,
+            py: 0.25,
+            borderRadius: foundationTokens.radius.control + 'px',
+            bgcolor: alpha(theme.palette.primary.main, 0.1),
+            color: 'primary.main',
+            fontFamily: foundationTokens.font.mono,
+            fontSize: foundationTokens.workplace.typography.caption.fontSize,
+            fontWeight: foundationTokens.workplace.typography.pageTitle.fontWeight,
+            lineHeight: foundationTokens.workplace.typography.caption.lineHeight,
+            letterSpacing: foundationTokens.workplace.typography.caption.letterSpacing,
+            '@media (forced-colors: active)': { border: '1px solid ButtonText' },
+          })}
+        >
+          {serviceCode}
+        </Box>
+      }
+      titleEnd={
+        <Typography variant="caption" color="text.secondary">
+          {serviceName}
+        </Typography>
+      }
       slotProps={{
         paper: {
           sx: {
@@ -75,7 +97,7 @@ export function WorkHubScheduleDialogFrame({
             maxWidth: compact ? 1 : 'calc(100vw - 32px)',
             maxHeight: compact ? '100dvh' : 'calc(100dvh - 48px)',
             m: compact ? 0 : 2,
-            borderRadius: compact ? 0 : 2,
+            borderRadius: compact ? 0 : foundationTokens.radius.surface * 2 + 'px',
             overflow: 'hidden',
             bgcolor: 'background.paper',
             '@media (forced-colors: active)': {
@@ -84,125 +106,29 @@ export function WorkHubScheduleDialogFrame({
           },
         },
       }}
-    >
-      <Box
-        component="form"
-        sx={{
-          display: 'flex',
-          minHeight: 0,
-          height: compact ? '100dvh' : 'auto',
-          flexDirection: 'column',
-        }}
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (!busy && !submitDisabled) void onSubmit();
-        }}
-      >
-        <Box
-          component="header"
-          sx={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: 2,
-            px: { xs: 2, sm: 3 },
-            pt: { xs: 2, sm: 3 },
-            pb: 2,
-          }}
-        >
-          <Box sx={{ minWidth: 0 }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.75, flexWrap: 'wrap' }}
-            >
-              <Box
-                component="span"
-                sx={(theme) => ({
-                  px: 0.75,
-                  py: 0.25,
-                  borderRadius: 0.75,
-                  bgcolor: alpha(theme.palette.primary.main, 0.1),
-                  color: 'primary.main',
-                  fontFamily: 'monospace',
-                  fontSize: '0.6875rem',
-                  fontWeight: 800,
-                  lineHeight: 1.45,
-                  letterSpacing: '0.05em',
-                  '@media (forced-colors: active)': { border: '1px solid ButtonText' },
-                })}
-              >
-                {serviceCode}
-              </Box>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                {serviceName}
-              </Typography>
-            </Box>
-            <Typography
-              component="h2"
-              variant="h5"
-              sx={{ fontWeight: 700, lineHeight: 1.3, letterSpacing: '-0.025em' }}
-            >
-              <Box component="span" id={titleId}>
-                {title}
-              </Box>{' '}
-              <Typography component="span" variant="body1" color="text.secondary">
-                {subtitle}
-              </Typography>
-            </Typography>
-            <Typography
-              id={descriptionId}
-              variant="body2"
-              color="text.secondary"
-              sx={{ mt: 0.5, lineHeight: 1.55 }}
-            >
-              {description}
-            </Typography>
-          </Box>
-          <Tooltip title={closeLabel}>
-            <span>
-              <IconButton
-                aria-label={closeLabel}
-                onClick={onClose}
-                disabled={busy}
-                size="small"
-                sx={{ width: 44, height: 44, mt: -0.75, mr: -0.75 }}
-              >
-                <X size={20} aria-hidden="true" />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </Box>
-
-        <DialogContent
-          tabIndex={0}
-          sx={{
-            minHeight: 0,
-            overflowY: 'auto',
-            px: { xs: 2, sm: 3 },
-            pt: '8px !important',
-            pb: 2,
-          }}
-        >
-          {children}
-        </DialogContent>
-
-        <DialogActions
-          sx={(theme) => ({
-            flex: '0 0 auto',
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: { xs: 'stretch', sm: 'center' },
-            justifyContent: 'space-between',
-            gap: 1.5,
-            px: { xs: 2, sm: 3 },
-            py: 1.5,
-            bgcolor: alpha(
-              theme.palette.primary.main,
-              theme.palette.mode === 'dark' ? 0.09 : 0.055
-            ),
-            borderTop: '1px solid',
-            borderColor: 'divider',
-          })}
-        >
+      contentSx={{
+        minHeight: 0,
+        overflowY: 'auto',
+        px: { xs: 2, sm: 3 },
+        pt: '8px !important',
+        pb: 2,
+      }}
+      contentTabIndex={0}
+      footerSx={(theme) => ({
+        flex: '0 0 auto',
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        alignItems: { xs: 'stretch', sm: 'center' },
+        justifyContent: 'space-between',
+        gap: 1.5,
+        px: { xs: 2, sm: 3 },
+        py: 1.5,
+        bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.09 : 0.055),
+        borderTop: '1px solid',
+        borderColor: 'divider',
+      })}
+      footerContent={
+        <>
           <ActionButton
             intent="quiet"
             endIcon={<ExternalLink size={16} aria-hidden="true" />}
@@ -228,6 +154,7 @@ export function WorkHubScheduleDialogFrame({
             {showSubmit && (
               <ActionButton
                 type="submit"
+                form={formId}
                 intent="primary"
                 startIcon={<CalendarCheck2 size={16} aria-hidden="true" />}
                 loading={busy}
@@ -239,8 +166,24 @@ export function WorkHubScheduleDialogFrame({
               </ActionButton>
             )}
           </Box>
-        </DialogActions>
+        </>
+      }
+    >
+      <Box
+        component="form"
+        id={formId}
+        sx={{
+          display: 'flex',
+          minHeight: 0,
+          flexDirection: 'column',
+        }}
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!busy && !submitDisabled) void onSubmit();
+        }}
+      >
+        {children}
       </Box>
-    </Dialog>
+    </ContentDialog>
   );
 }

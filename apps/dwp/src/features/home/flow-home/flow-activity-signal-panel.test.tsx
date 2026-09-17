@@ -5,7 +5,11 @@ import { describe, expect, it, vi } from 'vitest';
 import type * as DesignSystem from '@dwp-frontend/design-system';
 import type { WorkspaceActivityExecutionSummary } from '@dwp-frontend/shared-utils';
 import { FlowActivityDistribution, FlowActivitySignalPanel } from './flow-activity-signal-panel';
-import { flowActivityHistoryRoute, validFlowActivitySummary } from './flow-activity-signal-model';
+import {
+  flowActivityAttentionRoute,
+  flowActivityHistoryRoute,
+  validFlowActivitySummary,
+} from './flow-activity-signal-model';
 import { RolePulseInsight } from './home-purpose-role-pulse-insight';
 import type { FlowSignal } from './flow-home-model';
 
@@ -32,6 +36,22 @@ const summary: WorkspaceActivityExecutionSummary = {
   unknown: 0,
   generatedAt: '2026-09-07T01:00:00Z',
   coverage: { supportedObjectTypes: ['WORK_ITEM'] },
+  attentionItems: [
+    {
+      id: '21000000-0000-4000-8000-000000000002',
+      occurredAt: '2026-09-07T00:58:00Z',
+      actor: 'person',
+      actorName: 'Member',
+      state: 'needs-input',
+      title: 'Proposal confirmation required',
+      objectType: 'WORK_ITEM',
+      objectLabel: 'Customer proposal',
+      source: 'DWP_WORKSPACE',
+      eventKind: 'EXECUTION',
+      sourceAccess: 'AVAILABLE',
+      auditId: null,
+    },
+  ],
 };
 const signal: FlowSignal = {
   key: 'activity-attention',
@@ -102,6 +122,26 @@ describe('Flow execution signal ledger', () => {
     expect(markup).toContain('flow.signals.execution.historyNotice');
     expect(flowActivityHistoryRoute()).toBe('/activity/timeline');
     expect(flowActivityHistoryRoute('unknown')).toBe('/activity/timeline?state=unknown');
+  });
+
+  it('opens an exact current attention record before handing off to its owning app', () => {
+    const item = summary.attentionItems![0]!;
+    const markup = panel();
+    expect(markup).toContain('Proposal confirmation required');
+    expect(markup).toContain(
+      'href="/activity/timeline?event=21000000-0000-4000-8000-000000000002&amp;state=needs-input"'
+    );
+    expect(flowActivityAttentionRoute(item)).toBe(
+      '/activity/timeline?event=21000000-0000-4000-8000-000000000002&state=needs-input'
+    );
+  });
+
+  it('keeps a valid current item actionable during a brief count-to-item observation race', () => {
+    const racing = { ...summary, needsInput: 0, completed: 10 };
+    expect(validFlowActivitySummary(racing)).toBe(true);
+    const markup = panel({ ...signal, activityExecutionSummary: racing });
+    expect(markup).toContain('Proposal confirmation required');
+    expect(markup).not.toContain('flow.signals.execution.clearTitle');
   });
 
   it('does not display an invalid distribution or infer missing values as a healthy zero', () => {

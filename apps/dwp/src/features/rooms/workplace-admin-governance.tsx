@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, FileStack, Network, Scale, ShieldCheck } from 'lucide-react';
+import { Building2, DatabaseZap, FileStack, Network, Scale, ShieldCheck } from 'lucide-react';
 import { ActionButton, ConfirmDialog, PageCanvas, SelectField } from '@dwp-frontend/design-system';
 import { useBlocker, useSearchParams } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ import { WorkplaceAdminGovernanceFloorPlans } from './workplace-admin-governance
 import { WorkplaceAdminGovernanceHierarchy } from './workplace-admin-governance-hierarchy';
 import { WorkplaceAdminGovernancePolicy } from './workplace-admin-governance-policy';
 import { WorkplaceGovernanceExperienceSettings } from './workplace-governance-experience-settings';
+import { WorkplaceGovernanceDataSources } from './workplace-governance-data-sources';
 
 import {
   parseWorkplaceGovernanceTab,
@@ -32,6 +33,7 @@ const TABS = [
   { value: 'floorPlans', icon: FileStack },
   { value: 'delegation', icon: Building2 },
   { value: 'experience', icon: ShieldCheck },
+  { value: 'dataSources', icon: DatabaseZap },
 ] as const;
 
 export function WorkplaceAdminGovernance() {
@@ -197,6 +199,12 @@ export function WorkplaceAdminGovernance() {
             <WorkplaceGovernanceExperienceSettings
               canManage={capabilities.experience.canManage}
               canView={capabilities.experience.canView}
+            />
+          ) : null}
+          {tab === 'dataSources' ? (
+            <WorkplaceGovernanceDataSources
+              canManage={capabilities.dataSources.canManage}
+              canView={capabilities.dataSources.canView}
             />
           ) : null}
         </>

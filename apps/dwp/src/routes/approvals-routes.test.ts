@@ -10,7 +10,7 @@ import {
 import { resolveProductRoot } from '../features/shell/product-root-resolver';
 import { resolveProductSurface } from '../features/shell/product-surface-resolver';
 import {
-  PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
+  ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
   REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
 } from './product-page-route-contracts';
 import { approvalsRoutes } from './approvals-routes';
@@ -88,9 +88,9 @@ describe('Approvals product surface routes', () => {
     });
   });
 
-  it('owns exactly nine Work and six Management PAGE routes', () => {
+  it('owns exactly nine Work and eleven Management PAGE routes', () => {
     expect(flattenSurfaceItems(APPROVAL_WORK_NAVIGATION)).toHaveLength(9);
-    expect(flattenSurfaceItems(APPROVAL_MANAGEMENT_NAVIGATION)).toHaveLength(6);
+    expect(flattenSurfaceItems(APPROVAL_MANAGEMENT_NAVIGATION)).toHaveLength(11);
     expect(approvalsRoutes[0]?.children?.find((route) => route.path === 'admin')).toBeDefined();
 
     const routerKeys = approvalsRoutes
@@ -100,7 +100,7 @@ describe('Approvals product surface routes', () => {
       })
       .sort();
     expect(routerKeys).toEqual(
-      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) => route.productId === 'approvals')
+      ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) => route.productId === 'approvals')
         .map((route) => route.routeContractKey)
         .sort()
     );

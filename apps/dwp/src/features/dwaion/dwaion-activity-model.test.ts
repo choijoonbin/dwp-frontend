@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  dwaionActivityPeriodStart,
   filterDwaionActivityWindow,
   filterDwaionActivityPeriod,
   findExactDwaionRun,
+  hasExpiredDwaionRunLease,
   resolveDwaionActivityFilter,
   resolveDwaionActivityPeriod,
   summarizeDwaionActivityWindow,
@@ -22,6 +24,10 @@ const runs: DwaionUserRun[] = [
   {
     ...run('10000000-0000-0000-0000-000000000005', 'COMPLETED', 'ALLOW', 'COMPLETED'),
     dataProvenance: 'SAMPLE',
+  },
+  {
+    ...run('10000000-0000-4000-8000-000000000006', 'RUNNING', 'HANDOFF', null),
+    lease: { status: 'EXPIRED', expiresAt: '2026-09-04T00:01:00Z' },
   },
 ];
 
@@ -42,6 +48,8 @@ describe('DWAI activity recent-window model', () => {
     expect(resolveDwaionActivityPeriod('unsupported')).toBe('MONTH');
     expect(filterDwaionActivityPeriod(runs, 'DAY', now)).toEqual([]);
     expect(filterDwaionActivityPeriod(runs, 'WEEK', now)).toHaveLength(runs.length);
+    expect(dwaionActivityPeriodStart('DAY', now)).toBe('2026-09-08T00:00:00.000Z');
+    expect(dwaionActivityPeriodStart('MONTH', now)).toBe('2026-08-10T00:00:00.000Z');
     expect(updateDwaionActivityPeriod(new URLSearchParams('run=exact'), 'DAY').toString()).toBe(
       'run=exact&period=DAY'
     );
@@ -49,10 +57,10 @@ describe('DWAI activity recent-window model', () => {
 
   it('keeps local samples out of operational totals without hiding them from the recent list', () => {
     expect(summarizeDwaionActivityWindow(runs)).toEqual({
-      total: 4,
-      running: 1,
+      total: 5,
+      running: 2,
       completed: 2,
-      attention: 2,
+      attention: 3,
       sample: 1,
     });
     expect(filterDwaionActivityWindow(runs, 'ALL')).toContain(runs[4]);
@@ -61,11 +69,31 @@ describe('DWAI activity recent-window model', () => {
   it('drills the attention metric into the same evidence-based set of runs', () => {
     expect(resolveDwaionActivityFilter('attention')).toBe('ATTENTION');
     const attention = filterDwaionActivityWindow(runs, 'ATTENTION');
-    expect(attention.map((item) => item.runId)).toEqual([runs[2]?.runId, runs[3]?.runId]);
+    expect(attention.map((item) => item.runId)).toEqual([
+      runs[2]?.runId,
+      runs[3]?.runId,
+      runs[5]?.runId,
+    ]);
     expect(attention).toHaveLength(summarizeDwaionActivityWindow(runs).attention);
     expect(
       updateDwaionActivityFilter(new URLSearchParams('run=exact'), 'ATTENTION').toString()
     ).toBe('run=exact&state=ATTENTION');
+  });
+
+  it('flags an expired lease only while the server still reports the run as running', () => {
+    expect(hasExpiredDwaionRunLease(runs[5]!)).toBe(true);
+    expect(
+      hasExpiredDwaionRunLease({
+        ...runs[1]!,
+        lease: { status: 'EXPIRED', expiresAt: '2026-09-04T00:01:00Z' },
+      })
+    ).toBe(false);
+    expect(
+      hasExpiredDwaionRunLease({
+        ...runs[0]!,
+        lease: { status: 'ACTIVE', expiresAt: '2026-09-04T00:01:00Z' },
+      })
+    ).toBe(false);
   });
 
   it('never substitutes another recent row for an exact deep link', () => {

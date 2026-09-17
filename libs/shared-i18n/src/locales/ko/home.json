@@ -136,7 +136,31 @@
         "description": "여러 앱의 처리할 일을 마감과 위험도 순으로 모아봅니다.",
         "listLabel": "우선 처리할 업무",
         "empty": "지금 바로 처리할 업무가 없습니다",
-        "emptyDescription": "새 업무가 생기면 마감과 위험도를 기준으로 여기에 표시합니다."
+        "emptyDescription": "새 업무가 생기면 마감과 위험도를 기준으로 여기에 표시합니다.",
+        "filteredEmpty": "선택한 유형의 업무가 없습니다",
+        "filteredEmptyDescription": "다른 업무 유형을 선택하거나 전체 업무를 확인해 주세요.",
+        "openWorkHub": "통합업무함 열기",
+        "filters": {
+          "label": "업무 유형 필터",
+          "all": "전체",
+          "urgentApproval": "긴급 승인",
+          "accessReview": "권한 심사",
+          "personalTask": "개인 할 일",
+          "tabLabel": "{{label}} {{count}}건",
+          "tabLabel_one": "{{label}} {{count}}건",
+          "tabLabel_other": "{{label}} {{count}}건",
+          "resultCount": "{{label}} 업무 {{count}}건",
+          "resultCount_one": "{{label}} 업무 {{count}}건",
+          "resultCount_other": "{{label}} 업무 {{count}}건"
+        },
+        "cta": {
+          "approvalReview": "전자결재에서 검토",
+          "accessReview": "권한 검토",
+          "start": "시작하기",
+          "supplement": "사유 보완",
+          "open": "업무 열기",
+          "ariaLabel": "{{action}}: {{title}}"
+        }
       },
       "timeline": {
         "title": "오늘 일정",
@@ -462,6 +486,8 @@
         "total": "전체 실행",
         "count": "{{count}}건",
         "reviewTitle": "확인이 필요한 실행",
+        "currentItemsNotice": "현재 원장의 실행을 먼저 표시합니다. 항목을 열어 근거를 확인한 뒤 소유 앱에서 계속 처리할 수 있습니다.",
+        "reviewItem": "확인하고 계속 처리",
         "viewHistory": "관련 이력 보기",
         "openTimeline": "전체 활동 타임라인",
         "historyNotice": "위 수치는 현재 실행 상태입니다. 관련 이력은 해당 상태가 기록된 과거 이벤트를 조회하므로 목록 건수와 다를 수 있습니다.",

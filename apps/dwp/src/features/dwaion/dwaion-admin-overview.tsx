@@ -36,6 +36,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { verifiedPercentage, verifiedPercentageLabel } from './dwaion-admin-metrics';
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
+import { DwaionIncidentWorkbenchPanel } from './admin-advancement/dwaion-incident-workbench-panel';
+import { DwaionOutcomesOperationsPanel } from './admin-advancement/dwaion-outcomes-operations-panel';
 
 const MANAGEMENT_DESTINATIONS = [
   ['agents', 'ADMIN.DWAION_AGENTS', Bot],
@@ -399,6 +401,9 @@ export function DwaionAdminOverview() {
           </Stack>
         </Box>
       )}
+
+      <DwaionIncidentWorkbenchPanel />
+      <DwaionOutcomesOperationsPanel periodDays={days} />
 
       <InlineFeedback severity="info" sx={{ mt: 2 }}>
         {t('dwaionAdmin.overview.scopeNotice')}

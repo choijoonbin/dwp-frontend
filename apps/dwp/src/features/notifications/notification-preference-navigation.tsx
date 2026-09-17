@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BellDot,
   BellRing,
   CalendarClock,
+  Focus,
   MoonStar,
   ShieldCheck,
   SlidersHorizontal,
@@ -87,6 +87,7 @@ export function NotificationPreferenceViewTabs({
 export const NOTIFICATION_PREFERENCE_SECTION_IDS = {
   presentation: 'notification-preferences-presentation',
   global: 'notification-preferences-channels',
+  attention: 'notification-preferences-attention',
   quiet: 'notification-preferences-quiet-hours',
   digest: 'notification-preferences-digest',
   apps: 'notification-preferences-apps',
@@ -97,6 +98,7 @@ export type PreferenceSectionKey = keyof typeof NOTIFICATION_PREFERENCE_SECTION_
 const PREFERENCE_SECTIONS = [
   { key: 'global', id: NOTIFICATION_PREFERENCE_SECTION_IDS.global, icon: BellRing },
   { key: 'apps', id: NOTIFICATION_PREFERENCE_SECTION_IDS.apps, icon: ShieldCheck },
+  { key: 'attention', id: NOTIFICATION_PREFERENCE_SECTION_IDS.attention, icon: Focus },
   { key: 'quiet', id: NOTIFICATION_PREFERENCE_SECTION_IDS.quiet, icon: MoonStar },
   {
     key: 'presentation',
@@ -114,80 +116,6 @@ export function NotificationPreferenceNavigation({
   onSectionChange: (section: PreferenceSectionKey) => void;
 }) {
   const { t } = useTranslation('notifications');
-
-  const activeSectionRef = useRef(activeSection);
-  useEffect(() => {
-    activeSectionRef.current = activeSection;
-  }, [activeSection]);
-
-  useEffect(() => {
-    let frame = 0;
-    let resizeFrame = 0;
-    let width = window.innerWidth;
-    let resizeSection: PreferenceSectionKey | null = null;
-    const synchronizeActiveSection = () => {
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
-        if (
-          !document.getElementById(NOTIFICATION_PREFERENCE_SECTION_IDS.global)?.getClientRects()
-            .length
-        )
-          return;
-        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
-          onSectionChange('digest');
-          return;
-        }
-        const current = PREFERENCE_SECTIONS.reduce<PreferenceSectionKey>((visibleKey, section) => {
-          const top = document.getElementById(section.id)?.getBoundingClientRect().top;
-          return top != null && top <= 144 ? section.key : visibleKey;
-        }, 'global');
-        onSectionChange(current);
-      });
-    };
-    const restoreResizeSection = () => {
-      const section = resizeSection;
-      if (!section) return;
-      window.cancelAnimationFrame(resizeFrame);
-      resizeFrame = window.requestAnimationFrame(() => {
-        document.getElementById(NOTIFICATION_PREFERENCE_SECTION_IDS[section])?.scrollIntoView({
-          behavior: 'instant',
-          block: 'start',
-        });
-        synchronizeActiveSection();
-      });
-    };
-    const preserveSectionOnResize = () => {
-      if (width === window.innerWidth) return;
-      width = window.innerWidth;
-      resizeSection = activeSectionRef.current;
-      restoreResizeSection();
-    };
-    const releaseResizeSection = () => {
-      resizeSection = null;
-      window.cancelAnimationFrame(resizeFrame);
-    };
-    const resizeObserver = new ResizeObserver(restoreResizeSection);
-    const panel = document
-      .getElementById(NOTIFICATION_PREFERENCE_SECTION_IDS.global)
-      ?.closest('[role="tabpanel"]');
-    if (panel) resizeObserver.observe(panel);
-    synchronizeActiveSection();
-    window.addEventListener('scroll', synchronizeActiveSection, { passive: true });
-    window.addEventListener('resize', preserveSectionOnResize);
-    window.addEventListener('pointerdown', releaseResizeSection, { passive: true });
-    window.addEventListener('wheel', releaseResizeSection, { passive: true });
-    window.addEventListener('keydown', releaseResizeSection);
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.cancelAnimationFrame(resizeFrame);
-      resizeObserver.disconnect();
-      window.removeEventListener('scroll', synchronizeActiveSection);
-      window.removeEventListener('resize', preserveSectionOnResize);
-      window.removeEventListener('pointerdown', releaseResizeSection);
-      window.removeEventListener('wheel', releaseResizeSection);
-      window.removeEventListener('keydown', releaseResizeSection);
-    };
-  }, [onSectionChange]);
 
   const openSection = (key: PreferenceSectionKey, id: string) => {
     onSectionChange(key);
@@ -211,7 +139,7 @@ export function NotificationPreferenceNavigation({
         },
         zIndex: 2,
         mt: 1.5,
-        p: 0.75,
+        p: 0.5,
         borderBottom: 1,
         borderColor: 'divider',
         bgcolor: 'background.default',
@@ -229,7 +157,7 @@ export function NotificationPreferenceNavigation({
             aria-current={activeSection === key ? 'location' : undefined}
             onClick={() => openSection(key, id)}
             sx={{
-              minHeight: 36,
+              minHeight: 34,
               borderRadius: notificationPreferenceRadius,
               px: 1.25,
               justifyContent: 'flex-start',

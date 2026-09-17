@@ -1,0 +1,224 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "알림 탐색 열기" [ref=e8]:
+          - button "알림 탐색 열기" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "알림 관리" [ref=e17]
+        - generic [ref=e18]:
+          - button "DWP 검색" [ref=e20] [cursor=pointer]:
+            - img [ref=e21]
+          - generic "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e26]:
+            - button "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e27] [cursor=pointer]:
+              - generic [ref=e28]:
+                - img [ref=e29]
+                - generic [ref=e32]: "4"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+      - generic [ref=e39]:
+        - navigation "앱 영역 전환" [ref=e41]:
+          - generic [ref=e43]: 관리
+          - 'link "업무로 돌아가기: 알림" [ref=e45] [cursor=pointer]':
+            - /url: /notifications/home
+            - img [ref=e47]
+            - generic [ref=e49]: 업무
+        - generic "SKAX" [ref=e50]
+    - main [ref=e51]:
+      - generic [ref=e53]:
+        - generic [ref=e55]:
+          - img [ref=e57]
+          - generic [ref=e60]:
+            - paragraph [ref=e61]: 알림 운영
+            - heading "운영 개요" [level=1] [ref=e62]
+            - paragraph [ref=e63]: 사용자 영향, 계약 상태와 즉시 조치할 운영 예외를 확인합니다.
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - status [ref=e67]:
+              - generic [ref=e69]:
+                - generic [ref=e70]: 실시간 연결됨
+                - generic [ref=e71]: 2026. 9. 8. 오후 6:24
+              - generic "새로 고침" [ref=e72]:
+                - button "새로 고침" [ref=e73] [cursor=pointer]:
+                  - img [ref=e74]
+            - region "알림 운영 핵심 지표" [ref=e79]:
+              - article [ref=e80]:
+                - img [ref=e82]
+                - text: 활성 계약
+                - paragraph [ref=e85]: 12계약
+                - generic [ref=e86]: 정상
+              - article [ref=e87]:
+                - img [ref=e89]
+                - text: 최근 24시간 알림
+                - paragraph [ref=e94]: 842알림
+                - generic [ref=e95]: 정상
+              - article [ref=e96]:
+                - img [ref=e98]
+                - text: 전달 대기
+                - paragraph [ref=e101]: 12작업
+                - generic [ref=e102]: 확인 필요
+              - article [ref=e103]:
+                - img [ref=e105]
+                - text: 전달 실패
+                - paragraph [ref=e107]: 4작업
+                - generic [ref=e108]: 긴급 조치
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - generic [ref=e111]:
+                  - heading "조치 대기열" [level=2] [ref=e112]
+                  - paragraph [ref=e113]: 사용자 영향과 위험도 순으로 정렬된 운영 예외입니다.
+                - generic [ref=e115]:
+                  - button "재시도 한도를 초과한 전달이 있습니다 긴급 조치 4 하나 이상의 전달 작업이 재시도 한도를 모두 소진했습니다. 2026. 9. 8. 오후 6:18 · 알림 운영" [ref=e116] [cursor=pointer]:
+                    - img [ref=e118]
+                    - generic [ref=e120]:
+                      - generic [ref=e121]:
+                        - heading "재시도 한도를 초과한 전달이 있습니다" [level=6] [ref=e122]
+                        - generic [ref=e124]: 긴급 조치
+                        - generic [ref=e126]: "4"
+                      - paragraph [ref=e127]: 하나 이상의 전달 작업이 재시도 한도를 모두 소진했습니다.
+                      - generic [ref=e128]: 2026. 9. 8. 오후 6:18 · 알림 운영
+                    - img [ref=e129]
+                  - button "게시 템플릿이 없는 계약이 있습니다 주의 활성 계약 1개에 앱 내 게시 템플릿이 없습니다. 2026. 9. 8. 오후 6:20 · Notification Governance" [ref=e131] [cursor=pointer]:
+                    - img [ref=e133]
+                    - generic [ref=e135]:
+                      - generic [ref=e136]:
+                        - heading "게시 템플릿이 없는 계약이 있습니다" [level=6] [ref=e137]
+                        - generic [ref=e139]: 주의
+                      - paragraph [ref=e140]: 활성 계약 1개에 앱 내 게시 템플릿이 없습니다.
+                      - generic [ref=e141]: 2026. 9. 8. 오후 6:20 · Notification Governance
+                    - img [ref=e142]
+              - generic [ref=e144]:
+                - generic [ref=e145]:
+                  - heading "발생과 사용자 영향" [level=2] [ref=e146]
+                  - paragraph [ref=e147]: 생성량과 함께 조치 필요, 실패, 음소거 추이를 비교합니다.
+                - generic [ref=e148]:
+                  - generic [ref=e149]:
+                    - img [ref=e151]
+                    - heading "표시할 추이 데이터가 없습니다" [level=2] [ref=e154]
+                    - paragraph [ref=e155]: 알림이 발생하면 생성량과 사용자 영향 추이가 여기에 표시됩니다.
+                  - group [ref=e156]:
+                    - generic "정확한 수치 보기" [ref=e157] [cursor=pointer]:
+                      - img [ref=e159]
+                      - generic [ref=e161]: 정확한 수치 보기
+          - region "알림 품질 및 피로도" [ref=e162]:
+            - generic [ref=e164]:
+              - generic [ref=e165]:
+                - img [ref=e166]
+                - generic [ref=e168]:
+                  - heading "알림 품질 및 피로도" [level=2] [ref=e169]
+                  - paragraph [ref=e170]: 개인정보 기준을 충족한 집단의 전달, 억제, 업무 처리 및 피로도 신호를 익명으로 분석합니다.
+              - generic [ref=e171]:
+                - generic [ref=e172]: 기준 2026. 9. 16. 오전 10:15
+                - button "새로 고침" [ref=e173] [cursor=pointer]:
+                  - img [ref=e175]
+                  - text: 새로 고침
+            - generic "알림 품질 지표" [ref=e180]:
+              - article [ref=e181]:
+                - generic [ref=e182]: 음소거율
+                - generic [ref=e184]: 18%
+                - generic [ref=e185]: 해당 유형을 음소거한 수신자 비율
+              - article [ref=e186]:
+                - generic [ref=e187]: 중복 제거율
+                - generic [ref=e189]: 31%
+                - generic [ref=e190]: 전달 전 합쳐진 반복 발생 비율
+              - article [ref=e191]:
+                - generic [ref=e192]: 업무 처리 전환율
+                - generic [ref=e194]: 64%
+                - generic [ref=e195]: 알림 확인 후 원천 앱에서 완료된 업무 비율
+              - article [ref=e196]:
+                - generic [ref=e197]: 피로 노출 집단
+                - generic [ref=e199]: "9"
+                - generic [ref=e200]: 짧은 시간에 알림이 집중된 익명 수신자 수
+            - generic [ref=e201]:
+              - img [ref=e202]
+              - generic [ref=e205]: "개인정보 보호 기준: 최소 집단 20명. 소규모 집단의 값은 관리자에게도 공개하지 않습니다."
+            - region "과다 알림 유형" [ref=e206]:
+              - generic [ref=e208]:
+                - img [ref=e209]
+                - heading "과다 알림 유형" [level=3] [ref=e214]
+              - list [ref=e215]:
+                - listitem [ref=e216]:
+                  - generic [ref=e217]:
+                    - generic [ref=e218]:
+                      - heading "MESSAGE.PRIVATE_THREAD" [level=4] [ref=e219]
+                      - generic [ref=e220]: 메신저 · 담당 정보 없음
+                    - button "메신저 MESSAGE.PRIVATE_THREAD 상세 보기" [ref=e221] [cursor=pointer]:
+                      - img [ref=e222]
+                  - generic [ref=e224]:
+                    - generic [ref=e225]:
+                      - term [ref=e226]: 발송
+                      - definition [ref=e227]:
+                        - generic "소규모 집단의 값은 관리자에게도 공개하지 않습니다." [ref=e228]:
+                          - img [ref=e229]
+                          - generic [ref=e234]: 비공개
+                    - generic [ref=e235]:
+                      - term [ref=e236]: 음소거
+                      - definition [ref=e237]:
+                        - generic "소규모 집단의 값은 관리자에게도 공개하지 않습니다." [ref=e238]:
+                          - img [ref=e239]
+                          - generic [ref=e244]: 비공개
+                    - generic [ref=e245]:
+                      - term [ref=e246]: 중복 제거
+                      - definition [ref=e247]:
+                        - generic "소규모 집단의 값은 관리자에게도 공개하지 않습니다." [ref=e248]:
+                          - img [ref=e249]
+                          - generic [ref=e254]: 비공개
+                    - generic [ref=e255]:
+                      - term [ref=e256]: 업무 처리 전환
+                      - definition [ref=e257]:
+                        - generic "소규모 집단의 값은 관리자에게도 공개하지 않습니다." [ref=e258]:
+                          - img [ref=e259]
+                          - generic [ref=e264]: 비공개
+                  - generic [ref=e265]:
+                    - generic [ref=e266]:
+                      - generic [ref=e268]: 품질 발견 사항
+                      - generic [ref=e269]: MESSAGE.PRIVATE_THREAD
+                    - paragraph [ref=e270]: 관리 중인 알림 계약과 전달 정책을 검토하세요.
+                    - button "알림 계약 열기" [ref=e271] [cursor=pointer]:
+                      - text: 알림 계약 열기
+                      - img [ref=e273]
+                - listitem [ref=e276]:
+                  - generic [ref=e277]:
+                    - generic [ref=e278]:
+                      - heading "MESSAGE.MENTION" [level=4] [ref=e279]
+                      - generic [ref=e280]: 메신저 · 담당 정보 없음
+                    - button "메신저 MESSAGE.MENTION 상세 보기" [ref=e281] [cursor=pointer]:
+                      - img [ref=e282]
+                  - generic [ref=e284]:
+                    - generic [ref=e285]:
+                      - term [ref=e286]: 발송
+                      - definition [ref=e287]: "186"
+                    - generic [ref=e288]:
+                      - term [ref=e289]: 음소거
+                      - definition [ref=e290]: 8%
+                    - generic [ref=e291]:
+                      - term [ref=e292]: 중복 제거
+                      - definition [ref=e293]: 22%
+                    - generic [ref=e294]:
+                      - term [ref=e295]: 업무 처리 전환
+                      - definition [ref=e296]: 71%
+            - region "분리 승인 정책" [ref=e297]:
+              - generic [ref=e299]:
+                - img [ref=e300]
+                - generic [ref=e304]:
+                  - generic [ref=e305]:
+                    - heading "분리 승인 정책" [level=3] [ref=e306]
+                    - generic [ref=e308]: 확인 불가
+                  - paragraph [ref=e309]: 이 분석 API는 게시 승인 상태를 제공하지 않습니다.
+              - list [ref=e310]:
+                - listitem [ref=e311]:
+                  - generic [ref=e312]: "1"
+                  - paragraph [ref=e313]: 영향 범위가 제한된 정책 초안을 만들고 미리 검토합니다.
+                - listitem [ref=e314]:
+                  - generic [ref=e315]: "2"
+                  - paragraph [ref=e316]: 초안 작성자와 다른 관리자가 승인하거나 반려합니다.
+              - generic [ref=e317]: 검토자 분리 요건을 확인할 수 없습니다.
+```

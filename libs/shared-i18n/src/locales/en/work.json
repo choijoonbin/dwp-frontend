@@ -74,6 +74,9 @@
         "admin-overview": {
           "label": "Operations overview"
         },
+        "admin-models": {
+          "label": "Models & routing"
+        },
         "admin-agents": {
           "label": "Agent and publishing management"
         },
@@ -366,19 +369,23 @@
     "summaryLabel": "AI run status summary",
     "metrics": {
       "total": "Retrieved runs",
-      "totalDetail": "Up to 100 runs in the latest response",
+      "totalDetail": "Runs loaded so far for the selected period",
       "running": "In progress",
       "runningDetail": "Runs whose state is RUNNING",
       "completed": "Run completed",
       "completedDetail": "Runs whose state is COMPLETED",
       "attention": "Attention signals",
-      "attentionDetail": "Failed, denied, or configuration required; deduplicated"
+      "attentionDetail": "Failed, denied, configuration required, or running with an expired lease; deduplicated"
     },
-    "windowNotice": "Up to {{count}} recent runs are retrieved. The summary and state filter apply only to this response window, not to all run history.",
+    "attentionSignals": {
+      "leaseExpired": "Running · lease expired",
+      "leaseExpiredDescription": "The server still reports this run as running after its worker lease expired."
+    },
+    "windowNotice": "Runs in the selected period are retrieved {{count}} at a time. The summary and state filter apply to the runs loaded so far.",
     "listTitle": "My run timeline",
-    "listDescription": "Review each run's state, policy outcome, risk level, source count, and processing time in the latest response.",
-    "listLabel": "Recently retrieved AI runs",
-    "filteredWindow": "{{visible}} of {{total}} retrieved runs · state filter applied in this browser",
+    "listDescription": "Review each run's state, policy outcome, risk level, source count, and processing time for the selected period.",
+    "listLabel": "AI runs retrieved for the selected period",
+    "filteredWindow": "{{visible}} of {{total}} loaded runs · state filter applied in this browser",
     "columns": {
       "task": "Task / run ID",
       "agent": "Owning agent",
@@ -428,9 +435,16 @@
     "emptyTitle": "There is no AI run activity to show",
     "emptyDescription": "Start a question to create a privacy-minimized execution record here.",
     "noResultsTitle": "There are no runs in this state",
-    "noResultsDescription": "No run in the recent response matches this state. View all states to continue.",
+    "noResultsDescription": "No run in the selected period matches this state. View all states to continue.",
+    "noLoadedResultsDescription": "No loaded run matches this state yet. Load older runs to continue checking the selected period.",
     "resetFilter": "View all states",
     "start": "Start a new conversation",
+    "pagination": {
+      "loadOlder": "Load older runs",
+      "loading": "Loading older runs",
+      "retry": "Retry loading older runs",
+      "error": "The current list was preserved, but older runs could not be loaded."
+    },
     "details": {
       "title": "Selected run details",
       "inspectorLabel": "Execution trace inspector",
@@ -936,14 +950,14 @@
       "retired": "The agent was retired.",
       "error": "The agent registry request could not be completed.",
       "create": "New agent",
-      "deploymentHistoryUnavailable": "Deployment history unavailable",
-      "schemaExportUnavailable": "Schema export unavailable",
+      "deploymentHistoryUnavailable": "Deployment history",
+      "schemaExportUnavailable": "Export registry",
       "edit": "Edit",
       "newRevision": "New revision",
       "activate": "Publish",
       "retire": "Retire",
       "lifecycleNotice": "Draft authoring and publication permissions are separated. Only published versions appear in the user catalog, and every state transition is audited.",
-      "unsupportedNotice": "The current registry API provides definition metadata and the DRAFT, ACTIVE, and RETIRED lifecycle only. Runtime connectivity, source and action bindings, a separate review stage, and deployment history are not provided.",
+      "unsupportedNotice": "Registry metadata and rollout governance come from verified APIs. Promotion, rollback, and kill-switch changes always use reviewable governed commands.",
       "summaryLabel": "Loaded agent status summary",
       "summary": {
         "active": "Published",
@@ -1005,10 +1019,10 @@
       "error": "The data source policy request could not be completed.",
       "unavailableDescription": "Unverified source configuration and connection state are not displayed. Try loading the data again.",
       "secretBoundary": "Connector credentials are never stored in this screen or policy store. Only a secret-store reference ID may be linked.",
-      "healthCheckUnavailable": "Connection test unavailable",
-      "exportUnavailable": "Policy export unavailable",
-      "newConnectorUnavailable": "New connector unavailable",
-      "unsupportedNotice": "This policy API reports configuration state and policy update time. It does not report a live connection probe, last successful sync, latency, or credential health.",
+      "healthCheckUnavailable": "Refresh status",
+      "exportUnavailable": "Export policies",
+      "newConnectorUnavailable": "New connector",
+      "unsupportedNotice": "Policy and live connector evidence come from separate verified APIs. Missing probes, sync timestamps, ACL coverage, or credential state stay explicitly unavailable.",
       "summaryLabel": "Data source policy summary",
       "summary": {
         "registered": "Registered policies",
@@ -1232,6 +1246,180 @@
         "DENY": "Deny"
       }
     },
+    "aiRuntime": {
+      "eyebrow": "AI EXECUTION CONTROL · S19",
+      "title": "Model, knowledge, usage, and budget enforcement",
+      "description": "Manage each tenant's DWAI·ON Ask boundary with the actual policy, reserved and measured usage, and evaluation evidence.",
+      "loading": "Loading the AI execution policy and usage.",
+      "loadError": "AI runtime control could not be loaded",
+      "loadErrorDescription": "A failed request is not shown as a healthy policy or completed enforcement. Check connectivity and authority, then try again.",
+      "commandError": "The AI runtime policy command could not be completed.",
+      "unavailable": "Unavailable",
+      "summaryLabel": "AI runtime control summary",
+      "activationDisabled": "The policy can be configured, but enforcement is disabled in this deployment. Existing Ask execution continues in this state.",
+      "emergencyActive": "New DWAI·ON Ask retrieval and model requests are stopped. Requests already sent to an external provider might not be cancelled.",
+      "scopeBoundary": "The control scope is DWAI·ON Ask runtime. Voice STT/TTS, meeting intelligence, and meeting-media providers are outside this scope.",
+      "actions": {
+        "edit": "Edit execution policy",
+        "stop": "Emergency stop Ask",
+        "release": "Release Ask stop",
+        "initialize": "Initialize AI execution policy"
+      },
+      "notices": {
+        "bootstrapped": "The tenant AI execution policy was initialized.",
+        "saved": "The tenant AI execution policy was saved.",
+        "stopped": "New Ask execution was stopped.",
+        "released": "The Ask execution stop was released."
+      },
+      "notConfigured": {
+        "title": "AI execution policy is not configured",
+        "description": "There is no tenant source of truth for allowed models, knowledge sources, token limits, or evaluation conditions.",
+        "boundary": "When deployment enforcement is enabled, a missing policy denies Ask execution. Confirm the real provider identifiers and tenant limits before initialization."
+      },
+      "states": {
+        "ENABLED": "Execution enabled",
+        "EMERGENCY_DISABLED": "Emergency stopped",
+        "POLICY_NOT_CONFIGURED": "Policy missing",
+        "CONTROL_UNAVAILABLE": "Control unavailable"
+      },
+      "activation": {
+        "ENABLED": "Enforcement on",
+        "DISABLED": "Enforcement off"
+      },
+      "toolStates": {
+        "NOT_CONNECTED": "Tool executor not connected"
+      },
+      "summary": {
+        "activation": "Runtime enforcement",
+        "activationDetail": "Actual deployment activation state",
+        "runtime": "Ask runtime state",
+        "runtimeDetail": "Tenant policy and emergency-stop state",
+        "usage": "Measured tokens",
+        "usageDetail": "Active and unmeasured reservations {{reserved}}",
+        "version": "Policy version"
+      },
+      "models": {
+        "title": "Allowed providers and models",
+        "description": "The Ask boundary permits only exact provider, model, and optional region combinations.",
+        "count": "{{count}} routes",
+        "region": "Configured region: {{region}}",
+        "regionUnspecified": "No processing-region constraint configured"
+      },
+      "externalStates": {
+        "VERIFIED": "Verified",
+        "STALE": "Stale observation",
+        "UNAVAILABLE": "Not connected",
+        "UNVERIFIED": "Unverified"
+      },
+      "access": {
+        "title": "Knowledge and tool execution conditions",
+        "description": "Keep retrievable knowledge sources separate from the future tool-execution allowlist.",
+        "sources": "Allowed knowledge sources",
+        "tools": "Allowed tool keys",
+        "noSources": "No knowledge source is allowed.",
+        "noTools": "No tool key is allowed.",
+        "toolBoundary": "The current Ask runtime does not execute model-selected tools. Tool keys are a future executor contract and are not shown as enforced."
+      },
+      "budget": {
+        "title": "Usage, reservations, and budget",
+        "description": "Separate locally measured usage, active and unmeasured reservations, alerts, and hard execution limits.",
+        "maxOutput": "Maximum output tokens per request",
+        "periodLimit": "Current period token limit",
+        "measured": "Settled measured tokens",
+        "reserved": "Active and unmeasured reserved tokens",
+        "unmeasured": "Unmeasured reservations awaiting reconciliation",
+        "pressure": "Measured + reserved / period limit",
+        "providerUsage": "Provider usage",
+        "pricing": "Verified pricing",
+        "billing": "Actual billing",
+        "costBoundary": "Estimated cost and actual billing remain unavailable until external provider usage, pricing, and billing are connected. A budget alert is distinct from execution blocking."
+      },
+      "budgetModes": {
+        "ALERT_ONLY": "Alert only",
+        "ENFORCED": "Hard execution limit"
+      },
+      "evaluation": {
+        "title": "Evaluation gate",
+        "description": "Only trusted evaluation evidence tied to the policy version can permit execution.",
+        "required": "Evaluation pass required",
+        "notRequired": "Not required",
+        "evidence": "Evaluation evidence",
+        "open": "Open evaluation management"
+      },
+      "evaluationStates": {
+        "NOT_REQUIRED": "Not required",
+        "PENDING": "Evaluation pending",
+        "PASSED": "Passed",
+        "FAILED": "Failed",
+        "STALE": "Evidence expired"
+      },
+      "evaluationEvidence": {
+        "VERIFIED": "Verified evidence",
+        "STALE": "Stale evidence",
+        "UNAVAILABLE": "No trusted evidence"
+      },
+      "warnings": {
+        "title": "Operational attention",
+        "description": "Show disconnected, unmeasured, and alert states separately from healthy operation using their source codes.",
+        "count": "{{count}} items"
+      },
+      "warningCodes": {
+        "AI_RUNTIME_POLICY_NOT_CONFIGURED": "The tenant AI execution policy is not configured.",
+        "PROVIDER_USAGE_UNAVAILABLE": "External provider usage is not connected.",
+        "PROVIDER_PRICING_UNAVAILABLE": "External provider pricing evidence is not connected.",
+        "PROVIDER_BILLING_UNAVAILABLE": "External provider billing is not connected.",
+        "AI_TOOL_EXECUTION_NOT_CONNECTED": "The model tool executor is not connected.",
+        "MODEL_USAGE_MEASUREMENT_MISSING": "A reservation without provider usage is awaiting reconciliation.",
+        "LOCAL_USAGE_MEASUREMENT_NOT_CURRENT": "Local usage measurement is not current.",
+        "AI_TOKEN_BUDGET_ALERT": "Current-period token pressure reached the alert threshold.",
+        "AI_TOKEN_BUDGET_EXCEEDED": "The current-period hard token limit was reached."
+      },
+      "editor": {
+        "bootstrapTitle": "Initialize AI execution policy",
+        "updateTitle": "Edit AI execution policy",
+        "description": "Change only the tenant Ask boundary. An administrator cannot label external provider availability or evaluation evidence as verified.",
+        "bootstrap": "Initialize policy",
+        "save": "Save policy",
+        "evidenceBoundary": "Model availability is saved as unverified. Evaluation passed, failed, and stale states can only come from a future trusted evaluator receipt path.",
+        "modelRoutes": "Allowed model routes",
+        "modelRoutesDescription": "Enter the provider, exact model identifier, and optional processing region. Do not enter API keys or other secrets.",
+        "addRoute": "Add model route",
+        "removeRoute": "Remove model route {{index}}",
+        "remove": "Remove",
+        "provider": "Provider identifier",
+        "model": "Model identifier",
+        "region": "Processing region",
+        "optional": "Optional",
+        "knowledgeSources": "Allowed knowledge-source keys",
+        "toolKeys": "Allowed tool keys",
+        "identifierHelp": "Separate values with commas or new lines. Each key must match the runtime source of truth.",
+        "toolBoundary": "Separate values with commas or new lines. The tool executor is currently not connected.",
+        "maxOutputTokens": "Maximum output tokens per request",
+        "budgetMode": "Budget behavior",
+        "periodTokenLimit": "Current period token limit",
+        "alertThreshold": "Alert threshold (%)",
+        "requireEvaluation": "Require a verified evaluation pass for the current policy version",
+        "evaluationPending": "Saving sets evaluation to pending. Execution fails closed until verified evidence arrives.",
+        "evaluationNotRequired": "An evaluation pass is not required for execution."
+      },
+      "validation": {
+        "MODEL_ROUTE_REQUIRED": "At least one allowed model route is required.",
+        "MODEL_ROUTE_INVALID": "Check provider, model, region, and duplicate route values.",
+        "IDENTIFIER_INVALID": "Check the knowledge-source or tool-key format.",
+        "MAX_OUTPUT_INVALID": "Maximum output tokens must be an integer from 128 to 4096.",
+        "PERIOD_LIMIT_REQUIRED": "A period token limit is required for hard enforcement.",
+        "PERIOD_LIMIT_INVALID": "Check the period token limit range.",
+        "ALERT_THRESHOLD_INVALID": "The alert threshold must be an integer from 1 to 100.",
+        "CHANGE_REASON_REQUIRED": "Enter a change reason from 10 to 500 characters."
+      },
+      "emergency": {
+        "stopTitle": "Emergency stop DWAI·ON Ask",
+        "releaseTitle": "Release DWAI·ON Ask stop",
+        "description": "After checking MANAGE authority and the current policy version, change new Ask execution for this tenant.",
+        "impact": "This applies only to new Ask retrieval and model requests. Voice and meeting AI are excluded, and requests already sent to a provider are not cancelled.",
+        "confirm": "I reviewed the affected and excluded scopes."
+      }
+    },
     "evaluation": {
       "ruleBoundary": "Results check source grounding and expected terms only; they do not measure AI accuracy.",
       "ruleSample": "Limited rule checks: {{passed}} / {{total}} cases passed.",
@@ -1246,7 +1434,7 @@
       "detailUnavailable": "The selected evaluation set could not be loaded.",
       "create": "Create evaluation set",
       "importUnavailable": "CSV import unavailable",
-      "unsupportedNotice": "This API does not provide benchmark accuracy, citation precision, first-token latency, or evidence that separate runs used equivalent datasets, models, policies, and rules.",
+      "unsupportedNotice": "Evaluation evidence is accepted only when dataset checksums and model, prompt, policy, tool, and evaluator versions are pinned. Missing measurements stay explicitly unavailable.",
       "summaryLabel": "Loaded evaluation contract summary",
       "summary": {
         "loaded": "Loaded sets",
@@ -3638,8 +3826,24 @@
       "objectType": "Object type",
       "objectId": "Object ID",
       "executionId": "Execution ID",
-      "from": "From (inclusive · ISO 8601)",
-      "to": "Until (exclusive · ISO 8601)",
+      "from": "From (inclusive)",
+      "to": "Until (exclusive)",
+      "allSources": "All sources",
+      "allObjectTypes": "All object types",
+      "preservedValue": "Current link · {{value}}",
+      "localTimeNotice": "Times use your device time zone and are sent to the activity ledger with an explicit offset.",
+      "sourceOptions": {
+        "workspace": "Workspace",
+        "dwpWorkspace": "DWP Workspace",
+        "personalTask": "Personal work",
+        "apps": "DWP Apps",
+        "dwaion": "DWAI·ON"
+      },
+      "objectTypeOptions": {
+        "workItem": "Work item",
+        "workspaceApp": "Workspace app",
+        "agentRun": "Agent run"
+      },
       "includeUsage": "Include app usage records"
     }
   },

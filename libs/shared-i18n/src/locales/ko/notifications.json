@@ -92,6 +92,22 @@
       "reviewCompact": "검토",
       "dismiss": "브리핑 닫기"
     },
+    "presentation": {
+      "label": "알림 표시 방식",
+      "density": {
+        "label": "표시 밀도",
+        "dense": "간결하게",
+        "detailed": "자세히"
+      },
+      "grouping": {
+        "label": "알림 묶기",
+        "none": "묶지 않음",
+        "source": "업무 앱별",
+        "context": "업무 맥락별"
+      },
+      "contextGroup": "업무 맥락",
+      "sourceFallback": "기타 업무 앱"
+    },
     "groups": {
       "ACTION_REQUIRED": {
         "title": "조치 필요",
@@ -141,7 +157,13 @@
       "unread": "읽지 않은 알림",
       "mentions": "나를 멘션"
     },
-    "invalid": "이 저장 보기는 현재 알림 센터 형식과 맞지 않아 적용하지 않았습니다."
+    "icon": "식별 아이콘",
+    "color": "식별 색상",
+    "previewLoading": "필터 결과를 계산하는 중입니다.",
+    "previewUnavailable": "현재 필터 결과 수를 확인할 수 없습니다.",
+    "previewCount": "저장 시 {{count}}건의 알림이 포함됩니다.",
+    "invalid": "이 저장 보기는 현재 알림 센터 형식과 맞지 않아 적용하지 않았습니다.",
+    "capacity": "내 저장 보기 {{current}} / {{maximum}}"
   },
   "settings": {
     "eyebrow": "개인 알림 설정",
@@ -150,8 +172,12 @@
   },
   "actions": {
     "back": "뒤로",
+    "cancel": "취소",
+    "close": "닫기",
     "complete": "알림 정리",
     "detail": "상세 보기",
+    "delete": "삭제",
+    "edit": "편집",
     "loadMore": "더 불러오기",
     "markRead": "읽음으로 표시",
     "markUnread": "안 읽음으로 표시",
@@ -210,7 +236,10 @@
     "spaces": "Space",
     "messaging": "메신저",
     "mail": "메일",
-    "security": "보안"
+    "security": "보안",
+    "services": "IT 서비스",
+    "hr": "HR People",
+    "calendar": "캘린더"
   },
   "views": {
     "PRIORITY": "조치 필요",
@@ -308,7 +337,8 @@
     "description": "중요한 변화를 판단하고 읽음, 저장, 나중에, 완료 상태로 정리합니다.",
     "viewsLabel": "알림 센터 보기",
     "searchPlaceholder": "제목, 소스 또는 안전한 미리보기 검색",
-    "listLabel": "알림 목록"
+    "listLabel": "알림 목록",
+    "resultCount": "현재 표시 {{visible}} / 필터 결과 총 {{total}}"
   },
   "filters": {
     "reason": "수신 이유",
@@ -316,6 +346,7 @@
     "reset": "필터 초기화",
     "open": "상세 필터",
     "close": "필터 닫기",
+    "apply": "결과 보기",
     "viewCount": "추가 필터 적용 전 {{count}}건",
     "emptyTitle": "조건에 맞는 알림이 없습니다",
     "emptyDescription": "검색어나 수신 이유 등 조회 조건을 변경해 주세요.",
@@ -323,6 +354,13 @@
     "allPriorities": "모든 우선순위",
     "app": "앱 필터",
     "allApps": "모든 앱",
+    "context": "업무 맥락 필터",
+    "allContexts": "모든 업무 맥락",
+    "attentionEffect": "우선 규칙 적용",
+    "allAttention": "모든 알림",
+    "prioritized": "중요 인물·우선 규칙 적용",
+    "includedTypes": "포함 알림 유형",
+    "allTypes": "모든 알림 유형",
     "readState": "읽음 상태 필터",
     "read": {
       "ALL": "전체",
@@ -626,6 +664,9 @@
       "emptyTypesTitle": "설정할 알림 유형이 없습니다",
       "emptyTypesDescription": "이 앱에서 활성화한 알림 유형이 아직 없습니다.",
       "effectivePolicyUnavailable": "현재 서버는 유효 정책 합성 API를 제공하지 않아 저장된 개인 규칙만 표시합니다. 전역 설정은 계속 적용됩니다."
+    },
+    "attention": {
+      "title": "수신 집중 규칙"
     },
     "feedback": {
       "conflictRecovered": "다른 창의 최신 설정을 유지하면서 내 변경을 다시 적용했습니다.",
@@ -961,6 +1002,63 @@
         "rejectFailed": "정책 초안을 반려하지 못했습니다. 독립 승인 권한과 최신 버전을 확인해 주세요."
       }
     },
+    "attentionGovernance": {
+      "title": "관심 정책 거버넌스",
+      "description": "테넌트의 개인 관심 규칙 한도, 승인된 주제, 필수 정책 우선순위와 분석 개인정보 기준을 독립 승인으로 관리합니다.",
+      "liveStatus": "운영 적용 중",
+      "draftStatus": "독립 검토 대기",
+      "loading": "관심 정책 거버넌스를 불러오는 중",
+      "loadErrorTitle": "관심 정책 거버넌스를 불러오지 못했습니다",
+      "loadErrorDescription": "연결과 최신 정책 버전을 확인한 뒤 다시 시도해 주세요. 운영 적용값은 변경되지 않았습니다.",
+      "viewPermissionBlocked": "관심 정책 거버넌스를 조회할 권한이 없습니다.",
+      "identityUnavailable": "검증된 운영자 정보가 없어 정책 정보를 표시할 수 없습니다.",
+      "emptyTitle": "관심 정책 기준이 아직 초기화되지 않았습니다",
+      "emptyDescription": "서버에서 유효한 테넌트 기준을 제공한 뒤 승인 초안을 만들 수 있습니다.",
+      "ruleLimitsTitle": "사용자 관심 규칙 한도",
+      "ruleLimitsDescription": "개인 규칙과 고신호 규칙이 테넌트 운영 한도를 넘지 않도록 제한합니다.",
+      "maxActiveRules": "최대 활성 규칙",
+      "maxVipRules": "최대 VIP 규칙",
+      "maxFollowRules": "최대 팔로우 규칙",
+      "topicTitle": "승인된 주제 목록",
+      "topicDescription": "TOPIC_TOKEN 규칙에서 사용할 수 있는 정규 주제만 등록합니다.",
+      "topicInputLabel": "주제 토큰",
+      "addTopic": "주제 추가",
+      "removeTopic": "{{topic}} 제거",
+      "policyTitle": "정책 및 개인정보 보호 기준",
+      "mandatoryPrecedence": "필수 정책 우선 적용",
+      "mandatoryPrecedenceDetail": "필수 회사 정책은 사용자의 음소거 규칙보다 우선합니다.",
+      "minimumCohort": "최소 분석 코호트",
+      "minimumCohortDetail": "이 인원보다 작은 집단의 분석 결과는 사용자 개인정보 보호를 위해 숨깁니다.",
+      "independentReviewer": "독립 검토자 필수",
+      "independentReviewerDetail": "초안 작성자와 다른 승인자만 게시하거나 반려할 수 있습니다.",
+      "changeReason": "변경 사유",
+      "saveDraft": "승인 초안 만들기",
+      "pipelineTitle": "독립 승인 파이프라인",
+      "pipelineDescription": "운영 적용 전 작성자와 승인자를 분리하고 결정 근거를 보존합니다.",
+      "activeRevision": "현재 운영 리비전",
+      "noActiveRevision": "현재 게시된 리비전이 없습니다.",
+      "draftRevision": "검토 대기 리비전",
+      "createdBy": "작성자 사용자 #{{userId}}",
+      "approvedBy": "승인자 사용자 #{{userId}}",
+      "version": "리비전 {{revision}} · 버전 {{version}}",
+      "states": {
+        "DRAFT": "검토 대기",
+        "PUBLISHED": "게시됨",
+        "SUPERSEDED": "대체됨",
+        "REJECTED": "반려됨",
+        "WITHDRAWN": "철회됨"
+      },
+      "decisionReason": "결정 사유",
+      "publish": "정책 게시",
+      "reject": "초안 반려",
+      "withdraw": "초안 철회",
+      "selfApprovalBlocked": "본인이 작성한 리비전은 게시하거나 반려할 수 없습니다.",
+      "guardrailBlocked": "필수 정책 우선순위와 독립 검토 기준을 모두 사용해야 게시할 수 있습니다.",
+      "permissionBlocked": "정책 게시와 반려에는 독립 승인 권한이 필요합니다.",
+      "pendingDraftBlocked": "검토 중인 초안을 결정하기 전에는 새 초안을 만들 수 없습니다.",
+      "staleMutation": "다른 운영자가 먼저 정책을 변경했습니다. 최신 리비전을 다시 불러왔으니 내용을 확인해 주세요.",
+      "mutationError": "관심 정책 변경을 완료하지 못했습니다. 권한, 현재 버전과 입력값을 확인해 주세요."
+    },
     "templates": {
       "catalogLabel": "알림 템플릿 목록",
       "detailLabel": "선택한 알림 템플릿 상세",
@@ -1244,6 +1342,408 @@
       "CLOSED": "정상",
       "HALF_OPEN": "복구 확인",
       "OPEN": "차단"
+    }
+  },
+  "attention": {
+    "title": "수신 집중 규칙",
+    "description": "중요한 사람과 업무를 우선하고, 관리 주제를 팔로우하며, 필수 알림을 숨기지 않는 범위 안에서 정확한 대상을 음소거합니다.",
+    "summaryLabel": "수신 집중 규칙 요약",
+    "ruleListLabel": "수신 집중 규칙 목록",
+    "ruleActions": "규칙 작업",
+    "unavailable": "확인 불가",
+    "add": "규칙 추가",
+    "search": "수신 집중 규칙 검색",
+    "loadFailed": "수신 집중 규칙을 불러오지 못했습니다. 기존 수신 동작은 변경되지 않았습니다.",
+    "emptyTitle": "수신 집중 규칙이 없습니다",
+    "emptyDescription": "알림 서비스가 정확한 범위를 검증한 뒤 규칙을 추가할 수 있습니다.",
+    "noMatchTitle": "조건에 맞는 규칙이 없습니다",
+    "noMatchDescription": "검색어나 분류를 변경해 다른 규칙을 확인하세요.",
+    "capacityUnavailable": "규칙 한도를 확인할 수 없어 새 규칙을 비활성화했습니다. 서버 한도를 다시 확인해 주세요.",
+    "capacityUnavailableShort": "활성 규칙 한도 확인 불가",
+    "capacityReached": "규칙 한도에 도달했습니다({{used}}/{{limit}}).",
+    "capacityUsed": "활성 규칙 {{limit}}개 중 {{used}}개 사용",
+    "blockingConflict": "차단 충돌을 해결하기 전에는 이 규칙을 적용할 수 없습니다.",
+    "kinds": {
+      "VIP": {
+        "label": "중요한 사람",
+        "short": "사람",
+        "description": "이 사람의 멘션과 직접 알림을 우선 표시합니다."
+      },
+      "FOLLOW_CONTEXT": {
+        "label": "팔로우 중인 업무",
+        "short": "팔로우",
+        "description": "선택한 업무 흐름의 다음 변화를 놓치지 않습니다."
+      },
+      "MUTE_SCOPE": {
+        "label": "음소거 범위",
+        "short": "음소거",
+        "description": "정확한 범위의 소음을 줄이고 필수 정책은 유지합니다."
+      },
+      "TOPIC_WATCH": {
+        "label": "관리 주제",
+        "short": "주제",
+        "description": "승인된 시스템 주제의 업데이트를 추적합니다."
+      }
+    },
+    "states": {
+      "ENABLED": "사용 중",
+      "PAUSED": "일시 중지",
+      "EXPIRED": "만료"
+    },
+    "effects": {
+      "PRIORITIZE": "우선 표시",
+      "FOLLOW": "팔로우",
+      "MUTE": "음소거"
+    },
+    "scopeKinds": {
+      "APP_TYPE": "앱 알림 유형",
+      "ACTOR": "사람",
+      "THREAD": "대화 또는 스레드",
+      "RESOURCE": "업무 리소스",
+      "TOPIC_TOKEN": "관리 주제"
+    },
+    "sources": {
+      "USER": "내 설정",
+      "TENANT_POLICY": "회사 정책",
+      "SYSTEM_DEFAULT": "시스템 기본값"
+    },
+    "filters": {
+      "all": "전체 규칙",
+      "category": "규칙 분류"
+    },
+    "fields": {
+      "source": "출처",
+      "channels": "채널",
+      "expiry": "만료",
+      "noChannelOverride": "채널 재정의 없음",
+      "noExpiry": "만료 없음",
+      "lastChanged": "마지막 변경 {{date}}"
+    },
+    "actions": {
+      "pause": "일시 중지",
+      "resume": "다시 시작",
+      "extend": "기간 연장",
+      "MUTE_TYPE": "유형 음소거",
+      "MUTE_CONTEXT": "업무 범위 음소거",
+      "FOLLOW_CONTEXT": "업무 범위 팔로우",
+      "PRIORITIZE_ACTOR": "사람 우선 표시"
+    },
+    "managed": {
+      "owner": "회사 정책",
+      "reason": "회사 정책으로 관리되는 규칙입니다.",
+      "exceptionAllowed": "예외 요청 가능",
+      "noException": "사용자 예외 불가"
+    },
+    "feedback": {
+      "saved": "수신 집중 규칙을 저장했습니다.",
+      "deleted": "수신 집중 규칙을 삭제했습니다.",
+      "previewFailed": "규칙 영향을 평가하지 못했습니다. 정확한 범위를 확인한 뒤 다시 시도해 주세요.",
+      "saveFailed": "수신 집중 규칙을 저장하지 못했습니다.",
+      "deleteFailed": "수신 집중 규칙을 삭제하지 못했습니다.",
+      "conflict": "다른 창에서 규칙이 변경되었습니다. 서버의 최신 상태를 불러왔습니다."
+    },
+    "delete": {
+      "title": "수신 집중 규칙 삭제",
+      "description": "‘{{label}}’ 규칙을 삭제할까요? 이후 알림에는 회사 및 앱의 유효 정책이 다시 적용됩니다.",
+      "unnamed": "이름 없는 규칙"
+    },
+    "dialog": {
+      "createTitle": "수신 집중 규칙 추가",
+      "editTitle": "수신 집중 규칙 편집",
+      "description": "저장하기 전에 알림 서비스가 정확한 대상과 회사 정책을 검증합니다.",
+      "scopeKind": "범위 유형",
+      "scopeKey": "정확한 범위 키",
+      "scopeKeyHelp": "원천 앱 또는 알림 상세에서 제공한 정규 식별자를 사용하세요.",
+      "legacyTarget": "기존 정확 키 · 읽기 전용",
+      "targetSection": "알림 대상",
+      "targetSectionDescription": "검색 가능한 사람, 업무 컨텍스트 또는 승인된 주제에서 선택합니다.",
+      "behaviorSection": "수신 동작과 채널",
+      "behaviorSectionDescription": "선택한 대상의 우선순위와 채널 재정의 범위를 지정합니다.",
+      "scheduleSection": "적용 기간",
+      "scheduleSectionDescription": "즉시 적용하거나 시작·자동 만료 시각을 제한합니다.",
+      "discoveryHelp": "알림 서비스가 현재 사용자에게 허용한 실제 대상만 표시합니다.",
+      "selectedTarget": "선택한 대상",
+      "displayLabel": "표시 이름",
+      "effect": "수신 동작",
+      "channels": "채널 재정의",
+      "startsAt": "적용 시작 시각",
+      "expiresAt": "자동 만료 시각",
+      "preview": "영향도 미리보기",
+      "saving": "규칙 저장 중",
+      "previewAllowed": "정책 검증을 통과했습니다. 예상 영향 알림: {{count}}건.",
+      "previewAllowedNoEstimate": "정책 검증을 통과했습니다. 개인정보 기준에 따라 예상 건수는 표시하지 않습니다.",
+      "previewBlocked": "정책에 의해 차단된 규칙입니다: {{reason}}",
+      "policyConflict": "필수 정책이 우선 적용됩니다."
+    },
+    "controls": {
+      "title": "알림 수신 집중 제어",
+      "openLabel": "앞으로 이런 알림을 받는 방식 조정",
+      "loading": "사용 가능한 수신 집중 제어 불러오는 중",
+      "loadFailed": "상황별 제어를 일시적으로 불러오지 못했습니다. 설정은 변경되지 않았습니다.",
+      "partial": "일부 상황별 제어를 일시적으로 사용할 수 없습니다.",
+      "whyReceived": "이 알림을 받은 이유",
+      "availableScopes": "사용 가능한 범위",
+      "serverSupplied": "이 알림에 대해 알림 서비스가 제공하고 정책 검증한 선택지만 표시합니다.",
+      "current": "현재 적용",
+      "policyLocked": "정책 잠금",
+      "scope": "범위: {{scope}}",
+      "effectUnavailable": "제공된 범위에는 이 동작을 사용할 수 없습니다.",
+      "currentExpiry": "현재 만료 유지",
+      "noExpiryChoice": "서버가 제공한 이 작업에는 만료 선택이 없습니다.",
+      "serverExpiryOnly": "서버가 제공한 만료 옵션만 선택할 수 있습니다.",
+      "previewIdle": "사용 가능한 범위를 선택하고 서버가 평가한 영향을 확인하세요.",
+      "previewLoading": "정책 영향 확인 중",
+      "previewAction": "영향도 미리보기",
+      "expectedImpact": "예상 영향",
+      "asOf": "기준 {{date}}",
+      "conflictTitle": "서버에서 설정이 변경됨",
+      "rebase": "최신 상태 불러오기",
+      "rebasing": "최신 설정 불러오는 중",
+      "saving": "제어 저장 중",
+      "apply": "제어 적용",
+      "none": "이 알림에 사용할 수 있는 상황별 제어가 없습니다.",
+      "selectedExpiry": "선택한 만료: {{date}}",
+      "ongoing": "계속 적용",
+      "previewStatement": "{{scope}}에 ‘{{action}}’ 동작을 적용합니다.",
+      "previewExpiry": "{{date}}에 자동 만료됩니다.",
+      "previewOngoing": "자동 만료 없이 계속 적용됩니다.",
+      "previewAuthoritative": "알림 서비스가 현재 조직 정책을 기준으로 이 영향을 검증했습니다.",
+      "previewPolicyReason": "정책 판단: {{reason}}",
+      "previewOffline": "정책 영향을 확인하려면 다시 연결해 주세요. 설정은 변경되지 않았습니다.",
+      "previewFailed": "정책 영향을 검증하지 못했습니다. 설정은 변경되지 않았습니다.",
+      "previewDenied": "현재 정책 또는 접근 권한으로는 이 제어를 적용할 수 없습니다.",
+      "descriptions": {
+        "MUTE_TYPE": "이 알림 유형의 향후 알림을 음소거합니다.",
+        "MUTE_CONTEXT": "이 업무 범위에서 발생하는 향후 알림을 음소거합니다.",
+        "FOLLOW_CONTEXT": "이 업무 범위의 향후 업데이트를 우선 표시합니다.",
+        "PRIORITIZE_ACTOR": "이 사람이 보내는 향후 알림을 우선 표시합니다."
+      },
+      "feedback": {
+        "saved": "수신 집중 제어를 적용했습니다.",
+        "conflict": "다른 창에서 설정이 변경되었습니다. 최신 서버 상태를 검토한 뒤 다시 적용해 주세요.",
+        "denied": "정책 또는 접근 권한이 변경되었습니다. 서버가 제공한 최신 선택지를 확인해 주세요.",
+        "failed": "수신 집중 제어를 적용하지 못했습니다."
+      }
+    },
+    "diagnostics": {
+      "title": "테스트 알림 진단",
+      "description": "실제 업무 알림을 만들지 않고 구성된 전달 단계를 검증합니다.",
+      "exclusion": "진단 전용입니다. 받은 알림, 업무 처리 및 알림 품질 KPI에 포함되지 않습니다.",
+      "run": "테스트 실행",
+      "starting": "진단 시작 중",
+      "runFailed": "진단을 시작하지 못했습니다.",
+      "rateLimited": "진단 실행 한도에 도달했습니다. 서버가 안내한 재시도 시각 이후 다시 실행하세요.",
+      "partialDescription": "안전한 앱 내 단계는 완료했으며 사용할 수 없는 외부 Provider는 명시적으로 표시합니다.",
+      "summaryLabel": "진단 요약",
+      "stateLabel": "상태",
+      "supportedStages": "지원 단계",
+      "observedStages": "확인된 단계",
+      "resultExpiry": "결과 만료",
+      "stageDetails": "Provider별 단계 상세",
+      "pipelineLabel": "시험 알림 전달 단계",
+      "channelsTitle": "시험할 활성 채널",
+      "selectChannel": "사용 가능한 채널을 하나 이상 선택하세요.",
+      "activeEndpoints": "활성 단말: {{endpoints}}",
+      "noStages": "Provider가 진단 단계를 반환하지 않았습니다.",
+      "notIssued": "발급되지 않음",
+      "actionUnavailable": "테스트 실행 불가",
+      "retryAfter": "{{date}} 이후 재시도",
+      "id": "진단 ID: {{id}}",
+      "started": "시작 {{date}}",
+      "channelAvailability": {
+        "AVAILABLE": "사용 가능",
+        "CHECKING": "확인 중",
+        "DISABLED": "비활성",
+        "UNAVAILABLE": "사용 불가",
+        "PERMISSION_DENIED": "권한 없음",
+        "EXPIRED": "단말 만료",
+        "OFFLINE": "오프라인"
+      },
+      "channelReasons": {
+        "OFFLINE": "연결이 복구되면 채널 상태를 다시 확인합니다.",
+        "CHECKING": "채널, 정책 및 단말 상태를 확인하고 있습니다.",
+        "CAPABILITY_DISABLED": "현재 알림 인프라에서 이 채널을 제공하지 않습니다.",
+        "PROVIDER_DISABLED": "외부 Provider 운영 승인이 완료되지 않아 전달이 비활성화되어 있습니다.",
+        "POLICY_DISABLED": "현재 회사 또는 사용자 유효 정책에서 이 채널을 허용하지 않습니다.",
+        "NO_ENDPOINT": "이 채널에 연결된 활성 단말이 없습니다.",
+        "ENDPOINT_EXPIRED": "등록된 단말이 만료되었습니다. 단말을 다시 등록하세요.",
+        "PERMISSION_DENIED": "채널 또는 단말 상태를 조회할 권한이 없습니다.",
+        "SOURCE_UNAVAILABLE": "채널 상태 정본을 불러오지 못해 시험 전달을 차단했습니다."
+      },
+      "requestFailures": {
+        "RATE_LIMITED": {
+          "title": "시험 알림 실행 한도에 도달했습니다",
+          "description": "서버가 허용한 재시도 시각 이후 같은 채널로 다시 실행하세요."
+        },
+        "OFFLINE": {
+          "title": "오프라인에서는 시험 알림을 보낼 수 없습니다",
+          "description": "연결이 복구되면 채널 상태를 확인한 뒤 다시 실행하세요."
+        },
+        "FORBIDDEN": {
+          "title": "시험 알림 실행 권한이 없습니다",
+          "description": "권한 또는 세션을 갱신한 뒤 다시 시도하세요. 전달 성공으로 기록되지 않았습니다."
+        },
+        "FAILED": {
+          "title": "시험 알림을 시작하지 못했습니다",
+          "description": "채널과 단말 상태를 확인한 뒤 다시 실행하세요."
+        }
+      },
+      "availability": {
+        "BUSY": "이미 진단이 진행 중입니다.",
+        "RATE_LIMITED": "서버 실행 한도로 인해 지금은 추가 테스트를 할 수 없습니다.",
+        "OFFLINE": "다시 연결한 뒤 테스트를 실행하세요.",
+        "EXPIRED": "테스트 기능 상태를 새로 확인한 뒤 실행하세요.",
+        "DISABLED": "Provider 또는 회사 정책에서 테스트 전달을 비활성화했습니다."
+      },
+      "states": {
+        "IDLE": "실행 전",
+        "QUEUED": "진단 대기",
+        "RUNNING": "진단 중",
+        "COMPLETE": "진단 완료",
+        "PARTIAL": "부분 진단",
+        "FAILED": "진단 실패",
+        "RATE_LIMITED": "실행 제한",
+        "OFFLINE": "오프라인",
+        "EXPIRED": "결과 만료",
+        "DISABLED": "테스트 비활성"
+      },
+      "capabilities": {
+        "SUPPORTED": "지원",
+        "DISABLED": "Provider 비활성",
+        "UNAVAILABLE": "사용 불가"
+      },
+      "stageStates": {
+        "NOT_RUN": "실행 전",
+        "QUEUED": "대기",
+        "RUNNING": "진행 중",
+        "REACHED": "도달",
+        "SKIPPED": "건너뜀",
+        "BLOCKED": "차단",
+        "FAILED": "실패",
+        "EXPIRED": "만료"
+      },
+      "stages": {
+        "requestValidation": {
+          "label": "요청 검증",
+          "description": "진단 요청과 실행 한도를 검증합니다."
+        },
+        "privacyFilter": {
+          "label": "개인정보 필터",
+          "description": "안전 미리보기에 업무 데이터가 포함되지 않았는지 확인합니다."
+        },
+        "inAppPreview": {
+          "label": "앱 내 미리보기",
+          "description": "받은 알림에 기록하지 않고 앱 내 렌더링 경로를 검증합니다."
+        },
+        "endpointDelivery": {
+          "label": "외부 엔드포인트",
+          "description": "전달 성공을 가장하지 않고 외부 Provider 지원 상태를 보고합니다."
+        }
+      }
+    }
+  },
+  "noiseQuality": {
+    "title": "알림 품질 및 피로도",
+    "description": "개인정보 기준을 충족한 집단의 전달, 억제, 업무 처리 및 피로도 신호를 익명으로 분석합니다.",
+    "asOf": "기준 {{date}}",
+    "refreshing": "품질 데이터 새로 고치는 중",
+    "loadFailed": "알림 품질 데이터를 불러오지 못했습니다.",
+    "offline": "현재 알림 품질 데이터를 보려면 다시 연결하세요.",
+    "partial": "일부 알림 품질 데이터 원천을 일시적으로 사용할 수 없습니다.",
+    "empty": "이 기간에는 개인정보 기준을 충족한 과다 알림 유형이 없습니다.",
+    "missingTitle": "품질 데이터가 없습니다",
+    "metricsLabel": "알림 품질 지표",
+    "metricsMissing": "품질 지표가 제공되지 않아 KPI 값을 표시하지 않습니다.",
+    "metrics": {
+      "muted": { "label": "음소거율", "description": "해당 유형을 음소거한 수신자 비율" },
+      "deduplication": { "label": "중복 제거율", "description": "전달 전 합쳐진 반복 발생 비율" },
+      "actionConversion": {
+        "label": "업무 처리 전환율",
+        "description": "알림 확인 후 원천 앱에서 완료된 업무 비율"
+      },
+      "fatigue": {
+        "label": "피로 노출 집단",
+        "description": "짧은 시간에 알림이 집중된 익명 수신자 수"
+      }
+    },
+    "datum": {
+      "withheld": "비공개",
+      "unavailable": "확인 불가",
+      "noData": "데이터 없음",
+      "privacyUnavailable": "개인정보 기준을 확인할 수 없어 값을 공개하지 않습니다.",
+      "missing": "분석 원천에서 사용할 수 있는 값을 제공하지 않았습니다."
+    },
+    "privacy": {
+      "explanation": "소규모 집단의 값은 관리자에게도 공개하지 않습니다.",
+      "insufficient": "현재 집단이 개인정보 최소 기준보다 작아 모든 값을 공개하지 않습니다.",
+      "guard": "개인정보 보호 기준: 최소 집단 {{count}}명. {{explanation}}",
+      "unavailable": "개인정보 기준을 확인할 수 없어 모든 분석 값을 공개하지 않습니다."
+    },
+    "types": {
+      "title": "과다 알림 유형",
+      "tableLabel": "과다 알림 유형 목록",
+      "appType": "앱 / 유형",
+      "sent": "발송",
+      "muted": "음소거",
+      "deduplicated": "중복 제거",
+      "actionConversion": "업무 처리 전환",
+      "owner": "담당",
+      "finding": "발견 사항",
+      "notProvided": "제공되지 않음",
+      "ownerNotProvided": "담당 정보 없음",
+      "inspect": "유형 상세 보기",
+      "inspectLabel": "{{app}} {{type}} 상세 보기",
+      "emptyTitle": "과다 알림 유형이 없습니다",
+      "emptyDescription": "이 기간에는 유형별 품질 발견 사항이 없습니다."
+    },
+    "finding": {
+      "none": "발견 사항 없음",
+      "label": "품질 발견 사항",
+      "summary": "관리 중인 알림 계약과 전달 정책을 검토하세요.",
+      "open": "{{target}} 열기"
+    },
+    "findings": {
+      "HIGH_MUTE_RATE": {
+        "label": "음소거율 증가",
+        "summary": "개인정보 기준을 충족한 수신자 집단에서 음소거 비율이 25% 이상입니다. 계약의 대상과 빈도를 검토하세요."
+      },
+      "LOW_ACTION_CONVERSION": {
+        "label": "낮은 업무 처리 전환",
+        "summary": "조치형 알림의 원천 업무 완료 비율이 20% 미만입니다. 행동 문구와 대상 업무 상태를 검토하세요."
+      },
+      "DEDUPLICATION_OPPORTUNITY": {
+        "label": "중복 제거 개선 기회",
+        "summary": "반복 발생량에 비해 중복 제거 비율이 낮습니다. 스레드 키와 합치기 계약을 검토하세요."
+      },
+      "UNKNOWN": {
+        "label": "품질 발견 사항",
+        "summary": "관리 중인 알림 계약과 전달 정책을 검토하세요."
+      }
+    },
+    "targets": {
+      "CONTRACT": "알림 계약",
+      "POLICY": "정책",
+      "TEMPLATE": "템플릿",
+      "DELIVERY_CONTROL": "전달 통제"
+    },
+    "fourEyes": {
+      "title": "분리 승인 정책",
+      "states": {
+        "ENFORCED": "적용 중",
+        "NOT_CONFIGURED": "미설정",
+        "UNAVAILABLE": "확인 불가"
+      },
+      "openPolicy": "정책 열기",
+      "unavailableSummary": "이 분석 API는 게시 승인 상태를 제공하지 않습니다.",
+      "enforcedSummary": "게시 정책 {{published}}건에 작성자와 승인자 분리를 적용합니다. 검토 대기 초안은 {{drafts}}건입니다.",
+      "draft": "영향 범위가 제한된 정책 초안을 만들고 미리 검토합니다.",
+      "draftCount": "검토 대기 정책 초안 {{count}}건",
+      "review": "초안 작성자와 다른 관리자가 승인하거나 반려합니다.",
+      "separationUnavailable": "검토자 분리 요건을 확인할 수 없습니다.",
+      "separationNotConfigured": "검토자 분리가 설정되지 않았습니다.",
+      "separationRequired": "초안 작성자와 검토자는 서로 달라야 합니다.",
+      "separationNotRequired": "제공된 정책은 검토자 분리를 요구하지 않습니다.",
+      "updated": " {{date}}에 갱신됨."
     }
   }
 }

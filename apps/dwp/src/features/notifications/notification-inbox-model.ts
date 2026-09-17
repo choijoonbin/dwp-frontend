@@ -1,7 +1,9 @@
 import { notificationMatchesView } from './notification-model';
 
+import type { NotificationCenterGrouping } from './notification-saved-view-model';
 import type {
   NotificationInboxPage,
+  NotificationIncludedType,
   NotificationItem,
   NotificationPriority,
   NotificationReasonKind,
@@ -16,6 +18,17 @@ export type NotificationStreamGroup = {
   items: NotificationItem[];
 };
 
+export type NotificationPresentationGroup = {
+  key: string;
+  label: string | null;
+  items: NotificationItem[];
+};
+
+export type NotificationPresentationGroupLabels = {
+  context: string;
+  sourceFallback: string;
+};
+
 export type NotificationKpiKey = 'ACTIONABLE' | 'UNREAD' | 'MENTIONS' | 'SNOOZED';
 
 export type NotificationInboxFilterScope = {
@@ -25,6 +38,8 @@ export type NotificationInboxFilterScope = {
   priority?: NotificationPriority | 'ALL';
   readState?: 'ALL' | 'UNREAD' | 'READ';
   reason?: NotificationReasonKind | 'ALL';
+  attentionEffect?: 'ALL' | 'PRIORITIZE';
+  includedTypes?: readonly NotificationIncludedType[];
 };
 
 export type MessagingReplyTarget = {
@@ -59,13 +74,29 @@ export function mergeNotificationInboxPages(
 }
 
 const SAFE_TARGET_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$/u;
-const MACHINE_ACTOR_REFERENCE =
+const SAFE_CONTEXT_REFERENCE = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,239}$/u;
+const MACHINE_REFERENCE =
   /^(?:[A-Za-z][A-Za-z0-9+.-]{1,31}:|[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$)/iu;
 
-export function displayNotificationActorLabel(value?: string | null): string | null {
+const DEFAULT_PRESENTATION_GROUP_LABELS: NotificationPresentationGroupLabels = {
+  context: 'context',
+  sourceFallback: 'Other source',
+};
+
+function safeDisplayLabel(value?: string | null): string | null {
   const label = value?.trim();
-  if (!label || label.length > 120 || MACHINE_ACTOR_REFERENCE.test(label)) return null;
+  const hasControlCharacter = [...(label ?? '')].some((character) => {
+    const codePoint = character.codePointAt(0) ?? 0;
+    return codePoint <= 31 || codePoint === 127;
+  });
+  if (!label || label.length > 120 || MACHINE_REFERENCE.test(label) || hasControlCharacter) {
+    return null;
+  }
   return label;
+}
+
+export function displayNotificationActorLabel(value?: string | null): string | null {
+  return safeDisplayLabel(value);
 }
 
 export function groupNotificationStream(
@@ -87,6 +118,121 @@ export function groupNotificationStream(
   return (Object.entries(groups) as Array<[NotificationStreamGroupKey, NotificationItem[]]>)
     .filter(([, groupItems]) => groupItems.length > 0)
     .map(([key, groupItems]) => ({ key, items: groupItems }));
+}
+
+type PresentationBucket = {
+  internalKey: string;
+  sourceKey: string;
+  sourceLabel: string;
+  contextReference: string | null;
+  items: NotificationItem[];
+};
+
+function stableTextCompare(left: string, right: string): number {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+}
+
+function notificationSourceMetadata(
+  item: NotificationItem,
+  labels: NotificationPresentationGroupLabels
+): { key: string; label: string } {
+  const appKey = item.source.appKey.trim().toLocaleLowerCase('en-US');
+  const label = safeDisplayLabel(item.source.appName) ?? labels.sourceFallback;
+  return {
+    key: appKey || `label:${label.toLocaleLowerCase('en-US')}`,
+    label,
+  };
+}
+
+function notificationContextReference(item: NotificationItem): string | null {
+  const reference = item.threadKey?.trim();
+  return reference && SAFE_CONTEXT_REFERENCE.test(reference) ? reference : null;
+}
+
+function presentationBuckets(
+  items: readonly NotificationItem[],
+  grouping: Exclude<NotificationCenterGrouping, 'NONE'>,
+  labels: NotificationPresentationGroupLabels
+): PresentationBucket[] {
+  const buckets = new Map<string, PresentationBucket>();
+  for (const item of items) {
+    const source = notificationSourceMetadata(item, labels);
+    const contextReference = grouping === 'CONTEXT' ? notificationContextReference(item) : null;
+    const internalKey = contextReference
+      ? `${source.key}\u0000context\u0000${contextReference}`
+      : `${source.key}\u0000source`;
+    const current = buckets.get(internalKey);
+    if (current) {
+      current.items.push(item);
+      if (stableTextCompare(source.label, current.sourceLabel) < 0) {
+        current.sourceLabel = source.label;
+      }
+      continue;
+    }
+    buckets.set(internalKey, {
+      internalKey,
+      sourceKey: source.key,
+      sourceLabel: source.label,
+      contextReference,
+      items: [item],
+    });
+  }
+
+  return [...buckets.values()].sort(
+    (left, right) =>
+      stableTextCompare(left.sourceLabel, right.sourceLabel) ||
+      stableTextCompare(left.sourceKey, right.sourceKey) ||
+      Number(Boolean(left.contextReference)) - Number(Boolean(right.contextReference)) ||
+      stableTextCompare(left.internalKey, right.internalKey)
+  );
+}
+
+export function groupNotificationItemsForPresentation(
+  items: readonly NotificationItem[],
+  grouping: NotificationCenterGrouping,
+  labelOverrides: Partial<NotificationPresentationGroupLabels> = {}
+): NotificationPresentationGroup[] {
+  if (items.length === 0) return [];
+  if (grouping === 'NONE') return [{ key: 'all', label: null, items: [...items] }];
+
+  const labels = { ...DEFAULT_PRESENTATION_GROUP_LABELS, ...labelOverrides };
+  const buckets = presentationBuckets(items, grouping, labels);
+  if (grouping === 'SOURCE') {
+    return buckets.map((bucket, index) => ({
+      key: `source-${index}`,
+      label: bucket.sourceLabel,
+      items: bucket.items,
+    }));
+  }
+
+  const contextCounts = new Map<string, number>();
+  for (const bucket of buckets) {
+    if (!bucket.contextReference) continue;
+    contextCounts.set(bucket.sourceKey, (contextCounts.get(bucket.sourceKey) ?? 0) + 1);
+  }
+  const contextOrdinals = new Map<string, number>();
+  return buckets.map((bucket, index) => {
+    if (!bucket.contextReference) {
+      return { key: `context-${index}`, label: bucket.sourceLabel, items: bucket.items };
+    }
+    const ordinal = (contextOrdinals.get(bucket.sourceKey) ?? 0) + 1;
+    contextOrdinals.set(bucket.sourceKey, ordinal);
+    const suffix = (contextCounts.get(bucket.sourceKey) ?? 0) > 1 ? ` ${ordinal}` : '';
+    return {
+      key: `context-${index}`,
+      label: `${bucket.sourceLabel} ${labels.context}${suffix}`,
+      items: bucket.items,
+    };
+  });
+}
+
+export function orderNotificationItemsForPresentation(
+  items: readonly NotificationItem[],
+  grouping: NotificationCenterGrouping
+): NotificationItem[] {
+  return groupNotificationItemsForPresentation(items, grouping).flatMap((group) => group.items);
 }
 
 export function kpiView(key: NotificationKpiKey): {
@@ -118,6 +264,13 @@ export function notificationMatchesInboxScope(
   if (scope.readState === 'READ' && !item.readAt) return false;
   if (scope.priority && scope.priority !== 'ALL' && item.priority !== scope.priority) return false;
   if (scope.reason && scope.reason !== 'ALL' && item.reason.kind !== scope.reason) return false;
+  if (scope.attentionEffect === 'PRIORITIZE' && item.attentionEffect !== 'PRIORITIZE') {
+    return false;
+  }
+  if (scope.includedTypes?.length) {
+    const includedType = item.reason.kind === 'ROLE' ? 'ASSIGNED' : item.reason.kind;
+    if (!scope.includedTypes.includes(includedType as NotificationIncludedType)) return false;
+  }
   if (
     scope.appKey &&
     item.source.appKey.toLocaleLowerCase('en-US') !== scope.appKey.toLocaleLowerCase('en-US')

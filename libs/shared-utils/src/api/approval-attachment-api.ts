@@ -331,12 +331,16 @@ export async function loadApprovalAttachmentDownload(
     `${base}/attachment-downloads/${original.grantId}/content`,
     { ...options, contextScopeKey, beforeDispatch: requireCurrent, responseType: 'blob' }
   );
+  const responseSha256 = response.headers?.get('X-Content-SHA256');
+  const responseSize = response.headers?.get('Content-Length');
+  const responseOptions = response.headers?.get('X-Content-Type-Options');
+  const actualSha256 = await approvalAttachmentBlobSha256(response.data);
   if (
-    response.headers?.get('X-Content-SHA256') !== original.sha256 ||
-    response.headers?.get('Content-Length') !== String(original.sizeBytes) ||
-    response.headers?.get('X-Content-Type-Options') !== 'nosniff' ||
+    responseSha256 !== original.sha256 ||
+    responseSize !== String(original.sizeBytes) ||
+    responseOptions !== 'nosniff' ||
     response.data.size !== original.sizeBytes ||
-    (await approvalAttachmentBlobSha256(response.data)) !== original.sha256
+    actualSha256 !== original.sha256
   )
     invalidApprovalAttachment();
   requireCurrent();

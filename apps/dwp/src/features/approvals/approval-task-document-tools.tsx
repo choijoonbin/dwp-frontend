@@ -27,8 +27,10 @@ import type { ApprovalTaskDocumentsController } from './use-approval-task-docume
 
 export function ApprovalTaskDocumentTools({
   controller: documents,
+  mode = 'default',
 }: {
   controller: ApprovalTaskDocumentsController;
+  mode?: 'default' | 'evidence';
 }) {
   const { t } = useTranslation('approvals');
   const open = documents.dialog;
@@ -42,15 +44,23 @@ export function ApprovalTaskDocumentTools({
   };
   const tools = documents.ready ? documents.tools.data : undefined;
   return (
-    <Box component="section" aria-label={t('requests.documents.title')} sx={{ mt: 1.5 }}>
+    <Box
+      component="section"
+      aria-label={t(
+        mode === 'evidence' ? 'completed.evidence.documentTitle' : 'requests.documents.title'
+      )}
+      sx={{ mt: 1.5 }}
+    >
       <Stack direction="row" alignItems="center" gap={0.5}>
-        <ActionIconButton
-          label={t('requests.documents.comments')}
-          disabled={!tools?.comment.allowed || documents.busy || Boolean(documents.pending)}
-          onClick={() => documents.openDialog('COMMENT')}
-        >
-          <MessageSquareText size={16} />
-        </ActionIconButton>
+        {mode === 'default' && (
+          <ActionIconButton
+            label={t('requests.documents.comments')}
+            disabled={!tools?.comment.allowed || documents.busy || Boolean(documents.pending)}
+            onClick={() => documents.openDialog('COMMENT')}
+          >
+            <MessageSquareText size={16} />
+          </ActionIconButton>
+        )}
         <ActionIconButton
           label={t('requests.documents.print')}
           disabled={!tools?.print.allowed || documents.busy || Boolean(documents.pending)}
@@ -71,7 +81,8 @@ export function ApprovalTaskDocumentTools({
           </Typography>
         )}
       </Stack>
-      {documents.comments.isSuccess &&
+      {mode === 'default' &&
+        documents.comments.isSuccess &&
         documents.comments.failureCount === 0 &&
         !documents.comments.isFetching &&
         documents.ready &&
@@ -86,7 +97,8 @@ export function ApprovalTaskDocumentTools({
             </Typography>
           </Box>
         ))}
-      {documents.comments.isSuccess &&
+      {mode === 'default' &&
+        documents.comments.isSuccess &&
         documents.ready &&
         !documents.comments.isFetching &&
         documents.comments.failureCount === 0 &&

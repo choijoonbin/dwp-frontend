@@ -12,6 +12,7 @@ import {
 } from './support/product-area-fixtures';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { installApprovalInformationWireCapture } from './support/approval-information-wire-fixtures';
+import { assertApprovalSubmissionBlocked } from './support/approval-request-submission';
 
 async function mockLegacyApprovalSurface(page: Page) {
   await mockApprovalProductSurfaceAuthority(page, { surfaceUi: false });
@@ -120,7 +121,7 @@ test('기안 작성은 320px와 200% 글자에서도 핵심 작업과 검증 근
 
   await expect(page.getByLabel('결재 양식')).toBeVisible();
   await expect(page.getByRole('button', { name: '임시 저장' })).toBeVisible();
-  await expect(page.getByRole('button', { name: '결재 상신' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '검토', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: '상신 전 통제' })).toBeVisible();
 
   const geometry = await page.getByRole('heading', { name: '새 결재 작성' }).evaluate((title) => ({
@@ -196,7 +197,7 @@ test('기안자는 상신 전 검증을 확인한 뒤 초안 생성과 상신을
     .getByLabel('업무 사유')
     .fill('승인된 장애 조사 시간 동안 읽기 전용 진단 정보가 필요합니다.');
 
-  await page.getByRole('button', { name: '결재 상신' }).click();
+  await page.getByRole('button', { name: '검토', exact: true }).click();
   const preflight = page.getByRole('dialog', { name: '상신 전 통제' });
   await expect(preflight).toBeVisible();
   await expect(preflight.getByRole('list', { name: '단계별 결재선' })).toContainText(
@@ -287,7 +288,7 @@ test('Draft 409는 작성 내용을 보존하고 최신 버전 확인 뒤에만 
   await expect(conflict).toBeVisible();
   await expect(summary).toHaveValue('로컬에서 보존해야 하는 충돌 이후 수정 내용입니다.');
   expect(updateAttempts).toBe(1);
-  await expect(page.getByRole('button', { name: '결재 상신' })).toBeDisabled();
+  await assertApprovalSubmissionBlocked(page);
 
   await conflict.getByRole('button', { name: '새로고침' }).click();
   const reapply = conflict.getByRole('button', { name: '내 입력 다시 적용' });
@@ -476,7 +477,7 @@ test('기안자는 필수 업무값이 비어 있어도 초안을 저장하고 �
   await page.getByRole('option', { name: /데이터 접근 예외 신청서/u }).click();
 
   await expect(page.getByRole('button', { name: '임시 저장' })).toBeEnabled();
-  await expect(page.getByRole('button', { name: '결재 상신' })).toBeDisabled();
+  await assertApprovalSubmissionBlocked(page);
   await page.getByRole('button', { name: '임시 저장' }).click();
 
   await expect(page).toHaveURL(/\/approvals\/requests\/drafts$/u);

@@ -134,7 +134,7 @@ export function CalendarHome() {
   const currentTime = useCalendarLiveClock(summary.data?.generatedAt);
   const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
   const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
-  const roomsPath = hasPermission('APP.ROOMS', 'VIEW') ? '/workplace/rooms' : null;
+  const roomsPath = hasPermission('APP.ROOMS', 'VIEW') ? '/workplace/find?v=1&types=ROOM' : null;
   const writable = summary.state === 'READY';
   const canCreate = canCreateGranted && writable;
   const canUpdate = canUpdateGranted && writable;

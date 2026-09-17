@@ -56,8 +56,8 @@ export function DwaionActivityLatency({
         sx={{ display: 'block', mt: 0.5, mb: 1 }}
       >
         {korean
-          ? '현재 기간·상태 필터에서 서버 실측이 확인된 최근 6건 · 행을 선택하면 실행 근거를 엽니다.'
-          : 'Latest 6 server-measured runs in the current period and state filter. Select a row to inspect its evidence.'}
+          ? '현재까지 불러온 실행 중 서버 실측이 확인된 최신 6건 · 행을 선택하면 실행 근거를 엽니다.'
+          : 'Latest 6 server-measured runs loaded so far. Select a row to inspect its evidence.'}
       </Typography>
       {measured.length ? (
         <Stack component="ul" spacing={0.5} sx={{ m: 0, p: 0, listStyle: 'none' }}>

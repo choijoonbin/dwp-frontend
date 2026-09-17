@@ -30,6 +30,7 @@ const BACKEND_TASK_ALLOWLIST = {
   'services.work': ['WORK'],
   'spaces.work': ['WORK'],
   'workplace.work': ['WORK'],
+  'workplace.management': ['OPERATIONS'],
 } as const;
 
 describe('governed mutation telemetry task classification', () => {
@@ -72,6 +73,32 @@ describe('governed mutation telemetry task classification', () => {
         routeContractKey: 'route.dwaion.management.action-policy-update.action',
       })
     ).toBe('ADMINISTRATION');
+
+    expect(
+      resolveProductSurfaceTaskKind({
+        productKey: 'workplace',
+        surfaceKey: 'workplace.management',
+        routeContractKey: 'route.workplace.management.connector-replay-preview.action',
+      })
+    ).toBe('OPERATIONS');
+
+    for (const routeContractKey of [
+      'route.workplace.management.service-catalog-create.action',
+      'route.workplace.management.service-catalog-state.action',
+      'route.workplace.management.service-catalog-update.action',
+      'route.workplace.management.service-fulfillment-attachment-upload.action',
+      'route.workplace.management.service-fulfillment-message.action',
+      'route.workplace.management.service-fulfillment-task-update.action',
+    ]) {
+      expect(
+        resolveProductSurfaceTaskKind({
+          productKey: 'workplace',
+          surfaceKey: 'workplace.management',
+          routeContractKey,
+        }),
+        routeContractKey
+      ).toBe('OPERATIONS');
+    }
   });
 
   it('fails closed for a new, mismatched, or unclassified ACTION', () => {

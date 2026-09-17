@@ -1,5 +1,6 @@
 import { FilePenLine, Link2, ListPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -42,11 +43,11 @@ export function WorkTaskEntryModeControl({
         gap: 0.5,
         p: 0.5,
         bgcolor: 'action.hover',
-        borderRadius: 2,
+        borderRadius: foundationTokens.radius.surface * 2 + 'px',
         '& .MuiToggleButtonGroup-grouped': {
           m: 0,
           border: 0,
-          borderRadius: '8px !important',
+          borderRadius: foundationTokens.radius.surface + 'px !important',
         },
       }}
     >
@@ -78,7 +79,10 @@ export function WorkTaskEntryModeControl({
           >
             <Stack direction="row" spacing={0.75} alignItems="center" minWidth={0}>
               <Icon size={16} aria-hidden="true" />
-              <Box component="span" sx={{ overflowWrap: 'anywhere', lineHeight: 1.25 }}>
+              <Box
+                component="span"
+                sx={{ overflowWrap: 'anywhere', lineHeight: 'body2.lineHeight' }}
+              >
                 {t(`workHub.taskForm.entryMode.${option}`)}
               </Box>
               {option === 'source' && sourceIntent ? (

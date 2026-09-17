@@ -1,0 +1,143 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+                - navigation "Workplace home" [ref=e40]:
+                  - generic [ref=e41]:
+                    - link "Today's workspace" [ref=e42] [cursor=pointer]:
+                      - /url: /workplace/home?view=home
+                      - img [ref=e44]
+                      - text: Today's workspace
+                    - link "Team work plans" [ref=e47] [cursor=pointer]:
+                      - /url: /workplace/home?view=team
+                      - img [ref=e49]
+                      - text: Team work plans
+                    - link "Facility requests" [ref=e53] [cursor=pointer]:
+                      - /url: /workplace/home?view=requests
+                      - img [ref=e55]
+                      - text: Facility requests
+              - listitem [ref=e57]:
+                - link "Find and book a space" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/find
+                  - img [ref=e60]
+                  - paragraph [ref=e65]: Find and book a space
+              - listitem [ref=e66]:
+                - link "Weekly booking planner" [ref=e67] [cursor=pointer]:
+                  - /url: /workplace/planner
+                  - img [ref=e69]
+                  - paragraph [ref=e72]: Weekly booking planner
+              - listitem [ref=e73]:
+                - link "My reservations" [ref=e74] [cursor=pointer]:
+                  - /url: /workplace/reservations
+                  - img [ref=e76]
+                  - paragraph [ref=e79]: My reservations
+              - listitem [ref=e80]:
+                - link "My service orders" [ref=e81] [cursor=pointer]:
+                  - /url: /workplace/service-orders
+                  - img [ref=e83]
+                  - paragraph [ref=e87]: My service orders
+        - link "Return to apps" [ref=e89] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e91]
+          - text: Return to apps
+    - banner [ref=e93]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - img [ref=e97]
+          - generic "Workplace" [ref=e102]
+        - navigation "App area switcher" [ref=e105]:
+          - 'link "App management: Workplace" [ref=e107] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e109]
+            - generic [ref=e112]: App management
+        - generic [ref=e113]:
+          - button "Search DWP" [ref=e115] [cursor=pointer]:
+            - img [ref=e116]
+            - paragraph [ref=e119]: Search DWP
+            - generic [ref=e120]: ⌘K
+          - generic [ref=e121]:
+            - button "Enter full screen" [ref=e122] [cursor=pointer]:
+              - img [ref=e123]
+            - generic "0 actionable notifications, 0 total unread" [ref=e129]:
+              - button "0 actionable notifications, 0 total unread" [ref=e130] [cursor=pointer]:
+                - generic [ref=e131]:
+                  - img [ref=e132]
+                  - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e136] [cursor=pointer]':
+            - generic [ref=e137]: T
+            - img [ref=e138]
+    - main [ref=e140]:
+      - generic [ref=e142]:
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - text: Multi-day workplace planning
+            - heading "Weekly booking planner" [level=1] [ref=e145]
+            - paragraph [ref=e146]: Plan desks, parking and lockers for yourself or authorized beneficiaries, then confirm one server-held batch.
+          - button "Refresh" [ref=e148] [cursor=pointer]
+        - generic [ref=e150]:
+          - paragraph [ref=e151]: Planner progress
+          - generic [ref=e153]: 1. Plan
+          - generic [ref=e155]: 2. Hold and review
+          - generic [ref=e157]: 3. Results
+          - generic [ref=e159]: Current
+        - generic [ref=e161]:
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - heading "Batch reservation results" [level=2] [ref=e164]
+              - paragraph [ref=e165]: "Batch reference: 56000000-0000-4000-8000-000000000001"
+            - generic [ref=e167]: Succeeded
+          - generic [ref=e170]: 2 succeeded
+          - generic [ref=e171]:
+            - generic [ref=e172]:
+              - generic [ref=e173]:
+                - generic [ref=e174]:
+                  - paragraph [ref=e175]: Desk · 2026-09-14:900018:DESK
+                  - text: Actor 900018 · Beneficiary 900018 · Grant self · Authority WORKPLACE
+                - generic [ref=e177]: Succeeded
+              - link "Open reservation" [ref=e178] [cursor=pointer]:
+                - /url: /workplace/reservations?reservationAuthority=WORKPLACE&reservation=booking-workplace-1
+                - text: Open reservation
+                - img [ref=e180]
+            - generic [ref=e184]:
+              - generic [ref=e185]:
+                - generic [ref=e186]:
+                  - paragraph [ref=e187]: Desk · 2026-09-15:900018:DESK
+                  - text: Actor 900018 · Beneficiary 900018 · Grant self · Authority WORKPLACE
+                - generic [ref=e189]: Succeeded
+              - link "Open reservation" [ref=e190] [cursor=pointer]:
+                - /url: /workplace/reservations?reservationAuthority=WORKPLACE&reservation=booking-workplace-2
+                - text: Open reservation
+                - img [ref=e192]
+          - button "Create another plan" [ref=e196] [cursor=pointer]:
+            - img [ref=e198]
+            - text: Create another plan
+  - generic "Open DWAI·ON" [ref=e202]:
+    - button "Open DWAI·ON" [ref=e203] [cursor=pointer]
+```

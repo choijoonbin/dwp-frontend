@@ -45,12 +45,14 @@ export function ConfiguredProductSurfaceShell({
   surfaceId,
   areaKey,
   translationNamespace,
+  resolveMobileShell,
   legacy,
 }: {
   manifest: ProductSurfaceManifest;
   surfaceId: string;
   areaKey: ProductAreaLayoutProps['areaKey'];
   translationNamespace: NonNullable<ProductAreaLayoutProps['translationNamespace']>;
+  resolveMobileShell?: ProductAreaLayoutProps['resolveMobileShell'];
   legacy: ReactNode;
 }) {
   const decision = useAllowedProductSurface();
@@ -93,6 +95,7 @@ export function ConfiguredProductSurfaceShell({
     manifest,
     navigation: surface.navigation,
     translationNamespace,
+    resolveMobileShell,
     surface: runtime,
   };
   if (presentation === 'compatibility-management' || presentation === 'compatibility-work') {

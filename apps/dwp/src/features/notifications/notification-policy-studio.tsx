@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import {
   BellRing,
   Building2,
@@ -58,32 +59,12 @@ import {
 } from './notification-policy-simulation';
 import { NotificationResponsiveCatalog } from './notification-responsive-catalog';
 import { NotificationPolicyChannels as PolicyChannels } from './notification-policy-channels';
-
-const POLICY_CHANNELS: readonly NotificationChannel[] = [
-  'IN_APP',
-  'EMAIL',
-  'WEB_PUSH',
-  'MOBILE_PUSH',
-  'TEAMS',
-  'SLACK',
-];
-
-const DEFAULT_CHANNELS: NotificationPolicyChannelRule[] = POLICY_CHANNELS.map((channel) => ({
-  channel,
-  enabled: channel === 'IN_APP',
-  defaultMode: 'IMMEDIATE',
-  userOverridable: channel === 'IN_APP',
-  maxPerWindow: channel === 'IN_APP' ? 100 : null,
-}));
-
-function editableChannels(policy: TenantNotificationPolicy): NotificationPolicyChannelRule[] {
-  const indexed = new Map(policy.channels.map((channel) => [channel.channel, channel]));
-  return DEFAULT_CHANNELS.map((fallback) => ({ ...fallback, ...indexed.get(fallback.channel) }));
-}
-
-function sourceTone(source: TenantNotificationPolicy['source']): 'default' | 'info' {
-  return source === 'PROVIDER_POLICY' ? 'info' : 'default';
-}
+import { notificationAdminFocus } from './notification-admin-focus';
+import {
+  DEFAULT_NOTIFICATION_POLICY_CHANNELS,
+  editableNotificationPolicyChannels,
+  notificationPolicySourceTone,
+} from './notification-policy-studio-model';
 
 function PolicyListItem({
   policy,
@@ -128,7 +109,7 @@ function PolicyListItem({
           <Chip
             size="small"
             variant="outlined"
-            color={sourceTone(policy.source)}
+            color={notificationPolicySourceTone(policy.source)}
             label={t(`admin.policies.source.${policy.source}`)}
           />
           {policy.mandatory && (
@@ -176,7 +157,7 @@ function PolicyDetail({
             <Chip
               size="small"
               variant="outlined"
-              color={sourceTone(policy.source)}
+              color={notificationPolicySourceTone(policy.source)}
               label={t(`admin.policies.source.${policy.source}`)}
             />
           </Stack>
@@ -296,6 +277,8 @@ export function NotificationPolicyStudio() {
   const { hasPermission } = usePermissions();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const requestedPolicyId = notificationAdminFocus(searchParams, 'policyId');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -310,7 +293,9 @@ export function NotificationPolicyStudio() {
   const [mandatory, setMandatory] = useState(false);
   const [quietHoursBypass, setQuietHoursBypass] = useState(false);
   const [digestMode, setDigestMode] = useState<'IMMEDIATE' | 'DAILY' | 'WEEKLY'>('IMMEDIATE');
-  const [channels, setChannels] = useState<NotificationPolicyChannelRule[]>(DEFAULT_CHANNELS);
+  const [channels, setChannels] = useState<NotificationPolicyChannelRule[]>(
+    DEFAULT_NOTIFICATION_POLICY_CHANNELS
+  );
   const [changeReason, setChangeReason] = useState('');
   const [simulation, setSimulation] = useState(DEFAULT_NOTIFICATION_POLICY_SIMULATION);
 
@@ -342,8 +327,13 @@ export function NotificationPolicyStudio() {
     : null;
 
   useEffect(() => {
+    if (requestedPolicyId && effective.some((policy) => policy.policyId === requestedPolicyId)) {
+      setSelectedId(requestedPolicyId);
+      setMobileDetailOpen(true);
+      return;
+    }
     if (!selectedId && effective.length) setSelectedId(effective[0].policyId);
-  }, [effective, selectedId]);
+  }, [effective, requestedPolicyId, selectedId]);
 
   const previewMutation = useMutation({
     mutationFn: (input: TenantNotificationPolicyChangeInput) =>
@@ -426,7 +416,7 @@ export function NotificationPolicyStudio() {
     setMandatory(selected.mandatory);
     setQuietHoursBypass(selected.quietHoursBypass);
     setDigestMode(selected.digestMode);
-    setChannels(editableChannels(selected));
+    setChannels(editableNotificationPolicyChannels(selected));
     setChangeReason('');
     setEditorOpen(true);
   };

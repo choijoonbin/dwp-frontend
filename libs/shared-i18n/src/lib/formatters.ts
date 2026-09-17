@@ -35,7 +35,8 @@ export function formatDate(
   locale = getCurrentLanguage()
 ): string {
   const preference = readRegionalPreference();
-  const timeZone = preference.timeZone === 'system' ? undefined : preference.timeZone;
+  const timeZone =
+    options.timeZone ?? (preference.timeZone === 'system' ? undefined : preference.timeZone);
   const hour12 =
     preference.timeFormat === 'locale' ? undefined : preference.timeFormat === '12_hour';
   const effectiveOptions: Intl.DateTimeFormatOptions = {

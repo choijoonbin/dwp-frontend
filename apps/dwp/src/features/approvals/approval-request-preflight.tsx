@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, CircleAlert, CircleDashed, GitBranch, ShieldCheck } from 'lucide-react';
-import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -10,13 +11,22 @@ import Typography from '@mui/material/Typography';
 
 import { ApprovalSurface } from './approval-ui';
 
-import type { ApprovalFormField, ApprovalRequestTemplate } from '@dwp-frontend/shared-utils';
+import type {
+  ApprovalFormField,
+  ApprovalRequestServerPreflight,
+  ApprovalRequestTemplate,
+} from '@dwp-frontend/shared-utils';
+import type { ApprovalRequestReviewIssue } from './approval-request-composer-review';
 
 type ApprovalRequestPreflightProps = {
   template: ApprovalRequestTemplate;
   missingFields: readonly ApprovalFormField[];
   compact?: boolean;
   validation?: { ready: boolean; valid: boolean; missing: number; required: number };
+  issues?: readonly ApprovalRequestReviewIssue[];
+  onIssueFocus?: (path: string) => void;
+  serverPreflight?: ApprovalRequestServerPreflight;
+  serverError?: boolean;
 };
 
 export function ApprovalRequestPreflight({
@@ -24,6 +34,10 @@ export function ApprovalRequestPreflight({
   missingFields,
   compact = false,
   validation,
+  issues = [],
+  onIssueFocus,
+  serverPreflight,
+  serverError = false,
 }: ApprovalRequestPreflightProps) {
   const { t, i18n } = useTranslation('approvals');
   const korean = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language) === 'ko';
@@ -74,6 +88,33 @@ export function ApprovalRequestPreflight({
               }
             />
           </Stack>
+          {issues.length > 0 && (
+            <InlineFeedback severity="warning">
+              <Stack gap={1}>
+                <Typography variant="caption">{t('requests.typed.inputInvalid')}</Typography>
+                <Box component="ul" sx={{ m: 0, pl: 2.25 }}>
+                  {issues.map((issue) => (
+                    <Box component="li" key={issue.path} sx={{ py: 0.25 }}>
+                      {onIssueFocus ? (
+                        <ActionButton
+                          type="button"
+                          intent="quiet"
+                          size="small"
+                          onClick={() => onIssueFocus(issue.path)}
+                        >
+                          {t('requests.typed.fieldInvalid', { field: issue.label })}
+                        </ActionButton>
+                      ) : (
+                        <Typography variant="caption">
+                          {t('requests.typed.fieldInvalid', { field: issue.label })}
+                        </Typography>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Stack>
+            </InlineFeedback>
+          )}
           <Box
             component="ol"
             aria-label={t('requests.route.steps')}
@@ -144,13 +185,66 @@ export function ApprovalRequestPreflight({
           gap={1}
           sx={{ p: 2, color: 'text.secondary' }}
         >
-          {['identity', 'policy', 'evidence', 'concurrency'].map((key) => (
-            <Stack key={key} direction="row" gap={1} alignItems="flex-start">
-              <Box sx={{ color: 'text.secondary', display: 'flex', mt: 0.25 }}>
-                <CircleDashed size={15} aria-hidden="true" />
+          {serverError && (
+            <InlineFeedback severity="error">
+              {t('requests.assurance.serverUnavailable')}
+            </InlineFeedback>
+          )}
+          {serverPreflight && (
+            <Stack direction="row" gap={1} useFlexGap flexWrap="wrap" alignItems="center">
+              <Chip
+                size="small"
+                color={serverPreflight.ready ? 'success' : 'warning'}
+                label={t(
+                  serverPreflight.ready
+                    ? 'requests.assurance.serverReady'
+                    : 'requests.assurance.serverBlocked'
+                )}
+              />
+              <Typography variant="caption" color="text.secondary">
+                {t('requests.assurance.serverEvaluated', {
+                  value: formatDate(
+                    serverPreflight.evaluatedAt,
+                    { dateStyle: 'medium', timeStyle: 'short' },
+                    resolveSupportedLocale(i18n.resolvedLanguage, i18n.language)
+                  ),
+                })}
+              </Typography>
+            </Stack>
+          )}
+          {(serverPreflight?.checks ??
+            ['identity', 'policy', 'evidence', 'concurrency'].map((code) => ({
+              code,
+              status: 'PENDING' as const,
+              detail: '',
+            }))).map((check) => (
+            <Stack key={check.code} direction="row" gap={1} alignItems="flex-start">
+              <Box
+                sx={{
+                  color:
+                    check.status === 'PASS'
+                      ? 'success.main'
+                      : check.status === 'BLOCKED'
+                        ? 'warning.main'
+                        : 'text.secondary',
+                  display: 'flex',
+                  mt: 0.25,
+                }}
+              >
+                {check.status === 'PASS' ? (
+                  <CheckCircle2 size={15} aria-hidden="true" />
+                ) : check.status === 'BLOCKED' ? (
+                  <CircleAlert size={15} aria-hidden="true" />
+                ) : (
+                  <CircleDashed size={15} aria-hidden="true" />
+                )}
               </Box>
               <Typography variant="caption" color="inherit">
-                {t(`requests.assurance.${key}`)}
+                {serverPreflight
+                  ? t(`requests.assurance.serverChecks.${check.code}`, {
+                      defaultValue: check.detail,
+                    })
+                  : t(`requests.assurance.${check.code}`)}
               </Typography>
             </Stack>
           ))}

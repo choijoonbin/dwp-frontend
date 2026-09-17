@@ -56,10 +56,12 @@ export function homePurposeAllRoute(
   const routes: Partial<Record<HomeContributionBucketKey, Record<string, string>>> = {
     action: {
       'APP.WORK': '/work/queue',
-      'APP.WORKPLACE': '/workplace/my-bookings',
+      'APP.WORKPLACE':
+        '/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE',
     },
     timeline: {
-      'APP.WORKPLACE': '/workplace/my-bookings',
+      'APP.WORKPLACE':
+        '/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE',
       'APP.WORK': '/work/queue',
     },
     response: {

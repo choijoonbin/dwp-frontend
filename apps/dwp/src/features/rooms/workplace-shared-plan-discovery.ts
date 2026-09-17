@@ -30,10 +30,12 @@ export function workplaceSharedPlanDiscoveryPath(
     return null;
   }
   const query = new URLSearchParams({
-    site: site.siteId,
-    floor: floor.floorId,
+    v: '1',
     date: plan.planDate,
-    timeZone: site.timeZone,
+    tz: site.timeZone,
+    sites: site.siteId,
+    floors: floor.floorId,
+    types: 'ALL',
   });
-  return `/workplace/explore?${query}`;
+  return `/workplace/find?${query}`;
 }

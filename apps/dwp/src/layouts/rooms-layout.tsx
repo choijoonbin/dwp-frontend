@@ -14,7 +14,14 @@ const WorkplaceNavigationSubviews = lazy(() =>
 
 function renderWorkplaceNavigationSubviews(context: ProductAreaNavigationItemChildrenContext) {
   if (
-    !['home', 'admin-overview', 'admin-operations', 'admin-governance'].includes(context.item.view)
+    ![
+      'home',
+      'admin-overview',
+      'admin-operations',
+      'admin-governance',
+      'admin-service-fulfillment',
+      'admin-service-catalog',
+    ].includes(context.item.view)
   )
     return null;
   return (

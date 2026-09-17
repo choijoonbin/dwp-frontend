@@ -11,6 +11,7 @@ import { mockShellSession } from './support/shell-session';
 import { mockApprovalProductSurfaceAuthority } from './support/product-surface-authority';
 import { APPROVAL_MEMBER_PERMISSIONS } from './support/approval-command-center-fixtures';
 import { installApprovalInformationWireCapture } from './support/approval-information-wire-fixtures';
+import { assertApprovalSubmissionBlocked } from './support/approval-request-submission';
 import {
   APPROVAL_FORM_DETAIL_FIXTURE,
   APPROVAL_REQUEST_DETAIL_FIXTURE,
@@ -51,6 +52,7 @@ async function typedSession(page: Page, hash?: string) {
   const detail = {
     ...APPROVAL_REQUEST_DETAIL_FIXTURE,
     formSchema: APPROVAL_REQUEST_TYPED_TEST_SCHEMA,
+    formSchemaSha256: compiled.schemaSha256,
     payload,
     request: { ...APPROVAL_REQUEST_FIXTURE, status: 'DRAFT', version: 3 },
   };
@@ -142,12 +144,12 @@ test('Typed 게시 양식은 반복 행과 계산값을 실제 canonical 초안�
   expect(
     await page.getByRole('textbox', { name: '합계', exact: true }).getAttribute('readonly')
   ).not.toBeNull();
-  await expect(page.getByRole('button', { name: '결재 상신', exact: true })).toBeDisabled();
+  await assertApprovalSubmissionBlocked(page);
   await page
     .getByRole('textbox', { name: '추가 내용', exact: true })
     .fill('예외 항목의 업무상 필요성을 설명합니다.');
   await page.getByRole('textbox', { name: '고액 사유', exact: true }).fill('승인된 예산 내 구매');
-  await page.getByRole('button', { name: '결재 상신', exact: true }).click();
+  await page.getByRole('button', { name: '검토', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: '상신 전 통제' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('100.5');
@@ -221,7 +223,7 @@ test('Typed 초안 409는 반복 행 입력을 보존하고 최신 버전 확인
   const conflict = page.getByRole('alert').filter({ hasText: '다른 곳에서 초안이 변경되었습니다' });
   await expect(conflict).toBeVisible();
   await expect(quantity).toHaveValue('3.00');
-  await expect(page.getByRole('button', { name: '결재 상신', exact: true })).toBeDisabled();
+  await assertApprovalSubmissionBlocked(page);
   await conflict.getByRole('button', { name: '새로고침' }).click();
   await expect(conflict.getByRole('button', { name: '내 입력 다시 적용' })).toBeVisible();
   expect(updates).toHaveLength(1);
@@ -253,7 +255,7 @@ test('Typed 초안의 invalid decimal은 편집값을 보존하며 저장과 상
   await quantity.fill('1e3');
   await expect(quantity).toHaveValue('1e3');
   await expect(page.getByRole('button', { name: '임시 저장', exact: true })).toBeDisabled();
-  await expect(page.getByRole('button', { name: '결재 상신', exact: true })).toBeDisabled();
+  await assertApprovalSubmissionBlocked(page);
   await page.waitForTimeout(1900);
   expect(writes).toBe(0);
   await quantity.fill('3');
@@ -271,7 +273,7 @@ test('Typed marker가 있어도 advertised schema hash가 다르면 저장과 �
     page.getByRole('alert').filter({ hasText: '이 양식의 구조를 확인할 수 없습니다' })
   ).toBeVisible();
   await expect(page.getByRole('button', { name: '임시 저장', exact: true })).toBeDisabled();
-  await expect(page.getByRole('button', { name: '결재 상신', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: '검토', exact: true })).toBeDisabled();
 });
 
 test('Typed 보완 요청은 계산값을 재평가하고 schema-complete canonical payload만 최신 요청 버전으로 전송한다', async ({

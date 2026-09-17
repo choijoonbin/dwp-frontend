@@ -3,9 +3,37 @@
   "sourceKey": "product-page-routes.v1",
   "pageRoutes": [
     {
+      "routeContractKey": "route.approvals.admin.analytics.page",
+      "routeId": "approvals.admin.analytics",
+      "pattern": "/approvals/admin/analytics",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.audit.page",
+      "routeId": "approvals.admin.audit",
+      "pattern": "/approvals/admin/audit",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.deployments.page",
+      "routeId": "approvals.admin.deployments",
+      "pattern": "/approvals/admin/deployments",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
       "routeContractKey": "route.approvals.admin.forms.page",
       "routeId": "approvals.admin.forms",
       "pattern": "/approvals/admin/forms",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.integrations.page",
+      "routeId": "approvals.admin.integrations",
+      "pattern": "/approvals/admin/integrations",
       "productId": "approvals",
       "surfaceId": "approvals.admin"
     },
@@ -27,6 +55,13 @@
       "routeContractKey": "route.approvals.admin.policies.page",
       "routeId": "approvals.admin.policies",
       "pattern": "/approvals/admin/policies",
+      "productId": "approvals",
+      "surfaceId": "approvals.admin"
+    },
+    {
+      "routeContractKey": "route.approvals.admin.routing.page",
+      "routeId": "approvals.admin.routing",
+      "pattern": "/approvals/admin/routing",
       "productId": "approvals",
       "surfaceId": "approvals.admin"
     },
@@ -549,11 +584,207 @@
       "surfaceId": "spaces.work"
     },
     {
+      "routeId": "workplace.management.access-zones",
+      "pattern": "/workplace/admin/access-zones",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.access-zones.page"
+    },
+    {
+      "routeId": "workplace.management.assistant-governance",
+      "pattern": "/workplace/admin/assistant-governance",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.assistant-governance.page"
+    },
+    {
+      "routeId": "workplace.management.devices",
+      "pattern": "/workplace/admin/devices",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.devices.page"
+    },
+    {
+      "routeId": "workplace.management.exceptions",
+      "pattern": "/workplace/admin/exceptions",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.exceptions.page"
+    },
+    {
+      "routeId": "workplace.management.governance",
+      "pattern": "/workplace/admin/governance",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.governance.page"
+    },
+    {
+      "routeId": "workplace.management.kiosk-devices",
+      "pattern": "/workplace/admin/kiosk-devices",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.kiosk-devices.page"
+    },
+    {
+      "routeContractKey": "route.workplace.management.locations.page",
+      "routeId": "workplace.management.locations",
+      "pattern": "/workplace/admin/locations",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeContractKey": "route.workplace.management.operations.page",
+      "routeId": "workplace.management.operations",
+      "pattern": "/workplace/admin/operations",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeContractKey": "route.workplace.management.overview.page",
+      "routeId": "workplace.management.overview",
+      "pattern": "/workplace/admin/overview",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeContractKey": "route.workplace.management.policy.page",
+      "routeId": "workplace.management.policy",
+      "pattern": "/workplace/admin/policies",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeContractKey": "route.workplace.management.room-operations.page",
+      "routeId": "workplace.management.room-operations",
+      "pattern": "/workplace/admin/meeting-operations",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeContractKey": "route.workplace.management.room-policy.page",
+      "routeId": "workplace.management.room-policy",
+      "pattern": "/workplace/admin/meeting-policy",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeId": "workplace.management.safety",
+      "pattern": "/workplace/admin/safety",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.safety.page"
+    },
+    {
+      "routeContractKey": "route.workplace.management.service-catalog.page",
+      "routeId": "workplace.management.service-catalog",
+      "pattern": "/workplace/admin/service-catalog",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeContractKey": "route.workplace.management.service-fulfillment.page",
+      "routeId": "workplace.management.service-fulfillment",
+      "pattern": "/workplace/admin/service-fulfillment",
+      "productId": "workplace",
+      "surfaceId": "workplace.management"
+    },
+    {
+      "routeId": "workplace.management.service-providers",
+      "pattern": "/workplace/admin/service-providers",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.service-providers.page"
+    },
+    {
+      "routeId": "workplace.management.space-planning",
+      "pattern": "/workplace/admin/space-planning",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.space-planning.page"
+    },
+    {
+      "routeId": "workplace.management.visit-policies",
+      "pattern": "/workplace/admin/visit-policies",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.visit-policies.page"
+    },
+    {
+      "routeId": "workplace.management.visit-providers",
+      "pattern": "/workplace/admin/visit-providers",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.visit-providers.page"
+    },
+    {
+      "routeId": "workplace.management.visits",
+      "pattern": "/workplace/admin/visits",
+      "productId": "workplace",
+      "surfaceId": "workplace.management",
+      "routeContractKey": "route.workplace.management.visits.page"
+    },
+    {
+      "routeId": "workplace.work.assistant",
+      "pattern": "/workplace/assistant",
+      "productId": "workplace",
+      "surfaceId": "workplace.work",
+      "routeContractKey": "route.workplace.work.assistant.page"
+    },
+    {
       "routeContractKey": "route.workplace.work.explore.page",
       "routeId": "workplace.work.explore",
       "pattern": "/workplace/explore",
       "productId": "workplace",
       "surfaceId": "workplace.work"
+    },
+    {
+      "routeContractKey": "route.workplace.work.find.page",
+      "routeId": "workplace.work.find",
+      "pattern": "/workplace/find",
+      "productId": "workplace",
+      "surfaceId": "workplace.work"
+    },
+    {
+      "routeContractKey": "route.workplace.work.home.page",
+      "routeId": "workplace.work.home",
+      "pattern": "/workplace/home",
+      "productId": "workplace",
+      "surfaceId": "workplace.work"
+    },
+    {
+      "routeContractKey": "route.workplace.work.planner.page",
+      "routeId": "workplace.work.planner",
+      "pattern": "/workplace/planner",
+      "productId": "workplace",
+      "surfaceId": "workplace.work"
+    },
+    {
+      "routeContractKey": "route.workplace.work.reservations.page",
+      "routeId": "workplace.work.reservations",
+      "pattern": "/workplace/reservations",
+      "productId": "workplace",
+      "surfaceId": "workplace.work"
+    },
+    {
+      "routeId": "workplace.work.safety",
+      "pattern": "/workplace/safety",
+      "productId": "workplace",
+      "surfaceId": "workplace.work",
+      "routeContractKey": "route.workplace.work.safety.page"
+    },
+    {
+      "routeContractKey": "route.workplace.work.service-orders.page",
+      "routeId": "workplace.work.service-orders",
+      "pattern": "/workplace/service-orders",
+      "productId": "workplace",
+      "surfaceId": "workplace.work"
+    },
+    {
+      "routeId": "workplace.work.wayfinding",
+      "pattern": "/workplace/navigation",
+      "productId": "workplace",
+      "surfaceId": "workplace.work",
+      "routeContractKey": "route.workplace.work.wayfinding.page"
     }
   ],
   "legacyRedirects": [

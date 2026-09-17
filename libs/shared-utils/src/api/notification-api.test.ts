@@ -62,6 +62,123 @@ describe('notification API boundary', () => {
     );
   });
 
+  it('queries only the materialized prioritized attention effect', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        jsonResponse({ items: [], hasMore: false, approximateTotal: 0, changeVersion: '1' })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getNotificationInbox({ view: 'ALL', attentionEffect: 'PRIORITIZE' });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/notifications/v1/inbox?view=ALL&limit=30&attentionEffect=PRIORITIZE'
+    );
+  });
+
+  it('rejects arbitrary attention identities before a request', () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    expect(() =>
+      getNotificationInbox({ view: 'ALL', attentionEffect: 'user:vip-42' as 'PRIORITIZE' })
+    ).toThrow('must be PRIORITIZE');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('sends bounded canonical contexts in deterministic order', async () => {
+    const page = { items: [], hasMore: false, changeVersion: '1' };
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(page));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getNotificationInbox({
+      view: 'ALL',
+      contexts: [
+        { kind: 'THREAD', key: 'conversation:design-systems' },
+        { kind: 'ACTOR', key: 'user:42' },
+        { kind: 'ACTOR', key: 'user:84' },
+      ],
+    });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/notifications/v1/inbox?view=ALL&limit=30&contextKind=ACTOR&contextKind=ACTOR&contextKind=THREAD&contextKey=user%3A42&contextKey=user%3A84&contextKey=conversation%3Adesign-systems'
+    );
+  });
+
+  it('rejects malformed, duplicate, or oversized contexts before a request', () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    expect(() =>
+      getNotificationInbox({
+        view: 'ALL',
+        contexts: [{ kind: 'THREAD', key: ' conversation:42' }],
+      })
+    ).toThrow('canonical opaque keys');
+    expect(() =>
+      getNotificationInbox({
+        view: 'ALL',
+        contexts: [
+          { kind: 'ACTOR', key: 'user:42' },
+          { kind: 'ACTOR', key: 'user:42' },
+        ],
+      })
+    ).toThrow('canonical opaque keys');
+    expect(() =>
+      getNotificationInbox({
+        view: 'ALL',
+        contexts: Array.from({ length: 6 }, (_, index) => ({
+          kind: 'THREAD' as const,
+          key: `thread:${index}`,
+        })),
+      })
+    ).toThrow('limited to 5');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('sends included types once each in canonical order', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ items: [], hasMore: false, changeVersion: '1' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getNotificationInbox({
+      view: 'ALL',
+      includedTypes: ['MANDATORY_POLICY', 'DIRECT', 'ASSIGNED'],
+    });
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/notifications/v1/inbox?view=ALL&limit=30&includedType=DIRECT&includedType=ASSIGNED&includedType=MANDATORY_POLICY'
+    );
+  });
+
+  it('rejects invalid, duplicate, or oversized included types before a request', () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    expect(() =>
+      getNotificationInbox({ view: 'ALL', includedTypes: ['DIRECT', 'DIRECT'] })
+    ).toThrow('unique supported values');
+    expect(() =>
+      getNotificationInbox({ view: 'ALL', includedTypes: ['direct' as 'DIRECT'] })
+    ).toThrow('unique supported values');
+    expect(() =>
+      getNotificationInbox({
+        view: 'ALL',
+        includedTypes: [
+          'DIRECT',
+          'MENTION',
+          'ASSIGNED',
+          'SUBSCRIPTION',
+          'MANDATORY_POLICY',
+          'DIRECT',
+        ],
+      })
+    ).toThrow('limited to 5');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('reads server-owned delivery capabilities instead of assuming omnichannel support', async () => {
     const capabilities = {
       enabledChannels: ['IN_APP'],

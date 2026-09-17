@@ -1,6 +1,30 @@
 import type { ProductSurfaceMutationBinding } from './use-product-surface-governed-mutation';
 
 export const DWAION_MUTATION_BINDINGS = {
+  'route.dwaion.management.ai-control-bootstrap.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.management',
+    routeContractKey: 'route.dwaion.management.ai-control-bootstrap.action',
+    taskKind: 'ADMINISTRATION',
+  },
+  'route.dwaion.management.ai-control-emergency.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.management',
+    routeContractKey: 'route.dwaion.management.ai-control-emergency.action',
+    taskKind: 'ADMINISTRATION',
+  },
+  'route.dwaion.management.ai-control-update.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.management',
+    routeContractKey: 'route.dwaion.management.ai-control-update.action',
+    taskKind: 'ADMINISTRATION',
+  },
+  'route.dwaion.management.control-plane-command.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.management',
+    routeContractKey: 'route.dwaion.management.control-plane-command.action',
+    taskKind: 'ADMINISTRATION',
+  },
   'route.dwaion.management.action-policy-update.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.management',
@@ -145,6 +169,18 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.action-preview.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.attachment-create.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.attachment-create.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.attachment-delete.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.attachment-delete.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.artifact-autosave.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
@@ -271,6 +307,12 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.proposal-decision.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.proposal-handoff.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.proposal-handoff.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.proposal-preferences-update.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
@@ -289,10 +331,46 @@ export const DWAION_MUTATION_BINDINGS = {
     routeContractKey: 'route.dwaion.work.question-launch-create.action',
     taskKind: 'WORK',
   },
+  'route.dwaion.work.research-plan-create.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.research-plan-create.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.research-plan-update.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.research-plan-update.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.research-run-start.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.research-run-start.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.research-run-command.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.research-run-command.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.research-output.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.research-output.action',
+    taskKind: 'WORK',
+  },
   'route.dwaion.work.routine-archive.action': {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
     routeContractKey: 'route.dwaion.work.routine-archive.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.routine-activation.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.routine-activation.action',
     taskKind: 'WORK',
   },
   'route.dwaion.work.routine-consent.action': {
@@ -317,6 +395,18 @@ export const DWAION_MUTATION_BINDINGS = {
     productKey: 'dwaion',
     surfaceKey: 'dwaion.work',
     routeContractKey: 'route.dwaion.work.routine-lifecycle.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.routine-run-command.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.routine-run-command.action',
+    taskKind: 'WORK',
+  },
+  'route.dwaion.work.routine-run-trigger.action': {
+    productKey: 'dwaion',
+    surfaceKey: 'dwaion.work',
+    routeContractKey: 'route.dwaion.work.routine-run-trigger.action',
     taskKind: 'WORK',
   },
   'route.dwaion.work.routine-update.action': {

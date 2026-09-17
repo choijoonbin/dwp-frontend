@@ -8,6 +8,7 @@ import {
   createApprovalTaskReassignmentProposal,
   toggleApprovalOperationSelection,
 } from './approval-native-operations-model';
+import { approvalOperationsFullData } from './approval-operations-workbench-model';
 
 import type {
   ApprovalIntegrationDelivery,
@@ -129,8 +130,14 @@ describe('Approval native operations model', () => {
   });
 
   it('invalidates on first read failure, fetch, expiry, selection, scope or target drift', () => {
-    const original = delivery();
-    const data = { generatedAt, signals: [], breachedTasks: [], integrationDeliveries: [original] };
+    const wireDelivery = delivery();
+    const data = {
+      generatedAt,
+      signals: [],
+      breachedTasks: [],
+      integrationDeliveries: [wireDelivery],
+    };
+    const original = approvalOperationsFullData(data)!.integrationDeliveries[0]!;
     const proposal = createApprovalDeliveryOperationProposal({
       action: 'DEAD_LETTER',
       targets: [original],

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Check, CheckCircle2, Clock3, ShieldCheck, X } from 'lucide-react';
 import {
   ActionButton,
@@ -35,6 +34,7 @@ export function DwaionProposalDecisionPanel({
   onAccept,
   onSnooze,
   onDismiss,
+  onReviewAction,
 }: {
   proposal: DwaionProposal;
   busy: boolean;
@@ -42,9 +42,9 @@ export function DwaionProposalDecisionPanel({
   onAccept: (proposal: DwaionProposal) => void;
   onSnooze: (proposal: DwaionProposal, until: string) => void;
   onDismiss: (proposal: DwaionProposal) => void;
+  onReviewAction: (proposal: DwaionProposal) => void;
 }) {
   const { t } = useTranslation('work');
-  const navigate = useNavigate();
   const [snoozeAnchor, setSnoozeAnchor] = useState<HTMLElement | null>(null);
   const [dismissOpen, setDismissOpen] = useState(false);
   const [reviewTime, setReviewTime] = useState(Date.now);
@@ -150,7 +150,7 @@ export function DwaionProposalDecisionPanel({
             intent="primary"
             fullWidth
             endIcon={<ArrowRight size={16} aria-hidden="true" />}
-            onClick={() => navigate('/dwaion/actions')}
+            onClick={() => onReviewAction(proposal)}
           >
             {t('dwaionProposals.actions.openReview')}
           </ActionButton>
@@ -300,7 +300,7 @@ export function DwaionProposalDecisionPanel({
                 intent="primary"
                 fullWidth
                 endIcon={<ArrowRight size={16} aria-hidden="true" />}
-                onClick={() => navigate('/dwaion/actions')}
+                onClick={() => onReviewAction(proposal)}
               >
                 {t('dwaionProposals.actions.openReview')}
               </ActionButton>

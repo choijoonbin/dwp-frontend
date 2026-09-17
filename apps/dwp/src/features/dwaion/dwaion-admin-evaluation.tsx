@@ -44,6 +44,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DwaionAdminPageHeader } from './dwaion-admin-ui';
+import { DwaionEvaluationOperationsPanel } from './admin-advancement/dwaion-evaluation-operations-panel';
 import {
   EMPTY_EVALUATION_CASE,
   EMPTY_EVALUATION_SET,
@@ -238,8 +239,16 @@ export function DwaionAdminEvaluation() {
         description={t('dwaionAdmin.evaluation.description')}
         actions={
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="stretch">
-            <ActionButton intent="secondary" startIcon={<FileDown size={16} />} disabled>
-              {t('dwaionAdmin.evaluation.importUnavailable')}
+            <ActionButton
+              intent="secondary"
+              startIcon={<FileDown size={16} />}
+              onClick={() =>
+                document
+                  .getElementById('dwaion-evaluation-operations')
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }
+            >
+              Dataset import
             </ActionButton>
             {canCreate && (
               <ActionButton
@@ -627,6 +636,8 @@ export function DwaionAdminEvaluation() {
           </Box>
         </>
       )}
+
+      <DwaionEvaluationOperationsPanel />
 
       <EvaluationSetDialog
         draft={setDraft}

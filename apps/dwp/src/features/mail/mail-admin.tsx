@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ArrowLeft,
   Cable,
-  CheckCircle2,
   Clock3,
-  Database,
   Pencil,
   RefreshCw,
   Settings2,
   ShieldCheck,
-  Sparkles,
   UsersRound,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -39,7 +37,11 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
-import { MailMetric, MailPageHeading } from './mail-components';
+import { MailPageHeading } from './mail-components';
+import {
+  buildMailConnectionReadiness,
+  canSetMailConnectionState,
+} from './mail-admin-operations-model';
 
 import type {
   MailConnection,
@@ -47,6 +49,8 @@ import type {
   MailSharedInbox,
   MailTenantPolicy,
 } from '@dwp-frontend/shared-utils';
+
+const MAIL_CONNECTION_ACTIVATION_BLOCKED = 'MAIL_CONNECTION_ACTIVATION_BLOCKED';
 
 function useMailAdmin() {
   return useQuery({
@@ -62,11 +66,13 @@ function MailAdminFrame({
   title,
   description,
   children,
+  onBack,
 }: {
   eyebrow: string;
   title: string;
   description: string;
   children: ReactNode;
+  onBack?: () => void;
 }) {
   const { t } = useTranslation('mail');
   const query = useMailAdmin();
@@ -77,13 +83,20 @@ function MailAdminFrame({
         title={title}
         description={description}
         actions={
-          <ActionButton
-            intent="quiet"
-            startIcon={<RefreshCw size={17} />}
-            onClick={() => query.refetch()}
-          >
-            {t('actions.refresh')}
-          </ActionButton>
+          <Stack direction="row" spacing={1}>
+            {onBack ? (
+              <ActionButton intent="quiet" startIcon={<ArrowLeft size={17} />} onClick={onBack}>
+                {t('actions.back')}
+              </ActionButton>
+            ) : null}
+            <ActionButton
+              intent="quiet"
+              startIcon={<RefreshCw size={17} />}
+              onClick={() => query.refetch()}
+            >
+              {t('actions.refresh')}
+            </ActionButton>
+          </Stack>
         }
       />
       {query.isError && (
@@ -103,173 +116,7 @@ function MailAdminFrame({
   );
 }
 
-export function MailAdminOverview() {
-  const { t } = useTranslation('mail');
-  const query = useMailAdmin();
-  const data = query.data;
-  return (
-    <MailAdminFrame
-      eyebrow={t('admin.overview.eyebrow')}
-      title={t('admin.overview.title')}
-      description={t('admin.overview.description')}
-    >
-      {data && (
-        <Stack spacing={3}>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr 1fr',
-                lg: 'repeat(3, minmax(0, 1fr))',
-              },
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
-              '& > *:not(:last-child)': { borderRight: 1, borderColor: 'divider' },
-            }}
-          >
-            <MailMetric
-              label={t('admin.metrics.accounts')}
-              value={data.personalAccounts}
-              detail={t('admin.metrics.accountsDetail')}
-              tone="#176B63"
-            />
-            <MailMetric
-              label={t('admin.metrics.connections')}
-              value={data.activeConnections}
-              detail={t('admin.metrics.connectionsDetail')}
-              tone="#5267A8"
-            />
-            <MailMetric
-              label={t('admin.metrics.shared')}
-              value={data.openSharedThreads}
-              detail={t('admin.metrics.sharedDetail')}
-              tone="#B66A0A"
-            />
-            <MailMetric
-              label={t('admin.metrics.proposals')}
-              value={data.pendingAiProposals}
-              detail={t('admin.metrics.proposalsDetail')}
-              tone="#A73549"
-            />
-            <MailMetric
-              label={t('admin.metrics.delivery')}
-              value={data.queuedDeliveries}
-              detail={t('admin.metrics.deliveryDetail')}
-              tone="#5267A8"
-            />
-            <MailMetric
-              label={t('admin.metrics.failedDelivery')}
-              value={data.failedDeliveries}
-              detail={t('admin.metrics.failedDeliveryDetail')}
-              tone={data.failedDeliveries ? '#A73549' : '#17805F'}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.25fr) minmax(340px, 1fr)' },
-              gap: 3,
-            }}
-          >
-            <Box component="section">
-              <Typography component="h2" variant="h6" fontWeight={800}>
-                {t('admin.overview.connectionHealth')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35, mb: 1.25 }}>
-                {t('admin.overview.connectionHealthDescription')}
-              </Typography>
-              <Box
-                sx={{
-                  border: 1,
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  bgcolor: 'background.paper',
-                }}
-              >
-                {data.connections.map((connection, index) => (
-                  <Box key={connection.connectionId}>
-                    {index > 0 && <Divider />}
-                    <Stack direction="row" spacing={1.5} alignItems="center" sx={{ p: 2 }}>
-                      <Cable size={19} color="var(--dwp-product-accent)" />
-                      <Box sx={{ minWidth: 0, flex: 1 }}>
-                        <Typography fontWeight={750}>{connection.displayName}</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {t(`provider.${connection.providerType}`)} ·{' '}
-                          {connection.authenticationMode}
-                        </Typography>
-                      </Box>
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        color={connection.state === 'ACTIVE' ? 'success' : 'default'}
-                        label={t(`connection.state.${connection.state}`)}
-                      />
-                    </Stack>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-
-            <Box component="section">
-              <Typography component="h2" variant="h6" fontWeight={800}>
-                {t('admin.overview.controlPosture')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35, mb: 1.25 }}>
-                {t('admin.overview.controlPostureDescription')}
-              </Typography>
-              <Box
-                sx={{
-                  border: 1,
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  bgcolor: 'background.paper',
-                }}
-              >
-                {[
-                  {
-                    icon: ShieldCheck,
-                    label: t('admin.overview.externalBanner'),
-                    active: data.policy.externalSenderBanner,
-                  },
-                  {
-                    icon: Database,
-                    label: t('admin.overview.retention', { count: data.policy.retentionDays }),
-                    active: true,
-                  },
-                  {
-                    icon: Sparkles,
-                    label: t('admin.overview.aiApproval'),
-                    active: data.policy.aiAssistanceEnabled && !data.policy.aiAutoExecuteEnabled,
-                  },
-                ].map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <Box key={item.label}>
-                      {index > 0 && <Divider />}
-                      <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 2 }}>
-                        <Icon size={18} />
-                        <Typography variant="body2" sx={{ flex: 1 }}>
-                          {item.label}
-                        </Typography>
-                        <CheckCircle2 size={17} color={item.active ? '#17805F' : '#8A94A3'} />
-                      </Stack>
-                    </Box>
-                  );
-                })}
-              </Box>
-            </Box>
-          </Box>
-        </Stack>
-      )}
-    </MailAdminFrame>
-  );
-}
-
-export function MailAdminConnections() {
+export function MailAdminConnections({ onBack }: { onBack?: () => void } = {}) {
   const { t } = useTranslation('mail');
   const query = useMailAdmin();
   const queryClient = useQueryClient();
@@ -281,24 +128,50 @@ export function MailAdminConnections() {
   const [mailDomain, setMailDomain] = useState('');
   const [credentialRef, setCredentialRef] = useState('');
   const [state, setState] = useState<MailConnectionState>('CONFIGURATION_REQUIRED');
+  const [readinessNow, setReadinessNow] = useState(() => Date.now());
   const descriptor = query.data?.providerCatalog.find(
     (provider) => provider.providerType === editing?.providerType
   );
+  const editingReadiness = useMemo(
+    () =>
+      editing && query.data
+        ? (buildMailConnectionReadiness(query.data, readinessNow).find(
+            (candidate) => candidate.connection.connectionId === editing.connectionId
+          ) ?? null)
+        : null,
+    [editing, query.data, readinessNow]
+  );
+  const requestedStateAllowed = canSetMailConnectionState(state, editingReadiness);
   const mutation = useMutation({
-    mutationFn: () =>
-      updateMailConnection(editing!.connectionId, {
+    mutationFn: async () => {
+      const executionReadiness =
+        editing && query.data
+          ? (buildMailConnectionReadiness(query.data, Date.now()).find(
+              (candidate) => candidate.connection.connectionId === editing.connectionId
+            ) ?? null)
+          : null;
+      if (!editing || !canSetMailConnectionState(state, executionReadiness)) {
+        throw new Error(MAIL_CONNECTION_ACTIVATION_BLOCKED);
+      }
+      return updateMailConnection(editing.connectionId, {
         displayName: displayName.trim(),
         mailDomain: mailDomain.trim() || null,
         credentialRef: credentialRef.trim() || null,
         state,
-        version: editing!.version,
-      }),
+        version: editing.version,
+      });
+    },
     onSuccess: async () => {
       setEditing(null);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.connections.saved'));
     },
-    onError: () => toast.error(t('admin.connections.saveError')),
+    onError: (error) =>
+      toast.error(
+        error instanceof Error && error.message === MAIL_CONNECTION_ACTIVATION_BLOCKED
+          ? t('admin.connections.activationBlocked')
+          : t('admin.connections.saveError')
+      ),
   });
 
   useEffect(() => {
@@ -309,11 +182,20 @@ export function MailAdminConnections() {
     setState(editing.state);
   }, [editing]);
 
+  useEffect(() => {
+    if (!editing) return;
+    const updateReadinessClock = () => setReadinessNow(Date.now());
+    updateReadinessClock();
+    const interval = window.setInterval(updateReadinessClock, 15_000);
+    return () => window.clearInterval(interval);
+  }, [editing]);
+
   return (
     <MailAdminFrame
       eyebrow={t('admin.connections.eyebrow')}
       title={t('admin.connections.title')}
       description={t('admin.connections.description')}
+      onBack={onBack}
     >
       {query.data && (
         <Box
@@ -377,7 +259,10 @@ export function MailAdminConnections() {
                 <ActionButton
                   intent="secondary"
                   disabled={!canManage}
-                  onClick={() => setEditing(connection)}
+                  onClick={() => {
+                    setReadinessNow(Date.now());
+                    setEditing(connection);
+                  }}
                 >
                   {t('admin.connections.configure')}
                 </ActionButton>
@@ -395,7 +280,7 @@ export function MailAdminConnections() {
         submitLabel={t('actions.save')}
         submittingLabel={t('actions.saving')}
         busy={mutation.isPending}
-        submitDisabled={!displayName.trim()}
+        submitDisabled={!displayName.trim() || !requestedStateAllowed}
         onClose={() => setEditing(null)}
         onSubmit={() => mutation.mutate()}
       >
@@ -430,19 +315,19 @@ export function MailAdminConnections() {
               {
                 value: 'ACTIVE',
                 label: t('connection.state.ACTIVE'),
-                disabled: descriptor?.runtimeState !== 'AVAILABLE',
+                disabled: editingReadiness?.activationAllowed !== true,
               },
               { value: 'SUSPENDED', label: t('connection.state.SUSPENDED') },
             ]}
             onValueChange={(value) => value && setState(value)}
           />
-          {descriptor && (
-            <Alert severity={descriptor.runtimeState === 'AVAILABLE' ? 'success' : 'info'}>
-              {descriptor.runtimeState === 'AVAILABLE'
-                ? t('admin.connections.runtimeAvailable', {
-                    version: descriptor.adapterVersion ?? '',
+          {editingReadiness && (
+            <Alert severity={editingReadiness.activationAllowed ? 'success' : 'warning'}>
+              {editingReadiness.activationAllowed
+                ? t('admin.connections.activationReady', {
+                    version: descriptor?.adapterVersion ?? '',
                   })
-                : t('admin.connections.runtimeRequired')}
+                : t('admin.connections.activationBlocked')}
             </Alert>
           )}
         </Stack>
@@ -451,7 +336,7 @@ export function MailAdminConnections() {
   );
 }
 
-export function MailAdminSharedInboxes() {
+export function MailAdminSharedInboxes({ onBack }: { onBack?: () => void } = {}) {
   const { t } = useTranslation('mail');
   const query = useMailAdmin();
   const queryClient = useQueryClient();
@@ -493,6 +378,7 @@ export function MailAdminSharedInboxes() {
       eyebrow={t('admin.shared.eyebrow')}
       title={t('admin.shared.title')}
       description={t('admin.shared.description')}
+      onBack={onBack}
     >
       {query.data?.sharedInboxes.length ? (
         <Box
@@ -619,7 +505,7 @@ export function MailAdminSharedInboxes() {
   );
 }
 
-export function MailAdminPolicies() {
+export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
   const { t } = useTranslation('mail');
   const query = useMailAdmin();
   const queryClient = useQueryClient();
@@ -687,6 +573,7 @@ export function MailAdminPolicies() {
       eyebrow={t('admin.policies.eyebrow')}
       title={t('admin.policies.title')}
       description={t('admin.policies.description')}
+      onBack={onBack}
     >
       {policy && (
         <Stack spacing={2.5}>

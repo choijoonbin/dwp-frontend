@@ -48,6 +48,7 @@ import { WorkplaceHomeSectionHeader } from './workplace-home-section-frame';
 import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import {
   WorkplaceSharedPlanMatrix,
+  WorkplaceTeamSourceCard,
   workplacePublicPlansForWeek,
 } from './workplace-shared-plan-matrix';
 import { workplaceSharedPlanDiscoveryPath } from './workplace-shared-plan-discovery';
@@ -508,22 +509,74 @@ export function WorkplaceTeamContext() {
                   }
                   label={t('workplace.member.team.optIn')}
                 />
-                <SelectField
-                  size="small"
-                  label={t('workplace.member.team.visibility')}
-                  value={preferredVisibility}
-                  disabled={!ready || busy || !consent.optIn}
-                  options={preferenceChoices.map((value) => ({
-                    value,
-                    label: t(`workplace.member.team.visibilities.${value}`),
-                  }))}
-                  onValueChange={(value) =>
-                    setConsentDraft({
-                      ...consent,
-                      visibility: value as WorkplaceSharingVisibility,
-                    })
-                  }
-                />
+                <Box>
+                  <Typography
+                    component="h3"
+                    variant="caption"
+                    color="text.secondary"
+                    fontWeight="fontWeightBold"
+                    sx={{ display: 'block', mb: 0.75 }}
+                  >
+                    {t('workplace.member.team.visibility')}
+                  </Typography>
+                  <Box
+                    role="radiogroup"
+                    aria-label={t('workplace.member.team.visibility')}
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(4, minmax(0, 1fr))' },
+                      gap: 0.75,
+                    }}
+                  >
+                    {workplaceSharingLevels.map((level, index) => {
+                      const selected = consent.optIn
+                        ? preferredVisibility === level
+                        : level === 'PRIVATE';
+                      const allowed =
+                        level === 'PRIVATE' ||
+                        (overview.policy.sharingEnabled && preferenceChoices.includes(level));
+                      return (
+                        <ButtonBase
+                          key={level}
+                          role="radio"
+                          aria-checked={selected}
+                          disabled={!ready || busy || !allowed}
+                          onClick={() =>
+                            setConsentDraft({
+                              ...consent,
+                              optIn: level !== 'PRIVATE',
+                              visibility: level,
+                            })
+                          }
+                          sx={{
+                            minHeight: 72,
+                            p: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            textAlign: 'left',
+                            border: 1,
+                            borderColor: selected ? 'primary.main' : 'divider',
+                            bgcolor: selected ? 'action.selected' : 'background.paper',
+                            opacity: allowed ? 1 : 0.48,
+                            '&:focus-visible': {
+                              outline: '3px solid',
+                              outlineColor: 'primary.light',
+                            },
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary">
+                            {String(index + 1).padStart(2, '0')}
+                          </Typography>
+                          <Typography variant="body2" fontWeight="fontWeightBold">
+                            {t(`workplace.member.team.visibilities.${level}`)}
+                          </Typography>
+                        </ButtonBase>
+                      );
+                    })}
+                  </Box>
+                </Box>
                 <ActionButton
                   intent="primary"
                   data-testid="workplace-team-save-preference"
@@ -800,7 +853,12 @@ export function WorkplaceTeamContext() {
               />
               {sharedPlans.length ? (
                 <>
-                  <Box sx={{ px: 1, pb: 1 }}>
+                  <Box
+                    role="region"
+                    aria-label={t('workplace.member.team.matrixCaption')}
+                    tabIndex={0}
+                    sx={{ display: { xs: 'none', lg: 'block' }, px: 1, pb: 1, overflowX: 'auto' }}
+                  >
                     <WorkplaceSharedPlanMatrix
                       plans={sharedPlans}
                       days={week.days}
@@ -859,6 +917,48 @@ export function WorkplaceTeamContext() {
                   description={t('workplace.member.team.sharingDescription')}
                 />
               )}
+            </Box>
+          </Box>
+          <Box
+            component="section"
+            sx={(theme) => ({ ...workplaceMemberCard(theme), mt: 2, p: { xs: 1.5, md: 2.5 } })}
+          >
+            <Stack direction="row" gap={1} alignItems="center" sx={{ mb: 1.5 }}>
+              <ShieldCheck size={19} aria-hidden="true" />
+              <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
+                {t('workplace.member.team.sharingDescription')}
+              </Typography>
+            </Stack>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+                gap: 1,
+              }}
+            >
+              <WorkplaceTeamSourceCard
+                eyebrow={t('workplace.home.sources.workspace')}
+                title={t('workplace.member.team.planned')}
+                description={t('workplace.member.team.presenceNotice')}
+              />
+              <WorkplaceTeamSourceCard
+                eyebrow={t('workplace.home.status.verifiedAt', {
+                  time: formatDate(
+                    overview.generatedAt,
+                    { hour: '2-digit', minute: '2-digit' },
+                    locale
+                  ),
+                })}
+                title={t('workplace.member.team.matrixCaption')}
+                description={t('workplace.member.team.sharingDescription')}
+              />
+              <WorkplaceTeamSourceCard
+                eyebrow={t('workplace.experience.connectorKinds.ACTUAL_PRESENCE')}
+                title={t('workplace.home.sources.externalPresence')}
+                description={t(
+                  `workplace.experience.connectorStatuses.${overview.actualPresence.status}`
+                )}
+              />
             </Box>
           </Box>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>

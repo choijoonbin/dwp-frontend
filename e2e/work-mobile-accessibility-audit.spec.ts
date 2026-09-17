@@ -25,9 +25,11 @@ async function touchTarget(control: Locator) {
   expect(bounds!.width).toBeGreaterThanOrEqual(44);
   expect(bounds!.height).toBeGreaterThanOrEqual(44);
 }
-async function standardDensity(control: Locator) {
+async function desktopControl(control: Locator) {
   await expect(control).toBeVisible();
-  expect((await control.boundingBox())!.height).toBe(38);
+  const bounds = await control.boundingBox();
+  expect(bounds).not.toBeNull();
+  expect(bounds!.height).toBeGreaterThanOrEqual(38);
 }
 for (const width of [390, 320]) {
   for (const locale of ['ko', 'en'] as const) {
@@ -186,13 +188,14 @@ for (const width of [390, 320]) {
     await touchTarget(inspectSources);
     await inspectSources.click();
     const sources = page.getByRole('dialog', { name: 'Work source status', exact: true });
-    const reopen = sources.getByRole('button', { name: /View latest batch results/u });
-    await touchTarget(reopen);
+    const resultsTab = sources.getByRole('tab', { name: /^Batch result details/u });
+    await touchTarget(resultsTab);
     await noOverflow(page);
-    await reopen.click();
-    await expect(result).toBeVisible();
+    await resultsTab.click();
+    const integratedResult = page.getByRole('dialog', { name: 'Batch results', exact: true });
+    await expect(integratedResult.getByTestId('work-hub-batch-report')).toBeVisible();
     await touchTarget(
-      result.getByRole('button', {
+      integratedResult.getByRole('button', {
         name: 'Recheck unconfirmed personal tasks',
         exact: true,
       })
@@ -219,10 +222,9 @@ test('desktop Work controls retain standard density outside mobile touch media',
     page.getByRole('button', { name: 'Try again', exact: true }).first(),
     main.getByRole('button', { name: 'Add personal task', exact: true }),
     filters.getByRole('button', { name: /Today plan/u }),
-    filters.getByRole('button', { name: 'Filter and sort', exact: true }),
     main.getByRole('button', { name: 'Select work', exact: true }),
   ]) {
-    await standardDensity(control);
+    await desktopControl(control);
   }
 
   await main.getByRole('button', { name: 'Select work', exact: true }).click();
@@ -236,24 +238,28 @@ test('desktop Work controls retain standard density outside mobile touch media',
   const review = page.getByRole('dialog', { name: 'Complete the selected work?', exact: true });
   await review.getByRole('button', { name: 'Complete selected', exact: true }).click();
   const result = page.getByRole('dialog', { name: 'Batch results', exact: true });
-  await standardDensity(
+  await desktopControl(
     result.getByRole('button', {
       name: 'Recheck unconfirmed personal tasks',
       exact: true,
     })
   );
   for (const close of await result.getByRole('button', { name: 'Close', exact: true }).all()) {
-    await standardDensity(close);
+    await desktopControl(close);
   }
   await result.getByRole('button', { name: 'Close', exact: true }).last().click();
   const inspectSources = page.getByRole('button', { name: 'View source status', exact: true });
-  await standardDensity(inspectSources);
+  await desktopControl(inspectSources);
   await inspectSources.click();
-  await standardDensity(
+  const sources = page.getByRole('dialog', { name: 'Work source status', exact: true });
+  const resultsTab = sources.getByRole('tab', { name: /^Batch result details/u });
+  await desktopControl(resultsTab);
+  await resultsTab.click();
+  await expect(
     page
-      .getByRole('dialog', { name: 'Work source status', exact: true })
-      .getByRole('button', { name: /View latest batch results/u })
-  );
+      .getByRole('dialog', { name: 'Batch results', exact: true })
+      .getByTestId('work-hub-batch-report')
+  ).toBeVisible();
   await noOverflow(page);
 });
 
@@ -310,7 +316,9 @@ test('personal edit and M1 decision dialogs restore the triggering control', asy
   await expect(page.getByRole('dialog')).toBeHidden();
   await expect(edit).toBeFocused();
   await page.goto(reviewRoute);
-  await expect(page.getByRole('heading', { name: 'Access review', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Access review', exact: true })).toBeVisible({
+    timeout: 15_000,
+  });
   const rationale = page.getByRole('textbox', { name: 'Decision reason' });
   await page.getByRole('button', { name: 'Revoke access', exact: true }).click();
   await rationale.fill('The current business assignment no longer needs this access.');

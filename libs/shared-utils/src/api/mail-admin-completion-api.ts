@@ -1,0 +1,495 @@
+import { axiosInstance } from '../axios-instance';
+
+import type { ApiResponse } from '../types';
+
+// Mail administration completion contracts
+
+export type MailAdminSourceEvidence = {
+  sourceId: 'OVERVIEW' | 'COMMAND' | 'OUTBOX' | 'PROVIDER' | 'AUDIT' | 'EVENT';
+  state: 'CURRENT' | 'STALE' | 'UNAVAILABLE' | 'PARTIAL';
+  observedAt?: string | null;
+  errorCode?: string | null;
+};
+
+export type MailAdminOperationalException = {
+  exceptionId: string;
+  kind: 'CONNECTION' | 'DELIVERY' | 'SYNC' | 'OBSERVABILITY';
+  severity: 'CRITICAL' | 'WARNING';
+  safeResourceRef: string;
+  impactCount?: number | null;
+  lastObservedAt: string;
+  correlationId?: string | null;
+  nextAction: 'OPEN_CONNECTION' | 'OPEN_DELIVERY' | 'REFRESH_SOURCE' | 'ESCALATE';
+};
+
+export type MailAdminCommandAudit = {
+  auditId: string;
+  commandType: string;
+  safeResourceRef: string;
+  actorName: string;
+  result: 'SUCCEEDED' | 'FAILED' | 'UNKNOWN' | 'BLOCKED';
+  occurredAt: string;
+  correlationId: string;
+};
+
+export type MailAdminOperationsSnapshot = {
+  generatedAt: string;
+  sources: MailAdminSourceEvidence[];
+  exceptions: MailAdminOperationalException[];
+  commands: MailAdminCommandAudit[];
+};
+
+export type MailConnectionOperation = {
+  operationId: string;
+  connectionId: string;
+  kind: 'DIAGNOSTIC' | 'SYNCHRONIZE' | 'TEST_SEND';
+  state: 'ACCEPTED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'UNKNOWN';
+  acceptedAt: string;
+  completedAt?: string | null;
+  correlationId: string;
+  evidenceGeneratedAt?: string | null;
+  errorCode?: string | null;
+  replayed: boolean;
+};
+
+export type MailConnectionOperationInput = {
+  capability?: 'AUTHENTICATION' | 'SYNC' | 'SEND';
+  scope?: 'INCREMENTAL' | 'FULL';
+  recipient?: string;
+  confirmedExternalImpact?: boolean;
+  idempotencyKey: string;
+  version: number;
+};
+
+export type MailSharedInboxAccessPermissions = {
+  read: boolean;
+  sendAs: boolean;
+  sendOnBehalf: boolean;
+  assign: boolean;
+  manage: boolean;
+};
+
+export type MailSharedInboxAccessMember = {
+  memberId: string;
+  userId: number;
+  displayName: string;
+  department?: string | null;
+  state: 'ACTIVE' | 'PENDING' | 'REVOKED';
+  expiresAt?: string | null;
+  permissions: MailSharedInboxAccessPermissions;
+  providerState: 'APPLIED' | 'PARTIAL' | 'PENDING' | 'UNAVAILABLE';
+  version: number;
+};
+
+export type MailSharedInboxAccessImpact = {
+  activeAssignments: number;
+  openDrafts: number;
+  pendingCommands: number;
+  providerRevocationRequired: boolean;
+};
+
+export type MailSharedInboxAccess = {
+  sharedInboxId: string;
+  version: number;
+  providerState: 'APPLIED' | 'PARTIAL' | 'PENDING' | 'UNAVAILABLE';
+  members: MailSharedInboxAccessMember[];
+  impact?: MailSharedInboxAccessImpact | null;
+};
+
+export type MailSharedInboxMemberMutationInput = {
+  userId: number;
+  displayName?: string;
+  department?: string | null;
+  permissions: MailSharedInboxAccessPermissions;
+  expiresAt?: string | null;
+  impactAcknowledged: boolean;
+  idempotencyKey: string;
+  version: number;
+};
+
+export type MailPolicyGovernance = {
+  generatedAt: string;
+  policyVersion: number;
+  rows: Array<{
+    policyKey: string;
+    configuredValue: string;
+    effectiveValue?: string | null;
+    effectiveState: 'ENFORCED' | 'PARTIAL' | 'PENDING' | 'UNVERIFIED';
+    scope: string;
+    evidenceSource?: string | null;
+    evidenceAt?: string | null;
+    errorCode?: string | null;
+  }>;
+  history: Array<{
+    historyId: string;
+    version: number;
+    changedBy: string;
+    changedAt: string;
+    diffSummary: string;
+    result: 'APPLIED' | 'PARTIAL' | 'FAILED' | 'PENDING';
+    correlationId: string;
+  }>;
+};
+
+export type MailLegalHold = {
+  holdId: string;
+  name: string;
+  safeCaseRef: string;
+  scope: Record<string, unknown>;
+  status: 'ACTIVE' | 'RELEASED' | 'EXPIRED';
+  startsAt: string;
+  expiresAt?: string | null;
+  version: number;
+};
+
+export type MailLegalHoldMutationInput = {
+  name: string;
+  safeCaseRef: string;
+  scope: Record<string, unknown>;
+  startsAt: string;
+  expiresAt?: string | null;
+  idempotencyKey: string;
+  version?: number;
+};
+
+export type MailPurgeJob = {
+  jobId: string;
+  candidateSnapshotId: string;
+  state: 'ACCEPTED' | 'RUNNING' | 'PARTIAL' | 'SUCCEEDED' | 'FAILED' | 'UNKNOWN';
+  deletedThreads: number;
+  deletedMessages: number;
+  stepResults: Array<Record<string, unknown>>;
+  verificationState: 'PENDING' | 'VERIFIED' | 'FAILED' | 'UNKNOWN';
+  errorCode?: string | null;
+  startedAt?: string | null;
+  completedAt?: string | null;
+};
+
+export type MailRetentionSnapshot = {
+  generatedAt: string;
+  policyVersion: number;
+  resourcePolicies: Array<{
+    resourceType: string;
+    configuredDays: number;
+    effectiveDays?: number | null;
+    source: string;
+    evidenceState: 'VERIFIED' | 'REPORTED' | 'PARTIAL' | 'STALE' | 'UNAVAILABLE';
+  }>;
+  holds: MailLegalHold[];
+  purgeJobs: MailPurgeJob[];
+};
+
+export type MailPurgePreview = {
+  candidateSnapshotId: string;
+  fingerprint: string;
+  totalCandidates: number;
+  heldCount: number;
+  eligibleCount: number;
+  partialSources: string[];
+  generatedAt: string;
+  expiresAt: string;
+  policyVersion: number;
+};
+
+export type MailPurgeApproval = {
+  approvalId: string;
+  candidateSnapshotId: string;
+  distinctApproverCount: number;
+  policyVersion: number;
+  approvedAt: string;
+};
+
+export type MailDeliveryAuditItem = {
+  deliveryId: string;
+  safeResourceRef: string;
+  commandType: string;
+  actorName: string;
+  accountName: string;
+  providerType: string;
+  stage:
+    | 'RECEIVED'
+    | 'OUTBOX'
+    | 'PROVIDER_SUBMITTED'
+    | 'ACCEPTED_BY_PROVIDER'
+    | 'DELIVERED_CONFIRMED'
+    | 'BOUNCED'
+    | 'FAILED'
+    | 'UNKNOWN'
+    | 'CANCELLED'
+    | 'BLOCKED_BY_ACCESS';
+  state:
+    'QUEUED' | 'ACCEPTED_BY_PROVIDER' | 'DELIVERED_CONFIRMED' | 'BOUNCED' | 'FAILED' | 'UNKNOWN';
+  retryEligibility: 'ELIGIBLE' | 'INELIGIBLE' | 'UNKNOWN';
+  providerDisposition: 'NOT_ACCEPTED' | 'ACCEPTED' | 'UNKNOWN';
+  idempotencyState: 'REPLAY_SAFE' | 'NOT_REPLAY_SAFE' | 'UNKNOWN';
+  reconcileCapability: boolean;
+  cancelCapability: boolean;
+  lastEvidenceAt?: string | null;
+  correlationId: string;
+  timeline: Array<{
+    stage: string;
+    state: 'PENDING' | 'SUCCEEDED' | 'FAILED' | 'UNKNOWN' | 'BLOCKED';
+    at?: string | null;
+    source: string;
+    evidenceState: 'VERIFIED' | 'REPORTED' | 'PARTIAL' | 'STALE' | 'UNAVAILABLE';
+    code?: string | null;
+  }>;
+  version: number;
+};
+
+export type MailDeliveryAuditPage = {
+  items: MailDeliveryAuditItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  generatedAt: string;
+};
+
+export type MailDeliveryAuditExport = {
+  exportId: string;
+  state: 'ACCEPTED' | 'RUNNING' | 'READY' | 'FAILED';
+  expiresAt?: string | null;
+  watermark?: string | null;
+  downloadUrl?: string | null;
+};
+
+export async function getMailAdminOperations(): Promise<MailAdminOperationsSnapshot> {
+  const response = await axiosInstance.get<ApiResponse<MailAdminOperationsSnapshot>>(
+    '/api/platform/v1/admin/mail/operations'
+  );
+  return response.data.data;
+}
+
+async function runMailConnectionOperation(
+  connectionId: string,
+  operation: 'diagnostics' | 'sync' | 'test-send',
+  input: MailConnectionOperationInput
+): Promise<MailConnectionOperation> {
+  const response = await axiosInstance.post<
+    ApiResponse<MailConnectionOperation>,
+    MailConnectionOperationInput
+  >(
+    `/api/platform/v1/admin/mail/connections/${encodeURIComponent(connectionId)}/${operation}`,
+    input
+  );
+  return response.data.data;
+}
+
+export function runMailConnectionDiagnostic(
+  connectionId: string,
+  input: MailConnectionOperationInput
+) {
+  return runMailConnectionOperation(connectionId, 'diagnostics', input);
+}
+
+export function startMailConnectionSync(connectionId: string, input: MailConnectionOperationInput) {
+  return runMailConnectionOperation(connectionId, 'sync', input);
+}
+
+export function sendMailConnectionTest(connectionId: string, input: MailConnectionOperationInput) {
+  return runMailConnectionOperation(connectionId, 'test-send', input);
+}
+
+export async function getMailSharedInboxAccess(
+  sharedInboxId: string
+): Promise<MailSharedInboxAccess> {
+  const response = await axiosInstance.get<ApiResponse<MailSharedInboxAccess>>(
+    `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members`
+  );
+  return response.data.data;
+}
+
+export async function addMailSharedInboxMember(
+  sharedInboxId: string,
+  input: MailSharedInboxMemberMutationInput
+): Promise<MailSharedInboxAccess> {
+  const response = await axiosInstance.post<
+    ApiResponse<MailSharedInboxAccess>,
+    MailSharedInboxMemberMutationInput
+  >(
+    `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function updateMailSharedInboxMember(
+  sharedInboxId: string,
+  memberId: string,
+  input: MailSharedInboxMemberMutationInput
+): Promise<MailSharedInboxAccess> {
+  const response = await axiosInstance.put<
+    ApiResponse<MailSharedInboxAccess>,
+    MailSharedInboxMemberMutationInput
+  >(
+    `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members/${encodeURIComponent(memberId)}`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function removeMailSharedInboxMember(
+  sharedInboxId: string,
+  memberId: string,
+  input: Pick<
+    MailSharedInboxMemberMutationInput,
+    'impactAcknowledged' | 'idempotencyKey' | 'version'
+  >
+): Promise<MailSharedInboxAccess> {
+  const response = await axiosInstance.post<ApiResponse<MailSharedInboxAccess>, typeof input>(
+    `/api/platform/v1/admin/mail/shared-inboxes/${encodeURIComponent(sharedInboxId)}/members/${encodeURIComponent(memberId)}/revoke`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function getMailPolicyGovernance(): Promise<MailPolicyGovernance> {
+  const response = await axiosInstance.get<ApiResponse<MailPolicyGovernance>>(
+    '/api/platform/v1/admin/mail/policy/evidence'
+  );
+  return response.data.data;
+}
+
+export async function getMailRetention(): Promise<MailRetentionSnapshot> {
+  const response = await axiosInstance.get<ApiResponse<MailRetentionSnapshot>>(
+    '/api/platform/v1/admin/mail/retention'
+  );
+  return response.data.data;
+}
+
+export async function createMailLegalHold(
+  input: MailLegalHoldMutationInput
+): Promise<MailLegalHold> {
+  const response = await axiosInstance.post<ApiResponse<MailLegalHold>, MailLegalHoldMutationInput>(
+    '/api/platform/v1/admin/mail/retention/holds',
+    input
+  );
+  return response.data.data;
+}
+
+export async function updateMailLegalHold(
+  holdId: string,
+  input: MailLegalHoldMutationInput
+): Promise<MailLegalHold> {
+  const response = await axiosInstance.put<ApiResponse<MailLegalHold>, MailLegalHoldMutationInput>(
+    `/api/platform/v1/admin/mail/retention/holds/${encodeURIComponent(holdId)}`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function releaseMailLegalHold(
+  holdId: string,
+  input: { idempotencyKey: string; version: number }
+): Promise<MailLegalHold> {
+  const response = await axiosInstance.post<ApiResponse<MailLegalHold>, typeof input>(
+    `/api/platform/v1/admin/mail/retention/holds/${encodeURIComponent(holdId)}/release`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function previewMailPurge(input: {
+  scope: Record<string, unknown>;
+  resourceTypes: string[];
+  before: string;
+  idempotencyKey: string;
+  policyVersion: number;
+}): Promise<MailPurgePreview> {
+  const response = await axiosInstance.post<ApiResponse<MailPurgePreview>, typeof input>(
+    '/api/platform/v1/admin/mail/retention/purge-previews',
+    input
+  );
+  return response.data.data;
+}
+
+export async function approveMailPurge(
+  candidateSnapshotId: string,
+  input: { decision: 'APPROVE'; idempotencyKey: string; policyVersion: number }
+): Promise<MailPurgeApproval> {
+  const response = await axiosInstance.post<ApiResponse<MailPurgeApproval>, typeof input>(
+    `/api/platform/v1/admin/mail/retention/purges/${encodeURIComponent(candidateSnapshotId)}/approvals`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function executeMailPurge(
+  candidateSnapshotId: string,
+  input: { idempotencyKey: string; policyVersion: number; fingerprint: string }
+): Promise<MailPurgeJob> {
+  const response = await axiosInstance.post<ApiResponse<MailPurgeJob>, typeof input>(
+    `/api/platform/v1/admin/mail/retention/purges/${encodeURIComponent(candidateSnapshotId)}/execute`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function getMailPurgeJob(jobId: string): Promise<MailPurgeJob> {
+  const response = await axiosInstance.get<ApiResponse<MailPurgeJob>>(
+    `/api/platform/v1/admin/mail/retention/purge-jobs/${encodeURIComponent(jobId)}`
+  );
+  return response.data.data;
+}
+
+export async function getMailDeliveryAudit(input: {
+  page?: number;
+  pageSize?: number;
+  correlationId?: string;
+  state?: string;
+}): Promise<MailDeliveryAuditPage> {
+  const search = new URLSearchParams();
+  search.set('page', String(input.page ?? 0));
+  search.set('pageSize', String(input.pageSize ?? 50));
+  if (input.correlationId) search.set('correlationId', input.correlationId);
+  if (input.state) search.set('state', input.state);
+  const response = await axiosInstance.get<ApiResponse<MailDeliveryAuditPage>>(
+    `/api/platform/v1/admin/mail/delivery-audit?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+async function runMailDeliveryAdminAction(
+  deliveryId: string,
+  action: 'reconcile' | 'retry' | 'cancel',
+  input: { idempotencyKey: string; version: number }
+): Promise<MailDeliveryAuditItem> {
+  const response = await axiosInstance.post<ApiResponse<MailDeliveryAuditItem>, typeof input>(
+    `/api/platform/v1/admin/mail/delivery-audit/${encodeURIComponent(deliveryId)}/${action}`,
+    input
+  );
+  return response.data.data;
+}
+
+export function reconcileMailDeliveryAdmin(
+  deliveryId: string,
+  input: { idempotencyKey: string; version: number }
+) {
+  return runMailDeliveryAdminAction(deliveryId, 'reconcile', input);
+}
+
+export function retryMailDeliveryAdmin(
+  deliveryId: string,
+  input: { idempotencyKey: string; version: number }
+) {
+  return runMailDeliveryAdminAction(deliveryId, 'retry', input);
+}
+
+export function cancelMailDeliveryAdmin(
+  deliveryId: string,
+  input: { idempotencyKey: string; version: number }
+) {
+  return runMailDeliveryAdminAction(deliveryId, 'cancel', input);
+}
+
+export async function createMailDeliveryAuditExport(input: {
+  filters: Record<string, unknown>;
+  purpose: string;
+  idempotencyKey: string;
+}): Promise<MailDeliveryAuditExport> {
+  const response = await axiosInstance.post<ApiResponse<MailDeliveryAuditExport>, typeof input>(
+    '/api/platform/v1/admin/mail/delivery-audit/exports',
+    input
+  );
+  return response.data.data;
+}

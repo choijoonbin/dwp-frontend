@@ -85,7 +85,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(79);
+    expect(router).toHaveLength(112);
     expect(registry).toEqual(router);
   });
 
@@ -110,9 +110,9 @@ describe('generated product route authorization contracts', () => {
       latestAuthorizationBundle.routes.filter((route) => route.routeKind !== 'PAGE').length
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(78);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(157);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(157);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(75);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(187);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(187);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

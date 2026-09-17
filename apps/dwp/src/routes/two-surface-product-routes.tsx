@@ -27,6 +27,7 @@ type TwoSurfaceProductRouteOptions = {
   managementLegacyShell: ReactNode;
   areaKey: ProductAreaLayoutProps['areaKey'];
   translationNamespace: NonNullable<ProductAreaLayoutProps['translationNamespace']>;
+  resolveMobileShell?: ProductAreaLayoutProps['resolveMobileShell'];
   renderPage: (route: ProductPageRouteContractSource) => ReactNode;
   renderLegacyPage?: (route: ProductPageRouteContractSource) => ReactNode;
   renderErrorElement?: (route: ProductPageRouteContractSource) => ReactNode | undefined;
@@ -51,6 +52,7 @@ export function buildTwoSurfaceProductChildren({
   managementLegacyShell,
   areaKey,
   translationNamespace,
+  resolveMobileShell,
   renderPage,
   renderLegacyPage = renderPage,
   renderErrorElement,
@@ -79,6 +81,7 @@ export function buildTwoSurfaceProductChildren({
       surfaceId={surfaceId}
       areaKey={areaKey}
       translationNamespace={translationNamespace}
+      resolveMobileShell={resolveMobileShell}
       legacy={surfaceId === managementSurfaceId ? managementLegacyShell : legacyShell}
     />
   );

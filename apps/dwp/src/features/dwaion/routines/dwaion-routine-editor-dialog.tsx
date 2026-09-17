@@ -52,6 +52,10 @@ export function DwaionRoutineEditorDialog({
   const update = (patch: Partial<DwaionRoutineDraft>) => onDraftChange({ ...draft, ...patch });
   const updateSchedule = (patch: Partial<DwaionRoutineDraft['schedule']>) =>
     update({ schedule: { ...draft.schedule, ...patch } });
+  const updateBudget = (patch: Partial<DwaionRoutineDraft['budget']>) =>
+    update({ budget: { ...draft.budget, ...patch } });
+  const updateRetryPolicy = (patch: Partial<DwaionRoutineDraft['retryPolicy']>) =>
+    update({ retryPolicy: { ...draft.retryPolicy, ...patch } });
 
   return (
     <FormDialog
@@ -201,6 +205,172 @@ export function DwaionRoutineEditorDialog({
               onValueChange={(value) => updateSchedule({ quietHoursEnd: value })}
             />
           </Box>
+        </Box>
+
+        <Box component="fieldset" sx={{ m: 0, p: 0, border: 0 }}>
+          <Typography component="legend" variant="subtitle2">
+            {copy.executionBudget}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {copy.executionBudgetHelp}
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+              gap: 2,
+              mt: 1,
+            }}
+          >
+            <FormField
+              type="number"
+              label={copy.maximumRuns}
+              value={draft.budget.maximumRunsPerMonth}
+              errorMessage={
+                errors.includes('RUN_BUDGET_INVALID') ? copy.executionBudgetInvalid : undefined
+              }
+              slotProps={{ htmlInput: { min: 1, max: 744 } }}
+              onChange={(event) =>
+                updateBudget({ maximumRunsPerMonth: Number(event.target.value) })
+              }
+            />
+            <FormField
+              type="number"
+              label={copy.maximumTokens}
+              value={draft.budget.maximumTokensPerRun}
+              errorMessage={
+                errors.includes('TOKEN_BUDGET_INVALID') ? copy.executionBudgetInvalid : undefined
+              }
+              slotProps={{ htmlInput: { min: 128, max: 2_000_000 } }}
+              onChange={(event) =>
+                updateBudget({ maximumTokensPerRun: Number(event.target.value) })
+              }
+            />
+            <FormField
+              type="number"
+              label={copy.maximumMinutes}
+              value={draft.budget.maximumMinutesPerRun}
+              errorMessage={
+                errors.includes('TIME_BUDGET_INVALID') ? copy.executionBudgetInvalid : undefined
+              }
+              slotProps={{ htmlInput: { min: 1, max: 240 } }}
+              onChange={(event) =>
+                updateBudget({ maximumMinutesPerRun: Number(event.target.value) })
+              }
+            />
+          </Box>
+        </Box>
+
+        <Box component="fieldset" sx={{ m: 0, p: 0, border: 0 }}>
+          <Typography component="legend" variant="subtitle2">
+            {copy.recoveryPolicy}
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+              gap: 2,
+              mt: 1,
+            }}
+          >
+            <FormField
+              type="number"
+              label={copy.maximumAttempts}
+              value={draft.retryPolicy.maximumAttempts}
+              errorMessage={
+                errors.includes('RETRY_ATTEMPTS_INVALID') ? copy.recoveryPolicyInvalid : undefined
+              }
+              slotProps={{ htmlInput: { min: 1, max: 10 } }}
+              onChange={(event) =>
+                updateRetryPolicy({ maximumAttempts: Number(event.target.value) })
+              }
+            />
+            <FormField
+              type="number"
+              label={copy.initialBackoff}
+              value={draft.retryPolicy.initialBackoffSeconds}
+              errorMessage={
+                errors.includes('RETRY_BACKOFF_INVALID') ? copy.recoveryPolicyInvalid : undefined
+              }
+              slotProps={{ htmlInput: { min: 5, max: 3_600 } }}
+              onChange={(event) =>
+                updateRetryPolicy({ initialBackoffSeconds: Number(event.target.value) })
+              }
+            />
+            <FormField
+              type="number"
+              label={copy.backoffMultiplier}
+              value={draft.retryPolicy.backoffMultiplier}
+              errorMessage={
+                errors.includes('RETRY_MULTIPLIER_INVALID') ? copy.recoveryPolicyInvalid : undefined
+              }
+              slotProps={{ htmlInput: { min: 1, max: 10, step: 0.5 } }}
+              onChange={(event) =>
+                updateRetryPolicy({ backoffMultiplier: Number(event.target.value) })
+              }
+            />
+          </Box>
+          <Stack sx={{ mt: 1 }}>
+            {(
+              [
+                ['notifyOnPartial', copy.notifyOnPartial],
+                ['notifyOnFailure', copy.notifyOnFailure],
+                ['notifyOnRecovery', copy.notifyOnRecovery],
+              ] as const
+            ).map(([key, label]) => (
+              <FormControlLabel
+                key={key}
+                sx={{ minHeight: 44, m: 0 }}
+                control={
+                  <Checkbox
+                    checked={draft.notificationPolicy[key]}
+                    onChange={(_, checked) =>
+                      update({
+                        notificationPolicy: { ...draft.notificationPolicy, [key]: checked },
+                      })
+                    }
+                  />
+                }
+                label={label}
+              />
+            ))}
+            <FormControlLabel
+              sx={{ minHeight: 44, m: 0 }}
+              control={
+                <Checkbox
+                  checked={draft.compensationPolicy.enabled}
+                  onChange={(_, checked) =>
+                    update({
+                      compensationPolicy: { ...draft.compensationPolicy, enabled: checked },
+                    })
+                  }
+                />
+              }
+              label={copy.compensationEnabled}
+            />
+            <SelectField
+              label={copy.compensationStrategy}
+              value={draft.compensationPolicy.strategy}
+              disabled={!draft.compensationPolicy.enabled}
+              options={[
+                {
+                  value: 'REVOKE_PENDING_HANDOFFS',
+                  label: copy.compensationStrategies.REVOKE_PENDING_HANDOFFS,
+                },
+                {
+                  value: 'PROVIDER_MANAGED',
+                  label: copy.compensationStrategies.PROVIDER_MANAGED,
+                },
+              ]}
+              onValueChange={(value) => {
+                if (value === 'REVOKE_PENDING_HANDOFFS' || value === 'PROVIDER_MANAGED') {
+                  update({
+                    compensationPolicy: { ...draft.compensationPolicy, strategy: value },
+                  });
+                }
+              }}
+            />
+          </Stack>
         </Box>
 
         <Box component="fieldset" sx={{ m: 0, p: 0, border: 0 }}>

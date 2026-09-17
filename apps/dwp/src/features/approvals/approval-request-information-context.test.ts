@@ -4,11 +4,7 @@ import { latestApprovalInformationRequestEvent } from './approval-request-inform
 
 import type { ApprovalRequestDetail, ApprovalTimelineEvent } from '@dwp-frontend/shared-utils';
 
-const event = (
-  eventId: string,
-  message: string,
-  occurredAt: string
-): ApprovalTimelineEvent => ({
+const event = (eventId: string, message: string, occurredAt: string): ApprovalTimelineEvent => ({
   eventId,
   eventType: 'INFORMATION_REQUESTED',
   actorType: 'USER',

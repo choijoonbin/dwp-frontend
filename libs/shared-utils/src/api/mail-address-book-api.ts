@@ -52,6 +52,17 @@ export type MailAddressBook = {
   generatedAt: string;
 };
 
+export type MailGroupSendReceipt = {
+  receiptId: string;
+  groupId: string;
+  groupVersion: number;
+  recipientMode: 'TO' | 'BCC';
+  recipientCount: number;
+  threadId: string;
+  acceptedAt: string;
+  state: 'ACCEPTED' | 'DELIVERED' | 'FAILED' | 'UNKNOWN' | 'CANCELLED';
+};
+
 export type MailContactInput = {
   displayName: string;
   emailAddress: string;
@@ -152,13 +163,20 @@ export async function sendMailContactGroupMessage(
     subject: string;
     body: string;
     classification: MailClassification;
+    recipientMode: 'TO' | 'BCC';
     idempotencyKey: string;
     groupVersion: number;
   }
-): Promise<MailThreadDetail> {
-  const response = await axiosInstance.post<ApiResponse<MailThreadDetail>>(
-    `/api/platform/v1/mail/contact-groups/${encodeURIComponent(groupId)}/messages`,
-    input
+): Promise<{ thread: MailThreadDetail; receipt: MailGroupSendReceipt }> {
+  const response = await axiosInstance.post<
+    ApiResponse<{ thread: MailThreadDetail; receipt: MailGroupSendReceipt }>
+  >(`/api/platform/v1/mail/contact-groups/${encodeURIComponent(groupId)}/messages`, input);
+  return response.data.data;
+}
+
+export async function getMailGroupSendHistory(groupId: string): Promise<MailGroupSendReceipt[]> {
+  const response = await axiosInstance.get<ApiResponse<MailGroupSendReceipt[]>>(
+    `/api/platform/v1/mail/contact-groups/${encodeURIComponent(groupId)}/messages/history`
   );
   return response.data.data;
 }

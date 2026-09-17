@@ -76,9 +76,7 @@ describe('ApprovalFormBuilderDialog legacy mobile focus', () => {
     await act(async () =>
       fireEvent.click(getByRole(dialog, 'button', { name: 'admin.studio.formFields' }))
     );
-    expect(document.activeElement).toBe(
-      dialog.querySelector('[data-approval-legacy-field="0"]')
-    );
+    expect(document.activeElement).toBe(dialog.querySelector('[data-approval-legacy-field="0"]'));
 
     await act(async () =>
       fireEvent.click(getByRole(dialog, 'button', { name: /Request summary/u }))

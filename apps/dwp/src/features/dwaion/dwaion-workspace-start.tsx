@@ -7,6 +7,7 @@ import {
   CircleAlert,
   ClipboardList,
   KeyRound,
+  SearchCheck,
   Sparkles,
 } from 'lucide-react';
 import { ActionButton, ErrorState, foundationTokens } from '@dwp-frontend/design-system';
@@ -22,6 +23,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import type { WorkspaceWorkItem } from '@dwp-frontend/shared-utils';
 import type { AskCitationSourceType } from '@dwp-frontend/shared-utils';
 import type { DwaionModeKey } from './dwaion-workspace-model';
+import type { ReactNode } from 'react';
 
 import { DwaionWorkspaceComposer } from './dwaion-workspace-composer';
 
@@ -35,6 +37,8 @@ type DwaionWorkspaceStartProps = {
   workItems: WorkspaceWorkItem[];
   sourceScopes: AskCitationSourceType[];
   availableSources: AskCitationSourceType[];
+  attachmentSlot?: ReactNode;
+  attachmentsReady?: boolean;
   onQueryChange: (value: string) => void;
   onSubmit: () => void;
   onChooseMode: (mode: DwaionModeKey, prompt: string) => void;
@@ -42,6 +46,7 @@ type DwaionWorkspaceStartProps = {
   onRetryWork: () => void;
   onToggleSource: (source: AskCitationSourceType) => void;
   onCancel: () => void;
+  onDeepResearch?: () => void;
 };
 
 const modes: ReadonlyArray<{
@@ -65,6 +70,8 @@ export function DwaionWorkspaceStart({
   workItems,
   sourceScopes,
   availableSources,
+  attachmentSlot,
+  attachmentsReady = true,
   onQueryChange,
   onSubmit,
   onChooseMode,
@@ -72,6 +79,7 @@ export function DwaionWorkspaceStart({
   onRetryWork,
   onToggleSource,
   onCancel,
+  onDeepResearch,
 }: DwaionWorkspaceStartProps) {
   const { t, i18n } = useTranslation('work');
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
@@ -134,11 +142,60 @@ export function DwaionWorkspaceStart({
         presentation="home"
         sourceScopes={sourceScopes}
         availableSources={availableSources}
+        attachmentSlot={attachmentSlot}
+        attachmentsReady={attachmentsReady}
         onToggleSource={onToggleSource}
         onCancel={onCancel}
         onChange={onQueryChange}
         onSubmit={onSubmit}
       />
+
+      {!expert && onDeepResearch ? (
+        <ButtonBase
+          onClick={onDeepResearch}
+          sx={{
+            width: '100%',
+            mt: 1.5,
+            p: { xs: 1.5, sm: 2 },
+            display: 'grid',
+            gridTemplateColumns: '44px minmax(0, 1fr) auto',
+            alignItems: 'center',
+            gap: 1.25,
+            textAlign: 'left',
+            border: 1,
+            borderColor: 'primary.light',
+            borderRadius: foundationTokens.radius.surface + 'px',
+            bgcolor: 'primary.50',
+            '&:hover': { borderColor: 'primary.main', boxShadow: 2 },
+            '&:focus-visible': { outline: `3px solid ${alpha(theme.palette.primary.main, 0.3)}` },
+          }}
+        >
+          <Box
+            sx={{
+              width: 44,
+              height: 44,
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: 1,
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+            }}
+          >
+            <SearchCheck size={22} aria-hidden="true" />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="subtitle1" fontWeight="fontWeightBold">
+              Deep Research
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {locale === 'ko'
+                ? '검증 계획과 소스 범위를 먼저 확정하고 근거 중심 심층 조사를 실행합니다.'
+                : 'Plan sources and verification gates before an evidence-led research run.'}
+            </Typography>
+          </Box>
+          <ArrowRight size={18} color={theme.palette.primary.main} aria-hidden="true" />
+        </ButtonBase>
+      ) : null}
 
       <Box component="section" aria-labelledby="dwaion-modes-heading" sx={{ mt: 3.5 }}>
         <Typography

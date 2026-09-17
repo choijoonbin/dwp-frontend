@@ -4,6 +4,7 @@ import {
   ActionButton,
   DateTimePickerField,
   FormField,
+  foundationTokens,
   InlineFeedback,
   SelectField,
 } from '@dwp-frontend/design-system';
@@ -89,7 +90,7 @@ export function WorkHubScheduleDialogContent({
   const fieldSx = {
     '& .MuiOutlinedInput-root': {
       bgcolor: 'action.hover',
-      borderRadius: 1,
+      borderRadius: foundationTokens.radius.surface + 'px',
       '& fieldset': { borderColor: 'transparent' },
       '&:hover fieldset': { borderColor: 'divider' },
       '&.Mui-focused': { bgcolor: 'background.paper' },
@@ -103,7 +104,7 @@ export function WorkHubScheduleDialogContent({
         sx={(theme) => ({
           p: 2,
           bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.13 : 0.075),
-          borderRadius: 2,
+          borderRadius: foundationTokens.radius.surface * 2 + 'px',
           border: '1px solid',
           borderColor: alpha(theme.palette.primary.main, 0.12),
           '@media (forced-colors: active)': { borderColor: 'CanvasText' },
@@ -119,7 +120,11 @@ export function WorkHubScheduleDialogContent({
             <CheckCircle2 size={18} aria-hidden="true" />
             <Typography
               variant="caption"
-              sx={{ fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase' }}
+              sx={{
+                fontWeight: 'fontWeightBold',
+                letterSpacing: 'overline.letterSpacing',
+                textTransform: 'uppercase',
+              }}
             >
               {t('work:workHub.schedule.selectedWork')}
             </Typography>
@@ -131,7 +136,7 @@ export function WorkHubScheduleDialogContent({
               sx={(theme) => ({
                 bgcolor: alpha(theme.palette.primary.main, 0.09),
                 color: 'text.secondary',
-                fontWeight: 600,
+                fontWeight: 'fontWeightMedium',
               })}
             />
           )}
@@ -141,12 +146,15 @@ export function WorkHubScheduleDialogContent({
             {item.displayId && (
               <Typography
                 variant="body2"
-                sx={{ fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}
+                sx={{ fontWeight: 'fontWeightBold', fontVariantNumeric: 'tabular-nums' }}
               >
                 {item.displayId}
               </Typography>
             )}
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, overflowWrap: 'anywhere' }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 'fontWeightBold', overflowWrap: 'anywhere' }}
+            >
               {item.title}
             </Typography>
           </Stack>
@@ -165,13 +173,13 @@ export function WorkHubScheduleDialogContent({
             gap: 0.75,
             mt: 1.25,
             p: 1,
-            borderRadius: 1,
+            borderRadius: foundationTokens.radius.surface + 'px',
             bgcolor: 'background.paper',
             color: 'text.secondary',
           }}
         >
           <ShieldCheck size={17} aria-hidden="true" style={{ flex: '0 0 auto', marginTop: 2 }} />
-          <Typography variant="caption" sx={{ lineHeight: 1.55 }}>
+          <Typography variant="caption" sx={{ lineHeight: 'caption.lineHeight' }}>
             <Box component="strong" sx={{ color: 'text.primary' }}>
               {t('work:workHub.schedule.independenceTitle')}
             </Box>{' '}
@@ -253,7 +261,10 @@ export function WorkHubScheduleDialogContent({
         sx={fieldSx}
       />
       <Box>
-        <Typography variant="caption" sx={{ display: 'block', mb: 0.75, fontWeight: 700 }}>
+        <Typography
+          variant="caption"
+          sx={{ display: 'block', mb: 0.75, fontWeight: 'fontWeightBold' }}
+        >
           {durationMinutes
             ? t('work:workHub.schedule.reservationTime', { minutes: durationMinutes })
             : t('work:workHub.schedule.reservationTimeUnknown')}
@@ -299,13 +310,13 @@ export function WorkHubScheduleDialogContent({
           justifyContent: 'space-between',
           gap: 1,
           p: 1.25,
-          borderRadius: 1,
+          borderRadius: foundationTokens.radius.surface + 'px',
           bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.065),
         })}
       >
         <Stack direction="row" gap={0.75} alignItems="flex-start">
           <Info size={17} aria-hidden="true" style={{ flex: '0 0 auto', marginTop: 1 }} />
-          <Typography variant="caption" sx={{ lineHeight: 1.5 }}>
+          <Typography variant="caption" sx={{ lineHeight: 'caption.lineHeight' }}>
             {t('work:workHub.schedule.availabilityNotice')}
           </Typography>
         </Stack>
@@ -318,7 +329,7 @@ export function WorkHubScheduleDialogContent({
       <Box
         sx={(theme) => ({
           p: 2,
-          borderRadius: 2,
+          borderRadius: foundationTokens.radius.surface * 2 + 'px',
           bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.13 : 0.07),
         })}
       >
@@ -330,7 +341,7 @@ export function WorkHubScheduleDialogContent({
         >
           <Stack direction="row" gap={0.75} alignItems="center">
             <LockKeyhole size={17} color="currentColor" aria-hidden="true" />
-            <Typography variant="body2" sx={{ fontWeight: 750 }}>
+            <Typography variant="body2" sx={{ fontWeight: 'fontWeightBold' }}>
               {t('work:workHub.schedule.privacyTitle')}
             </Typography>
           </Stack>
@@ -342,13 +353,13 @@ export function WorkHubScheduleDialogContent({
                 ? t('work:workHub.schedule.personalCalendarConfirmed')
                 : t('work:workHub.schedule.personalCalendarRequired')
             }
-            sx={{ fontWeight: 700 }}
+            sx={{ fontWeight: 'fontWeightBold' }}
           />
         </Stack>
         <Typography
           variant="caption"
           color="text.secondary"
-          sx={{ display: 'block', mt: 0.75, lineHeight: 1.55 }}
+          sx={{ display: 'block', mt: 0.75, lineHeight: 'caption.lineHeight' }}
         >
           {t('work:workHub.schedule.privateScope')}
         </Typography>
@@ -360,7 +371,10 @@ export function WorkHubScheduleDialogContent({
           sx={{ mt: 1 }}
         >
           <Link2 size={16} aria-hidden="true" style={{ flex: '0 0 auto', marginTop: 1 }} />
-          <Typography variant="caption" sx={{ fontWeight: 600, lineHeight: 1.5 }}>
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: 'fontWeightMedium', lineHeight: 'caption.lineHeight' }}
+          >
             {t('work:workHub.schedule.privateReference')}
           </Typography>
         </Stack>
@@ -375,7 +389,7 @@ export function WorkHubScheduleDialogContent({
           gap: 1,
           px: 1.25,
           py: 1,
-          borderRadius: 1,
+          borderRadius: foundationTokens.radius.surface + 'px',
           border: '1px solid',
           borderColor: 'divider',
         }}
@@ -398,13 +412,13 @@ export function WorkHubScheduleDialogContent({
             }}
           />
           <Box>
-            <Typography variant="caption" sx={{ display: 'block', fontWeight: 700 }}>
+            <Typography variant="caption" sx={{ display: 'block', fontWeight: 'fontWeightBold' }}>
               {t(`work:workHub.schedule.readiness.${readinessState}.title`)}
             </Typography>
             <Typography
               variant="caption"
               color="text.secondary"
-              sx={{ display: 'block', lineHeight: 1.45 }}
+              sx={{ display: 'block', lineHeight: 'caption.lineHeight' }}
             >
               {t(`work:workHub.schedule.readiness.${readinessState}.description`)}
             </Typography>

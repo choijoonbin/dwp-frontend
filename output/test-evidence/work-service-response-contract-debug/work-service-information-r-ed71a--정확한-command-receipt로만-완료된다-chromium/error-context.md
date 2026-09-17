@@ -1,0 +1,379 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - button [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+          - separator [ref=e23]
+          - button [ref=e25] [cursor=pointer]:
+            - img [ref=e27]
+            - text: 개인 할 일 추가
+          - navigation [ref=e28]:
+            - list [ref=e29]:
+              - listitem [ref=e30]:
+                - link [ref=e31] [cursor=pointer]:
+                  - /url: /work/queue
+                  - img [ref=e32]
+                  - generic [ref=e35]: 통합업무함
+                  - generic:
+                    - generic: "4"
+              - listitem [ref=e36]:
+                - link [ref=e37] [cursor=pointer]:
+                  - /url: /work/action-required
+                  - img [ref=e38]
+                  - generic [ref=e41]: 내 조치 대기
+                  - generic:
+                    - generic: "4"
+              - listitem [ref=e42]:
+                - link [ref=e43] [cursor=pointer]:
+                  - /url: /work/day-plan
+                  - img [ref=e44]
+                  - generic [ref=e49]: 오늘 계획
+                  - generic:
+                    - generic: "1"
+              - listitem [ref=e50]:
+                - link [ref=e51] [cursor=pointer]:
+                  - /url: /work/in-progress
+                  - img [ref=e52]
+                  - generic [ref=e55]: 진행 중
+                  - generic:
+                    - generic: "1"
+              - listitem [ref=e56]:
+                - link [ref=e57] [cursor=pointer]:
+                  - /url: /work/awaiting-response
+                  - img [ref=e58]
+                  - generic [ref=e61]: 응답 대기
+              - listitem [ref=e62]:
+                - link [ref=e63] [cursor=pointer]:
+                  - /url: /work/completed
+                  - img [ref=e64]
+                  - generic [ref=e67]: 완료된 업무
+          - generic [ref=e68]:
+            - button [ref=e69] [cursor=pointer]:
+              - generic [ref=e70]:
+                - generic [ref=e71]: 연동 상태
+                - generic [ref=e72]: 확인된 원천 7개
+            - link [ref=e73] [cursor=pointer]:
+              - /url: /
+              - img [ref=e75]
+              - text: 개인 홈으로 돌아가기
+      - banner [ref=e78]:
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - img [ref=e82]
+            - generic [ref=e86]: 업무
+          - generic [ref=e88]:
+            - generic [ref=e90]: D
+            - generic [ref=e91]:
+              - generic [ref=e92]: DWP Workspace
+              - generic [ref=e93]: 현재 워크스페이스
+          - generic [ref=e94]:
+            - button [ref=e96] [cursor=pointer]:
+              - img [ref=e97]
+              - paragraph [ref=e100]: DWP 검색
+              - generic [ref=e101]: ⌘K
+            - button [ref=e103] [cursor=pointer]:
+              - img [ref=e104]
+            - button [ref=e110] [cursor=pointer]:
+              - generic [ref=e111]: M
+              - generic [ref=e112]:
+                - generic [ref=e113]: Mina Kim
+                - generic [ref=e114]: Tenant administrator
+              - img [ref=e115]
+      - main [ref=e117]:
+        - generic [ref=e118]:
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - heading [level=1] [ref=e122]: 통합업무함
+                - generic [ref=e124]: 결과 4건
+              - paragraph [ref=e125]: 여러 업무 원천의 내 책임을 한곳에서 확인하고, 올바른 소유 앱과 연결해 실행합니다.
+              - paragraph [ref=e126]: "새 업무: Alt+Shift+N · ⌘/Ctrl+N은 브라우저가 허용할 때 사용할 수 있습니다."
+            - status [ref=e128]:
+              - generic [ref=e130]:
+                - generic [ref=e131]: 조회 상태 확인됨
+                - generic [ref=e132]: 마지막 확인 26. 9. 16. 오전 11:17
+              - button [ref=e134] [cursor=pointer]:
+                - img [ref=e135]
+            - button [ref=e140] [cursor=pointer]:
+              - img [ref=e142]
+              - text: 원천 상태
+            - button [ref=e147] [cursor=pointer]:
+              - img [ref=e149]
+              - text: 개인 할 일 추가
+          - region [ref=e151]:
+            - generic [ref=e152]:
+              - generic [ref=e153]:
+                - generic [ref=e154]: 업무 검색
+                - generic [ref=e155]:
+                  - img [ref=e157]
+                  - textbox [ref=e160]:
+                    - /placeholder: 제목 또는 업무 내용 검색
+                  - group:
+                    - generic: 업무 검색
+              - group [ref=e161]:
+                - button [pressed] [ref=e162] [cursor=pointer]: 전체 (4)
+                - button [ref=e163] [cursor=pointer]: 내 조치 (4)
+                - button [ref=e164] [cursor=pointer]: 진행 중 (1)
+                - button [ref=e165] [cursor=pointer]: 응답 대기 (0)
+                - button [ref=e166] [cursor=pointer]: 완료 (0)
+              - button [ref=e167] [cursor=pointer]:
+                - img [ref=e169]
+                - text: 오늘 계획 (1)
+              - button [ref=e171] [cursor=pointer]:
+                - img [ref=e173]
+                - text: 필터·정렬
+          - generic [ref=e174]:
+            - generic [ref=e175]:
+              - generic [ref=e176]:
+                - heading [level=6] [ref=e177]: 확인된 업무 4건
+                - button [ref=e178] [cursor=pointer]: 업무 선택
+              - list [ref=e179]:
+                - listitem [ref=e180]:
+                  - generic [ref=e181]:
+                    - button [ref=e184] [cursor=pointer]:
+                      - img [ref=e185]
+                    - button [ref=e187] [cursor=pointer]:
+                      - generic [ref=e189]:
+                        - generic [ref=e190]:
+                          - text: APR-031
+                          - generic [ref=e191]: 전자결재
+                        - generic [ref=e192]: 고객 지원 장비 구매 승인 · 1,850,000원
+                        - generic [ref=e193]: 내 조치 필요
+                        - generic [ref=e194]:
+                          - generic [ref=e196]: 검토 대기
+                          - generic [ref=e197]: 기한 없음
+                    - button [ref=e199] [cursor=pointer]:
+                      - text: 검토
+                      - img [ref=e201]
+                - listitem [ref=e204]:
+                  - generic [ref=e205]:
+                    - button [pressed] [ref=e208] [cursor=pointer]:
+                      - img [ref=e209]
+                    - button [ref=e211] [cursor=pointer]:
+                      - generic [ref=e213]:
+                        - generic [ref=e214]:
+                          - text: 개인 할 일
+                          - generic [ref=e215]: 개인 할 일
+                        - generic [ref=e216]: 분기 고객 안내 초안 정리
+                        - generic [ref=e217]: 내 조치 필요오늘 계획
+                        - generic [ref=e218]:
+                          - generic [ref=e220]: 시작 전
+                          - generic [ref=e221]: 기한 없음
+                    - button [ref=e223] [cursor=pointer]: 시작
+                - listitem [ref=e224]:
+                  - generic [ref=e225]:
+                    - button [ref=e228] [cursor=pointer]:
+                      - img [ref=e229]
+                    - button [ref=e231] [cursor=pointer]:
+                      - generic [ref=e233]:
+                        - generic [ref=e234]:
+                          - text: SR-088
+                          - generic [ref=e235]: 서비스 요청
+                        - generic [ref=e236]: 원격접속(VPN) 신청의 사용 사유 보완 요청
+                        - generic [ref=e237]: 내 조치 필요
+                        - generic [ref=e238]:
+                          - generic [ref=e240]: 내 응답 필요
+                          - generic [ref=e241]: 기한 없음
+                    - button [ref=e243] [cursor=pointer]:
+                      - text: 응답 작성
+                      - img [ref=e245]
+                - listitem [ref=e248]:
+                  - generic [ref=e249]:
+                    - button [ref=e252] [cursor=pointer]:
+                      - img [ref=e253]
+                    - button [ref=e255] [cursor=pointer]:
+                      - generic [ref=e257]:
+                        - generic [ref=e258]:
+                          - text: 개인 할 일
+                          - generic [ref=e259]: 개인 할 일
+                        - generic [ref=e260]: 팀 예산 검토 메모 작성
+                        - generic [ref=e261]: 내 조치 필요
+                        - generic [ref=e262]:
+                          - generic [ref=e264]: 진행 중
+                          - generic [ref=e265]: 기한 없음
+                    - button [ref=e267] [cursor=pointer]: 완료
+            - article [ref=e269]:
+              - generic [ref=e271]:
+                - generic [ref=e272]:
+                  - generic [ref=e273]: SR-088서비스 요청
+                  - heading [level=2] [ref=e274]: 원격접속(VPN) 신청의 사용 사유 보완 요청
+                  - paragraph [ref=e275]: 2026. 9. 16. 오전 11:17 원천 상태 확인
+                - generic [ref=e276]:
+                  - generic [ref=e278]: 내 응답 필요
+                  - generic [ref=e280]: 기한 없음
+              - generic [ref=e281]:
+                - generic [ref=e283]:
+                  - generic [ref=e284]:
+                    - generic [ref=e285]:
+                      - heading [level=3] [ref=e286]: 내 보완 의무와 요청 진행
+                      - paragraph [ref=e287]: 내가 보완할 단계와 서비스 요청 전체의 해결 상태를 구분해 확인합니다.
+                    - generic [ref=e288]:
+                      - term [ref=e289]: 현재 책임
+                      - definition [ref=e290]: 내 조치 필요
+                      - term [ref=e291]: 원천 상태
+                      - definition [ref=e292]: 내 응답 필요
+                      - term [ref=e293]: 우선순위
+                      - definition [ref=e294]: 보통
+                      - term [ref=e295]: 처리 기한
+                      - definition [ref=e296]: 기한 없음
+                    - region [ref=e297]:
+                      - generic [ref=e298]:
+                        - img [ref=e299]
+                        - generic [ref=e302]:
+                          - heading [level=3] [ref=e303]: 서비스 요청 정보
+                          - text: 목록 원천이 제공한 서비스와 현재 담당 정보를 구분해 확인합니다.
+                      - generic [ref=e305]:
+                        - generic [ref=e306]:
+                          - term [ref=e307]: 티켓 번호
+                          - definition [ref=e308]: SR-088
+                        - generic [ref=e309]:
+                          - term [ref=e310]: 신청 서비스
+                          - definition [ref=e311]: 원격접속(VPN) 신청
+                        - generic [ref=e312]:
+                          - term [ref=e313]: 처리 담당 부서
+                          - definition [ref=e314]: IT Service
+                        - generic [ref=e315]:
+                          - term [ref=e316]: 현재 담당자
+                          - definition [ref=e317]: 원천 정보 없음
+                        - generic [ref=e318]:
+                          - term [ref=e319]: 요청 일시
+                          - definition [ref=e320]: 2026. 9. 4. 오전 9:00
+                    - generic [ref=e321]:
+                      - region [ref=e322]:
+                        - generic [ref=e323]:
+                          - img [ref=e324]
+                          - heading [level=3] [ref=e327]: 보완 요청 사유
+                        - paragraph [ref=e329]: 접속 목적이 모호합니다. 구체적인 프로젝트명과 접속 대상, 수행 기간을 보완해 주세요.
+                      - region [ref=e330]:
+                        - generic [ref=e331]:
+                          - img [ref=e332]
+                          - heading [level=3] [ref=e336]: 최초 신청 내역 및 현재 요청 값
+                        - generic [ref=e338]:
+                          - generic [ref=e339]:
+                            - term [ref=e340]: 접속 대상 리소스 / 서버망
+                            - definition [ref=e341]: 원천 정보 없음
+                          - generic [ref=e342]:
+                            - term [ref=e343]: 업무 목적
+                            - definition [ref=e344]: 원천 정보 없음
+                      - region [ref=e345]:
+                        - generic [ref=e346]:
+                          - img [ref=e347]
+                          - generic [ref=e351]:
+                            - heading [level=3] [ref=e352]: 원천 처리 이력
+                            - text: 원천에서 확인한 업무 사건을 발생 순서대로 표시합니다. 전체 결재선과 추가 증빙은 원본에서 확인합니다.
+                        - list [ref=e354]:
+                          - listitem [ref=e355]:
+                            - heading [level=4] [ref=e356]: 보완 요청
+                            - time [ref=e357]: 2026. 9. 4. 오전 9:00
+                            - generic [ref=e358]:
+                              - term [ref=e359]: 처리 주체
+                              - definition [ref=e360]: 사용자
+                              - term [ref=e361]: 당시 결과·상태
+                              - definition [ref=e362]: 요청자 응답 대기
+                            - paragraph [ref=e363]: 접속 목적이 모호합니다. 구체적인 프로젝트명과 접속 대상, 수행 기간을 보완해 주세요.
+                    - generic [ref=e365]:
+                      - text: 업무 내용
+                      - paragraph [ref=e366]: VPN access request
+                    - status [ref=e367]:
+                      - img [ref=e369]
+                      - generic [ref=e371]: 원본으로 이동하거나 돌아온 사실만으로 보완 또는 해결 완료로 표시하지 않습니다.
+                  - region [ref=e372]:
+                    - generic [ref=e373]:
+                      - img [ref=e374]
+                      - generic [ref=e378]:
+                        - heading [level=2] [ref=e379]: 요청된 정보를 보완해 주세요
+                        - paragraph [ref=e380]: 접속 목적이 모호합니다. 구체적인 프로젝트명과 접속 대상, 수행 기간을 보완해 주세요.
+                    - generic [ref=e381]:
+                      - paragraph [ref=e382]: 보완 답변이 접수되면 담당자가 처리를 이어갑니다. 보완 제출과 전체 서비스 요청 해결은 서로 다른 상태입니다.
+                      - generic [ref=e383]:
+                        - generic [ref=e384]:
+                          - generic [ref=e385]:
+                            - text: 접속 대상 리소스 / 서버망
+                            - generic [ref=e386]: "*"
+                          - generic [ref=e387]:
+                            - textbox [ref=e388]: vpn.customer-support.internal
+                            - group:
+                              - generic: 접속 대상 리소스 / 서버망 *
+                        - generic [ref=e389]:
+                          - generic [ref=e390]:
+                            - text: 업무 목적
+                            - generic [ref=e391]: "*"
+                          - generic [ref=e392]:
+                            - textbox [ref=e393]: 고객사 장애 원인 분석과 승인된 복구 작업
+                            - group:
+                              - generic: 업무 목적 *
+                      - generic [ref=e394]:
+                        - generic [ref=e395]:
+                          - text: 담당자에게 전달할 보완 답변
+                          - generic [ref=e396]: "*"
+                        - generic [ref=e397]:
+                          - textbox [ref=e398]: 고객 지원 프로젝트 수행 기간에만 원격접속을 사용하고 종료 후 즉시 권한을 반납하겠습니다.
+                          - group:
+                            - generic: 담당자에게 전달할 보완 답변 *
+                        - paragraph [ref=e399]: 50 / 2,000자 · 10자 이상 입력해 주세요.
+                      - button [ref=e401] [cursor=pointer]: 보완 답변 검토
+                  - region [ref=e402]:
+                    - generic [ref=e403]:
+                      - generic [ref=e404]:
+                        - img [ref=e405]
+                        - heading [level=3] [ref=e409]: 연결된 수행 시간
+                      - button [ref=e410] [cursor=pointer]: Calendar 열기
+                    - paragraph [ref=e412]: 이 업무에 연결된 수행 시간이 없습니다.
+                - separator [ref=e413]
+                - generic [ref=e414]:
+                  - button [ref=e415] [cursor=pointer]:
+                    - text: 원본에서 확인
+                    - img [ref=e417]
+                  - button [ref=e420] [cursor=pointer]: 오늘 계획에 추가
+                  - button [ref=e421] [cursor=pointer]:
+                    - img [ref=e423]
+                    - text: 수행 시간 잡기
+                  - button [ref=e427] [cursor=pointer]:
+                    - img [ref=e429]
+                    - text: DWAI·ON에게 묻기
+                - generic [ref=e432]: 원천 앱이 업무 상태의 최종 소유자입니다. 원본 이동만으로 완료로 처리하지 않습니다.
+    - button [ref=e435] [cursor=pointer]
+  - dialog "보완 답변을 제출할까요?" [active] [ref=e440]:
+    - heading "보완 답변을 제출할까요?" [level=2] [ref=e441]
+    - generic [ref=e442]:
+      - generic [ref=e443]:
+        - img [ref=e445]
+        - paragraph [ref=e448]: 검토한 정보가 서비스 담당자에게 전달됩니다. 제출 전 최신 신청 버전과 현재 제출 권한을 다시 확인합니다.
+      - generic [ref=e450]:
+        - heading "원격접속(VPN) 신청의 사용 사유 보완 요청" [level=6] [ref=e451]
+        - generic [ref=e452]:
+          - generic [ref=e453]:
+            - generic [ref=e454]:
+              - text: 접속 대상 리소스 / 서버망
+              - generic [ref=e455]: "*"
+            - generic [ref=e456]:
+              - textbox "접속 대상 리소스 / 서버망" [disabled] [ref=e457]: vpn.customer-support.internal
+              - group:
+                - generic: 접속 대상 리소스 / 서버망 *
+          - generic [ref=e458]:
+            - generic [ref=e459]:
+              - text: 업무 목적
+              - generic [ref=e460]: "*"
+            - generic [ref=e461]:
+              - textbox "업무 목적" [disabled] [ref=e462]: 고객사 장애 원인 분석과 승인된 복구 작업
+              - group:
+                - generic: 업무 목적 *
+        - paragraph [ref=e463]: 고객 지원 프로젝트 수행 기간에만 원격접속을 사용하고 종료 후 즉시 권한을 반납하겠습니다.
+    - generic [ref=e464]:
+      - button "작성으로 돌아가기" [ref=e465] [cursor=pointer]: 작성으로 돌아가기
+      - button "보완 답변 제출" [ref=e466] [cursor=pointer]
+```

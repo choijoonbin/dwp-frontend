@@ -84,6 +84,9 @@ vi.mock('../../routes/governed-route-access-guard', async () => {
 vi.mock('@dwp-frontend/design-system', async () => {
   const { createElement } = await import('react');
   return {
+    foundationTokens: {
+      workplace: { typography: { smallBody: { fontSize: '0.75rem' } } },
+    },
     ActionButton: ({
       children,
       disabled,

@@ -200,10 +200,7 @@ test('보완 상세 권한 확인 실패는 이전 payload 제출을 막고 재�
   );
 
   await page.goto('/approvals/requests/needs-info');
-  await page
-    .getByRole('list', { name: '결재' })
-    .getByRole('button', { name: '보완 답변' })
-    .click();
+  await page.getByRole('list', { name: '결재' }).getByRole('button', { name: '보완 답변' }).click();
   const dialog = page.getByRole('dialog');
   const error = dialog
     .getByRole('alert')

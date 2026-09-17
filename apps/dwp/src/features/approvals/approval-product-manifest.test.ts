@@ -10,7 +10,7 @@ function flattenSurfaceItems(groups: readonly ProductSurfaceNavigationGroup[]) {
 }
 
 describe('approval product surface manifest', () => {
-  it('separates nine work entries from six management entries', () => {
+  it('separates nine work entries from eleven management entries', () => {
     const [work, management] = APPROVAL_PRODUCT_MANIFEST.surfaces;
 
     expect(work.id).toBe('approvals.work');
@@ -24,7 +24,7 @@ describe('approval product surface manifest', () => {
 
     expect(management.id).toBe('approvals.admin');
     expect(management.plane).toBe('management');
-    expect(management.navigation.flatMap((group) => group.items)).toHaveLength(6);
+    expect(management.navigation.flatMap((group) => group.items)).toHaveLength(11);
     expect(management.entryAccess.requiresProductEntitlement).toBe(false);
   });
 
@@ -38,6 +38,11 @@ describe('approval product surface manifest', () => {
       'operations',
       'administration',
       'administration',
+      'administration',
+      'administration',
+      'administration',
+      'operations',
+      'operations',
       'administration',
       'operations',
       'administration',

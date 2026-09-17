@@ -535,7 +535,7 @@ export function WorkplaceHome() {
 
   if (initialLoading && !hasAnyData) {
     return (
-      <PageCanvas>
+      <PageCanvas topInset="compact">
         {header}
         <LoadingState label={t('workplace.home.loading')} variant="skeleton" size="page" />
       </PageCanvas>
@@ -543,7 +543,7 @@ export function WorkplaceHome() {
   }
   if (!hasAnyData) {
     return (
-      <PageCanvas>
+      <PageCanvas topInset="compact">
         {header}
         <LocalErrorState
           title={t('workplace.home.errorTitle')}
@@ -558,7 +558,7 @@ export function WorkplaceHome() {
   }
 
   return (
-    <PageCanvas>
+    <PageCanvas topInset="compact">
       {header}
       {initialLoading && (
         <InlineFeedback severity="info" sx={{ mt: 2 }}>

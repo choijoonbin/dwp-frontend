@@ -1,0 +1,348 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+      - text: 본문으로 건너뛰기
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - button [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: 개요
+            - paragraph [ref=e26]: SKAX
+          - navigation [ref=e27]:
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: 개요
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - link [ref=e32] [cursor=pointer]:
+                    - /url: /notifications/home
+                    - img [ref=e34]
+                    - paragraph [ref=e38]: 알림 홈
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: 알림 정리
+              - list [ref=e41]:
+                - listitem [ref=e42]:
+                  - link [ref=e43] [cursor=pointer]:
+                    - /url: /notifications/center
+                    - img [ref=e45]
+                    - paragraph [ref=e49]: 알림 센터
+                - listitem [ref=e50]:
+                  - link [ref=e51] [cursor=pointer]:
+                    - /url: /notifications/settings
+                    - img [ref=e53]
+                    - paragraph [ref=e57]: 알림 설정
+          - link [ref=e59] [cursor=pointer]:
+            - /url: /apps
+            - img [ref=e61]
+            - text: 앱 목록으로 돌아가기
+      - banner [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - img [ref=e67]
+            - generic [ref=e73]: 알림
+          - generic [ref=e74]:
+            - button [ref=e76] [cursor=pointer]:
+              - img [ref=e77]
+            - generic [ref=e80]:
+              - button [ref=e81] [cursor=pointer]:
+                - img [ref=e82]
+              - button [ref=e89] [cursor=pointer]:
+                - generic [ref=e90]:
+                  - img [ref=e91]
+                  - generic [ref=e94]: "1"
+            - button [ref=e96] [cursor=pointer]:
+              - generic [ref=e97]: T
+              - img [ref=e98]
+      - main [ref=e100]:
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - img [ref=e106]
+              - generic [ref=e111]:
+                - heading [level=1] [ref=e112]: 알림 설정
+                - paragraph [ref=e113]: 전역 설정을 기준으로 앱, 알림 유형, 전달 채널별 예외를 관리합니다.
+            - status [ref=e114]:
+              - img [ref=e115]
+              - generic [ref=e117]: 변경 사항 자동 저장
+          - tablist [ref=e120]:
+            - tab [selected] [ref=e121] [cursor=pointer]:
+              - img [ref=e122]
+              - text: 알림 설정
+            - tab [ref=e123] [cursor=pointer]:
+              - img [ref=e124]
+              - text: 내 수신 상태
+          - tabpanel [ref=e127]:
+            - navigation [ref=e128]:
+              - generic [ref=e129]:
+                - button [ref=e130] [cursor=pointer]:
+                  - img [ref=e132]
+                  - text: 전역 전달 채널
+                - button [ref=e137] [cursor=pointer]:
+                  - img [ref=e139]
+                  - text: 앱별 알림
+                - button [ref=e142] [cursor=pointer]:
+                  - img [ref=e144]
+                  - text: 수신 집중 규칙
+                - button [ref=e150] [cursor=pointer]:
+                  - img [ref=e152]
+                  - text: 집중 시간
+                - button [ref=e154] [cursor=pointer]:
+                  - img [ref=e156]
+                  - text: 도착 알림 및 개인정보
+                - button [ref=e160] [cursor=pointer]:
+                  - img [ref=e162]
+                  - text: 요약 알림
+            - generic [ref=e168]:
+              - region [ref=e169]:
+                - generic [ref=e170]:
+                  - generic [ref=e171]:
+                    - heading [level=2] [ref=e172]: 수신 집중 규칙
+                    - paragraph [ref=e173]: 중요한 사람과 업무를 우선하고, 관리 주제를 팔로우하며, 필수 알림을 숨기지 않는 범위 안에서 정확한 대상을 음소거합니다.
+                  - button [ref=e174] [cursor=pointer]:
+                    - img [ref=e176]
+                    - text: 규칙 추가
+                - generic [ref=e177]:
+                  - generic [ref=e178]:
+                    - img [ref=e180]
+                    - generic [ref=e184]:
+                      - text: 중요한 사람
+                      - paragraph [ref=e185]: "1"
+                  - generic [ref=e186]:
+                    - img [ref=e188]
+                    - generic [ref=e190]:
+                      - text: 팔로우 중인 업무
+                      - paragraph [ref=e191]: "0"
+                  - generic [ref=e192]:
+                    - img [ref=e194]
+                    - generic [ref=e198]:
+                      - text: 음소거 범위
+                      - paragraph [ref=e199]: "0"
+                  - generic [ref=e200]:
+                    - img [ref=e202]
+                    - generic [ref=e205]:
+                      - text: 관리 주제
+                      - paragraph [ref=e206]: "0"
+                - generic [ref=e207]:
+                  - group [ref=e208]:
+                    - button [pressed] [ref=e209] [cursor=pointer]: 전체 규칙
+                    - button [ref=e210] [cursor=pointer]: 사람
+                    - button [ref=e211] [cursor=pointer]: 팔로우
+                    - button [ref=e212] [cursor=pointer]: 음소거
+                    - button [ref=e213] [cursor=pointer]: 주제
+                  - generic [ref=e214]:
+                    - generic [ref=e215]: 수신 집중 규칙 검색
+                    - generic [ref=e216]:
+                      - img [ref=e218]
+                      - textbox [ref=e221]
+                      - group:
+                        - generic: 수신 집중 규칙 검색
+                - region [ref=e223]:
+                  - generic [ref=e224]:
+                    - img [ref=e225]
+                    - heading [level=3] [ref=e229]: 중요한 사람
+                    - generic [ref=e231]: "1"
+                  - article [ref=e233]:
+                    - generic [ref=e234]:
+                      - img [ref=e236]
+                      - generic [ref=e240]:
+                        - generic [ref=e241]:
+                          - heading [level=3] [ref=e242]: 김민서
+                          - generic [ref=e244]: 사용 중
+                          - generic [ref=e246]: 우선 표시
+                        - paragraph [ref=e247]: 김민서
+                        - generic [ref=e248]:
+                          - generic [ref=e249]:
+                            - term [ref=e250]: 출처
+                            - definition [ref=e251]: 내 설정
+                          - generic [ref=e252]:
+                            - term [ref=e253]: 채널
+                            - definition [ref=e254]: 앱 내 알림
+                          - generic [ref=e255]:
+                            - term [ref=e256]: admin.suppression.fields.startsAt
+                            - definition [ref=e257]: —
+                          - generic [ref=e258]:
+                            - term [ref=e259]: 만료
+                            - definition [ref=e260]: 만료 없음
+                        - generic [ref=e261]: 마지막 변경 2026. 9. 16. 오전 10:00
+                      - generic [ref=e262]:
+                        - button [ref=e263] [cursor=pointer]:
+                          - img [ref=e265]
+                          - text: 편집
+                        - button [ref=e268] [cursor=pointer]:
+                          - img [ref=e270]
+                          - text: 일시 중지
+                        - button [ref=e272] [cursor=pointer]:
+                          - img [ref=e274]
+                          - text: 삭제
+                - generic [ref=e277]:
+                  - img [ref=e278]
+                  - generic [ref=e283]: 활성 규칙 25개 중 1개 사용
+              - region [ref=e284]:
+                - generic [ref=e286]:
+                  - generic [ref=e287]:
+                    - img [ref=e288]
+                    - generic [ref=e290]:
+                      - heading [level=2] [ref=e291]: 테스트 알림 진단
+                      - paragraph [ref=e292]: 실제 업무 알림을 만들지 않고 구성된 전달 단계를 검증합니다.
+                  - button [ref=e294] [cursor=pointer]:
+                    - img [ref=e296]
+                    - text: 테스트 실행
+                - status [ref=e299]:
+                  - img [ref=e301]
+                  - generic [ref=e304]: 진단 전용입니다. 받은 알림, 업무 처리 및 알림 품질 KPI에 포함되지 않습니다.
+                - group [ref=e305]:
+                  - generic [ref=e306]:
+                    - text: 상태
+                    - generic [ref=e309]: 실행 전
+                  - generic [ref=e310]:
+                    - text: 지원 단계
+                    - paragraph [ref=e311]: "0"
+                  - generic [ref=e312]:
+                    - text: 확인된 단계
+                    - paragraph [ref=e313]: 0 / 0
+                  - generic [ref=e314]:
+                    - text: 결과 만료
+                    - paragraph [ref=e315]: 발급되지 않음
+                - heading [level=3] [ref=e317]:
+                  - button [ref=e318] [cursor=pointer]:
+                    - generic [ref=e320]:
+                      - img [ref=e321]
+                      - heading [level=6] [ref=e330]: Provider별 단계 상세
+                    - img [ref=e332]
+  - dialog "수신 집중 규칙 추가" [active] [ref=e336]:
+    - generic [ref=e337]:
+      - heading "수신 집중 규칙 추가" [level=2] [ref=e338]
+      - generic [ref=e339]:
+        - paragraph [ref=e340]: 저장하기 전에 알림 서비스가 정확한 대상과 회사 정책을 검증합니다.
+        - generic [ref=e341]:
+          - generic [ref=e342]:
+            - generic [ref=e343]: 범위 유형
+            - generic [ref=e344]:
+              - combobox "범위 유형 앱 알림 유형" [ref=e345] [cursor=pointer]: 앱 알림 유형
+              - textbox: APP_TYPE
+              - img
+              - group:
+                - generic: 범위 유형
+          - generic [ref=e347]:
+            - generic: 앱 알림 유형
+            - generic [ref=e348]:
+              - combobox "앱 알림 유형" [ref=e349]
+              - button "Open" [ref=e351] [cursor=pointer]:
+                - img [ref=e352]
+              - group:
+                - generic: 앱 알림 유형
+            - paragraph [ref=e354]: 저장하기 전에 알림 서비스가 정확한 대상과 회사 정책을 검증합니다.
+          - generic [ref=e355]:
+            - generic: 표시 이름
+            - generic [ref=e356]:
+              - textbox "표시 이름" [ref=e357]
+              - group:
+                - generic: 표시 이름
+          - generic [ref=e358]:
+            - generic [ref=e359]: 수신 동작
+            - generic [ref=e360]:
+              - combobox "수신 동작 음소거" [ref=e361] [cursor=pointer]: 음소거
+              - textbox: MUTE
+              - img
+              - group:
+                - generic: 수신 동작
+          - generic [ref=e362]:
+            - heading "채널 재정의" [level=3] [ref=e363]
+            - generic [ref=e364]:
+              - generic [ref=e365] [cursor=pointer]:
+                - generic [ref=e366]:
+                  - checkbox "앱 내 알림" [checked] [ref=e367]
+                  - img [ref=e368]
+                - generic [ref=e370]: 앱 내 알림
+              - generic [ref=e371] [cursor=pointer]:
+                - generic [ref=e372]:
+                  - checkbox "이메일" [ref=e373]
+                  - img [ref=e374]
+                - generic [ref=e376]: 이메일
+              - generic [ref=e377] [cursor=pointer]:
+                - generic [ref=e378]:
+                  - checkbox "브라우저 푸시" [ref=e379]
+                  - img [ref=e380]
+                - generic [ref=e382]: 브라우저 푸시
+              - generic [ref=e383] [cursor=pointer]:
+                - generic [ref=e384]:
+                  - checkbox "모바일 푸시" [ref=e385]
+                  - img [ref=e386]
+                - generic [ref=e388]: 모바일 푸시
+              - generic [ref=e389] [cursor=pointer]:
+                - generic [ref=e390]:
+                  - checkbox "Microsoft Teams" [ref=e391]
+                  - img [ref=e392]
+                - generic [ref=e394]: Microsoft Teams
+              - generic [ref=e395] [cursor=pointer]:
+                - generic [ref=e396]:
+                  - checkbox "Slack" [ref=e397]
+                  - img [ref=e398]
+                - generic [ref=e400]: Slack
+          - generic [ref=e401]:
+            - generic [ref=e402]:
+              - generic: admin.suppression.fields.startsAt
+              - group "admin.suppression.fields.startsAt" [ref=e403]:
+                - generic [ref=e404]:
+                  - generic [ref=e405]:
+                    - spinbutton "년" [ref=e406]: YYYY
+                    - text: .
+                  - generic [ref=e407]:
+                    - spinbutton "월" [ref=e408]: MM
+                    - text: .
+                  - generic [ref=e409]:
+                    - spinbutton "일" [ref=e410]: DD
+                    - text: .
+                  - generic [ref=e411]:
+                    - spinbutton "시간" [ref=e412]: hh
+                    - text: ":"
+                  - spinbutton "분" [ref=e414]: mm
+                - button "날짜를 선택하세요" [ref=e416] [cursor=pointer]:
+                  - img [ref=e417]
+                - group:
+                  - generic: admin.suppression.fields.startsAt
+                - textbox [ref=e419]
+            - generic [ref=e420]:
+              - generic: 자동 만료 시각
+              - group "자동 만료 시각" [ref=e421]:
+                - generic [ref=e422]:
+                  - generic [ref=e423]:
+                    - spinbutton "년" [ref=e424]: YYYY
+                    - text: .
+                  - generic [ref=e425]:
+                    - spinbutton "월" [ref=e426]: MM
+                    - text: .
+                  - generic [ref=e427]:
+                    - spinbutton "일" [ref=e428]: DD
+                    - text: .
+                  - generic [ref=e429]:
+                    - spinbutton "시간" [ref=e430]: hh
+                    - text: ":"
+                  - spinbutton "분" [ref=e432]: mm
+                - button "날짜를 선택하세요" [ref=e434] [cursor=pointer]:
+                  - img [ref=e435]
+                - group:
+                  - generic: 자동 만료 시각
+                - textbox [ref=e437]
+      - generic [ref=e438]:
+        - generic [ref=e439]:
+          - button "영향도 미리보기" [disabled]:
+            - generic:
+              - img
+            - text: 영향도 미리보기
+        - generic [ref=e440]:
+          - button "취소" [ref=e441] [cursor=pointer]
+          - button "저장" [disabled]
+```

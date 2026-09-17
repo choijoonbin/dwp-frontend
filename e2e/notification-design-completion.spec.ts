@@ -112,8 +112,12 @@ test('개인정보 설정이 확정되기 전 센터와 모바일 상세는 컨�
   await expect(page.getByText(notification.actorLabel, { exact: true })).toHaveCount(0);
 
   releaseProfile();
-  await expect(mobileDetail.getByText(notification.title, { exact: true })).toBeVisible();
-  await expect(mobileDetail.getByText(notification.actorLabel, { exact: true })).toBeVisible();
+  await expect(
+    mobileDetail.getByRole('heading', { name: notification.title, exact: true })
+  ).toBeVisible();
+  await expect(
+    mobileDetail.getByText(notification.actorLabel, { exact: true }).first()
+  ).toBeVisible();
 });
 
 test('모바일 직접 상세의 오류 상태는 알림 목록 복귀 수단을 유지한다', async ({ page }) => {
@@ -402,9 +406,13 @@ test('메신저 상세 패널의 답장은 원천 API 성공 후 알림을 완�
 
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto('/notifications/center');
-  await expect(page.getByText(messagingNotification.preview, { exact: true })).toHaveCSS(
-    '-webkit-line-clamp',
-    '1'
+  await expect(
+    page.getByTestId('notification-detail-scroll').getByText(messagingNotification.preview, {
+      exact: true,
+    })
+  ).toHaveCSS(
+    'white-space',
+    'pre-wrap'
   );
   await page.getByRole('button', { name: messagingNotification.title }).click();
   const detail = page.getByRole('complementary', { name: '선택한 알림 상세' });

@@ -7,7 +7,16 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { ApprovalBatchPreflight } from './approval-batch-preflight';
+import type {
+  ApprovalBatchPreflight,
+  ApprovalBatchPreflightOutcome,
+} from './approval-batch-preflight';
+
+const outcomeColors: Record<ApprovalBatchPreflightOutcome, 'success' | 'warning' | 'error'> = {
+  ELIGIBLE: 'success',
+  EXCLUDED: 'warning',
+  RECHECK: 'error',
+};
 
 export function ApprovalBatchPreflightSummary({
   preflight,
@@ -61,7 +70,7 @@ export function ApprovalBatchPreflightSummary({
           mt: 1.5,
           border: 1,
           borderColor: 'divider',
-          borderRadius: 1,
+          borderRadius: 'shape.borderRadius',
           overflow: 'hidden',
         }}
       >
@@ -115,7 +124,7 @@ export function ApprovalBatchPreflightSummary({
                 </Box>
                 <Chip
                   size="small"
-                  color={entry.outcome === 'EXCLUDED' ? 'warning' : 'error'}
+                  color={outcomeColors[entry.outcome]}
                   variant="outlined"
                   label={t(`home.commandCenter.batchPreflight.outcomes.${entry.outcome}`)}
                 />

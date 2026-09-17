@@ -63,6 +63,23 @@ describe('notification center cache', () => {
     expect(result && !('pages' in result) ? result.items[0].version : null).toBe('2');
   });
 
+  it('keeps only materialized prioritized decisions in an attention-filtered cache', () => {
+    const prioritized = item({ attentionEffect: 'PRIORITIZE' });
+    const ordinary = item({ notificationId: '20000000-0000-0000-0000-000000000002' });
+
+    const kept = updateInboxCache(page([prioritized]), prioritized, {
+      view: 'ALL',
+      attentionEffect: 'PRIORITIZE',
+    });
+    const removed = updateInboxCache(page([ordinary]), ordinary, {
+      view: 'ALL',
+      attentionEffect: 'PRIORITIZE',
+    });
+
+    expect(kept && !('pages' in kept) ? kept.items : []).toHaveLength(1);
+    expect(removed && !('pages' in removed) ? removed.items : []).toHaveLength(0);
+  });
+
   it('derives the filter scope from the query key and fails to priority by default', () => {
     expect(inboxScopeFromQueryKey(['notifications', 'inbox', { view: 'MENTIONS' }])).toEqual({
       view: 'MENTIONS',

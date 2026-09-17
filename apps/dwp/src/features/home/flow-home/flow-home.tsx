@@ -37,6 +37,7 @@ import {
 } from './flow-updates';
 import { resolveFlowGovernedPlacement } from './flow-governed-placement';
 import { homePurposeAllRoute } from './home-purpose-route-policy';
+import { composeHomeWorkActions, HOME_WORK_CARD_VISIBLE_LIMIT } from './home-work-action-policy';
 import { buildFlowSignals } from './flow-home-model';
 import { FlowHomeHeroSurface } from './flow-home-hero-surface';
 import { filterRolePulseSignals, filterRolePulseTextItems } from './home-purpose-role-pulse-policy';
@@ -117,10 +118,13 @@ function useLargeTextReflow(): boolean {
   const [largeText, setLargeText] = useState(false);
   useEffect(() => {
     const sync = () => {
-      const rootSize = Number.parseFloat(
-        window.getComputedStyle(document.documentElement).fontSize
+      const rootStyle = window.getComputedStyle(document.documentElement);
+      const rootSize = Number.parseFloat(rootStyle.fontSize);
+      const pageZoom = Number.parseFloat(rootStyle.zoom || document.documentElement.style.zoom);
+      setLargeText(
+        (Number.isFinite(rootSize) && rootSize >= 24) ||
+          (Number.isFinite(pageZoom) && pageZoom >= 1.75)
       );
-      setLargeText(Number.isFinite(rootSize) && rootSize >= 24);
     };
     const resizeObserver = new ResizeObserver(sync);
     const mutationObserver = new MutationObserver(sync);
@@ -208,6 +212,7 @@ export function FlowHome({
     noSsr: true,
   });
   const largeTextReflow = useLargeTextReflow();
+  const workHubAccessible = apps.some((app) => app.resourceKey === 'APP.WORK');
   const compactPreview = previewDevice === 'mobile' && editing;
   const compactContent = compactPreview || narrowViewport || largeTextReflow;
   const compactDensity = density === 'compact';
@@ -254,10 +259,14 @@ export function FlowHome({
         timeZone,
       })
     : updatedAt;
+  const homeWorkActions = composeHomeWorkActions(
+    contributionModel.buckets.action,
+    contributionModel.buckets.response
+  );
   const contextMetrics = {
-    action: contributionCount(contributionModel.buckets.action),
+    action: contributionCount(homeWorkActions.actionItems),
     timeline: contributionCount(contributionModel.buckets.timeline),
-    response: contributionCount(contributionModel.buckets.response),
+    response: contributionCount(homeWorkActions.responseItems),
   };
   const flowSignals = buildFlowSignals(overview);
   const visibleSectionKeys = new Set(
@@ -682,14 +691,10 @@ export function FlowHome({
                   {...common}
                   sectionKey="action"
                   icon={Zap}
-                  items={contributionModel.buckets.action}
+                  items={homeWorkActions.actionItems}
                   state={contributionModel.bucketStates.action}
-                  maxItems={resolveFlowHomeReadItemLimit({
-                    template: readLayout.template,
-                    sectionKey: 'action',
-                    firstSectionKey: readLayout.firstSectionKey,
-                  })}
-                  allRoute={homePurposeAllRoute('action', contributionModel.buckets.action)}
+                  maxItems={HOME_WORK_CARD_VISIBLE_LIMIT}
+                  allRoute={workHubAccessible ? '/work/queue' : undefined}
                   featuredFirst
                   wideFeatured={readLayout.template !== 'adaptive-wide'}
                   headerAccessory={
@@ -724,10 +729,10 @@ export function FlowHome({
                   {...common}
                   sectionKey="response"
                   icon={Inbox}
-                  items={contributionModel.buckets.response}
+                  items={homeWorkActions.responseItems}
                   state={contributionModel.bucketStates.response}
                   maxItems={sectionItemLimit('response-hub')}
-                  allRoute={homePurposeAllRoute('response', contributionModel.buckets.response)}
+                  allRoute={homePurposeAllRoute('response', homeWorkActions.responseItems)}
                 />
               );
             }

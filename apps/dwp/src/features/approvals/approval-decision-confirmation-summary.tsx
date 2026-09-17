@@ -68,7 +68,7 @@ export function ApprovalDecisionConfirmationSummary({
             : task.riskScore >= 60
               ? 'warning.main'
               : 'primary.main',
-        borderRadius: 1,
+        borderRadius: 'shape.borderRadius',
         bgcolor: 'action.hover',
       }}
     >

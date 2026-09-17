@@ -19,6 +19,13 @@ import type {
   NotificationReasonKind,
   NotificationView,
 } from '@dwp-frontend/shared-utils/api/notification-api';
+import {
+  canonicalNotificationIncludedTypes,
+  canonicalNotificationContextFilters,
+  type NotificationContextFilter,
+  type NotificationContextKind,
+  type NotificationIncludedType,
+} from './notification-filter-model';
 
 export type NotificationNavigationView =
   | 'home'
@@ -55,6 +62,9 @@ export type NotificationCenterPathScope = {
   appKey?: string;
   priority?: NotificationPriority | 'ALL';
   reason?: NotificationReasonKind | 'ALL';
+  attentionEffect?: 'ALL' | 'PRIORITIZE';
+  includedTypes?: readonly NotificationIncludedType[];
+  contextFilters?: readonly NotificationContextFilter[];
 };
 
 export const NOTIFICATION_HOME_PATH = '/notifications/home';
@@ -78,6 +88,9 @@ export function notificationCenterSearchParams({
   appKey,
   priority = 'ALL',
   reason = 'ALL',
+  attentionEffect = 'ALL',
+  includedTypes = [],
+  contextFilters = [],
 }: NotificationCenterPathScope): URLSearchParams {
   const parameters = new URLSearchParams({ view: QUERY_BY_CENTER_VIEW[view] });
   if (readState !== 'ALL') parameters.set('read', readState.toLocaleLowerCase('en-US'));
@@ -88,7 +101,41 @@ export function notificationCenterSearchParams({
   if (priority !== 'ALL') parameters.set('priority', priority.toLocaleLowerCase('en-US'));
   if (reason !== 'ALL' && view !== 'MENTIONS')
     parameters.set('reason', reason.toLocaleLowerCase('en-US'));
+  if (attentionEffect === 'PRIORITIZE') parameters.set('attentionEffect', 'prioritize');
+  const canonicalTypes = canonicalNotificationIncludedTypes(includedTypes);
+  if (!canonicalTypes) throw new Error('Notification included types are not canonical.');
+  if (view !== 'MENTIONS') {
+    for (const type of canonicalTypes) parameters.append('type', type.toLocaleLowerCase('en-US'));
+  }
+  const canonicalContexts = canonicalNotificationContextFilters(contextFilters);
+  if (!canonicalContexts) throw new Error('Notification context filters are not canonical.');
+  for (const context of canonicalContexts) {
+    parameters.append('context', context.kind.toLocaleLowerCase('en-US'));
+    parameters.append('contextKey', context.key);
+  }
   return parameters;
+}
+
+/** Leaves repeated values untrusted so the API boundary rejects malformed or oversized input. */
+export function notificationIncludedTypesFromSearchParams(
+  parameters: URLSearchParams
+): NotificationIncludedType[] {
+  return parameters
+    .getAll('type')
+    .map((value) => value.toLocaleUpperCase('en-US') as NotificationIncludedType);
+}
+
+/** Leaves URL values untrusted so the API boundary can fail closed instead of broadening a query. */
+export function notificationContextFiltersFromSearchParams(
+  parameters: URLSearchParams
+): NotificationContextFilter[] {
+  const kinds = parameters.getAll('context');
+  const keys = parameters.getAll('contextKey');
+  return Array.from({ length: Math.max(kinds.length, keys.length) }, (_, index) => ({
+    kind: (kinds[index]?.toLocaleUpperCase('en-US') ?? '') as NotificationContextKind,
+    key: keys[index] ?? '',
+    label: '',
+  }));
 }
 
 export function notificationCenterPath(scope: NotificationCenterPathScope): string {

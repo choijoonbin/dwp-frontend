@@ -40,6 +40,7 @@ type ApprovalRequestDetailDrawerProps = {
   requestId?: string;
   canUpdateRequests: boolean;
   onClose: () => void;
+  onClosed?: () => void;
   onReturnToWork?: () => void;
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;
@@ -52,6 +53,7 @@ export function ApprovalRequestDetailDrawer({
   requestId,
   canUpdateRequests,
   onClose,
+  onClosed,
   onReturnToWork,
   onRespond,
   onWithdraw,
@@ -111,6 +113,8 @@ export function ApprovalRequestDetailDrawer({
         'aria-labelledby': 'approval-request-detail-title',
         sx: { width: { xs: '100%', sm: 620 }, maxWidth: '100vw' },
       }}
+      ModalProps={{ disableRestoreFocus: true }}
+      slotProps={{ transition: { onExited: onClosed } }}
     >
       <Box sx={{ minHeight: '100%', bgcolor: 'background.default' }}>
         <Stack

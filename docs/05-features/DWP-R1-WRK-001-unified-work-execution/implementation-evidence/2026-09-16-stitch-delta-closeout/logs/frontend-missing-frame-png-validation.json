@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "validator": "Pillow 11.3.0",
+  "expectedFiles": 5,
+  "decodedFiles": 5,
+  "allExpectedDimensionsMatch": true,
+  "allDecoded": true,
+  "items": [
+    {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/DWP-R1-WRK-001-unified-work-execution/implementation-evidence/2026-09-16-stitch-delta-closeout/screens/missing-reference-frames/wrk-d02-1440.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 1440,
+      "height": 1129,
+      "bytes": 237898,
+      "sha256": "795b1618220b50dbc2db20d986dc3d9dadaf5d5d25875fea8606d4e772b4cadb",
+      "decoded": true,
+      "samplePixel": [245, 247, 250]
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/DWP-R1-WRK-001-unified-work-execution/implementation-evidence/2026-09-16-stitch-delta-closeout/screens/missing-reference-frames/wrk-d02-390.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 390,
+      "height": 1555,
+      "bytes": 104108,
+      "sha256": "ab3c020415691c62675f12bfc85be9bece782fdd79daa28c1c06f5b2c4758f3c",
+      "decoded": true,
+      "samplePixel": [255, 255, 255]
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/DWP-R1-WRK-001-unified-work-execution/implementation-evidence/2026-09-16-stitch-delta-closeout/screens/missing-reference-frames/wrk-f01-1440.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 1440,
+      "height": 1129,
+      "bytes": 194486,
+      "sha256": "6ba6ee23ab21b2ea7dccbdad81ae14a02c27d3656c176c23a948efd09cc07022",
+      "decoded": true,
+      "samplePixel": [125, 126, 126]
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/DWP-R1-WRK-001-unified-work-execution/implementation-evidence/2026-09-16-stitch-delta-closeout/screens/missing-reference-frames/wrk-m1-390.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 390,
+      "height": 1555,
+      "bytes": 108960,
+      "sha256": "b443cdbae4e0bf31c54d769ff8f5a09e45c64b3afcc289306028f5007c07abc6",
+      "decoded": true,
+      "samplePixel": [255, 255, 255]
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/DWP-R1-WRK-001-unified-work-execution/implementation-evidence/2026-09-16-stitch-delta-closeout/screens/missing-reference-frames/wrk-m2-320.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "width": 320,
+      "height": 1108,
+      "bytes": 74774,
+      "sha256": "29a944da4ccafac149267ad852968100044b236c160bb979fd8ec6b43c6509d7",
+      "decoded": true,
+      "samplePixel": [245, 247, 250]
+    }
+  ]
+}

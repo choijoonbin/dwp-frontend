@@ -13,7 +13,9 @@ import {
   Zap,
 } from 'lucide-react';
 import { ActionButton, ActionIconButton, FormField } from '@dwp-frontend/design-system';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
 import Drawer from '@mui/material/Drawer';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
@@ -23,9 +25,16 @@ import Typography from '@mui/material/Typography';
 import {
   EMPTY_NOTIFICATION_FILTERS,
   hasNotificationFilters,
+  MAX_NOTIFICATION_CONTEXT_FILTERS,
+  MAX_NOTIFICATION_INCLUDED_TYPES,
+  NOTIFICATION_INCLUDED_TYPES,
   NOTIFICATION_REASONS,
 } from './notification-filter-model';
-import type { CenterFilters } from './notification-filter-model';
+import type {
+  CenterFilters,
+  NotificationContextOption,
+  NotificationIncludedType,
+} from './notification-filter-model';
 import type {
   NotificationSummary,
   NotificationView,
@@ -46,6 +55,7 @@ export function NotificationFilterBar({
   filters,
   summary,
   appOptions,
+  contextOptions,
   savedViewControl,
   onViewChange,
   onChange,
@@ -54,6 +64,7 @@ export function NotificationFilterBar({
   filters: CenterFilters;
   summary?: NotificationSummary;
   appOptions: Array<[string, string]>;
+  contextOptions: NotificationContextOption[];
   savedViewControl?: ReactNode;
   onViewChange: (view: NotificationView) => void;
   onChange: (filters: CenterFilters) => void;
@@ -61,6 +72,13 @@ export function NotificationFilterBar({
   const { t } = useTranslation('notifications');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const update = (patch: Partial<CenterFilters>) => onChange({ ...filters, ...patch });
+  const contextOptionsWithCurrent = [...contextOptions];
+  for (const context of filters.contextFilters) {
+    if (!contextOptionsWithCurrent.some((option) => contextId(option) === contextId(context))) {
+      contextOptionsWithCurrent.unshift({ ...context, label: context.label || context.key });
+    }
+  }
+  const selectedContextIds = filters.contextFilters.map(contextId);
   return (
     <Box
       component="section"
@@ -75,25 +93,43 @@ export function NotificationFilterBar({
         overflow: 'hidden',
       }}
     >
-      <Select
-        value={view}
-        size="small"
-        fullWidth
-        onChange={(event) => onViewChange(event.target.value as NotificationView)}
-        inputProps={{ 'aria-label': t('center.viewsLabel') }}
+      <Stack
+        component="nav"
+        aria-label={t('center.viewsLabel')}
+        direction="row"
         sx={{
           display: { xs: 'flex', md: 'none' },
-          minHeight: 44,
-          m: 1,
-          width: 'calc(100% - 16px)',
+          gap: 0.5,
+          p: 1,
+          overflowX: 'auto',
+          scrollbarWidth: 'thin',
+          borderBottom: 1,
+          borderColor: 'divider',
         }}
       >
-        {VIEWS.map(({ key }) => (
-          <MenuItem key={key} value={key}>
+        {VIEWS.map(({ key, icon: Icon }) => (
+          <ActionButton
+            key={key}
+            intent="quiet"
+            size="small"
+            startIcon={<Icon size={15} />}
+            aria-current={view === key ? 'page' : undefined}
+            onClick={() => onViewChange(key)}
+            sx={{
+              minHeight: 34,
+              flexShrink: 0,
+              px: 1,
+              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              bgcolor: view === key ? 'primary.main' : 'action.hover',
+              color: view === key ? 'primary.contrastText' : 'text.secondary',
+              '&:hover': { bgcolor: view === key ? 'primary.dark' : 'action.selected' },
+            }}
+          >
             {t(`views.${key}`)}
-          </MenuItem>
+            {summary ? summary.viewCounts[key] : null}
+          </ActionButton>
         ))}
-      </Select>
+      </Stack>
       <Stack
         component="nav"
         aria-label={t('center.viewsLabel')}
@@ -147,8 +183,8 @@ export function NotificationFilterBar({
         sx={{
           display: 'grid',
           gridTemplateColumns: {
-            xs: 'minmax(0, 1fr) auto',
-            md: 'minmax(220px, 1fr) auto auto',
+            xs: 'minmax(0, 1fr) auto auto',
+            md: 'minmax(220px, 1fr) auto',
           },
           gap: 1,
           p: 1.25,
@@ -168,19 +204,34 @@ export function NotificationFilterBar({
               ),
             },
           }}
-          sx={{ minWidth: 0, gridColumn: { xs: '1 / -1', md: 'auto' } }}
+          sx={{ minWidth: 0 }}
         />
-        <ActionButton
-          intent="secondary"
-          startIcon={<SlidersHorizontal size={17} />}
+        <ActionIconButton
+          label={t('filters.open')}
           onClick={() => setFiltersOpen(true)}
-          sx={{ display: { xs: 'flex', md: 'none' }, minHeight: 44, width: 1 }}
+          sx={{ display: { xs: 'inline-flex', md: 'none' }, width: 40, height: 40 }}
         >
-          {t('filters.open')}
-        </ActionButton>
-        <Box sx={{ display: { xs: 'none', md: 'block' } }}>{renderFilters()}</Box>
+          <SlidersHorizontal size={17} />
+        </ActionIconButton>
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            gridColumn: { md: '1 / -1' },
+            gridRow: { md: 2 },
+          }}
+        >
+          {renderFilters()}
+        </Box>
         {savedViewControl && (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gridColumn: { md: 2 },
+              gridRow: { md: 1 },
+            }}
+          >
             {savedViewControl}
           </Box>
         )}
@@ -189,18 +240,60 @@ export function NotificationFilterBar({
         anchor="bottom"
         open={filtersOpen}
         onClose={() => setFiltersOpen(false)}
-        slotProps={{ paper: { 'aria-label': t('filters.open') } }}
+        slotProps={{
+          paper: {
+            'aria-label': t('filters.open'),
+            sx: {
+              maxHeight: 'min(82dvh, 620px)',
+              borderTopLeftRadius: foundationTokens.radius.surface * 3,
+              borderTopRightRadius: foundationTokens.radius.surface * 3,
+              overflow: 'hidden',
+            },
+          },
+        }}
       >
-        <Box sx={{ p: 2, pb: 'max(16px, env(safe-area-inset-bottom))' }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
-            <Typography component="h2" variant="subtitle1">
-              {t('filters.open')}
-            </Typography>
-            <ActionIconButton label={t('filters.close')} onClick={() => setFiltersOpen(false)}>
-              <X size={18} />
-            </ActionIconButton>
-          </Stack>
-          {renderFilters()}
+        <Box sx={{ display: 'grid', gridTemplateRows: 'auto minmax(0, 1fr) auto' }}>
+          <Box
+            aria-hidden="true"
+            sx={{
+              width: 36,
+              height: 4,
+              borderRadius: foundationTokens.radius.compact,
+              bgcolor: 'divider',
+              mx: 'auto',
+              mt: 1,
+            }}
+          />
+          <Box sx={{ p: 2, overflowY: 'auto' }}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ mb: 2 }}
+            >
+              <Typography component="h2" variant="subtitle1">
+                {t('filters.open')}
+              </Typography>
+              <ActionIconButton label={t('filters.close')} onClick={() => setFiltersOpen(false)}>
+                <X size={18} />
+              </ActionIconButton>
+            </Stack>
+            {renderFilters()}
+          </Box>
+          <Box
+            sx={{
+              p: 2,
+              pt: 1.25,
+              pb: 'max(16px, env(safe-area-inset-bottom))',
+              borderTop: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+            }}
+          >
+            <ActionButton intent="primary" onClick={() => setFiltersOpen(false)} sx={{ width: 1 }}>
+              {t('filters.apply')}
+            </ActionButton>
+          </Box>
         </Box>
       </Drawer>
     </Box>
@@ -208,7 +301,20 @@ export function NotificationFilterBar({
 
   function renderFilters() {
     return (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, minWidth: 0 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, minmax(0, 1fr))',
+            md: 'repeat(4, minmax(0, 1fr))',
+            xl: 'repeat(8, minmax(0, 1fr))',
+          },
+          alignItems: 'center',
+          gap: 1,
+          minWidth: 0,
+        }}
+      >
         <Select
           value={filters.readState}
           onChange={(event) =>
@@ -216,7 +322,7 @@ export function NotificationFilterBar({
           }
           size="small"
           inputProps={{ 'aria-label': t('filters.readState') }}
-          sx={{ flexGrow: { xs: 1, md: 0 }, minWidth: 120 }}
+          sx={{ width: 1, minWidth: 0 }}
         >
           {(['ALL', 'UNREAD', 'READ'] as const).map((state) => (
             <MenuItem key={state} value={state}>
@@ -230,7 +336,7 @@ export function NotificationFilterBar({
           size="small"
           displayEmpty
           inputProps={{ 'aria-label': t('filters.app') }}
-          sx={{ flexGrow: { xs: 1, md: 0 }, minWidth: 124, maxWidth: '100%' }}
+          sx={{ width: 1, minWidth: 0 }}
         >
           <MenuItem value="">{t('filters.allApps')}</MenuItem>
           {appOptions.map(([key, label]) => (
@@ -240,12 +346,31 @@ export function NotificationFilterBar({
           ))}
         </Select>
         <Select
+          value={filters.attentionEffect}
+          onChange={(event) =>
+            update({ attentionEffect: event.target.value as CenterFilters['attentionEffect'] })
+          }
+          size="small"
+          inputProps={{
+            'aria-label': t('filters.attentionEffect'),
+          }}
+          sx={{ width: 1, minWidth: 0 }}
+        >
+          <MenuItem value="ALL">{t('filters.allAttention')}</MenuItem>
+          <MenuItem value="PRIORITIZE">{t('filters.prioritized')}</MenuItem>
+        </Select>
+        <Select
           value={filters.reason}
           disabled={view === 'MENTIONS'}
-          onChange={(event) => update({ reason: event.target.value as CenterFilters['reason'] })}
+          onChange={(event) =>
+            update({
+              reason: event.target.value as CenterFilters['reason'],
+              includedTypes: [],
+            })
+          }
           size="small"
           inputProps={{ 'aria-label': t('filters.reason') }}
-          sx={{ flexGrow: { xs: 1, md: 0 }, minWidth: 144, maxWidth: '100%' }}
+          sx={{ width: 1, minWidth: 0 }}
         >
           <MenuItem value="ALL">
             {view === 'MENTIONS' ? t('reason.MENTION') : t('filters.allReasons')}
@@ -257,13 +382,91 @@ export function NotificationFilterBar({
           ))}
         </Select>
         <Select
+          multiple
+          value={filters.includedTypes}
+          disabled={view === 'MENTIONS'}
+          onChange={(event) => {
+            const values = Array.isArray(event.target.value)
+              ? (event.target.value as NotificationIncludedType[])
+              : (String(event.target.value).split(',') as NotificationIncludedType[]);
+            update({
+              reason: 'ALL',
+              includedTypes: values.slice(0, MAX_NOTIFICATION_INCLUDED_TYPES),
+            });
+          }}
+          renderValue={(selected) =>
+            selected.length === 0
+              ? t('filters.allTypes')
+              : selected.map(includedTypeLabel).join(', ')
+          }
+          size="small"
+          displayEmpty
+          inputProps={{
+            'aria-label': t('filters.includedTypes'),
+          }}
+          sx={{ width: 1, minWidth: 0 }}
+        >
+          {NOTIFICATION_INCLUDED_TYPES.map((type) => (
+            <MenuItem key={type} value={type}>
+              <Checkbox size="small" checked={filters.includedTypes.includes(type)} />
+              {includedTypeLabel(type)}
+            </MenuItem>
+          ))}
+        </Select>
+        <Select
+          multiple
+          value={selectedContextIds}
+          onChange={(event) => {
+            const values = Array.isArray(event.target.value)
+              ? event.target.value
+              : String(event.target.value).split(',');
+            update({
+              contextFilters: contextOptionsWithCurrent
+                .filter((option) => values.includes(contextId(option)))
+                .slice(0, MAX_NOTIFICATION_CONTEXT_FILTERS),
+            });
+          }}
+          renderValue={(selected) =>
+            selected.length === 0
+              ? t('filters.allContexts')
+              : selected
+                  .map(
+                    (identity) =>
+                      contextOptionsWithCurrent.find((option) => contextId(option) === identity)
+                        ?.label ||
+                      contextOptionsWithCurrent.find((option) => contextId(option) === identity)
+                        ?.key ||
+                      identity
+                  )
+                  .join(', ')
+          }
+          size="small"
+          displayEmpty
+          inputProps={{ 'aria-label': t('filters.context') }}
+          sx={{ width: 1, minWidth: 0 }}
+        >
+          {contextOptionsWithCurrent.map((option) => (
+            <MenuItem
+              key={contextId(option)}
+              value={contextId(option)}
+              disabled={
+                selectedContextIds.length >= MAX_NOTIFICATION_CONTEXT_FILTERS &&
+                !selectedContextIds.includes(contextId(option))
+              }
+            >
+              <Checkbox size="small" checked={selectedContextIds.includes(contextId(option))} />
+              {option.label || option.key}
+            </MenuItem>
+          ))}
+        </Select>
+        <Select
           value={filters.priority}
           onChange={(event) =>
             update({ priority: event.target.value as CenterFilters['priority'] })
           }
           size="small"
           inputProps={{ 'aria-label': t('filters.priority') }}
-          sx={{ flexGrow: { xs: 1, md: 0 }, minWidth: 124 }}
+          sx={{ width: 1, minWidth: 0 }}
         >
           {(['ALL', 'URGENT', 'HIGH', 'NORMAL', 'LOW'] as const).map((priority) => (
             <MenuItem key={priority} value={priority}>
@@ -282,4 +485,14 @@ export function NotificationFilterBar({
       </Box>
     );
   }
+
+  function includedTypeLabel(type: NotificationIncludedType): string {
+    return type === 'ASSIGNED'
+      ? t('reason.ROLE')
+      : t(`reason.${type}`, { defaultValue: type });
+  }
+}
+
+function contextId(context: NotificationContextOption): string {
+  return `${context.kind}:${encodeURIComponent(context.key)}`;
 }

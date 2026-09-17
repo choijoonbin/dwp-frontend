@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-09-16T02:58:17" hostname="MacBook-Pro" time="1.342">
+  <properties/>
+  <testcase name="malformedChecklistAndDuplicateSourceReferencesAreRejectedBeforeWriting()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.112"/>
+  <testcase name="crossOwnerNativeReferenceAndDuplicateSelectionAreRejectedAtomically()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.079"/>
+  <testcase name="preExtensionCommandReceiptStillReplaysAfterTheSchemaUpgrade()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.076"/>
+  <testcase name="sameCommandReplaysOriginalResponseAndDifferentPayloadConflicts()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.108"/>
+  <testcase name="lifecycleIsOptimisticScopedAndAuditedWithoutDeletingHistory()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.203"/>
+  <testcase name="checklistAndMultipleSourcesRoundTripPreserveOrderAndRequireOwnedSources()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.148"/>
+  <testcase name="softDeleteIsScopedIdempotentRemovesSelectionsAndPreservesHistory()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.205"/>
+  <testcase name="auditFailureRollsBackTaskMutationAndCommandReceipt()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.053"/>
+  <testcase name="deletionAuditFailureRollsBackTaskAndAffectedPlanTogether()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.128"/>
+  <testcase name="planningAndReorderingNeverChangeTaskDatesLifecycleOrPriorDays()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.17"/>
+  <testcase name="simultaneousSameCommandCreatesOneTaskAndOneTimelineEvent()" classname="com.dwp.services.platform.workhub.personal.PersonalWorkPostgresIntegrationTest" time="0.054"/>
+  <system-out><![CDATA[11:58:16.055 [Test worker] INFO tc.postgres:16-alpine -- Creating container for image: postgres:16-alpine
+11:58:16.109 [Test worker] INFO tc.postgres:16-alpine -- Container postgres:16-alpine is starting: 316cd1f26aa70410fe6f0e0eadfbcfaa8954202d3687a8c069b67f1cc59f980e
+11:58:17.059 [Test worker] INFO tc.postgres:16-alpine -- Container postgres:16-alpine started in PT1.004226S
+11:58:17.060 [Test worker] INFO tc.postgres:16-alpine -- Container is started (JDBC URL: jdbc:postgresql://localhost:52696/test?loggerLevel=OFF)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

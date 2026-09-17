@@ -1,5 +1,5 @@
 import type { Page, Route } from '@playwright/test';
-import type { MailOrganization } from '@dwp-frontend/shared-utils';
+import type { MailOrganization, MailSharedInboxAction } from '@dwp-frontend/shared-utils';
 
 import { mockShellSession } from './shell-session';
 
@@ -53,7 +53,16 @@ export function thread(id: string, options: { shared?: boolean; subject?: string
   };
 }
 
-export function detail(item: ReturnType<typeof thread>, deliveryState = 'FAILED') {
+export function detail(
+  item: ReturnType<typeof thread>,
+  deliveryState = 'FAILED',
+  options: {
+    projectSharedInboxActions?: boolean;
+    sharedInboxActions?: MailSharedInboxAction[];
+  } = {}
+) {
+  const projectSharedInboxActions =
+    options.projectSharedInboxActions ?? Boolean(item.sharedInboxId);
   return {
     thread: item,
     messages: [
@@ -104,6 +113,16 @@ export function detail(item: ReturnType<typeof thread>, deliveryState = 'FAILED'
           },
         ]
       : [],
+    ...(projectSharedInboxActions
+      ? {
+          sharedInboxActions: options.sharedInboxActions ?? [
+            'ASSIGN',
+            'COMMENT',
+            'REPLY',
+            'SEND_AS',
+          ],
+        }
+      : {}),
   };
 }
 

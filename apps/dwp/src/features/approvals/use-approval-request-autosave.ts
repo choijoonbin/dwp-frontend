@@ -196,6 +196,12 @@ export function useApprovalRequestAutosave({
     flush: () => controller.flush(),
     reconcile: () => controller.reconcile(),
     reviewLatest: (receipt: ApprovalDraftReceipt) => controller.reviewLatest(receipt),
+    reviewLatestDetail: (detail: ApprovalRequestDetail, currentSchemaHash?: string) =>
+      controller.reviewLatest(detail.request, approvalRequestDetailSnapshot(detail), {
+        currentSchemaHash,
+        serverSchemaHash: detail.formSchemaSha256 ?? undefined,
+      }),
+    reviewedInput: () => controller.reviewedInput(),
     reapply: () => controller.reapply(),
     resume: () => controller.resume(),
   };

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:01:06" hostname="MacBook-Pro" time="0.126">
+  <properties/>
+  <testcase name="replayingRemovedLinkNeverResurrectsItAndChangedPayloadConflicts()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest" time="0.118"/>
+  <testcase name="inaccessibleNativeTaskCannotBeLinkedAndDoesNotGenerateAnAudit()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest" time="0.001"/>
+  <testcase name="writeRequiresWorkUpdateAndCalendarViewBeforeAnyStorageAccess()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest" time="0.0"/>
+  <testcase name="linkCreationDoesNotInvokeTaskMutationAndCalendarAccessRemainsUnverified()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest" time="0.002"/>
+  <testcase name="sameLinkIdentityIsAnIdempotentReplayWithoutSourceMutationOrExtraAudit()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest" time="0.001"/>
+  <testcase name="unlinkCanCleanPrivateBookmarkAfterCalendarPermissionWasRevoked()" classname="com.dwp.services.platform.workhub.calendar.WorkCalendarServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

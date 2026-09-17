@@ -1,7 +1,6 @@
 import { lazy } from 'react';
-import Stack from '@mui/material/Stack';
 
-import type { ApprovalView } from './approval-navigation';
+import type { ApprovalAdminView } from './approval-navigation';
 
 const ApprovalAdminOverview = lazy(() =>
   import('./approval-admin-overview').then((module) => ({ default: module.ApprovalAdminOverview }))
@@ -32,25 +31,53 @@ const ApprovalAdminDocumentController = lazy(() =>
     default: module.ApprovalAdminDocumentController,
   }))
 );
+const adminV2 = () => import('./admin-v2/approval-admin-v2-runtime');
+const ApprovalAdminFormsRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminFormsRuntime }))
+);
+const ApprovalAdminRoutingRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminRoutingRuntime }))
+);
+const ApprovalAdminPoliciesRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminPoliciesRuntime }))
+);
+const ApprovalAdminIntegrationsRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminIntegrationsRuntime }))
+);
+const ApprovalAdminAuditRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminAuditRuntime }))
+);
+const ApprovalAdminOperationsRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminOperationsRuntime }))
+);
+const ApprovalAdminAnalyticsRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminAnalyticsRuntime }))
+);
+const ApprovalAdminDeploymentsRuntime = lazy(() =>
+  adminV2().then((module) => ({ default: module.ApprovalAdminDeploymentsRuntime }))
+);
 
-export function ApprovalAdmin({
-  view,
-}: {
-  view: Extract<
-    ApprovalView,
-    'admin-overview' | 'workflows' | 'forms' | 'policies' | 'operations' | 'signatures'
-  >;
-}) {
+export function ApprovalAdmin({ view }: { view: ApprovalAdminView }) {
   if (view === 'admin-overview') return <ApprovalAdminOverview />;
   if (view === 'workflows') return <ApprovalWorkflowStudio />;
-  if (view === 'forms') return <ApprovalFormStudio />;
-  if (view === 'policies')
+  if (view === 'forms') {
+    return <ApprovalAdminFormsRuntime matureWorkspace={<ApprovalFormStudio />} />;
+  }
+  if (view === 'routing') return <ApprovalAdminRoutingRuntime />;
+  if (view === 'policies') {
     return (
-      <Stack gap={3}>
-        <ApprovalPolicyStudio />
-        <ApprovalAdminDocumentController />
-      </Stack>
+      <ApprovalAdminPoliciesRuntime
+        policyWorkspace={<ApprovalPolicyStudio />}
+        documentWorkspace={<ApprovalAdminDocumentController />}
+      />
     );
-  if (view === 'operations') return <ApprovalOperationsAdmin />;
-  return <ApprovalSignatureAdmin />;
+  }
+  if (view === 'integrations') return <ApprovalAdminIntegrationsRuntime />;
+  if (view === 'audit') return <ApprovalAdminAuditRuntime />;
+  if (view === 'operations') {
+    return <ApprovalAdminOperationsRuntime deliveryWorkspace={<ApprovalOperationsAdmin />} />;
+  }
+  if (view === 'signatures') return <ApprovalSignatureAdmin />;
+  if (view === 'analytics') return <ApprovalAdminAnalyticsRuntime />;
+  return <ApprovalAdminDeploymentsRuntime />;
 }

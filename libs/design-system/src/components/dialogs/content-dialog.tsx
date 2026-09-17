@@ -33,7 +33,9 @@ export type ContentDialogProps = {
   footerSx?: SxProps<Theme>;
   contentDividers?: boolean;
   contentSx?: SxProps<Theme>;
+  contentTabIndex?: number;
   slotProps?: DialogProps['slotProps'];
+  testId?: string;
 };
 
 export function ContentDialog({
@@ -55,7 +57,9 @@ export function ContentDialog({
   footerSx,
   contentDividers = false,
   contentSx,
+  contentTabIndex,
   slotProps,
+  testId,
 }: ContentDialogProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -70,6 +74,7 @@ export function ContentDialog({
       aria-describedby={!hideHeader && description ? descriptionId : undefined}
       onClose={busy ? undefined : onClose}
       slotProps={slotProps}
+      data-testid={testId}
     >
       {hideHeader ? (
         <Box component="span" id={titleId} sx={visuallyHidden}>
@@ -105,7 +110,7 @@ export function ContentDialog({
         </DialogTitle>
       )}
       {headerContent}
-      <DialogContent dividers={contentDividers} sx={contentSx}>
+      <DialogContent dividers={contentDividers} sx={contentSx} tabIndex={contentTabIndex}>
         {children}
       </DialogContent>
       {footerContent && <DialogActions sx={footerSx}>{footerContent}</DialogActions>}

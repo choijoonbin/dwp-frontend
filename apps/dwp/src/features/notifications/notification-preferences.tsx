@@ -51,6 +51,7 @@ import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
 import { NotificationChannelGrid } from './notification-channel-grid';
+import { NotificationAttentionSettings } from './notification-attention-settings';
 import {
   NOTIFICATION_PREFERENCE_SECTION_IDS,
   NotificationPreferenceNavigation,
@@ -87,20 +88,23 @@ function PreferenceSection({
   id,
   title,
   description,
+  hidden,
   children,
 }: {
   id: string;
   title: string;
   description: string;
+  hidden?: boolean;
   children: ReactNode;
 }) {
   return (
     <Box
       component="section"
       id={id}
+      hidden={hidden}
       tabIndex={-1}
       sx={{
-        mt: 2,
+        mt: 1.5,
         scrollMarginTop: {
           xs: 'calc(var(--dwp-shell-mobile-sticky-offset, 64px) + 56px)',
           lg: 112,
@@ -601,6 +605,7 @@ export function NotificationPreferences() {
             id={NOTIFICATION_PREFERENCE_SECTION_IDS.global}
             title={t('preferences.global.title')}
             description={t('preferences.global.description')}
+            hidden={mobileSection !== 'global'}
           >
             <NotificationChannelGrid
               profile={draft}
@@ -626,6 +631,7 @@ export function NotificationPreferences() {
             id={NOTIFICATION_PREFERENCE_SECTION_IDS.apps}
             title={t('preferences.apps.title')}
             description={t('preferences.apps.description')}
+            hidden={mobileSection !== 'apps'}
           >
             {effectiveQuery.isLoading ? (
               <LoadingState
@@ -715,10 +721,17 @@ export function NotificationPreferences() {
             )}
           </PreferenceSection>
 
+          <Box hidden={mobileSection !== 'attention'}>
+            <NotificationAttentionSettings
+              sectionId={NOTIFICATION_PREFERENCE_SECTION_IDS.attention}
+            />
+          </Box>
+
           <PreferenceSection
             id={NOTIFICATION_PREFERENCE_SECTION_IDS.quiet}
             title={t('preferences.quiet.title')}
             description={t('preferences.quiet.description')}
+            hidden={mobileSection !== 'quiet'}
           >
             <Stack divider={<Divider flexItem />}>
               <PreferenceRow
@@ -828,6 +841,7 @@ export function NotificationPreferences() {
             id={NOTIFICATION_PREFERENCE_SECTION_IDS.presentation}
             title={t('preferences.presentation.title')}
             description={t('preferences.presentation.description')}
+            hidden={mobileSection !== 'presentation'}
           >
             <Stack divider={<Divider flexItem />}>
               <PreferenceRow
@@ -899,6 +913,7 @@ export function NotificationPreferences() {
             id={NOTIFICATION_PREFERENCE_SECTION_IDS.digest}
             title={t('preferences.digest.title')}
             description={t('preferences.digest.description')}
+            hidden={mobileSection !== 'digest'}
           >
             <PreferenceRow
               icon={CalendarClock}

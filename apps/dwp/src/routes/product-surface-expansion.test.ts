@@ -33,18 +33,18 @@ import type { ProductScopeKind } from '../components/product-manifest';
 import type { RouteObject } from 'react-router-dom';
 
 const EXPECTED_MENU_COUNTS: Readonly<Record<string, number>> = {
-  approvals: 15,
+  approvals: 20,
   calendar: 10,
   communications: 6,
-  dwaion: 18,
+  dwaion: 19,
   hcm: 25,
-  mail: 16,
+  mail: 23,
   meetings: 10,
   messaging: 8,
   notifications: 9,
   services: 6,
   spaces: 11,
-  workplace: 12,
+  workplace: 28,
 };
 
 const DRAFT_PRODUCT_IDS = [
@@ -104,7 +104,7 @@ function routeBySurfaceId(
 }
 
 describe('all-product surface expansion', () => {
-  it('registers all 12 business apps and exactly the governed 146 menu rows', () => {
+  it('registers all 12 business apps and exactly the governed 175 menu rows', () => {
     expect(GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id).sort()).toEqual(
       Object.keys(EXPECTED_MENU_COUNTS).sort()
     );
@@ -119,7 +119,44 @@ describe('all-product surface expansion', () => {
         manifest.surfaces.length
       );
     }
-    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(146);
+    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(175);
+  });
+
+  it('binds promoted Workplace menus to their explicit PAGE authority source', () => {
+    const manifest = GOVERNED_PRODUCT_MANIFESTS.find((product) => product.id === 'workplace');
+    const items = manifest?.surfaces.flatMap((surface) =>
+      surface.navigation.flatMap((group) => group.items.map((item) => ({ surface, item })))
+    );
+    const expected = [
+      ['home', '/workplace/home', 'OFFICIAL'],
+      ['planner', '/workplace/planner', 'OFFICIAL'],
+      ['service-orders', '/workplace/service-orders', 'OFFICIAL'],
+      ['admin-service-fulfillment', '/workplace/admin/service-fulfillment', 'OFFICIAL'],
+      ['admin-service-catalog', '/workplace/admin/service-catalog', 'OFFICIAL'],
+      ['admin-overview', '/workplace/admin/overview', 'OFFICIAL'],
+      ['admin-operations', '/workplace/admin/operations', 'OFFICIAL'],
+      ['admin-locations', '/workplace/admin/locations', 'OFFICIAL'],
+      ['admin-policy', '/workplace/admin/policies', 'OFFICIAL'],
+      ['admin-room-operations', '/workplace/admin/meeting-operations', 'OFFICIAL'],
+      ['admin-room-policy', '/workplace/admin/meeting-policy', 'OFFICIAL'],
+    ] as const;
+
+    for (const [view, path, authoritySource] of expected) {
+      const entry = items?.find((candidate) => candidate.item.view === view);
+      expect(entry?.item.path, view).toBe(path);
+      expect(entry?.surface.id, view).toBe(
+        view.startsWith('admin-') ? 'workplace.management' : 'workplace.work'
+      );
+      const source =
+        authoritySource === 'OFFICIAL'
+          ? PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
+          : DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE;
+      const pageContract = source.find(
+        (route) => route.productId === 'workplace' && route.pattern === path
+      );
+      expect(pageContract, `${view} ${authoritySource} PAGE source`).toBeDefined();
+      expect(routeContractKeys(roomsRoutes), view).toContain(pageContract?.routeContractKey);
+    }
   });
 
   it('keeps the three active DWAI work extensions W3 with official PAGE authority', () => {
@@ -289,8 +326,8 @@ describe('all-product surface expansion', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(73);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(78);
+    expect(menuContracts).toHaveLength(70);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(75);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(
@@ -401,7 +438,7 @@ describe('all-product surface expansion', () => {
   it.each(ROUTE_TREES)(
     '%s has sibling work and management route shells',
     (_, routes, adminPath) => {
-      const productRoot = routes[0];
+      const productRoot = routes.find((route) => Boolean(route.children?.length));
       expect(productRoot?.children?.some((route) => route.index)).toBe(true);
       expect(productRoot?.children?.some((route) => route.path === adminPath)).toBe(true);
       expect(productRoot?.children?.some((route) => route.path === undefined)).toBe(true);
@@ -421,7 +458,7 @@ describe('all-product surface expansion', () => {
     ]);
     expect(
       PRODUCT_MENU_ROUTES.filter((menu) => menu.productSurfaceId).map((menu) => menu.path)
-    ).toHaveLength(146);
+    ).toHaveLength(175);
 
     const spacesWorkShell = spacesRoutes[0]?.children?.find(
       (route) => !route.index && route.path === undefined
@@ -449,7 +486,8 @@ describe('all-product surface expansion', () => {
 
   it('keeps official and DRAFT PAGE routes fail closed during partial promotion', () => {
     const officialRoutes = [
-      [roomsRoutes, 'route.workplace.work.explore.page'],
+      [roomsRoutes, 'route.workplace.work.find.page'],
+      [roomsRoutes, 'route.workplace.work.home.page'],
       [meetingsRoutes, 'route.meetings.work.home.page'],
       [messagingRoutes, 'route.messaging.work.home.page'],
     ] as const;
@@ -462,14 +500,6 @@ describe('all-product surface expansion', () => {
       if (isValidElement(route?.element)) {
         expect(route.element.type, routeContractKey).toBe(ProductCanaryRouteBoundary);
       }
-    }
-
-    const workplaceDraftHome = routeByContractKey(roomsRoutes, 'route.workplace.work.home.page');
-    expect(workplaceDraftHome).toBeDefined();
-    expect(workplaceDraftHome?.handle).toMatchObject({ productPageLifecycle: 'DRAFT' });
-    expect(isValidElement(workplaceDraftHome?.element)).toBe(true);
-    if (isValidElement(workplaceDraftHome?.element)) {
-      expect(workplaceDraftHome.element.type).toBe(ProductCanaryRouteBoundary);
     }
 
     const spacesManagement = routeBySurfaceId(spacesRoutes, 'spaces.management');

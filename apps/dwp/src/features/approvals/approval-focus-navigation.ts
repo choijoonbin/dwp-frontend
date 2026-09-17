@@ -1,9 +1,9 @@
 function enabled(element: HTMLElement | null): element is HTMLElement {
   return Boolean(
     element &&
-      !element.hasAttribute('disabled') &&
-      element.getAttribute('aria-disabled') !== 'true' &&
-      !element.closest('[hidden]')
+    !element.hasAttribute('disabled') &&
+    element.getAttribute('aria-disabled') !== 'true' &&
+    !element.closest('[hidden]')
   );
 }
 
@@ -43,10 +43,11 @@ export function focusApprovalLabeledControl(
     )[occurrence];
     const control =
       matchingLabel instanceof HTMLLabelElement
-        ? matchingLabel.control ??
-          (matchingLabel.htmlFor ? document.getElementById(matchingLabel.htmlFor) : null)
+        ? (matchingLabel.control ??
+          (matchingLabel.htmlFor ? document.getElementById(matchingLabel.htmlFor) : null))
         : null;
-    if (control instanceof HTMLElement && root.contains(control) && focus(control, block)) return true;
+    if (control instanceof HTMLElement && root.contains(control) && focus(control, block))
+      return true;
   }
   const fallback = root.querySelector<HTMLElement>(
     'input:not(:disabled), textarea:not(:disabled), button:not(:disabled), [role="combobox"]:not([aria-disabled="true"]), [tabindex="0"]'

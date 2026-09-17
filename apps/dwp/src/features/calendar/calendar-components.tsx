@@ -321,7 +321,7 @@ export function CalendarEventDrawer({
                 sx={(theme) => ({
                   color: theme.palette.mode === 'dark' ? lighten(tone.main, 0.42) : tone.main,
                   bgcolor: 'background.paper',
-                  fontWeight: 600,
+                  fontWeight: 'fontWeightMedium',
                   '@media (forced-colors: active)': {
                     border: '1px solid CanvasText',
                     backgroundColor: 'Canvas',
@@ -449,7 +449,7 @@ export function CalendarEventDrawer({
                       height: 34,
                       bgcolor: tone.main,
                       color: theme.palette.getContrastText(tone.main),
-                      fontSize: 13,
+                      fontSize: theme.typography.pxToRem(13),
                     })}
                   >
                     {event.organizerName.slice(0, 1)}
@@ -471,7 +471,13 @@ export function CalendarEventDrawer({
                 <Stack spacing={1} sx={{ mt: 0.75 }}>
                   {event.attendees.map((attendee) => (
                     <Stack key={attendee.email} direction="row" spacing={1} alignItems="center">
-                      <Avatar sx={{ width: 30, height: 30, fontSize: 12 }}>
+                      <Avatar
+                        sx={(theme) => ({
+                          width: 30,
+                          height: 30,
+                          fontSize: theme.typography.pxToRem(12),
+                        })}
+                      >
                         {attendee.name.slice(0, 1)}
                       </Avatar>
                       <Typography variant="body2" sx={{ flex: 1 }} noWrap title={attendee.name}>

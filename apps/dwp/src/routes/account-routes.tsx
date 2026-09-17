@@ -16,6 +16,7 @@ const AccountLayout = lazy(() =>
   import('../layouts/account-layout').then((module) => ({ default: module.AccountLayout }))
 );
 const ProfilePage = lazy(() => import('../pages/account/profile'));
+const SettingsHomePage = lazy(() => import('../pages/account/settings-home'));
 const SettingsPage = lazy(() => import('../pages/account/settings'));
 const SecurityPage = lazy(() => import('../pages/account/security'));
 
@@ -61,7 +62,7 @@ export const accountRoutes: RouteObject[] = [
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="settings/appearance" replace /> },
+      { index: true, element: <Navigate to="settings" replace /> },
       {
         path: 'profile',
         element: (
@@ -70,7 +71,14 @@ export const accountRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
-      { path: 'settings', element: <Navigate to="appearance" replace /> },
+      {
+        path: 'settings',
+        element: (
+          <Suspense fallback={routeFallback}>
+            <SettingsHomePage />
+          </Suspense>
+        ),
+      },
       {
         path: 'settings/:section',
         element: (

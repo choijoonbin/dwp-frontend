@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CalendarClock, Star, ArrowUpRight } from 'lucide-react';
-import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
+import { ActionButton, ActionIconButton, foundationTokens } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
@@ -90,7 +90,7 @@ export function WorkHubList({
                   px: 1,
                   py: 0.75,
                   bgcolor: 'var(--dwp-product-soft)',
-                  borderRadius: 1,
+                  borderRadius: foundationTokens.radius.surface + 'px',
                   color: 'text.secondary',
                 },
               }
@@ -327,7 +327,10 @@ export function WorkHubList({
                             py: 0.25,
                             mb: 0.5,
                             bgcolor: 'var(--dwp-product-soft)',
-                            borderRadius: 0.75,
+                            borderRadius:
+                              foundationTokens.radius.surface -
+                              foundationTokens.radius.compact +
+                              'px',
                           },
                         }}
                       >
@@ -353,8 +356,8 @@ export function WorkHubList({
                           overflowWrap: 'anywhere',
                           fontWeight: selected ? 'fontWeightBold' : 'fontWeightMedium',
                           '@container work-queue (max-width: 439px)': {
-                            fontSize: '1rem',
-                            lineHeight: 1.35,
+                            fontSize: 'subtitle1.fontSize',
+                            lineHeight: 'subtitle1.lineHeight',
                             fontWeight: 'fontWeightBold',
                           },
                         }}
@@ -442,7 +445,14 @@ export function WorkHubList({
                                         ? theme.palette.warning.light
                                         : darken(theme.palette.warning.main, 0.15),
                                   })
-                                : undefined
+                                : item.lifecycle === 'CANCELLED'
+                                  ? undefined
+                                  : (theme) => ({
+                                      color:
+                                        theme.palette.mode === 'dark'
+                                          ? theme.palette.info.light
+                                          : darken(theme.palette.info.main, 0.25),
+                                    })
                           }
                           color={
                             item.lifecycle === 'COMPLETED'

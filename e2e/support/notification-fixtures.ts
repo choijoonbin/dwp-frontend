@@ -67,12 +67,12 @@ export function fulfillSuccess(route: Route, data: unknown) {
 export async function openHeaderNotificationGlance(page: Page) {
   const control = page.getByTestId('shell-notification-control');
   const initialTrigger = control.getByRole('button');
-  await expect(initialTrigger).toBeVisible();
+  await expect(initialTrigger).toBeVisible({ timeout: 15_000 });
   const initialTriggerHandle = await initialTrigger.elementHandle();
   await initialTrigger.click();
 
   const glance = page.getByRole('dialog', { name: '최근 알림' });
-  await expect(glance).toBeVisible();
+  await expect(glance).toBeVisible({ timeout: 15_000 });
   return { control, glance, initialTriggerHandle };
 }
 
@@ -139,6 +139,7 @@ export async function mockNotificationCenter(
     inboxQueries?: string[];
     inboxFailureViews?: string[];
     inboxItems?: () => unknown[];
+    byAppItems?: () => unknown[];
     inboxPage?: (requestUrl: string) => {
       items: unknown[];
       nextCursor: string | null;
@@ -165,7 +166,7 @@ export async function mockNotificationCenter(
       return fulfillSuccess(route, {
         partial: options.partial ?? false,
         unavailableSources: options.unavailableSources ?? [],
-        apps: [
+        apps: options.byAppItems?.() ?? [
           {
             appKey: 'approvals',
             totalUnread: options.totalUnread ?? 1,
@@ -380,6 +381,257 @@ export async function mockNotificationProfile(
   });
 }
 
+export async function mockNotificationAttentionR2(page: Page) {
+  const createdAt = '2026-09-16T01:00:00Z';
+  let rules = [
+    {
+      ruleId: 'attention-rule-e2e-1',
+      scopeKind: 'ACTOR',
+      scopeKey: 'user:kim-minseo',
+      displayLabel: '김민서',
+      effect: 'PRIORITIZE',
+      channels: { IN_APP: true },
+      startsAt: null,
+      expiresAt: null,
+      source: 'USER',
+      managed: false,
+      exceptionAllowed: true,
+      enabled: true,
+      version: '1',
+      createdAt,
+      updatedAt: createdAt,
+    },
+  ];
+
+  await page.route('**/api/notifications/v1/me/attention-rules**', (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const path = url.pathname;
+    const method = request.method();
+    if (method === 'POST' && path.endsWith('/attention-rules/preview')) {
+      return fulfillSuccess(route, {
+        allowed: true,
+        effectiveEffect: request.postDataJSON().effect,
+        mandatoryConflict: false,
+        conflictReason: null,
+        estimatedAffectedCount: null,
+        estimateAvailable: false,
+        asOf: '2026-09-16T01:05:00Z',
+      });
+    }
+    if (method === 'GET' && path.endsWith('/attention-rules')) {
+      return fulfillSuccess(route, { items: rules, maxActiveRules: 25 });
+    }
+    if (method === 'POST' && path.endsWith('/attention-rules')) {
+      const input = request.postDataJSON() as Record<string, unknown>;
+      const created = {
+        ...input,
+        ruleId: `attention-rule-e2e-${rules.length + 1}`,
+        source: 'USER',
+        managed: false,
+        exceptionAllowed: true,
+        enabled: input.enabled ?? true,
+        version: '1',
+        createdAt,
+        updatedAt: '2026-09-16T01:06:00Z',
+      };
+      rules = [...rules, created] as typeof rules;
+      return fulfillSuccess(route, created);
+    }
+    const ruleMatch = /\/attention-rules\/([^/]+)$/u.exec(path);
+    const ruleId = ruleMatch ? decodeURIComponent(ruleMatch[1] ?? '') : '';
+    const current = rules.find((rule) => rule.ruleId === ruleId);
+    if (method === 'PUT' && current) {
+      const input = request.postDataJSON() as Record<string, unknown>;
+      const updated = {
+        ...current,
+        ...input,
+        version: String(Number(current.version) + 1),
+        updatedAt: '2026-09-16T01:07:00Z',
+      };
+      rules = rules.map((rule) => (rule.ruleId === ruleId ? updated : rule));
+      return fulfillSuccess(route, updated);
+    }
+    if (method === 'DELETE' && current) {
+      rules = rules.filter((rule) => rule.ruleId !== ruleId);
+      return route.fulfill({ status: 204 });
+    }
+    return route.fulfill({ status: 404 });
+  });
+
+  const attentionPreviewFingerprint = 'a'.repeat(64);
+  await page.route('**/api/notifications/v1/inbox/*/attention-controls/preview', (route) => {
+    const request = route.request();
+    const notificationId = new URL(request.url()).pathname.split('/').at(-3) ?? '';
+    const input = request.postDataJSON() as Record<string, unknown>;
+    return fulfillSuccess(route, {
+      controlKey: input.controlKey,
+      allowed: true,
+      policyLocked: false,
+      effectiveEffect: input.effect,
+      policySource: null,
+      policyReason: null,
+      previewFingerprint: attentionPreviewFingerprint,
+      currentRuleVersion: null,
+      expiresAt: input.expiresAt ?? null,
+      asOf: '2026-09-16T01:10:00Z',
+      notificationId,
+    });
+  });
+  await page.route('**/api/notifications/v1/inbox/*/attention-controls', (route) => {
+    const request = route.request();
+    const notificationId = new URL(request.url()).pathname.split('/').at(-2) ?? '';
+    if (request.method() === 'GET') {
+      return fulfillSuccess(route, {
+        partial: false,
+        unavailableSources: [],
+        message: null,
+        notificationId,
+        whyReceived: '김민서님이 회원님을 승인 담당자로 직접 지정했습니다.',
+        controls: [
+          {
+            controlKey: 'FOLLOW_CONTEXT',
+            scopeKind: 'THREAD',
+            label: '클라우드 운영 예산 승인 건',
+            description: '이 승인 건의 후속 변경을 우선 표시합니다.',
+            allowedEffects: ['FOLLOW'],
+            currentEffect: null,
+            policyLocked: false,
+            policyReason: null,
+            dndBypassAllowed: false,
+            expiresAt: null,
+            ruleId: null,
+            ruleVersion: null,
+          },
+          {
+            controlKey: 'MUTE_TYPE',
+            scopeKind: 'APP_TYPE',
+            label: '필수 승인 요청',
+            description: '회사 정책상 필수 승인 알림은 음소거할 수 없습니다.',
+            allowedEffects: ['MUTE'],
+            currentEffect: null,
+            policyLocked: true,
+            policyReason: '업무 필수 알림 정책',
+            dndBypassAllowed: true,
+            expiresAt: null,
+            ruleId: null,
+            ruleVersion: null,
+          },
+        ],
+        generatedAt: '2026-09-16T01:10:00Z',
+      });
+    }
+    const input = request.postDataJSON() as Record<string, unknown>;
+    if (input.previewFingerprint !== attentionPreviewFingerprint) {
+      return route.fulfill({
+        status: 409,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'ERROR',
+          code: 'ATTENTION_PREVIEW_STALE',
+          message: 'The attention impact preview is no longer current.',
+        }),
+      });
+    }
+    return fulfillSuccess(route, {
+      ruleId: 'attention-rule-context-e2e',
+      scopeKind: 'THREAD',
+      scopeKey: notification.threadKey,
+      displayLabel: '클라우드 운영 예산 승인 건',
+      effect: input.effect,
+      channels: { IN_APP: true },
+      startsAt: null,
+      expiresAt: input.expiresAt ?? null,
+      source: 'USER',
+      managed: false,
+      exceptionAllowed: true,
+      enabled: true,
+      version: '1',
+      createdAt,
+      updatedAt: '2026-09-16T01:11:00Z',
+    });
+  });
+
+  await page.route('**/api/notifications/v1/me/test-deliveries**', (route) => {
+    const request = route.request();
+    const pending = request.method() === 'POST';
+    return fulfillSuccess(route, {
+      testId: 'notification-test-e2e-1',
+      state: pending ? 'PENDING' : 'COMPLETED',
+      requestedChannels: ['IN_APP'],
+      stages: [
+        {
+          stage: 'REQUEST_VALIDATION',
+          state: 'SUCCEEDED',
+          detail: 'Request and rate limit validated.',
+          occurredAt: '2026-09-16T01:12:00Z',
+        },
+        {
+          stage: 'PRIVACY_FILTER',
+          state: 'SUCCEEDED',
+          detail: 'No business payload was persisted.',
+          occurredAt: '2026-09-16T01:12:01Z',
+        },
+        {
+          stage: 'IN_APP_PREVIEW',
+          state: pending ? 'PENDING' : 'SUCCEEDED',
+          detail: 'Safe preview path verified.',
+          occurredAt: pending ? null : '2026-09-16T01:12:02Z',
+        },
+        {
+          stage: 'ENDPOINT_DELIVERY',
+          state: 'DISABLED',
+          detail: 'External provider delivery is disabled in this environment.',
+          occurredAt: '2026-09-16T01:12:02Z',
+        },
+      ],
+      createdAt: '2026-09-16T01:12:00Z',
+      expiresAt: '2099-09-16T02:12:00Z',
+      retryAfterSeconds: null,
+    });
+  });
+}
+
+export async function mockNotificationNoiseQuality(page: Page) {
+  await page.route('**/api/notifications/v1/admin/noise-quality', (route) =>
+    fulfillSuccess(route, {
+      partial: false,
+      unavailableSources: [],
+      message: null,
+      sufficientCohort: true,
+      minimumCohortSize: 20,
+      observedCohortSize: 84,
+      muteRate: 0.18,
+      deduplicationRate: 0.31,
+      actionConversionRate: 0.64,
+      fatigueExposedUsers: 9,
+      noisyTypes: [
+        {
+          appKey: 'messaging',
+          typeKey: 'MESSAGE.MENTION',
+          cohortSize: 42,
+          volume: 186,
+          muteRate: 0.08,
+          deduplicationRate: 0.22,
+          actionConversionRate: 0.71,
+          findingCode: null,
+        },
+        {
+          appKey: 'messaging',
+          typeKey: 'MESSAGE.PRIVATE_THREAD',
+          cohortSize: 7,
+          volume: 14,
+          muteRate: 0.57,
+          deduplicationRate: 0.04,
+          actionConversionRate: 0.12,
+          findingCode: 'LOW_COHORT_REVIEW',
+        },
+      ],
+      generatedAt: '2026-09-16T01:15:00Z',
+    })
+  );
+}
+
 export async function mockNotificationPreferences(page: Page) {
   const endpointRevokeRequests: Array<Record<string, unknown>> = [];
   let endpoints = [
@@ -483,6 +735,7 @@ export async function mockNotificationPreferences(page: Page) {
       generatedAt: '2026-09-03T04:00:00Z',
     })
   );
+  await mockNotificationAttentionR2(page);
   return { endpointRevokeRequests };
 }
 
@@ -522,4 +775,5 @@ export async function mockNotificationAdminOverview(page: Page) {
       findings: [],
     })
   );
+  await mockNotificationNoiseQuality(page);
 }

@@ -1,0 +1,453 @@
+{
+  "capturedAt": "2026-09-16T06:06:41.283Z",
+  "source": "REAL_LOCAL_UI_LOGIN_NATIVE_HTTP_NO_RESPONSE_MOCKS",
+  "baseURL": "http://127.0.0.1:4200",
+  "results": [
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/home",
+      "actualPath": "/calendar/home",
+      "heading": "오늘의 흐름",
+      "textLength": 976,
+      "stableReads": 3,
+      "skeletons": 3,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/01-today.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/schedule",
+      "actualPath": "/calendar/schedule",
+      "heading": "일정",
+      "textLength": 491,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/02-schedule.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/focus",
+      "actualPath": "/calendar/focus",
+      "heading": "집중 계획",
+      "textLength": 664,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [
+        "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. 0e8df8f0-47f9-9936-196e-6be401d3ec61",
+        "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. 5b763d12-07a4-74c1-cb95-78ad4c2860bf"
+      ],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/03-focus-plan.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/invitations",
+      "actualPath": "/calendar/invitations",
+      "heading": "초대 및 응답",
+      "textLength": 197,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/04-invitations.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/availability",
+      "actualPath": "/calendar/availability",
+      "heading": "함께 가능한 시간 찾기",
+      "textLength": 397,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/05-find-time.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/insights",
+      "actualPath": "/calendar/insights",
+      "heading": "나의 시간 인사이트",
+      "textLength": 684,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/06-insights.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/trash",
+      "actualPath": "/calendar/trash",
+      "heading": "휴지통",
+      "textLength": 98,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/07-trash.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/admin/overview",
+      "actualPath": "/calendar/admin/overview",
+      "heading": "캘린더 운영 현황",
+      "textLength": 1201,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/08-admin-overview.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/admin/company-calendars",
+      "actualPath": "/calendar/admin/company-calendars",
+      "heading": "회사 캘린더",
+      "textLength": 434,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/09-admin-company-calendars.png"
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "requestedRoute": "/calendar/admin/policies",
+      "actualPath": "/calendar/admin/policies",
+      "heading": "일정 정책",
+      "textLength": 568,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 1440,
+        "scrollX": 0,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/desktop/10-admin-policies.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/home",
+      "actualPath": "/calendar/home",
+      "heading": "오늘의 흐름",
+      "textLength": 631,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/01-today.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/schedule",
+      "actualPath": "/calendar/schedule",
+      "heading": "일정",
+      "textLength": 669,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/02-schedule.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/focus",
+      "actualPath": "/calendar/focus",
+      "heading": "집중 계획",
+      "textLength": 664,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [
+        "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. 0e8df8f0-47f9-9936-196e-6be401d3ec61",
+        "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. 5b763d12-07a4-74c1-cb95-78ad4c2860bf"
+      ],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/03-focus-plan.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/invitations",
+      "actualPath": "/calendar/invitations",
+      "heading": "초대 및 응답",
+      "textLength": 207,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/04-invitations.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/availability",
+      "actualPath": "/calendar/availability",
+      "heading": "함께 가능한 시간 찾기",
+      "textLength": 397,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/05-find-time.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/insights",
+      "actualPath": "/calendar/insights",
+      "heading": "나의 시간 인사이트",
+      "textLength": 663,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/06-insights.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/trash",
+      "actualPath": "/calendar/trash",
+      "heading": "휴지통",
+      "textLength": 98,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/07-trash.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/admin/overview",
+      "actualPath": "/calendar/admin/overview",
+      "heading": "캘린더 운영 현황",
+      "textLength": 1251,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/08-admin-overview.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/admin/company-calendars",
+      "actualPath": "/calendar/admin/company-calendars",
+      "heading": "회사 캘린더",
+      "textLength": 441,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/09-admin-company-calendars.png"
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "requestedRoute": "/calendar/admin/policies",
+      "actualPath": "/calendar/admin/policies",
+      "heading": "일정 정책",
+      "textLength": 568,
+      "stableReads": 3,
+      "skeletons": 0,
+      "progressbars": 0,
+      "viewportEvidence": {
+        "innerWidth": 390,
+        "scrollX": 0,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "failedReads": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "output/calendar-re-audit-2026-09-16/current-state/mobile/10-admin-policies.png"
+    }
+  ]
+}

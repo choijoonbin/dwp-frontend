@@ -25,6 +25,7 @@ export type MailProposalType =
 export type MailProposalStatus = 'PROPOSED' | 'ACCEPTED' | 'DISMISSED' | 'EXPIRED' | 'EXECUTED';
 export type MailDeliveryState =
   'RECEIVED' | 'DRAFT' | 'QUEUED' | 'SENDING' | 'RETRYING' | 'SENT' | 'FAILED';
+export type MailSharedInboxAction = 'ASSIGN' | 'COMMENT' | 'REPLY' | 'SEND_AS';
 
 export type MailAccount = {
   accountId: string;
@@ -38,6 +39,17 @@ export type MailAccount = {
 };
 
 export type MailParticipant = { name: string; email: string };
+
+export type MailRecipient = {
+  type: 'TO' | 'CC' | 'BCC';
+  name?: string | null;
+  email: string;
+  emailAddress?: string | null;
+  address?: string | null;
+  recipientType?: 'TO' | 'CC' | 'BCC' | null;
+  kind?: 'TO' | 'CC' | 'BCC' | null;
+  displayName?: string | null;
+};
 
 export type MailThread = {
   threadId: string;
@@ -69,7 +81,7 @@ export type MailMessage = {
   messageId: string;
   senderEmail: string;
   senderName: string;
-  recipients: Array<Record<string, unknown>>;
+  recipients: MailRecipient[];
   direction: 'INBOUND' | 'OUTBOUND' | 'DRAFT';
   bodyFormat: 'TEXT' | 'HTML';
   body: string;
@@ -114,6 +126,7 @@ export type MailThreadDetail = {
   internalComments: MailInternalComment[];
   proposals: MailActionProposal[];
   sharedInboxMembers: MailSharedInboxMember[];
+  sharedInboxActions?: MailSharedInboxAction[];
 };
 
 export type MailDraftSaveInput = {
@@ -349,8 +362,13 @@ export type MailRuleInput = {
   enabled: boolean;
 };
 
-export async function getMailHome(): Promise<MailHome> {
-  const response = await axiosInstance.get<ApiResponse<MailHome>>('/api/platform/v1/mail/home');
+export async function getMailHome(input: { accountId?: string } = {}): Promise<MailHome> {
+  const search = new URLSearchParams();
+  if (input.accountId) search.set('accountId', input.accountId);
+  const suffix = search.size ? `?${search.toString()}` : '';
+  const response = await axiosInstance.get<ApiResponse<MailHome>>(
+    `/api/platform/v1/mail/home${suffix}`
+  );
   return response.data.data;
 }
 
@@ -360,6 +378,9 @@ export async function getMailThreads(input: {
   folder?: MailThread['folderType'];
   folderId?: string;
   sharedOnly?: boolean;
+  accountId?: string;
+  sharedInboxId?: string;
+  assignment?: 'MINE' | 'UNASSIGNED';
   query?: string;
   page?: number;
   pageSize?: number;
@@ -370,6 +391,9 @@ export async function getMailThreads(input: {
   if (input.folder) search.set('folder', input.folder);
   if (input.folderId) search.set('folderId', input.folderId);
   if (input.sharedOnly) search.set('sharedOnly', 'true');
+  if (input.accountId) search.set('accountId', input.accountId);
+  if (input.sharedInboxId) search.set('sharedInboxId', input.sharedInboxId);
+  if (input.assignment) search.set('assignment', input.assignment);
   if (input.query) search.set('query', input.query);
   search.set('page', String(input.page ?? 0));
   search.set('pageSize', String(input.pageSize ?? 30));
@@ -451,14 +475,24 @@ export async function addMailComment(
 export async function replyToMailThread(
   threadId: string,
   body: string,
-  idempotencyKey: string
+  idempotencyKey: string,
+  options: {
+    mode: 'REPLY' | 'REPLY_ALL';
+    recipients?: MailRecipient[];
+  } = { mode: 'REPLY' }
 ): Promise<MailThreadDetail> {
   const response = await axiosInstance.post<
     ApiResponse<MailThreadDetail>,
-    { body: string; idempotencyKey: string }
+    {
+      body: string;
+      idempotencyKey: string;
+      mode: 'REPLY' | 'REPLY_ALL';
+      recipients?: MailRecipient[];
+    }
   >(`/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/replies`, {
     body,
     idempotencyKey,
+    ...options,
   });
   return response.data.data;
 }
@@ -694,5 +728,67 @@ export async function applyMailLifecycle(
     version,
     targetFolderId,
   });
+  return response.data.data;
+}
+
+// Mail collaboration completion contracts
+
+export type MailLifecyclePreview = {
+  threadId: string;
+  action: MailLifecycleAction;
+  allowed: boolean;
+  blockers: string[];
+  targetFolderId?: string | null;
+  targetFolderName?: string | null;
+  affectedCount: number;
+  version: number;
+};
+
+export async function previewMailLifecycle(
+  threadId: string,
+  input: {
+    action: MailLifecycleAction;
+    targetFolderId?: string;
+    version: number;
+  }
+): Promise<MailLifecyclePreview> {
+  const response = await axiosInstance.post<ApiResponse<MailLifecyclePreview>, typeof input>(
+    `/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/lifecycle/preview`,
+    input
+  );
+  return response.data.data;
+}
+
+export async function reorderMailRules(input: {
+  rules: Array<{ ruleId: string; version: number }>;
+}): Promise<MailOrganization> {
+  const response = await axiosInstance.put<ApiResponse<MailOrganization>, typeof input>(
+    '/api/platform/v1/mail/organization/rules/order',
+    input
+  );
+  return response.data.data;
+}
+
+export async function getMailProposals(
+  input: { status?: MailProposalStatus; type?: MailProposalType } = {}
+): Promise<MailActionProposal[]> {
+  const search = new URLSearchParams();
+  if (input.status) search.set('status', input.status);
+  if (input.type) search.set('type', input.type);
+  const suffix = search.size ? `?${search.toString()}` : '';
+  const response = await axiosInstance.get<ApiResponse<MailActionProposal[]>>(
+    `/api/platform/v1/mail/proposals${suffix}`
+  );
+  return response.data.data;
+}
+
+export async function updateMailProposal(
+  proposalId: string,
+  input: { proposedPayload: Record<string, unknown>; version: number }
+): Promise<MailActionProposal> {
+  const response = await axiosInstance.put<ApiResponse<MailActionProposal>, typeof input>(
+    `/api/platform/v1/mail/proposals/${encodeURIComponent(proposalId)}`,
+    input
+  );
   return response.data.data;
 }

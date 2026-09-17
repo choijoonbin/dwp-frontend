@@ -199,14 +199,16 @@ test('a disclosed colleague floor opens actual dated discovery and disappears wh
     await expect(action).toBeVisible();
     const target = new URL((await action.getAttribute('href'))!, 'https://dwp.test');
     expect(Object.fromEntries(target.searchParams)).toEqual({
-      site: floor.siteId,
-      floor: floor.floorId,
+      v: '1',
       date: '2026-08-19',
-      timeZone: catalog.sites.find((site) => site.siteId === floor.siteId)!.timeZone,
+      tz: catalog.sites.find((site) => site.siteId === floor.siteId)!.timeZone,
+      sites: floor.siteId,
+      floors: floor.floorId,
+      types: 'ALL',
     });
   }
   await action.click();
-  await expect(page).toHaveURL(/\/workplace\/explore\?/u);
+  await expect(page).toHaveURL(/\/workplace\/find\?/u);
   await expect.poll(() => reads.at(-1)?.searchParams.get('floorId')).toBe(floor.floorId);
   await page.goto('/workplace/home?view=team');
   await expect(action).toHaveCount(1);

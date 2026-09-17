@@ -1,0 +1,184 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 개요
+          - paragraph [ref=e26]: SKAX
+        - navigation "알림 탐색" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 개요
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "알림 홈" [ref=e32] [cursor=pointer]:
+                  - /url: /notifications/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: 알림 홈
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: 알림 정리
+            - list [ref=e41]:
+              - listitem [ref=e42]:
+                - link "알림 센터" [ref=e43] [cursor=pointer]:
+                  - /url: /notifications/center
+                  - img [ref=e45]
+                  - paragraph [ref=e49]: 알림 센터
+              - listitem [ref=e50]:
+                - link "알림 설정" [ref=e51] [cursor=pointer]:
+                  - /url: /notifications/settings
+                  - img [ref=e53]
+                  - paragraph [ref=e57]: 알림 설정
+        - link "앱 목록으로 돌아가기" [ref=e59] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e61]
+          - text: 앱 목록으로 돌아가기
+    - banner [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - img [ref=e67]
+          - generic "알림" [ref=e73]
+        - navigation "앱 영역 전환" [ref=e76]:
+          - 'link "앱 관리: 알림" [ref=e78] [cursor=pointer]':
+            - /url: /notifications/admin/overview
+            - img [ref=e80]
+            - generic [ref=e83]: 앱 관리
+        - generic [ref=e84]:
+          - button "DWP 검색" [ref=e86] [cursor=pointer]:
+            - img [ref=e87]
+            - paragraph [ref=e90]: DWP 검색
+            - generic [ref=e91]: ⌘K
+          - generic [ref=e92]:
+            - button "전체 화면" [ref=e93] [cursor=pointer]:
+              - img [ref=e94]
+            - generic "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e100]:
+              - button "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e101] [cursor=pointer]:
+                - generic [ref=e102]:
+                  - img [ref=e103]
+                  - generic [ref=e106]: "4"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e108] [cursor=pointer]':
+            - generic [ref=e109]: T
+            - img [ref=e110]
+    - main [ref=e112]:
+      - generic [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - img [ref=e118]
+            - generic [ref=e123]:
+              - heading "알림 설정" [level=1] [ref=e124]
+              - paragraph [ref=e125]: 전역 설정을 기준으로 앱, 알림 유형, 전달 채널별 예외를 관리합니다.
+          - status [ref=e126]:
+            - img [ref=e127]
+            - generic [ref=e129]: 변경 사항 자동 저장
+        - tablist "알림 설정" [ref=e132]:
+          - tab "알림 설정" [selected] [ref=e133] [cursor=pointer]:
+            - img [ref=e134]
+            - text: 알림 설정
+          - tab "내 수신 상태" [ref=e135] [cursor=pointer]:
+            - img [ref=e136]
+            - text: 내 수신 상태
+        - tabpanel "알림 설정" [ref=e139]:
+          - navigation "알림 설정 바로가기" [ref=e140]:
+            - generic [ref=e141]:
+              - button "전역 전달 채널" [ref=e142] [cursor=pointer]:
+                - img [ref=e144]
+                - text: 전역 전달 채널
+              - button "앱별 알림" [ref=e149] [cursor=pointer]:
+                - img [ref=e151]
+                - text: 앱별 알림
+              - button "수신 집중 규칙" [ref=e154] [cursor=pointer]:
+                - img [ref=e156]
+                - text: 수신 집중 규칙
+              - button "집중 시간" [ref=e162] [cursor=pointer]:
+                - img [ref=e164]
+                - text: 집중 시간
+              - button "도착 알림 및 개인정보" [ref=e166] [cursor=pointer]:
+                - img [ref=e168]
+                - text: 도착 알림 및 개인정보
+              - button "요약 알림" [ref=e172] [cursor=pointer]:
+                - img [ref=e174]
+                - text: 요약 알림
+          - generic [ref=e179]:
+            - generic [ref=e180]:
+              - heading "전역 전달 채널" [level=2] [ref=e181]
+              - paragraph [ref=e182]: 모든 앱에 적용할 기본 전달 채널입니다. 관리 정책과 앱별 예외가 우선할 수 있습니다.
+            - generic [ref=e183]:
+              - generic [ref=e184]:
+                - generic [ref=e185]:
+                  - generic [ref=e186]:
+                    - img [ref=e188]
+                    - switch "앱 내 알림 전역 사용 설정" [checked] [ref=e195] [cursor=pointer]
+                  - paragraph [ref=e198]: 앱 내 알림
+                  - generic [ref=e199]: DWP 알림 센터에서 항상 확인합니다.
+                - generic [ref=e201]:
+                  - generic [ref=e202]:
+                    - img [ref=e204]
+                    - generic [ref=e207]:
+                      - generic:
+                        - switch "이메일 전역 사용 설정" [disabled]
+                  - paragraph [ref=e209]: 이메일
+                  - generic [ref=e210]: 검증된 회사 이메일 주소로 전달합니다.
+                  - generic "연결 준비 중" [ref=e212]:
+                    - img [ref=e213]
+                    - generic [ref=e216]: 연결 준비 중
+                - generic [ref=e217]:
+                  - generic [ref=e218]:
+                    - img [ref=e220]
+                    - generic [ref=e222]:
+                      - generic:
+                        - switch "브라우저 푸시 전역 사용 설정" [disabled]
+                  - paragraph [ref=e224]: 브라우저 푸시
+                  - generic [ref=e225]: 허용한 브라우저에서 업무 알림을 받습니다.
+                  - generic "연결 준비 중" [ref=e227]:
+                    - img [ref=e228]
+                    - generic [ref=e231]: 연결 준비 중
+                - generic [ref=e232]:
+                  - generic [ref=e233]:
+                    - img [ref=e235]
+                    - generic [ref=e237]:
+                      - generic:
+                        - switch "모바일 푸시 전역 사용 설정" [disabled]
+                  - paragraph [ref=e239]: 모바일 푸시
+                  - generic [ref=e240]: 등록된 모바일 기기에 안전한 미리보기를 보냅니다.
+                  - generic "연결 준비 중" [ref=e242]:
+                    - img [ref=e243]
+                    - generic [ref=e246]: 연결 준비 중
+                - generic [ref=e247]:
+                  - generic [ref=e248]:
+                    - img [ref=e250]
+                    - generic [ref=e252]:
+                      - generic:
+                        - switch "Microsoft Teams 전역 사용 설정" [disabled]
+                  - paragraph [ref=e254]: Microsoft Teams
+                  - generic [ref=e255]: 연결된 Microsoft Teams 계정으로 전달합니다.
+                  - generic "연결 준비 중" [ref=e257]:
+                    - img [ref=e258]
+                    - generic [ref=e261]: 연결 준비 중
+                - generic [ref=e262]:
+                  - generic [ref=e263]:
+                    - img [ref=e265]
+                    - generic [ref=e267]:
+                      - generic:
+                        - switch "Slack 전역 사용 설정" [disabled]
+                  - paragraph [ref=e269]: Slack
+                  - generic [ref=e270]: 연결된 Slack 계정으로 전달합니다.
+                  - generic "연결 준비 중" [ref=e272]:
+                    - img [ref=e273]
+                    - generic [ref=e276]: 연결 준비 중
+              - alert [ref=e277]:
+                - img [ref=e279]
+                - generic [ref=e281]: 현재는 DWP 앱 내 알림만 활성화되어 있습니다. 이메일, 브라우저·모바일 푸시 및 협업 도구 전달은 테넌트 연결과 운영 검증이 완료된 뒤 사용할 수 있습니다.
+```

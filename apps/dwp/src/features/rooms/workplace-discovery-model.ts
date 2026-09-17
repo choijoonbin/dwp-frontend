@@ -16,6 +16,7 @@ export type WorkplaceDiscoveryFilters = {
   search: string;
   type: WorkplaceResourceType | 'ALL';
   feature: string;
+  capacity?: number | null;
   neighborhood: string;
   accessibleOnly: boolean;
   sort: WorkplaceDiscoverySort;
@@ -150,6 +151,9 @@ export function filterWorkplaceResources(
       (resource) =>
         (filters.type === 'ALL' || resource.type === filters.type) &&
         (!filters.feature || resource.features.includes(filters.feature)) &&
+        (filters.capacity === null ||
+          filters.capacity === undefined ||
+          resource.capacity >= filters.capacity) &&
         (!filters.neighborhood || resource.neighborhood === filters.neighborhood) &&
         (!filters.accessibleOnly || resource.accessible) &&
         (!keyword ||

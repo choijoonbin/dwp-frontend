@@ -767,22 +767,19 @@ export async function mockApprovalProductSurfaceAuthority(
       ];
     const nonPublishingReviewRejection =
       routeContractKey === 'route.approvals.admin.form-publish-review-reject.action';
-    const evaluatedContext =
-      receiptAuthority
-        ? {
-            ...context,
-            effectiveGrants: [
-              {
-                ...capabilityGrant(receiptAuthority.capability, scope.key, true, 'ACTIVE'),
-                resolvedCapabilityCode: receiptAuthority.permission,
-                authorityMode: 'PERMISSION' as const,
-                predicatePolicyKeys: [
-                  'predicate.approval.retention-command-original-authority.v1',
-                ],
-              },
-            ],
-          }
-        : actionCapability || APPROVAL_POLICY_ACTIONS.has(routeContractKey)
+    const evaluatedContext = receiptAuthority
+      ? {
+          ...context,
+          effectiveGrants: [
+            {
+              ...capabilityGrant(receiptAuthority.capability, scope.key, true, 'ACTIVE'),
+              resolvedCapabilityCode: receiptAuthority.permission,
+              authorityMode: 'PERMISSION' as const,
+              predicatePolicyKeys: ['predicate.approval.retention-command-original-authority.v1'],
+            },
+          ],
+        }
+      : actionCapability || APPROVAL_POLICY_ACTIONS.has(routeContractKey)
         ? {
             ...context,
             effectiveGrants: context.effectiveGrants

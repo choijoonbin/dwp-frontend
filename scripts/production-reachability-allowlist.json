@@ -1,18 +1,42 @@
 {
   "version": 1,
-  "maximumEntries": 3,
+  "maximumEntries": 7,
   "entries": [
     {
-      "path": "apps/dwp/src/routes/draft-product-page-route-contracts.ts",
-      "owner": "Frontend Architecture",
-      "reason": "Verification-only draft route projection consumed by architecture contract tests.",
-      "removalCondition": "Remove when draft route verification is generated directly from the canonical route source."
+      "path": "apps/dwp/src/features/rooms/room-bookings.tsx",
+      "owner": "Workplace",
+      "reason": "Legacy room-booking screen retained during migration to the canonical workplace-unified-reservations implementation.",
+      "removalCondition": "Remove after the Workplace owner confirms that no supported migration or rollback path consumes the legacy screen."
     },
     {
-      "path": "apps/dwp/src/routes/product-page-route-contracts.ts",
-      "owner": "Frontend Architecture",
-      "reason": "Verification-only combined route projection consumed by architecture contract tests.",
-      "removalCondition": "Remove when combined route verification is generated directly from the canonical route source."
+      "path": "apps/dwp/src/features/rooms/rooms-find.tsx",
+      "owner": "Workplace",
+      "reason": "Legacy room-finder screen retained during migration to the canonical workplace-explore implementation.",
+      "removalCondition": "Remove after the Workplace owner confirms that no supported migration or rollback path consumes the legacy screen."
+    },
+    {
+      "path": "apps/dwp/src/features/rooms/workplace-booking-check-in-window.tsx",
+      "owner": "Workplace",
+      "reason": "Legacy booking subgraph retained during migration to the canonical workplace-unified-reservations implementation.",
+      "removalCondition": "Remove with the legacy workplace-bookings subgraph after Workplace owner review."
+    },
+    {
+      "path": "apps/dwp/src/features/rooms/workplace-booking-detail-panel.tsx",
+      "owner": "Workplace",
+      "reason": "Legacy booking subgraph retained during migration to the canonical workplace-unified-reservations implementation.",
+      "removalCondition": "Remove with the legacy workplace-bookings subgraph after Workplace owner review."
+    },
+    {
+      "path": "apps/dwp/src/features/rooms/workplace-bookings.tsx",
+      "owner": "Workplace",
+      "reason": "Legacy booking screen retained during migration to the canonical workplace-unified-reservations implementation.",
+      "removalCondition": "Remove after the Workplace owner confirms that no supported migration or rollback path consumes the legacy screen."
+    },
+    {
+      "path": "apps/dwp/src/features/rooms/workplace-release-windows.tsx",
+      "owner": "Workplace",
+      "reason": "Legacy booking subgraph retained during migration to the canonical workplace-unified-reservations implementation.",
+      "removalCondition": "Remove with the legacy workplace-bookings subgraph after Workplace owner review."
     },
     {
       "path": "apps/dwp/src/routes/product-menu-manifest.ts",

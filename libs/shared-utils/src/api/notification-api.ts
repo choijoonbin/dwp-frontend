@@ -11,7 +11,15 @@ import type {
   NotificationPartialState,
   NotificationPriority,
 } from './notification-contract';
+import type { NotificationSummary, NotificationView } from './notification-summary-api';
 import type { ApiResponse } from '../types';
+
+export { getNotificationSummary } from './notification-summary-api';
+export type {
+  NotificationSummary,
+  NotificationView,
+  NotificationViewCounts,
+} from './notification-summary-api';
 
 export type * from './notification-contract';
 
@@ -30,8 +38,8 @@ export const NOTIFICATION_API_CAPABILITIES = {
 
 export type NotificationChangeCursor = string;
 
-export type NotificationView = 'PRIORITY' | 'ALL' | 'MENTIONS' | 'SAVED' | 'SNOOZED' | 'DONE';
 export type NotificationInterruptionLevel = 'PASSIVE' | 'ACTIVE' | 'TIME_SENSITIVE' | 'CRITICAL';
+export type NotificationMaterializedAttentionEffect = 'FOLLOW' | 'PRIORITIZE';
 export type NotificationCapabilities = {
   enabledChannels: NotificationChannel[];
   unavailableChannels: NotificationChannel[];
@@ -90,6 +98,7 @@ export type NotificationItem = {
   actorLabel?: string | null;
   priority: NotificationPriority;
   interruptionLevel?: NotificationInterruptionLevel;
+  attentionEffect?: NotificationMaterializedAttentionEffect | null;
   reason: NotificationReason;
   receivedAt: string;
   lastActivityAt: string;
@@ -135,17 +144,6 @@ export type NotificationInboxPage = NotificationPartialState & {
   changeVersion: NotificationChangeVersion;
 };
 
-export type NotificationViewCounts = Record<NotificationView, number>;
-
-export type NotificationSummary = NotificationPartialState & {
-  actionableUnread: number;
-  totalUnread: number;
-  viewCounts: NotificationViewCounts;
-  changeVersion: NotificationChangeVersion;
-  counterVersion: NotificationCounterVersion;
-  generatedAt: string;
-};
-
 export type NotificationSyncResult = {
   changeVersion: NotificationChangeVersion;
   counterVersion: NotificationCounterVersion;
@@ -179,8 +177,25 @@ export type NotificationInboxQuery = {
   priority?: NotificationPriority | 'ALL';
   readState?: 'ALL' | 'UNREAD' | 'READ';
   reason?: NotificationReasonKind | 'ALL';
+  attentionEffect?: 'ALL' | 'PRIORITIZE';
+  includedTypes?: readonly NotificationIncludedType[];
+  contexts?: readonly NotificationInboxContextFilter[];
   from?: string;
   to?: string;
+};
+
+export const NOTIFICATION_INCLUDED_TYPES = [
+  'DIRECT',
+  'MENTION',
+  'ASSIGNED',
+  'SUBSCRIPTION',
+  'MANDATORY_POLICY',
+] as const;
+export type NotificationIncludedType = (typeof NOTIFICATION_INCLUDED_TYPES)[number];
+
+export type NotificationInboxContextFilter = {
+  kind: 'ACTOR' | 'THREAD' | 'RESOURCE' | 'TOPIC_TOKEN';
+  key: string;
 };
 
 export type NotificationSyncQuery = {
@@ -357,11 +372,17 @@ function boundedLimit(value: number | undefined, fallback: number): number {
   return Math.max(1, Math.min(100, Math.trunc(value)));
 }
 
-function queryString(values: Record<string, string | number | undefined | null>): string {
+function queryString(
+  values: Record<string, string | number | readonly string[] | undefined | null>
+): string {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(values)) {
     if (value === undefined || value === null || value === '') continue;
-    search.set(key, String(value));
+    if (Array.isArray(value)) {
+      value.forEach((item) => search.append(key, item));
+    } else {
+      search.set(key, String(value));
+    }
   }
   const serialized = search.toString();
   return serialized ? `?${serialized}` : '';
@@ -469,12 +490,6 @@ export function parseNotificationSyncResetSignal(
     : null;
 }
 
-export function getNotificationSummary(signal?: AbortSignal): Promise<NotificationSummary> {
-  return axiosInstance
-    .get<ApiResponse<NotificationSummary>>(`${NOTIFICATION_API_BASE}/summary`, { signal })
-    .then((response) => response.data.data);
-}
-
 export function getNotificationCapabilities(
   signal?: AbortSignal
 ): Promise<NotificationCapabilities> {
@@ -517,6 +532,9 @@ export function getNotificationInbox(
   input: NotificationInboxQuery,
   signal?: AbortSignal
 ): Promise<NotificationInboxPage> {
+  const contexts = canonicalInboxContexts(input.contexts ?? []);
+  const includedTypes = canonicalInboxIncludedTypes(input.includedTypes ?? []);
+  const attentionEffect = canonicalInboxAttentionEffect(input.attentionEffect);
   const query = queryString({
     view: input.view,
     cursor: input.cursor,
@@ -526,12 +544,71 @@ export function getNotificationInbox(
     priority: input.priority === 'ALL' ? undefined : input.priority,
     readState: input.readState === 'ALL' ? undefined : input.readState,
     reason: input.reason === 'ALL' ? undefined : input.reason,
+    attentionEffect,
+    includedType: includedTypes,
+    contextKind: contexts.map((context) => context.kind),
+    contextKey: contexts.map((context) => context.key),
     from: input.from,
     to: input.to,
   });
   return axiosInstance
     .get<ApiResponse<NotificationInboxPage>>(`${NOTIFICATION_API_BASE}/inbox${query}`, { signal })
     .then((response) => response.data.data);
+}
+
+function canonicalInboxAttentionEffect(
+  value: NotificationInboxQuery['attentionEffect']
+): 'PRIORITIZE' | undefined {
+  if (value == null || value === 'ALL') return undefined;
+  if (value === 'PRIORITIZE') return value;
+  throw new Error('Notification attention effect must be PRIORITIZE.');
+}
+
+function canonicalInboxIncludedTypes(
+  values: readonly NotificationIncludedType[]
+): NotificationIncludedType[] {
+  if (values.length > 5) throw new Error('Notification included types are limited to 5.');
+  const unique = new Set(values);
+  if (
+    unique.size !== values.length ||
+    [...unique].some((value) => !NOTIFICATION_INCLUDED_TYPES.includes(value))
+  ) {
+    throw new Error('Notification included types must be unique supported values.');
+  }
+  return [...unique].sort(
+    (left, right) =>
+      NOTIFICATION_INCLUDED_TYPES.indexOf(left) - NOTIFICATION_INCLUDED_TYPES.indexOf(right)
+  );
+}
+
+const INBOX_CONTEXT_KINDS = ['ACTOR', 'THREAD', 'RESOURCE', 'TOPIC_TOKEN'] as const;
+const INBOX_OPAQUE_CONTEXT = /^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,299}$/u;
+const INBOX_TOPIC_CONTEXT = /^[a-z0-9][a-z0-9._-]{0,159}$/u;
+
+function canonicalInboxContexts(
+  contexts: readonly NotificationInboxContextFilter[]
+): NotificationInboxContextFilter[] {
+  if (contexts.length > 5) throw new Error('Notification context filters are limited to 5.');
+  const unique = new Set<string>();
+  const result = contexts.map((context) => {
+    const pattern = context.kind === 'TOPIC_TOKEN' ? INBOX_TOPIC_CONTEXT : INBOX_OPAQUE_CONTEXT;
+    const identity = `${context.kind}\u0000${context.key}`;
+    if (
+      !INBOX_CONTEXT_KINDS.includes(context.kind) ||
+      context.key !== context.key.trim() ||
+      !pattern.test(context.key) ||
+      unique.has(identity)
+    ) {
+      throw new Error('Notification context filters must be unique canonical opaque keys.');
+    }
+    unique.add(identity);
+    return { ...context };
+  });
+  return result.sort(
+    (left, right) =>
+      INBOX_CONTEXT_KINDS.indexOf(left.kind) - INBOX_CONTEXT_KINDS.indexOf(right.kind) ||
+      left.key.localeCompare(right.key)
+  );
 }
 
 export function getNotificationDetail(

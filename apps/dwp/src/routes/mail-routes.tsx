@@ -3,6 +3,7 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { MAIL_PRODUCT_MANIFEST } from '../features/mail/mail-product-manifest';
+import { resolveMailProductAreaMobileShell } from '../features/mail/mail-mobile-navigation';
 import { MailLayout } from '../layouts/mail-layout';
 import {
   authenticationFallback,
@@ -53,6 +54,7 @@ export const mailRoutes: RouteObject[] = [
       managementLegacyShell,
       areaKey: 'mail',
       translationNamespace: 'mail',
+      resolveMobileShell: resolveMailProductAreaMobileShell,
       renderPage: () => page,
       legacyUnknown: page,
     }),

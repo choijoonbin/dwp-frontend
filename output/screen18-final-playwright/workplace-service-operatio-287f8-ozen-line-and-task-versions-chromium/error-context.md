@@ -1,0 +1,259 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - generic "0 actionable notifications, 0 total unread" [ref=e27]:
+            - button "0 actionable notifications, 0 total unread" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]:
+                - img [ref=e30]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+          - generic "Open DWAI·ON" [ref=e39]:
+            - button "Open DWAI·ON" [ref=e40] [cursor=pointer]
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - text: Reservation services
+            - heading "My workplace service orders" [level=1] [ref=e47]
+            - paragraph [ref=e48]: Track reservation-linked services separately from the reservation lifecycle.
+          - link "Open reservations" [ref=e49] [cursor=pointer]:
+            - /url: /workplace/reservations
+            - img [ref=e51]
+            - text: Open reservations
+        - dialog "Service order details" [ref=e55]:
+          - button "Close" [active] [ref=e57] [cursor=pointer]: Close
+          - generic [ref=e59]:
+            - heading "Service order details" [level=2] [ref=e60]
+            - generic [ref=e61]:
+              - link "Add services" [ref=e62] [cursor=pointer]:
+                - /url: /workplace/reservations?v=1&period=UPCOMING&types=ALL&status=ACTIVE&authority=WORKPLACE&reservation=18000000-0000-4000-8000-000000000103&reservationAuthority=WORKPLACE&tab=services
+                - img [ref=e64]
+                - text: Add services
+              - link "Contact service desk" [ref=e65] [cursor=pointer]:
+                - /url: "#workplace-service-contact"
+                - img [ref=e67]
+                - text: Contact service desk
+              - button "Print" [ref=e69] [cursor=pointer]:
+                - img [ref=e71]
+                - text: Print
+            - generic [ref=e75]:
+              - heading [level=1] [ref=e76]: Workplace service order
+              - paragraph [ref=e77]: Audit reference · WSO-0303Y2K
+              - generic [ref=e78]:
+                - term [ref=e79]: Reservation
+                - definition [ref=e80]: RSV-03K35GI
+                - term [ref=e81]: Reservation schedule
+                - definition [ref=e82]: September 20, 2026 at 10:00 AM – September 20, 2026 at 11:00 AM
+                - term [ref=e83]: Order state
+                - definition [ref=e84]: Fulfilled
+              - generic [ref=e86]:
+                - heading [level=2] [ref=e87]: AV readiness
+                - paragraph [ref=e88]: 2 × service · 50,000 KRW
+                - generic [ref=e89]: Cancel until one hour before
+              - heading [level=6] [ref=e90]: "Estimated total: 50,000 KRW"
+              - generic [ref=e91]: This requester-safe copy excludes internal assignee, provider receipt, blocker detail, and audit identities.
+            - generic [ref=e92]:
+              - term [ref=e93]: Estimated cost
+              - definition [ref=e94]: 50,000 KRW
+              - term [ref=e95]: Cost center
+              - definition [ref=e96]: CC-1800
+            - list [ref=e97]:
+              - listitem [ref=e98]:
+                - generic [ref=e99]:
+                  - heading "AV readiness" [level=3] [ref=e100]
+                  - generic [ref=e102]: Fulfilled
+                - text: 2 of 2 fulfilled
+                - generic [ref=e103]: 0 cancelled · 0 KRW refunded
+                - generic [ref=e104]:
+                  - generic [ref=e105]:
+                    - generic [ref=e106]:
+                      - img [ref=e107]
+                      - heading "Temporary access credential" [level=4] [ref=e110]
+                    - generic [ref=e112]: Memory only
+                  - paragraph [ref=e113]: Reauthenticate to reveal the provider credential once. It is cleared when hidden, closed, or expired.
+                  - generic [ref=e114]:
+                    - generic [ref=e115]:
+                      - generic: Reason for revealing
+                      - generic [ref=e116]:
+                        - textbox "Reason for revealing" [ref=e117]
+                        - group:
+                          - generic: Reason for revealing
+                    - generic [ref=e118] [cursor=pointer]:
+                      - generic [ref=e119]:
+                        - checkbox "I understand this credential is sensitive and must not be copied into notes or messages." [ref=e120]
+                        - img [ref=e121]
+                      - generic [ref=e123]: I understand this credential is sensitive and must not be copied into notes or messages.
+                    - alert [ref=e124]:
+                      - img [ref=e126]
+                      - generic [ref=e128]: Fresh reauthentication is unavailable for this read-only or unverified session.
+                    - generic [ref=e129]:
+                      - button "Reauthenticate and reveal" [disabled]
+                - generic [ref=e130]:
+                  - generic [ref=e131]:
+                    - heading "Final inspection and acceptance" [level=4] [ref=e132]
+                    - generic [ref=e134]: Not started
+                  - generic [ref=e135]:
+                    - generic [ref=e136] [cursor=pointer]:
+                      - generic [ref=e137]:
+                        - checkbox "Equipment ready" [ref=e138]
+                        - img [ref=e139]
+                      - generic [ref=e141]: Equipment ready
+                    - generic [ref=e142]:
+                      - generic [ref=e143]: Inspection decision
+                      - generic [ref=e144]:
+                        - combobox "Inspection decision Pass and accept" [ref=e145] [cursor=pointer]: Pass and accept
+                        - textbox: PASSED
+                        - img
+                        - group:
+                          - generic: Inspection decision
+                    - generic [ref=e146]:
+                      - generic: Acceptance note
+                      - generic [ref=e147]:
+                        - textbox "Acceptance note" [ref=e148]
+                        - group:
+                          - generic: Acceptance note
+                    - generic [ref=e149] [cursor=pointer]:
+                      - generic [ref=e150]:
+                        - checkbox "I confirm this decision reflects the completed service and checklist evidence." [ref=e151]
+                        - img [ref=e152]
+                      - generic [ref=e154]: I confirm this decision reflects the completed service and checklist evidence.
+                    - button "Accept service" [disabled]:
+                      - generic:
+                        - img
+                      - text: Accept service
+            - heading "Policy details" [level=3] [ref=e156]:
+              - button "Policy details" [ref=e157] [cursor=pointer]:
+                - generic [ref=e159]:
+                  - img [ref=e160]
+                  - heading "Policy details" [level=3] [ref=e163]
+                - img [ref=e165]
+            - generic [ref=e169]:
+              - heading "Order timeline" [level=3] [ref=e170]
+              - list [ref=e171]:
+                - listitem [ref=e172]: Service order submitted
+              - button "Load more" [ref=e173] [cursor=pointer]
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - img [ref=e176]
+                - heading "Messages and attachments" [level=3] [ref=e178]
+              - generic [ref=e179]:
+                - generic [ref=e180]:
+                  - img [ref=e181]
+                  - heading "Contact workplace support" [level=4] [ref=e183]
+                - generic [ref=e184]:
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: Contact target
+                    - generic [ref=e187]:
+                      - combobox "Contact target Site service desk" [ref=e188] [cursor=pointer]: Site service desk
+                      - textbox: SERVICE_DESK
+                      - img
+                      - group:
+                        - generic: Contact target
+                  - generic [ref=e189]:
+                    - generic [ref=e190]: Service line
+                    - generic [ref=e191]:
+                      - combobox "Service line AV_ASSIST · DWP_NATIVE_FULFILLMENT" [ref=e192] [cursor=pointer]: AV_ASSIST · DWP_NATIVE_FULFILLMENT
+                      - textbox: 18000000-0000-4000-8000-000000000104
+                      - img
+                      - group:
+                        - generic: Service line
+                  - generic [ref=e193]:
+                    - generic: Message
+                    - generic [ref=e194]:
+                      - textbox "Message" [ref=e195]
+                      - group:
+                        - generic: Message
+                  - generic [ref=e196]:
+                    - generic: Change reason
+                    - generic [ref=e197]:
+                      - textbox "Change reason" [ref=e198]
+                      - group:
+                        - generic: Change reason
+                  - generic [ref=e199] [cursor=pointer]:
+                    - generic [ref=e200]:
+                      - checkbox "I confirmed the current order and understand that the target will be resolved again by the server." [ref=e201]
+                      - img [ref=e202]
+                    - generic [ref=e204]: I confirmed the current order and understand that the target will be resolved again by the server.
+                  - button "Send contact request" [disabled]:
+                    - generic:
+                      - img
+                    - text: Send contact request
+              - generic [ref=e205]:
+                - heading "Conversation" [level=4] [ref=e206]
+                - list [ref=e207]:
+                  - listitem [ref=e208]:
+                    - paragraph [ref=e209]: Use the east entrance for delivery.
+                    - text: Requester · Sep 17, 2026, 9:04 AM
+                - button "Load more" [ref=e210] [cursor=pointer]
+              - generic [ref=e211]:
+                - generic [ref=e212]:
+                  - generic: Message
+                  - generic [ref=e213]:
+                    - textbox "Message" [ref=e214]
+                    - group:
+                      - generic: Message
+                - generic [ref=e215]:
+                  - generic: Message reason
+                  - generic [ref=e216]:
+                    - textbox "Message reason" [ref=e217]
+                    - group:
+                      - generic: Message reason
+                - generic [ref=e218] [cursor=pointer]:
+                  - generic [ref=e219]:
+                    - checkbox "I confirmed this message belongs to the current service order." [ref=e220]
+                    - img [ref=e221]
+                  - generic [ref=e223]: I confirmed this message belongs to the current service order.
+                - button "Send message" [disabled]
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - img [ref=e226]
+                  - heading "Verified attachments" [level=4] [ref=e228]
+                - list [ref=e229]:
+                  - listitem [ref=e230]:
+                    - generic [ref=e231]:
+                      - generic [ref=e232]:
+                        - paragraph [ref=e233]: approved-layout.pdf
+                        - generic [ref=e234]: application/pdf · 9 B
+                      - generic [ref=e235]:
+                        - generic [ref=e237]: Clean
+                        - button "Download" [ref=e238] [cursor=pointer]:
+                          - img [ref=e240]
+                          - text: Download
+                - button "Load more" [ref=e243] [cursor=pointer]
+              - generic [ref=e244]:
+                - generic [ref=e245]:
+                  - generic [ref=e246]: PDF, PNG, or JPEG up to 25 MiB
+                  - generic [ref=e247]:
+                    - button "PDF, PNG, or JPEG up to 25 MiB" [ref=e248]
+                    - group:
+                      - generic: PDF, PNG, or JPEG up to 25 MiB
+                - generic [ref=e249]:
+                  - generic: Attachment reason
+                  - generic [ref=e250]:
+                    - textbox "Attachment reason" [ref=e251]
+                    - group:
+                      - generic: Attachment reason
+                - generic [ref=e252] [cursor=pointer]:
+                  - generic [ref=e253]:
+                    - checkbox "I confirmed this file belongs to the current service order and contains no secrets." [ref=e254]
+                    - img [ref=e255]
+                  - generic [ref=e257]: I confirmed this file belongs to the current service order and contains no secrets.
+                - button "Upload attachment" [disabled]
+```

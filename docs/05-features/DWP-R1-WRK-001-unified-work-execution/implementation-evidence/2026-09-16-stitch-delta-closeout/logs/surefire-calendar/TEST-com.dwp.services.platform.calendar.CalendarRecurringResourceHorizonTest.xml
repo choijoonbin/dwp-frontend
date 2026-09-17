@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarRecurringResourceHorizonTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:47" hostname="MacBook-Pro" time="0.05">
+  <properties/>
+  <testcase name="calendarUpdateAcceptsTheLastLocalDayAcrossFallBack()" classname="com.dwp.services.platform.calendar.CalendarRecurringResourceHorizonTest" time="0.036"/>
+  <testcase name="roomsCreateRejectsTheNextLocalDate()" classname="com.dwp.services.platform.calendar.CalendarRecurringResourceHorizonTest" time="0.005"/>
+  <testcase name="roomsCreateAcceptsTheLastLocalDayAcrossFallBack()" classname="com.dwp.services.platform.calendar.CalendarRecurringResourceHorizonTest" time="0.004"/>
+  <testcase name="calendarCreateKeepsTheSameWallClockAcrossSpringForward()" classname="com.dwp.services.platform.calendar.CalendarRecurringResourceHorizonTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,191 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "Collapse navigation" [ref=e14]:
+            - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Workplace
+          - paragraph [ref=e26]: SKAX
+        - navigation "Workplace navigation" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Workplace
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "Workplace home" [ref=e32] [cursor=pointer]:
+                  - /url: /workplace/home
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: Workplace home
+                - navigation "Workplace home" [ref=e40]:
+                  - generic [ref=e41]:
+                    - link "Today's workspace" [ref=e42] [cursor=pointer]:
+                      - /url: /workplace/home?view=home
+                      - img [ref=e44]
+                      - text: Today's workspace
+                    - link "Team work plans" [ref=e47] [cursor=pointer]:
+                      - /url: /workplace/home?view=team
+                      - img [ref=e49]
+                      - text: Team work plans
+                    - link "Facility requests" [ref=e53] [cursor=pointer]:
+                      - /url: /workplace/home?view=requests
+                      - img [ref=e55]
+                      - text: Facility requests
+              - listitem [ref=e57]:
+                - link "Find and book a space" [ref=e58] [cursor=pointer]:
+                  - /url: /workplace/find
+                  - img [ref=e60]
+                  - paragraph [ref=e65]: Find and book a space
+              - listitem [ref=e66]:
+                - link "Indoor wayfinding" [ref=e67] [cursor=pointer]:
+                  - /url: /workplace/navigation
+                  - img [ref=e69]
+                  - paragraph [ref=e74]: Indoor wayfinding
+              - listitem [ref=e75]:
+                - link "Weekly booking planner" [ref=e76] [cursor=pointer]:
+                  - /url: /workplace/planner
+                  - img [ref=e78]
+                  - paragraph [ref=e81]: Weekly booking planner
+              - listitem [ref=e82]:
+                - link "Workplace booking assistant" [ref=e83] [cursor=pointer]:
+                  - /url: /workplace/assistant
+                  - img [ref=e85]
+                  - paragraph [ref=e89]: Workplace booking assistant
+              - listitem [ref=e90]:
+                - link "My reservations" [ref=e91] [cursor=pointer]:
+                  - /url: /workplace/reservations
+                  - img [ref=e93]
+                  - paragraph [ref=e96]: My reservations
+              - listitem [ref=e97]:
+                - link "My service orders" [ref=e98] [cursor=pointer]:
+                  - /url: /workplace/service-orders
+                  - img [ref=e100]
+                  - paragraph [ref=e104]: My service orders
+              - listitem [ref=e105]:
+                - link "Safety check" [ref=e106] [cursor=pointer]:
+                  - /url: /workplace/safety
+                  - img [ref=e108]
+                  - paragraph [ref=e114]: Safety check
+        - link "Return to apps" [ref=e116] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e118]
+          - text: Return to apps
+    - banner [ref=e120]:
+      - generic [ref=e121]:
+        - generic [ref=e122]:
+          - img [ref=e124]
+          - generic "Workplace" [ref=e129]
+        - navigation "App area switcher" [ref=e132]:
+          - 'link "App management: Workplace" [ref=e134] [cursor=pointer]':
+            - /url: /workplace/admin/overview
+            - img [ref=e136]
+            - generic [ref=e139]: App management
+        - generic [ref=e140]:
+          - button "Search DWP" [ref=e142] [cursor=pointer]:
+            - img [ref=e143]
+            - paragraph [ref=e146]: Search DWP
+            - generic [ref=e147]: ⌘K
+          - generic [ref=e148]:
+            - button "Enter full screen" [ref=e149] [cursor=pointer]:
+              - img [ref=e150]
+            - generic "0 actionable notifications, 0 total unread" [ref=e156]:
+              - button "0 actionable notifications, 0 total unread" [ref=e157] [cursor=pointer]:
+                - generic [ref=e158]:
+                  - img [ref=e159]
+                  - generic: "0"
+          - 'button "Account: Workspace Member, Tenant administrator" [ref=e163] [cursor=pointer]':
+            - generic [ref=e164]: W
+            - img [ref=e165]
+    - main [ref=e167]:
+      - generic [ref=e168]:
+        - generic [ref=e170]:
+          - text: Explainable booking
+          - heading "Workplace booking assistant" [level=1] [ref=e171]
+          - paragraph [ref=e172]: Turn a request into reviewable suggestions, verify them with booking authorities, and confirm only after you approve the plan.
+        - generic [ref=e173]:
+          - status [ref=e174]:
+            - img [ref=e176]
+            - generic [ref=e179]:
+              - strong [ref=e180]: Privacy and authority boundary
+              - text: Request text is processed only with consent, retained under tenant policy, and returned in redacted form. Suggestions are not bookings until authority validation and explicit confirmation succeed.
+          - generic [ref=e181]:
+            - generic [ref=e183]:
+              - generic [ref=e184]:
+                - generic [ref=e185]:
+                  - text: Redacted request
+                  - heading "Book a nearby team desk and parking for [redacted]." [level=2] [ref=e186]
+                - generic [ref=e188]: Suggested
+              - generic [ref=e189]: Retained until Oct 17, 2026
+              - generic [ref=e190]:
+                - generic [ref=e192]: Assistant suggestion
+                - generic [ref=e194]: Authoritative booking validation
+                - generic [ref=e196]: APPLIED
+              - status [ref=e197]:
+                - img [ref=e199]
+                - generic [ref=e201]: Suggestions require authoritative validation.
+              - button "Refresh request evidence" [ref=e202] [cursor=pointer]:
+                - img [ref=e204]
+                - text: Refresh request evidence
+            - generic [ref=e210]:
+              - generic [ref=e211]:
+                - heading "Review proposals" [level=2] [ref=e212]
+                - paragraph [ref=e213]: Select proposal items, inspect reasoning and exclusions, then ask Calendar and Workplace authorities to validate them.
+              - generic [ref=e215]:
+                - generic [ref=e216]:
+                  - generic [ref=e217] [cursor=pointer]:
+                    - generic [ref=e218]:
+                      - checkbox "Select proposal for validation and confirmation" [checked] [ref=e219]
+                      - img [ref=e220]
+                    - generic [ref=e222]: Select proposal for validation and confirmation
+                  - generic [ref=e224]: Not validated
+                - paragraph [ref=e225]: Desk
+                - paragraph [ref=e226]: Matches the requested site, time, and accessibility requirement.
+                - generic [ref=e227]:
+                  - text: Constraints used
+                  - paragraph [ref=e228]: site · time · accessibility
+                - generic [ref=e229]:
+                  - text: Excluded conditions
+                  - paragraph [ref=e230]: Unavailable neighborhood
+                - generic [ref=e231]:
+                  - text: Alternatives
+                  - paragraph [ref=e232]: Desk 4B · Authoritative alternative in the same verified floor. · Waitlist eligible
+              - generic [ref=e233]:
+                - generic [ref=e234]:
+                  - generic: Validation reason
+                  - generic [ref=e235]:
+                    - textbox "Validation reason" [ref=e236]
+                    - group:
+                      - generic: Validation reason
+                - generic [ref=e237]:
+                  - generic [ref=e238]: Requested hold duration (seconds)
+                  - generic [ref=e239]:
+                    - spinbutton "Requested hold duration (seconds)" [ref=e240]: "120"
+                    - group:
+                      - generic: Requested hold duration (seconds)
+                - generic [ref=e241] [cursor=pointer]:
+                  - generic [ref=e242]:
+                    - checkbox "Allow authoritative alternatives" [checked] [ref=e243]
+                    - img [ref=e244]
+                  - generic [ref=e246]: Allow authoritative alternatives
+                - button "Validate selected proposals" [disabled]:
+                  - generic:
+                    - img
+                  - text: Validate selected proposals
+            - status [ref=e247]:
+              - img [ref=e249]
+              - generic [ref=e251]: Command SUCCEEDED · 23000000-0000-4000-8000-000000000011 · Result SUCCEEDED · completed Sep 17, 2026, 9:00 AM
+  - generic "Open DWAI·ON" [ref=e253]:
+    - button "Open DWAI·ON" [ref=e254] [cursor=pointer]
+```

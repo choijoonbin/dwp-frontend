@@ -5,6 +5,7 @@ const ADMIN = '/api/platform/v1/admin/workplace/experience/facilities';
 const MEMBER = '/api/platform/v1/workplace/experience/facilities';
 export type WorkplaceFacilityCategory = 'REPAIR' | 'CLEANING' | 'ACCESS' | 'OTHER';
 export type WorkplaceFacilityRequestStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CANCELLED';
+export type WorkplaceFacilityRequestPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'CRITICAL';
 export type WorkplaceResourceClosure = {
   closureId: string;
   resourceId: string;
@@ -39,6 +40,11 @@ export type WorkplaceFacilityRequest = {
   description: string;
   status: WorkplaceFacilityRequestStatus;
   statusReason: string | null;
+  priority: WorkplaceFacilityRequestPriority;
+  assignedTo: string | null;
+  serviceProvider: string | null;
+  externalWorkOrderReference: string | null;
+  slaDueAt: string | null;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -194,6 +200,12 @@ export async function changeWorkplaceFacilityRequestStatus(
     version: number;
     reason: string;
     confirmed: boolean;
+    priority?: WorkplaceFacilityRequestPriority;
+    assignedTo?: string;
+    serviceProvider?: string;
+    externalWorkOrderReference?: string;
+    slaDueAt?: string;
+    clearSla?: boolean;
   }
 ) {
   const response = await axiosInstance.put<ApiResponse<WorkplaceFacilityRequest>, typeof input>(

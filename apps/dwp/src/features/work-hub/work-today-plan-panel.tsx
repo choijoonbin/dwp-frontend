@@ -17,6 +17,7 @@ import {
 import {
   ActionButton,
   EmptyState,
+  foundationTokens,
   InlineFeedback,
   LoadingState,
   useDateTimePolicy,
@@ -443,7 +444,10 @@ export function WorkTodayPlanPanel({
                               justifyContent: 'center',
                               gap: 0.25,
                               bgcolor: 'var(--dwp-product-soft)',
-                              borderRadius: 0.75,
+                              borderRadius:
+                                foundationTokens.radius.surface -
+                                foundationTokens.radius.compact +
+                                'px',
                               color: 'text.primary',
                               fontSize: 'caption.fontSize',
                               fontWeight: 'fontWeightBold',
@@ -625,7 +629,7 @@ export function WorkTodayPlanPanel({
                     placeItems: 'center',
                     color: 'success.dark',
                     bgcolor: 'success.light',
-                    borderRadius: 1,
+                    borderRadius: foundationTokens.radius.surface + 'px',
                   }}
                 >
                   <Lightbulb size={20} />

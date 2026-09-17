@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-16T14:02:15+09:00",
+  "reference": {
+    "projectId": "13391261371843159731",
+    "archive": "/Users/a10697/Work/DWP/output/stitch-enterprise-grid-calendar-2026-09-16/latest-970a1f72/stitch_enterprise_grid_calendar_application.zip",
+    "sha256": "970a1f72bfb04783a611c67d9d08eaf6b6a51befc86bd947bbea56647055e570",
+    "bytes": 5334188,
+    "zipEntries": 57,
+    "screenFolders": 18,
+    "calendarNamedScreens": 1
+  },
+  "scope": {
+    "owner": "Work",
+    "acceptedFrames": 18,
+    "totalFrames": 18,
+    "permanentMenus": [
+      "/work/queue",
+      "/work/action-required",
+      "/work/day-plan",
+      "/work/in-progress",
+      "/work/awaiting-response",
+      "/work/completed"
+    ]
+  },
+  "verdict": {
+    "implementationOwnedScopeComplete": true,
+    "designAndFunctionalContractImplemented": true,
+    "menuContractComplete": true,
+    "workOwnedP0P1Open": 0,
+    "workOwnedP2Open": 0,
+    "workOwnedP0P1P2Open": 0,
+    "additionalProductEnhancementRequiredForAttachedScope": false,
+    "pixelPerfectCertified": false,
+    "liveStitchLatestCertified": false,
+    "liveTenantCertified": false,
+    "productionDeploymentCertified": false,
+    "externalReleaseApprovalComplete": false
+  },
+  "validation": {
+    "frontendFocusedUnit": {
+      "files": 30,
+      "tests": 352,
+      "passed": 352
+    },
+    "frontendH01FocusedUnit": {
+      "files": 3,
+      "tests": 28,
+      "passed": 28,
+      "note": "Subset of frontendFocusedUnit; do not add to the focused-unit total."
+    },
+    "calendarRefactorRegression": {
+      "files": 3,
+      "tests": 12,
+      "passed": 12,
+      "note": "Follow-up subset; do not add to the focused-unit total."
+    },
+    "frontendCriticalE2e": {
+      "tests": 46,
+      "passed": 46,
+      "browser": "chromium"
+    },
+    "frontendH01IntegratedE2e": {
+      "tests": 7,
+      "passed": 7,
+      "note": "One canonical scenario overlaps frontendCriticalE2e; do not add these totals."
+    },
+    "frontendR01E2e": {
+      "tests": 7,
+      "passed": 7
+    },
+    "frontendF01E2e": {
+      "messengerCapture": {
+        "tests": 6,
+        "passed": 6
+      },
+      "entryModes": {
+        "tests": 6,
+        "passed": 6
+      },
+      "canonical": {
+        "tests": 1,
+        "passed": 1
+      },
+      "note": "These targeted runs overlap the canonical suite and each other; do not add them to frontendCriticalE2e."
+    },
+    "visualAndResponsiveRuns": {
+      "detailFramesPassed": 7,
+      "queueAndPlanPassed": 6,
+      "serviceAndBatchPassed": 10,
+      "homeAndAssistantPassed": 10,
+      "calendarMobilePassed": 11,
+      "viewports": [1440, 1280, 390, 320],
+      "textZoomPercent": 200,
+      "themes": ["light", "dark", "forced-colors"]
+    },
+    "backendFocused": {
+      "tests": 208,
+      "passed": 208,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "byArea": {
+        "messaging": 34,
+        "platformPersonal": 29,
+        "auth": 13,
+        "people": 1,
+        "calendar": 131
+      }
+    },
+    "backendBoundaryPython": {
+      "tests": 88,
+      "passed": 88
+    },
+    "openApi": {
+      "services": 9,
+      "gatewayPaths": 1043,
+      "frontendGeneratedSnapshotsMatch": true
+    },
+    "qualityGates": {
+      "typecheck": "passed",
+      "targetedEslint": "passed",
+      "prettier": "passed",
+      "i18n": "passed",
+      "sourceSize": "passed",
+      "diffCheck": "passed"
+    }
+  },
+  "evidence": {
+    "screenshots": 68,
+    "decodedScreenshots": 68,
+    "dedicatedReferenceFrameScreens": 18,
+    "directories": [
+      "screens/calendar",
+      "screens/f01-exact",
+      "screens/q01-p01",
+      "screens/remaining-frames",
+      "screens/missing-reference-frames"
+    ],
+    "manifest": "manifest.sha256"
+  },
+  "productionReadiness": {
+    "implementationOwnedScope": "complete",
+    "exactProductContracts": "12/12",
+    "internallyClosedProducts": "12/12",
+    "ownerServicePepCells": "60/60",
+    "releaseApprovedProductClosure": "0/12",
+    "productSurfaceComplete": "0/37",
+    "incompleteReleaseEvidence": 37,
+    "externalReleaseEvidencePending": 18,
+    "status": "blocked_on_external_release_evidence"
+  },
+  "limitations": [
+    "The frozen user-provided ZIP is authoritative for this verification; later changes behind the live Stitch login are not certified.",
+    "Implementation-owned scope completion is separate from production release approval.",
+    "No automated pixel-diff threshold or designer pixel sign-off was performed.",
+    "Browser scenarios use controlled fixtures rather than a live tenant and production source systems.",
+    "Production deployment, operational smoke tests, and external release approval were not performed.",
+    "The ZIP has one Calendar-named screen (C01); full Calendar-grid pixel parity is outside the supplied visual corpus.",
+    "Calendar reload recovery requires writable sessionStorage; same-document PUT retry remains available when storage is blocked.",
+    "Production Messaging provenance requires HTTPS URL and service/purpose tokens from the secret store.",
+    "The listed browser scenarios are not a general production observability or zero-console-diagnostic certification."
+  ]
+}

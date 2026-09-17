@@ -279,31 +279,26 @@ test('DWAI·ON docks above a CSS zoom reflow without covering Work mobile naviga
 
   const launcher = page.getByTestId('dwaion-launcher');
   const bottomNavigation = page.getByTestId('work-mobile-bottom-navigation');
-  const more = bottomNavigation.getByRole('button', { name: 'More', exact: true });
+  const profile = bottomNavigation.getByRole('button', { name: 'Profile', exact: true });
   await expect(bottomNavigation).toBeVisible();
-  await expect(more).toBeVisible();
+  await expect(profile).toBeVisible();
   await expect(launcher).toHaveAttribute('data-shell-auxiliary-placement', 'header');
 
-  const geometry = await Promise.all([launcher.boundingBox(), more.boundingBox()]);
-  const [launcherBounds, moreBounds] = geometry;
+  const geometry = await Promise.all([launcher.boundingBox(), profile.boundingBox()]);
+  const [launcherBounds, profileBounds] = geometry;
   expect(launcherBounds).not.toBeNull();
-  expect(moreBounds).not.toBeNull();
+  expect(profileBounds).not.toBeNull();
   const overlaps =
-    launcherBounds!.x < moreBounds!.x + moreBounds!.width &&
-    launcherBounds!.x + launcherBounds!.width > moreBounds!.x &&
-    launcherBounds!.y < moreBounds!.y + moreBounds!.height &&
-    launcherBounds!.y + launcherBounds!.height > moreBounds!.y;
+    launcherBounds!.x < profileBounds!.x + profileBounds!.width &&
+    launcherBounds!.x + launcherBounds!.width > profileBounds!.x &&
+    launcherBounds!.y < profileBounds!.y + profileBounds!.height &&
+    launcherBounds!.y + launcherBounds!.height > profileBounds!.y;
   expect(overlaps).toBe(false);
 
-  await more.focus();
-  await expect(more).toBeFocused();
+  await profile.focus();
+  await expect(profile).toBeFocused();
   await page.keyboard.press('Enter');
-  const dialog = page.getByRole('dialog', { name: 'Browse work by status', exact: true });
-  await expect(dialog).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(dialog).toHaveCount(0);
-  await more.click();
-  await expect(dialog).toBeVisible();
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/account/profile');
 });
 
 test('DWAI·ON reserves the shell edge without covering compact content or bottom actions', async ({

@@ -349,6 +349,16 @@ export class ApprovalDraftAutosave {
     this.publish({ status: 'CONFLICT', latestLoaded: false, conflicts: [] });
   }
 
+  reviewedInput(): ApprovalDraftSnapshot | undefined {
+    return this.latest &&
+      this.reviewedMerge &&
+      this.state.latestLoaded &&
+      this.state.conflicts.length === 0 &&
+      this.state.status === 'CONFLICT'
+      ? structuredClone(this.reviewedMerge)
+      : undefined;
+  }
+
   async reapply(): Promise<ApprovalDraftReapplyResult> {
     if (
       !this.latest ||

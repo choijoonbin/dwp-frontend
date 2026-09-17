@@ -111,8 +111,8 @@ export function ApprovalRequestLifecycleCollection({
   pending: boolean;
   attachments: ApprovalAttachmentClient;
   onRetry: () => void;
-  onSelect: (request: ApprovalRequest) => void;
-  onOpenDetails: (request: ApprovalRequest) => void;
+  onSelect: (request: ApprovalRequest, trigger?: HTMLElement) => void;
+  onOpenDetails: (request: ApprovalRequest, trigger?: HTMLElement) => void;
   onEdit: (request: ApprovalRequest) => void;
   onRespond: (request: ApprovalRequest) => void;
   onWithdraw: (request: ApprovalRequest) => void;

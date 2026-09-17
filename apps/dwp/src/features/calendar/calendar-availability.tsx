@@ -76,9 +76,9 @@ export function CalendarAvailability() {
   const consumedPerson = useRef<string | null>(null);
   const canCreate = hasPermission('APP.CALENDAR', 'CREATE');
   const workplacePath = hasPermission('APP.ROOMS', 'VIEW')
-    ? '/workplace/rooms'
+    ? '/workplace/find?v=1&types=ROOM'
     : hasPermission('APP.WORKPLACE', 'VIEW')
-      ? '/workplace/explore'
+      ? '/workplace/find?v=1&types=ALL'
       : null;
   const [people, setPeople] = useState<PersonSummary[]>([]);
   const [searchedPeople, setSearchedPeople] = useState<PersonSummary[]>([]);

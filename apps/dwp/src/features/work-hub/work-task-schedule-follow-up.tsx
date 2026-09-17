@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CalendarClock, CheckCircle2, CircleSlash2 } from 'lucide-react';
+import { foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -19,7 +20,7 @@ export function WorkTaskScheduleFollowUp({ available }: { available: boolean }) 
         border: 1,
         borderColor: available ? 'primary.main' : 'divider',
         bgcolor: available ? 'action.selected' : 'action.disabledBackground',
-        borderRadius: 1,
+        borderRadius: foundationTokens.radius.surface + 'px',
         px: 1,
         py: 0.75,
       }}

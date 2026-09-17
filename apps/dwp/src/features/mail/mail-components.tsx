@@ -57,35 +57,6 @@ export function MailPageHeading({
   );
 }
 
-export function MailMetric({
-  label,
-  value,
-  detail,
-  tone,
-}: {
-  label: string;
-  value: number | string;
-  detail: string;
-  tone: string;
-}) {
-  return (
-    <Box sx={{ px: 2.5, py: 2.25, minWidth: 0 }}>
-      <Stack direction="row" spacing={1} alignItems="center">
-        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: tone, flexShrink: 0 }} />
-        <Typography variant="body2" color="text.secondary" fontWeight="fontWeightBold">
-          {label}
-        </Typography>
-      </Stack>
-      <Typography component="p" variant="h4" fontWeight="fontWeightBold" sx={{ mt: 0.85 }}>
-        {value}
-      </Typography>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.35 }}>
-        {detail}
-      </Typography>
-    </Box>
-  );
-}
-
 function initials(name: string) {
   const value = name.trim();
   if (!value) return '?';
@@ -111,6 +82,7 @@ export function mailRelativeTime(value: string, language: string) {
 
 export function MailThreadListItem({
   thread,
+  buttonId,
   selected = false,
   onSelect,
   compact = false,
@@ -118,6 +90,7 @@ export function MailThreadListItem({
   presentation = 'default',
 }: {
   thread: MailThread;
+  buttonId?: string;
   selected?: boolean;
   onSelect: () => void;
   compact?: boolean;
@@ -128,12 +101,28 @@ export function MailThreadListItem({
   const participant = thread.participants[0];
   const urgent = thread.importance === 'URGENT';
   const focusPresentation = presentation === 'focus';
+  const relativeTime = mailRelativeTime(
+    thread.latestMessageAt,
+    i18n.resolvedLanguage ?? i18n.language
+  );
+  const accessibleName = [
+    participant?.name ?? thread.accountName,
+    thread.subject,
+    thread.unread ? t('thread.unread') : null,
+    thread.attachments ? t('thread.attachment') : null,
+    thread.assignedName ? t('thread.assignedTo', { name: thread.assignedName }) : null,
+    relativeTime,
+  ]
+    .filter(Boolean)
+    .join(', ');
   return (
     <Box
       component="button"
+      id={buttonId}
       type="button"
       onClick={onSelect}
       disabled={disabled}
+      aria-label={accessibleName}
       aria-pressed={selected}
       aria-busy={disabled || undefined}
       sx={(theme) => ({
@@ -267,7 +256,7 @@ export function MailThreadListItem({
       </Box>
       <Stack alignItems="flex-end" spacing={0.75} sx={{ minWidth: 54 }}>
         <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
-          {mailRelativeTime(thread.latestMessageAt, i18n.resolvedLanguage ?? i18n.language)}
+          {relativeTime}
         </Typography>
         <Stack direction="row" spacing={0.6} color="text.secondary">
           {thread.starred && <Star size={14} fill="currentColor" />}

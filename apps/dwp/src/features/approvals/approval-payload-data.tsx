@@ -61,10 +61,10 @@ function formatExactDecimal(value: string, locale: ApprovalLocale) {
 
 function formatScalar(value: unknown, field: PayloadField | undefined, locale: ApprovalLocale) {
   if (value == null || value === '') return undefined;
-  if (field?.type === 'DATE' && (typeof value === 'string' || typeof value === 'number')) {
-    const parsed = new Date(value);
+  if (field?.type === 'DATE' && typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const parsed = new Date(`${value}T00:00:00.000Z`);
     if (Number.isFinite(parsed.getTime()))
-      return formatDate(parsed, { dateStyle: 'medium' }, locale);
+      return formatDate(parsed, { dateStyle: 'medium', timeZone: 'UTC' }, locale);
   }
   if (
     (field?.type === 'NUMBER' || field?.type === 'CALCULATED_NUMBER') &&
@@ -196,43 +196,45 @@ function ApprovalRepeatingPayload({
       </Typography>
     );
   return (
-    <Box component="ol" sx={{ m: 0, p: 0, display: 'grid', gap: 1.25, listStyle: 'none' }}>
-      {value.map((row, index) => {
-        const record = isRecord(row) ? row : { value: row };
-        return (
-          <Box
-            component="li"
-            key={index}
-            sx={{ minWidth: 0, pl: 1.25, borderLeft: 2, borderColor: 'divider' }}
-          >
-            <Typography variant="caption" color="text.secondary">
-              {index + 1}
-            </Typography>
-            <Box component="dl" sx={{ m: 0, mt: 0.5, display: 'grid', gap: 0.75 }}>
-              {orderedEntries(record, field.fields).map(([key, childValue, childField]) => (
-                <Box key={key} sx={{ minWidth: 0 }}>
-                  <Typography component="dt" variant="caption" color="text.secondary">
-                    {childField ? (korean ? childField.labelKo : childField.labelEn) : key}
-                  </Typography>
-                  <Typography
-                    component="dd"
-                    variant="body2"
-                    sx={{ m: 0, overflowWrap: 'anywhere', fontVariantNumeric: 'tabular-nums' }}
-                  >
-                    <ApprovalPayloadValue
-                      value={childValue}
-                      field={childField as ApprovalTypedScalarField | undefined}
-                      locale={locale}
-                      trueLabel={trueLabel}
-                      falseLabel={falseLabel}
-                    />
-                  </Typography>
-                </Box>
-              ))}
+    <Box component="dd" sx={{ m: 0, minWidth: 0 }}>
+      <Box component="ol" sx={{ m: 0, p: 0, display: 'grid', gap: 1.25, listStyle: 'none' }}>
+        {value.map((row, index) => {
+          const record = isRecord(row) ? row : { value: row };
+          return (
+            <Box
+              component="li"
+              key={index}
+              sx={{ minWidth: 0, pl: 1.25, borderLeft: 2, borderColor: 'divider' }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                {index + 1}
+              </Typography>
+              <Box component="dl" sx={{ m: 0, mt: 0.5, display: 'grid', gap: 0.75 }}>
+                {orderedEntries(record, field.fields).map(([key, childValue, childField]) => (
+                  <Box key={key} sx={{ minWidth: 0 }}>
+                    <Typography component="dt" variant="caption" color="text.secondary">
+                      {childField ? (korean ? childField.labelKo : childField.labelEn) : key}
+                    </Typography>
+                    <Typography
+                      component="dd"
+                      variant="body2"
+                      sx={{ m: 0, overflowWrap: 'anywhere', fontVariantNumeric: 'tabular-nums' }}
+                    >
+                      <ApprovalPayloadValue
+                        value={childValue}
+                        field={childField as ApprovalTypedScalarField | undefined}
+                        locale={locale}
+                        trueLabel={trueLabel}
+                        falseLabel={falseLabel}
+                      />
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
             </Box>
-          </Box>
-        );
-      })}
+          );
+        })}
+      </Box>
     </Box>
   );
 }

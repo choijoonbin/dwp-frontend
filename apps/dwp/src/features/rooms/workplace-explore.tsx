@@ -6,12 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Temporal } from 'temporal-polyfill';
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { getRoomsPolicy, getWorkplaceExplore, useAuth, useToast } from '@dwp-frontend/shared-utils';
-import {
-  ActionButton,
-  EmptyState,
-  PageCanvas,
-  mergeFilterSearchParams,
-} from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState, PageCanvas } from '@dwp-frontend/design-system';
 
 import { InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
@@ -38,6 +33,11 @@ import {
   workplaceDiscoveryType,
 } from './workplace-discovery-model';
 import { workplaceHomeSourceState } from './workplace-home-source-state';
+import {
+  parseWorkplaceFindUrl,
+  updateWorkplaceFindUrl,
+  type WorkplaceFindUrlPatch,
+} from './workplace-find-url-state';
 import {
   WorkplaceFloorPlan,
   WorkplaceMapLegend,
@@ -104,7 +104,9 @@ export function WorkplaceExplore({
   const theme = useTheme();
   const wide = useMediaQuery(theme.breakpoints.up('lg'));
   const [searchParams, setSearchParams] = useSearchParams();
+  const parsedUrl = useMemo(() => parseWorkplaceFindUrl(searchParams), [searchParams]);
   const defaults = useMemo(() => ({ date: dateOnly(), time: defaultTime() }), []);
+  const [urlWasNormalized, setUrlWasNormalized] = useState(false);
   const [bookingResource, setBookingResource] = useState<WorkplaceResource | null>(null);
   const [room, setRoom] = useState<CalendarResource | null>(null);
   const [lastVerifiedSnapshot, setLastVerifiedSnapshot] = useState<{
@@ -112,41 +114,48 @@ export function WorkplaceExplore({
     data: WorkplaceExploreResponse;
   } | null>(null);
   const [siteTimeZone, setSiteTimeZone] = useState(() =>
-    initialSiteTimeZone(searchParams.get('timeZone'))
+    initialSiteTimeZone(parsedUrl.state.timeZone)
   );
-  const explicitDateRef = useRef(searchParams.has('date'));
-  const explicitTimeRef = useRef(searchParams.has('time'));
+  const explicitDateRef = useRef(Boolean(parsedUrl.state.date));
+  const explicitTimeRef = useRef(Boolean(parsedUrl.state.start));
   const defaultedTimeZoneRef = useRef<string | null>(null);
   const searchParamsRef = useRef(searchParams);
   searchParamsRef.current = searchParams;
 
   const updateParams = useCallback(
-    (values: Record<string, string | number | boolean | null | undefined>) => {
-      const next = mergeFilterSearchParams(searchParamsRef.current, values);
+    (values: WorkplaceFindUrlPatch) => {
+      const next = updateWorkplaceFindUrl(searchParamsRef.current, values);
       searchParamsRef.current = next;
       setSearchParams(next, { replace: true });
     },
     [setSearchParams]
   );
 
-  const date = searchParams.get('date') ?? defaults.date;
-  const time = searchParams.get('time') ?? defaults.time;
-  const duration = positiveNumber(searchParams.get('duration'), 60);
-  const requestedSiteId = searchParams.get('site') ?? '';
-  const requestedFloorId = searchParams.get('floor') ?? '';
-  const search = searchParams.get('q') ?? '';
-  const type = workplaceDiscoveryType(searchParams.get('type'));
-  const feature = searchParams.get('feature') ?? '';
-  const neighborhood = searchParams.get('neighborhood') ?? '';
-  const accessibleOnly = searchParams.get('accessible') === 'true';
-  const sort = workplaceDiscoverySort(searchParams.get('sort'));
+  useEffect(() => {
+    if (!parsedUrl.corrected) return;
+    setUrlWasNormalized(true);
+    searchParamsRef.current = parsedUrl.canonicalSearchParams;
+    setSearchParams(parsedUrl.canonicalSearchParams, { replace: true });
+  }, [parsedUrl, setSearchParams]);
+
+  const date = parsedUrl.state.date ?? defaults.date;
+  const time = parsedUrl.state.start ?? defaults.time;
+  const duration = positiveNumber(
+    parsedUrl.state.duration === null ? null : String(parsedUrl.state.duration),
+    60
+  );
+  const requestedSiteId = parsedUrl.state.siteId;
+  const requestedFloorId = parsedUrl.state.floorId;
+  const search = parsedUrl.state.query;
+  const type = workplaceDiscoveryType(parsedUrl.state.type);
+  const feature = parsedUrl.state.feature;
+  const capacity = parsedUrl.state.capacity;
+  const neighborhood = parsedUrl.state.neighborhood;
+  const accessibleOnly = parsedUrl.state.accessibleOnly;
+  const sort = workplaceDiscoverySort(parsedUrl.state.sort);
   const view: WorkplaceDiscoveryView =
-    searchParams.get('view') === 'map'
-      ? 'map'
-      : searchParams.get('view') === 'list'
-        ? 'list'
-        : defaultView;
-  const inspectedResourceId = searchParams.get('resource');
+    parsedUrl.state.view === 'map' ? 'map' : parsedUrl.state.view === 'list' ? 'list' : defaultView;
+  const inspectedResourceId = parsedUrl.state.resourceId;
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
 
   const selectedRange = useMemo(() => {
@@ -253,11 +262,11 @@ export function WorkplaceExplore({
       explicitTimeRef.current = true;
     }
     updateParams({
-      site: selectedSite.siteId,
-      floor: selectedFloor.floorId,
-      timeZone: selectedSite.timeZone,
+      sites: selectedSite.siteId,
+      floors: selectedFloor.floorId,
+      tz: selectedSite.timeZone,
       date: shouldDefaultTimeZone && !hasExplicitDate ? selection.date : date,
-      time: shouldDefaultTimeZone ? nextTime : time,
+      start: shouldDefaultTimeZone ? nextTime : time,
     });
   }, [
     data,
@@ -315,25 +324,43 @@ export function WorkplaceExplore({
     if (selectedFloor && !mapAvailable && view === 'map') updateParams({ view: 'list' });
   }, [mapAvailable, selectedFloor, updateParams, view]);
 
+  const visibleResources = useMemo(
+    () =>
+      (data?.resources ?? []).filter(
+        (resource) => resource.type !== 'ROOM' || capabilities.canViewRooms
+      ),
+    [capabilities.canViewRooms, data?.resources]
+  );
+  const roomTypeDenied = capabilities.isLoaded && type === 'ROOM' && !capabilities.canViewRooms;
+
   const features = useMemo(
-    () => [...new Set((data?.resources ?? []).flatMap((resource) => resource.features))].sort(),
-    [data?.resources]
+    () => [...new Set(visibleResources.flatMap((resource) => resource.features))].sort(),
+    [visibleResources]
   );
   const neighborhoods = useMemo(
     () =>
       [
         ...new Set(
-          (data?.resources ?? [])
+          visibleResources
             .map((resource) => resource.neighborhood)
             .filter((value): value is string => Boolean(value))
         ),
       ].sort(),
-    [data?.resources]
+    [visibleResources]
   );
+  const allTypes = [
+    'ROOM',
+    'DESK',
+    'LOCKER',
+    'PARKING',
+    'FOCUS_POD',
+    'PHONE_BOOTH',
+    'EQUIPMENT',
+  ] as const;
+  const visibleTypes = allTypes.filter((value) => value !== 'ROOM' || capabilities.canViewRooms);
+  const discoveryTypeOptions = roomTypeDenied ? (['ROOM', ...visibleTypes] as const) : visibleTypes;
   const typeLabels = Object.fromEntries(
-    (['ROOM', 'DESK', 'LOCKER', 'PARKING', 'FOCUS_POD', 'PHONE_BOOTH', 'EQUIPMENT'] as const).map(
-      (value) => [value, t(`workplace.resourceTypes.${value}`)]
-    )
+    allTypes.map((value) => [value, t(`workplace.resourceTypes.${value}`)])
   ) as Record<WorkplaceResourceType, string>;
   const statusLabels = Object.fromEntries(
     (['AVAILABLE', 'OCCUPIED', 'MINE', 'ASSIGNED', 'DROP_IN', 'UNAVAILABLE'] as const).map(
@@ -378,12 +405,13 @@ export function WorkplaceExplore({
   const filtered = useMemo(
     () =>
       filterWorkplaceResources(
-        data?.resources ?? [],
+        visibleResources,
         data?.occupancy ?? [],
         {
           search,
           type,
           feature,
+          capacity,
           neighborhood,
           accessibleOnly,
           sort,
@@ -393,13 +421,14 @@ export function WorkplaceExplore({
     [
       accessibleOnly,
       bookability,
+      capacity,
       data?.occupancy,
-      data?.resources,
       feature,
       neighborhood,
       search,
       sort,
       type,
+      visibleResources,
     ]
   );
   const inspected =
@@ -422,7 +451,13 @@ export function WorkplaceExplore({
           : 'workplace.explore.availabilityRefreshing'
       );
     }
-    if (code === 'READ_ONLY') return t('permissions.workplaceBookingReadOnly');
+    if (code === 'READ_ONLY') {
+      return t(
+        resource.type === 'ROOM'
+          ? 'permissions.roomBookingReadOnly'
+          : 'permissions.workplaceBookingReadOnly'
+      );
+    }
     if (code === 'ROOM_POLICY') return t('workplace.explore.roomPolicyUnavailable');
     if (code === 'ROOM_BINDING') return t('workplace.explore.bindingUnavailable');
     if (code === 'ASSIGNED') {
@@ -496,9 +531,9 @@ export function WorkplaceExplore({
     const nextSite = data?.sites.find((site) => site.siteId === value);
     if (nextSite?.timeZone) setSiteTimeZone(nextSite.timeZone);
     updateParams({
-      site: value,
-      floor: nextFloor?.floorId ?? null,
-      timeZone: nextSite?.timeZone ?? null,
+      sites: value,
+      floors: nextFloor?.floorId ?? null,
+      tz: nextSite?.timeZone ?? null,
       resource: null,
     });
   };
@@ -507,9 +542,9 @@ export function WorkplaceExplore({
     const nextSite = data?.sites.find((site) => site.siteId === nextFloor?.siteId);
     if (nextSite?.timeZone) setSiteTimeZone(nextSite.timeZone);
     updateParams({
-      site: nextFloor?.siteId ?? siteId,
-      floor: value,
-      timeZone: nextSite?.timeZone ?? siteTimeZone,
+      sites: nextFloor?.siteId ?? siteId,
+      floors: value,
+      tz: nextSite?.timeZone ?? siteTimeZone,
       resource: null,
     });
   };
@@ -555,13 +590,14 @@ export function WorkplaceExplore({
     updateParams({
       q: null,
       date: resetSelection.date,
-      time: resetSelection.time,
+      start: resetSelection.time,
       duration: 60,
-      site: firstSite?.siteId ?? null,
-      floor: firstFloor?.floorId ?? null,
-      timeZone: firstSite?.timeZone ?? null,
-      type: null,
-      feature: null,
+      sites: firstSite?.siteId ?? null,
+      floors: firstFloor?.floorId ?? null,
+      tz: firstSite?.timeZone ?? null,
+      types: 'ALL',
+      features: null,
+      capacity: null,
       neighborhood: null,
       accessible: null,
       sort: null,
@@ -575,7 +611,17 @@ export function WorkplaceExplore({
   const hasUsableData = !query.isLoading && (!query.isError || Boolean(data));
 
   return (
-    <PageCanvas>
+    <PageCanvas topInset="compact">
+      {urlWasNormalized && (
+        <InlineFeedback severity="info" sx={{ mb: 2 }}>
+          {t('workplace.explore.urlNormalized')}
+        </InlineFeedback>
+      )}
+      {roomTypeDenied && (
+        <InlineFeedback severity="error" sx={{ mb: 2 }}>
+          {t('workplace.explore.roomViewDenied')}
+        </InlineFeedback>
+      )}
       {capabilities.isLoaded &&
         !capabilities.canCreateWorkplaceBooking &&
         !capabilities.canCreateRoomBooking && (
@@ -625,7 +671,7 @@ export function WorkplaceExplore({
           onDateChange={(value) => updateParams({ date: value, resource: null })}
           time={time}
           timeOptions={displayedTimeOptions}
-          onTimeChange={(value) => updateParams({ time: value, resource: null })}
+          onTimeChange={(value) => updateParams({ start: value, resource: null })}
           duration={duration}
           durationOptions={displayedDurationOptions}
           onDurationChange={(value) => updateParams({ duration: value, resource: null })}
@@ -637,12 +683,13 @@ export function WorkplaceExplore({
           onFloorChange={chooseFloor}
           type={type}
           typeLabels={typeLabels}
-          onTypeChange={(value) =>
-            updateParams({ type: value === 'ALL' ? null : value, resource: null })
-          }
+          typeOptions={discoveryTypeOptions}
+          onTypeChange={(value) => updateParams({ types: value, resource: null })}
           feature={feature}
           features={features}
-          onFeatureChange={(value) => updateParams({ feature: value, resource: null })}
+          onFeatureChange={(value) => updateParams({ features: value, resource: null })}
+          capacity={capacity}
+          onCapacityChange={(value) => updateParams({ capacity: value, resource: null })}
           neighborhood={neighborhood}
           neighborhoods={neighborhoods}
           onNeighborhoodChange={(value) => updateParams({ neighborhood: value, resource: null })}
@@ -653,7 +700,7 @@ export function WorkplaceExplore({
           sort={sort}
           onSortChange={(value) => updateParams({ sort: value === 'availability' ? null : value })}
           resultCount={filtered.length}
-          totalCount={data?.resources.length ?? 0}
+          totalCount={visibleResources.length}
           view={view}
           mapAvailable={mapAvailable}
           onViewChange={(value) => updateParams({ view: value === defaultView ? null : value })}
@@ -668,6 +715,8 @@ export function WorkplaceExplore({
             wide && inspected ? 'minmax(0, 1.55fr) minmax(320px, .9fr)' : 'minmax(0, 1fr)',
           gap: wide && inspected ? 2 : 0,
           alignItems: 'start',
+          minWidth: 0,
+          maxWidth: '100%',
           mt: 2,
           '& > aside': workplaceMemberCard(theme),
         }}
@@ -678,6 +727,9 @@ export function WorkplaceExplore({
           sx={{
             ...workplaceMemberCard(theme),
             p: { xs: 1.25, md: 2 },
+            minWidth: 0,
+            maxWidth: '100%',
+            overflow: 'hidden',
           }}
         >
           <Stack
@@ -786,6 +838,8 @@ export function WorkplaceExplore({
                   wide && !inspected ? 'minmax(280px, 0.38fr) minmax(0, 0.62fr)' : '1fr',
                 gap: 2,
                 alignItems: 'start',
+                minWidth: 0,
+                maxWidth: '100%',
               }}
             >
               {wide && !inspected && (
@@ -922,7 +976,9 @@ export function WorkplaceExplore({
         policy={policy ?? null}
         sourceSnapshot={workplaceBookingSourceSnapshot}
         onSaved={(booking) =>
-          navigate(`/workplace/my-bookings?booking=${encodeURIComponent(booking.bookingId)}`)
+          navigate(
+            `/workplace/reservations?v=1&period=UPCOMING&types=WORKSPACE&status=ACTIVE&authority=WORKPLACE&reservation=${encodeURIComponent(booking.bookingId)}&reservationAuthority=WORKPLACE`
+          )
         }
         onClose={() => setBookingResource(null)}
         onChooseAnother={() => {

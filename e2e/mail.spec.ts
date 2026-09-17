@@ -104,44 +104,9 @@ test('mail home exposes work signals without serious accessibility defects', asy
   await expect(page).toHaveURL(/\/mail\/shared$/u);
 });
 
-test('connected accounts expose actual account and synchronization states', async ({ page }) => {
-  await mockMailMember(page);
-  const organization = mailOrganization();
-  await page.route('**/api/platform/v1/mail/home', (route) =>
-    fulfill(route, {
-      accounts: [
-        {
-          ...organization.accounts[0],
-          connectionState: 'REAUTHENTICATION_REQUIRED',
-          synchronizationState: 'READY',
-        },
-        {
-          ...organization.accounts[0],
-          accountId: '10000000-0000-0000-0000-000000000002',
-          emailAddress: 'shared@sk.com',
-          displayName: 'Shared operations',
-          accountKind: 'SHARED',
-          connectionState: 'DISCONNECTED',
-          synchronizationState: 'PAUSED',
-          defaultAccount: false,
-        },
-      ],
-      metrics: { unread: 0, urgent: 0, needsReply: 0, assigned: 0, snoozed: 0, activeProposals: 0 },
-      focusQueue: [],
-      proposals: [],
-      sharedInboxes: [],
-      generatedAt: '2026-08-29T03:00:00Z',
-    })
-  );
-
-  await page.goto('/mail/accounts');
-  await expect(page.getByText('Reauthentication required')).toBeVisible();
-  await expect(page.getByText(/authenticate with the provider again/i)).toBeVisible();
-  await expect(page.getByText('Disconnected')).toBeVisible();
-  await expect(page.getByText(/mail cannot be retrieved or sent/i)).toBeVisible();
-});
-
-test('partial drafts autosave and promote the same draft when sent', async ({ page }) => {
+test('partial drafts autosave and preserve the send command across a response failure', async ({
+  page,
+}) => {
   await mockMailMember(page);
   const organization = mailOrganization();
   const draftId = '40000000-0000-0000-0000-000000000020';
@@ -160,6 +125,7 @@ test('partial drafts autosave and promote the same draft when sent', async ({ pa
     if (request.method() === 'PUT' && path.endsWith(`/${draftId}/draft`)) {
       const input = (await request.postDataJSON()) as Record<string, unknown>;
       sends.push(input);
+      if (sends.length === 1) return route.abort('failed');
       return fulfill(route, {
         ...draftDetail(draftId, fields, version + 1),
         thread: {
@@ -197,18 +163,35 @@ test('partial drafts autosave and promote the same draft when sent', async ({ pa
   await page.getByRole('button', { name: 'New message' }).click();
   const dialog = page.getByRole('dialog', { name: 'New message' });
   await dialog.getByLabel('Subject').fill('Subject-only planning note');
-  await expect(dialog.getByRole('button', { name: 'Send' })).toBeDisabled();
+  await expect(dialog.getByRole('button', { name: 'Send', exact: true })).toBeDisabled();
   await expect.poll(() => creates.length).toBe(1);
   expect(creates[0]).toMatchObject({ subject: 'Subject-only planning note' });
   expect(creates[0]).not.toHaveProperty('toEmail');
   await expect(dialog.getByRole('status')).toContainText('All changes saved');
 
   await dialog.getByLabel('Recipient email').fill('alex.park@example.com');
-  await dialog.getByLabel('Message').fill('Please review the launch plan.');
+  await dialog
+    .getByRole('textbox', { name: 'Message', exact: true })
+    .fill('Please review the launch plan.');
   await expect.poll(() => saves.length).toBeGreaterThan(0);
   await expect(dialog.getByRole('status')).toContainText('All changes saved');
-  await dialog.getByRole('button', { name: 'Send' }).click();
+  await dialog.getByRole('button', { name: 'Send', exact: true }).click();
   await expect.poll(() => sends.length).toBe(1);
+  await expect(dialog.getByText(/previous result is unknown/i)).toBeVisible();
+  await expect(dialog.getByLabel('Recipient email')).toBeDisabled();
+  await expect(dialog.getByLabel('Subject')).toBeDisabled();
+  await expect(dialog.getByRole('textbox', { name: 'Message', exact: true })).toBeDisabled();
+  await expect(dialog.getByRole('button', { name: 'Send', exact: true })).toBeEnabled();
+  await page.reload();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel('Recipient email')).toHaveValue('alex.park@example.com');
+  await expect(dialog.getByLabel('Subject')).toHaveValue('Subject-only planning note');
+  await expect(dialog.getByRole('textbox', { name: 'Message', exact: true })).toHaveValue(
+    'Please review the launch plan.'
+  );
+  await expect(dialog.getByRole('textbox', { name: 'Message', exact: true })).toBeDisabled();
+  await dialog.getByRole('button', { name: 'Send', exact: true }).click();
+  await expect.poll(() => sends.length).toBe(2);
   expect(sends[0]).toMatchObject({
     toEmail: 'alex.park@example.com',
     subject: 'Subject-only planning note',
@@ -216,6 +199,7 @@ test('partial drafts autosave and promote the same draft when sent', async ({ pa
     deliveryMode: 'SEND',
     version,
   });
+  expect(sends[1]).toEqual(sends[0]);
   expect(creates).toHaveLength(1);
 });
 
@@ -302,10 +286,21 @@ test('existing drafts hydrate without writes and preserve local text on a versio
 
   const body = page.getByRole('textbox', { name: 'Message' });
   await body.fill('Local text that must survive the conflict');
-  await expect(page.getByText(/draft changed elsewhere/i)).toBeVisible();
+  const conflict = page.getByRole('alert').filter({ hasText: 'This draft changed on the server' });
+  await expect(conflict).toBeVisible();
+  await expect(conflict.getByText('Original draft body', { exact: true })).toHaveCount(2);
+  await expect(
+    conflict.getByText('Local text that must survive the conflict', { exact: true })
+  ).toBeVisible();
   expect(saves).toBe(1);
   await expect(body).toHaveValue('Local text that must survive the conflict');
-  await expect(page.getByRole('button', { name: 'Send' })).toBeDisabled();
+  await expect(body).toBeDisabled();
+  await page.reload();
+  await expect(body).toHaveValue('Local text that must survive the conflict');
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'This draft changed on the server' })
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: 'Back' }).click();
   const confirm = page.getByRole('alertdialog', { name: 'Discard unsaved changes?' });
   await expect(confirm).toBeVisible();
@@ -348,6 +343,19 @@ test('mail URL lanes, keyboard commands, and custom snooze keep one truthful wor
         version: current.version + 1,
       };
       return fulfill(route, detail(current, 'SENT'));
+    }
+    if (request.method() === 'POST' && path.endsWith('/lifecycle/preview')) {
+      const input = await request.postDataJSON();
+      return fulfill(route, {
+        threadId: current.threadId,
+        action: input.action,
+        allowed: true,
+        blockers: [],
+        targetFolderId: null,
+        targetFolderName: 'Trash',
+        affectedCount: 1,
+        version: current.version,
+      });
     }
     if (request.method() === 'POST' && path.endsWith('/lifecycle')) {
       const input = await request.postDataJSON();
@@ -758,7 +766,7 @@ test('truncated rule preview blocks backfill until the bounded scope is resolved
   expect(commands).toBe(0);
 });
 
-test('mailbox pagination, shared ownership, and failed delivery retry are complete', async ({
+test('mailbox pagination, shared ownership, and failed delivery safety are complete', async ({
   page,
 }) => {
   await mockMailMember(page);
@@ -772,7 +780,6 @@ test('mailbox pagination, shared ownership, and failed delivery retry are comple
     shared: true,
     subject: 'People policy question',
   });
-  let retried = false;
   let assignedToJin = false;
   await page.route('**/api/platform/v1/mail/threads?*', (route) => {
     const url = new URL(route.request().url());
@@ -786,10 +793,6 @@ test('mailbox pagination, shared ownership, and failed delivery retry are comple
       page: pageNumber,
       pageSize: 30,
     });
-  });
-  await page.route('**/api/platform/v1/mail/threads/*/messages/*/retry', (route) => {
-    retried = true;
-    return fulfill(route, detail(shared, 'QUEUED'));
   });
   await page.route('**/api/platform/v1/mail/threads/*/assignment', async (route) => {
     expect((await route.request().postDataJSON()).assignedUserId).toBe(43);
@@ -808,7 +811,7 @@ test('mailbox pagination, shared ownership, and failed delivery retry are comple
             ? { ...shared, assignedUserId: 43, assignedName: 'Jin Lee', version: 4 }
             : shared
           : first;
-    return fulfill(route, detail(item, retried && id === shared.threadId ? 'QUEUED' : 'FAILED'));
+    return fulfill(route, detail(item, 'FAILED'));
   });
 
   await page.goto('/mail/inbox');
@@ -829,8 +832,8 @@ test('mailbox pagination, shared ownership, and failed delivery retry are comple
 
   await page.goto(`/mail/shared?thread=${shared.threadId}`);
   await expect(page.getByText('Delivery failed')).toBeVisible();
-  await page.getByRole('button', { name: 'Retry delivery' }).click();
-  await expect(page.getByText('Queued', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Retry delivery' })).toBeDisabled();
+  await expect(page.getByText(/duplicate-delivery risk can be verified/u)).toBeVisible();
 
   await page.getByLabel('Assignee').click();
   await page.getByRole('option', { name: /Jin Lee/ }).click();
@@ -877,6 +880,19 @@ test('trash and restore keep the mailbox lifecycle reversible', async ({ page })
             };
       return fulfill(route, { thread: current, deleted: false });
     }
+    if (request.method() === 'POST' && path.endsWith('/lifecycle/preview')) {
+      const input = await request.postDataJSON();
+      return fulfill(route, {
+        threadId: current.threadId,
+        action: input.action,
+        allowed: true,
+        blockers: [],
+        targetFolderId: input.targetFolderId ?? null,
+        targetFolderName: input.action === 'TRASH' ? 'Trash' : null,
+        affectedCount: 1,
+        version: current.version,
+      });
+    }
     if (request.method() === 'GET' && path.endsWith(`/${current.threadId}`)) {
       return fulfill(route, detail(current, 'SENT'));
     }
@@ -891,12 +907,14 @@ test('trash and restore keep the mailbox lifecycle reversible', async ({ page })
   await expect(page.getByRole('heading', { name: 'Reversible lifecycle review' })).toBeVisible();
   await page.getByRole('button', { name: 'Move to folder' }).click();
   await page.getByRole('menuitem', { name: 'Move to trash' }).click();
+  await page.getByRole('button', { name: 'Confirm move' }).click();
   await expect.poll(() => lifecycleActions).toEqual(['TRASH']);
   await page.getByRole('button', { name: 'Undo' }).click();
   await expect.poll(() => lifecycleActions).toEqual(['TRASH', 'RESTORE']);
 
   await page.getByRole('button', { name: 'Move to folder' }).click();
   await page.getByRole('menuitem', { name: 'Move to trash' }).click();
+  await page.getByRole('button', { name: 'Confirm move' }).click();
   await expect.poll(() => lifecycleActions).toEqual(['TRASH', 'RESTORE', 'TRASH']);
 
   await page.goto('/mail/trash');

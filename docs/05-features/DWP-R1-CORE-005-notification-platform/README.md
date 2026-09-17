@@ -1,7 +1,8 @@
 # DWP-R1-CORE-005 Notification Platform
 
 - Owner: Shared Experience Platform
-- 상태: `internal-product-complete`; 외부 Provider Production Gate 진행 중
+- 상태: `R2 internal-product-complete`; Stitch 01-20·관심 규칙·Saved View v2·시험 알림·소음 품질
+  구현 및 회귀 완료, 외부 Provider Production Gate 진행 중
 - Roadmap: R1 Core Foundation
 - 사용자 제품명: `알림 센터`
 - 내부 도메인명: `notification`
@@ -12,6 +13,10 @@
 - [최신 수신 분류·메뉴·홈 구현 기준](09-recipient-views-and-action-home.md)
 - [관리자 계약·정책·템플릿 스튜디오 구현 기준](10-admin-governance-studios.md)
 - [Design 01-14 구현 완료 매트릭스](11-design-01-14-implementation-matrix.md)
+- [Stitch 구현·글로벌 완결성 감사](15-stitch-global-completeness-audit-2026-09-16.md)
+- [Attention Rules 아키텍처](16-attention-rules-architecture-2026-09-16.md)
+- [Design AI 전달 프롬프트](17-design-ai-prompt-attention-personalization-2026-09-16.md)
+- [Notification R2 완료 증적](18-notification-r2-completion-evidence-2026-09-17.md)
 
 - [기획 정의](01-기획 정의.md)
 - [화면 설계서](02-화면 설계서.md)
@@ -27,10 +32,14 @@
 
 ## 현재 판정
 
-2026-09-09 기준 사용자 메뉴·홈은 09 문서, 관리자 계약·정책·템플릿 화면과 4-eyes
+2026-09-17 기준 사용자 메뉴·홈은 09 문서, 관리자 계약·정책·템플릿 화면과 4-eyes
 변경 절차는 10 문서를 따른다.
 과거 설계 문서의 virtual list와 SLA 정렬은 구현 완료 증거가 아니라 제안으로 구분한다.
 SavedView는 공통 Governed Saved View API에 연결돼 개인 범위로 구현됐다.
+
+Stitch 01-20의 사용자·관리자 화면과 E1-E5 내부 고도화는 구현 및 자동 회귀를 완료했다.
+현재 제품 판정과 정확한 Gate 수치는 [R2 완료 증적](18-notification-r2-completion-evidence-2026-09-17.md)을
+정본으로 사용한다. 과거 날짜의 수치는 해당 시점 통합 기록이며 최신 판정을 덮어쓰지 않는다.
 
 Direct Recipient 기반 In-app Foundation Pilot은 구현되어 실제 로컬 서비스와 데이터로 동작한다.
 Header Badge·Glance, 사용자 알림 센터, 개인 설정, Tenant 운영 개요·계약·전달 운영 화면은 각각의

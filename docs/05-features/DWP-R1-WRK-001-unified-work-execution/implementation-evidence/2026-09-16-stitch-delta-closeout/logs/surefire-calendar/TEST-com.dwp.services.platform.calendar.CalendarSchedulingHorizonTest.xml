@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.platform.calendar.CalendarSchedulingHorizonTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:00:47" hostname="MacBook-Pro" time="0.001">
+  <properties/>
+  <testcase name="horizonUsesCanonicalLocalDatesAcrossDaylightSavingTransitions()" classname="com.dwp.services.platform.calendar.CalendarSchedulingHorizonTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

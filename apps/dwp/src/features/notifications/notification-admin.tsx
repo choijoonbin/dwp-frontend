@@ -10,7 +10,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   getNotificationAdminOverview,
   getNotificationDeliveryOperations,
@@ -624,8 +624,12 @@ function ContractDetail({ contract }: { contract: NotificationTypeContract }) {
 
 export function NotificationTypeCatalogPage() {
   const { t } = useTranslation('notifications');
-  const [queryText, setQueryText] = useState('');
-  const [appKey, setAppKey] = useState('');
+  const [searchParams] = useSearchParams();
+  const requestedContractId = searchParams.get('contractId')?.trim() ?? '';
+  const requestedQuery = (searchParams.get('query')?.trim() ?? '').slice(0, 120);
+  const requestedAppKey = (searchParams.get('appKey')?.trim() ?? '').slice(0, 100);
+  const [queryText, setQueryText] = useState(requestedQuery);
+  const [appKey, setAppKey] = useState(requestedAppKey);
   const [state, setState] = useState<NotificationContractState | 'ALL'>('ALL');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
@@ -654,6 +658,17 @@ export function NotificationTypeCatalogPage() {
     [query.data?.pages]
   );
   useEffect(() => {
+    setQueryText(requestedQuery);
+    setAppKey(requestedAppKey);
+  }, [requestedAppKey, requestedQuery]);
+  useEffect(() => {
+    if (!requestedContractId) return;
+    if (contracts.some((contract) => contract.contractId === requestedContractId)) {
+      setSelectedId(requestedContractId);
+      setMobileDetailOpen(true);
+    }
+  }, [contracts, requestedContractId]);
+  useEffect(() => {
     if (contracts.length === 0) return;
     setKnownApps((current) => {
       const next = new Map(current);
@@ -672,7 +687,10 @@ export function NotificationTypeCatalogPage() {
     return <NotificationAdminCapabilityUnavailable />;
   }
   const selected =
-    contracts.find((contract) => contract.contractId === selectedId) ?? contracts[0] ?? null;
+    contracts.find((contract) => contract.contractId === selectedId) ??
+    contracts.find((contract) => contract.contractId === requestedContractId) ??
+    contracts[0] ??
+    null;
 
   return (
     <Stack gap={1.5} data-testid="notification-contract-catalog">

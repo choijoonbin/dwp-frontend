@@ -1,0 +1,249 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 테넌트 운영
+          - paragraph [ref=e26]: SKAX
+        - navigation "알림 탐색" [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 테넌트 운영
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - link "운영 개요" [ref=e32] [cursor=pointer]:
+                  - /url: /notifications/admin/overview
+                  - img [ref=e34]
+                  - paragraph [ref=e38]: 운영 개요
+              - listitem [ref=e39]:
+                - link "알림 계약" [ref=e40] [cursor=pointer]:
+                  - /url: /notifications/admin/contracts
+                  - img [ref=e42]
+                  - paragraph [ref=e48]: 알림 계약
+              - listitem [ref=e49]:
+                - link "정책 스튜디오" [ref=e50] [cursor=pointer]:
+                  - /url: /notifications/admin/policies
+                  - img [ref=e52]
+                  - paragraph [ref=e54]: 정책 스튜디오
+              - listitem [ref=e55]:
+                - link "템플릿 스튜디오" [ref=e56] [cursor=pointer]:
+                  - /url: /notifications/admin/templates
+                  - img [ref=e58]
+                  - paragraph [ref=e63]: 템플릿 스튜디오
+              - listitem [ref=e64]:
+                - link "전달 운영" [ref=e65] [cursor=pointer]:
+                  - /url: /notifications/admin/operations
+                  - img [ref=e67]
+                  - paragraph [ref=e75]: 전달 운영
+              - listitem [ref=e76]:
+                - link "전달 통제" [ref=e77] [cursor=pointer]:
+                  - /url: /notifications/admin/suppressions
+                  - img [ref=e79]
+                  - paragraph [ref=e83]: 전달 통제
+        - link "업무로 돌아가기" [ref=e85] [cursor=pointer]:
+          - /url: /notifications/home
+          - img [ref=e87]
+          - text: 업무로 돌아가기
+    - banner [ref=e89]:
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - img [ref=e93]
+          - generic "알림 관리" [ref=e97]
+        - navigation "앱 영역 전환" [ref=e100]:
+          - generic [ref=e101]: 관리 모드
+          - 'link "업무로 돌아가기: 알림" [ref=e103] [cursor=pointer]':
+            - /url: /notifications/home
+            - img [ref=e105]
+            - generic [ref=e107]: 업무로 돌아가기
+        - generic [ref=e108]:
+          - button "DWP 검색" [ref=e110] [cursor=pointer]:
+            - img [ref=e111]
+            - paragraph [ref=e114]: DWP 검색
+            - generic [ref=e115]: ⌘K
+          - generic [ref=e116]:
+            - button "전체 화면" [ref=e117] [cursor=pointer]:
+              - img [ref=e118]
+            - generic "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e124]:
+              - button "조치 필요 알림 2건, 전체 새 알림 4건" [ref=e125] [cursor=pointer]:
+                - generic [ref=e126]:
+                  - img [ref=e127]
+                  - generic [ref=e130]: "4"
+          - 'button "계정: Tenant Admin, Tenant administrator" [ref=e132] [cursor=pointer]':
+            - generic [ref=e133]: T
+            - img [ref=e134]
+    - main [ref=e136]:
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - img [ref=e142]
+          - generic [ref=e143]:
+            - paragraph [ref=e144]: 알림 운영
+            - heading "알림 정책 스튜디오" [level=1] [ref=e145]
+            - paragraph [ref=e146]: Provider 기본값을 바탕으로 회사 수신 정책을 제안하고, 사용자 영향과 위험을 검토한 뒤 분리 승인합니다.
+        - generic [ref=e148]:
+          - alert [ref=e149]:
+            - img [ref=e151]
+            - generic [ref=e154]: Provider 계약은 이 화면에서 변경하지 않습니다. 회사 정책은 변경 제안, 영향 미리보기, 독립 승인과 감사 증적을 거쳐 게시됩니다.
+          - generic [ref=e155]:
+            - generic [ref=e156]:
+              - generic [ref=e157]:
+                - heading "승인 대기" [level=2] [ref=e158]
+                - paragraph [ref=e159]: 작성자와 다른 승인자가 위험과 사용자 영향을 확인해야 게시할 수 있습니다.
+              - generic [ref=e161]: "2"
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - generic [ref=e164]:
+                  - generic [ref=e165]:
+                    - heading "전자결재" [level=6] [ref=e166]
+                    - generic [ref=e168]: 초안
+                  - paragraph [ref=e169]: 긴급 결재 요청을 업무 시간 밖에도 놓치지 않도록 변경
+                  - text: 2026. 9. 8. 오전 11:30 · v5
+                - generic [ref=e170]:
+                  - button "반려" [ref=e171] [cursor=pointer]:
+                    - img [ref=e173]
+                    - text: 반려
+                  - button "검토 및 게시" [ref=e177] [cursor=pointer]:
+                    - img [ref=e179]
+                    - text: 검토 및 게시
+              - generic [ref=e182]:
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - heading "업무" [level=6] [ref=e185]
+                    - generic [ref=e187]: 초안
+                  - paragraph [ref=e188]: 집중 시간대 업무 알림 정책을 재검토하기 위한 초안
+                  - text: 2026. 9. 8. 오전 11:40 · v3
+                - generic [ref=e189]:
+                  - button "반려" [ref=e190] [cursor=pointer]:
+                    - img [ref=e192]
+                    - text: 반려
+                  - button "검토 및 게시" [ref=e196] [cursor=pointer]:
+                    - img [ref=e198]
+                    - text: 검토 및 게시
+          - generic [ref=e201]:
+            - region "알림 정책 목록" [ref=e202]:
+              - generic [ref=e203]: 알림 정책 목록
+              - button "전자결재 APP · approvals 회사 정책 v4" [pressed] [ref=e204] [cursor=pointer]:
+                - generic [ref=e205]:
+                  - heading "전자결재" [level=6] [ref=e206]
+                  - generic [ref=e207]: APP · approvals
+                  - generic [ref=e210]: 회사 정책
+                - generic [ref=e211]: v4
+              - button "메일 APP · mail Provider 기본값 v0" [ref=e212] [cursor=pointer]:
+                - generic [ref=e213]:
+                  - heading "메일" [level=6] [ref=e214]
+                  - generic [ref=e215]: APP · mail
+                  - generic [ref=e218]: Provider 기본값
+                - generic [ref=e219]: v0
+              - button "업무 APP · work 회사 정책 v2" [ref=e220] [cursor=pointer]:
+                - generic [ref=e221]:
+                  - heading "업무" [level=6] [ref=e222]
+                  - generic [ref=e223]: APP · work
+                  - generic [ref=e226]: 회사 정책
+                - generic [ref=e227]: v2
+            - region "선택한 알림 정책 상세" [ref=e228]:
+              - generic [ref=e229]:
+                - generic [ref=e230]:
+                  - generic [ref=e231]:
+                    - generic [ref=e232]:
+                      - generic [ref=e234]: APP
+                      - generic [ref=e236]: 회사 정책
+                    - heading "전자결재" [level=2] [ref=e237]
+                    - paragraph [ref=e238]: approvals
+                  - button "승인 대기 중" [disabled]:
+                    - generic:
+                      - img
+                    - text: 승인 대기 중
+                - generic [ref=e239]:
+                  - generic [ref=e240]:
+                    - term [ref=e241]: 필수 알림
+                    - definition [ref=e242]: 아니요
+                  - generic [ref=e243]:
+                    - term [ref=e244]: 방해 금지 시간
+                    - definition [ref=e245]: 방해 금지 시간 준수
+                  - generic [ref=e246]:
+                    - term [ref=e247]: 기본 요약 주기
+                    - definition [ref=e248]: 즉시
+                - generic [ref=e249]:
+                  - generic [ref=e250]:
+                    - generic [ref=e252]: 초안
+                    - generic [ref=e253]: v5
+                  - region "현재 적용값과 제안값 비교" [ref=e254]:
+                    - heading "현재 적용값과 제안값 비교" [level=3] [ref=e255]
+                    - generic [ref=e256]:
+                      - generic [ref=e257]:
+                        - generic [ref=e259]: 현재
+                        - generic [ref=e260]: 제안
+                      - generic [ref=e262]:
+                        - generic [ref=e263]:
+                          - term [ref=e264]: 필수 알림
+                          - definition [ref=e265]:
+                            - generic [ref=e266]: 현재
+                            - paragraph [ref=e267]: 아니요
+                          - definition [ref=e268]:
+                            - generic [ref=e269]: 제안
+                            - paragraph [ref=e270]: 예
+                          - definition [ref=e271]:
+                            - generic [ref=e273]: 변경
+                        - generic [ref=e274]:
+                          - term [ref=e275]: 방해 금지 시간
+                          - definition [ref=e276]:
+                            - generic [ref=e277]: 현재
+                            - paragraph [ref=e278]: 방해 금지 시간 준수
+                          - definition [ref=e279]:
+                            - generic [ref=e280]: 제안
+                            - paragraph [ref=e281]: 긴급 시 우회
+                          - definition [ref=e282]:
+                            - generic [ref=e284]: 변경
+                        - generic [ref=e285]:
+                          - term [ref=e286]: 기본 요약 주기
+                          - definition [ref=e287]:
+                            - generic [ref=e288]: 현재
+                            - paragraph [ref=e289]: 즉시
+                          - definition [ref=e290]:
+                            - generic [ref=e291]: 제안
+                            - paragraph [ref=e292]: 즉시
+                          - definition [ref=e293]:
+                            - generic [ref=e295]: 유지
+                    - heading "채널 정책" [level=4] [ref=e296]
+                    - generic [ref=e297]:
+                      - generic [ref=e298]:
+                        - generic [ref=e300]: 현재
+                        - generic [ref=e301]: 제안
+                      - generic [ref=e303]:
+                        - heading "앱 내 알림" [level=6] [ref=e304]
+                        - generic [ref=e305]:
+                          - generic [ref=e306]: 현재
+                          - paragraph [ref=e307]: 사용 · 즉시 · 사용자 변경 가능
+                          - generic [ref=e308]: "윈도우당 제한: 20"
+                        - generic [ref=e309]:
+                          - generic [ref=e310]: 제안
+                          - paragraph [ref=e311]: 사용 · 즉시 · 회사에서 관리
+                          - generic [ref=e312]: "윈도우당 제한: 20"
+                        - generic [ref=e314]: 변경
+                      - generic [ref=e315]:
+                        - heading "이메일" [level=6] [ref=e316]
+                        - generic [ref=e317]:
+                          - generic [ref=e318]: 현재
+                          - paragraph [ref=e319]: 사용 안 함 · 요약 · 회사에서 관리
+                          - generic [ref=e320]: "윈도우당 제한: 5"
+                        - generic [ref=e321]:
+                          - generic [ref=e322]: 제안
+                          - paragraph [ref=e323]: 사용 안 함 · 요약 · 회사에서 관리
+                          - generic [ref=e324]: "윈도우당 제한: 5"
+                        - generic [ref=e326]: 유지
+                  - paragraph [ref=e327]: 긴급 결재 요청을 업무 시간 밖에도 놓치지 않도록 변경
+                  - generic [ref=e328]: 다른 승인자 필요
+```

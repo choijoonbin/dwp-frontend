@@ -16,11 +16,16 @@ import {
   getWorkplaceAdminFloors,
   getWorkplaceAdminResources,
   getWorkplaceAdminSites,
+  getWorkplaceAuditEvents,
 } from '@dwp-frontend/shared-utils';
+import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import { ArrowUpRight, MapPin } from 'lucide-react';
 import { WorkplaceAdminSection } from './workplace-admin-experience-ui';
 import { useRoomsCapabilities, useWorkplaceGovernanceCapabilities } from './rooms-capabilities';
@@ -30,20 +35,33 @@ import {
   workplaceCanonicalScopeUuid,
 } from './workplace-authorized-floor-metadata';
 import { RoomsPageHeading } from './rooms-ui';
-import { WorkplaceAdminOperations } from './workplace-admin-operations';
+import {
+  initialOperationsRange,
+  operationsRangeToIso,
+  WorkplaceAdminOperations,
+} from './workplace-admin-operations';
+import { AuditResults } from './workplace-admin-audit-results';
 import { WorkplaceFacilityRequests } from './workplace-facility-requests';
 import { WorkplaceResourceClosurePanel } from './workplace-resource-closure-panel';
 import { WorkplaceResourcePhoto } from './workplace-resource-photo';
-import { WorkplaceExperienceQueryError } from './workplace-experience-ui';
+import {
+  WorkplaceExperienceFreshness,
+  WorkplaceExperienceQueryError,
+} from './workplace-experience-ui';
 
 export function WorkplaceAdminFacilities() {
-  const { t } = useTranslation('rooms');
+  const { t, i18n } = useTranslation('rooms');
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down('md'));
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage);
   const authorityKey = useWorkplaceExperienceAuthority();
   const capabilities = useRoomsCapabilities();
   const governance = useWorkplaceGovernanceCapabilities();
   const identity = authorityKey;
   const [params, setParams] = useSearchParams();
-  const [resourceId, setResourceId] = useState('');
+  const resourceId = params.get('resource') ?? '';
+  const [auditPage, setAuditPage] = useState(0);
+  const [auditSize, setAuditSize] = useState(10);
   const allowed = capabilities.isLoaded && capabilities.canViewWorkplaceAdmin;
   const sitesQuery = useQuery({
     queryKey: ['workplace', 'facilities', identity, 'sites'],
@@ -111,11 +129,44 @@ export function WorkplaceAdminFacilities() {
   const resources =
     catalogReady && resourcesValid && !resourcesQuery.isError ? (resourcesQuery.data ?? []) : [];
   const selected = resources.find((item) => item.resourceId === resourceId);
-  useEffect(() => setResourceId(''), [identity, site?.siteId, floor?.floorId, scopeKey]);
+  useEffect(() => setAuditPage(0), [identity, selected?.resourceId]);
+  const auditRange = site
+    ? operationsRangeToIso(initialOperationsRange(site.timeZone), site.timeZone)
+    : null;
+  const auditQuery = useQuery({
+    queryKey: [
+      'workplace',
+      'facilities',
+      identity,
+      'audit',
+      auditRange?.from,
+      auditRange?.to,
+      auditPage,
+      auditSize,
+    ],
+    queryFn: () =>
+      getWorkplaceAuditEvents(auditRange!.from, auditRange!.to, {
+        page: auditPage,
+        size: auditSize,
+      }),
+    enabled: allowed && Boolean(site && selected && auditRange),
+    staleTime: 15_000,
+    retry: false,
+  });
+  const formatAuditInstant = (value: string) =>
+    formatDate(
+      value,
+      { dateStyle: 'medium', timeStyle: 'short', timeZone: site?.timeZone },
+      locale
+    );
   const update = (key: string, value: string) => {
     const next = new URLSearchParams(params);
     next.set(key, value);
-    if (key === 'site') next.delete('floor');
+    if (key === 'site') {
+      next.delete('floor');
+      next.delete('resource');
+    }
+    if (key === 'floor') next.delete('resource');
     setParams(next, { replace: true });
   };
   return (
@@ -228,7 +279,7 @@ export function WorkplaceAdminFacilities() {
                   key={item.resourceId}
                   intent={selected?.resourceId === item.resourceId ? 'secondary' : 'quiet'}
                   aria-pressed={selected?.resourceId === item.resourceId}
-                  onClick={() => setResourceId(item.resourceId)}
+                  onClick={() => update('resource', item.resourceId)}
                   sx={{
                     width: '100%',
                     textAlign: 'left',
@@ -303,6 +354,77 @@ export function WorkplaceAdminFacilities() {
                 ) : null}
               </WorkplaceAdminSection>
               <WorkplaceResourceClosurePanel resource={selected} timeZone={site.timeZone} />
+              <WorkplaceAdminSection
+                title={t('workplace.admin.operations.tabs.audit')}
+                description={t('workplace.admin.operations.filters.timeZone', {
+                  timeZone: site.timeZone,
+                })}
+                actions={
+                  auditQuery.dataUpdatedAt ? (
+                    <WorkplaceExperienceFreshness
+                      at={new Date(auditQuery.dataUpdatedAt).toISOString()}
+                      refreshing={auditQuery.isFetching}
+                    />
+                  ) : null
+                }
+              >
+                {auditQuery.isError ? (
+                  <WorkplaceExperienceQueryError retry={() => void auditQuery.refetch()} />
+                ) : (
+                  <AuditResults
+                    data={auditQuery.data}
+                    loading={auditQuery.isPending}
+                    mobile={mobile}
+                    page={auditPage}
+                    size={auditSize}
+                    formatInstant={formatAuditInstant}
+                    slots={{
+                      desktopAction: (
+                        <Box
+                          component="span"
+                          sx={{ display: 'block', fontWeight: 'fontWeightBold' }}
+                        />
+                      ),
+                      mobileAction: (
+                        <Box
+                          component="span"
+                          sx={{
+                            display: 'block',
+                            mt: 0.5,
+                            fontWeight: 'fontWeightBold',
+                            overflowWrap: 'anywhere',
+                          }}
+                        />
+                      ),
+                      desktopCorrelation: (
+                        <TableCell
+                          sx={{
+                            maxWidth: 220,
+                            overflowWrap: 'anywhere',
+                          }}
+                        />
+                      ),
+                      mobileCorrelation: (
+                        <Box
+                          component="span"
+                          sx={{
+                            display: 'block',
+                            mt: 0.25,
+                            color: 'text.secondary',
+                            fontSize: 'caption.fontSize',
+                            overflowWrap: 'anywhere',
+                          }}
+                        />
+                      ),
+                    }}
+                    onPage={setAuditPage}
+                    onSize={(size) => {
+                      setAuditSize(size);
+                      setAuditPage(0);
+                    }}
+                  />
+                )}
+              </WorkplaceAdminSection>
               <Stack
                 direction={{ xs: 'column', md: 'row' }}
                 gap={1.5}

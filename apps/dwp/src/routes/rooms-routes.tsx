@@ -3,6 +3,8 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
 
 import { WORKPLACE_PRODUCT_MANIFEST } from '../features/rooms/workplace-product-manifest';
+import { migrateLegacyWorkplaceFindUrl } from '../features/rooms/workplace-find-url-state';
+import { migrateLegacyWorkplaceReservationsUrl } from '../features/rooms/workplace-reservations-url-state';
 import { normalizeProductPath } from '../components/product-manifest';
 import { RoomsLayout } from '../layouts/rooms-layout';
 import { buildProductPageRouteContractSource } from './draft-product-page-route-contract-source';
@@ -18,6 +20,14 @@ import { preserveProductRouteLocation } from './product-surface-canary-routes';
 import { buildTwoSurfaceProductChildren } from './two-surface-product-routes';
 
 const RoomsPage = lazy(() => import('../pages/rooms'));
+const WorkplaceVisitKioskRoute = lazy(() =>
+  import('../features/rooms/workplace-visit-kiosk').then((module) => ({
+    default: module.WorkplaceVisitKioskRoute,
+  }))
+);
+const WorkplaceDeviceDisplayRoute = lazy(
+  () => import('../features/rooms/workplace-navigation-device-route')
+);
 
 const page = (
   <Suspense fallback={routeFallback}>
@@ -74,7 +84,73 @@ function LegacyRoomsRedirect() {
   );
 }
 
+export function resolveLegacyWorkplaceFindLocation(
+  search: string,
+  hash: string,
+  source: 'explore' | 'rooms'
+) {
+  const normalized = migrateLegacyWorkplaceFindUrl(new URLSearchParams(search), source);
+  return {
+    pathname: '/workplace/find',
+    search: `?${normalized.toString()}`,
+    hash,
+  } as const;
+}
+
+function LegacyWorkplaceFindRedirect({ source }: { source: 'explore' | 'rooms' }) {
+  const location = useLocation();
+  return (
+    <Navigate
+      replace
+      to={resolveLegacyWorkplaceFindLocation(location.search, location.hash, source)}
+    />
+  );
+}
+
+export function resolveLegacyWorkplaceReservationsLocation(
+  search: string,
+  hash: string,
+  source: 'my-bookings' | 'my-meetings'
+) {
+  const normalized = migrateLegacyWorkplaceReservationsUrl(new URLSearchParams(search), source);
+  return {
+    pathname: '/workplace/reservations',
+    search: `?${normalized.toString()}`,
+    hash,
+  } as const;
+}
+
+function LegacyWorkplaceReservationsRedirect({
+  source,
+}: {
+  source: 'my-bookings' | 'my-meetings';
+}) {
+  const location = useLocation();
+  return (
+    <Navigate
+      replace
+      to={resolveLegacyWorkplaceReservationsLocation(location.search, location.hash, source)}
+    />
+  );
+}
+
 export const roomsRoutes: RouteObject[] = [
+  {
+    path: 'device/workplace/devices/:deviceId/display',
+    element: (
+      <Suspense fallback={routeFallback}>
+        <WorkplaceDeviceDisplayRoute />
+      </Suspense>
+    ),
+  },
+  {
+    path: 'workplace/kiosk',
+    element: (
+      <Suspense fallback={routeFallback}>
+        <WorkplaceVisitKioskRoute />
+      </Suspense>
+    ),
+  },
   {
     path: 'workplace',
     element: (
@@ -84,19 +160,35 @@ export const roomsRoutes: RouteObject[] = [
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
-    children: buildTwoSurfaceProductChildren({
-      manifest: WORKPLACE_PRODUCT_MANIFEST,
-      workSurfaceId: 'workplace.work',
-      managementSurfaceId: 'workplace.management',
-      managementBasePath: '/workplace/admin',
-      legacyPath: '/workplace/home',
-      legacyShell,
-      managementLegacyShell,
-      areaKey: 'rooms',
-      translationNamespace: 'rooms',
-      renderPage: () => page,
-      legacyUnknown: page,
-    }),
+    children: [
+      { path: 'rooms', element: <LegacyWorkplaceFindRedirect source="rooms" /> },
+      {
+        path: 'my-bookings',
+        element: <LegacyWorkplaceReservationsRedirect source="my-bookings" />,
+      },
+      {
+        path: 'my-meetings',
+        element: <LegacyWorkplaceReservationsRedirect source="my-meetings" />,
+      },
+      ...buildTwoSurfaceProductChildren({
+        manifest: WORKPLACE_PRODUCT_MANIFEST,
+        workSurfaceId: 'workplace.work',
+        managementSurfaceId: 'workplace.management',
+        managementBasePath: '/workplace/admin',
+        legacyPath: '/workplace/home',
+        legacyShell,
+        managementLegacyShell,
+        areaKey: 'rooms',
+        translationNamespace: 'rooms',
+        renderPage: (route) =>
+          route.routeContractKey === 'route.workplace.work.explore.page' ? (
+            <LegacyWorkplaceFindRedirect source="explore" />
+          ) : (
+            page
+          ),
+        legacyUnknown: page,
+      }),
+    ],
   },
   { path: 'rooms/*', element: <LegacyRoomsRedirect /> },
 ];

@@ -20,6 +20,7 @@ import { alpha } from '@mui/material/styles';
 
 import {
   FLOW_ACTIVITY_STATES,
+  flowActivityAttentionRoute,
   flowActivityHistoryRoute,
   validFlowActivitySummary,
 } from './flow-activity-signal-model';
@@ -97,7 +98,10 @@ export function FlowActivitySignalPanel({
   const attention = valid ? valid.needsInput + valid.policyBlocked : undefined;
   const stale = valid ? Date.now() - Date.parse(valid.generatedAt) > 5 * 60_000 : true;
   const hasUnknown = Boolean(valid?.unknown);
-  const allClear = attention === 0 && !hasUnknown && valid?.failed === 0 && !stale;
+  const hasAttentionItems = Boolean(valid?.attentionItems?.length);
+  const requiresAttention = Boolean(attention || hasAttentionItems);
+  const allClear =
+    attention === 0 && !hasAttentionItems && !hasUnknown && valid?.failed === 0 && !stale;
 
   return (
     <ContentDialog
@@ -158,12 +162,12 @@ export function FlowActivitySignalPanel({
                   gap: 1.5,
                   borderRadius: SURFACE_RADIUS,
                   bgcolor: alpha(
-                    attention ? theme.palette.error.main : theme.palette.success.main,
+                    requiresAttention ? theme.palette.error.main : theme.palette.success.main,
                     0.07
                   ),
                   border: '1px solid',
                   borderColor: alpha(
-                    attention ? theme.palette.error.main : theme.palette.success.main,
+                    requiresAttention ? theme.palette.error.main : theme.palette.success.main,
                     0.16
                   ),
                   '@media (forced-colors: active)': { borderColor: 'CanvasText' },
@@ -251,6 +255,71 @@ export function FlowActivitySignalPanel({
                   {t('flow.signals.execution.reviewTitle')}
                 </Typography>
               </Stack>
+              {valid.attentionItems && valid.attentionItems.length > 0 && (
+                <Box sx={{ mt: 1.5 }}>
+                  <Typography variant="caption" color="text.secondary" component="p">
+                    {t('flow.signals.execution.currentItemsNotice')}
+                  </Typography>
+                  <Stack component="ul" gap={1} sx={{ p: 0, m: 0, mt: 1, listStyle: 'none' }}>
+                    {valid.attentionItems.map((item) => {
+                      const blocked = item.state === 'policy-blocked';
+                      const Icon = blocked ? ShieldX : CircleAlert;
+                      return (
+                        <Box
+                          component="li"
+                          key={item.id}
+                          sx={(theme) => ({
+                            p: 1.5,
+                            display: 'grid',
+                            gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+                            alignItems: 'center',
+                            gap: 1.25,
+                            border: 1,
+                            borderColor: alpha(
+                              blocked ? theme.palette.error.main : theme.palette.warning.main,
+                              0.24
+                            ),
+                            borderRadius: SURFACE_RADIUS,
+                            '@media (max-width:599.95px)': {
+                              gridTemplateColumns: 'auto minmax(0, 1fr)',
+                            },
+                          })}
+                        >
+                          <Icon size={18} aria-hidden="true" />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
+                              {item.title}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" component="p">
+                              {item.objectLabel} ·{' '}
+                              {t(`flow.signals.execution.states.${item.state}`)} ·{' '}
+                              {formatDate(item.occurredAt, {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </Typography>
+                          </Box>
+                          <ActionButton
+                            component={Link}
+                            to={flowActivityAttentionRoute(item)}
+                            intent="secondary"
+                            size="small"
+                            endIcon={<ArrowUpRight size={14} aria-hidden="true" />}
+                            sx={{
+                              minHeight: { xs: 44, sm: 38 },
+                              '@media (max-width:599.95px)': { gridColumn: '1 / -1', width: 1 },
+                            }}
+                          >
+                            {t('flow.signals.execution.reviewItem')}
+                          </ActionButton>
+                        </Box>
+                      );
+                    })}
+                  </Stack>
+                </Box>
+              )}
               <Stack gap={1} sx={{ mt: 1.5 }}>
                 {(['needs-input', 'policy-blocked'] as const).map((state) => {
                   const blocked = state === 'policy-blocked';

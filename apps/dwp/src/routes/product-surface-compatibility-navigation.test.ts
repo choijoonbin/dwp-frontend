@@ -218,7 +218,7 @@ function mutateSurfaceContext(
 }
 
 describe('rollout 110/111 exact navigation targets', () => {
-  it('projects all six Approvals management items from their exact PAGE decisions in 111', () => {
+  it('projects all eleven Approvals management items from their exact PAGE decisions in 111', () => {
     const managementPaths = APPROVAL_PRODUCT_MANIFEST.surfaces
       .find((surface) => surface.id === 'approvals.admin')!
       .navigation.flatMap((group) => group.items.map((item) => item.path));
@@ -229,11 +229,11 @@ describe('rollout 110/111 exact navigation targets', () => {
       rolloutMode: 'surface-ui',
     });
 
-    expect(managementPaths).toHaveLength(6);
+    expect(managementPaths).toHaveLength(11);
     expect(managementPaths.filter((path) => targets?.has(path))).toEqual(managementPaths);
   });
 
-  it('projects all nine Work and six Management Approvals PAGEs from exact 111 decisions', () => {
+  it('projects all nine Work and eleven Management Approvals PAGEs from exact 111 decisions', () => {
     const authority = authorityFor(APPROVAL_PRODUCT_MANIFEST);
     const routeDecisions = { ...authority.routeDecisions };
     authority.routeDecisions = routeDecisions;
@@ -292,7 +292,7 @@ describe('rollout 110/111 exact navigation targets', () => {
       .find((surface) => surface.id === 'approvals.admin')!
       .navigation.flatMap((group) => group.items.map((item) => item.path));
     expect(workPaths).toHaveLength(9);
-    expect(managementPaths).toHaveLength(6);
+    expect(managementPaths).toHaveLength(11);
     expect(workPaths.filter((path) => targets?.has(path))).toEqual(workPaths);
     expect(managementPaths.filter((path) => targets?.has(path))).toEqual(managementPaths);
   });

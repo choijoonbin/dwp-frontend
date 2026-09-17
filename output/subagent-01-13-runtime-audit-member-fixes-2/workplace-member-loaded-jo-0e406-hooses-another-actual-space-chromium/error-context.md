@@ -1,0 +1,90 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic "Open Workplace navigation" [ref=e8]:
+          - button "Open Workplace navigation" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic "Workplace" [ref=e18]
+        - generic [ref=e19]:
+          - button "Search DWP" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+          - generic "0 actionable notifications, 0 total unread" [ref=e27]:
+            - button "0 actionable notifications, 0 total unread" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]:
+                - img [ref=e30]
+                - generic: "0"
+          - 'button "Account: Tenant Admin, Tenant administrator" [ref=e34] [cursor=pointer]':
+            - generic [ref=e35]: T
+            - img [ref=e36]
+          - generic "Open DWAI·ON" [ref=e39]:
+            - button "Open DWAI·ON" [ref=e40] [cursor=pointer]
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - status [ref=e45]:
+          - img [ref=e47]
+          - generic [ref=e49]: Unsupported or invalid search conditions in this shared link were reset to safe defaults.
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - img [ref=e54]
+              - generic [ref=e57]:
+                - heading "Find a space · Pangyo HQ · 12F" [level=1] [ref=e58]: Pangyo HQ · 12F
+                - text: 2026-08-19 · 09:01 · 60 min
+            - button "Filters" [ref=e59] [cursor=pointer]:
+              - img [ref=e61]
+              - text: Filters
+          - generic [ref=e63]:
+            - status [ref=e65]: 2 of 2 results · 2 pass initial booking checks
+            - group "View mode" [ref=e66]:
+              - button "List view" [pressed] [ref=e67] [cursor=pointer]:
+                - img [ref=e68]
+              - button "Map view" [ref=e69] [cursor=pointer]:
+                - img [ref=e70]
+        - region "Pangyo HQ" [ref=e73]:
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - img [ref=e76]
+              - generic [ref=e80]:
+                - heading "Pangyo HQ" [level=2] [ref=e81]
+                - text: 12F · 2 results
+            - generic "Space status legend" [ref=e82]:
+              - generic [ref=e85]: Open by reservation state
+              - generic [ref=e88]: Occupied
+              - generic [ref=e91]: My booking
+              - generic [ref=e94]: Assigned
+              - generic [ref=e97]: Drop-in
+              - generic [ref=e100]: Unavailable
+          - generic [ref=e101]:
+            - article [ref=e102]:
+              - generic [ref=e105]:
+                - img [ref=e106]
+                - generic [ref=e108]: No space photo is registered.
+              - button "Actual alternative desk Desk · Focus zone · MONITOR · STANDING Open by reservation state Initial booking checks passed" [ref=e109] [cursor=pointer]:
+                - img [ref=e111]
+                - generic [ref=e113]:
+                  - heading "Actual alternative desk" [level=6] [ref=e114]
+                  - generic [ref=e115]: Desk · Focus zone · MONITOR · STANDING
+                - generic [ref=e116]:
+                  - generic [ref=e118]: Open by reservation state
+                  - generic [ref=e120]: Initial booking checks passed
+            - article [ref=e121]:
+              - generic [ref=e124]:
+                - img [ref=e125]
+                - generic [ref=e127]: No space photo is registered.
+              - button "Focus desk 12 Desk · Focus zone · MONITOR · STANDING Open by reservation state Initial booking checks passed" [ref=e128] [cursor=pointer]:
+                - img [ref=e130]
+                - generic [ref=e132]:
+                  - heading "Focus desk 12" [level=6] [ref=e133]
+                  - generic [ref=e134]: Desk · Focus zone · MONITOR · STANDING
+                - generic [ref=e135]:
+                  - generic [ref=e137]: Open by reservation state
+                  - generic [ref=e139]: Initial booking checks passed
+```

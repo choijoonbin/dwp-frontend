@@ -15,6 +15,7 @@ import {
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
+  DateTimePickerField,
   EmptyState,
   FilterBar,
   FormField,
@@ -47,6 +48,8 @@ import { ActivityEventDetail } from '../components/activity/activity-event-detai
 import { ActivitySourceStatus } from '../components/activity/activity-source-status';
 import {
   ACTIVITY_ACTORS as ACTOR_FILTERS,
+  ACTIVITY_OBJECT_TYPES,
+  ACTIVITY_SOURCES,
   ACTIVITY_STATES as STATE_FILTERS,
   activityRefreshState,
   activitySavedConfiguration,
@@ -64,6 +67,22 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 type ActivityRow = WorkspaceActivityEvent & { time: string; date: string };
+
+const EMPTY_SELECT_VALUE = '';
+
+const activitySourceLabelKey = {
+  WORKSPACE: 'workspace',
+  DWP_WORKSPACE: 'dwpWorkspace',
+  PERSONAL_TASK: 'personalTask',
+  'DWP Apps': 'apps',
+  DWAI_ON: 'dwaion',
+} as const;
+
+const activityObjectTypeLabelKey = {
+  WORK_ITEM: 'workItem',
+  WORKSPACE_APP: 'workspaceApp',
+  AGENT_RUN: 'agentRun',
+} as const;
 
 const stateColor: Record<ActivityState, 'info' | 'warning' | 'success' | 'error'> = {
   running: 'info',
@@ -101,6 +120,38 @@ export default function ActivityPage() {
   const actorFilter = filters.actor ?? 'all';
   const stateFilter = filters.state ?? 'all';
   const query = filters.query ?? '';
+  const sourceOptions = [
+    { value: '', label: t('activityFoundation.filters.allSources') },
+    ...ACTIVITY_SOURCES.map((value) => ({
+      value,
+      label: t(`activityFoundation.filters.sourceOptions.${activitySourceLabelKey[value]}`),
+    })),
+    ...(filters.source &&
+    !ACTIVITY_SOURCES.includes(filters.source as (typeof ACTIVITY_SOURCES)[number])
+      ? [
+          {
+            value: filters.source,
+            label: t('activityFoundation.filters.preservedValue', { value: filters.source }),
+          },
+        ]
+      : []),
+  ];
+  const objectTypeOptions = [
+    { value: '', label: t('activityFoundation.filters.allObjectTypes') },
+    ...ACTIVITY_OBJECT_TYPES.map((value) => ({
+      value,
+      label: t(`activityFoundation.filters.objectTypeOptions.${activityObjectTypeLabelKey[value]}`),
+    })),
+    ...(filters.objectType &&
+    !ACTIVITY_OBJECT_TYPES.includes(filters.objectType as (typeof ACTIVITY_OBJECT_TYPES)[number])
+      ? [
+          {
+            value: filters.objectType,
+            label: t('activityFoundation.filters.preservedValue', { value: filters.objectType }),
+          },
+        ]
+      : []),
+  ];
   const activeFilterCount = [
     filters.actor,
     filters.state,
@@ -435,21 +486,48 @@ export default function ActivityPage() {
                     bgcolor: 'background.paper',
                   }}
                 >
-                  {(['source', 'objectType', 'objectId', 'executionId', 'from', 'to'] as const).map(
-                    (key) => (
-                      <FormField
-                        key={key}
-                        label={t(`activityFoundation.filters.${key}`)}
-                        size="small"
-                        value={filters[key] ?? ''}
-                        onChange={(event) => changeFilter(key, event.target.value || null)}
-                        placeholder={
-                          key === 'from' || key === 'to' ? '2026-09-04T00:00:00Z' : undefined
-                        }
-                        fullWidth
-                      />
-                    )
-                  )}
+                  <SelectField<string>
+                    label={t('activityFoundation.filters.source')}
+                    size="small"
+                    value={filters.source ?? ''}
+                    options={sourceOptions}
+                    onValueChange={(value) => changeFilter('source', value || null)}
+                  />
+                  <SelectField<string>
+                    label={t('activityFoundation.filters.objectType')}
+                    size="small"
+                    value={filters.objectType ?? EMPTY_SELECT_VALUE}
+                    options={objectTypeOptions}
+                    onValueChange={(value) => changeFilter('objectType', value || null)}
+                  />
+                  {(['objectId', 'executionId'] as const).map((key) => (
+                    <FormField
+                      key={key}
+                      label={t(`activityFoundation.filters.${key}`)}
+                      size="small"
+                      value={filters[key] ?? ''}
+                      onChange={(event) => changeFilter(key, event.target.value || null)}
+                      fullWidth
+                    />
+                  ))}
+                  {(['from', 'to'] as const).map((key) => (
+                    <DateTimePickerField
+                      key={key}
+                      label={t(`activityFoundation.filters.${key}`)}
+                      size="small"
+                      value={filters[key] ?? null}
+                      onValueChange={(value) => changeFilter(key, value)}
+                      minutesStep={1}
+                      fullWidth
+                    />
+                  ))}
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ gridColumn: { sm: '1 / -1' } }}
+                  >
+                    {t('activityFoundation.filters.localTimeNotice')}
+                  </Typography>
                   <FormControlLabel
                     label={t('activityFoundation.filters.includeUsage')}
                     control={
@@ -520,7 +598,23 @@ export default function ActivityPage() {
                   ? [
                       {
                         key,
-                        label: `${t(`activityFoundation.filters.${key}`)}: ${filters[key]}`,
+                        label: `${t(`activityFoundation.filters.${key}`)}: ${
+                          key === 'source'
+                            ? sourceOptions.find(({ value }) => value === filters[key])?.label
+                            : key === 'objectType'
+                              ? objectTypeOptions.find(({ value }) => value === filters[key])?.label
+                              : key === 'from' || key === 'to'
+                                ? validActivityTimeRange({ [key]: filters[key] })
+                                  ? formatDate(filters[key]!, {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })
+                                  : filters[key]
+                                : filters[key]
+                        }`,
                         onRemove: () => changeFilter(key, null),
                       },
                     ]

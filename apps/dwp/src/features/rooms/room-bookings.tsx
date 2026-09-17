@@ -52,7 +52,7 @@ function roomBookingTargetId(eventId: string) {
   return `room-booking-${eventId.replace(/[^a-zA-Z0-9_-]/gu, '-')}`;
 }
 
-export function RoomBookings() {
+export default function RoomBookings() {
   const { t, i18n } = useTranslation('rooms');
   const auth = useAuth();
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;

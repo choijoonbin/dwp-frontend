@@ -1,0 +1,620 @@
+{
+  "schemaVersion": 2,
+  "sourceProjectId": "13391261371843159731",
+  "sourceDelivery": "전자결재.zip",
+  "sourceArchive": {
+    "fileName": "전자결재.zip",
+    "sha256": "86384fedc131d4ee537f760809bd99a292d8a45755accecc152fbbcd152c7bc0"
+  },
+  "sourceRootEnv": "APPROVAL_STITCH_EXTENSION_SOURCE_DIR",
+  "sourceTreeSha256": "c52947819084c336e8545092082817e6d747a4713a4516a9f78762f3164ae966",
+  "pairCount": 24,
+  "approvalFrameCount": 24,
+  "rasterFrameCount": 24,
+  "fetchErrorPlaceholderCount": 0,
+  "ignoredArtifacts": [
+    {
+      "path": "dwp_workplace_operating_system/DESIGN.md",
+      "reason": "Non-Approval design metadata is excluded from the APR-17..24 implementation source.",
+      "bytes": 11872,
+      "sha256": "47574a670458a8d2d23da85c27d758a18301e55796c5a80394893378f37b7cb3"
+    },
+    {
+      "path": "precision_calendar_system/DESIGN.md",
+      "reason": "Non-Approval design metadata is excluded from the APR-17..24 implementation source.",
+      "bytes": 12283,
+      "sha256": "dc14f164e1578db21a976c88f25d293d6e54e7b845b360d203603dcfbed675cc"
+    }
+  ],
+  "frames": [
+    {
+      "id": "APR-17A",
+      "apr": "APR-17",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_17a_template_library_1440_desktop_catalog",
+      "screen": {
+        "path": "apr_17a_template_library_1440_desktop_catalog/screen.png",
+        "sha256": "9cf26024367ac588250ac57cb2bb7a90fb4a867910b2179b8e36b863b4ab155f",
+        "bytes": 521025,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1173,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_17a_template_library_1440_desktop_catalog/code.html",
+        "sha256": "4c75002c63cf0057e1e7b3e5d0b25fceae62b00cb3d9f8bc01b913791c0f1db9",
+        "bytes": 50969,
+        "mediaType": "text/html",
+        "sourceTokens": ["apps 앱 전환 전자결재 관리", "notifications", "help"]
+      }
+    },
+    {
+      "id": "APR-17B",
+      "apr": "APR-17",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_17b_template_detail_and_install_1440_desktop",
+      "screen": {
+        "path": "apr_17b_template_detail_and_install_1440_desktop/screen.png",
+        "sha256": "b21142ed9b91869bc9a75e56ef28724c2fb137dc36638ddcb2b695c74d43d3ee",
+        "bytes": 499946,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1156,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_17b_template_detail_and_install_1440_desktop/code.html",
+        "sha256": "b8d01163663038be81403bfb4ed6fb95b8d28e4f2e094fca396f9ea11eeaded3",
+        "bytes": 50089,
+        "mediaType": "text/html",
+        "sourceTokens": ["apps 앱 전환 전자결재 관리", "notifications", "help"]
+      }
+    },
+    {
+      "id": "APR-17C",
+      "apr": "APR-17",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_17c_template_library_390_mobile_drill_in",
+      "screen": {
+        "path": "apr_17c_template_library_390_mobile_drill_in/screen.png",
+        "sha256": "6f9d146349809bb4fe6eea7ebed9bcda129ca824c9a375b87585f6507f3d28d5",
+        "bytes": 174611,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 300,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_17c_template_library_390_mobile_drill_in/code.html",
+        "sha256": "d0b47c4a0b865160580a1c5f69aba80c2e33be9aa4aab580f42e8786a323d923",
+        "bytes": 32465,
+        "mediaType": "text/html",
+        "sourceTokens": ["menu", "Forms And Templates", "search"]
+      }
+    },
+    {
+      "id": "APR-18A",
+      "apr": "APR-18",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_18a_form_studio_v3_1440_desktop_builder_polished",
+      "screen": {
+        "path": "apr_18a_form_studio_v3_1440_desktop_builder_polished/screen.png",
+        "sha256": "599c571ed3b6a582d493e51e8b6f8c91bd495a1ae985908bebd4951f69333b28",
+        "bytes": 392033,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1002,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_18a_form_studio_v3_1440_desktop_builder_polished/code.html",
+        "sha256": "616e642fef5e987ef0c1d06bb62cf446d0ceab54a63c39aa5b827b32c658ae39",
+        "bytes": 41421,
+        "mediaType": "text/html",
+        "sourceTokens": ["apps 앱 전환 전자결재 관리", "notifications", "help"]
+      }
+    },
+    {
+      "id": "APR-18B",
+      "apr": "APR-18",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_18b_form_studio_v3_schema_preview_inspector_polished",
+      "screen": {
+        "path": "apr_18b_form_studio_v3_schema_preview_inspector_polished/screen.png",
+        "sha256": "fdba515d6db3c5ea7b6bca3c46245a433958185651e557781441b3732dc4e03e",
+        "bytes": 594378,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1400
+      },
+      "code": {
+        "path": "apr_18b_form_studio_v3_schema_preview_inspector_polished/code.html",
+        "sha256": "19c882a04a307cf4ff23486d9ab63ad79632f5bffcef12e5ca5c1803908cfa33",
+        "bytes": 39796,
+        "mediaType": "text/html",
+        "sourceTokens": ["apps 앱 전환 전자결재 관리", "notifications", "help"]
+      }
+    },
+    {
+      "id": "APR-18C",
+      "apr": "APR-18",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_18c_form_studio_v3_390_mobile_drill_in",
+      "screen": {
+        "path": "apr_18c_form_studio_v3_390_mobile_drill_in/screen.png",
+        "sha256": "5673d5bf48fe1eae8c5b8ebb004cfe49b8699184d7f44be63bf5c0e0672afd8b",
+        "bytes": 191704,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 370,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_18c_form_studio_v3_390_mobile_drill_in/code.html",
+        "sha256": "f2d95ac0f7c0a5ae8e03add8397cc1b53a736084afcd68b239673016c762fb3c",
+        "bytes": 29514,
+        "mediaType": "text/html",
+        "sourceTokens": ["arrow_back", "Form Drill In", "search"]
+      }
+    },
+    {
+      "id": "APR-19A",
+      "apr": "APR-19",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_19a_routing_studio_v3_1440_desktop_builder",
+      "screen": {
+        "path": "apr_19a_routing_studio_v3_1440_desktop_builder/screen.png",
+        "sha256": "a0ecdbb8ea2425dfdc495bbe834c9ef84fb60fdb68d940c2e750b95b56cff1e3",
+        "bytes": 536615,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1364
+      },
+      "code": {
+        "path": "apr_19a_routing_studio_v3_1440_desktop_builder/code.html",
+        "sha256": "e4d066f4ff7c9b528612ac348d180a373a1fde6664d80460a7a26f3d284d9559",
+        "bytes": 44483,
+        "mediaType": "text/html",
+        "sourceTokens": ["시뮬레이션 검증 Ctrl+M", "변경이력 (Diff)", "초안 저장 Ctrl+S"]
+      }
+    },
+    {
+      "id": "APR-19B",
+      "apr": "APR-19",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_19b_routing_studio_v3_simulation_validation_inspector",
+      "screen": {
+        "path": "apr_19b_routing_studio_v3_simulation_validation_inspector/screen.png",
+        "sha256": "8b69846f5ed952c243aa81dd7c4a37b4586f439457103e1bbef205086a7561fc",
+        "bytes": 571144,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1471,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_19b_routing_studio_v3_simulation_validation_inspector/code.html",
+        "sha256": "27a9bdd8f7a036918dd860c71324773b85d4793652252a65b56e5c7a7cad1f47",
+        "bytes": 35476,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "APR-19B 라우팅 스튜디오 & 정합성 검증 인스펙터",
+          "캔버스 빌더 (Canvas)",
+          "실시간 시뮬레이션 검증"
+        ]
+      }
+    },
+    {
+      "id": "APR-19C",
+      "apr": "APR-19",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_19c_routing_studio_v3_390_mobile_drill_in",
+      "screen": {
+        "path": "apr_19c_routing_studio_v3_390_mobile_drill_in/screen.png",
+        "sha256": "8092a4cd5a3ff8f35f2fddbff29ea054126cb4fddfacf57dc1c7c56cfebc3ad9",
+        "bytes": 205276,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 406,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_19c_routing_studio_v3_390_mobile_drill_in/code.html",
+        "sha256": "790ad056eaae1a869092dec982ddcd289ced61369a6ccd2fdc18fc8df26b3e82",
+        "bytes": 26320,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "프로세스 설계 / 결재선",
+          "PAM 특권 계정 접근 결재선 v3.4",
+          "결재선 순서 (4)"
+        ]
+      }
+    },
+    {
+      "id": "APR-20A",
+      "apr": "APR-20",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_20a_delegation_proxy_governance_1440_desktop_console",
+      "screen": {
+        "path": "apr_20a_delegation_proxy_governance_1440_desktop_console/screen.png",
+        "sha256": "fb4b3f509c1a70cc4344482b7ab7d026632dfdd1b595f5eb1b1bc7ebb916c1e1",
+        "bytes": 602951,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1442
+      },
+      "code": {
+        "path": "apr_20a_delegation_proxy_governance_1440_desktop_console/code.html",
+        "sha256": "1425c9d27813f9ce78f804cbca4b8ced59da2fcfdb101bdcffeeabacafb32ed2",
+        "bytes": 45509,
+        "mediaType": "text/html",
+        "sourceTokens": ["notifications", "help", "power_settings_new 긴급 회수 (Kill-Switch)"]
+      }
+    },
+    {
+      "id": "APR-20B",
+      "apr": "APR-20",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_20b_delegation_inspector_audit_1440_desktop",
+      "screen": {
+        "path": "apr_20b_delegation_inspector_audit_1440_desktop/screen.png",
+        "sha256": "b656599eec889983308482b29701b71c71ad51274e35dd1316c22189b8e59fbf",
+        "bytes": 592032,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1384,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_20b_delegation_inspector_audit_1440_desktop/code.html",
+        "sha256": "2457e07aeb9dc5322ad7707134839d800da92f199e8a6cd649c946c73a74f3a6",
+        "bytes": 40547,
+        "mediaType": "text/html",
+        "sourceTokens": ["notifications", "help", "history 변경 이력 (12)"]
+      }
+    },
+    {
+      "id": "APR-20C",
+      "apr": "APR-20",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_20c_delegation_drill_in_390_mobile",
+      "screen": {
+        "path": "apr_20c_delegation_drill_in_390_mobile/screen.png",
+        "sha256": "6f9bcaaf4637392422e926a60fa34b577dc480be9016201a7c96278589d60a53",
+        "bytes": 230267,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 459,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_20c_delegation_drill_in_390_mobile/code.html",
+        "sha256": "2057f4fe52faffb4d2ce0ea3d9508970c2e6a71b2bcb55daa137556b1e0d0741",
+        "bytes": 21588,
+        "mediaType": "text/html",
+        "sourceTokens": ["arrow_back", "결재 위임·대결 거버넌스", "search"]
+      }
+    },
+    {
+      "id": "APR-21A",
+      "apr": "APR-21",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_21a_policy_sla_governance_1440_desktop_console",
+      "screen": {
+        "path": "apr_21a_policy_sla_governance_1440_desktop_console/screen.png",
+        "sha256": "666943706fc87e7db5842e27e0b6bffcc2f44f072b857c2a88a4731ebae436a4",
+        "bytes": 589409,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1565
+      },
+      "code": {
+        "path": "apr_21a_policy_sla_governance_1440_desktop_console/code.html",
+        "sha256": "7717cd5b9deb10b89024ffa5290d662b56aaf1a6498307ccc336d0d9730d9869",
+        "bytes": 43441,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "전사 결재 정책 및 SLA · 직무분리 거버넌스 콘솔",
+          "ac_unit 긴급 정책 동결 (Freeze)",
+          "history 감사 내역 (Audit Log)"
+        ]
+      }
+    },
+    {
+      "id": "APR-21B",
+      "apr": "APR-21",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_21b_policy_diff_simulation_inspector_1440_desktop",
+      "screen": {
+        "path": "apr_21b_policy_diff_simulation_inspector_1440_desktop/screen.png",
+        "sha256": "43ab5d723f5f975490991e2dcd307c63daccbcb5af183b202c0ca0096ea52f2f",
+        "bytes": 601943,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1461
+      },
+      "code": {
+        "path": "apr_21b_policy_diff_simulation_inspector_1440_desktop/code.html",
+        "sha256": "f274d93b7751994a949de3cc590e4e27f3e3944bb4e12d874632ca1d40d9dbb2",
+        "bytes": 34070,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "history 버전 이력 Diff (6)",
+          "play_circle 시뮬레이션 Dry-Run 실행",
+          "save 초안 저장"
+        ]
+      }
+    },
+    {
+      "id": "APR-21C",
+      "apr": "APR-21",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_21c_policy_drill_in_390_mobile",
+      "screen": {
+        "path": "apr_21c_policy_drill_in_390_mobile/screen.png",
+        "sha256": "c4e5680117fbc14e939665fa0400c6b67436ef6141d964243d79b7eb1576a70a",
+        "bytes": 226549,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 402,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_21c_policy_drill_in_390_mobile/code.html",
+        "sha256": "de23dc9a7418f7c717b1d1b0bf1e79a848b583e7d4d1f8be2377b96b46f95e06",
+        "bytes": 25011,
+        "mediaType": "text/html",
+        "sourceTokens": ["arrow_back", "전사 정책·Sla 거버넌스", "search"]
+      }
+    },
+    {
+      "id": "APR-22A",
+      "apr": "APR-22",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_22a_operations_incident_recovery_console_1440_desktop",
+      "screen": {
+        "path": "apr_22a_operations_incident_recovery_console_1440_desktop/screen.png",
+        "sha256": "182894359d45d4e9bef67d4e0aba08f3647a232b355876ce7dbb75fd67a41572",
+        "bytes": 530438,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1329
+      },
+      "code": {
+        "path": "apr_22a_operations_incident_recovery_console_1440_desktop/code.html",
+        "sha256": "ebab65cb92f1ac380f68f691c75dc4cb173a1942e0858b89a2fb89a68a4147d3",
+        "bytes": 51527,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "notifications",
+          "전자결재 운영 관제 및 장애 복구 워크벤치 (Operations & Incident Recovery Console)",
+          "pause_circle 긴급 일시동결 (Pause Queue)"
+        ]
+      }
+    },
+    {
+      "id": "APR-22B",
+      "apr": "APR-22",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_22b_incident_deep_inspector_reprocessing_1440_desktop",
+      "screen": {
+        "path": "apr_22b_incident_deep_inspector_reprocessing_1440_desktop/screen.png",
+        "sha256": "97496bc78686622db3cf0f6a20e0c4ec63d294993741c00f5d4c28e5da325934",
+        "bytes": 404458,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1170,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_22b_incident_deep_inspector_reprocessing_1440_desktop/code.html",
+        "sha256": "d5b374b327d6d953e8632d4bd8ec4b1887e03aee54106c04ebc400e7b94d242b",
+        "bytes": 41124,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "notifications",
+          "arrow_back 대기목록 복귀",
+          "restart_alt 단계적 안전 재처리 실행"
+        ]
+      }
+    },
+    {
+      "id": "APR-22C",
+      "apr": "APR-22",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_22c_incident_recovery_drill_in_390_mobile",
+      "screen": {
+        "path": "apr_22c_incident_recovery_drill_in_390_mobile/screen.png",
+        "sha256": "f2329534c3ae82028d6af96659dd396d68bb196a62ee38e9061b98ff1367ead1",
+        "bytes": 248326,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 512,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_22c_incident_recovery_drill_in_390_mobile/code.html",
+        "sha256": "52e508c50983899ba6f4859bbdde7fee86a17f3cd9f8e12b3e54c0bf5a05d591",
+        "bytes": 21780,
+        "mediaType": "text/html",
+        "sourceTokens": ["arrow_back", "Incident Recovery List", "search"]
+      }
+    },
+    {
+      "id": "APR-23A",
+      "apr": "APR-23",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_23a_audit_legal_compliance_console_1440_desktop",
+      "screen": {
+        "path": "apr_23a_audit_legal_compliance_console_1440_desktop/screen.png",
+        "sha256": "3c47b920c0bf8227a99a75fb428895acc65461d160dc8b1b887809de3f90e32e",
+        "bytes": 574544,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1520
+      },
+      "code": {
+        "path": "apr_23a_audit_legal_compliance_console_1440_desktop/code.html",
+        "sha256": "ae5f5d6c2a2b01c31b78b8dd1aff62b112f008d323e0783f2a1fad6f7dd5e6f5",
+        "bytes": 38456,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "notifications",
+          "shield_with_heart",
+          "전사 결재 감사 추적 및 법적 증적 관리 콘솔"
+        ]
+      }
+    },
+    {
+      "id": "APR-23B",
+      "apr": "APR-23",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_23b_audit_forensic_deep_inspector_legal_proof_1440_desktop",
+      "screen": {
+        "path": "apr_23b_audit_forensic_deep_inspector_legal_proof_1440_desktop/screen.png",
+        "sha256": "b8a75e82d2bebf5b68aefa2f68af32d4d23bd3aeac8299524a2ee79918f38fbf",
+        "bytes": 708812,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1099,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_23b_audit_forensic_deep_inspector_legal_proof_1440_desktop/code.html",
+        "sha256": "cd1f064340306fcf350b0f96961d9302055d782ca6f54608f45c0ea776d33740",
+        "bytes": 40564,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "notifications",
+          "shield_with_heart",
+          "결재 증적 암호화 심층 포렌식 및 법적 증명서"
+        ]
+      }
+    },
+    {
+      "id": "APR-23C",
+      "apr": "APR-23",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_23c_audit_drill_in_compliance_mobile_390_mobile",
+      "screen": {
+        "path": "apr_23c_audit_drill_in_compliance_mobile_390_mobile/screen.png",
+        "sha256": "bef8b0b9b53ce46ef5481e5404ff4d4f55c67e32bc0c8f49b37c2f31ea35cd6b",
+        "bytes": 239194,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 460,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_23c_audit_drill_in_compliance_mobile_390_mobile/code.html",
+        "sha256": "c9adb074fdfb03db92f305a36d9c4fa7aa1accc18e9b6408439993e43dcce4eb",
+        "bytes": 29299,
+        "mediaType": "text/html",
+        "sourceTokens": ["arrow_back", "Legal Compliance", "search"]
+      }
+    },
+    {
+      "id": "APR-24A",
+      "apr": "APR-24",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_24a_deployment_canary_release_console_1440_desktop",
+      "screen": {
+        "path": "apr_24a_deployment_canary_release_console_1440_desktop/screen.png",
+        "sha256": "88cad5a1b6957de680243bda82112b0f4240a3e7d80e5d641ef755b8566adcca",
+        "bytes": 497556,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 1600,
+        "height": 1554
+      },
+      "code": {
+        "path": "apr_24a_deployment_canary_release_console_1440_desktop/code.html",
+        "sha256": "469b741a5c094ef9fe485b6dd20a6646ecdaab4267a33fd2b6198d53252fed5d",
+        "bytes": 41102,
+        "mediaType": "text/html",
+        "sourceTokens": ["notifications", "security", "APR-24A 카나리 릴리스 거버넌스 콘솔"]
+      }
+    },
+    {
+      "id": "APR-24B",
+      "apr": "APR-24",
+      "renderClass": "normal",
+      "viewportIntent": "desktop-1440",
+      "pairPath": "apr_24b_canary_deep_inspector_rollback_workbench_1440_desktop",
+      "screen": {
+        "path": "apr_24b_canary_deep_inspector_rollback_workbench_1440_desktop/screen.png",
+        "sha256": "92436bee861d0acdd817538605b8a3828239aa059320e81bc66d1b8de9d8d11f",
+        "bytes": 383334,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 637,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_24b_canary_deep_inspector_rollback_workbench_1440_desktop/code.html",
+        "sha256": "9a4235584cc93a0889da016e31faf1f264ed2c79fb1b67c462b768ebb8fa58a1",
+        "bytes": 51551,
+        "mediaType": "text/html",
+        "sourceTokens": [
+          "notifications",
+          "security",
+          "전자결재 코어 라우팅 엔진 카나리 검증 및 긴급 롤백 워크벤치"
+        ]
+      }
+    },
+    {
+      "id": "APR-24C",
+      "apr": "APR-24",
+      "renderClass": "mobile",
+      "viewportIntent": "mobile-390",
+      "pairPath": "apr_24c_canary_deployment_mobile_drill_in_390_mobile",
+      "screen": {
+        "path": "apr_24c_canary_deployment_mobile_drill_in_390_mobile/screen.png",
+        "sha256": "beec246d782551a9bf8d347ace94d15a2d7e9b67d8f8a931e13a2db1201558c0",
+        "bytes": 210891,
+        "mediaType": "image/png",
+        "status": "raster",
+        "width": 429,
+        "height": 1600
+      },
+      "code": {
+        "path": "apr_24c_canary_deployment_mobile_drill_in_390_mobile/code.html",
+        "sha256": "672a1a94abf80b8f9f6919a412a6ea8a44fb40e3ce3178c7c0adf7c9bc5f9499",
+        "bytes": 24143,
+        "mediaType": "text/html",
+        "sourceTokens": ["arrow_back", "Canary Telemetry Control", "search"]
+      }
+    }
+  ],
+  "integritySha256": "773594493e14ebc8b935bfd9d2f318138212a9d54d58217a659a6aa53d040dcb"
+}

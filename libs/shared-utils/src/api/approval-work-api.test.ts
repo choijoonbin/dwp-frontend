@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import {
   decideApprovalTask,
+  preflightApprovalRequest,
   respondToApprovalInformationRequest,
   submitApprovalRequest,
 } from './approval-api';
@@ -90,6 +91,41 @@ describe('approval work API boundary', () => {
       expect(commands.map(([, init]) => JSON.parse(init.body).expectedVersion)).toEqual([7, 8]);
     }
   );
+
+  it('binds preflight to the exact persisted request version', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockImplementation((url: string) =>
+        Promise.resolve(
+          response(
+            url.includes('/csrf')
+              ? { token: 'csrf', headerName: 'X-XSRF-TOKEN' }
+              : {
+                  requestId: 'request-1',
+                  expectedVersion: 7,
+                  ready: true,
+                  workflowContract: 'LEGACY_SEQUENTIAL',
+                  checks: [],
+                  evaluatedAt: '2026-09-14T00:00:00Z',
+                }
+          )
+        )
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      preflightApprovalRequest('request-1', 7, {
+        mode: 'LEGACY_COMPATIBILITY',
+        rolloutState: '000',
+      })
+    ).resolves.toMatchObject({ requestId: 'request-1', expectedVersion: 7, ready: true });
+
+    const command = fetchMock.mock.calls.find(
+      ([url]) => String(url).endsWith('/requests/request-1/preflight')
+    );
+    expect(command?.[1]).toMatchObject({ method: 'POST' });
+    expect(JSON.parse(command?.[1].body as string)).toEqual({ expectedVersion: 7 });
+  });
 
   it('rejects malformed or borrowed request command keys before transport', async () => {
     const fetchMock = vi.fn();

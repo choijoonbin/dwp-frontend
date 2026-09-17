@@ -38,7 +38,7 @@ export function CalendarMobileNavigation({
         bgcolor: alpha(theme.palette.background.paper, 0.96),
         backdropFilter: 'blur(12px)',
         pb: 'env(safe-area-inset-bottom)',
-        boxShadow: '0 -8px 24px rgba(15, 23, 42, 0.08)',
+        boxShadow: theme.shadows[8],
         '@media (forced-colors: active)': {
           borderColor: 'CanvasText',
           backgroundColor: 'Canvas',

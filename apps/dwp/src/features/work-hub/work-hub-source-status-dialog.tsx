@@ -8,7 +8,7 @@ import {
   MinusCircle,
   RefreshCw,
 } from 'lucide-react';
-import { ActionButton, FormDialog } from '@dwp-frontend/design-system';
+import { ActionButton, FormDialog, foundationTokens } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { Link } from 'react-router-dom';
 
@@ -127,7 +127,7 @@ export function WorkHubSourceStatusDialog({
         sx={{
           border: 1,
           borderColor: 'divider',
-          borderRadius: 1.5,
+          borderRadius: foundationTokens.radius.surface + foundationTokens.radius.control + 'px',
           overflow: 'hidden',
           bgcolor: 'background.paper',
           '@media (forced-colors: active)': { borderColor: 'CanvasText' },
@@ -146,7 +146,8 @@ export function WorkHubSourceStatusDialog({
               height: 42,
               display: 'grid',
               placeItems: 'center',
-              borderRadius: 1.5,
+              borderRadius:
+                foundationTokens.radius.surface + foundationTokens.radius.control + 'px',
               bgcolor: 'primary.main',
               color: 'primary.contrastText',
               '@media (forced-colors: active)': { border: '1px solid ButtonText' },
@@ -161,7 +162,7 @@ export function WorkHubSourceStatusDialog({
                 color="primary"
                 label={t('work:workHub.sourcesDialog.serviceCode')}
               />
-              <Typography variant="subtitle1" fontWeight={700}>
+              <Typography variant="subtitle1" fontWeight="fontWeightBold">
                 {t('work:workHub.sourcesDialog.integratedTitle')}
               </Typography>
             </Stack>
@@ -200,7 +201,7 @@ export function WorkHubSourceStatusDialog({
           minHeight: 52,
           border: 1,
           borderColor: 'divider',
-          borderRadius: 1.5,
+          borderRadius: foundationTokens.radius.surface + foundationTokens.radius.control + 'px',
           bgcolor: 'action.hover',
           '& .MuiTabs-indicator': { height: 3 },
           '& .MuiTab-root': {
@@ -209,7 +210,7 @@ export function WorkHubSourceStatusDialog({
             px: { xs: 0.75, sm: 2 },
             py: 1,
             whiteSpace: 'normal',
-            lineHeight: 1.25,
+            lineHeight: 'body2.lineHeight',
             textTransform: 'none',
           },
           '@media (forced-colors: active)': { borderColor: 'CanvasText' },
@@ -239,7 +240,11 @@ export function WorkHubSourceStatusDialog({
         <Box component="section" aria-labelledby="work-source-status-heading">
           <Stack direction="row" justifyContent="space-between" gap={1.5} alignItems="flex-start">
             <Box>
-              <Typography id="work-source-status-heading" variant="subtitle1" fontWeight={700}>
+              <Typography
+                id="work-source-status-heading"
+                variant="subtitle1"
+                fontWeight="fontWeightBold"
+              >
                 {t('work:workHub.sourcesDialog.sourcePanelTitle')}
               </Typography>
               <Typography variant="caption" color="text.secondary">
@@ -287,7 +292,8 @@ export function WorkHubSourceStatusDialog({
                     border: 1,
                     borderColor: source.state === 'UNAVAILABLE' ? 'error.main' : 'divider',
                     bgcolor: source.state === 'UNAVAILABLE' ? 'action.hover' : 'background.paper',
-                    borderRadius: 1.5,
+                    borderRadius:
+                      foundationTokens.radius.surface + foundationTokens.radius.control + 'px',
                     '@media (forced-colors: active)': { borderColor: 'CanvasText' },
                   }}
                 >
@@ -396,7 +402,7 @@ export function WorkHubSourceStatusDialog({
             p: { xs: 1.5, sm: 2 },
             border: 1,
             borderColor: 'divider',
-            borderRadius: 1.5,
+            borderRadius: foundationTokens.radius.surface + foundationTokens.radius.control + 'px',
             bgcolor: 'action.hover',
             '@media (forced-colors: active)': { borderColor: 'CanvasText' },
           }}
@@ -408,7 +414,11 @@ export function WorkHubSourceStatusDialog({
             alignItems={{ xs: 'stretch', sm: 'flex-start' }}
           >
             <Box>
-              <Typography id="work-batch-report-heading" variant="subtitle1" fontWeight={700}>
+              <Typography
+                id="work-batch-report-heading"
+                variant="subtitle1"
+                fontWeight="fontWeightBold"
+              >
                 {t('work:workHub.batch.reportTitle')}
               </Typography>
               <Typography variant="caption" color="text.secondary">

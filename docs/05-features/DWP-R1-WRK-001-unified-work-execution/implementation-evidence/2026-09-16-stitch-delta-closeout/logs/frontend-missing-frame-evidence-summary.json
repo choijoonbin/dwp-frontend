@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "fixtureBacked": true,
+  "baseUrl": "http://127.0.0.1:43947",
+  "defaultPort4200Used": false,
+  "project": "chromium",
+  "workers": 1,
+  "tests": {
+    "passed": 3,
+    "failed": 0,
+    "durationSeconds": 12.8
+  },
+  "captures": [
+    {
+      "screen": "WRK-D02-1440",
+      "file": "../screens/missing-reference-frames/wrk-d02-1440.png",
+      "routeState": "/work/queue access-review detail",
+      "assertions": [
+        "governed detail visible",
+        "subject/org/revision visible",
+        "keep/revoke actions visible",
+        "horizontal overflow 0"
+      ]
+    },
+    {
+      "screen": "WRK-D02-390",
+      "file": "../screens/missing-reference-frames/wrk-d02-390.png",
+      "routeState": "/work/queue access-review detail at 390px",
+      "assertions": [
+        "four progress stages visible",
+        "due evidence visible",
+        "horizontal overflow 0"
+      ]
+    },
+    {
+      "screen": "WRK-F01-1440",
+      "file": "../screens/missing-reference-frames/wrk-f01-1440.png",
+      "routeState": "Messenger Track as personal task -> Work composer",
+      "assertions": [
+        "identity-only navigation",
+        "exact source preflight",
+        "A/B/C segmented modes visible",
+        "B source mode selected for Messenger entry",
+        "M2 four-step quick flow absent from F01",
+        "640px desktop dialog width",
+        "source card visible",
+        "exact source-linked task persisted",
+        "horizontal overflow 0"
+      ]
+    },
+    {
+      "screen": "WRK-M1-390",
+      "file": "../screens/missing-reference-frames/wrk-m1-390.png",
+      "routeState": "access-review revoke draft at 390px",
+      "assertions": [
+        "revoke selected",
+        "500-character reason contract",
+        "preview enabled",
+        "confirmation dialog opens",
+        "no mutation before confirmation",
+        "horizontal overflow 0"
+      ]
+    },
+    {
+      "screen": "WRK-M2-320",
+      "file": "../screens/missing-reference-frames/wrk-m2-320.png",
+      "routeState": "empty Work queue quick capture at 320px",
+      "assertions": [
+        "empty state visible",
+        "four quick-capture stages",
+        "five-tab navigation",
+        "personal task created",
+        "Today Plan PUT persisted",
+        "Calendar handoff opened without early calendar command",
+        "horizontal overflow 0"
+      ]
+    }
+  ],
+  "pngValidation": "frontend-missing-frame-png-validation.json",
+  "playwrightLog": "frontend-missing-frame-evidence-e2e.log"
+}

@@ -414,7 +414,7 @@ export function WorkplaceDayBrief({
                 to={
                   model.nextAction.kind === 'CHECK_IN'
                     ? model.nextAction.path
-                    : '/workplace/my-bookings'
+                    : '/workplace/reservations?v=1&period=UPCOMING&types=ALL&status=ACTIVE&authority=ALL'
                 }
                 intent="secondary"
               >

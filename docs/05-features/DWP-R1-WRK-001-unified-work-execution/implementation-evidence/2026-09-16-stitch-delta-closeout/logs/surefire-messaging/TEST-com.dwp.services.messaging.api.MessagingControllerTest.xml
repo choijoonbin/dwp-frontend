@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dwp.services.messaging.api.MessagingControllerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-16T03:09:21" hostname="MacBook-Pro" time="1.905">
+  <properties/>
+  <testcase name="directConversationSerializesOnlyTheConversationSummary()" classname="com.dwp.services.messaging.api.MessagingControllerTest" time="1.728"/>
+  <testcase name="internalWorkSourceSerializesOnlyBoundedAuthoritativeProvenance()" classname="com.dwp.services.messaging.api.MessagingControllerTest" time="0.026"/>
+  <testcase name="reactionCommandsSerializeOnlyTheUpdatedMessage()" classname="com.dwp.services.messaging.api.MessagingControllerTest" time="0.046"/>
+  <testcase name="sendSerializesAConstantSizeMessageDelta()" classname="com.dwp.services.messaging.api.MessagingControllerTest" time="0.043"/>
+  <testcase name="readCursorSerializesOnlyTheCurrentMonotonicCursor()" classname="com.dwp.services.messaging.api.MessagingControllerTest" time="0.026"/>
+  <testcase name="messageHistorySerializesTheKeysetPageContract()" classname="com.dwp.services.messaging.api.MessagingControllerTest" time="0.031"/>
+  <system-out><![CDATA[12:09:22.422 [Test worker] INFO org.hibernate.validator.internal.util.Version -- HV000001: Hibernate Validator 8.0.3.Final
+12:09:22.938 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:09:22.938 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:09:22.949 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 2 ms
+12:09:23.218 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:09:23.218 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:09:23.219 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 1 ms
+12:09:23.254 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:09:23.254 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:09:23.254 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:09:23.299 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:09:23.299 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:09:23.299 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+12:09:23.341 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:09:23.341 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:09:23.342 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 1 ms
+12:09:23.364 [Test worker] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+12:09:23.365 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+12:09:23.365 [Test worker] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+]]></system-out>
+  <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/Users/a10697/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.17.8/f09415827a71be7ed621c7bd02550678f28bc81c/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>

@@ -215,16 +215,17 @@ function ApprovalCommandTaskRow({
       role="row"
       aria-selected={selected}
       data-approval-task-id={task.taskId}
-      sx={(theme) => ({
+      sx={{
         display: 'grid',
         gridTemplateColumns: selectionMode ? '44px minmax(0, 1fr)' : 'minmax(0, 1fr)',
         minHeight: 118,
+        borderInlineStart: '3px solid',
+        borderInlineStartColor: selected ? 'primary.main' : 'transparent',
         borderBottom: 1,
         borderColor: 'divider',
         bgcolor: selected ? 'action.selected' : 'background.paper',
-        boxShadow: selected ? `inset 3px 0 0 ${theme.palette.primary.main}` : 'none',
         '&:focus-within': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
-      })}
+      }}
     >
       {selectionMode && (
         <Box

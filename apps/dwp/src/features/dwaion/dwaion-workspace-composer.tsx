@@ -24,6 +24,7 @@ import Typography from '@mui/material/Typography';
 
 import type { AskCitationSourceType } from '@dwp-frontend/shared-utils';
 import type { LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import { DwaionVoiceInputControl } from '../../components/dwaion-assistant/dwaion-voice-controls';
 
@@ -35,6 +36,8 @@ type DwaionWorkspaceComposerProps = {
   presentation?: 'workspace' | 'home';
   sourceScopes?: AskCitationSourceType[];
   availableSources?: AskCitationSourceType[];
+  attachmentSlot?: ReactNode;
+  attachmentsReady?: boolean;
   onToggleSource?: (source: AskCitationSourceType) => void;
   onCancel?: () => void;
   onChange: (value: string) => void;
@@ -59,6 +62,8 @@ export function DwaionWorkspaceComposer({
   presentation = 'workspace',
   sourceScopes = ['WORK_ITEM', 'MAIL', 'CALENDAR'],
   availableSources = ['WORK_ITEM', 'MAIL', 'CALENDAR'],
+  attachmentSlot,
+  attachmentsReady = true,
   onToggleSource,
   onCancel,
   onChange,
@@ -108,13 +113,13 @@ export function DwaionWorkspaceComposer({
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!loading && valid) onSubmit();
+    if (!loading && valid && attachmentsReady) onSubmit();
   };
 
   const keyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) return;
     event.preventDefault();
-    if (!loading && valid) onSubmit();
+    if (!loading && valid && attachmentsReady) onSubmit();
   };
 
   return (
@@ -199,6 +204,7 @@ export function DwaionWorkspaceComposer({
           {sourceControls}
         </Stack>
       )}
+      {attachmentSlot ? <Box sx={{ mt: compact ? 0.5 : 1 }}>{attachmentSlot}</Box> : null}
       <Box
         sx={{
           mt: compact ? 0.25 : 1,
@@ -251,7 +257,7 @@ export function DwaionWorkspaceComposer({
             label={loading ? t('askPage.composer.cancel') : t('askPage.composer.send')}
             tooltip={loading ? t('askPage.composer.cancel') : t('askPage.composer.sendHint')}
             intent="primary"
-            disabled={!loading && !valid}
+            disabled={!loading && (!valid || !attachmentsReady)}
             onClick={loading ? onCancel : undefined}
             sx={{ width: 44, height: 44, flex: '0 0 auto' }}
           >

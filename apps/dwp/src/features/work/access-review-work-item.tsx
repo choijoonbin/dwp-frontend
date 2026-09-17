@@ -7,6 +7,7 @@ import {
   ActionButton,
   FormDialog,
   FormField,
+  foundationTokens,
   LoadingState,
   LocalErrorState,
   InlineFeedback,
@@ -161,7 +162,7 @@ function AccessReviewProgress({
                   borderRadius: '50%',
                   bgcolor: completed || current ? 'primary.main' : 'action.disabledBackground',
                   color: completed || current ? 'primary.contrastText' : 'text.secondary',
-                  fontSize: 13,
+                  fontSize: foundationTokens.workplace.typography.smallBody.fontSize,
                   fontWeight: 'fontWeightBold',
                 }}
               >
