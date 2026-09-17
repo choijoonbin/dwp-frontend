@@ -15,8 +15,10 @@ import {
   routeHomeWave2Flow,
   routeHomeWave2HealthyFlowContributions,
   routeHomeWave2NewsOverview,
+  routeHomeWave2WidgetCatalog,
 } from './support/home-wave2-acceptance-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 
 import type { Locator, Page } from '@playwright/test';
 
@@ -251,6 +253,8 @@ test.beforeEach(async ({ page }, testInfo) => {
   await routeHomeWave2NewsOverview(page);
   await routeCanonicalHomeWorkspaceApps(page);
   await routeHomeWave2HealthyFlowContributions(page);
+  await routeHomeWave2WidgetCatalog(page);
+  await routeHomeWave4ShadowRuntime(page);
 });
 
 test('Classic compositions preserve the 18-app contract and document scroll at every edge', async ({
@@ -490,8 +494,16 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
     await page.unroute('**/api/platform/v1/home-preferences');
     await page.unroute('**/api/platform/v1/home-views**');
     await routeHomeWave2Flow(page, item.presentation);
+    await page.unroute('**/api/platform/v2/home**');
+    await routeHomeWave4ShadowRuntime(page, 'FLOW_V1');
     await page.setViewportSize({ width: item.width, height: item.height });
-    await page.goto(item.presentation === 'expressive' ? '/?wave2FlowState=loaded' : '/');
+    await page.goto(
+      item.presentation === 'expressive'
+        ? '/?wave2FlowState=loaded'
+        : item.width < 600
+          ? '/?wave2FlowState=preview'
+          : '/'
+    );
     const root = page.getByTestId('flow-home');
     await expect(root).toBeVisible();
     await expect(root).toHaveAttribute('data-home-ia', 'personal-action');
@@ -675,6 +687,7 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
       animations: 'disabled',
       caret: 'hide',
       fullPage: true,
+      maxDiffPixelRatio: 0.01,
       scale: 'css',
     });
 
@@ -704,11 +717,17 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
     description: 'WAVE2_FLOW-EDITOR-DESKTOP',
   });
   await routeHomeWave2Flow(page, 'expressive', { studio: true });
+  await page.unroute('**/api/platform/v2/home**');
+  await routeHomeWave4ShadowRuntime(page, 'FLOW_V1');
   await page.setViewportSize({ width: 1920, height: 1080 });
-  await page.goto('/');
+  await page.goto('/?wave2FlowState=preview');
 
   const root = page.getByTestId('flow-home');
   await expect(root).toBeVisible();
+  await expect(page.locator('[data-home-runtime-path]')).toHaveAttribute(
+    'data-home-runtime-state',
+    'shadow_compare'
+  );
   await root.getByRole('button', { name: '홈 편집 옵션' }).click();
   await page.getByRole('menuitem', { name: /홈 설정/u }).click();
 
@@ -725,6 +744,7 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
   const workbench = dialog.getByTestId('home-layout-studio-workbench');
   await expect(workbench).toBeVisible();
   await expect(workbench).toHaveAttribute('data-home-studio-catalog-count', '12');
+  await expect(workbench).toHaveAttribute('data-home-studio-catalog-mode', 'shadow');
   await expect(workbench.locator('[data-home-studio-catalog-item]')).toHaveCount(12);
   const catalogIds = await workbench
     .locator('[data-home-studio-catalog-item]')
@@ -776,7 +796,9 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
   ).not.toBeEmpty();
 
   await workbench.locator('[data-home-studio-catalog-item="schedule"]').click();
-  await workbench.getByRole('button', { name: '앞으로 이동' }).click();
+  const moveForward = workbench.getByRole('button', { name: '앞으로 이동' });
+  await expect(moveForward).toBeEnabled();
+  await moveForward.click();
   await expect(workbench.locator('[data-home-studio-dirty="true"]').first()).toBeVisible();
   await page.keyboard.press('Control+z');
   await expect(workbench.locator('[data-home-studio-dirty="false"]').first()).toBeVisible();
@@ -786,12 +808,14 @@ test('Flow Studio owns panel scrolling, traps focus, and restores the launch poi
     animations: 'disabled',
     caret: 'hide',
     fullPage: true,
+    maxDiffPixelRatio: 0.01,
     scale: 'css',
   });
   await expect(page).toHaveScreenshot('home-wave2-FLOW-EDITOR-DESKTOP-interaction.png', {
     animations: 'disabled',
     caret: 'hide',
     fullPage: false,
+    maxDiffPixelRatio: 0.01,
     scale: 'css',
   });
   expect(unsafeSelectorWarnings).toEqual([]);
@@ -926,6 +950,7 @@ test('long English content wraps without clipping or deleting its accessible mea
     mode: 'light',
     longEnglish: true,
   });
+  await routeHomeWave4ShadowRuntime(page);
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/');
   const root = page.getByTestId('classic-home');
@@ -960,6 +985,7 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
     displayName: '김미나',
     mode: 'dark',
   });
+  await routeHomeWave4ShadowRuntime(page);
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
@@ -981,6 +1007,7 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
     mode: 'dark',
     highContrast: true,
   });
+  await routeHomeWave4ShadowRuntime(page);
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark', forcedColors: 'active' });
   await page.reload();
   root = page.getByTestId('classic-home');

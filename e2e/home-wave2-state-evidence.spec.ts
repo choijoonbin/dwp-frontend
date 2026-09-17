@@ -13,11 +13,15 @@ import {
   mockShellSession,
 } from './support/shell-session';
 import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
-import { createHomeWave2NewsOverviewFixture } from './support/home-wave2-acceptance-fixtures';
+import {
+  createHomeWave2NewsOverviewFixture,
+  routeHomeWave2WidgetCatalog,
+} from './support/home-wave2-acceptance-fixtures';
 import {
   HOME_WAVE2_FLOW_WIDGETS as FLOW_WIDGETS,
   HOME_WAVE2_MODE_LAYOUTS as MODE_LAYOUTS,
 } from './support/home-wave2-state-fixtures';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 
 import type { Locator, Page } from '@playwright/test';
 
@@ -99,6 +103,8 @@ async function prepareClassic(page: Page) {
     })
   );
   await routeCanonicalHomeWorkspaceApps(page);
+  await routeHomeWave2WidgetCatalog(page);
+  await routeHomeWave4ShadowRuntime(page);
 }
 
 async function routeOverview(page: Page, data: unknown) {

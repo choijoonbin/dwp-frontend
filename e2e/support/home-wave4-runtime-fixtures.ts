@@ -13,15 +13,16 @@ import type {
   HomeV2WidgetState,
 } from '@dwp-frontend/shared-utils';
 import type { OwnerWidgetDefinitionKey } from '../../apps/dwp/src/features/home/runtime/owner-widgets/owner-widget-contracts';
+import type { Page } from '@playwright/test';
 
 export const HOME_V2_ROUTE = '**/api/platform/v2/home**';
 export const HOME_V2_VARY =
   'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision, X-DWP-Current-Revalidate-At, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision';
 
-// Independently pinned to the backend V261 full 19-binding catalog receipt.
+// Independently pinned to the backend V264 full 21-binding catalog receipt.
 // Do not derive this from the frontend constant: the E2E gate must detect drift.
 export const HOME_V2_BACKEND_BINDING_CATALOG_REVISION =
-  'd9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643';
+  'b03bdd59271207ced7deaa29375ce63f4863137a4b7789d2b7c8c3a13bf345b7';
 
 const SERVER_GROUP_BY_CONTRACT_GROUP = {
   work: 'WORK_START',
@@ -91,12 +92,50 @@ function ownerPayload(definitionKey: OwnerWidgetDefinitionKey, marker: string): 
           },
         ],
       };
+    case 'space.change-feed':
+      return {
+        unreadSignals: 2,
+        items: [
+          {
+            id: '88888888-8888-4888-8888-888888888888',
+            spaceKey: 'release-readiness',
+            spaceNameKo: '릴리스 준비',
+            spaceNameEn: 'Release readiness',
+            activityType: 'DOCUMENT_UPDATED',
+            titleKo: `검증된 Space 변경 ${marker}`,
+            titleEn: `Verified Space change ${marker}`,
+            occurredAt: '2026-09-16T01:30:00Z',
+          },
+        ],
+      };
     case 'hr.edu':
       return {
         requiredLearningCount: 1,
         activeGoalCount: 3,
         state: { availability: 'AVAILABLE', dataOrigin: 'SOURCE' },
       };
+    case 'workplace.booking':
+      return {
+        visibleCount: 1,
+        items: [
+          {
+            bookingId: '77777777-7777-4777-8777-777777777777',
+            resourceName: `Verified focus booth ${marker}`,
+            resourceType: 'FOCUS_BOOTH',
+            siteName: 'Seoul HQ',
+            floorName: '8F',
+            startsAt: '2026-09-16T03:00:00Z',
+            endsAt: '2026-09-16T04:00:00Z',
+            status: 'CONFIRMED',
+            canCheckIn: true,
+            canCancel: true,
+            checkInOpensAt: '2026-09-16T02:50:00Z',
+            checkInClosesAt: '2026-09-16T03:10:00Z',
+          },
+        ],
+      };
+    case 'dwaion.artifact':
+      return {};
     default:
       return {};
   }
@@ -321,6 +360,64 @@ export function createHomeWave4Model({
   };
 }
 
+/** Exact ACTIVE expressive projection: five mesh slots plus unrelated generic owner cards. */
+export function createHomeWave4ExpressiveFlowModel(
+  input: Readonly<{ deviceClass: HomeDeviceClass; marker: string; mode: HomeExperienceVariant }>
+): HomeV2ReadModel {
+  const base = createHomeWave4Model({ ...input, mode: 'FLOW_V1' });
+  const meshDefinitions = new Set<OwnerWidgetDefinitionKey>([
+    'meetings.next-prep',
+    'space.change-feed',
+    'hr.edu',
+    'workplace.booking',
+    'dwaion.artifact',
+  ]);
+  const meshWidgets = [
+    ownerWidget('meetings.next-prep', 'AVAILABLE', 20, input.marker),
+    ownerWidget('space.change-feed', 'AVAILABLE', 21, input.marker),
+    ownerWidget('hr.edu', 'STALE', 22, input.marker),
+    ownerWidget('workplace.booking', 'AVAILABLE', 23, input.marker),
+    ownerWidget('dwaion.artifact', 'UNAVAILABLE', 24, input.marker),
+  ];
+  const compositionWidgets = [
+    ...base.view.composition.widgets.filter(
+      ({ widgetKey }) => !meshDefinitions.has(widgetKey as OwnerWidgetDefinitionKey)
+    ),
+    ...meshWidgets.map(({ definitionKey }) => ({
+      widgetKey: definitionKey,
+      visible: true,
+      size: 'medium' as const,
+      height: 'standard' as const,
+    })),
+  ];
+  return {
+    ...base,
+    mode: 'FLOW_V1',
+    runtime: { ...base.runtime, homeMode: 'FLOW_V1' },
+    view: {
+      ...base.view,
+      mode: 'FLOW_V1',
+      composition: {
+        ...base.view.composition,
+        presentation: 'expressive',
+        widgets: compositionWidgets,
+      },
+      deviceOverlay: base.view.deviceOverlay
+        ? {
+            ...base.view.deviceOverlay,
+            widgetOrder: compositionWidgets.map(({ widgetKey }) => widgetKey),
+          }
+        : null,
+    },
+    widgets: [
+      ...base.widgets.filter(
+        ({ definitionKey }) => !meshDefinitions.has(definitionKey as OwnerWidgetDefinitionKey)
+      ),
+      ...meshWidgets,
+    ],
+  };
+}
+
 export function withHomeWave6Runtime(
   model: HomeV2ReadModel,
   state: Exclude<HomeV2RuntimeState, 'DISABLED'>,
@@ -506,4 +603,58 @@ export function homeWave4ResponseHeaders(
 
 export function homeWave4ResponseBody(model: HomeV2ReadModel): string {
   return JSON.stringify({ status: 'SUCCESS', message: 'OK', data: model });
+}
+
+const HOME_V2_DEVICE_CLASSES = new Set<HomeDeviceClass>([
+  'DESKTOP_WIDE',
+  'DESKTOP_STANDARD',
+  'MOBILE_STANDARD',
+  'MOBILE_COMPACT',
+]);
+
+/** Keeps legacy visual evidence on its intended path while supplying a complete Wave 6 receipt. */
+export async function routeHomeWave4ShadowRuntime(
+  page: Page,
+  mode: HomeExperienceVariant = 'CLASSIC'
+): Promise<void> {
+  await page.route(HOME_V2_ROUTE, async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (url.pathname === '/api/platform/v2/home/shadow-receipts') {
+      return route.fulfill({
+        status: 202,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'SUCCESS',
+          message: 'Accepted',
+          data: { accepted: true, receiptVersion: 'home-shadow-v1' },
+        }),
+      });
+    }
+    if (url.pathname !== '/api/platform/v2/home') return route.fallback();
+    const candidate = url.searchParams.get('deviceClass');
+    if (!candidate || !HOME_V2_DEVICE_CLASSES.has(candidate as HomeDeviceClass)) {
+      return route.fulfill({ status: 400, contentType: 'application/json', body: '{}' });
+    }
+    const deviceClass = candidate as HomeDeviceClass;
+    const marker = `wave2-shadow-${mode.toLowerCase()}-${deviceClass.toLowerCase()}`;
+    const rolloutRevision = 'wave6-shadow-compare-wave2-r1';
+    const etag = `"${marker}"`;
+    const headers = homeWave4ResponseHeaders('SHADOW', etag, {
+      runtimeState: 'SHADOW_COMPARE',
+      rolloutRevision,
+      rolloutRing: 'CONTROL',
+    });
+    const model = withHomeWave6Runtime(
+      createHomeWave4Model({ deviceClass, marker, mode }),
+      'SHADOW_COMPARE',
+      { rolloutRevision, rolloutRing: 'CONTROL' }
+    );
+    return route.fulfill({
+      status: 200,
+      headers,
+      contentType: 'application/json',
+      body: homeWave4ResponseBody(model),
+    });
+  });
 }

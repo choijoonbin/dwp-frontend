@@ -8,10 +8,74 @@ import {
 import { APPROVAL_HOME_FIXTURE, HR_HOME_FIXTURE } from './product-area-fixtures';
 import { routeEmptyFlowExecutionSummaries } from './flow-home-provider-fixtures';
 import { routeCanonicalHomeWorkspaceApps } from './home-launchpad-contract-fixture';
+import { widgetRegistryEffectiveCatalog, widgetRegistryReadiness } from './widget-registry';
 
 import type { Page } from '@playwright/test';
 
 export const HOME_WAVE2_FIXED_NOW = new Date('2026-08-11T00:30:00.000Z');
+
+function wave2StudioEffectiveCatalog() {
+  const base = widgetRegistryEffectiveCatalog('SHADOW', 'AVAILABLE');
+  const nativeByKey = new Map(
+    base.contexts[0]!.items.map((item) => [item.legacyWidgetKey, item] as const)
+  );
+  const native = (legacyWidgetKey: string, definitionKey: string) => ({
+    ...nativeByKey.get(legacyWidgetKey)!,
+    definitionKey,
+  });
+  const projection = (index: number, definitionKey: string) => ({
+    definitionId: `90000000-0000-4000-8000-${String(index).padStart(12, '0')}`,
+    definitionKey,
+    legacyWidgetKey: null,
+    resolvedVersionId: `91000000-0000-4000-8000-${String(index).padStart(12, '0')}`,
+    semanticVersion: '1.0.0',
+    effectiveState: 'AVAILABLE' as const,
+    reasonCodes: ['AVAILABLE' as const],
+    placementCapabilities: { canAdd: false, canHide: false, canMove: false, canResize: true },
+    addedInstanceCount: 0,
+  });
+  const items = [
+    native('schedule', 'meetings.next-prep'),
+    projection(1, 'meetings.decisions'),
+    projection(2, 'space.feed'),
+    projection(3, 'dwai.artifacts'),
+    projection(4, 'workplace.status'),
+    projection(5, 'hr.learning'),
+    native('focus', 'services.requests'),
+    native('daily-brief', 'security.bulletin'),
+    native('command-rail', 'home.priority-queue'),
+    native('activity', 'home.role-activity'),
+    native('focus-balance', 'calendar.focus-balance'),
+    native('meeting-load', 'calendar.meeting-load'),
+  ];
+  const context = (placementContext: 'CLASSIC_PERSONAL' | 'FLOW_PERSONAL') => ({
+    placementContext,
+    capabilities: {
+      libraryRead: true,
+      legacyPlacementWrite: true,
+      instanceV6Write: false,
+      brokerRead: false,
+      presetCreate: false,
+      presetShare: false,
+    },
+    items,
+  });
+  return {
+    ...base,
+    catalogRevision: 'wave2-studio-12',
+    hostContext: { ...base.hostContext, resolvedHostMode: 'FLOW' as const },
+    contexts: [context('CLASSIC_PERSONAL'), context('FLOW_PERSONAL')],
+  };
+}
+
+export async function routeHomeWave2WidgetCatalog(page: Page) {
+  await page.route('**/api/platform/v1/widget-catalog/readiness', (route) =>
+    fulfillSuccess(route, widgetRegistryReadiness('SHADOW'))
+  );
+  await page.route('**/api/platform/v1/widget-catalog/effective**', (route) =>
+    fulfillSuccess(route, wave2StudioEffectiveCatalog())
+  );
+}
 
 const HOME_CAPABILITIES = [
   'HOME_COMPOSITION_V4',

@@ -10,6 +10,7 @@ import {
   tabTo,
 } from './support/accessibility';
 import {
+  createHomeWave4ExpressiveFlowModel,
   createHomeWave4Model,
   createHomeWave4NativeBindingDriftModel,
   createHomeWave4UnsafeRouteModel,
@@ -114,12 +115,26 @@ function homeRuntimeRoot(page: Page) {
   return page.locator('[data-home-runtime-path]');
 }
 
-async function prepareSession(page: Page, appearance: 'light' | 'dark' = 'light'): Promise<void> {
+async function prepareSession(
+  page: Page,
+  appearance: 'light' | 'dark' = 'light',
+  includeDwaionArtifacts = false
+): Promise<void> {
   await page.clock.setFixedTime(FIXED_NOW);
   await page.emulateMedia({ colorScheme: appearance, reducedMotion: 'reduce' });
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'en',
-    permissions: FULL_PRODUCT_PERMISSIONS,
+    permissions: includeDwaionArtifacts
+      ? [
+          ...FULL_PRODUCT_PERMISSIONS,
+          {
+            resourceType: 'APP',
+            resourceKey: 'APP.DWAION_ARTIFACTS',
+            permissionCode: 'VIEW',
+            effect: 'ALLOW',
+          },
+        ]
+      : FULL_PRODUCT_PERMISSIONS,
     appearance: {
       mode: 'system',
       density: 'standard',
@@ -268,7 +283,7 @@ async function attachRuntimeEvidence(
 
 test.beforeEach(async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Wave 4 owns an explicit Chromium matrix.');
-  await prepareSession(page);
+  await prepareSession(page, 'light', testInfo.title.includes('ACTIVE expressive Flow'));
 });
 
 test('ACTIVE owns the page, suppresses legacy fanout, reuses 304, and isolates a device scope', async ({
@@ -374,6 +389,83 @@ test('ACTIVE owns the page, suppresses legacy fanout, reuses 304, and isolates a
   await attachRuntimeEvidence(page, 'wave4-active-dom-receipt.json', runtimeErrors);
   await sourceButton.click();
   await expect(page).toHaveURL(/\/approvals\/home$/u);
+});
+
+test('ACTIVE expressive Flow projects five exact runtime slots once and keeps Studio closed', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const evidence = observeHomeNetwork(page);
+  await routeHomeV2(page, evidence, {
+    mode: 'FLOW_V1',
+    runtimeMode: 'ACTIVE',
+    modelFactory: createHomeWave4ExpressiveFlowModel,
+  });
+  await page.goto('/');
+
+  const runtime = homeRuntimeRoot(page);
+  await expect(runtime).toHaveAttribute('data-home-runtime-path', 'v2');
+  await expect(runtime).toHaveAttribute('data-home-mode', 'FLOW_V1');
+  await expect(runtime).toHaveAttribute('data-home-personal-customization-enabled', 'false');
+  await expect(page.locator('[data-home-edit-trigger]')).toHaveCount(0);
+
+  const mesh = page.locator('[data-flow-future-widget-mesh]');
+  await expect(mesh).toHaveAttribute('data-flow-future-widget-count', '5');
+  await expect(mesh).toHaveAttribute('data-flow-runtime-projection-count', '5');
+  const expected = {
+    'meetings-prep-decisions': 'available',
+    'space-change-feed': 'available',
+    'dwaion-artifact': 'unavailable',
+    'workplace-booking': 'available',
+    'learning-progress': 'stale',
+  } as const;
+  for (const [key, state] of Object.entries(expected)) {
+    const surface = mesh.locator(`[data-flow-future-widget="${key}"]`);
+    await expect(surface).toHaveCount(1);
+    await expect(surface).toHaveAttribute('data-flow-provider-activation', 'active-runtime');
+    await expect(surface).toHaveAttribute('data-flow-provider-status', state);
+    await expect(surface.locator('article')).toHaveCount(0);
+    await expect(surface.locator('h3')).toHaveCount(1);
+  }
+  await expect(mesh).toContainText('Verified meeting flow_v1-desktop_standard');
+  await expect(mesh).toContainText('Verified Space change flow_v1-desktop_standard');
+  await expect(mesh).toContainText('Verified focus booth flow_v1-desktop_standard');
+  await expect(mesh).not.toContainText('H2 2026 operating strategy draft');
+  await expect(
+    mesh.locator('[data-flow-future-widget="dwaion-artifact"]').getByRole('button')
+  ).toHaveCount(0);
+
+  const region = page.locator('[data-home-owner-widget-region="flow"]');
+  await expect(region).toHaveAttribute('data-home-owner-widget-count', '3');
+  for (const definitionKey of [
+    'meetings.next-prep',
+    'space.change-feed',
+    'hr.edu',
+    'workplace.booking',
+    'dwaion.artifact',
+  ]) {
+    await expect(region.locator(`[data-home-owner-placement="${definitionKey}"]`)).toHaveCount(0);
+  }
+  await test.info().attach('wave4-active-expressive-desktop.png', {
+    body: await page.screenshot({ fullPage: true }),
+    contentType: 'image/png',
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(runtime).toHaveAttribute('data-home-device-class', 'MOBILE_STANDARD');
+  await expect(mesh).toHaveAttribute(
+    'data-flow-future-mobile-order',
+    'meetings-space-ai-workplace-learning'
+  );
+  await expect(mesh).toContainText('Verified focus booth flow_v1-mobile_standard');
+  await expectNoHorizontalOverflow(page);
+  await test.info().attach('wave4-active-expressive-mobile.png', {
+    body: await page.screenshot({ fullPage: true }),
+    contentType: 'image/png',
+  });
+  expect(evidence.v2.every((receipt) => receipt.forbiddenIdentityQueryKeys.length === 0)).toBe(
+    true
+  );
 });
 
 test('SHADOW keeps the legacy requests and legacy UI authoritative', async ({ page }) => {
