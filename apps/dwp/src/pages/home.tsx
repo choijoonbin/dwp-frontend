@@ -72,25 +72,14 @@ import {
   type HomeEditSession,
   type HomeSaveMutation,
 } from '../features/home/runtime/home-edit-session';
-import {
-  useHomeEditorSafety,
-  useHomeRolloutOverlayGuard,
-} from '../features/home/runtime/use-home-editor-safety';
+import { useHomeEditorSafety } from '../features/home/runtime/use-home-editor-safety';
 import { useHomeEditorEntryFocus } from '../features/home/runtime/use-home-editor-entry-focus';
 import { useHomeCurrentInstant } from '../features/home/runtime/use-home-current-instant';
 import { useHomeDataRetry } from '../features/home/runtime/use-home-data-retry';
 import { useHomeDraftController } from '../features/home/runtime/use-home-draft-controller';
-import {
-  freezeHomeStudioContractScope,
-  resolveActiveHomeViewScope,
-  resolveBrokeredHomeExperience,
-  type HomeStudioContractScope,
-} from '../features/home/runtime/home-store-capabilities';
+import { resolveBrokeredHomeExperience } from '../features/home/runtime/home-store-capabilities';
 import { HomeEditorGuards } from '../features/home/runtime/home-editor-guards';
-import {
-  ActiveHomeOwnerWidgetRegion,
-  homeV2RuntimeEvidence,
-} from '../features/home/runtime/home-owner-widget-region';
+import { homeV2RuntimeEvidence } from '../features/home/runtime/home-owner-widget-region';
 import { createHomeAppLauncher } from '../features/home/runtime/home-app-launch';
 import {
   resolveHomeViewCustomized,
@@ -104,8 +93,10 @@ import {
   reconcileLaunchpadLayout,
 } from '../components/workspace-composer/app-launchpad-model';
 import { useSystemCodeOptions } from '../components/use-system-code-options';
+import { resolveHomeActiveRuntimeRegions } from './home/home-active-runtime-regions';
 import { useHomeCoreReadModel, useHomePersonalizationReadModel } from './home/home-page-read-model';
 import { resolveWave2Evidence } from './home/home-wave2-evidence-adapter';
+import { useHomeStudioController } from './home/use-home-studio-controller';
 export default function HomePage() {
   const { t, i18n } = useTranslation('home');
   const auth = useAuth();
@@ -123,10 +114,6 @@ export default function HomePage() {
   const queryClient = useQueryClient();
   const [editorOpen, setEditorOpen] = useState(searchParams.get('edit') === 'home');
   const [galleryOpen, setGalleryOpen] = useState(false);
-  const [studioOpen, setStudioOpen] = useState(false);
-  const [studioContractScope, setStudioContractScope] = useState<HomeStudioContractScope | null>(
-    null
-  );
   const [discardEditorOpen, setDiscardEditorOpen] = useState(false);
   const [editBaseDraft, setEditBaseDraft] = useState<HomeDraft | null>(null);
   const [editSession, setEditSession] = useState<HomeEditSession | null>(null);
@@ -134,8 +121,6 @@ export default function HomePage() {
   const [conflictTarget, setConflictTarget] = useState<HomeEditConflictTarget | null>(null);
   const currentInstant = useHomeCurrentInstant();
   const editEntryFocusRef = useRef<HTMLElement | null>(null);
-  const studioEntryFocusRef = useRef<HTMLElement | null>(null);
-  const studioFocusRestorePendingRef = useRef(false);
   const editEntryScrollRef = useRef(0);
   const conflictResolutionRef = useRef<'reload' | 'reapply' | null>(null);
   const pendingHomeSaveCommandRef = useRef<ReturnType<typeof resolvePendingHomeSaveCommand> | null>(
@@ -174,6 +159,7 @@ export default function HomePage() {
   });
   const {
     entitledApps,
+    effectiveWidgetCatalog,
     homeExperienceQuery,
     homeNativeRuntimeState,
     homeRuntimePartial,
@@ -230,63 +216,29 @@ export default function HomePage() {
     viewStoreEnabled
   );
   useEffect(() => reportHomeMode?.(homeModeKey), [homeModeKey, reportHomeMode]);
-  const editingHomeViewScope = resolveActiveHomeViewScope(
-    { modeKey: homeModeKey, modeScoped: modeScopedHomeViewsSupported },
-    editSession
-  );
-  const liveHomeStudioContractScope = useMemo<HomeStudioContractScope>(
-    () => ({
-      modeKey: editingHomeViewScope.modeKey,
-      modeScopedViews: editingHomeViewScope.modeScoped,
-      fourDeviceLayoutsSupported,
-    }),
-    [editingHomeViewScope.modeKey, editingHomeViewScope.modeScoped, fourDeviceLayoutsSupported]
-  );
-  const effectiveHomeStudioContractScope = studioContractScope ?? liveHomeStudioContractScope;
-  const openHomeStudio = useCallback(() => {
-    const activeElement = document.activeElement as HTMLElement | null;
-    studioEntryFocusRef.current =
-      (activeElement?.matches('[data-home-edit-trigger]') ? activeElement : null) ??
-      document.querySelector<HTMLElement>('[data-home-edit-trigger]') ??
-      activeElement;
-    studioFocusRestorePendingRef.current = false;
-    setStudioContractScope((current) =>
-      freezeHomeStudioContractScope(current, liveHomeStudioContractScope)
-    );
-    setStudioOpen(true);
-  }, [liveHomeStudioContractScope]);
-  const openStudioFromGallery = useCallback(() => {
-    setGalleryOpen(false);
-    openHomeStudio();
-  }, [openHomeStudio]);
-  const closeHomeStudio = useCallback(() => {
-    studioFocusRestorePendingRef.current = true;
-    setStudioOpen(false);
-    setStudioContractScope(null);
-  }, []);
-  useHomeRolloutOverlayGuard(
-    homeV2Runtime.active,
-    galleryOpen || discardEditorOpen || conflictTarget !== null,
-    studioOpen,
+  const {
+    activeHomeViewScope,
     closeHomeStudio,
+    effectiveHomeStudioContractScope,
+    markHomeStudioEditStarted,
+    openHomeStudio,
+    openStudioFromGallery,
+    restoreHomeStudioEntryFocus,
+    studioContractScope,
+    studioOpen,
+  } = useHomeStudioController({
+    homeModeKey,
+    modeScopedHomeViewsSupported,
+    fourDeviceLayoutsSupported,
+    editSession,
+    homeV2Active: homeV2Runtime.active,
+    galleryOpen,
+    discardEditorOpen,
+    conflictTarget,
     setGalleryOpen,
     setDiscardEditorOpen,
-    setConflictTarget
-  );
-  const restoreHomeStudioEntryFocus = useCallback(() => {
-    if (!studioFocusRestorePendingRef.current) return;
-    const retainedEntry = studioEntryFocusRef.current;
-    const fallbackEntry = document.querySelector<HTMLElement>('[data-home-edit-trigger]');
-    const target = retainedEntry?.isConnected ? retainedEntry : fallbackEntry;
-    target?.focus({ preventScroll: true });
-    studioEntryFocusRef.current = null;
-    studioFocusRestorePendingRef.current = false;
-  }, []);
-  const activeHomeViewScope = resolveActiveHomeViewScope(
-    { modeKey: homeModeKey, modeScoped: modeScopedHomeViewsSupported },
-    editSession,
-    studioOpen ? studioContractScope : null
-  );
+    setConflictTarget,
+  });
   const homeReadModel = useHomePersonalizationReadModel({
     activeHomeViewScope,
     auth,
@@ -754,7 +706,12 @@ export default function HomePage() {
     fallbackSubheadline: t('page.commandDescription'),
   });
   const homeAssistantAvailable = !editorOpen && isAppResourceEntitled('APP.ASK', permissions);
-  const ownerWidgetRegion = <ActiveHomeOwnerWidgetRegion runtime={homeV2Runtime} />;
+  const { flowFutureRuntimeProps, ownerWidgetRegion } = resolveHomeActiveRuntimeRegions(
+    homeV2Runtime,
+    homeModeKey,
+    activePresentation,
+    navigate
+  );
   return (
     <Box
       ref={homeAvailableWidthRef}
@@ -852,6 +809,7 @@ export default function HomePage() {
           onRetryContributions={homeDataRetry.retry}
           onRecommendationFeedback={recommendationAction.dismiss}
           futureWidgetStateByKey={wave2Evidence.loadedFlow}
+          {...flowFutureRuntimeProps}
           ownerWidgetRegion={ownerWidgetRegion}
         />
       ) : (
@@ -995,6 +953,7 @@ export default function HomePage() {
             overviewFetching={homeOverviewQuery.isFetching}
             overviewFailed={homeOverviewHardFailed}
             widgetRuntimeDecisions={widgetRuntimeDecisions}
+            effectiveWidgetCatalog={effectiveWidgetCatalog}
             feedbackBusy={recommendationAction.busy}
             onRetryOverview={homeDataRetry.retry}
             onRecommendationFeedback={recommendationAction.dismiss}
@@ -1012,7 +971,7 @@ export default function HomePage() {
                 : undefined
             }
             onEditView={(view) => {
-              studioFocusRestorePendingRef.current = false;
+              markHomeStudioEditStarted();
               beginEditing(view);
             }}
           />

@@ -5,6 +5,7 @@ import type { HomeDeviceClass } from '@dwp-frontend/shared-utils';
 export const HOME_MOBILE_STANDARD_MIN_WIDTH = 360;
 export const HOME_DESKTOP_STANDARD_MIN_WIDTH = 900;
 export const HOME_DESKTOP_WIDE_MIN_WIDTH = 1440;
+const HOME_AVAILABLE_WIDTH_SETTLE_MS = 120;
 
 export type HomeAvailableWidthClass =
   'mobile-compact' | 'mobile-standard' | 'desktop-standard' | 'desktop-wide';
@@ -38,6 +39,16 @@ function initialAvailableWidth(): number {
   return typeof window === 'undefined' ? HOME_DESKTOP_STANDARD_MIN_WIDTH : window.innerWidth;
 }
 
+export function isStableHomeAvailableWidth(width: number, viewportWidth: number): boolean {
+  if (!Number.isFinite(width) || width <= 0) return false;
+  // Full-document capture and transient shell layout can briefly report a sliver width while the
+  // desktop viewport is unchanged. Ignoring that impossible allocation avoids a false mobile
+  // runtime scope and the corresponding cold-loading flash.
+  return !(
+    viewportWidth >= HOME_DESKTOP_STANDARD_MIN_WIDTH && width < HOME_MOBILE_STANDARD_MIN_WIDTH
+  );
+}
+
 export function useHomeAvailableWidth() {
   const elementRef = useRef<HTMLDivElement | null>(null);
   const [availableWidth, setAvailableWidth] = useState(initialAvailableWidth);
@@ -46,13 +57,22 @@ export function useHomeAvailableWidth() {
     const element = elementRef.current;
     if (!element) return;
     const sync = (width = element.getBoundingClientRect().width) => {
-      if (width > 0) setAvailableWidth(width);
+      if (isStableHomeAvailableWidth(width, window.innerWidth)) setAvailableWidth(width);
     };
     sync();
     if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => sync(entry?.contentRect.width));
+    let settleTimer: number | undefined;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry?.contentRect.width;
+      if (width === undefined || !isStableHomeAvailableWidth(width, window.innerWidth)) return;
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => sync(width), HOME_AVAILABLE_WIDTH_SETTLE_MS);
+    });
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      window.clearTimeout(settleTimer);
+      observer.disconnect();
+    };
   }, []);
 
   return {

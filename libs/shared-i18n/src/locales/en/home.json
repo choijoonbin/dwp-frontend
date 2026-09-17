@@ -1339,6 +1339,12 @@
       "hr": {
         "edu": "Required learning",
         "team-pulse": "Team pulse"
+      },
+      "workplace": {
+        "booking": "Workplace bookings"
+      },
+      "dwaion": {
+        "artifact": "DWAI·ON artifact"
       }
     },
     "action": { "openSource": "Open source" },
@@ -1360,13 +1366,15 @@
       "activeGoals": "Active goals",
       "teamPending": "Team pending",
       "teamTimePending": "Time requests",
-      "teamAbsencePending": "Absence requests"
+      "teamAbsencePending": "Absence requests",
+      "visibleBookings": "Visible bookings"
     },
     "meta": {
       "attendees": "{{count}} attendees",
       "unread": "{{count}} unread",
       "actionable": "{{count}} actionable",
-      "urgent": "{{count}} urgent"
+      "urgent": "{{count}} urgent",
+      "bookingLocation": "{{site}} · {{floor}}"
     },
     "empty": { "verified": "Checked and up to date" }
   },

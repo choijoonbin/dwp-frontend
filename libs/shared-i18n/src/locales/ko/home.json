@@ -1339,6 +1339,12 @@
       "hr": {
         "edu": "필수 학습",
         "team-pulse": "팀 현황"
+      },
+      "workplace": {
+        "booking": "업무 공간 예약"
+      },
+      "dwaion": {
+        "artifact": "DWAI·ON 산출물"
       }
     },
     "action": { "openSource": "원본 열기" },
@@ -1360,13 +1366,15 @@
       "activeGoals": "진행 목표",
       "teamPending": "팀 대기",
       "teamTimePending": "근태 요청",
-      "teamAbsencePending": "휴가 요청"
+      "teamAbsencePending": "휴가 요청",
+      "visibleBookings": "표시 예약"
     },
     "meta": {
       "attendees": "참석자 {{count}}명",
       "unread": "읽지 않음 {{count}}건",
       "actionable": "조치 필요 {{count}}건",
-      "urgent": "긴급 {{count}}건"
+      "urgent": "긴급 {{count}}건",
+      "bookingLocation": "{{site}} · {{floor}}"
     },
     "empty": { "verified": "최신 상태를 확인했습니다" }
   },

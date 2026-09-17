@@ -98,10 +98,24 @@ const EXPECTED_TUPLES = [
     '/hr',
     'WIDGET',
   ],
+  [
+    'workplace.booking',
+    '3da8f665137fd670411f87893af302133cea70fda9a402fce690f85686c2869e',
+    'home.workplace.booking',
+    '/workplace/home',
+    'WIDGET',
+  ],
+  [
+    'dwaion.artifact',
+    'a525bf1c6b926984a0978386f74aeb055c6e81db0813b9ea6b2443384de188e7',
+    'home.dwaion.artifact',
+    '/dwaion',
+    'WIDGET',
+  ],
 ] as const;
 
 describe('Wave 4 owner widget contracts', () => {
-  it('pins the exact twelve canonical manifest and renderer tuples', () => {
+  it('pins the exact fourteen canonical manifest and renderer tuples', () => {
     expect(
       OWNER_WIDGET_CONTRACTS.map((value) => [
         value.definitionKey,
@@ -111,8 +125,8 @@ describe('Wave 4 owner widget contracts', () => {
         value.surface,
       ])
     ).toEqual(EXPECTED_TUPLES);
-    expect(OWNER_WIDGET_DEFINITION_KEYS).toHaveLength(12);
-    expect(new Set(OWNER_WIDGET_DEFINITION_KEYS).size).toBe(12);
+    expect(OWNER_WIDGET_DEFINITION_KEYS).toHaveLength(14);
+    expect(new Set(OWNER_WIDGET_DEFINITION_KEYS).size).toBe(14);
   });
 
   it('uses the backend catalog-wide renderer binding revision', () => {
@@ -126,8 +140,8 @@ describe('Wave 4 owner widget contracts', () => {
     }
     expect(HOME_NATIVE_BINDING_CATALOG_REVISION).toBe(HOME_WIDGET_BINDING_CATALOG_REVISION);
     expect(NATIVE_HOME_WIDGET_BINDINGS).toHaveLength(7);
-    expect(OWNER_WIDGET_CONTRACTS).toHaveLength(12);
-    expect(NATIVE_HOME_WIDGET_BINDINGS.length + OWNER_WIDGET_CONTRACTS.length).toBe(19);
+    expect(OWNER_WIDGET_CONTRACTS).toHaveLength(14);
+    expect(NATIVE_HOME_WIDGET_BINDINGS.length + OWNER_WIDGET_CONTRACTS.length).toBe(21);
 
     const bindingMaterial = [
       ...NATIVE_HOME_WIDGET_BINDINGS.map((binding) => ({

@@ -211,6 +211,64 @@ describe('Home layout studio workbench contract', () => {
     });
   });
 
+  it('keeps approved presentation metadata while the effective catalog remains authoritative', () => {
+    const item: EffectiveWidgetCatalogItem = {
+      definitionId: '00000000-0000-4000-8000-000000000001',
+      definitionKey: 'meetings.next-prep',
+      legacyWidgetKey: 'schedule',
+      resolvedVersionId: '10000000-0000-4000-8000-000000000001',
+      semanticVersion: '1.0.0',
+      effectiveState: 'AVAILABLE',
+      reasonCodes: ['AVAILABLE'],
+      placementCapabilities: { canAdd: true, canHide: true, canMove: true, canResize: true },
+      addedInstanceCount: 1,
+    };
+    const catalog: EffectiveWidgetCatalog = {
+      schemaVersion: 1,
+      mode: 'SHADOW',
+      catalogRevision: 'approved-overlay',
+      bindingCatalogRevision: 'c'.repeat(64),
+      policyRevision: 'policy-1',
+      safetyRevision: 'safety-1',
+      hostContext: {
+        surfaceKey: 'workspace-home',
+        resolvedHostMode: 'FLOW',
+        homeExperienceVersion: 1,
+        compositionSchemaVersion: 4,
+        layoutSource: 'HOME_VIEW',
+        activeViewRef: 'view-1',
+        layoutRevision: 1,
+        hostConfigurationRevision: 'host-1',
+        hostCapabilityVersion: 1,
+        decisionRevision: 'decision-1',
+      },
+      contexts: [
+        {
+          placementContext: 'FLOW_PERSONAL',
+          capabilities: {
+            libraryRead: true,
+            legacyPlacementWrite: true,
+            instanceV6Write: false,
+            brokerRead: false,
+            presetCreate: false,
+            presetShare: false,
+          },
+          items: [item],
+        },
+      ],
+    };
+
+    expect(resolveHomeStudioCatalog(catalog, 'FLOW_V1')[0]).toMatchObject({
+      key: 'schedule',
+      catalogId: 'meetings.next-prep',
+      owner: 'DWP Calendar',
+      permission: 'APP.CALENDAR:VIEW',
+      translatedLabel: true,
+      canMove: true,
+      effectiveState: 'AVAILABLE',
+    });
+  });
+
   it('preserves unknown saved instances while reconciling known native widgets', () => {
     const reconciled = reconcileStudioWidgets([
       { widgetKey: 'partner.widget-42', visible: false, size: 'full', height: 'expanded' },

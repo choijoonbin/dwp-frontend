@@ -70,6 +70,21 @@ const availableHrState = {
   dataOrigin: 'SOURCE',
 };
 
+const workplaceBookingItem = {
+  bookingId: ID_2,
+  resourceName: 'Focus booth 04',
+  resourceType: 'FOCUS_BOOTH',
+  siteName: 'Seoul HQ',
+  floorName: '8F',
+  startsAt: '2026-09-16T15:00:00+09:00',
+  endsAt: '2026-09-16T16:00:00+09:00',
+  status: 'CONFIRMED',
+  canCheckIn: true,
+  canCancel: true,
+  checkInOpensAt: '2026-09-16T14:50:00+09:00',
+  checkInClosesAt: '2026-09-16T15:10:00+09:00',
+};
+
 const VALID_PAYLOADS: Readonly<Record<OwnerWidgetDefinitionKey, unknown>> = {
   'approval.focus-queue': {
     pendingCount: 7,
@@ -117,6 +132,9 @@ const VALID_PAYLOADS: Readonly<Record<OwnerWidgetDefinitionKey, unknown>> = {
     teamAbsencePendingCount: 1,
     state: availableHrState,
   },
+  'workplace.booking': { items: [workplaceBookingItem], visibleCount: 1 },
+  // This definition has an envelope-only UNAVAILABLE contract; no payload is valid.
+  'dwaion.artifact': {},
 };
 
 function parse<K extends OwnerWidgetDefinitionKey>(key: K, payload: unknown, locale?: string) {
@@ -125,10 +143,13 @@ function parse<K extends OwnerWidgetDefinitionKey>(key: K, payload: unknown, loc
 
 describe('owner widget payload parsers', () => {
   it('strictly parses every canonical owner payload', () => {
-    expect(OWNER_WIDGET_DEFINITION_KEYS).toHaveLength(12);
-    for (const key of OWNER_WIDGET_DEFINITION_KEYS) {
+    expect(OWNER_WIDGET_DEFINITION_KEYS).toHaveLength(14);
+    for (const key of OWNER_WIDGET_DEFINITION_KEYS.filter(
+      (candidate) => candidate !== 'dwaion.artifact'
+    )) {
       expect(parse(key, VALID_PAYLOADS[key], 'ko-KR')).toMatchObject({ ok: true });
     }
+    expect(parse('dwaion.artifact', {})).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
   });
 
   it('normalizes localized Space labels with deterministic fallback', () => {
@@ -252,6 +273,39 @@ describe('owner widget payload parsers', () => {
         requiredLearningCount: 2,
         activeGoalCount: 1,
         state: { availability: 'AVAILABLE' },
+      })
+    ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
+  });
+
+  it('strictly validates workplace booking fields, chronology and uniqueness', () => {
+    expect(parse('workplace.booking', VALID_PAYLOADS['workplace.booking'])).toMatchObject({
+      ok: true,
+    });
+    expect(
+      parse('workplace.booking', {
+        items: [{ ...workplaceBookingItem, internalResourceId: 'secret' }],
+        visibleCount: 1,
+      })
+    ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
+    expect(
+      parse('workplace.booking', {
+        items: [
+          workplaceBookingItem,
+          { ...workplaceBookingItem, resourceName: 'Duplicate booking' },
+        ],
+        visibleCount: 2,
+      })
+    ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
+    expect(
+      parse('workplace.booking', {
+        items: [
+          {
+            ...workplaceBookingItem,
+            checkInOpensAt: '2026-09-16T15:20:00+09:00',
+            checkInClosesAt: '2026-09-16T15:10:00+09:00',
+          },
+        ],
+        visibleCount: 1,
       })
     ).toEqual({ ok: false, code: 'MALFORMED_PAYLOAD' });
   });

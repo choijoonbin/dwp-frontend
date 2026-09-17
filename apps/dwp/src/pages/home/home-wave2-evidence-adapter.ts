@@ -41,7 +41,8 @@ export function resolveWave2ResourceEvidence(
 export function resolveWave2LoadedFlowEvidence(
   searchParams: URLSearchParams
 ): Readonly<Record<string, FlowFutureWidgetState>> | undefined {
-  if (import.meta.env.MODE !== 'test' || searchParams.get('wave2FlowState') !== 'loaded') {
+  const requested = searchParams.get('wave2FlowState');
+  if (import.meta.env.MODE !== 'test' || !['loaded', 'preview'].includes(requested ?? '')) {
     return undefined;
   }
   return Object.fromEntries(
@@ -51,7 +52,7 @@ export function resolveWave2LoadedFlowEvidence(
       'dwaion-artifact',
       'workplace-booking',
       'learning-progress',
-    ].map((key) => [key, 'loaded' as const])
+    ].map((key) => [key, requested as FlowFutureWidgetState])
   );
 }
 

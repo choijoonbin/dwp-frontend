@@ -62,6 +62,7 @@ import type {
   HomeOverview,
   HomePresentation,
   HomeRecommendation,
+  HomeV2Widget,
   HomeWidgetConfiguration,
 } from '@dwp-frontend/shared-utils';
 import type {
@@ -129,6 +130,10 @@ type FlowHomeProps = {
   onRecommendationFeedback?: (recommendation: HomeRecommendation) => void;
   /** Test/runtime adapter input. Omission keeps every future provider fail-closed. */
   futureWidgetStateByKey?: Readonly<Record<string, FlowFutureWidgetState>>;
+  futureRuntimeWidgets?: readonly HomeV2Widget[];
+  futureRuntimeRefreshing?: boolean;
+  onOpenFutureRuntimeSource?: (route: string) => void;
+  onRetryFutureRuntime?: () => void;
   ownerWidgetRegion?: ReactNode;
 };
 
@@ -192,6 +197,10 @@ export function FlowHome({
   onRetryContributions,
   onRecommendationFeedback,
   futureWidgetStateByKey,
+  futureRuntimeWidgets,
+  futureRuntimeRefreshing = false,
+  onOpenFutureRuntimeSource,
+  onRetryFutureRuntime,
   ownerWidgetRegion,
 }: FlowHomeProps) {
   const { t } = useTranslation('home');
@@ -590,7 +599,13 @@ export function FlowHome({
       )}
 
       {!editing && presentation === 'expressive' ? (
-        <FlowFutureWidgetMesh stateByKey={futureWidgetStateByKey} />
+        <FlowFutureWidgetMesh
+          stateByKey={futureWidgetStateByKey}
+          runtimeWidgets={futureRuntimeWidgets}
+          runtimeRefreshing={futureRuntimeRefreshing}
+          onOpenRuntimeSource={onOpenFutureRuntimeSource}
+          onRetryRuntime={onRetryFutureRuntime}
+        />
       ) : !editing ? (
         <FlowMeetingPrep
           title={linkedCalendar?.title}
@@ -770,7 +785,10 @@ export function FlowHome({
             )}
             renderAfterWidget={(sectionKey) =>
               !editing && presentation !== 'expressive' && sectionKey === 'response-hub' ? (
-                <FlowBaseSpaceCompactPreview />
+                <FlowBaseSpaceCompactPreview
+                  state={futureWidgetStateByKey?.['space-change-feed']}
+                  evidencePreview={futureWidgetStateByKey !== undefined}
+                />
               ) : null
             }
             renderWidget={(sectionKey, _size, height) => {

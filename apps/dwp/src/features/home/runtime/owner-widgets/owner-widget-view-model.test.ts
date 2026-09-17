@@ -8,6 +8,10 @@ const approval = OWNER_WIDGET_CONTRACTS.find(
 const badges = OWNER_WIDGET_CONTRACTS.find(
   (value) => value.definitionKey === 'notification.app-badges'
 )!;
+const workplace = OWNER_WIDGET_CONTRACTS.find(
+  (value) => value.definitionKey === 'workplace.booking'
+)!;
+const dwaion = OWNER_WIDGET_CONTRACTS.find((value) => value.definitionKey === 'dwaion.artifact')!;
 
 const approvalPayload = {
   pendingCount: 2,
@@ -158,5 +162,44 @@ describe('normalizeOwnerWidget', () => {
     });
     expect(result.ok && result.value.surface).toBe('APP_DOCK');
     expect(result.ok && result.value.definitionKey).toBe('notification.app-badges');
+  });
+
+  it('accepts only the exact workplace source action and narrow booking payload', () => {
+    const payload = {
+      visibleCount: 1,
+      items: [
+        {
+          bookingId: '33333333-3333-4333-8333-333333333333',
+          resourceName: 'Focus booth 04',
+          resourceType: 'FOCUS_BOOTH',
+          siteName: 'Seoul HQ',
+          floorName: '8F',
+          startsAt: '2026-09-16T03:00:00Z',
+          endsAt: '2026-09-16T04:00:00Z',
+          status: 'CONFIRMED',
+          canCheckIn: true,
+          canCancel: true,
+          checkInOpensAt: '2026-09-16T02:50:00Z',
+          checkInClosesAt: '2026-09-16T03:10:00Z',
+        },
+      ],
+    };
+    const candidate = { ...input(workplace), payload };
+    const result = normalizeOwnerWidget(candidate);
+    expect(result.ok && result.value.definitionKey).toBe('workplace.booking');
+    expect(result.ok && result.value.sourceRoute).toBe('/workplace/home');
+    expect(
+      normalizeOwnerWidget({
+        ...candidate,
+        actions: [{ ...candidate.actions[0], sourceRoute: '/workplace/admin' }],
+      })
+    ).toEqual({ ok: false, code: 'ACTION_CONTRACT_MISMATCH' });
+  });
+
+  it('keeps DWAI·ON envelope-only by rejecting every content-bearing state', () => {
+    expect(normalizeOwnerWidget({ ...input(dwaion), actions: [], payload: {} })).toEqual({
+      ok: false,
+      code: 'MALFORMED_PAYLOAD',
+    });
   });
 });

@@ -2,6 +2,8 @@ import { useId } from 'react';
 import {
   BellRing,
   BookOpenCheck,
+  Bot,
+  Building2,
   CalendarCheck2,
   CheckSquare2,
   FileClock,
@@ -45,10 +47,12 @@ export type OwnerWidgetLabelKey =
   | 'ownerWidgets.metric.teamPending'
   | 'ownerWidgets.metric.teamTimePending'
   | 'ownerWidgets.metric.teamAbsencePending'
+  | 'ownerWidgets.metric.visibleBookings'
   | 'ownerWidgets.meta.attendees'
   | 'ownerWidgets.meta.unread'
   | 'ownerWidgets.meta.actionable'
   | 'ownerWidgets.meta.urgent'
+  | 'ownerWidgets.meta.bookingLocation'
   | 'ownerWidgets.empty.verified';
 
 export type OwnerWidgetLabelResolver = (
@@ -87,6 +91,8 @@ const ICON_BY_DEFINITION: Readonly<Record<OwnerWidgetDefinitionKey, LucideIcon>>
   'messaging.change-feed': Send,
   'hr.edu': BookOpenCheck,
   'hr.team-pulse': UsersRound,
+  'workplace.booking': Building2,
+  'dwaion.artifact': Bot,
 };
 
 function boundedItemBudget(value: number | undefined): number {
@@ -223,6 +229,16 @@ function metrics(widget: NormalizedOwnerWidget): readonly Metric[] {
           value: widget.payload.teamAbsencePendingCount,
         },
       ];
+    case 'workplace.booking':
+      return [
+        {
+          key: 'visible-bookings',
+          label: 'ownerWidgets.metric.visibleBookings',
+          value: widget.payload.visibleCount,
+        },
+      ];
+    case 'dwaion.artifact':
+      return [];
   }
 }
 
@@ -286,7 +302,19 @@ function rows(
       }));
     case 'hr.edu':
     case 'hr.team-pulse':
+    case 'dwaion.artifact':
       return [];
+    case 'workplace.booking':
+      return widget.payload.items.map((item) => ({
+        key: item.bookingId,
+        title: item.resourceName,
+        detail: label('ownerWidgets.meta.bookingLocation', {
+          site: item.siteName,
+          floor: item.floorName,
+        }),
+        meta: `${item.resourceType} · ${item.status}`,
+        timestamp: formatTimestamp(item.startsAt, locale),
+      }));
   }
 }
 

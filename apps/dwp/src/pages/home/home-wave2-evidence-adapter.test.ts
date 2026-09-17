@@ -36,6 +36,13 @@ describe('Wave 2 evidence adapter', () => {
       'workplace-booking': 'loaded',
       'learning-progress': 'loaded',
     });
+    expect(resolveWave2LoadedFlowEvidence(params('wave2FlowState=preview'))).toEqual({
+      'meetings-prep-decisions': 'preview',
+      'space-change-feed': 'preview',
+      'dwaion-artifact': 'preview',
+      'workplace-booking': 'preview',
+      'learning-progress': 'preview',
+    });
     expect(resolveWave2LoadedFlowEvidence(params(''))).toBeUndefined();
   });
 

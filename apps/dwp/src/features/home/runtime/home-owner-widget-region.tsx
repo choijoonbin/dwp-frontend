@@ -36,6 +36,8 @@ const OWNER_DEFINITION_BY_PLACEMENT = {
   'messaging-change-feed': 'messaging.change-feed',
   'hr-education': 'hr.edu',
   'hr-team-pulse': 'hr.team-pulse',
+  'workplace-booking': 'workplace.booking',
+  'dwaion-artifact': 'dwaion.artifact',
 } as const satisfies Readonly<Record<string, OwnerWidgetDefinitionKey>>;
 const NATIVE_PLACEMENT_KEYS = new Set([
   'command-rail',
@@ -117,8 +119,10 @@ export function selectOwnerRuntimeWidgets(
 
 /** Projects the owner-placement subset of Composition v4; native slots stay in their sealed canvas. */
 export function projectOwnerWidgetPlacements(
-  model: HomeV2ReadModel
+  model: HomeV2ReadModel,
+  excludedDefinitionKeys: readonly OwnerWidgetDefinitionKey[] = []
 ): readonly HomeOwnerWidgetPlacement[] {
+  const excludedDefinitions = new Set(excludedDefinitionKeys);
   const runtimeByDefinition = new Map(
     model.widgets.map((widget) => [widget.definitionKey, widget])
   );
@@ -138,6 +142,7 @@ export function projectOwnerWidgetPlacements(
           ];
       if (
         definitionKey === 'notification.app-badges' ||
+        (definitionKey !== undefined && excludedDefinitions.has(definitionKey)) ||
         NATIVE_PLACEMENT_KEYS.has(preference.widgetKey) ||
         NATIVE_DEFINITION_KEYS.has(preference.widgetKey)
       ) {
@@ -172,16 +177,18 @@ export function HomeOwnerWidgetRegion({
   refreshing,
   variant,
   model,
+  excludedDefinitionKeys = [],
 }: Readonly<{
   locale: string;
   onRetry: () => void;
   refreshing: boolean;
   variant: OwnerWidgetRendererVariant;
   model: HomeV2ReadModel;
+  excludedDefinitionKeys?: readonly OwnerWidgetDefinitionKey[];
 }>) {
   const { t } = useTranslation('home');
   const navigate = useNavigate();
-  const placements = projectOwnerWidgetPlacements(model);
+  const placements = projectOwnerWidgetPlacements(model, excludedDefinitionKeys);
   if (placements.length === 0) return null;
 
   return (
@@ -246,8 +253,10 @@ export function HomeOwnerWidgetRegion({
 
 export function ActiveHomeOwnerWidgetRegion({
   runtime,
+  excludedDefinitionKeys = [],
 }: Readonly<{
   runtime: HomeV2Runtime;
+  excludedDefinitionKeys?: readonly OwnerWidgetDefinitionKey[];
 }>) {
   const { i18n } = useTranslation('home');
   if (runtime.activation.kind !== 'ACTIVE') return null;
@@ -255,6 +264,7 @@ export function ActiveHomeOwnerWidgetRegion({
   const region = (
     <HomeOwnerWidgetRegion
       model={model}
+      excludedDefinitionKeys={excludedDefinitionKeys}
       variant={model.mode === 'FLOW_V1' ? 'FLOW' : 'CLASSIC'}
       locale={i18n.resolvedLanguage || i18n.language || 'en'}
       refreshing={runtime.query.isFetching && !runtime.query.isLoading}

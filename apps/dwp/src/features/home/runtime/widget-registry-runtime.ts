@@ -117,10 +117,10 @@ export const NATIVE_HOME_WIDGET_BINDINGS: readonly NativeHomeWidgetBinding[] = [
 ] as const;
 
 // Catalog-wide revision emitted by WidgetCatalogService after evaluating all 19
-// Wave 4 bindings (7 native and 12 owner definitions). The broker copies this
+// Wave 4 bindings (7 native and 14 owner definitions). The broker copies this
 // aggregate revision into every RuntimeDefinition envelope.
 export const HOME_WIDGET_BINDING_CATALOG_REVISION =
-  'd9cdfe69d6d5c7f2fc04cd2423365b6b1101d91e56069ffe1b82fb5b1c854643';
+  'b03bdd59271207ced7deaa29375ce63f4863137a4b7789d2b7c8c3a13bf345b7';
 
 // Compatibility alias for native-renderer call sites. The backend signs every
 // runtime definition, including owner widgets, with the same catalog revision.

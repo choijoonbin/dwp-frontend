@@ -13,6 +13,8 @@ export const OWNER_WIDGET_DEFINITION_KEYS = [
   'messaging.change-feed',
   'hr.edu',
   'hr.team-pulse',
+  'workplace.booking',
+  'dwaion.artifact',
 ] as const;
 
 export type OwnerWidgetDefinitionKey = (typeof OWNER_WIDGET_DEFINITION_KEYS)[number];
@@ -143,6 +145,18 @@ export const OWNER_WIDGET_CONTRACTS = Object.freeze([
     hash: '9cf2e1770e377a3a7a7721ee795beaf9ad1649bac8a8977046e9990f9c6604df',
     rendererKey: 'home.hr.team-pulse',
     canonicalSourceRoute: '/hr',
+  }),
+  contract({
+    definitionKey: 'workplace.booking',
+    hash: '3da8f665137fd670411f87893af302133cea70fda9a402fce690f85686c2869e',
+    rendererKey: 'home.workplace.booking',
+    canonicalSourceRoute: '/workplace/home',
+  }),
+  contract({
+    definitionKey: 'dwaion.artifact',
+    hash: 'a525bf1c6b926984a0978386f74aeb055c6e81db0813b9ea6b2443384de188e7',
+    rendererKey: 'home.dwaion.artifact',
+    canonicalSourceRoute: '/dwaion',
   }),
 ] satisfies readonly OwnerWidgetContract[]);
 

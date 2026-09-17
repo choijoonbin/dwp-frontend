@@ -78,4 +78,40 @@ describe('Home owner widget region', () => {
       { placementKey: 'meeting-next-prep', size: 'medium', widget: null },
     ]);
   });
+
+  it('removes expressive-mesh definitions from the generic owner region without hiding peers', () => {
+    const model = {
+      view: {
+        composition: {
+          widgets: [
+            { widgetKey: 'meetings.next-prep', visible: true, size: 'medium' },
+            { widgetKey: 'space.change-feed', visible: true, size: 'medium' },
+            { widgetKey: 'hr.edu', visible: true, size: 'medium' },
+            { widgetKey: 'workplace.booking', visible: true, size: 'medium' },
+            { widgetKey: 'dwaion.artifact', visible: true, size: 'medium' },
+            { widgetKey: 'approval.focus-queue', visible: true, size: 'medium' },
+          ],
+        },
+        deviceOverlay: null,
+      },
+      widgets: [
+        widget('meetings.next-prep'),
+        widget('space.change-feed'),
+        widget('hr.edu'),
+        widget('workplace.booking'),
+        widget('dwaion.artifact'),
+        widget('approval.focus-queue'),
+      ],
+    } as unknown as HomeV2ReadModel;
+
+    expect(
+      projectOwnerWidgetPlacements(model, [
+        'meetings.next-prep',
+        'space.change-feed',
+        'hr.edu',
+        'workplace.booking',
+        'dwaion.artifact',
+      ]).map(({ placementKey }) => placementKey)
+    ).toEqual(['approval.focus-queue']);
+  });
 });

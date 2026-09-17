@@ -213,6 +213,20 @@ function registryCatalogItem(
   instanceV6Write: boolean
 ): StudioCatalogItem {
   const available = item.effectiveState === 'AVAILABLE' && Boolean(item.resolvedVersionId);
+  const approved = HOME_STUDIO_CATALOG.find(
+    (candidate) => candidate.catalogId === item.definitionKey
+  );
+  if (approved) {
+    const placementWrite = approved.kind === 'native' ? legacyPlacementWrite : instanceV6Write;
+    return {
+      ...approved,
+      effectiveState: item.effectiveState,
+      reasonCodes: item.reasonCodes,
+      canAdd: available && placementWrite && item.placementCapabilities.canAdd,
+      canHide: placementWrite && item.placementCapabilities.canHide,
+      canMove: placementWrite && item.placementCapabilities.canMove,
+    };
+  }
   if (isNativeWidgetKey(item.legacyWidgetKey)) {
     return {
       ...nativeCatalogItem(item.legacyWidgetKey, item.definitionKey),

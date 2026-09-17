@@ -300,6 +300,7 @@ export function useHomeCoreReadModel({
 
   return {
     accessFingerprint,
+    effectiveWidgetCatalog: activeHomeV2Model ? undefined : legacyWidgetRuntime.effectiveCatalog,
     entitledApps,
     homeExperienceQuery,
     homeNativeRuntimeState,

@@ -9,6 +9,7 @@ import type {
   OwnerNotificationCounter,
   OwnerSpaceChangeItem,
   OwnerSpaceResponseItem,
+  OwnerWorkplaceBookingItem,
   OwnerWidgetPayload,
   OwnerWidgetPayloadParseResult,
 } from './owner-widget-payload-types';
@@ -345,6 +346,70 @@ function hrState(value: unknown): OwnerHrDomainState | null {
   return { availability: state.availability, dataOrigin, reasonCode } as OwnerHrDomainState;
 }
 
+function workplaceBookingItem(value: unknown): OwnerWorkplaceBookingItem | null {
+  const item = recordWithKeys(value, [
+    'bookingId',
+    'resourceName',
+    'resourceType',
+    'siteName',
+    'floorName',
+    'startsAt',
+    'endsAt',
+    'status',
+    'canCheckIn',
+    'canCancel',
+    'checkInOpensAt',
+    'checkInClosesAt',
+  ]);
+  if (!item) return null;
+  const parsed = {
+    bookingId: uuid(item.bookingId),
+    resourceName: text(item.resourceName, 240),
+    resourceType: code(item.resourceType),
+    siteName: text(item.siteName, 240),
+    floorName: text(item.floorName, 120),
+    startsAt: timestamp(item.startsAt),
+    endsAt: timestamp(item.endsAt),
+    status: code(item.status),
+    canCheckIn: typeof item.canCheckIn === 'boolean' ? item.canCheckIn : null,
+    canCancel: typeof item.canCancel === 'boolean' ? item.canCancel : null,
+    checkInOpensAt: timestamp(item.checkInOpensAt),
+    checkInClosesAt: timestamp(item.checkInClosesAt),
+  };
+  if (
+    !parsed.bookingId ||
+    !parsed.resourceName ||
+    !parsed.resourceType ||
+    !parsed.siteName ||
+    !parsed.floorName ||
+    !parsed.startsAt ||
+    !parsed.endsAt ||
+    !parsed.status ||
+    parsed.canCheckIn === null ||
+    parsed.canCancel === null ||
+    !parsed.checkInOpensAt ||
+    !parsed.checkInClosesAt ||
+    Date.parse(parsed.endsAt) < Date.parse(parsed.startsAt) ||
+    Date.parse(parsed.checkInClosesAt) < Date.parse(parsed.checkInOpensAt)
+  ) {
+    return null;
+  }
+  return parsed as OwnerWorkplaceBookingItem;
+}
+
+function parseWorkplaceBooking(value: unknown): unknown | null {
+  const payload = recordWithKeys(value, ['items', 'visibleCount']);
+  if (!payload) return null;
+  const items = list(payload.items, workplaceBookingItem);
+  const visibleCount = count(payload.visibleCount);
+  return items &&
+    visibleCount !== null &&
+    visibleCount >= items.length &&
+    uniqueBy(items, (item) => item.bookingId)
+    ? { items, visibleCount }
+    : null;
+}
+
 function parseApproval(key: OwnerWidgetDefinitionKey, value: unknown): unknown | null {
   const focus = key === 'approval.focus-queue';
   const payload = recordWithKeys(
@@ -472,6 +537,9 @@ export function parseOwnerWidgetPayload<K extends OwnerWidgetDefinitionKey>(
   else if (definitionKey === 'space.response-queue') value = parseSpaceResponse(payload, locale);
   else if (definitionKey.startsWith('messaging.')) value = parseMessaging(payload);
   else if (definitionKey.startsWith('hr.')) value = parseHr(definitionKey, payload);
+  else if (definitionKey === 'workplace.booking') value = parseWorkplaceBooking(payload);
+  // Any content-bearing DWAI·ON state fails closed until a payload contract exists.
+  else if (definitionKey === 'dwaion.artifact') value = null;
   return value === null
     ? { ok: false, code: 'MALFORMED_PAYLOAD' }
     : { ok: true, value: value as OwnerWidgetPayload<K> };

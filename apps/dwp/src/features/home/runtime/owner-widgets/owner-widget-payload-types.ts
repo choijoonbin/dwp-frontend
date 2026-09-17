@@ -120,6 +120,29 @@ export type OwnerHrTeamPulsePayload = Readonly<{
   state: OwnerHrDomainState;
 }>;
 
+export type OwnerWorkplaceBookingItem = Readonly<{
+  bookingId: string;
+  resourceName: string;
+  resourceType: string;
+  siteName: string;
+  floorName: string;
+  startsAt: string;
+  endsAt: string;
+  status: string;
+  canCheckIn: boolean;
+  canCancel: boolean;
+  checkInOpensAt: string;
+  checkInClosesAt: string;
+}>;
+
+export type OwnerWorkplaceBookingPayload = Readonly<{
+  items: readonly OwnerWorkplaceBookingItem[];
+  visibleCount: number;
+}>;
+
+/** V264 publishes this definition only as an UNAVAILABLE envelope. */
+export type OwnerDwaionArtifactPayload = never;
+
 export type OwnerWidgetPayloadMap = Readonly<{
   'approval.focus-queue': OwnerApprovalFocusQueuePayload;
   'approval.my-requests': OwnerApprovalMyRequestsPayload;
@@ -133,6 +156,8 @@ export type OwnerWidgetPayloadMap = Readonly<{
   'messaging.change-feed': OwnerMessagingPayload;
   'hr.edu': OwnerHrEducationPayload;
   'hr.team-pulse': OwnerHrTeamPulsePayload;
+  'workplace.booking': OwnerWorkplaceBookingPayload;
+  'dwaion.artifact': OwnerDwaionArtifactPayload;
 }>;
 
 export type OwnerWidgetPayload<K extends OwnerWidgetDefinitionKey> = OwnerWidgetPayloadMap[K];

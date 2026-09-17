@@ -32,6 +32,8 @@ export type {
   OwnerWidgetPayload,
   OwnerWidgetPayloadMap,
   OwnerWidgetPayloadParseResult,
+  OwnerWorkplaceBookingItem,
+  OwnerWorkplaceBookingPayload,
 } from './owner-widget-payload-types';
 export { normalizeOwnerWidget, normalizeOwnerWidgetEnvelope } from './owner-widget-view-model';
 export type {
