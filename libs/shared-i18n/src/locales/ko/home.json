@@ -1038,9 +1038,9 @@
         "description": "IT, 구성원, 업무 환경, 재무 및 구매 요청"
       },
       "ref-app-people": {
-        "name": "인사",
-        "shortName": "인사",
-        "description": "DWP HCM에서 나의 인사, 구성원, 조직 및 권한별 인력 운영을 연결합니다"
+        "name": "HRIS",
+        "shortName": "HRIS",
+        "description": "DWP HRIS에서 나의 인사, 구성원, 조직 및 권한별 인력 운영을 연결합니다"
       },
       "ref-app-knowledge": {
         "name": "지식",

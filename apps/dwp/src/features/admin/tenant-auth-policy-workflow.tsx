@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, FilePenLine, Send, ShieldCheck, Upload, X } from 'lucide-react';
+import { Check, FilePenLine, Send, Upload, X } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createTenantAuthPolicyChange,
