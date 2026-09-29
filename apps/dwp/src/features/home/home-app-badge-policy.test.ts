@@ -24,8 +24,8 @@ const app: HomeAppDefinition = {
 const hcmApp: HomeAppDefinition = {
   ...app,
   id: 'hcm',
-  name: 'HR',
-  shortName: 'HR',
+  name: 'HRIS',
+  shortName: 'HRIS',
   route: '/hr/home',
   iconKey: 'hcm',
   resourceKey: 'APP.HCM',

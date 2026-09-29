@@ -25,7 +25,7 @@
     },
     {
       "id": "hcm",
-      "features": ["hcm", "people", "workforce"],
+      "features": ["hcm", "hris", "people", "workforce"],
       "routePrefixes": ["/hr", "/people", "/workforce"],
       "backendServices": ["people", "platform"],
       "deployment": "independent"

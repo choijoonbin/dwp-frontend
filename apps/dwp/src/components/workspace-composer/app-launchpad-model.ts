@@ -267,9 +267,9 @@ export const HOME_APPS: readonly HomeAppDefinition[] = [
   },
   {
     id: 'ref-app-people',
-    name: 'HR',
-    shortName: 'HR',
-    description: 'Personal HR, people, organization, and workforce operations in DWP HCM',
+    name: 'HRIS',
+    shortName: 'HRIS',
+    description: 'Personal HR, people, time, payroll, performance, and workforce operations',
     groupId: 'services',
     route: '/hr',
     iconKey: 'hcm',

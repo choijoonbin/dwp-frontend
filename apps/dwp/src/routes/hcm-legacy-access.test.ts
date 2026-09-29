@@ -87,10 +87,24 @@ describe('HCM legacy shell and PAGE access', () => {
     expect(
       resolveLegacyHcmSurfaceAccess('hcm.personal', { ...denied, canAccessPersonal: true })
     ).toBe(true);
-    expect(resolveLegacyHcmSurfaceAccess('hcm.team', { ...denied, isManager: true })).toBe(true);
+    expect(resolveLegacyHcmSurfaceAccess('hcm.team', { ...denied, isManager: true })).toBe(false);
+    expect(
+      resolveLegacyHcmSurfaceAccess('hcm.team', {
+        ...denied,
+        canAccessPersonal: true,
+        isManager: true,
+      })
+    ).toBe(true);
     expect(
       resolveLegacyHcmSurfaceAccess('hcm.operations', {
         ...denied,
+        canAccessOperationsOverview: true,
+      })
+    ).toBe(false);
+    expect(
+      resolveLegacyHcmSurfaceAccess('hcm.operations', {
+        ...denied,
+        canAccessPersonal: true,
         canAccessOperationsOverview: true,
       })
     ).toBe(true);
@@ -161,6 +175,24 @@ describe('HCM legacy shell and PAGE access', () => {
         tenantRuntime.supportContextLoading
       )
     ).toBe('allowed');
+    expect(
+      resolveProductAreaNavigationItemAccess(
+        operation,
+        (_resourceKey: string, permissionCode?: string) => permissionCode === 'VIEW_TENANT',
+        tenantRuntime.permissionsLoaded,
+        tenantRuntime.providerRole,
+        tenantRuntime.supportContextLoading
+      )
+    ).toBe('allowed');
+    expect(
+      resolveProductAreaNavigationItemAccess(
+        operation,
+        (_resourceKey: string, permissionCode?: string) => permissionCode === 'VIEW',
+        tenantRuntime.permissionsLoaded,
+        tenantRuntime.providerRole,
+        tenantRuntime.supportContextLoading
+      )
+    ).toBe('route-denied');
     expect(
       resolveProductAreaNavigationItemAccess(
         {

@@ -21,6 +21,73 @@ export type ZonedClock = {
 
 export type ZonedDateKey = string;
 
+export type CivilDateFormatOptions = Omit<
+  Intl.DateTimeFormatOptions,
+  | 'timeStyle'
+  | 'timeZone'
+  | 'timeZoneName'
+  | 'hour'
+  | 'minute'
+  | 'second'
+  | 'fractionalSecondDigits'
+  | 'hour12'
+  | 'hourCycle'
+  | 'dayPeriod'
+>;
+
+/** Format a Gregorian DATE, not an instant in the user's time zone. */
+export function formatCivilDate(
+  value: string,
+  options: CivilDateFormatOptions = { dateStyle: 'medium' },
+  locale = getCurrentLanguage()
+): string {
+  const invalid = () => {
+    throw new RangeError('Civil date must be a valid Gregorian YYYY-MM-DD value.');
+  };
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) invalid();
+  const [year, month, day] = value.split('-').map(Number);
+  if (year < 1 || month < 1 || month > 12 || day < 1 || day > 31) invalid();
+  const date = new Date(0);
+  date.setUTCFullYear(year, month - 1, day);
+  date.setUTCHours(0, 0, 0, 0);
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  )
+    invalid();
+
+  for (const key of [
+    'timeStyle',
+    'timeZone',
+    'timeZoneName',
+    'hour',
+    'minute',
+    'second',
+    'fractionalSecondDigits',
+    'hour12',
+    'hourCycle',
+    'dayPeriod',
+  ] as const) {
+    if ((options as Intl.DateTimeFormatOptions)[key] !== undefined) {
+      throw new RangeError('Civil date formatting does not accept time options.');
+    }
+  }
+  const preference = readRegionalPreference();
+  if (preference.dateFormat !== 'locale' && options.dateStyle) {
+    if (preference.dateFormat === 'iso') return value;
+    const [yearText, monthText, dayText] = value.split('-');
+    return preference.dateFormat === 'month_first'
+      ? `${monthText}/${dayText}/${yearText}`
+      : `${dayText}/${monthText}/${yearText}`;
+  }
+  return new Intl.DateTimeFormat(locale, {
+    calendar: 'gregory',
+    ...options,
+    timeZone: 'UTC',
+  }).format(date);
+}
+
 export function resolveSystemTimeZone(fallback = ''): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || fallback;
 }

@@ -144,7 +144,7 @@ describe('Product action disclosure contracts', () => {
 
   it('keeps the HCM personal Work home free of management modes, data, and tools', () => {
     const home = source('features/hcm/hcm-home.tsx');
-    expect(home).toContain("type HomeMode = 'personal' | 'team';");
+    expect(home).toContain("useState<HcmHomeMode>('personal')");
     expect(home).not.toContain('experience.canOperate');
     expect(home).not.toContain('listHrisSyncRuns');
     expect(home).not.toContain("surface: 'workforce'");

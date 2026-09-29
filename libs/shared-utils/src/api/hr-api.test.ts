@@ -116,11 +116,49 @@ describe('HR API boundary', () => {
     expect(home.timeZone).toBe('UTC');
     expect(home.enrollmentWindows).toEqual([]);
     expect(home.domainStates.TIME).toEqual({
-      availability: 'AVAILABLE',
+      availability: 'UNAVAILABLE',
       dataOrigin: 'UNKNOWN',
-      reasonCode: null,
+      reasonCode: 'TIME_DOMAIN_STATE_REQUIRED',
     });
     expect(home.pay?.dataOrigin).toBe('REFERENCE');
+  });
+
+  it('preserves explicit domain availability and forwards cancellation to the home request', async () => {
+    const controller = new AbortController();
+    const fetchMock = vi.fn().mockResolvedValueOnce(
+      jsonResponse({
+        asOf: '2026-09-17',
+        generatedAt: '2026-09-17T01:00:00Z',
+        timeZone: 'Asia/Seoul',
+        employee: { personId: 'person-1', displayName: 'Mina', directReportCount: 0 },
+        leaveBalances: [],
+        activeBenefitCount: 0,
+        openBenefitWindowCount: 0,
+        activeGoalCount: 0,
+        requiredLearningCount: 0,
+        teamPendingCount: 0,
+        referenceDataPresent: false,
+        domainStates: {
+          TIME: { availability: 'AVAILABLE', dataOrigin: 'SOURCE', reasonCode: null },
+        },
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const home = await getHrHome({ signal: controller.signal });
+
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(request.signal).toBeInstanceOf(AbortSignal);
+    expect(home.domainStates.TIME).toEqual({
+      availability: 'AVAILABLE',
+      dataOrigin: 'SOURCE',
+      reasonCode: null,
+    });
+    expect(home.domainStates.PAY).toEqual({
+      availability: 'UNAVAILABLE',
+      dataOrigin: 'UNKNOWN',
+      reasonCode: 'PAY_DOMAIN_STATE_REQUIRED',
+    });
   });
 
   it('uses dedicated team and workforce operations read boundaries', async () => {

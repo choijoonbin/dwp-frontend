@@ -72,7 +72,7 @@
       "productRuntime",
       "{workspaceRoot}/apps/dwp/src/routes/hcm-routes.tsx",
       "{workspaceRoot}/apps/dwp/src/pages/hcm.tsx",
-      "{workspaceRoot}/apps/dwp/src/features/{hcm,people,workforce}/**/*"
+      "{workspaceRoot}/apps/dwp/src/features/{hcm,hris,people,workforce}/**/*"
     ],
     "approvalsProduct": [
       "productRuntime",

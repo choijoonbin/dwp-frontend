@@ -190,7 +190,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: Clock3,
         audience: 'time-admin',
         requiredResourceKey: 'DATA.HR_TIME',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -199,7 +199,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: CalendarCheck2,
         audience: 'absence-admin',
         requiredResourceKey: 'DATA.HR_ABSENCE',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -208,7 +208,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: HeartHandshake,
         audience: 'benefits-admin',
         requiredResourceKey: 'DATA.HR_BENEFITS',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -217,7 +217,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: ReceiptText,
         audience: 'pay-admin',
         requiredResourceKey: 'DATA.HR_PAY',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -226,7 +226,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: ShieldCheck,
         audience: 'talent-admin',
         requiredResourceKey: 'DATA.HR_TALENT',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',

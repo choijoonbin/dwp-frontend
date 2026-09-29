@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import authorizationSource from '../../../../../architecture/product-surface-authorization.v1.json';
 import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
 import { hcmRoutes } from '../../routes/hcm-routes';
-import { HCM_PRODUCT_MANIFEST } from './hcm-product-manifest';
+import { HCM_APP_ENTITLEMENT_CUTOVER, HCM_PRODUCT_MANIFEST } from './hcm-product-manifest';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -129,6 +129,21 @@ function sameAccess(left: RegistryRequiredAccess, right: RegistryRequiredAccess)
 }
 
 describe('HCM W1b product manifest', () => {
+  it('keeps the A004 APP.HCM cutover deferred for zero-APP administrators', () => {
+    expect(HCM_APP_ENTITLEMENT_CUTOVER).toMatchObject({
+      blockerId: 'A004',
+      state: 'DEFERRED_ZERO_APP_ADMIN_COMPATIBILITY',
+      canonicalResourceKey: 'APP.HCM',
+      compatibilityAlias: 'APP.HRIS',
+      requiresProductEntitlement: false,
+    });
+    expect(
+      HCM_PRODUCT_MANIFEST.surfaces.every(
+        (surface) => surface.entryAccess.requiresProductEntitlement === false
+      )
+    ).toBe(true);
+  });
+
   it('freezes the personal, team, operations, and management menu partition', () => {
     expect(
       Object.fromEntries(

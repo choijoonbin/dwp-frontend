@@ -15,7 +15,7 @@ type HcmRhythmMetricProps = {
   value: string;
   detail: string;
   progress?: number;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 export function HcmRhythmMetric({
@@ -29,6 +29,7 @@ export function HcmRhythmMetric({
   return (
     <ButtonBase
       onClick={onClick}
+      disabled={!onClick}
       sx={(theme) => ({
         width: 1,
         minHeight: 116,

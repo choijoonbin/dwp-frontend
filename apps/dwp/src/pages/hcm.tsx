@@ -14,6 +14,7 @@ import {
 import { useHcmAccess } from '../features/hcm/use-hcm-experience';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { RouteFallback } from '../routes/route-support';
+import { HRIS_HOME_RUNTIME_PROVIDER_REGISTRY } from '../features/hris/integration';
 
 import type { HcmNavigationItem } from '../features/hcm/hcm-navigation';
 
@@ -32,14 +33,14 @@ const HrBenefitsWorkspace = lazy(() =>
     default: module.HrBenefitsWorkspace,
   }))
 );
-const HrPayWorkspace = lazy(() =>
-  import('../features/hcm/hr-benefits-pay-talent').then((module) => ({
-    default: module.HrPayWorkspace,
+const HrisPayrollWorkspace = lazy(() =>
+  import('../features/hris/payroll').then((module) => ({
+    default: module.HrisPayrollWorkspace,
   }))
 );
-const HrTalentWorkspace = lazy(() =>
-  import('../features/hcm/hr-benefits-pay-talent').then((module) => ({
-    default: module.HrTalentWorkspace,
+const HrisPerformanceWorkspace = lazy(() =>
+  import('../features/hris/performance').then((module) => ({
+    default: module.HrisPerformanceWorkspace,
   }))
 );
 const HrDomainOperations = lazy(() =>
@@ -52,9 +53,14 @@ const HrServiceHub = lazy(() =>
     default: module.HrServiceHub,
   }))
 );
-const HrTimeWorkspace = lazy(() =>
-  import('../features/hcm/hr-time-workspace').then((module) => ({
-    default: module.HrTimeWorkspace,
+const HrisTimeWorkspace = lazy(() =>
+  import('../features/hris/time').then((module) => ({
+    default: module.HrisTimeWorkspace,
+  }))
+);
+const HrisTimeOperationsWorkspace = lazy(() =>
+  import('../features/hris/time').then((module) => ({
+    default: module.HrisTimeOperationsWorkspace,
   }))
 );
 const HrTeamTimeWorkspace = lazy(() =>
@@ -87,6 +93,11 @@ const PeopleDirectory = lazy(() =>
     default: module.PeopleDirectory,
   }))
 );
+const HrisPeople360Workspace = lazy(() =>
+  import('../features/hris/people').then((module) => ({
+    default: module.HrisPeople360Workspace,
+  }))
+);
 const OrganizationExplorer = lazy(() =>
   import('../features/people/organization/organization-chart-manager').then((module) => ({
     default: module.OrganizationExplorer,
@@ -112,23 +123,22 @@ const WorkforceReferenceData = lazy(() =>
     default: module.WorkforceReferenceData,
   }))
 );
-
 function HcmPageContent({ page }: { page: HcmNavigationItem }) {
   if (page.view === 'home') {
     return (
       <Suspense fallback={<RouteFallback />}>
-        <HcmHome />
+        <HcmHome moduleProviderRegistry={HRIS_HOME_RUNTIME_PROVIDER_REGISTRY} />
       </Suspense>
     );
   }
 
   const content = {
     me: <MyHrProfile />,
-    time: <HrTimeWorkspace />,
+    time: <HrisTimeWorkspace />,
     absence: <HrAbsenceWorkspace />,
     benefits: <HrBenefitsWorkspace />,
-    pay: <HrPayWorkspace />,
-    talent: <HrTalentWorkspace />,
+    pay: <HrisPayrollWorkspace />,
+    talent: <HrisPerformanceWorkspace />,
     services: <HrServiceHub />,
     directory: <PeopleDirectory experience="directory" />,
     organization: <OrganizationExplorer experience="directory" />,
@@ -136,11 +146,14 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'team-time': <HrTeamTimeWorkspace />,
     'team-absence': <HrTeamAbsenceWorkspace />,
     operations: <HrOperationsOverview />,
-    people: <PeopleDirectory experience="workforce" />,
+    people: <HrisPeople360Workspace />,
     assignments: <AssignmentRegister />,
-    'time-operations': <HrDomainOperations domain="TIME" />,
+    'time-operations': <HrisTimeOperationsWorkspace />,
     'absence-operations': <HrDomainOperations domain="ABSENCE" />,
     'benefits-operations': <HrDomainOperations domain="BENEFITS" />,
+    // The HRIS foundation studios remain intentionally unbound until their owner APIs publish
+    // generated DATA/ACTION route contracts. Keep the established, contract-governed domain
+    // operations surface at these URLs rather than issuing unscoped payroll or performance I/O.
     'pay-operations': <HrDomainOperations domain="PAY" />,
     'talent-operations': <HrDomainOperations domain="TALENT" />,
     'organization-design': <OrganizationExplorer experience="workforce" />,
