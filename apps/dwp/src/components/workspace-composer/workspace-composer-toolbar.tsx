@@ -279,6 +279,15 @@ export function WorkspaceComposerToolbar({
               borderColor: toolbarColors.selectedBorder,
             },
             '&.Mui-selected:hover': { bgcolor: toolbarColors.selectedHover },
+            '@media (forced-colors: active)': {
+              color: 'ButtonText',
+              borderColor: 'ButtonText',
+              '&.Mui-selected, &.Mui-selected:hover': {
+                color: 'HighlightText',
+                bgcolor: 'Highlight',
+                borderColor: 'Highlight',
+              },
+            },
           },
         }}
       >

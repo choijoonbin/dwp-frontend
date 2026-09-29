@@ -2,7 +2,9 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 import { HR_HOME_FIXTURE } from './support/product-area-fixtures';
+import { mockHcmProductSurfaceAuthority } from './support/product-surface-authority';
 import { fulfillSuccess, mockShellSession } from './support/shell-session';
+import { people360Snapshot } from '../apps/dwp/src/features/hris/people/testing/people-360.test-support';
 
 const EMPLOYEE_SELF_GRANTS = [
   {
@@ -44,6 +46,57 @@ function currentSeoulDateKey(): string {
   return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
+type HrisHomeAggregateFixture = Readonly<{
+  asOf: string;
+  employee: Readonly<{
+    displayName: string;
+    businessTitle?: string | null;
+    organizationName?: string | null;
+    managerDisplayName?: string | null;
+  }>;
+}> &
+  Readonly<Record<string, unknown>>;
+
+function people360SelfFixture(aggregate: HrisHomeAggregateFixture) {
+  const snapshot = people360Snapshot({
+    asOf: aggregate.asOf,
+    displayName: aggregate.employee.displayName,
+    archetype: 'SELF',
+    scope: 'SELF',
+  });
+  return {
+    ...snapshot,
+    primaryAssignment: {
+      ...snapshot.primaryAssignment,
+      businessTitle: aggregate.employee.businessTitle ?? undefined,
+      organizationName: aggregate.employee.organizationName ?? undefined,
+      managerDisplayName: aggregate.employee.managerDisplayName ?? undefined,
+    },
+  };
+}
+
+async function mockHrisHomeSources(
+  page: Page,
+  aggregate: HrisHomeAggregateFixture,
+  options: Readonly<{ legacyUnavailable?: boolean }> = {}
+) {
+  await mockHcmProductSurfaceAuthority(page, { surfaceIds: ['hcm.personal'] });
+  await page.route('**/api/people/v1/hr/home**', (route) => {
+    const projection = new URL(route.request().url()).searchParams.get('projection');
+    if (projection === 'people360') {
+      return fulfillSuccess(route, people360SelfFixture(aggregate));
+    }
+    if (options.legacyUnavailable) {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', message: 'source unavailable' }),
+      });
+    }
+    return fulfillSuccess(route, aggregate);
+  });
+}
+
 test('minimum employee SELF grants compose the governed HRIS home', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
@@ -52,13 +105,11 @@ test('minimum employee SELF grants compose the governed HRIS home', async ({ pag
     jobTitle: 'Product designer',
     permissions: EMPLOYEE_SELF_GRANTS,
   });
-  await page.route('**/api/people/v1/hr/home', (route) =>
-    fulfillSuccess(route, {
-      ...HR_HOME_FIXTURE,
-      asOf: currentSeoulDateKey(),
-      generatedAt: new Date().toISOString(),
-    })
-  );
+  await mockHrisHomeSources(page, {
+    ...HR_HOME_FIXTURE,
+    asOf: currentSeoulDateKey(),
+    generatedAt: new Date().toISOString(),
+  });
 
   await page.goto('/hr/home');
 
@@ -67,7 +118,7 @@ test('minimum employee SELF grants compose the governed HRIS home', async ({ pag
   await expect(home).toHaveAttribute('data-hris-home-provider-registry', 'v1');
   await expect(home).toHaveAttribute(
     'data-hris-home-data-authority',
-    'LEGACY_AGGREGATE_COMPATIBILITY'
+    'MODULE_API LEGACY_AGGREGATE_COMPATIBILITY'
   );
   await expect(home).toHaveAttribute(
     'data-hris-home-provider-states',
@@ -103,13 +154,11 @@ test('wheel input over an HRIS widget continues the document scroll', async ({
     jobTitle: 'Product designer',
     permissions: EMPLOYEE_SELF_GRANTS,
   });
-  await page.route('**/api/people/v1/hr/home', (route) =>
-    fulfillSuccess(route, {
-      ...HR_HOME_FIXTURE,
-      asOf: currentSeoulDateKey(),
-      generatedAt: new Date().toISOString(),
-    })
-  );
+  await mockHrisHomeSources(page, {
+    ...HR_HOME_FIXTURE,
+    asOf: currentSeoulDateKey(),
+    generatedAt: new Date().toISOString(),
+  });
 
   await page.goto('/hr/home');
   const widgetContent = page.locator('[data-workspace-widget-content]').first();
@@ -142,13 +191,11 @@ test('View HR flow keeps the focused rhythm landmark clear of the fixed shell', 
     jobTitle: 'Product designer',
     permissions: EMPLOYEE_SELF_GRANTS,
   });
-  await page.route('**/api/people/v1/hr/home', (route) =>
-    fulfillSuccess(route, {
-      ...HR_HOME_FIXTURE,
-      asOf: currentSeoulDateKey(),
-      generatedAt: new Date().toISOString(),
-    })
-  );
+  await mockHrisHomeSources(page, {
+    ...HR_HOME_FIXTURE,
+    asOf: currentSeoulDateKey(),
+    generatedAt: new Date().toISOString(),
+  });
 
   await page.goto('/hr/home');
 
@@ -188,22 +235,20 @@ test('one missing entitlement and one unavailable source degrade independently',
       (permission) => permission.resourceKey !== 'DATA.HR_ABSENCE'
     ),
   });
-  await page.route('**/api/people/v1/hr/home', (route) =>
-    fulfillSuccess(route, {
-      ...HR_HOME_FIXTURE,
-      asOf: currentSeoulDateKey(),
-      generatedAt: new Date().toISOString(),
-      time: null,
-      domainStates: {
-        ...HR_HOME_FIXTURE.domainStates,
-        TIME: {
-          availability: 'UNAVAILABLE',
-          dataOrigin: 'NONE',
-          reasonCode: 'TIME_SOURCE_DOWN',
-        },
+  await mockHrisHomeSources(page, {
+    ...HR_HOME_FIXTURE,
+    asOf: currentSeoulDateKey(),
+    generatedAt: new Date().toISOString(),
+    time: null,
+    domainStates: {
+      ...HR_HOME_FIXTURE.domainStates,
+      TIME: {
+        availability: 'UNAVAILABLE',
+        dataOrigin: 'NONE',
+        reasonCode: 'TIME_SOURCE_DOWN',
       },
-    })
-  );
+    },
+  });
 
   await page.goto('/hr/home');
 
@@ -233,12 +278,14 @@ test('legacy source failure degrades its widgets without replacing the HRIS shel
     jobTitle: 'Product designer',
     permissions: EMPLOYEE_SELF_GRANTS,
   });
-  await page.route('**/api/people/v1/hr/home', (route) =>
-    route.fulfill({
-      status: 503,
-      contentType: 'application/json',
-      body: JSON.stringify({ status: 'ERROR', message: 'source unavailable' }),
-    })
+  await mockHrisHomeSources(
+    page,
+    {
+      ...HR_HOME_FIXTURE,
+      asOf: currentSeoulDateKey(),
+      generatedAt: new Date().toISOString(),
+    },
+    { legacyUnavailable: true }
   );
 
   await page.goto('/hr/home');
@@ -268,30 +315,28 @@ test('forbidden projections neither render aggregate values nor fan out to the o
     jobTitle: 'Manager',
     permissions: EMPLOYEE_SELF_GRANTS.filter((permission) => permission.resourceType === 'APP'),
   });
-  await page.route('**/api/people/v1/hr/home', (route) =>
-    fulfillSuccess(route, {
-      ...HR_HOME_FIXTURE,
-      asOf: currentSeoulDateKey(),
-      generatedAt: new Date().toISOString(),
-      employee: {
-        ...HR_HOME_FIXTURE.employee,
-        displayName: 'DO_NOT_RENDER_EMPLOYEE',
-        managerDisplayName: 'DO_NOT_RENDER_MANAGER',
-        directReportCount: 999,
-      },
-      leaveBalances: HR_HOME_FIXTURE.leaveBalances.map((balance) => ({
-        ...balance,
-        planName: 'DO_NOT_RENDER_LEAVE',
-        availableMinutes: 999_999,
-      })),
-      pay: HR_HOME_FIXTURE.pay ? { ...HR_HOME_FIXTURE.pay, name: 'DO_NOT_RENDER_PAY' } : null,
-      journeys: HR_HOME_FIXTURE.journeys.map((journey) => ({
-        ...journey,
-        name: 'DO_NOT_RENDER_JOURNEY',
-        progressPercent: 99,
-      })),
-    })
-  );
+  await mockHrisHomeSources(page, {
+    ...HR_HOME_FIXTURE,
+    asOf: currentSeoulDateKey(),
+    generatedAt: new Date().toISOString(),
+    employee: {
+      ...HR_HOME_FIXTURE.employee,
+      displayName: 'DO_NOT_RENDER_EMPLOYEE',
+      managerDisplayName: 'DO_NOT_RENDER_MANAGER',
+      directReportCount: 999,
+    },
+    leaveBalances: HR_HOME_FIXTURE.leaveBalances.map((balance) => ({
+      ...balance,
+      planName: 'DO_NOT_RENDER_LEAVE',
+      availableMinutes: 999_999,
+    })),
+    pay: HR_HOME_FIXTURE.pay ? { ...HR_HOME_FIXTURE.pay, name: 'DO_NOT_RENDER_PAY' } : null,
+    journeys: HR_HOME_FIXTURE.journeys.map((journey) => ({
+      ...journey,
+      name: 'DO_NOT_RENDER_JOURNEY',
+      progressPercent: 99,
+    })),
+  });
 
   await page.goto('/hr/home');
 
@@ -324,22 +369,20 @@ for (const viewport of [
         'Global People Operations, Organizational Capability and Employee Experience Partner',
       permissions: EMPLOYEE_SELF_GRANTS,
     });
-    await page.route('**/api/people/v1/hr/home', (route) =>
-      fulfillSuccess(route, {
-        ...HR_HOME_FIXTURE,
-        asOf: currentSeoulDateKey(),
-        generatedAt: new Date().toISOString(),
-        employee: {
-          ...HR_HOME_FIXTURE.employee,
-          displayName:
-            'Alexandra International Workforce Experience and Organizational Development Specialist',
-          businessTitle:
-            'Global People Operations, Organizational Capability and Employee Experience Partner',
-          organizationName:
-            'International Workforce Strategy, Culture and Employee Experience Center of Excellence',
-        },
-      })
-    );
+    await mockHrisHomeSources(page, {
+      ...HR_HOME_FIXTURE,
+      asOf: currentSeoulDateKey(),
+      generatedAt: new Date().toISOString(),
+      employee: {
+        ...HR_HOME_FIXTURE.employee,
+        displayName:
+          'Alexandra International Workforce Experience and Organizational Development Specialist',
+        businessTitle:
+          'Global People Operations, Organizational Capability and Employee Experience Partner',
+        organizationName:
+          'International Workforce Strategy, Culture and Employee Experience Center of Excellence',
+      },
+    });
 
     await page.goto('/hr/home');
 
@@ -360,13 +403,11 @@ test('200 percent zoom, forced colors and keyboard activation preserve home cust
     jobTitle: 'Global employee experience partner',
     permissions: EMPLOYEE_SELF_GRANTS,
   });
-  await page.route('**/api/people/v1/hr/home', (route) =>
-    fulfillSuccess(route, {
-      ...HR_HOME_FIXTURE,
-      asOf: currentSeoulDateKey(),
-      generatedAt: new Date().toISOString(),
-    })
-  );
+  await mockHrisHomeSources(page, {
+    ...HR_HOME_FIXTURE,
+    asOf: currentSeoulDateKey(),
+    generatedAt: new Date().toISOString(),
+  });
 
   await page.goto('/hr/home');
   await page.evaluate(() => {
