@@ -1378,19 +1378,11 @@
       "RawRadius": 1,
       "RawTypography": 1
     },
-    "apps/dwp/src/features/rooms/room-bookings.tsx": {
-      "Skeleton": 1,
-      "RawShadow": 1
-    },
     "apps/dwp/src/features/rooms/rooms-admin-operations.tsx": {
       "Skeleton": 2
     },
     "apps/dwp/src/features/rooms/rooms-admin-policies.tsx": {
       "Skeleton": 2
-    },
-    "apps/dwp/src/features/rooms/rooms-find.tsx": {
-      "LinearProgress": 1,
-      "Skeleton": 1
     },
     "apps/dwp/src/features/rooms/rooms-ui.tsx": {
       "Alert": 1,
@@ -1423,10 +1415,6 @@
     "apps/dwp/src/features/rooms/workplace-admin-policy.tsx": {
       "Skeleton": 1
     },
-    "apps/dwp/src/features/rooms/workplace-bookings.tsx": {
-      "Skeleton": 1,
-      "RawShadow": 1
-    },
     "apps/dwp/src/features/rooms/workplace-explore.tsx": {
       "Skeleton": 1,
       "CircularProgress": 1
@@ -1444,9 +1432,6 @@
     },
     "apps/dwp/src/features/rooms/workplace-operation-json-details.tsx": {
       "RawTypography": 2
-    },
-    "apps/dwp/src/features/rooms/workplace-release-windows.tsx": {
-      "Skeleton": 3
     },
     "apps/dwp/src/features/rooms/workplace-relocate-booking-dialog.tsx": {
       "Skeleton": 1,

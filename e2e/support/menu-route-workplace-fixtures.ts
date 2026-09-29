@@ -19,7 +19,6 @@ import type {
   WorkplaceExploreResponse,
   WorkplaceGovernanceCampus,
   WorkplacePolicy,
-  WorkplaceReleaseWindow,
   WorkplaceSite,
 } from '@dwp-frontend/shared-utils';
 
@@ -146,10 +145,6 @@ const resolveWorkplaceFixture = (path: string): MenuRouteFixtureResolution | nul
       };
     case '/api/platform/v1/workplace/bookings':
       return { data: [] satisfies WorkplaceBooking[] };
-    case '/api/platform/v1/workplace/release-windows':
-      return { data: [] satisfies WorkplaceReleaseWindow[] };
-    case '/api/platform/v1/workplace/release-windows/eligible-resources':
-      return { data: [] };
     case '/api/platform/v1/admin/workplace/overview':
       return {
         data: {
