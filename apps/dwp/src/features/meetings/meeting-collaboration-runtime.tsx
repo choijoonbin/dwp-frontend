@@ -19,6 +19,7 @@ import {
 } from '@dwp-frontend/shared-utils/api/video-meeting-collaboration-api';
 
 import {
+  formatMeetingParticipantInitials,
   type MeetingChatMessage,
   type MeetingCollaborationLabels,
   type MeetingCollaborationTab,
@@ -84,16 +85,6 @@ function activeFloorRequests(requests: readonly VideoMeetingHandRequest[]): Meet
       acknowledgedAt: request.acknowledgedAt,
       resolvedAt: request.resolvedAt,
     }));
-}
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/u).filter(Boolean);
-  if (!parts.length) return '?';
-  return parts
-    .slice(0, 2)
-    .map((part) => Array.from(part)[0])
-    .join('')
-    .toUpperCase();
 }
 
 export function MeetingCollaborationRuntime({
@@ -458,7 +449,7 @@ export function MeetingCollaborationRuntime({
       loadMoreFloorRequests: t('room.collaboration.loadMoreFloorRequests'),
       loadingMoreFloorRequests: t('room.collaboration.loadingMoreFloorRequests'),
       requestedAt: (value) => t('room.collaboration.requestedAt', { time: formatTime(value) }),
-      participantInitials: initials,
+      participantInitials: formatMeetingParticipantInitials,
     };
   }, [activeTab, i18n.language, t]);
 

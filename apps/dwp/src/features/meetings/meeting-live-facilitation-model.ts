@@ -1,6 +1,4 @@
 import type {
-  VideoMeetingFacilitationPoll,
-  VideoMeetingFacilitationQuestion,
   VideoMeetingFacilitationSnapshot,
   VideoMeetingFacilitationTimer,
 } from '@dwp-frontend/shared-utils/api/video-meeting-facilitation-api';
@@ -34,34 +32,4 @@ export function validPollDraft(question: string, options: readonly string[]) {
   return (
     question.trim().length > 0 && new Set(normalized.map((value) => value.toLowerCase())).size >= 2
   );
-}
-
-export function patchFacilitationQuestion(
-  snapshot: VideoMeetingFacilitationSnapshot,
-  question: VideoMeetingFacilitationQuestion,
-  sequence: number,
-  serverTime: string
-): VideoMeetingFacilitationSnapshot {
-  return {
-    ...snapshot,
-    sequence,
-    serverTime,
-    questions: snapshot.questions.map((current) =>
-      current.questionId === question.questionId ? question : current
-    ),
-  };
-}
-
-export function patchFacilitationPoll(
-  snapshot: VideoMeetingFacilitationSnapshot,
-  poll: VideoMeetingFacilitationPoll,
-  sequence: number,
-  serverTime: string
-): VideoMeetingFacilitationSnapshot {
-  return {
-    ...snapshot,
-    sequence,
-    serverTime,
-    polls: snapshot.polls.map((current) => (current.pollId === poll.pollId ? poll : current)),
-  };
 }

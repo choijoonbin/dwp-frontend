@@ -162,3 +162,13 @@ export function findOwnFloorRequest(
 export function normalizeMeetingChatDraft(value: string, maxLength: number): string {
   return value.trim().slice(0, Math.max(0, maxLength));
 }
+
+export function formatMeetingParticipantInitials(name: string): string {
+  const parts = name.trim().split(/\s+/u).filter(Boolean);
+  if (!parts.length) return '?';
+  return parts
+    .slice(0, 2)
+    .map((part) => Array.from(part)[0])
+    .join('')
+    .toUpperCase();
+}

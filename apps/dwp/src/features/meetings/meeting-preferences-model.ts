@@ -188,23 +188,6 @@ export function writeBrowserMeetingDevicePreferences(
   }
 }
 
-/** Reconcile only after enumeration; an empty permission-gated inventory is not proof of removal. */
-export function reconcileMeetingDevices(
-  value: MeetingDevicePreferences,
-  devices: readonly Pick<MediaDeviceInfo, 'deviceId' | 'kind'>[]
-): MeetingDevicePreferences {
-  const resolve = (id: string, kind: MediaDeviceKind) =>
-    id === 'default' || devices.some((device) => device.kind === kind && device.deviceId === id)
-      ? id
-      : 'default';
-  return {
-    ...value,
-    microphoneId: resolve(value.microphoneId, 'audioinput'),
-    cameraId: resolve(value.cameraId, 'videoinput'),
-    speakerId: resolve(value.speakerId, 'audiooutput'),
-  };
-}
-
 /**
  * Browser enumeration before permission can be empty or anonymized. Only a labelled inventory is
  * evidence that the browser exposed that device kind, so permission-gated gaps never erase a

@@ -1,7 +1,4 @@
-import type {
-  VideoMeetingAdminCapabilities,
-  VideoMeetingAdminPolicy,
-} from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import type { VideoMeetingAdminPolicy } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import type { VideoMeetingAdminIntelligenceReadiness as RuntimeMeetingAdminIntelligenceReadiness } from '@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api';
 
 export type MeetingAdminPolicyValidationCode = 'RANGE' | 'EXCEEDS_MEETING_RETENTION';
@@ -39,29 +36,6 @@ export function validateMeetingAdminPolicy(
 
 export function hasMeetingAdminPolicyErrors(validation: MeetingAdminPolicyValidation): boolean {
   return Object.values(validation).some(Boolean);
-}
-
-export type MeetingAdminOperationCapabilityKey =
-  'video' | 'screenShare' | 'chat' | 'captions' | 'recording' | 'transcript' | 'aiNotes';
-
-export const MEETING_ADMIN_OPERATION_CAPABILITIES: readonly MeetingAdminOperationCapabilityKey[] = [
-  'video',
-  'screenShare',
-  'chat',
-  'captions',
-  'recording',
-  'transcript',
-  'aiNotes',
-];
-
-export function isMeetingAdminCapabilityAvailable(
-  capabilities: VideoMeetingAdminCapabilities,
-  key: MeetingAdminOperationCapabilityKey
-): boolean {
-  if (key === 'recording') return capabilities.recordingConfigured;
-  if (key === 'transcript') return capabilities.transcriptConfigured;
-  if (key === 'aiNotes') return capabilities.aiNotesConfigured;
-  return capabilities[key];
 }
 
 export function formatMeetingAdminQualityScore(value?: number | null): string {

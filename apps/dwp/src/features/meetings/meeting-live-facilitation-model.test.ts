@@ -1,16 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import type {
-  VideoMeetingFacilitationSnapshot,
-  VideoMeetingFacilitationTimer,
-} from '@dwp-frontend/shared-utils/api/video-meeting-facilitation-api';
+import type { VideoMeetingFacilitationTimer } from '@dwp-frontend/shared-utils/api/video-meeting-facilitation-api';
 
 import {
   countdownParts,
   facilitationPollingInterval,
   facilitationTimerProgress,
-  patchFacilitationPoll,
-  patchFacilitationQuestion,
   validPollDraft,
 } from './meeting-live-facilitation-model';
 
@@ -43,27 +38,5 @@ describe('meeting live facilitation model', () => {
     expect(validPollDraft('Decision?', ['Yes', 'No'])).toBe(true);
     expect(validPollDraft('Decision?', ['Yes', ' yes '])).toBe(false);
     expect(validPollDraft(' ', ['Yes', 'No'])).toBe(false);
-  });
-
-  it('patches only the addressed resource while advancing the verified sequence', () => {
-    const snapshot = {
-      sequence: 1,
-      serverTime: 'old',
-      questions: [{ questionId: 'q-1', text: 'old' }],
-      polls: [{ pollId: 'p-1', question: 'old' }],
-    } as VideoMeetingFacilitationSnapshot;
-    const nextQuestion = { ...snapshot.questions[0]!, text: 'new' };
-    const nextPoll = { ...snapshot.polls[0]!, question: 'new' };
-
-    expect(patchFacilitationQuestion(snapshot, nextQuestion, 2, 'new-time')).toMatchObject({
-      sequence: 2,
-      serverTime: 'new-time',
-      questions: [nextQuestion],
-    });
-    expect(patchFacilitationPoll(snapshot, nextPoll, 3, 'newer-time')).toMatchObject({
-      sequence: 3,
-      serverTime: 'newer-time',
-      polls: [nextPoll],
-    });
   });
 });

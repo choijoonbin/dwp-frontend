@@ -7,6 +7,7 @@ import type {
   VideoMeetingParticipant,
   VideoMeetingRole,
 } from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import { formatMeetingParticipantInitials } from './meeting-collaboration-model';
 import { MeetingParticipantDisconnect } from './meeting-participant-disconnect';
 
 import { containMeetingOverlayTab } from './meeting-overlay-focus-boundary';
@@ -30,16 +31,6 @@ function participantRole(metadata?: string): VideoMeetingRole {
   } catch {
     return 'ATTENDEE';
   }
-}
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/u).filter(Boolean);
-  if (!parts.length) return '?';
-  return parts
-    .slice(0, 2)
-    .map((part) => Array.from(part)[0])
-    .join('')
-    .toUpperCase();
 }
 
 export function MeetingParticipantsPanel({
@@ -142,7 +133,7 @@ export function MeetingParticipantsPanel({
               data-speaking={participant.isSpeaking}
             >
               <span className="dwp-meeting-participant__avatar" aria-hidden="true">
-                {initials(name)}
+                {formatMeetingParticipantInitials(name)}
               </span>
               <span className="dwp-meeting-participant__identity">
                 <span className="dwp-meeting-participant__name">

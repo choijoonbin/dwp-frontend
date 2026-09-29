@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   emptyMeetingSchedule,
-  meetingScheduleAttempt,
   meetingScheduleDraftAttempt,
   meetingScheduleDraftInput,
   meetingScheduleDraftStep,
@@ -117,16 +116,6 @@ describe('U03 shared desktop/mobile scheduling model', () => {
     expect(meetingScheduleStepError(draft, 7, 1)).toBe('time');
     expect(meetingScheduleStepError(draft, 7, 2)).toBeNull();
     expect(meetingScheduleStepError(draft, 7, 3)).toBe('title');
-  });
-  it('keeps the key for an ambiguous retry and changes it only when the canonical body changes', () => {
-    const input = scheduleMeetingInput(valid(), 'ignored');
-    const key = vi.fn().mockReturnValueOnce('one').mockReturnValueOnce('two');
-    const first = meetingScheduleAttempt(null, input, key);
-    expect(meetingScheduleAttempt(first, { ...input, idempotencyKey: 'different' }, key)).toBe(
-      first
-    );
-    expect(meetingScheduleAttempt(first, { ...input, title: 'New title' }, key).key).toBe('two');
-    expect(key).toHaveBeenCalledTimes(2);
   });
   it('maps the four UI steps to the persisted draft contract in both directions', () => {
     expect([0, 1, 2, 3].map(meetingScheduleDraftStep)).toEqual([

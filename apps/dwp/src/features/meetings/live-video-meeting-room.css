@@ -118,8 +118,7 @@
 
 .dwp-meeting-control,
 .dwp-meeting-device-menu,
-.dwp-meeting-side-panel__close,
-.dwp-meeting-chat__composer button {
+.dwp-meeting-side-panel__close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -159,17 +158,14 @@
 
 .dwp-meeting-control:hover,
 .dwp-meeting-device-menu:hover,
-.dwp-meeting-side-panel__close:hover,
-.dwp-meeting-chat__composer button:hover {
+.dwp-meeting-side-panel__close:hover {
   border-color: rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.14);
 }
 
 .dwp-meeting-control:focus-visible,
 .dwp-meeting-device-menu:focus-visible,
-.dwp-meeting-side-panel__close:focus-visible,
-.dwp-meeting-chat__composer button:focus-visible,
-.dwp-meeting-chat__composer input:focus-visible {
+.dwp-meeting-side-panel__close:focus-visible {
   outline: 2px solid #82aaff;
   outline-offset: 2px;
 }
@@ -201,8 +197,7 @@
 }
 
 .dwp-meeting-control:disabled,
-.dwp-meeting-device-menu:disabled,
-.dwp-meeting-chat__composer button:disabled {
+.dwp-meeting-device-menu:disabled {
   cursor: not-allowed;
   opacity: 0.48;
 }
@@ -358,8 +353,7 @@
   white-space: nowrap;
 }
 
-.dwp-meeting-side-panel__close,
-.dwp-meeting-chat__composer button {
+.dwp-meeting-side-panel__close {
   width: 38px;
   height: 38px;
   flex: 0 0 auto;
@@ -453,54 +447,6 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-.dwp-meeting-chat__messages {
-  min-height: 0;
-  margin: 0;
-  padding: 12px;
-  overflow-y: auto;
-  list-style: none;
-}
-
-.dwp-meeting-chat__messages .lk-chat-entry {
-  margin: 0 0 8px;
-}
-
-.dwp-meeting-chat__messages .lk-message-body {
-  border-radius: var(--dwp-meeting-shape-inset);
-}
-
-.dwp-meeting-chat__empty {
-  display: grid;
-  min-height: 160px;
-  place-items: center;
-  color: rgba(255, 255, 255, 0.58);
-  text-align: center;
-}
-
-.dwp-meeting-chat__composer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 38px;
-  gap: 8px;
-  padding: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.dwp-meeting-chat__composer input {
-  width: 100%;
-  min-width: 0;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: var(--dwp-meeting-shape-inset);
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
-  font: inherit;
-}
-
-.dwp-meeting-chat__composer input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
 }
 
 .dwp-video-meeting-room__header {
@@ -850,8 +796,7 @@
   .dwp-video-meeting-room .dwp-video-meeting-room__reaction,
   .dwp-video-meeting-room .dwp-meeting-control,
   .dwp-video-meeting-room .dwp-meeting-device-menu,
-  .dwp-video-meeting-room .dwp-meeting-side-panel__close,
-  .dwp-video-meeting-room .dwp-meeting-chat__composer button {
+  .dwp-video-meeting-room .dwp-meeting-side-panel__close {
     animation: none;
     transition: none;
   }
@@ -867,9 +812,7 @@
   .dwp-meeting-device-menu,
   .dwp-meeting-side-panel,
   .dwp-meeting-room-rail,
-  .dwp-meeting-room-rail__tabs button,
-  .dwp-meeting-chat__composer input,
-  .dwp-meeting-chat__composer button {
+  .dwp-meeting-room-rail__tabs button {
     border: 1px solid CanvasText;
     background: Canvas;
     color: CanvasText;

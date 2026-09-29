@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 
-export async function openMeetingIntelligenceMobileDetailsIfVisible(page: Page): Promise<void> {
+async function openMeetingIntelligenceMobileDetailsIfVisible(page: Page): Promise<void> {
   const mobileDetails = page.getByTestId('meeting-intelligence-mobile-details');
   if (!(await mobileDetails.isVisible())) return;
   if ((await mobileDetails.getAttribute('open')) === null)
