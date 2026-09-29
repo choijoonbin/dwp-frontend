@@ -216,6 +216,8 @@ const ITEM_FIELDS = [
 const PRODUCT_FIELDS = [...ITEM_FIELDS, 'productId', 'routeKinds', 'rolloutDefault'];
 const INTERNAL_CLOSURE_REFERENCE =
   'architecture/product-surface-internal-closure.v1.generated.json';
+const INTERNAL_CLOSURE_BUNDLE_VERSION = 5;
+const INTERNAL_CLOSURE_BUNDLE_ARTIFACT = `product-surfaces-v1.bundle-v${INTERNAL_CLOSURE_BUNDLE_VERSION}.json`;
 const RELEASE_TRUST_POLICY_STATES = new Set(['ACTIVE', 'BLOCKED_EXTERNAL']);
 const REVIEWER_ASSIGNMENT_FIELDS = [
   'itemId',
@@ -638,8 +640,8 @@ function validateInternalClosureHandoff(manifestValue, closure, authorization) {
   if (
     closure.generatedFrom?.backend?.repository !== 'https://github.com/choijoonbin/dwp-backend' ||
     !/^[a-f0-9]{40}$/.test(closure.generatedFrom?.backend?.revision ?? '') ||
-    closure.generatedFrom?.authorizationBundle?.artifact !== 'product-surfaces-v1.bundle-v4.json' ||
-    closure.generatedFrom?.authorizationBundle?.version !== 4 ||
+    closure.generatedFrom?.authorizationBundle?.artifact !== INTERNAL_CLOSURE_BUNDLE_ARTIFACT ||
+    closure.generatedFrom?.authorizationBundle?.version !== INTERNAL_CLOSURE_BUNDLE_VERSION ||
     !/^[a-f0-9]{64}$/.test(closure.generatedFrom?.authorizationBundle?.checksum ?? '') ||
     closure.generatedFrom?.negativeMatrix?.artifact !== 'authorization-negative-matrix.v1.json' ||
     closure.generatedFrom?.negativeMatrix?.matrixId !==

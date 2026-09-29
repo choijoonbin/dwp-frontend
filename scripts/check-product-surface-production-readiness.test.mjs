@@ -516,7 +516,7 @@ function recalculateClosure(value) {
       checksum: closure.generatedFrom.rolloutInventory.checksum,
     },
     exactContract: {
-      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      reference: `contracts/product-authorization/${closure.generatedFrom.authorizationBundle.artifact}`,
       checksum: closure.generatedFrom.authorizationBundle.checksum,
       products: closure.products.map(({ productId }) => productId),
     },
@@ -629,9 +629,12 @@ test('integrity mode accepts the attested closure while a newer registry remains
 
 test('integrity mode rejects duplicate immutable bundles for the attested closure version', () => {
   const value = fixture();
-  const v4 = value.authorization.bundles.find((bundle) => bundle.version === 4);
-  assert.ok(v4);
-  value.authorization.bundles.push(structuredClone(v4));
+  const attestedVersion = value.closure.generatedFrom.authorizationBundle.version;
+  const attestedBundle = value.authorization.bundles.find(
+    (bundle) => bundle.version === attestedVersion
+  );
+  assert.ok(attestedBundle);
+  value.authorization.bundles.push(structuredClone(attestedBundle));
 
   const result = run(value);
   assert.equal(result.status, 1);
@@ -643,9 +646,12 @@ test('integrity mode rejects duplicate immutable bundles for the attested closur
 
 test('integrity mode rejects an index entry that is not bound to the attested bundle', () => {
   const value = fixture();
-  const v4Index = value.authorization.index.versions.find((entry) => entry.version === 4);
-  assert.ok(v4Index);
-  v4Index.artifact = 'product-surfaces-v1.bundle-v4-tampered.json';
+  const attestedVersion = value.closure.generatedFrom.authorizationBundle.version;
+  const attestedIndex = value.authorization.index.versions.find(
+    (entry) => entry.version === attestedVersion
+  );
+  assert.ok(attestedIndex);
+  attestedIndex.artifact = `product-surfaces-v1.bundle-v${attestedVersion}-tampered.json`;
 
   const result = run(value);
   assert.equal(result.status, 1);
