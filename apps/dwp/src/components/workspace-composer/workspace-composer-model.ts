@@ -1,5 +1,4 @@
 import type {
-  HomePresentation,
   HomeWidgetHeight,
   HomeWidgetSize,
   PersonalHomeWidgetPreference,
@@ -33,12 +32,6 @@ export type WorkspaceWidgetDefinition<WidgetKey extends string> = {
   audience?: WorkspaceWidgetAudience;
   manifest?: WorkspaceWidgetManifest;
 };
-
-export const HOME_PRESENTATIONS: readonly HomePresentation[] = [
-  'balanced',
-  'expressive',
-  'focused',
-];
 
 export function defaultWorkspaceWidgets<WidgetKey extends string>(
   registry: readonly WorkspaceWidgetDefinition<WidgetKey>[]

@@ -1,10 +1,4 @@
-import type {
-  HomeComposerChange,
-  HomeDeviceClass,
-  HomeDeviceLayout,
-  HomeDeviceLayoutOverlay,
-  HomeView,
-} from '@dwp-frontend/shared-utils';
+import type { HomeComposerChange, HomeView } from '@dwp-frontend/shared-utils';
 
 export type HomeStudioSection =
   'layout' | 'profiles' | 'appearance' | 'content' | 'device' | 'templates' | 'history' | 'ai';
@@ -32,19 +26,6 @@ export function createHomeViewKey(name: string, occupiedKeys: readonly string[])
 
 export function activeHomeView(views: readonly HomeView[]): HomeView | null {
   return views.find((view) => view.isDefault) ?? views[0] ?? null;
-}
-
-export function homeDeviceOverlay(
-  layouts: readonly HomeDeviceLayout[],
-  deviceClass: HomeDeviceClass
-): HomeDeviceLayoutOverlay {
-  return (
-    layouts.find((layout) => layout.deviceClass === deviceClass)?.overlay ?? {
-      widgetOrder: [],
-      widgetSizes: {},
-      density: 'comfortable',
-    }
-  );
 }
 
 export function buildWorkstyleChanges(

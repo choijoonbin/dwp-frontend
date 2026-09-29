@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { FlowHome } from '../flow-home/flow-home';
+import type { FlowHome } from '../flow-home/flow-home';
 import { FlowFutureWidgetMesh } from '../flow-home/flow-future-widget-mesh';
 import { FlowRequiredNotice, hasFlowRequiredNotice } from '../flow-home/flow-updates';
 import { MyAppDock } from '../flow-home/my-app-dock';

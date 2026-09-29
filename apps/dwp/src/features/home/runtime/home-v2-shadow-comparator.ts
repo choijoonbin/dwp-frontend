@@ -9,6 +9,8 @@ import type {
   HomeExperienceVariant,
   HomeOverview,
   HomePresentation,
+  HomeV2ShadowOutcome as HomeShadowOutcome,
+  HomeV2ShadowReason as HomeShadowReason,
   HomeV2ReadModel,
   HomeV2WidgetState,
   PersonalHomeWidgetPreference,
@@ -17,29 +19,6 @@ import type {
   HomeAppDefinition,
   LaunchpadLayout,
 } from '../../../components/workspace-composer/app-launchpad-model';
-
-export const HOME_SHADOW_OUTCOMES = [
-  'MATCH',
-  'EXPECTED_TRANSIENT',
-  'MISMATCH',
-  'UNAVAILABLE',
-] as const;
-export type HomeShadowOutcome = (typeof HOME_SHADOW_OUTCOMES)[number];
-
-export const HOME_SHADOW_REASONS = [
-  'MATCH',
-  'EXPECTED_TRANSIENT',
-  'STRUCTURE',
-  'AUTHORITY',
-  'MODE',
-  'LAYOUT',
-  'APP_DOCK',
-  'WIDGET_STATE',
-  'ROUTE_ACTION',
-  'FRESHNESS',
-  'UNAVAILABLE',
-] as const;
-export type HomeShadowReason = (typeof HOME_SHADOW_REASONS)[number];
 
 type WidgetStateProjection = Readonly<{
   binding: 'TRUSTED' | 'UNTRUSTED';
@@ -61,7 +40,7 @@ export type HomeShadowSemanticSnapshot = Readonly<{
   widgets: readonly WidgetStateProjection[];
 }>;
 
-export type HomeShadowComparison = Readonly<{
+type HomeShadowComparison = Readonly<{
   count: number;
   outcome: HomeShadowOutcome;
   reasons: readonly HomeShadowReason[];

@@ -36,7 +36,7 @@ type ClassicSummaryRuntimeState =
   | 'widget-error'
   | null;
 
-export function resolveClassicSummaryRuntimeState({
+function resolveClassicSummaryRuntimeState({
   overview,
   loading,
   fetching,

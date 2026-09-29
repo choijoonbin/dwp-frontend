@@ -1,12 +1,9 @@
 {
   "page": {
-    "personalWorkspace": "Personal work command home",
     "welcome": "Welcome back",
     "welcomeName": "Welcome back, {{name}}",
-    "assignedDescription": "Your assigned apps and services, ready to launch.",
     "commandDescription": "See what needs attention now and the next action, grounded in your live work signals.",
     "loadingHome": "Preparing your work home.",
-    "nextPriority": "Next priority",
     "loadingPriorities": "Loading work priorities.",
     "priorityLoadError": "Work priorities could not be loaded. The rest of your home remains available.",
     "retry": "Try again",
@@ -18,16 +15,7 @@
     "openPriority": "Open priority in Work",
     "clearTitle": "There is no priority work right now",
     "clearDescription": "Newly assigned work will appear here.",
-    "commandSignals": "Current work signals",
-    "signals": {
-      "open": "Open work",
-      "dueSoon": "Due soon",
-      "inProgress": "In progress",
-      "waiting": "Waiting"
-    },
     "appsTitle": "Work tools",
-    "today": "Today",
-    "dateUpdated": "{{date}} / Updated {{time}}",
     "lastRefreshed": "Last refreshed {{time}} / Permission-scoped data",
     "saveError": "The home preference could not be saved.",
     "homeSaved": "Home view saved.",
