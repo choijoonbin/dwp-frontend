@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { WorkspaceActivityEvent } from '@dwp-frontend/shared-utils';
 
-import { activityEventDetailModel } from './activity-detail-model';
+import {
+  activityEventDetailModel,
+  availableActivitySourceRoute,
+  selectedActivityEvent,
+} from './activity-detail-model';
 
 const baseEvent: WorkspaceActivityEvent = {
   id: 'activity-1',
@@ -177,4 +181,60 @@ describe('activity event detail presentation', () => {
     expect(model.executionFields).toEqual([]);
     expect(model.traceFields).toEqual([{ key: 'recordId', value: 'activity-1' }]);
   });
+
+  it('does not substitute a different event for a missing explicit ID', () => {
+    expect(selectedActivityEvent('old-event', baseEvent)).toBeUndefined();
+    expect(selectedActivityEvent('activity-1', undefined)).toBeUndefined();
+    expect(selectedActivityEvent('', baseEvent)).toBeUndefined();
+    expect(selectedActivityEvent('activity-1', baseEvent)).toBe(baseEvent);
+  });
+
+  it.each(['', 'dwaion:'])(
+    'accepts a case-equivalent UUID within the exact %s source namespace',
+    (prefix) => {
+      const uuid = 'aaaaaaaa-0000-4000-8000-000000000001';
+      const selected = { ...baseEvent, id: `${prefix}${uuid}` };
+      expect(selectedActivityEvent(`${prefix}${uuid.toUpperCase()}`, selected)).toBe(selected);
+      expect(
+        selectedActivityEvent(`${prefix}bbbbbbbb-0000-4000-8000-000000000001`, selected)
+      ).toBeUndefined();
+      expect(selectedActivityEvent(`DWAION:${uuid}`, selected)).toBeUndefined();
+      expect(selectedActivityEvent('ACTIVITY-1', baseEvent)).toBeUndefined();
+    }
+  );
+
+  it.each([
+    ['/activity', false],
+    ['/activity/home', false],
+    ['/activity/timeline?event=other', false],
+    ['//other.example', false],
+    ['https://other.example', false],
+    ['/\\other.example', false],
+    ['/%2Factivity', false],
+    ['/activity%2Ftimeline', false],
+    ['/work/item/work-1', true],
+  ])('rejects unsafe/self-loop source %s', (sourceRoute, available) => {
+    expect(
+      Boolean(
+        availableActivitySourceRoute({
+          ...baseEvent,
+          sourceAccess: 'AVAILABLE',
+          sourceRoute,
+        })
+      )
+    ).toBe(available);
+  });
+
+  it.each(['FORBIDDEN', 'UNAVAILABLE', 'DELETED', undefined] as const)(
+    'requires explicit AVAILABLE, not %s',
+    (sourceAccess) => {
+      expect(
+        availableActivitySourceRoute({
+          ...baseEvent,
+          sourceAccess,
+          sourceRoute: '/work/item/work-1',
+        })
+      ).toBeNull();
+    }
+  );
 });

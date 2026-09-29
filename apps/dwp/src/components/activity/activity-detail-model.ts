@@ -1,16 +1,16 @@
 import type { WorkspaceActivityEvent } from '@dwp-frontend/shared-utils';
 
-export type ActivityDetailKind = 'CHANGE' | 'EXECUTION_SNAPSHOT' | 'EXECUTION' | 'USAGE' | 'EVENT';
+type ActivityDetailKind = 'CHANGE' | 'EXECUTION_SNAPSHOT' | 'EXECUTION' | 'USAGE' | 'EVENT';
 
 export type ActivityDetailField = {
   key: string;
   value: string;
 };
 
-export type ActivityAuditPresentation =
+type ActivityAuditPresentation =
   'VERIFIED' | 'VERIFIED_RESTRICTED' | 'LINKED' | 'PENDING' | 'LEGACY_UNLINKED' | 'NOT_LINKED';
 
-export type ActivityEventDetailModel = {
+type ActivityEventDetailModel = {
   kind: ActivityDetailKind;
   occurredAt: string;
   sourceObservedAt: string | null;

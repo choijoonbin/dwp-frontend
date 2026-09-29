@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getDwaionUserRun, getDwaionUserRunPage, getDwaionUserRuns } from './agent-run-api';
+import { getDwaionUserRun, getDwaionUserRunPage } from './agent-run-api';
 
 const run = {
   runId: 'aaaaaaaa-0000-4000-8000-000000000101',
@@ -72,11 +72,13 @@ function response(payload: unknown): Response {
 describe('Agent run API', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('loads only privacy-minimized activity and bounds the result size', async () => {
+  it('loads only privacy-minimized activity and bounds the page size', async () => {
     const fetchMock = vi.fn().mockResolvedValue(response({ success: true, data: [run] }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(getDwaionUserRuns('COMPLETED', 500)).resolves.toEqual([run]);
+    await expect(getDwaionUserRunPage({ state: 'COMPLETED', limit: 500 })).resolves.toMatchObject({
+      runs: [run],
+    });
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/agent/v1/runs?limit=100&state=COMPLETED',
       expect.objectContaining({ method: 'GET', credentials: 'include' })
@@ -85,7 +87,7 @@ describe('Agent run API', () => {
 
   it('fails closed for malformed activity responses', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ success: true, data: [{}] })));
-    await expect(getDwaionUserRuns()).rejects.toMatchObject({ status: 502 });
+    await expect(getDwaionUserRunPage()).rejects.toMatchObject({ status: 502 });
   });
 
   it('requests a bounded time page and validates its continuation cursor', async () => {
@@ -156,7 +158,7 @@ describe('Agent run API', () => {
       vi.fn().mockResolvedValue(response({ success: true, data: [observableRun] }))
     );
 
-    await expect(getDwaionUserRuns()).resolves.toEqual([observableRun]);
+    await expect(getDwaionUserRunPage()).resolves.toMatchObject({ runs: [observableRun] });
   });
 
   it('accepts the canonical 160-character title and opaque bounded audit ID', async () => {
@@ -170,7 +172,7 @@ describe('Agent run API', () => {
       vi.fn().mockResolvedValue(response({ success: true, data: [boundaryRun] }))
     );
 
-    await expect(getDwaionUserRuns()).resolves.toEqual([boundaryRun]);
+    await expect(getDwaionUserRunPage()).resolves.toMatchObject({ runs: [boundaryRun] });
   });
 
   it.each([
@@ -222,7 +224,7 @@ describe('Agent run API', () => {
         .mockResolvedValue(response({ success: true, data: [{ ...observableRun, ...override }] }))
     );
 
-    await expect(getDwaionUserRuns()).rejects.toMatchObject({ status: 502 });
+    await expect(getDwaionUserRunPage()).rejects.toMatchObject({ status: 502 });
   });
 
   it('resolves an exact run outside the recent response window', async () => {
@@ -248,7 +250,7 @@ describe('Agent run API', () => {
       .mockResolvedValueOnce(response({ success: true, data: postgresRun }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(getDwaionUserRuns()).resolves.toEqual([postgresRun]);
+    await expect(getDwaionUserRunPage()).resolves.toMatchObject({ runs: [postgresRun] });
     await expect(getDwaionUserRun(postgresRun.runId.toUpperCase())).resolves.toEqual(postgresRun);
     expect(fetchMock.mock.calls[1]?.[0]).toBe(`/api/agent/v1/runs/${postgresRun.runId}`);
   });

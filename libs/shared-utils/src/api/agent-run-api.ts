@@ -107,13 +107,6 @@ const USER_RUN_KEYS = new Set([
   'sourceHealth',
 ]);
 
-export async function getDwaionUserRuns(
-  state?: DwaionRunState,
-  limit = 50
-): Promise<DwaionUserRun[]> {
-  return (await getDwaionUserRunPage({ state, limit })).runs;
-}
-
 export async function getDwaionUserRunPage(
   options: DwaionUserRunPageOptions = {}
 ): Promise<DwaionUserRunPage> {

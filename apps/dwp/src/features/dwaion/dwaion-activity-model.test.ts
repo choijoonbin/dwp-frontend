@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import {
   dwaionActivityPeriodStart,
   filterDwaionActivityWindow,
-  filterDwaionActivityPeriod,
   findExactDwaionRun,
   hasExpiredDwaionRunLease,
   resolveDwaionActivityFilter,
@@ -42,12 +41,10 @@ describe('DWAI activity recent-window model', () => {
     ]);
   });
 
-  it('applies an explicit date range only to timestamps returned by the run API', () => {
+  it('derives the explicit server period boundary and preserves selection in the URL', () => {
     const now = Date.parse('2026-09-09T00:00:00Z');
     expect(resolveDwaionActivityPeriod('week')).toBe('WEEK');
     expect(resolveDwaionActivityPeriod('unsupported')).toBe('MONTH');
-    expect(filterDwaionActivityPeriod(runs, 'DAY', now)).toEqual([]);
-    expect(filterDwaionActivityPeriod(runs, 'WEEK', now)).toHaveLength(runs.length);
     expect(dwaionActivityPeriodStart('DAY', now)).toBe('2026-09-08T00:00:00.000Z');
     expect(dwaionActivityPeriodStart('MONTH', now)).toBe('2026-08-10T00:00:00.000Z');
     expect(updateDwaionActivityPeriod(new URLSearchParams('run=exact'), 'DAY').toString()).toBe(

@@ -5,7 +5,7 @@ import { DWAION_ACTIVITY_PAGE_LIMIT } from './dwaion-activity-model';
 
 import type { DwaionActivityPeriod } from './dwaion-activity-model';
 
-export const DWAION_ACTIVITY_REFRESH_INTERVAL_MS = 60_000;
+const DWAION_ACTIVITY_REFRESH_INTERVAL_MS = 60_000;
 
 export function useDwaionRunPages({
   identity,
