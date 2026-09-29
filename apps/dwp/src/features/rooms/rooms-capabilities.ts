@@ -17,7 +17,7 @@ import type {
   WorkplaceGovernanceEffectiveDelegatedScope,
 } from '@dwp-frontend/shared-utils';
 
-export type PermissionCheck = (resourceKey: string, permissionCode: string) => boolean;
+type PermissionCheck = (resourceKey: string, permissionCode: string) => boolean;
 
 export function resolveRoomsCapabilities(hasPermission: PermissionCheck) {
   return {

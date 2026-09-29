@@ -1,6 +1,6 @@
 import type { CalendarEvent } from '@dwp-frontend/shared-utils';
 
-export type RoomBookingActionPolicy = Readonly<{
+type RoomBookingActionPolicy = Readonly<{
   canEdit: boolean;
   canCancel: boolean;
   canRespond: boolean;

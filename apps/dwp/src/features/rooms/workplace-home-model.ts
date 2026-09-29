@@ -26,7 +26,7 @@ const RESOURCE_ORDER: readonly WorkplaceResourceType[] = [
   'EQUIPMENT',
 ];
 
-export type WorkplaceHomeAgendaKind =
+type WorkplaceHomeAgendaKind =
   'WORKSPACE' | 'MEETING' | 'FOCUS' | 'TASK' | 'OUT_OF_OFFICE' | 'REMINDER';
 
 export type WorkplaceHomeAgendaItem = {
@@ -40,7 +40,7 @@ export type WorkplaceHomeAgendaItem = {
   booking?: WorkplaceBooking;
 };
 
-export type WorkplaceHomeAvailability = {
+type WorkplaceHomeAvailability = {
   type: WorkplaceResourceType;
   available: number;
   bookable: number;
@@ -85,7 +85,7 @@ export type WorkplaceHomeAttention =
       description: string;
     };
 
-export type WorkplaceHomeNextAction =
+type WorkplaceHomeNextAction =
   | { kind: 'CHECK_IN'; booking: WorkplaceBooking; path: string }
   | { kind: 'OPEN_NEXT'; item: WorkplaceHomeAgendaItem; path: string }
   | { kind: 'BOOK_SPACE'; path: string }
@@ -95,7 +95,7 @@ export type WorkplaceHomeNextAction =
   | { kind: 'NO_RESOURCE'; path: string }
   | { kind: 'NONE'; path: string };
 
-export type WorkplaceHomeScopeState = 'READY' | 'NO_SITE' | 'NO_FLOOR' | 'NO_RESOURCE';
+type WorkplaceHomeScopeState = 'READY' | 'NO_SITE' | 'NO_FLOOR' | 'NO_RESOURCE';
 
 export type WorkplaceHomeModel = {
   selectedSiteName: string | null;

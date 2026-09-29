@@ -34,11 +34,7 @@ import { useRoomsCapabilities, useWorkplaceGovernanceCapabilities } from './room
 import { WorkplaceExperienceQueryError } from './workplace-experience-ui';
 import { WorkplaceResourceClosureExecution } from './workplace-resource-closure-execution';
 
-export function workplaceClosureInterval(
-  start: string | null,
-  end: string | null,
-  timeZone: string
-) {
+function workplaceClosureInterval(start: string | null, end: string | null, timeZone: string) {
   try {
     if (!start || !end) return null;
     const from = Temporal.Instant.from(start);

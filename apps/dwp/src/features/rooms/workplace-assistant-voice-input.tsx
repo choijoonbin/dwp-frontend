@@ -35,7 +35,7 @@ function speechRecognitionConstructor() {
   return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
 }
 
-export function isWorkplaceSpeechRecognitionSupported() {
+function isWorkplaceSpeechRecognitionSupported() {
   return speechRecognitionConstructor() !== null;
 }
 

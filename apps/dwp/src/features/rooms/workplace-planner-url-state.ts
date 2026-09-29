@@ -1,6 +1,6 @@
 import { Temporal } from 'temporal-polyfill';
 
-export const WORKPLACE_PLANNER_URL_VERSION = '1' as const;
+const WORKPLACE_PLANNER_URL_VERSION = '1' as const;
 
 export const WORKPLACE_PLANNER_TARGETS = ['SELF', 'DELEGATE', 'TEAM'] as const;
 export type WorkplacePlannerTarget = (typeof WORKPLACE_PLANNER_TARGETS)[number];
@@ -8,8 +8,8 @@ export type WorkplacePlannerTarget = (typeof WORKPLACE_PLANNER_TARGETS)[number];
 export const WORKPLACE_PLANNER_RESOURCE_TYPES = ['DESK', 'PARKING', 'LOCKER'] as const;
 export type WorkplacePlannerResourceType = (typeof WORKPLACE_PLANNER_RESOURCE_TYPES)[number];
 
-export const WORKPLACE_PLANNER_STEPS = ['PLAN', 'REVIEW', 'RESULT'] as const;
-export type WorkplacePlannerStep = (typeof WORKPLACE_PLANNER_STEPS)[number];
+const WORKPLACE_PLANNER_STEPS = ['PLAN', 'REVIEW', 'RESULT'] as const;
+type WorkplacePlannerStep = (typeof WORKPLACE_PLANNER_STEPS)[number];
 
 export type WorkplacePlannerUrlState = Readonly<{
   week: string;

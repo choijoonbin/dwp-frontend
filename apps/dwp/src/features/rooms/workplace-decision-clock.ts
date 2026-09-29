@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 
 import { latestWorkplaceDecisionInstant } from './workplace-home-decision-clock';
 
-export type WorkplaceDecisionClockSnapshot = Readonly<{
+type WorkplaceDecisionClockSnapshot = Readonly<{
   identityKey: string;
   nowInstant: number;
 }>;

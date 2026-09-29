@@ -4,7 +4,7 @@ import type {
   WorkplaceFacilityRequestStatus,
 } from '@dwp-frontend/shared-utils';
 
-export type FacilityWorkOrderDraft = {
+type FacilityWorkOrderDraft = {
   status: WorkplaceFacilityRequestStatus;
   priority: WorkplaceFacilityRequestPriority;
   assignedTo: string;

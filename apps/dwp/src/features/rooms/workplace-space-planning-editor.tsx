@@ -35,7 +35,7 @@ import type {
 } from '@dwp-frontend/shared-utils/api/workplace-planning-contract';
 import type { WorkplacePlanningDraftForm } from './workplace-space-planning-model';
 
-export type WorkplacePlanningEditorAction =
+type WorkplacePlanningEditorAction =
   'CREATE' | 'UPDATE' | 'PREVIEW' | 'BOOKING_IMPACT' | 'SUBMIT' | 'APPROVE' | 'REJECT' | 'PUBLISH';
 
 export type WorkplacePlanningEditorSubmission = Readonly<{

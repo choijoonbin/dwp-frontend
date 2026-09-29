@@ -35,7 +35,7 @@ import type { Theme } from '@mui/material/styles';
 export type WorkplaceResourceAvailability =
   'AVAILABLE' | 'OCCUPIED' | 'MINE' | 'ASSIGNED' | 'DROP_IN' | 'UNAVAILABLE';
 
-export type WorkplaceFloorPlanZone = {
+type WorkplaceFloorPlanZone = {
   key: string;
   label: string;
   resourceCount: number;

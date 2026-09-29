@@ -34,7 +34,7 @@ const allowedQueries = {
   ]),
 } as const;
 
-export type WorkplaceCanonicalRoute = keyof typeof allowedQueries;
+type WorkplaceCanonicalRoute = keyof typeof allowedQueries;
 
 export function buildWorkplaceCanonicalDeepLink(
   routePath: WorkplaceCanonicalRoute,

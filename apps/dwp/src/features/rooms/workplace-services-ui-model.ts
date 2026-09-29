@@ -6,9 +6,9 @@ import type {
   WorkplaceServiceWorkState,
 } from '@dwp-frontend/shared-utils';
 
-export type WorkplaceServicesLocale = 'ko' | 'en';
+type WorkplaceServicesLocale = 'ko' | 'en';
 
-export type CatalogOptionDefinition = Readonly<{
+type CatalogOptionDefinition = Readonly<{
   key: string;
   labelKo: string;
   labelEn: string;

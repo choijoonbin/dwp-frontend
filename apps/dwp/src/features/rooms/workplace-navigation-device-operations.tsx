@@ -46,7 +46,7 @@ import {
 import type { WorkplaceDevice } from '@dwp-frontend/shared-utils/api/workplace-navigation-contract';
 import type { WorkplaceNavigationLocale } from './workplace-navigation-model';
 
-export type WorkplaceDeviceOperationsProps = Readonly<{
+type WorkplaceDeviceOperationsProps = Readonly<{
   locale?: WorkplaceNavigationLocale;
   canManage: boolean;
   elevated: boolean;

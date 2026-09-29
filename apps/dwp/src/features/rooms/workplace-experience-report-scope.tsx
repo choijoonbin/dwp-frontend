@@ -24,7 +24,7 @@ import { RefreshCw } from 'lucide-react';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 
-export function workplaceReportDateRange(
+function workplaceReportDateRange(
   from: string | null,
   through: string | null,
   timeZone: string,

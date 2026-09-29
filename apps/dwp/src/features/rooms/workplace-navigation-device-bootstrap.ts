@@ -1,4 +1,4 @@
-export type WorkplaceDeviceBootstrap = Readonly<{
+type WorkplaceDeviceBootstrap = Readonly<{
   schemaVersion: 1;
   deviceId: string;
   credential: string;

@@ -34,7 +34,7 @@ export type WorkplaceUnifiedReservation = Readonly<{
   canEdit: boolean;
 }>;
 
-export type WorkplaceUnifiedReservationProjection = Readonly<{
+type WorkplaceUnifiedReservationProjection = Readonly<{
   items: readonly WorkplaceUnifiedReservation[];
   sources: Readonly<{
     workplace: WorkplaceHomeSourceState;
