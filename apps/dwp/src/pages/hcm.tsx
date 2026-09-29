@@ -151,9 +151,12 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'time-operations': <HrisTimeOperationsWorkspace />,
     'absence-operations': <HrDomainOperations domain="ABSENCE" />,
     'benefits-operations': <HrDomainOperations domain="BENEFITS" />,
-    // The HRIS foundation studios remain intentionally unbound until their owner APIs publish
-    // generated DATA/ACTION route contracts. Keep the established, contract-governed domain
-    // operations surface at these URLs rather than issuing unscoped payroll or performance I/O.
+    // V32 publishes the owner routes, but activation remains fail-closed until the runtime
+    // authority boundary is complete. PAY has no production policy provider or per-action
+    // frontend authority (`PAY_PRODUCTION_AUTHORITY_PROVIDER_MISSING`); PER still needs distinct
+    // exact executors for create/update/validate/preview/publish
+    // (`PER_FRONTEND_EXACT_ACTION_EXECUTOR_BINDING_MISSING`). Keep the established governed
+    // surfaces here instead of presenting a partially authorized owner studio.
     'pay-operations': <HrDomainOperations domain="PAY" />,
     'talent-operations': <HrDomainOperations domain="TALENT" />,
     'organization-design': <OrganizationExplorer experience="workforce" />,
