@@ -254,41 +254,13 @@
     "WHITEBOARD": "Whiteboard"
   },
   "find": {
-    "eyebrow": "Live spaces",
-    "title": "Find a room",
-    "description": "Check availability by location, capacity, and equipment, then book immediately.",
-    "filterLabel": "Room search criteria",
-    "searchLabel": "Search rooms or equipment",
-    "dateLabel": "Date",
-    "siteLabel": "Site",
-    "allSites": "All sites",
-    "capacityLabel": "Minimum capacity",
-    "capacityOption": "{{count}} or more",
-    "any": "Any",
-    "durationLabel": "Duration",
-    "minutes": "{{count}} min",
-    "timelineLabel": "Availability for {{room}}",
-    "resourceTimeZone": "Local time · {{timeZone}}",
-    "slotOccupied": "{{time}} occupied",
-    "slotAvailable": "{{time}} available",
-    "slotPast": "{{time}} has already passed",
-    "slotUnavailable": "{{time}} unavailable",
-    "bookSlot": "Book {{room}} at {{time}}",
-    "unavailableSlot": "{{room}} is unavailable at {{time}}",
-    "loading": "Refreshing room availability",
-    "loadError": "Room availability could not be loaded.",
-    "policyUnavailable": "The meeting-room booking policy could not be loaded. Booking is temporarily disabled.",
     "policyStale": "The latest meeting-room policy could not be refreshed. The last verified policy is shown for reference, and room booking remains paused until recovery.",
     "availabilityStale": "Live room availability could not be refreshed. Review is available, but booking is disabled until the connection is restored.",
     "availabilityVerifying": "Checking the latest room availability for this time. Saving will be available after verification.",
     "rangeChanged": "This time differs from the verified search range. Update the search time and select the room again before booking.",
     "eligibilityConflict": "This room or its required booking buffer is no longer open for the selected time. Choose another time or room.",
     "eligibilityPolicyBlocked": "The selected time does not meet the current room booking policy. Choose a time within the permitted window.",
-    "eligibilityResourceUnavailable": "This room is not currently available for reservation. Choose another room.",
-    "results": "Availability timeline",
-    "resultCount": "{{count}} rooms",
-    "emptyTitle": "No rooms match these filters",
-    "emptyDescription": "Adjust the location, capacity, or equipment filters."
+    "eligibilityResourceUnavailable": "This room is not currently available for reservation. Choose another room."
   },
   "booking": {
     "createTitle": "Book a room",
@@ -318,28 +290,8 @@
     "saveError": "The room booking could not be saved. Check for a conflicting reservation."
   },
   "my": {
-    "eyebrow": "My space schedule",
-    "title": "My room bookings",
-    "description": "Review, change, and respond to room meetings you organize or attend.",
-    "upcoming": "Upcoming",
-    "past": "Past",
-    "loadError": "Room bookings could not be loaded.",
-    "emptyUpcoming": "No upcoming room bookings",
-    "emptyPast": "No past room bookings",
-    "emptyDescription": "Choose a room and time from Find a room.",
-    "organizer": "Organizer",
-    "invited": "Invited",
-    "approvalRequired": "Approval required",
-    "cancelledState": "Cancelled",
-    "attendeeCount": "{{count}} attendees",
     "accept": "Accept",
-    "decline": "Decline",
-    "responseSaved": "Your response was saved.",
-    "responseError": "Your response could not be saved.",
-    "cancelTitle": "Cancel this room booking?",
-    "cancelDescription": "The linked event and room booking are cancelled for every attendee.",
-    "cancelled": "The room booking was cancelled.",
-    "cancelError": "The room booking could not be cancelled."
+    "decline": "Decline"
   },
   "admin": {
     "operations": {
@@ -423,8 +375,7 @@
       "reviewTitle": "Review room booking policy changes",
       "reviewDescription": "Review the changed values before saving the Calendar-owned room booking policy.",
       "current": "Current",
-      "proposed": "Proposed",
-      "ownerNotice": "Meeting bookings use the Calendar booking policy."
+      "proposed": "Proposed"
     }
   },
   "workplace": {
@@ -2130,14 +2081,8 @@
         "view": "View mode"
       },
       "bookings": {
-        "detail": "Booking detail",
-        "openDetail": "View detail",
-        "ownerNotice": "Manage meeting bookings in meeting spaces.",
         "openMeetings": "My meetings",
-        "checkInWindow": "Check-in window",
         "checkInDeadline": "Check in by {{time}}",
-        "checkInRemaining": "{{count}} min until check-in closes",
-        "bookingId": "Booking number",
         "currentReservation": "Current booking",
         "requestedReservation": "Requested change",
         "changeUnknown": "The change result is unknown. Reload your booking before choosing the next action.",
@@ -2556,25 +2501,9 @@
       "saveError": "The workspace could not be booked. Check the time and booking policy."
     },
     "my": {
-      "eyebrow": "My workplace",
-      "title": "My space bookings",
-      "description": "Manage reservations, check-in, and release for desks, lockers, pods, and shared resources.",
-      "loadError": "Your space bookings could not be loaded.",
-      "emptyUpcoming": "No upcoming space bookings",
-      "emptyPast": "No past space bookings",
-      "emptyDescription": "Choose a location and time from Find a space.",
-      "checkIn": "Check in",
-      "release": "Release",
       "check-inSaved": "You checked in to the space.",
-      "releaseSaved": "The space was released.",
-      "cancelSaved": "The space booking was cancelled.",
       "actionError": "The booking state could not be changed.",
-      "releaseTitle": "Release this space?",
-      "releaseDescription": "The remaining booking time ends and the space becomes available.",
-      "cancelTitle": "Cancel this space booking?",
-      "cancelDescription": "The selected space and time become available immediately.",
       "relocate": {
-        "action": "Change reservation",
         "title": "Change space or time",
         "description": "Move this reservation to a same-type space that passes the initial checks, or adjust its time. The server verifies final eligibility when you save.",
         "submit": "Save reservation change",
@@ -2584,43 +2513,11 @@
         "saved": "The space reservation was changed.",
         "saveError": "The reservation could not be changed. Refresh availability and try again.",
         "loadError": "Eligible relocation options could not be loaded.",
-        "deniedNotice": "You no longer have permission to view relocation options. The reservation change was closed and no update was sent.",
         "refresh": "Refresh target options",
         "staleNotice": "Relocation options could not be refreshed. The last verified options are read-only, and saving remains disabled until recovery.",
         "freshnessRequired": "Refresh relocation options before saving this reservation change.",
         "resourceRequired": "Select a space that passes the initial checks.",
         "empty": "No space of the same type is available for this period."
-      },
-      "releaseWindows": {
-        "title": "Share my assigned space",
-        "description": "Let colleagues reserve an assigned desk or space only while you are away.",
-        "add": "Add sharing window",
-        "resource": "Assigned space",
-        "start": "Sharing starts",
-        "end": "Sharing ends",
-        "note": "Note",
-        "dialogTitle": "Set an assigned-space sharing window",
-        "dialogDescription": "Colleagues can reserve this space only inside the complete selected period.",
-        "publish": "Publish sharing window",
-        "cancel": "Cancel sharing",
-        "cancelTitle": "Cancel this sharing window?",
-        "cancelDescription": "A window with a confirmed booking cannot be cancelled, protecting the member who reserved it.",
-        "empty": "No sharing windows published",
-        "emptyDescription": "Declare when you are away to share the assigned space only for that period.",
-        "policyNotice": "Company assigned-space policy and booking horizon are enforced by the server.",
-        "invalidRange": "Enter a valid future start and end time.",
-        "created": "The assigned-space sharing window was published.",
-        "cancelled": "The assigned-space sharing window was cancelled.",
-        "readOnly": "You do not have permission to change assigned-space sharing windows.",
-        "resourceLoadError": "Your assigned spaces could not be loaded.",
-        "loadError": "Assigned-space sharing windows could not be loaded.",
-        "saveError": "The assigned-space sharing window could not be saved.",
-        "cancelError": "The window has a confirmed booking or changed and could not be cancelled.",
-        "status": {
-          "ACTIVE": "Scheduled",
-          "CANCELLED": "Cancelled",
-          "EXPIRED": "Ended"
-        }
       }
     },
     "visits": {

@@ -1,6 +1,6 @@
 import { Temporal } from 'temporal-polyfill';
 
-import type { CalendarPolicy, RoomOccupancy } from '@dwp-frontend/shared-utils';
+import type { CalendarPolicy } from '@dwp-frontend/shared-utils';
 
 export const DEFAULT_ROOM_POLICY: CalendarPolicy = {
   weekStart: 1,
@@ -20,12 +20,6 @@ export const DEFAULT_ROOM_POLICY: CalendarPolicy = {
 
 export type RoomBookingRangeError = 'invalid' | 'past' | 'window' | 'duration' | 'hours';
 
-export type RoomPolicySlot = {
-  startsAt: string;
-  endsAt: string;
-  localTime: string;
-};
-
 function clockMinutes(value: string) {
   const [hour = 0, minute = 0] = value.slice(0, 5).split(':').map(Number);
   return hour * 60 + minute;
@@ -41,75 +35,6 @@ function localInstant(date: string, time: string, timeZone: string) {
   return Temporal.ZonedDateTime.from(`${date}T${time}:00[${timeZone}]`, {
     disambiguation: 'reject',
   }).toInstant();
-}
-
-export function roomAvailabilityRange(date: string) {
-  const utcStart = Temporal.Instant.from(`${date}T00:00:00Z`);
-  return {
-    from: utcStart.subtract({ hours: 14 }).toString(),
-    to: utcStart.add({ hours: 36 }).toString(),
-  };
-}
-
-export function roomLocalDate(timeZone: string, now = Temporal.Now.instant().toString()) {
-  return Temporal.Instant.from(now).toZonedDateTimeISO(timeZone).toPlainDate().toString();
-}
-
-export function roomDateBounds(
-  timeZone: string,
-  maximumAdvanceDays: number,
-  now = Temporal.Now.instant().toString()
-) {
-  const today = Temporal.Instant.from(now).toZonedDateTimeISO(timeZone).toPlainDate();
-  return {
-    minDate: today.toString(),
-    maxDate: today.add({ days: maximumAdvanceDays }).toString(),
-  };
-}
-
-export function roomDurationOptions(policy: CalendarPolicy) {
-  return [
-    policy.defaultEventMinutes,
-    policy.minimumEventMinutes,
-    30,
-    60,
-    90,
-    120,
-    policy.maximumEventMinutes,
-  ]
-    .filter(
-      (value, index, values) =>
-        value >= policy.minimumEventMinutes &&
-        value <= policy.maximumEventMinutes &&
-        values.indexOf(value) === index
-    )
-    .sort((left, right) => left - right);
-}
-
-export function roomPolicySlots(
-  date: string,
-  timeZone: string,
-  durationMinutes: number,
-  policy: CalendarPolicy,
-  slotMinutes = 30
-): RoomPolicySlot[] {
-  const start = clockMinutes(policy.workingDayStart);
-  const end = clockMinutes(policy.workingDayEnd);
-  const result: RoomPolicySlot[] = [];
-  for (let current = start; current + durationMinutes <= end; current += slotMinutes) {
-    const localTime = clock(current);
-    try {
-      const instant = localInstant(date, localTime, timeZone);
-      result.push({
-        startsAt: instant.toString(),
-        endsAt: instant.add({ minutes: durationMinutes }).toString(),
-        localTime,
-      });
-    } catch {
-      // A DST transition can remove a local wall-clock slot.
-    }
-  }
-  return result;
 }
 
 export function roomDefaultRange(
@@ -183,34 +108,4 @@ export function validateRoomBookingRange(
   } catch {
     return 'invalid';
   }
-}
-
-export function roomSlotOverlaps(
-  start: Date,
-  end: Date,
-  occupancy: readonly RoomOccupancy[],
-  bufferMinutes = 0
-): boolean {
-  const bufferMilliseconds = Math.max(0, bufferMinutes) * 60_000;
-  return occupancy.some(
-    (busy) =>
-      Date.parse(busy.startsAt) < end.getTime() + bufferMilliseconds &&
-      Date.parse(busy.endsAt) > start.getTime() - bufferMilliseconds
-  );
-}
-
-export function roomSlotAvailable({
-  start,
-  end,
-  occupancy,
-  active,
-  bufferMinutes = 0,
-}: {
-  start: Date;
-  end: Date;
-  occupancy: readonly RoomOccupancy[];
-  active: boolean;
-  bufferMinutes?: number;
-}): boolean {
-  return active && end > start && !roomSlotOverlaps(start, end, occupancy, bufferMinutes);
 }

@@ -5,7 +5,6 @@ import {
   cancelWorkplaceBooking,
   checkInWorkplaceBooking,
   createWorkplaceBooking,
-  createWorkplaceReleaseWindow,
   getWorkplaceExplore,
   getWorkplaceAdminBookings,
   relocateWorkplaceBooking,
@@ -256,29 +255,5 @@ describe('Workplace API boundary', () => {
       legalHold: true,
       reason: 'Approved investigation',
     });
-  });
-
-  it('creates an assigned-workspace release window with a retry-safe key', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
-      .mockResolvedValueOnce(jsonResponse({ releaseWindowId: 'window-1' }));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await createWorkplaceReleaseWindow(
-      {
-        resourceId: 'desk-1',
-        startsAt: '2026-08-20T00:00:00Z',
-        endsAt: '2026-08-20T08:00:00Z',
-        note: 'Team day',
-      },
-      'workplace:release-window:test-1'
-    );
-
-    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
-    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/platform/v1/workplace/release-windows');
-    expect(new Headers(request.headers).get('Idempotency-Key')).toBe(
-      'workplace:release-window:test-1'
-    );
   });
 });

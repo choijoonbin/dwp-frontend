@@ -170,38 +170,6 @@ export type WorkplaceRelocateBookingInput = Pick<
   version: number;
 };
 
-export type WorkplaceReleaseWindowStatus = 'ACTIVE' | 'CANCELLED' | 'EXPIRED';
-
-export type WorkplaceReleaseWindow = {
-  releaseWindowId: string;
-  resourceId: string;
-  resourceName: string;
-  siteName: string;
-  floorName: string;
-  startsAt: string;
-  endsAt: string;
-  note: string | null;
-  status: WorkplaceReleaseWindowStatus;
-  canCancel: boolean;
-  version: number;
-};
-
-export type WorkplaceReleaseWindowInput = {
-  resourceId: string;
-  startsAt: string;
-  endsAt: string;
-  note: string;
-};
-
-export type WorkplaceAssignedResource = {
-  resourceId: string;
-  resourceName: string;
-  resourceType: WorkplaceResourceType;
-  siteName: string;
-  floorName: string;
-  timeZone: string;
-};
-
 export type WorkplaceAdminBooking = {
   bookingId: string;
   resourceId: string;
@@ -386,49 +354,6 @@ export const releaseWorkplaceBooking = (
   version: number,
   idempotencyKey = bookingCommandIdempotencyKey('release', bookingId, version)
 ) => changeBooking(bookingId, 'release', version, idempotencyKey);
-
-export async function getWorkplaceReleaseWindows(
-  from: string,
-  to: string
-): Promise<WorkplaceReleaseWindow[]> {
-  const response = await axiosInstance.get<ApiResponse<WorkplaceReleaseWindow[]>>(
-    `/api/platform/v1/workplace/release-windows?${rangeQuery(from, to)}`
-  );
-  return response.data.data;
-}
-
-export async function getWorkplaceAssignedResources(): Promise<WorkplaceAssignedResource[]> {
-  const response = await axiosInstance.get<ApiResponse<WorkplaceAssignedResource[]>>(
-    '/api/platform/v1/workplace/release-windows/eligible-resources'
-  );
-  return response.data.data;
-}
-
-export async function createWorkplaceReleaseWindow(
-  input: WorkplaceReleaseWindowInput,
-  idempotencyKey: string
-): Promise<WorkplaceReleaseWindow> {
-  const response = await axiosInstance.post<
-    ApiResponse<WorkplaceReleaseWindow>,
-    WorkplaceReleaseWindowInput
-  >('/api/platform/v1/workplace/release-windows', input, {
-    headers: { 'Idempotency-Key': idempotencyKey },
-  });
-  return response.data.data;
-}
-
-export async function cancelWorkplaceReleaseWindow(
-  releaseWindowId: string,
-  version: number
-): Promise<WorkplaceReleaseWindow> {
-  const response = await axiosInstance.post<
-    ApiResponse<WorkplaceReleaseWindow>,
-    { version: number }
-  >(`/api/platform/v1/workplace/release-windows/${encodeURIComponent(releaseWindowId)}/cancel`, {
-    version,
-  });
-  return response.data.data;
-}
 
 function operationQuery(
   from: string,
