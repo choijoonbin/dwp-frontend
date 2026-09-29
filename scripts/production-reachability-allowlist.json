@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "maximumEntries": 23,
+  "maximumEntries": 21,
   "entries": [
     {
       "path": "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
@@ -121,18 +121,6 @@
       "owner": "HRIS Integration Control",
       "reason": "Prepared HRIS system-access workspace remains intentionally unmounted until its owner APIs publish scoped PAGE/DATA/ACTION contracts.",
       "removalCondition": "Remove when the governed SYS route is registered with tenant- and authority-partitioned cache handling."
-    },
-    {
-      "path": "apps/dwp/src/routes/draft-product-page-route-contracts.ts",
-      "owner": "Frontend Architecture",
-      "reason": "Verification-only draft route projection consumed by architecture contract tests.",
-      "removalCondition": "Remove when draft route verification is generated directly from the canonical route source."
-    },
-    {
-      "path": "apps/dwp/src/routes/product-page-route-contracts.ts",
-      "owner": "Frontend Architecture",
-      "reason": "Verification-only combined route projection consumed by architecture contract tests.",
-      "removalCondition": "Remove when combined route verification is generated directly from the canonical route source."
     },
     {
       "path": "apps/dwp/src/routes/product-menu-manifest.ts",
