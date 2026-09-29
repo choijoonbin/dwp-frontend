@@ -28,7 +28,7 @@ import type {
   HomeAppIconKey,
 } from '../../components/workspace-composer/app-launchpad-model';
 
-export const homeAppIconByKey: Record<HomeAppIconKey, LucideIcon> = {
+const homeAppIconByKey: Record<HomeAppIconKey, LucideIcon> = {
   activity: Activity,
   admin: ShieldCheck,
   approvals: FileCheck2,

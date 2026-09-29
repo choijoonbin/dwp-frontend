@@ -826,7 +826,7 @@ const RESPONSIVE_CASES = [
     id: 'classic-d1440',
     viewport: { width: 1440, height: 900 },
     mode: 'CLASSIC',
-    deviceClass: 'DESKTOP_STANDARD',
+    deviceClass: 'DESKTOP_WIDE',
     surface: 'classic-home',
     colorScheme: 'light',
     largeText: false,

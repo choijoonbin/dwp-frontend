@@ -21,7 +21,7 @@ export type {
   HomeWidgetShadowObservationStatus,
 } from '../../../components/home-widget-runtime-contract';
 
-export const HOME_NATIVE_HOST_API_VERSION = 1;
+const HOME_NATIVE_HOST_API_VERSION = 1;
 
 export function homeWidgetRegistryEffectiveQueryKey(
   tenantId: number | undefined,

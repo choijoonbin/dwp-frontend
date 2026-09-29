@@ -4,8 +4,6 @@ import type {
   HomeView,
 } from '@dwp-frontend/shared-utils';
 
-export const DEFAULT_HOME_VIEW_KEY = 'default';
-
 export type PendingHomeSaveCommand = {
   fingerprint: string;
   idempotencyKey: string;

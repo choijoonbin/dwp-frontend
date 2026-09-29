@@ -31,7 +31,7 @@ export function groupIdFromTarget(droppableId: string): HomeAppGroupId | null {
   return droppableId.slice(GROUP_TARGET_PREFIX.length) || null;
 }
 
-export const launchpadCollisionDetection: CollisionDetection = (args) => {
+const launchpadCollisionDetection: CollisionDetection = (args) => {
   const activeId = String(args.active.id);
   // The dragged tile follows the pointer and remains a registered droppable.
   // Excluding its own item/origin target lets the destination underneath win;
