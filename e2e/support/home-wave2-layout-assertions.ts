@@ -34,7 +34,7 @@ export const CLASSIC_HOME_KO_APP_LABELS = [
   '메신저',
   '화상회의',
   '서비스 센터',
-  '인사',
+  'HRIS',
   '지식',
   '비즈니스 ERP',
   '레거시 업무',
