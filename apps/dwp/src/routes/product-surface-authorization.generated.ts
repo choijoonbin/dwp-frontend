@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 31,
-  checksum: 'be4e1b6db3d3f0b5100182a3c80066a39c64479f9ba88d908fee661efd3335b8',
-  indexChecksum: '1eaba46a2b6f61c8b6d0f0d174d0ff5551c8bd85b2e05e0ea4b7449de2325907',
+  version: 32,
+  checksum: '9e4e274bf457d1a5947c8b54e83299d28fb9fe128d9f1100991bc30634b54344',
+  indexChecksum: 'd595ecdc054b271cdae32df43aa5842c16f04ea328a1d76b1464b5ab38f87578',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -8029,6 +8029,166 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-configuration.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-configurations.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/hris/payroll/foundation/receipts/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-reconcile.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/hris/payroll/foundation/receipts/{commandId}/reconcile',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-reverse.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/reversals',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-simulate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/simulations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-versions.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/versions',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.people.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.operations',
@@ -8045,6 +8205,166 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/workforce/organization/chart',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.people360-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/workforce/people/{publicId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.people360-search.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/workforce/people',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycle-command-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/command-receipts/{receiptId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycle-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/cycles',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycle-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/cycles/{cycleId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycle-population-preview.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/cycles/{cycleId}/population-previews',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycle-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/cycles/{cycleId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycle-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PATCH',
+        path: '/api/people/v1/hris/performance/cycles/{cycleId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycle-validate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/cycles/{cycleId}/validate',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-cycles-list.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/cycles',
       },
     ],
   },
@@ -8113,6 +8433,134 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.work-plan-apply-approval.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/hris/work-plans/{workPlanId}/actions/{action}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.work-plan-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/hris/work-plans/drafts',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.work-plan-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/hris/work-plans/{workPlanId}/actions/{action}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.work-plan-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/hris/work-plan-receipts/{receiptId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.work-plan-simulate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/hris/work-plans/{workPlanId}/simulations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.work-plan-submit-review.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/hris/work-plans/{workPlanId}/actions/{action}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.work-plan-validate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/hris/work-plans/{workPlanId}/actions/{action}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.work-plans-list.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/hris/work-plans',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.personal.absence-create.action',
     routeKind: 'ACTION',
     navigationContextId: 'hcm.personal',
@@ -8173,6 +8621,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/benefits',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.configuration-projection.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/hris/configuration/projection',
       },
     ],
   },
@@ -8305,6 +8769,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/pay',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.people360-self.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hr/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.product-access-snapshot.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/auth/hris/product-access/snapshot',
       },
     ],
   },
@@ -8449,6 +8945,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     surfaceId: 'hcm.team',
     routeId: 'hcm.team.home',
     pattern: '/hr/team',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hr/team',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.team.people360-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.team',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeId: null,
+    pattern: null,
     gatewayBindings: [
       {
         method: 'GET',

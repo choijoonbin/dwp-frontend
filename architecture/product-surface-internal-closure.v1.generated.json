@@ -4,7 +4,7 @@
   "generatedFrom": {
     "backend": {
       "repository": "https://github.com/choijoonbin/dwp-backend",
-      "revision": "787f25753a72dc5f0fbbb06783205c0bff6635a5"
+      "revision": "6b1bda18bb27ea5af0c8dba5625e2694e8c1a8df"
     },
     "authorizationBundle": {
       "artifact": "product-surfaces-v1.bundle-v5.json",
@@ -14,7 +14,7 @@
     "negativeMatrix": {
       "artifact": "authorization-negative-matrix.v1.json",
       "matrixId": "product-authorization-negative-matrix.v1",
-      "artifactChecksum": "452e4e85b438786e65365c81577ae76f8e13e2f925bed70efcc93addb25a0a1a",
+      "artifactChecksum": "bbe2ebff65efcaf4523e7517446e98ee21f74dc20279be93dc7502cd231f2eb8",
       "projectionChecksum": "76bdd7d29ffbe1d6d13c8050403f91ed581a3224475de694bd074c271ae079df"
     },
     "rolloutInventory": {

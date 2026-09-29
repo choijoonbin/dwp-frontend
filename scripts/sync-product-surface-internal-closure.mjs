@@ -16,7 +16,8 @@ const authorizationSnapshotPath = path.join(
   'architecture/product-surface-authorization.v1.json'
 );
 const MATRIX_FILE = 'authorization-negative-matrix.v1.json';
-const BUNDLE_FILE = 'product-surfaces-v1.bundle-v4.json';
+const BUNDLE_VERSION = 5;
+const BUNDLE_FILE = `product-surfaces-v1.bundle-v${BUNDLE_VERSION}.json`;
 const INVENTORY_FILE = 'product-surface-rollout-inventory.v1.generated.json';
 const AGENT_ATTESTATION_FILE = 'dwaion-agent-pep-attestation.v1.json';
 const BACKEND_REPOSITORY = 'https://github.com/choijoonbin/dwp-backend';
@@ -113,24 +114,26 @@ function validateInventory(value) {
 }
 
 function validateBundle(value, expectedProducts) {
-  const bundle = requireRecord(value, 'v4 authorization bundle');
+  const bundle = requireRecord(value, `v${BUNDLE_VERSION} authorization bundle`);
   if (
     bundle.schemaVersion !== 1 ||
     bundle.bundleKey !== 'product-surfaces' ||
-    bundle.version !== 4 ||
+    bundle.version !== BUNDLE_VERSION ||
     bundle.bundleStatus !== 'DRAFT' ||
     bundle.checksumAlgorithm !== 'SHA-256' ||
     !SHA_256.test(bundle.checksum) ||
     bundleChecksum(bundle) !== bundle.checksum
   ) {
-    fail('v4 authorization bundle identity or checksum is invalid');
+    fail(`v${BUNDLE_VERSION} authorization bundle identity or checksum is invalid`);
   }
   const routeKindsByProduct = new Map(expectedProducts.map((productId) => [productId, new Set()]));
-  for (const route of requireArray(bundle.routes, 'v4 authorization routes')) {
+  for (const route of requireArray(bundle.routes, `v${BUNDLE_VERSION} authorization routes`)) {
     const subject = requireRecord(route?.subject, `${route?.routeContractKey ?? 'route'}.subject`);
     if (subject.type !== 'PRODUCT') continue;
     if (!routeKindsByProduct.has(subject.productKey)) {
-      fail(`v4 authorization bundle contains an unknown product ${String(subject.productKey)}`);
+      fail(
+        `v${BUNDLE_VERSION} authorization bundle contains an unknown product ${String(subject.productKey)}`
+      );
     }
     if (!ROUTE_KINDS.includes(route.routeKind)) {
       fail(`${route.routeContractKey} has an invalid route kind`);
@@ -274,7 +277,9 @@ function buildSnapshot(
     matrix.exactContract?.checksum !== bundle.checksum ||
     !sameArray([...(matrix.exactContract?.products ?? [])].sort(), [...productIds].sort())
   ) {
-    fail('authorization negative matrix is not bound to the v4 bundle and rollout inventory');
+    fail(
+      `authorization negative matrix is not bound to the v${BUNDLE_VERSION} bundle and rollout inventory`
+    );
   }
   if (
     matrix.rolloutInventory?.reference !== `contracts/product-authorization/${INVENTORY_FILE}` ||
@@ -301,7 +306,9 @@ function buildSnapshot(
     const routeKinds = routeKindsByProduct.get(product.productId);
     const expectedContractStatus = contractStatus(routeKinds);
     if (product.contractStatus !== expectedContractStatus) {
-      fail(`${product.productId} matrix contract status differs from the v4 route kinds`);
+      fail(
+        `${product.productId} matrix contract status differs from the v${BUNDLE_VERSION} route kinds`
+      );
     }
     const qualifiedAttackIds = attackVectors.filter(
       (attackId) => product.attackEvidence[attackId].length > 0
@@ -363,7 +370,7 @@ function buildSnapshot(
       backend,
       authorizationBundle: {
         artifact: BUNDLE_FILE,
-        version: 4,
+        version: BUNDLE_VERSION,
         checksum: bundle.checksum,
       },
       negativeMatrix: {
@@ -483,7 +490,7 @@ function validateSnapshot(value, authorizationSnapshot) {
   const inventory = requireRecord(authorization.rolloutInventory, 'frontend rollout inventory');
   if (
     closureReference.artifact !== BUNDLE_FILE ||
-    closureReference.version !== 4 ||
+    closureReference.version !== BUNDLE_VERSION ||
     !closureBundle ||
     !indexEntry ||
     indexEntry.artifact !== closureReference.artifact ||
@@ -638,7 +645,7 @@ function readOfficialSnapshot(artifactDirectory, backendCheckout, sourceRevision
     return value;
   };
   return buildSnapshot(
-    readOfficialJson(BUNDLE_FILE, 'v4 authorization bundle'),
+    readOfficialJson(BUNDLE_FILE, `v${BUNDLE_VERSION} authorization bundle`),
     readOfficialJson(INVENTORY_FILE, 'rollout inventory'),
     readOfficialJson(MATRIX_FILE, 'authorization negative matrix', false),
     readOfficialJson(AGENT_ATTESTATION_FILE, 'DWAI Agent PEP attestation'),

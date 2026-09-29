@@ -46,7 +46,7 @@ function createFixture() {
     `${JSON.stringify(authorization, null, 2)}\n`
   );
   fs.writeFileSync(
-    path.join(official, 'product-surfaces-v1.bundle-v4.json'),
+    path.join(official, 'product-surfaces-v1.bundle-v5.json'),
     `${JSON.stringify(closureBundle, null, 2)}\n`
   );
   fs.writeFileSync(
@@ -63,7 +63,7 @@ function createFixture() {
       checksum: closure.generatedFrom.rolloutInventory.checksum,
     },
     exactContract: {
-      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v5.json',
       checksum: closure.generatedFrom.authorizationBundle.checksum,
       products: closure.products.map(({ productId }) => productId),
     },
