@@ -25,7 +25,7 @@ import type {
   ProductAreaNavigationItem,
 } from '../../layouts/product-area-layout';
 
-export type RoomsView =
+type RoomsView =
   | 'home'
   | 'find'
   | 'wayfinding'

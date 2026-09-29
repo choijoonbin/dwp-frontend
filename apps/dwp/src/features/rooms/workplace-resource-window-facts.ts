@@ -15,7 +15,7 @@ export type WorkplaceResourceWindowContext = {
   occupancy: readonly WorkplaceOccupancy[];
   closures: WorkplaceExploreResponse['closures'];
 };
-export type WorkplaceWindowSegment = {
+type WorkplaceWindowSegment = {
   startsAt: string;
   endsAt: string;
   kind: 'RESERVED' | 'UNRESERVED' | 'CLOSED';

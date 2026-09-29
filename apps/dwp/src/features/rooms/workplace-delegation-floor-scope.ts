@@ -17,7 +17,7 @@ export function workplaceDelegationFloorSet(value: unknown): string[] | null | f
   return new Set(normalized).size === normalized.length ? normalized : false;
 }
 
-export function workplaceDelegationFloorSetEqual(left: unknown, right: unknown) {
+function workplaceDelegationFloorSetEqual(left: unknown, right: unknown) {
   const first = workplaceDelegationFloorSet(left);
   const second = workplaceDelegationFloorSet(right);
   return first !== false && second !== false && JSON.stringify(first) === JSON.stringify(second);

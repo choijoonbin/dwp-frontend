@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 
 import { workplaceMemberSoftSurface } from './workplace-member-surfaces';
 
-export type WorkplaceServiceOptionRow = Readonly<{
+type WorkplaceServiceOptionRow = Readonly<{
   rowId: string;
   key: string;
   labelKo: string;

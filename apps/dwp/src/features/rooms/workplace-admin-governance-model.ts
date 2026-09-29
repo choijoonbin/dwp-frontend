@@ -23,7 +23,7 @@ export function parseWorkplaceGovernanceTab(value: string | null): WorkplaceGove
     : 'hierarchy';
 }
 
-export type WorkplaceGovernancePolicyField = {
+type WorkplaceGovernancePolicyField = {
   key: keyof WorkplaceGovernancePolicyPatch;
   kind: 'integer' | 'boolean' | 'time';
   minimum?: number;

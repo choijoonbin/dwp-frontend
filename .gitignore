@@ -21,6 +21,15 @@ blob-report/
 artifacts/
 # Playwright notification runs are disposable; approved baselines live beside the specs.
 output/notification-*/
+# Workplace Playwright/debug runs are disposable. Approved baselines live beside the specs,
+# while accepted Stitch sources and final completion evidence are stored outside this repo.
+output/workplace-*/
+output/screen18-*/
+output/screen19-*/
+output/screen22-*/
+output/screen23-*/
+output/subagent-01-13-*/
+output/floor-target-debug/
 *.tsbuildinfo
 
 # Local environment

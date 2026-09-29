@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-export type WorkplaceDecisionActionKind = 'CHECK_IN' | 'RELEASE' | 'CANCEL';
+type WorkplaceDecisionActionKind = 'CHECK_IN' | 'RELEASE' | 'CANCEL';
 
 export type WorkplaceDecisionAction = {
   id: string;

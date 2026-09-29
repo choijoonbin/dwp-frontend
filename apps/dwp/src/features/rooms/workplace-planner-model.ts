@@ -14,28 +14,28 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { WorkplacePlannerResourceType } from './workplace-planner-url-state';
 
-export type WorkplacePlannerDaySummary = Readonly<{
+type WorkplacePlannerDaySummary = Readonly<{
   date: string;
   total: number;
   available: number;
   resources: readonly WorkplaceResource[];
 }>;
 
-export type WorkplacePlannerCollectionState =
+type WorkplacePlannerCollectionState =
   'PERMISSION_LOADING' | 'DENIED' | 'LOADING' | 'ERROR' | 'EMPTY' | 'DEGRADED' | 'READY';
 
-export type WorkplacePlannerBeneficiary = Readonly<{
+type WorkplacePlannerBeneficiary = Readonly<{
   userId: number;
   personPublicId: string | null;
   displayName: string;
   delegationGrantId: string | null;
 }>;
 
-export type WorkplacePlannerIntentBuildResult =
+type WorkplacePlannerIntentBuildResult =
   | Readonly<{ ok: true; items: readonly WorkplaceBookingIntentItemInput[] }>
   | Readonly<{ ok: false; code: 'NO_BENEFICIARY' | 'INVALID_RANGE' | 'TOO_MANY_ITEMS' }>;
 
-export const WORKPLACE_PLANNER_MAX_INTENT_ITEMS = 50;
+const WORKPLACE_PLANNER_MAX_INTENT_ITEMS = 50;
 
 export function workplacePlannerRange(
   date: string,

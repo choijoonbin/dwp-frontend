@@ -12,7 +12,7 @@ import type {
 
 export type WorkplaceDiscoverySort = 'availability' | 'name' | 'capacity';
 
-export type WorkplaceDiscoveryFilters = {
+type WorkplaceDiscoveryFilters = {
   search: string;
   type: WorkplaceResourceType | 'ALL';
   feature: string;
@@ -37,7 +37,7 @@ export type WorkplaceBookabilityContext = {
   workplacePolicy: WorkplacePolicy | null;
 };
 
-export type WorkplaceBookingBlockCode =
+type WorkplaceBookingBlockCode =
   | 'UNVERIFIED'
   | 'UNAVAILABLE'
   | 'READ_ONLY'

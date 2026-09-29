@@ -45,7 +45,7 @@ export type WorkplacePlanningDraftForm = Readonly<{
   approvalAuthorityReference: string;
 }>;
 
-export type WorkplacePlanningUrlState = Readonly<{
+type WorkplacePlanningUrlState = Readonly<{
   form: WorkplacePlanningScopeForm;
   scenarioId: string | null;
   corrected: boolean;

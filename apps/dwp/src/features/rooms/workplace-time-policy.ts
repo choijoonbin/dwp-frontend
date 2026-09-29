@@ -2,7 +2,7 @@ import { Temporal } from 'temporal-polyfill';
 
 import type { WorkplacePolicy } from '@dwp-frontend/shared-utils';
 
-export type WorkplaceBookingRangeError = 'invalid' | 'past' | 'window' | 'duration' | 'hours';
+type WorkplaceBookingRangeError = 'invalid' | 'past' | 'window' | 'duration' | 'hours';
 
 function minutes(value: string) {
   const [hour = 0, minute = 0] = value.slice(0, 5).split(':').map(Number);

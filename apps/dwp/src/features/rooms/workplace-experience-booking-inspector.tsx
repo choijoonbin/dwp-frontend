@@ -23,7 +23,7 @@ import { useRoomsCapabilities } from './rooms-capabilities';
 import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 import { WorkplaceExperiencePanel, WorkplaceExperienceQueryError } from './workplace-experience-ui';
 
-export function WorkplaceExperienceFutureImpact({
+function WorkplaceExperienceFutureImpact({
   siteId,
   resourceId,
   from,

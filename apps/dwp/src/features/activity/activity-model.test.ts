@@ -1,30 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import type { WorkspaceActivityEvent } from '@dwp-frontend/shared-utils';
 import {
   activityQueryKeys,
   activityRefreshState,
   activitySavedConfiguration,
   applyActivitySavedConfiguration,
-  availableActivitySourceRoute,
   readActivityFilters,
-  selectedActivityEvent,
   validActivityTimeRange,
 } from './activity-model';
-
-const event: WorkspaceActivityEvent = {
-  id: 'specific-event',
-  actor: 'person',
-  actorName: 'Member',
-  state: 'completed',
-  occurredAt: '',
-  title: 'Changed',
-  objectType: 'WORK_ITEM',
-  objectLabel: 'Item',
-  source: 'DWP',
-  auditId: null,
-  sourceAccess: 'AVAILABLE',
-  sourceRoute: '/work/item/work-1',
-};
 
 describe('activity navigation and server-query model', () => {
   it('preserves legacy URL filters while adding source/object/time and cursor scope', () => {
@@ -68,27 +50,6 @@ describe('activity navigation and server-query model', () => {
     expect(restored).toEqual({ ...first, cursor: undefined });
   });
 
-  it('does not substitute a different event for a missing explicit ID', () => {
-    expect(selectedActivityEvent('old-event', event)).toBeUndefined();
-    expect(selectedActivityEvent('specific-event', undefined)).toBeUndefined();
-    expect(selectedActivityEvent('', event)).toBeUndefined();
-    expect(selectedActivityEvent('specific-event', event)).toBe(event);
-  });
-
-  it.each(['', 'dwaion:'])(
-    'accepts a case-equivalent UUID within the exact %s source namespace',
-    (prefix) => {
-      const uuid = 'aaaaaaaa-0000-4000-8000-000000000001';
-      const selected = { ...event, id: `${prefix}${uuid}` };
-      expect(selectedActivityEvent(`${prefix}${uuid.toUpperCase()}`, selected)).toBe(selected);
-      expect(
-        selectedActivityEvent(`${prefix}bbbbbbbb-0000-4000-8000-000000000001`, selected)
-      ).toBeUndefined();
-      expect(selectedActivityEvent(`DWAION:${uuid}`, selected)).toBeUndefined();
-      expect(selectedActivityEvent('SPECIFIC-EVENT', event)).toBeUndefined();
-    }
-  );
-
   it('separates tenant/user, page, filter, detail, and summary caches', () => {
     const base = activityQueryKeys.feed('tenant:user', { actor: 'person' });
     expect(base).not.toEqual(activityQueryKeys.feed('tenant:other', { actor: 'person' }));
@@ -100,27 +61,6 @@ describe('activity navigation and server-query model', () => {
     expect(base).not.toEqual(activityQueryKeys.detail('tenant:user', 'specific-event'));
     expect(base).not.toEqual(activityQueryKeys.summary('tenant:user'));
   });
-
-  it.each([
-    ['/activity', false],
-    ['/activity/home', false],
-    ['/activity/timeline?event=other', false],
-    ['//other.example', false],
-    ['https://other.example', false],
-    ['/\\other.example', false],
-    ['/%2Factivity', false],
-    ['/activity%2Ftimeline', false],
-    ['/work/item/work-1', true],
-  ])('rejects unsafe/self-loop source %s', (sourceRoute, available) => {
-    expect(Boolean(availableActivitySourceRoute({ ...event, sourceRoute }))).toBe(available);
-  });
-
-  it.each(['FORBIDDEN', 'UNAVAILABLE', 'DELETED', undefined] as const)(
-    'requires explicit AVAILABLE, not %s',
-    (sourceAccess) => {
-      expect(availableActivitySourceRoute({ ...event, sourceAccess })).toBeNull();
-    }
-  );
 
   it('does not label stale/error/no-success data live', () => {
     expect(activityRefreshState({ isError: true, isFetching: false, dataUpdatedAt: 50 }, 60)).toBe(

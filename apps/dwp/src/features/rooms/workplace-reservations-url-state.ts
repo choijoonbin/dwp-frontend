@@ -1,7 +1,7 @@
-export const WORKPLACE_RESERVATIONS_URL_VERSION = '1' as const;
+const WORKPLACE_RESERVATIONS_URL_VERSION = '1' as const;
 
 export const WORKPLACE_RESERVATION_PERIODS = ['TODAY', 'WEEK', 'UPCOMING', 'PAST'] as const;
-export type WorkplaceReservationPeriod = (typeof WORKPLACE_RESERVATION_PERIODS)[number];
+type WorkplaceReservationPeriod = (typeof WORKPLACE_RESERVATION_PERIODS)[number];
 
 export const WORKPLACE_RESERVATION_TYPES = [
   'ALL',
@@ -34,10 +34,10 @@ export const WORKPLACE_RESERVATION_AUTHORITIES = ['ALL', 'WORKPLACE', 'CALENDAR'
 export type WorkplaceReservationAuthorityFilter =
   (typeof WORKPLACE_RESERVATION_AUTHORITIES)[number];
 
-export const WORKPLACE_RESERVATION_DETAIL_TABS = ['VISITS', 'SERVICES', 'ACCESS', 'AUDIT'] as const;
-export type WorkplaceReservationDetailTab = (typeof WORKPLACE_RESERVATION_DETAIL_TABS)[number];
+const WORKPLACE_RESERVATION_DETAIL_TABS = ['VISITS', 'SERVICES', 'ACCESS', 'AUDIT'] as const;
+type WorkplaceReservationDetailTab = (typeof WORKPLACE_RESERVATION_DETAIL_TABS)[number];
 
-export type WorkplaceReservationsUrlState = Readonly<{
+type WorkplaceReservationsUrlState = Readonly<{
   period: WorkplaceReservationPeriod;
   type: WorkplaceReservationType;
   status: WorkplaceReservationStatus;

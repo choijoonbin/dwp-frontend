@@ -5,12 +5,12 @@ import type {
   WorkplaceAssistantRequest,
 } from '@dwp-frontend/shared-utils/api/workplace-assistant-contract';
 
-export type WorkplaceAssistantTone = 'default' | 'info' | 'success' | 'warning' | 'error';
-export type WorkplaceAssistantGovernanceAvailability = 'AVAILABLE' | 'PAUSED' | 'BLOCKED';
+type WorkplaceAssistantTone = 'default' | 'info' | 'success' | 'warning' | 'error';
+type WorkplaceAssistantGovernanceAvailability = 'AVAILABLE' | 'PAUSED' | 'BLOCKED';
 
 const TERMINAL = new Set(['SUCCEEDED', 'PARTIAL', 'FAILED'] as const);
 
-export function workplaceAssistantNeedsGetOnlyRecovery(
+function workplaceAssistantNeedsGetOnlyRecovery(
   request: WorkplaceAssistantRequest | null,
   receipt?: WorkplaceAssistantCommandReceipt | null
 ) {

@@ -2,7 +2,7 @@ import type { WorkplaceResourceType } from '@dwp-frontend/shared-utils';
 import { resolveZonedClock } from '@dwp-frontend/shared-i18n';
 import type { WorkplaceDiscoverySort } from './workplace-discovery-model';
 
-export const WORKPLACE_FIND_URL_VERSION = '1' as const;
+const WORKPLACE_FIND_URL_VERSION = '1' as const;
 
 const RESOURCE_TYPES = new Set<WorkplaceResourceType>([
   'ROOM',
@@ -18,9 +18,9 @@ const SAFE_FEATURE = /^[A-Z][A-Z0-9_]{0,63}$/u;
 const DATE = /^\d{4}-\d{2}-\d{2}$/u;
 const START = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
 
-export type WorkplaceFindView = 'list' | 'map';
+type WorkplaceFindView = 'list' | 'map';
 
-export type WorkplaceFindUrlState = Readonly<{
+type WorkplaceFindUrlState = Readonly<{
   date: string | null;
   start: string | null;
   duration: number | null;
@@ -39,7 +39,7 @@ export type WorkplaceFindUrlState = Readonly<{
   scope: string | null;
 }>;
 
-export type ParsedWorkplaceFindUrl = Readonly<{
+type ParsedWorkplaceFindUrl = Readonly<{
   state: WorkplaceFindUrlState;
   canonicalSearchParams: URLSearchParams;
   corrected: boolean;

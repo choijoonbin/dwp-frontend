@@ -5,10 +5,6 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 import { activityQueryKeys as sharedActivityQueryKeys } from '../../components/activity/activity-detail-model';
-export {
-  availableActivitySourceRoute,
-  selectedActivityEvent,
-} from '../../components/activity/activity-detail-model';
 
 export const ACTIVITY_ACTORS = ['all', 'agent', 'person', 'system'] as const;
 export const ACTIVITY_STATES = [
@@ -32,11 +28,11 @@ export const ACTIVITY_OBJECT_TYPES = ['WORK_ITEM', 'WORKSPACE_APP', 'AGENT_RUN']
 export type ActorFilter = 'all' | WorkspaceActivityActor;
 export type StateFilter = 'all' | WorkspaceActivityState;
 
-export function isActorFilter(value: unknown): value is ActorFilter {
+function isActorFilter(value: unknown): value is ActorFilter {
   return ACTIVITY_ACTORS.includes(value as ActorFilter);
 }
 
-export function isStateFilter(value: unknown): value is StateFilter {
+function isStateFilter(value: unknown): value is StateFilter {
   return ACTIVITY_STATES.includes(value as StateFilter);
 }
 

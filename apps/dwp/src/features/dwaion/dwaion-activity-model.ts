@@ -40,18 +40,6 @@ export function resolveDwaionActivityPeriod(value: string | null): DwaionActivit
     : 'MONTH';
 }
 
-export function filterDwaionActivityPeriod(
-  runs: readonly DwaionUserRun[],
-  period: DwaionActivityPeriod,
-  now = Date.now()
-): DwaionUserRun[] {
-  const cutoff = Date.parse(dwaionActivityPeriodStart(period, now));
-  return runs.filter((run) => {
-    const timestamp = Date.parse(run.createdAt);
-    return Number.isFinite(timestamp) && timestamp >= cutoff && timestamp <= now + 60_000;
-  });
-}
-
 export function filterDwaionActivityWindow(
   runs: readonly DwaionUserRun[],
   filter: DwaionActivityFilter

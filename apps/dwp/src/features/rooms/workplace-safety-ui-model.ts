@@ -8,7 +8,7 @@ import type {
   WorkplaceSafetySourceSummary,
 } from '@dwp-frontend/shared-utils';
 
-export type WorkplaceSafetyTone = 'default' | 'info' | 'success' | 'warning' | 'error';
+type WorkplaceSafetyTone = 'default' | 'info' | 'success' | 'warning' | 'error';
 
 export function workplaceSafetySeverityTone(
   severity: WorkplaceSafetySeverity

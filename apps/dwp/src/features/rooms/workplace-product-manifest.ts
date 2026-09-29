@@ -12,7 +12,7 @@ const workAccess = () => ({
   accessPolicyKey: 'workplace.work-access.v1',
 });
 
-export const WORKPLACE_WORK_NAVIGATION = projectProductSurfaceNavigation(ROOMS_NAVIGATION, {
+const WORKPLACE_WORK_NAVIGATION = projectProductSurfaceNavigation(ROOMS_NAVIGATION, {
   home: { taskKind: 'work', access: workAccess() },
   find: { taskKind: 'work', access: workAccess() },
   wayfinding: { taskKind: 'work', access: workAccess() },
@@ -23,7 +23,7 @@ export const WORKPLACE_WORK_NAVIGATION = projectProductSurfaceNavigation(ROOMS_N
   safety: { taskKind: 'work', access: workAccess() },
 });
 
-export const WORKPLACE_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(ROOMS_NAVIGATION, {
+const WORKPLACE_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(ROOMS_NAVIGATION, {
   'admin-overview': { taskKind: 'operations', access: capability('workplace.operations.read') },
   'admin-safety': { taskKind: 'operations', access: capability('workplace.operations.read') },
   'admin-operations': { taskKind: 'operations', access: capability('workplace.operations.read') },

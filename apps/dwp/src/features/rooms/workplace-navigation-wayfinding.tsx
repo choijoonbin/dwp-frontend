@@ -50,7 +50,7 @@ import {
 
 import type { WorkplaceNavigationLocale } from './workplace-navigation-model';
 
-export type WorkplaceWayfindingProps = Readonly<{
+type WorkplaceWayfindingProps = Readonly<{
   siteId: string;
   locale?: WorkplaceNavigationLocale;
   initialOriginPoiId?: string;

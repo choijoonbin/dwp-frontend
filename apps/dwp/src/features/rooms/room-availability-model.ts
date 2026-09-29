@@ -18,7 +18,7 @@ export const DEFAULT_ROOM_POLICY: CalendarPolicy = {
   version: 0,
 };
 
-export type RoomBookingRangeError = 'invalid' | 'past' | 'window' | 'duration' | 'hours';
+type RoomBookingRangeError = 'invalid' | 'past' | 'window' | 'duration' | 'hours';
 
 function clockMinutes(value: string) {
   const [hour = 0, minute = 0] = value.slice(0, 5).split(':').map(Number);

@@ -215,7 +215,7 @@ export function useGovernanceChangeReview<T>({
   };
 }
 
-export type GovernanceReviewRow = { label: string; current: string; proposed: string };
+type GovernanceReviewRow = { label: string; current: string; proposed: string };
 
 export function WorkplaceGovernanceChangeReview<T>({
   state,

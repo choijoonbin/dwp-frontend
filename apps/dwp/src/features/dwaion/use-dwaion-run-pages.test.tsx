@@ -12,7 +12,7 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
   getDwaionUserRunPage: runtime.page,
 }));
 
-import { DWAION_ACTIVITY_REFRESH_INTERVAL_MS, useDwaionRunPages } from './use-dwaion-run-pages';
+import { useDwaionRunPages } from './use-dwaion-run-pages';
 
 import type { DwaionUserRun, DwaionUserRunPage } from '@dwp-frontend/shared-utils';
 
@@ -91,8 +91,7 @@ describe('DWAI activity run page freshness', () => {
     host.remove();
   });
 
-  it('refreshes every explicitly loaded page without discarding older pages', async () => {
-    expect(DWAION_ACTIVITY_REFRESH_INTERVAL_MS).toBe(60_000);
+  it('refetches every explicitly loaded page without discarding older pages', async () => {
     await act(async () => {
       root.render(
         <QueryClientProvider client={client}>
