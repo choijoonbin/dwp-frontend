@@ -33,6 +33,7 @@ import {
   expectNoLaunchpadLabelClipping,
   expectSingleVisibleGlobalSearchTrigger,
   FLOW_HOME_MOBILE_NAVIGATION,
+  readHomeShellGeometry,
   stabilizeHomeWave2Visual,
 } from './support/home-wave2-layout-assertions';
 
@@ -344,19 +345,6 @@ test('Classic layout controls change the actual focused and wide reading canvas'
   const hero = page.getByTestId('home-hero');
   const body = page.getByTestId('classic-home-body');
   const width = async (locator: Locator) => Math.round((await locator.boundingBox())?.width ?? 0);
-  const shellGeometry = async (locator: Locator) =>
-    locator.evaluate((node) => {
-      const style = getComputedStyle(node);
-      const paddingInline =
-        Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight);
-      return {
-        borderBoxWidth: Math.round(node.getBoundingClientRect().width),
-        boxSizing: style.boxSizing,
-        contentWidth: Math.round(node.clientWidth - paddingInline),
-        maxWidth: style.maxWidth,
-        paddingInline: Math.round(paddingInline),
-      };
-    });
   const expectReadingCanvasGeometry = async (
     outerWidth: number,
     gutter: number,
@@ -364,7 +352,7 @@ test('Classic layout controls change the actual focused and wide reading canvas'
   ) => {
     await expect.poll(() => width(root)).toBe(outerWidth);
     await expect
-      .poll(() => shellGeometry(hero))
+      .poll(() => readHomeShellGeometry(hero))
       .toEqual({
         borderBoxWidth: outerWidth,
         boxSizing: 'border-box',
@@ -373,7 +361,7 @@ test('Classic layout controls change the actual focused and wide reading canvas'
         paddingInline: gutter * 2,
       });
     await expect
-      .poll(() => shellGeometry(body))
+      .poll(() => readHomeShellGeometry(body))
       .toEqual({
         borderBoxWidth: outerWidth,
         boxSizing: 'border-box',

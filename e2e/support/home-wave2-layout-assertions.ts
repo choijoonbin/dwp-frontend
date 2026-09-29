@@ -182,6 +182,21 @@ export async function expectSingleVisibleGlobalSearchTrigger(page: Page) {
   await expect(searchSurface.getByRole('button')).toHaveCount(1);
 }
 
+export async function readHomeShellGeometry(locator: Locator) {
+  return locator.evaluate((node) => {
+    const style = getComputedStyle(node);
+    const paddingInline =
+      Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight);
+    return {
+      borderBoxWidth: Math.round(node.getBoundingClientRect().width),
+      boxSizing: style.boxSizing,
+      contentWidth: Math.round(node.clientWidth - paddingInline),
+      maxWidth: style.maxWidth,
+      paddingInline: Math.round(paddingInline),
+    };
+  });
+}
+
 export async function expectFlowWideComposition(root: Locator) {
   const stage = root.getByTestId('flow-home-personal-sections');
   await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
