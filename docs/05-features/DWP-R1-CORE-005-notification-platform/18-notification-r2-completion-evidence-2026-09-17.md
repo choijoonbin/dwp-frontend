@@ -94,6 +94,22 @@ E2E_BASE_URL=http://127.0.0.1:4217 E2E_REUSE_EXISTING_SERVER=true \
   --tests '*MessagingProductSurfaceContractCandidateTest'
 ```
 
+## 클린코드 재감사 (2026-09-29)
+
+- 알림 프로덕션 모듈 75개는 테스트 파일을 제외한 실제 런타임 진입점 10곳에서 모두 도달한다.
+  고립 모듈, 빈 파일, 동일 본문 중복 파일, 디버그 출력과 안전하게 제거할 미사용 Named Export는 0건이다.
+- 과거 Playwright 실행에서 생성돼 추적되던 `output/notification-*` 결과물 287개를 제거했다.
+  이 경로는 재생성돼도 커밋되지 않도록 Ignore 처리했다.
+- 제품 계약인 `e2e/notification-stitch-visual-parity.spec.ts-snapshots`의 승인 기준 34개는 유지했다.
+- 재검증은 Notification Vitest 30 files / 166 tests, Stitch Chromium 17/17,
+  Notification scoped ESLint, Node 24 TypeScript를 모두 통과했다.
+- Backend `dwp-notification-server`는 97 suites / 473 tests 중 조건부 50 SKIP,
+  0 failures / 0 errors로 통과했다.
+
+전체 Source Size Gate는 동시 개발 중인 비알림 파일
+`apps/dwp/src/features/admin/catalog-explorer.tsx`가 1,014줄이라 차단되지만,
+알림 프로덕션 파일은 최대 1,000줄 이하 계약을 유지한다.
+
 ## 공유 트리 전체 Gate 상태
 
 Notification 소유 범위는 통과했다. 현재 전체 저장소 Gate의 남은 차단은 다른 활성 제품 범위다.

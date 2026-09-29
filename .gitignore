@@ -19,6 +19,8 @@ test-results/
 test-results-*/
 blob-report/
 artifacts/
+# Playwright notification runs are disposable; approved baselines live beside the specs.
+output/notification-*/
 *.tsbuildinfo
 
 # Local environment
