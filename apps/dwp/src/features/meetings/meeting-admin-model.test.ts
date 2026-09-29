@@ -2,10 +2,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import type {
-  VideoMeetingAdminCapabilities,
-  VideoMeetingAdminPolicy,
-} from '@dwp-frontend/shared-utils/api/video-meeting-api';
+import type { VideoMeetingAdminPolicy } from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import type { VideoMeetingAdminIntelligenceReadiness as RuntimeMeetingAdminIntelligenceReadiness } from '@dwp-frontend/shared-utils/api/video-meeting-admin-intelligence-api';
 
 import {
@@ -13,12 +10,10 @@ import {
   type MeetingAdminIntelligenceLabels,
 } from './meeting-admin-intelligence';
 import {
-  MEETING_ADMIN_OPERATION_CAPABILITIES,
   MEETING_RECORDING_POLICIES,
   createUnavailableMeetingAdminIntelligenceReadiness,
   formatMeetingAdminQualityScore,
   hasMeetingAdminPolicyErrors,
-  isMeetingAdminCapabilityAvailable,
   projectMeetingAdminIntelligenceReadiness,
   validateMeetingAdminPolicy,
 } from './meeting-admin-model';
@@ -41,16 +36,6 @@ const policy: VideoMeetingAdminPolicy = {
   recordingConfigured: false,
   aiNotesConfigured: false,
   version: 4,
-};
-
-const capabilities: VideoMeetingAdminCapabilities = {
-  video: true,
-  screenShare: true,
-  chat: true,
-  captions: false,
-  recordingConfigured: false,
-  transcriptConfigured: false,
-  aiNotesConfigured: false,
 };
 
 const item = (label: string) => ({ label, description: `${label} description` });
@@ -238,16 +223,6 @@ describe('meeting admin policy validation', () => {
 });
 
 describe('meeting admin operations projection', () => {
-  it('includes governed transcript readiness in the operations capability list', () => {
-    expect(MEETING_ADMIN_OPERATION_CAPABILITIES).toContain('transcript');
-    expect(
-      isMeetingAdminCapabilityAvailable(
-        { ...capabilities, transcriptConfigured: true },
-        'transcript'
-      )
-    ).toBe(true);
-  });
-
   it('shows a reported quality score and uses a dash only when telemetry is absent', () => {
     expect(formatMeetingAdminQualityScore(96)).toBe('96 / 100');
     expect(formatMeetingAdminQualityScore(null)).toBe('—');

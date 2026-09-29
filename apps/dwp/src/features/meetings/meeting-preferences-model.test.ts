@@ -9,7 +9,6 @@ import {
   meetingPreferenceScope,
   readBrowserMeetingDevicePreferences,
   readMeetingDevicePreferences,
-  reconcileMeetingDevices,
   reconcileMeetingDevicesFromBrowserInventory,
   resolveMeetingPreJoinPreferenceDefaults,
   writeMeetingDevicePreferences,
@@ -190,27 +189,6 @@ describe('meeting account and device preferences', () => {
     expect(JSON.parse(saved)).toEqual({
       ...DEFAULT_MEETING_DEVICE_PREFERENCES,
       microphoneId: 'mic-1',
-    });
-  });
-  it('falls back for removed devices and does not confuse an output with a microphone', () => {
-    expect(
-      reconcileMeetingDevices(
-        {
-          microphoneId: 'speaker',
-          cameraId: 'camera',
-          speakerId: 'speaker',
-          noiseSuppression: false,
-        },
-        [
-          { kind: 'audiooutput', deviceId: 'speaker' },
-          { kind: 'videoinput', deviceId: 'camera' },
-        ]
-      )
-    ).toEqual({
-      microphoneId: 'default',
-      cameraId: 'camera',
-      speakerId: 'speaker',
-      noiseSuppression: false,
     });
   });
   it('does not erase saved IDs from a permission-gated empty or anonymous inventory', () => {

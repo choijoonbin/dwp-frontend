@@ -7,7 +7,7 @@ import {
   type MeetingApprovedFrameSourceArtifact,
 } from './meeting-approved-frame-contract';
 
-export type MeetingSourceBinding = {
+type MeetingSourceBinding = {
   archive: { fileName: string; sha256: string; capturedAt: string };
   archiveEnvironmentVariable: string;
   screenEntry: string;

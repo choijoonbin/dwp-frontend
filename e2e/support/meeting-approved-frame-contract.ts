@@ -1,8 +1,8 @@
 import { implementationCaptureEvidence } from './meeting-reviewed-implementation-captures';
 import { MEETING_STITCH_SOURCE_OVERRIDES } from './meeting-approved-source-revisions';
 
-export type MeetingApprovedFrameMode = 'desktop' | 'mobile';
-export type MeetingApprovedFrameScreen =
+type MeetingApprovedFrameMode = 'desktop' | 'mobile';
+type MeetingApprovedFrameScreen =
   | 'U01'
   | 'U02'
   | 'U03'
@@ -19,9 +19,9 @@ export type MeetingApprovedFrameScreen =
   | 'U14'
   | 'U15';
 export type MeetingApprovedFrameId = `${MeetingApprovedFrameScreen}-${'D' | 'M'}`;
-export type MeetingApprovedFrameCaptureClass = 'FULL_DOCUMENT' | 'IMMERSIVE_VIEWPORT';
+type MeetingApprovedFrameCaptureClass = 'FULL_DOCUMENT' | 'IMMERSIVE_VIEWPORT';
 
-export type MeetingApprovedFrameClearance = {
+type MeetingApprovedFrameClearance = {
   horizontalOverflowTolerancePx: number;
   lastContentSelector: string;
   maxTrailingGapPx: number;

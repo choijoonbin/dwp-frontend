@@ -299,12 +299,3 @@ export function meetingScheduleStepError(
           : [];
   return (step === 3 ? errors[0] : errors.find((error) => included.includes(error))) ?? null;
 }
-
-export function meetingScheduleAttempt(
-  previous: { fingerprint: string; key: string } | null,
-  input: ScheduleVideoMeetingInput,
-  newKey: () => string
-) {
-  const fingerprint = JSON.stringify({ ...input, idempotencyKey: undefined });
-  return previous?.fingerprint === fingerprint ? previous : { fingerprint, key: newKey() };
-}
