@@ -1,7 +1,11 @@
 import type { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
 
-import { homeRevisionSourceLabel, homeRevisionSummaryLabel } from './home-history-localization';
+import {
+  homeRevisionSourceLabel,
+  homeRevisionSummaryLabel,
+  homeTemplateLifecycleLabel,
+} from './home-history-localization';
 
 const koreanCopy: Readonly<Record<string, string>> = {
   'history.sources.USER': '직접 변경',
@@ -9,7 +13,9 @@ const koreanCopy: Readonly<Record<string, string>> = {
   'history.sources.AI': 'AI 제안',
   'history.sources.RESTORE': '버전 복원',
   'history.sources.UNDO': '되돌리기',
-  'history.sources.UNKNOWN': '홈 변경',
+  'history.sources.UNAVAILABLE': '확인 불가',
+  'templates.lifecycle.PUBLISHED': '게시됨',
+  'templates.lifecycle.UNAVAILABLE': '확인 불가',
   'history.summaries.created': '홈을 만들었습니다.',
   'history.summaries.updated': '홈 구성을 변경했습니다.',
   'history.summaries.reset': '조직 기본값으로 초기화했습니다.',
@@ -60,7 +66,9 @@ describe('home history localization', () => {
   });
 
   it('does not expose unknown protocol or identifier values', () => {
-    expect(homeRevisionSourceLabel(t, 'SYSTEM')).toBe('홈 변경');
+    expect(homeRevisionSourceLabel(t, 'SYSTEM')).toBe('확인 불가');
+    expect(homeTemplateLifecycleLabel(t, 'PUBLISHED')).toBe('게시됨');
+    expect(homeTemplateLifecycleLabel(t, 'INTERNAL_STATE')).toBe('확인 불가');
     expect(homeRevisionSummaryLabel(t, 'internal-widget-v7 configuration updated')).toBe(
       '위젯 콘텐츠 설정을 변경했습니다.'
     );

@@ -7,8 +7,6 @@ import { DeliveryAuditSurface } from './mail-admin-operations-a06';
 
 import type { MailAdminOperationsContentProps } from './mail-admin-operations-ui-shared';
 
-export type { MailAdminOperationsContentProps } from './mail-admin-operations-ui-shared';
-
 export function MailAdminOperationsContent(props: MailAdminOperationsContentProps) {
   const now = props.now ?? Date.now();
   const fallback = props.canManage;

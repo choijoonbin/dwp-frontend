@@ -59,7 +59,7 @@ const expectedRouteCount = Object.values(EXPECTED_SHELL_COUNTS).reduce(
 
 describe('product menu manifest', () => {
   it('keeps every supported menu route unique and under visual governance', () => {
-    expect(PRODUCT_MENU_ROUTES).toHaveLength(227);
+    expect(PRODUCT_MENU_ROUTES).toHaveLength(229);
     expect(PRODUCT_MENU_ROUTES).toHaveLength(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.id)).size).toBe(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.path)).size).toBe(expectedRouteCount);
@@ -84,17 +84,17 @@ describe('product menu manifest', () => {
       work: 104,
       management: 83,
       'tenant-governance': 22,
-      'provider-control': 10,
+      'provider-control': 12,
       account: 8,
     });
     expect(countBy('taskKind')).toEqual({
       work: 109,
       team: 3,
       operations: 55,
-      administration: 60,
+      administration: 62,
     });
     expect(countBy('migrationWave')).toEqual({
-      Keep: 50,
+      Keep: 52,
       'W0.5': 12,
       W1a: 20,
       W1b: 25,
@@ -157,14 +157,14 @@ describe('product menu manifest', () => {
       ),
       'utf8'
     );
-    expect(document).toContain('정적 Menu Route **227개 전부**');
+    expect(document).toContain('정적 Menu Route **229개 전부**');
     expect(document).toContain('12개 업무 앱 177개');
     expect(document).toContain('| `W2`     |             36 | DWAI·ON, Notifications, Spaces');
     expect(document).toContain('| `W1a`    |             20 | Approvals 대표 Pilot');
     expect(document).toContain(
       '| `W3`     |             84 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
     );
-    expect(document).toContain('| **합계** |        **227** |');
+    expect(document).toContain('| **합계** |        **229** |');
   });
 
   it('locks every governed menu identity, path, plane, task, surface, and wave to the ADR checksum', () => {
@@ -233,13 +233,18 @@ describe('product menu manifest', () => {
       'rooms.admin-assistant-governance',
       'rooms.admin-exceptions',
     ]);
+    const newProviderGovernanceMenuIds = new Set([
+      'provider.resourceGovernance',
+      'provider.artifactGovernance',
+    ]);
     const previousLedger = canonicalLedger.filter(
       (route) =>
         !newDwaionMenuIds.has(route.id) &&
         !restoredWorkMenuIds.has(route.id) &&
         !newMailMenuIds.has(route.id) &&
         !newCalendarMenuIds.has(route.id) &&
-        !newWorkplaceMenuIds.has(route.id)
+        !newWorkplaceMenuIds.has(route.id) &&
+        !newProviderGovernanceMenuIds.has(route.id)
     );
     expect(previousLedger).toHaveLength(191);
     expect(createHash('sha256').update(JSON.stringify(previousLedger)).digest('hex')).toBe(
@@ -257,7 +262,7 @@ describe('product menu manifest', () => {
       '33f851b5b229b71233369a47bd24381f564aca52297e413d98e0da810c4d03e5'
     );
     const checksum = createHash('sha256').update(JSON.stringify(canonicalLedger)).digest('hex');
-    expect(checksum).toBe('8d7039d77ce0cc183c11003c9a621547d0bc07a8060daa49a545f3eb2839821c');
+    expect(checksum).toBe('7622ee334e11301bdf34580bc78f556f2c61962c2e4fbf6e09f7df2697c29ae5');
     const document = fs.readFileSync(
       new URL(
         '../../../../docs/03-architecture/R1 제품 Surface 전체 메뉴 분류표.md',

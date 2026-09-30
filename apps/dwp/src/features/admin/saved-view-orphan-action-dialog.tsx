@@ -44,6 +44,7 @@ import {
   surfaceLabel,
   userIdentityLabel,
 } from './saved-view-custody-ui';
+import { savedViewReasonLabel, savedViewScopeLabel } from './saved-view-custody-presentation';
 import {
   SavedViewCustodyTargetField,
   SavedViewTargetEligibilityNotice,
@@ -407,7 +408,7 @@ export function SavedViewOrphanActionDialog({
               </Typography>
               <Typography component="p" variant="body2">
                 {t('savedViewCustody.orphanActions.sharedNameConflict.description', {
-                  scope: t('savedViewCustody.scopes.' + view.scope),
+                  scope: savedViewScopeLabel(view.scope, t),
                   name: view.name,
                 })}
               </Typography>
@@ -498,7 +499,7 @@ export function SavedViewOrphanActionDialog({
             value={reasonCode}
             options={REASONS.map((value) => ({
               value,
-              label: t('savedViewCustody.reasons.' + value),
+              label: savedViewReasonLabel(value, t),
             }))}
             onValueChange={(value) => value && setReasonCode(value)}
           />
@@ -575,7 +576,7 @@ export function SavedViewOrphanActionDialog({
               />
               <ConfirmDetail
                 label={t('savedViewCustody.confirm.reasonType')}
-                value={t('savedViewCustody.reasons.' + reasonCode)}
+                value={savedViewReasonLabel(reasonCode, t)}
               />
               <ConfirmDetail
                 label={t('savedViewCustody.confirm.sourceReference')}

@@ -194,7 +194,7 @@ export function DwaionRoutineConflictWorkbench({
               </Typography>
               {conflict.loading ? (
                 <Stack direction="row" gap={1} alignItems="center" sx={{ py: 3 }} role="status">
-                  <CircularProgress size={20} />
+                  <CircularProgress size={20} aria-hidden="true" />
                   <Typography variant="body2">{copy.conflictLoadingServer}</Typography>
                 </Stack>
               ) : conflict.serverDraft && conflict.serverRoutine ? (

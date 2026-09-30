@@ -14,7 +14,7 @@ import {
 } from '@dwp-frontend/shared-utils/api/app-governance-api';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary, useRoleDisplay } from '@dwp-frontend/shared-i18n';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
 import { FormDialog } from '@dwp-frontend/design-system/components/dialogs/form-dialog';
@@ -45,6 +45,15 @@ import {
 } from './app-governance-authority';
 import { AppPresetAssignmentProgress } from './app-preset-assignment-progress';
 import { selectPresetAssignmentForInspection } from './app-preset-assignment-progress-model';
+import {
+  appAssignmentStateLabelKey,
+  appDutyLabelKey,
+  appReviewEvidenceLabelKey,
+  appReviewReasonLabelKey,
+  appReviewStateLabelKey,
+  appResponsibilityLabelKey,
+  isKnownAppResponsibility,
+} from './app-governance-presentation';
 
 export { resolvePresetAssignmentActions } from './app-governance-authority';
 
@@ -67,17 +76,10 @@ function stateColor(state: AppAdminPresetAssignment['lifecycleState']) {
   return 'default' as const;
 }
 
-function displayReviewEvidence(evidence: unknown): string {
-  if (typeof evidence === 'string') return evidence;
-  try {
-    return JSON.stringify(evidence);
-  } catch {
-    return '';
-  }
-}
-
 export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }) {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
+  const roleDisplay = useRoleDisplay();
   const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -174,8 +176,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
                       <Typography variant="subtitle2">{assignment.principalName}</Typography>
                       <Typography variant="caption" color="text.secondary">
                         {t('appGovernance.presets.principalMetadata', {
-                          type: assignment.principalType,
-                          ref: assignment.principalRef,
+                          type: display('entityKinds', assignment.principalType),
                         })}
                       </Typography>
                     </TableCell>
@@ -185,7 +186,6 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {t('appGovernance.presets.presetMetadata', {
-                          code: assignment.presetCode,
                           version: assignment.catalogVersion,
                         })}
                       </Typography>
@@ -198,7 +198,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
                             key={duty.assignmentId}
                             size="small"
                             variant="outlined"
-                            label={duty.dutyCode}
+                            label={t(appDutyLabelKey(duty.dutyCode))}
                           />
                         ))}
                       </Stack>
@@ -218,7 +218,7 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
                         size="small"
                         variant="outlined"
                         color={stateColor(assignment.lifecycleState)}
-                        label={t(`appGovernance.states.${assignment.lifecycleState}`)}
+                        label={t(appAssignmentStateLabelKey(assignment.lifecycleState))}
                       />
                     </TableCell>
                     <TableCell align="right" data-shell-auxiliary-avoidance="inline-end">
@@ -291,24 +291,21 @@ export function AppAdminPresetManager({ data }: { data: AppGovernanceDashboard }
                 {reviews.map((review) => (
                   <TableRow key={review.reviewId} hover>
                     <TableCell>{review.userName}</TableCell>
-                    <TableCell>{review.sourceRoleCode}</TableCell>
-                    <TableCell>{review.dutyCode}</TableCell>
-                    <TableCell>{review.reasonCode}</TableCell>
                     <TableCell>
-                      <Typography
-                        variant="body2"
-                        noWrap
-                        title={displayReviewEvidence(review.evidence)}
-                        sx={{ maxWidth: 280 }}
-                      >
-                        {displayReviewEvidence(review.evidence)}
+                      {roleDisplay(review.sourceRoleCode, t('access.unknownRole')).name}
+                    </TableCell>
+                    <TableCell>{t(appDutyLabelKey(review.dutyCode))}</TableCell>
+                    <TableCell>{t(appReviewReasonLabelKey(review.reasonCode))}</TableCell>
+                    <TableCell>
+                      <Typography variant="body2" noWrap sx={{ maxWidth: 280 }}>
+                        {t(appReviewEvidenceLabelKey(review.evidence))}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Chip
                         size="small"
                         variant="outlined"
-                        label={t(`appGovernance.presets.reviewStates.${review.lifecycleState}`)}
+                        label={t(appReviewStateLabelKey(review.lifecycleState))}
                       />
                     </TableCell>
                     <TableCell align="right" data-shell-auxiliary-avoidance="inline-end">
@@ -421,6 +418,7 @@ function PresetRequestDialog({
 }) {
   const { t } = useTranslation('admin');
   const { t: tDisplay } = useTranslation('display');
+  const display = useDisplayDictionary();
   const [principal, setPrincipal] = useState('');
   const [presetCode, setPresetCode] = useState('');
   const [resourceSetId, setResourceSetId] = useState('');
@@ -457,6 +455,8 @@ function PresetRequestDialog({
     Boolean(
       selectedPrincipal &&
       selectedPreset?.requestable !== false &&
+      selectedPreset &&
+      isKnownAppResponsibility(selectedPreset.responsibilityCode) &&
       resourceSetId &&
       validTo &&
       reviewDueAt
@@ -495,7 +495,7 @@ function PresetRequestDialog({
           onValueChange={setPrincipal}
           options={data.principals.map((item) => ({
             value: `${item.type}:${item.ref}`,
-            label: `${item.displayName} · ${item.detail || item.type}`,
+            label: `${item.displayName} · ${item.detail || display('entityKinds', item.type)}`,
           }))}
         />
         <SelectField
@@ -509,7 +509,8 @@ function PresetRequestDialog({
           options={presets.map((preset) => ({
             value: preset.presetCode,
             label: `${preset.displayName} · ${tDisplay(`riskTiers.${preset.riskTier}`)}`,
-            disabled: preset.requestable === false,
+            disabled:
+              preset.requestable === false || !isKnownAppResponsibility(preset.responsibilityCode),
           }))}
         />
         {selectedPreset && (
@@ -517,9 +518,7 @@ function PresetRequestDialog({
             <Typography variant="subtitle2">{selectedPreset.description}</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
               {t('appGovernance.presets.responsibilityPreview', {
-                responsibility: t(
-                  `appGovernance.responsibilities.${selectedPreset.responsibilityCode}`
-                ),
+                responsibility: t(appResponsibilityLabelKey(selectedPreset.responsibilityCode)),
               })}
             </Typography>
             <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 1 }}>
@@ -528,14 +527,16 @@ function PresetRequestDialog({
                   key={duty.dutyCode}
                   size="small"
                   variant="outlined"
-                  label={`${duty.dutyCode} · ${tDisplay(`riskTiers.${duty.riskTier}`)}`}
+                  label={`${t(appDutyLabelKey(duty.dutyCode))} · ${tDisplay(
+                    `riskTiers.${duty.riskTier}`
+                  )}`}
                 />
               ))}
             </Stack>
             {selectedPreset.requestable === false && (
               <Alert severity="warning" sx={{ mt: 1.5 }}>
                 {t('appGovernance.presets.unavailable', {
-                  reason: selectedPreset.unavailableReason,
+                  reason: t('appGovernance.presentation.catalogUnavailable'),
                 })}
               </Alert>
             )}

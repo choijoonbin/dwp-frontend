@@ -69,6 +69,7 @@ import {
   HomeExperienceRevisionHistory,
   homeExperienceRevisionScopes,
 } from './home-experience-revision-history';
+import { homeExperienceScopeKey } from './home-revision-presentation';
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MIN_IMAGE_WIDTH = 1920;
@@ -915,7 +916,9 @@ export function HomeExperienceManager() {
 
       <HomeExperienceRevisionHistory
         open={historyOpen}
-        revisions={historyQuery.data ?? []}
+        revisions={historyQuery.data?.items ?? []}
+        hasMore={historyQuery.data?.hasMore ?? false}
+        limit={historyQuery.data?.limit ?? 30}
         loading={historyQuery.isLoading}
         error={historyQuery.isError}
         busy={busy}
@@ -982,7 +985,7 @@ export function HomeExperienceManager() {
               key={scope}
               size="small"
               variant="outlined"
-              label={t(`homeExperience.history.scopes.${scope}`)}
+              label={t(homeExperienceScopeKey(scope))}
             />
           ))}
         </Stack>

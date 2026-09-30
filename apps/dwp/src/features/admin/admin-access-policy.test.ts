@@ -22,22 +22,72 @@ const item = (
   requiredPermissionCode: permission,
 });
 
+type TestResourceRole = NonNullable<
+  Parameters<typeof resolvePrimaryAuthorityRole>[1]
+>[number];
+
+function identity(
+  roles: string[],
+  resourceRoles: TestResourceRole[] = [],
+  identityPlane: 'TENANT' | 'PROVIDER' = 'TENANT'
+) {
+  return { identityPlane, roles, resourceRoles } as const;
+}
+
+function companyAccess(
+  roles: string[],
+  grants: readonly string[],
+  resourceRoles: TestResourceRole[] = [],
+  identityPlane: 'TENANT' | 'PROVIDER' = 'TENANT'
+) {
+  return {
+    identity: identity(roles, resourceRoles, identityPlane),
+    permissionsLoaded: true,
+    hasPermission: vi.fn((resourceKey: string, permissionCode = 'VIEW') =>
+      grants.includes(`${resourceKey}:${permissionCode}`)
+    ),
+  };
+}
+
 describe('control plane access policy', () => {
-  it('never opens company administration for an app configuration responsibility alone', () => {
-    expect(canEnterCompanyAdministration(['APP_CONFIG_ADMIN'], true)).toBe(false);
+  it('requires exact shell and leaf permissions for an ordinary tenant identity', () => {
+    const customGroupRole = ['CUSTOM_IDENTITY_REVIEWER'];
+
     expect(
-      canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, [
-        {
-          responsibilityCode: 'APP_CONFIG_ADMIN',
-          resourceType: 'APP',
-          resourceKey: 'APP.APPROVALS',
-          resourceSetId: 'set-1',
-          resourceSetKey: 'APP_APPROVALS',
-        },
-      ])
+      canEnterCompanyAdministration(
+        companyAccess(customGroupRole, ['APP.ADMINISTRATION:VIEW'])
+      )
     ).toBe(false);
-    expect(canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false)).toBe(false);
-    expect(canEnterCompanyAdministration(['TENANT_ADMIN'], true)).toBe(true);
+    expect(
+      canEnterCompanyAdministration(
+        companyAccess(customGroupRole, ['ADMIN.ACCESS_GOVERNANCE:VIEW'])
+      )
+    ).toBe(false);
+    expect(
+      canEnterCompanyAdministration(
+        companyAccess(customGroupRole, [
+          'APP.ADMINISTRATION:VIEW',
+          'ADMIN.ACCESS_GOVERNANCE:VIEW',
+        ])
+      )
+    ).toBe(true);
+    expect(canEnterCompanyAdministration(companyAccess(['TENANT_ADMIN'], []))).toBe(false);
+  });
+
+  it('never opens company administration for an app configuration responsibility alone', () => {
+    expect(
+      canEnterCompanyAdministration(
+        companyAccess(['WORKSPACE_MEMBER'], [], [
+          {
+            responsibilityCode: 'APP_CONFIG_ADMIN',
+            resourceType: 'APP',
+            resourceKey: 'APP.APPROVALS',
+            resourceSetId: 'set-1',
+            resourceSetKey: 'APP_APPROVALS',
+          },
+        ])
+      )
+    ).toBe(false);
   });
   it('recognizes every provider persona exposed by the provider router', () => {
     expect(hasProviderControlPlaneRole(['PROVIDER_OPERATOR'])).toBe(true);
@@ -61,10 +111,12 @@ describe('control plane access policy', () => {
         resourceSetKey: 'APP_MAIL_CALENDAR',
       },
     ];
-    expect(canEnterTenantControlPlane(['WORKSPACE_MEMBER'], false, false, resourceRoles)).toBe(
+    expect(canEnterTenantControlPlane(identity(['WORKSPACE_MEMBER'], resourceRoles), false)).toBe(
       true
     );
-    expect(canEnterCompanyAdministration(['WORKSPACE_MEMBER'], false, resourceRoles)).toBe(true);
+    expect(
+      canEnterCompanyAdministration(companyAccess(['WORKSPACE_MEMBER'], [], resourceRoles))
+    ).toBe(true);
     expect(
       canAccessAdminNavigationItem(
         {
@@ -72,56 +124,63 @@ describe('control plane access policy', () => {
           requiredResponsibilityCodes: ['APP_OWNER'],
         },
         {
-          roles: ['WORKSPACE_MEMBER'],
+          identity: identity(['WORKSPACE_MEMBER'], resourceRoles),
           permissionsLoaded: true,
           hasPermission: vi.fn(() => false),
-          resourceRoles,
         }
       )
     ).toBe(true);
     expect(
       canAccessAdminNavigationItem(item('branding'), {
-        roles: ['WORKSPACE_MEMBER'],
+        identity: identity(['WORKSPACE_MEMBER'], resourceRoles),
         permissionsLoaded: true,
         hasPermission: vi.fn(() => false),
-        resourceRoles,
       })
     ).toBe(false);
   });
 
   it('never admits a provider operator to tenant administration', () => {
-    expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, false)).toBe(false);
-    expect(canEnterTenantControlPlane(['PROVIDER_SUPPORT'], false, true)).toBe(false);
-    expect(canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true)).toBe(false);
     expect(
-      canEnterCompanyAdministration(['ADMIN', 'PROVIDER_ADMIN'], true, [
-        {
-          responsibilityCode: 'APP_OWNER',
-          resourceType: 'APP',
-          resourceKey: 'APP.ADMINISTRATION',
-          resourceSetId: 'set-1',
-          resourceSetKey: 'APP_ADMINISTRATION',
-        },
-      ])
+      canEnterTenantControlPlane(identity(['PROVIDER_SUPPORT'], [], 'PROVIDER'), true)
+    ).toBe(false);
+    expect(
+      canEnterCompanyAdministration(
+        companyAccess(
+          ['PROVIDER_ADMIN'],
+          ['APP.ADMINISTRATION:VIEW', 'ADMIN.ACCESS_GOVERNANCE:VIEW'],
+          [],
+          'PROVIDER'
+        )
+      )
+    ).toBe(false);
+    expect(
+      canEnterCompanyAdministration(
+        companyAccess(
+          [],
+          ['APP.ADMINISTRATION:VIEW', 'ADMIN.ACCESS_GOVERNANCE:VIEW'],
+          [],
+          'PROVIDER'
+        )
+      )
     ).toBe(false);
   });
 
-  it('gives the provider identity family precedence over mixed tenant roles in navigation', () => {
+  it('denies a Provider identity before evaluating an exact tenant permission', () => {
     const access = {
-      roles: ['ADMIN', 'PROVIDER_ADMIN'],
+      identity: identity([], [], 'PROVIDER'),
       permissionsLoaded: true,
       hasPermission: vi.fn(() => true),
     };
 
     expect(canAccessAdminNavigationItem(item('branding'), access)).toBe(false);
     expect(
-      canAccessAdminNavigationItem(item('audit-events', 'ADMIN.AUDIT_VIEW'), {
+      canAccessAdminNavigationItem(item('audit-events', 'ADMIN.AUDIT_VIEW', 'VIEW'), {
         ...access,
       })
     ).toBe(false);
   });
 
-  it('keeps product specialists in product workbenches rather than company administration', () => {
+  it('does not turn product role names into company administration authority', () => {
     const productRoles = [
       'COMMUNICATIONS_EDITOR',
       'COMMUNICATIONS_PUBLISHER',
@@ -136,12 +195,16 @@ describe('control plane access policy', () => {
     ];
 
     for (const role of productRoles) {
-      expect(canEnterTenantControlPlane([role], true)).toBe(false);
+      expect(
+        canEnterCompanyAdministration(
+          companyAccess([role], ['APP.ADMINISTRATION:VIEW'])
+        )
+      ).toBe(false);
       expect(
         canAccessAdminNavigationItem(item('branding', 'ADMIN.PRODUCT_SPECIALIST'), {
-          roles: [role],
+          identity: identity([role]),
           permissionsLoaded: true,
-          hasPermission: vi.fn(() => true),
+          hasPermission: vi.fn(() => false),
         })
       ).toBe(false);
     }
@@ -152,19 +215,17 @@ describe('control plane access policy', () => {
     expect(resolvePrimaryAuthorityRole(['SERVICE_AGENT'])).toBe('SERVICE_AGENT');
   });
 
-  it('does not infer application approval responsibility from tenant administration', () => {
+  it('uses exact app-governance authority without requiring a built-in role name', () => {
     expect(
       canAccessAdminNavigationItem(
         {
-          ...item('app-access-requests', 'ADMIN.APP_ACCESS_REQUESTS'),
-          requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
+          ...item('app-access-requests', 'ADMIN.APP_ACCESS_REQUESTS', 'VIEW'),
           requiredResponsibilityCodes: ['APP_ACCESS_APPROVER', 'APP_ACCESS_MANAGER'],
         },
         {
-          roles: ['TENANT_ADMIN'],
+          identity: identity(['TENANT_ADMIN']),
           permissionsLoaded: true,
-          hasPermission: vi.fn(() => true),
-          resourceRoles: [],
+          hasPermission: vi.fn(() => false),
         }
       )
     ).toBe(false);
@@ -172,15 +233,16 @@ describe('control plane access policy', () => {
     expect(
       canAccessAdminNavigationItem(
         {
-          ...item('app-access-requests', 'ADMIN.APP_ACCESS_REQUESTS'),
-          requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
+          ...item('app-access-requests', 'ADMIN.APP_ACCESS_REQUESTS', 'VIEW'),
           requiredResponsibilityCodes: ['APP_ACCESS_APPROVER', 'APP_ACCESS_MANAGER'],
         },
         {
-          roles: ['APP_CATALOG_ADMIN'],
+          identity: identity(['CUSTOM_APP_GOVERNANCE_REVIEWER']),
           permissionsLoaded: true,
-          hasPermission: vi.fn(() => true),
-          resourceRoles: [],
+          hasPermission: vi.fn(
+            (resourceKey: string, permissionCode?: string) =>
+              resourceKey === 'ADMIN.APP_ACCESS_REQUESTS' && permissionCode === 'VIEW'
+          ),
         }
       )
     ).toBe(true);
@@ -190,14 +252,14 @@ describe('control plane access policy', () => {
     const hasPermission = vi.fn(() => true);
     expect(
       canAccessAdminNavigationItem(item('branding'), {
-        roles: ['AUDITOR'],
+        identity: identity(['AUDITOR']),
         permissionsLoaded: true,
         hasPermission,
       })
     ).toBe(false);
     expect(
-      canAccessAdminNavigationItem(item('audit-events', 'ADMIN.AUDIT_VIEW'), {
-        roles: ['AUDITOR'],
+      canAccessAdminNavigationItem(item('audit-events', 'ADMIN.AUDIT_VIEW', 'VIEW'), {
+        identity: identity(['AUDITOR']),
         permissionsLoaded: true,
         hasPermission,
       })
@@ -206,7 +268,7 @@ describe('control plane access policy', () => {
 
   it('does not expose workforce pages to a Provider support role', () => {
     const access = {
-      roles: ['PROVIDER_SUPPORT'],
+      identity: identity(['PROVIDER_SUPPORT'], [], 'PROVIDER'),
       permissionsLoaded: true,
       hasPermission: vi.fn(() => false),
     };
@@ -218,34 +280,36 @@ describe('control plane access policy', () => {
   it('keeps Provider support identities out of home composition', () => {
     expect(
       canAccessAdminNavigationItem(item('home-composition'), {
-        roles: ['PROVIDER_SUPPORT'],
+        identity: identity(['PROVIDER_SUPPORT'], [], 'PROVIDER'),
         permissionsLoaded: true,
         hasPermission: vi.fn(() => false),
       })
     ).toBe(false);
     expect(
       canAccessAdminNavigationItem(item('home-composition'), {
-        roles: ['PROVIDER_SUPPORT'],
+        identity: identity(['PROVIDER_SUPPORT'], [], 'PROVIDER'),
         permissionsLoaded: true,
         hasPermission: vi.fn(() => false),
       })
     ).toBe(false);
   });
 
-  it('keeps assigned reviewers out of the tenant administration shell', () => {
-    const hasPermission = vi.fn(() => false);
+  it('does not let a built-in tenant role bypass an exact leaf permission', () => {
     expect(
-      canAccessAdminNavigationItem(item('access-reviews'), {
-        roles: ['WORKSPACE_MEMBER'],
+      canAccessAdminNavigationItem(item('access-reviews', 'ADMIN.ACCESS_REVIEWS', 'VIEW'), {
+        identity: identity(['TENANT_ADMIN']),
         permissionsLoaded: true,
-        hasPermission,
+        hasPermission: vi.fn(() => false),
       })
     ).toBe(false);
     expect(
-      canAccessAdminNavigationItem(item('access-reviews'), {
-        roles: ['TENANT_ADMIN'],
+      canAccessAdminNavigationItem(item('access-reviews', 'ADMIN.ACCESS_REVIEWS', 'VIEW'), {
+        identity: identity(['CUSTOM_ACCESS_REVIEWER']),
         permissionsLoaded: true,
-        hasPermission,
+        hasPermission: vi.fn(
+          (resourceKey: string, permissionCode?: string) =>
+            resourceKey === 'ADMIN.ACCESS_REVIEWS' && permissionCode === 'VIEW'
+        ),
       })
     ).toBe(true);
   });

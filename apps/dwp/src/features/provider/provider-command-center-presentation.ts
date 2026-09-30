@@ -1,12 +1,33 @@
 import type { ProviderCommandCenter } from '@dwp-frontend/shared-utils';
 
 type ProviderOperatingState = ProviderCommandCenter['operatingState'];
+export type ProviderOperatingPresentationState = ProviderOperatingState | 'UNAVAILABLE';
+export type ProviderActionSeverityPresentation = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN';
 
 const stateRank: Record<ProviderOperatingState, number> = {
   HEALTHY: 0,
   ATTENTION: 1,
   CRITICAL: 2,
 };
+
+export function providerOperatingStatePresentation(
+  state: unknown
+): ProviderOperatingPresentationState {
+  return state === 'HEALTHY' || state === 'ATTENTION' || state === 'CRITICAL'
+    ? state
+    : 'UNAVAILABLE';
+}
+
+export function providerActionSeverityPresentation(
+  severity: unknown
+): ProviderActionSeverityPresentation {
+  return severity === 'CRITICAL' ||
+    severity === 'HIGH' ||
+    severity === 'MEDIUM' ||
+    severity === 'LOW'
+    ? severity
+    : 'UNKNOWN';
+}
 
 /**
  * Keep the command-center headline consistent with the operational evidence rendered below it.
@@ -16,7 +37,7 @@ const stateRank: Record<ProviderOperatingState, number> = {
  */
 export function providerCommandCenterPresentationState(
   command: ProviderCommandCenter
-): ProviderOperatingState {
+): ProviderOperatingPresentationState {
   const evidenceState: ProviderOperatingState =
     command.services.some((service) => service.failedInstances > 0) ||
     command.actionQueue.some((item) => item.severity === 'CRITICAL')
@@ -29,9 +50,12 @@ export function providerCommandCenterPresentationState(
         ? 'ATTENTION'
         : 'HEALTHY';
 
-  return stateRank[evidenceState] > stateRank[command.operatingState]
+  const authoritativeState = providerOperatingStatePresentation(command.operatingState);
+  if (authoritativeState === 'UNAVAILABLE') return authoritativeState;
+
+  return stateRank[evidenceState] > stateRank[authoritativeState]
     ? evidenceState
-    : command.operatingState;
+    : authoritativeState;
 }
 
 export function providerCustomerImpactTone(

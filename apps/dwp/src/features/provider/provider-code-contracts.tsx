@@ -40,33 +40,19 @@ import InputAdornment from '@mui/material/InputAdornment';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProviderError, ProviderLoading } from './provider-ui';
+import { providerCodeEnumTranslationKey } from './provider-safe-enum-presentation';
+import {
+  ProviderCodeContractRegistrationChip,
+  ProviderCodeContractTypeBadges,
+} from './provider-code-contract-badges';
 
 import type { GridColDef } from '@mui/x-data-grid';
-import type {
-  SystemCodeContractKind,
-  SystemCodeSetHealth,
-  SystemCodeValue,
-} from '@dwp-frontend/shared-utils';
+import type { SystemCodeSetHealth, SystemCodeValue } from '@dwp-frontend/shared-utils';
 
 const ALL = 'ALL';
 const LIST_PAGE_SIZE = 40;
 
 type DetailTab = 'overview' | 'values' | 'consumers';
-
-const levelColor = {
-  SYSTEM: 'default',
-  EXTENSIBLE: 'info',
-  USER: 'success',
-} as const;
-
-const kindColor = {
-  REFERENCE: 'info',
-  STATE_MACHINE: 'warning',
-  SECURITY: 'error',
-  PROTOCOL: 'primary',
-  OBSERVABILITY: 'success',
-  REGISTRY_META: 'default',
-} as const;
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
@@ -338,7 +324,7 @@ export function ProviderCodeContracts() {
           <MenuItem value={ALL}>{t('codeContracts.filters.allKinds')}</MenuItem>
           {kinds.map((value) => (
             <MenuItem key={value} value={value}>
-              {t(`codeContracts.kinds.${value as SystemCodeContractKind}`)}
+              {t(providerCodeEnumTranslationKey('codeContractKind', value))}
             </MenuItem>
           ))}
         </Select>
@@ -701,17 +687,9 @@ export function ProviderCodeContracts() {
                       <Typography component="h2" variant="h6">
                         {detail.displayName}
                       </Typography>
-                      <Chip
-                        label={t(`codeContracts.levels.${detail.configurationLevel}`)}
-                        color={levelColor[detail.configurationLevel]}
-                        size="small"
-                        variant="outlined"
-                      />
-                      <Chip
-                        label={t(`codeContracts.kinds.${detail.contractKind}`)}
-                        color={kindColor[detail.contractKind]}
-                        size="small"
-                        variant="outlined"
+                      <ProviderCodeContractTypeBadges
+                        configurationLevel={detail.configurationLevel}
+                        contractKind={detail.contractKind}
                       />
                     </Stack>
                     <Typography variant="body2" fontWeight={700} sx={{ mt: 0.5 }}>
@@ -722,12 +700,8 @@ export function ProviderCodeContracts() {
                     </Typography>
                   </Box>
                   <Stack direction="row" alignItems="center" gap={0.75}>
-                    <Chip
-                      label={t(`codeContracts.states.${selectedHealth.registrationState}`)}
-                      color={
-                        selectedHealth.registrationState === 'REGISTERED' ? 'success' : 'warning'
-                      }
-                      size="small"
+                    <ProviderCodeContractRegistrationChip
+                      state={selectedHealth.registrationState}
                     />
                     <Chip label={`v${detail.schemaVersion}`} size="small" variant="outlined" />
                   </Stack>
@@ -830,7 +804,12 @@ export function ProviderCodeContracts() {
                     />
                     <Metadata
                       label={t('codeContracts.metadata.visibility')}
-                      value={t(`codeContracts.visibility.${detail.runtimeVisibility}`)}
+                      value={t(
+                        providerCodeEnumTranslationKey(
+                          'codeRuntimeVisibility',
+                          detail.runtimeVisibility
+                        )
+                      )}
                     />
                     <Metadata
                       label={t('codeContracts.metadata.changePolicy')}

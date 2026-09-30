@@ -21,6 +21,10 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { shellHeaderHeight } from '../features/shell/shell-registry';
+import {
+  providerSupportModeLabel,
+  providerSupportScopeLabel,
+} from '../features/provider/provider-support-presentation';
 import { purgeProviderSupportTenantCache } from './provider-support-cache-policy';
 import {
   providerSupportRemainingTime,
@@ -122,14 +126,14 @@ export default function ProviderSupportBanner({
           size="small"
           variant="outlined"
           sx={contextChipSx}
-          label={t(`support.scopes.${scope}`, { defaultValue: scope })}
+          label={providerSupportScopeLabel(t, scope)}
         />
       ))}
       <Chip
         size="small"
         variant="outlined"
         sx={contextChipSx}
-        label={t(`support.modes.${context.accessMode}`)}
+        label={providerSupportModeLabel(t, context.accessMode)}
         color={context.accessMode === 'BREAK_GLASS' ? 'error' : 'default'}
       />
       <Typography variant="caption">

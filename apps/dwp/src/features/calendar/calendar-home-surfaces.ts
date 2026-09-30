@@ -3,7 +3,7 @@ import { alpha } from '@mui/material/styles';
 
 import type { Theme } from '@mui/material/styles';
 
-export const CALENDAR_HOME_RADIUS = `${foundationTokens.radius.surface * 2}px`;
+const CALENDAR_HOME_RADIUS = `${foundationTokens.radius.surface * 2}px`;
 export const CALENDAR_HOME_ROW_RADIUS = `${foundationTokens.radius.surface}px`;
 
 export const calendarHomeSurface = (theme: Theme) => ({

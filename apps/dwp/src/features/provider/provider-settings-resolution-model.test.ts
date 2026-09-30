@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  displayProviderSettingValue,
+  providerSettingMetadataPresentation,
+  providerSettingWorkflowStatePresentation,
+  providerSettingValuePresentation,
   providerSettingManagementPath,
   providerSettingStateTone,
   resolveProviderSettingTenantTarget,
@@ -16,10 +18,42 @@ describe('provider setting resolution presentation', () => {
     expect(providerSettingStateTone('DRIFTED')).toBe('error');
   });
 
-  it('preserves scalar and structured effective values without inventing a value', () => {
-    expect(displayProviderSettingValue(null)).toBe('-');
-    expect(displayProviderSettingValue('enabled')).toBe('enabled');
-    expect(displayProviderSettingValue({ enabled: true })).toBe('{\n  "enabled": true\n}');
+  it('presents scalars and summarizes structured effective values without raw JSON', () => {
+    expect(providerSettingValuePresentation(null)).toEqual({ kind: 'unavailable' });
+    expect(providerSettingValuePresentation('enabled')).toEqual({
+      kind: 'scalar',
+      value: 'enabled',
+    });
+    expect(providerSettingValuePresentation({ enabled: true })).toEqual({
+      kind: 'collection',
+      collection: 'OBJECT',
+      count: 1,
+    });
+  });
+
+  it('fails closed for unknown metadata and reason codes', () => {
+    expect(providerSettingMetadataPresentation('workflow', 'DIRECT')).toBe('DIRECT');
+    expect(providerSettingMetadataPresentation('riskTier', 'INTERNAL_UNKNOWN')).toBe(
+      'UNAVAILABLE_VALUE'
+    );
+    expect(providerSettingMetadataPresentation('resolutionReason', 'SECRET_INTERNAL_REASON')).toBe(
+      'UNAVAILABLE_VALUE'
+    );
+    expect(providerSettingMetadataPresentation('sourceType', 'INTERNAL_SOURCE')).toBe(
+      'UNAVAILABLE_VALUE'
+    );
+    expect(providerSettingMetadataPresentation('decisionCode', 'INTERNAL_DECISION')).toBe(
+      'UNAVAILABLE_VALUE'
+    );
+    expect(providerSettingWorkflowStatePresentation('resolution', 'INTERNAL_RESOLUTION')).toBe(
+      'UNAVAILABLE_STATE'
+    );
+    expect(providerSettingWorkflowStatePresentation('desired', 'INTERNAL_DESIRED')).toBe(
+      'UNAVAILABLE_STATE'
+    );
+    expect(providerSettingWorkflowStatePresentation('application', 'INTERNAL_APPLICATION')).toBe(
+      'UNAVAILABLE_STATE'
+    );
   });
 
   it('only turns provider-owned internal paths into navigation targets', () => {

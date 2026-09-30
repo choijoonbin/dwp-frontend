@@ -44,12 +44,11 @@ import {
 } from './use-mail-draft-autosave';
 
 import type {
+  DwaionProposalHandoffBinding,
   IdempotentMutationIntent,
-  MailProposalMutationBinding,
-} from '@dwp-frontend/shared-utils';
-import type {
   MailClassification,
   MailComposeOptions,
+  MailProposalMutationBinding,
   MailSignature,
   MailTemplate,
 } from '@dwp-frontend/shared-utils';
@@ -122,7 +121,7 @@ type MailComposeDialogProps = {
   initialBody?: string;
   fromDwaion?: boolean;
   proposalBinding?: MailProposalMutationBinding;
-  dwaionProposalBinding?: import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding | null;
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null;
   submissionBlocked?: boolean;
   handoffNotice?: React.ReactNode;
   onClose: () => void;

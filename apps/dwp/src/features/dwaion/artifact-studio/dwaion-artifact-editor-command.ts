@@ -1,12 +1,7 @@
 import type { DwaionArtifactSourceReference } from './dwaion-artifact-model';
 
 export type DwaionArtifactEditorCommand =
-  | 'HEADING_ONE'
-  | 'HEADING_TWO'
-  | 'BOLD'
-  | 'BULLET_LIST'
-  | 'TABLE'
-  | 'CITATION';
+  'HEADING_ONE' | 'HEADING_TWO' | 'BOLD' | 'BULLET_LIST' | 'TABLE' | 'CITATION';
 
 export type DwaionArtifactEditorCommandResult = {
   value: string;
@@ -34,11 +29,19 @@ export function applyDwaionArtifactEditorCommand(
     const replacement = block
       .split('\n')
       .map((line) => {
-        if (command === 'BULLET_LIST') return line.trim() ? `- ${line.replace(/^\s*[-*+]\s+/u, '')}` : line;
+        if (command === 'BULLET_LIST')
+          return line.trim() ? `- ${line.replace(/^\s*[-*+]\s+/u, '')}` : line;
         return `${prefix}${line.replace(/^\s*#{1,6}\s+/u, '')}`;
       })
       .join('\n');
-    return replaceRange(value, lineStart, lineEnd, replacement, lineStart, lineStart + replacement.length);
+    return replaceRange(
+      value,
+      lineStart,
+      lineEnd,
+      replacement,
+      lineStart,
+      lineStart + replacement.length
+    );
   }
 
   if (command === 'BOLD') {
@@ -49,8 +52,7 @@ export function applyDwaionArtifactEditorCommand(
   }
 
   if (command === 'TABLE') {
-    const insertion =
-      '| Column 1 | Column 2 |\n| --- | --- |\n| Value 1 | Value 2 |';
+    const insertion = '| Column 1 | Column 2 |\n| --- | --- |\n| Value 1 | Value 2 |';
     return replaceRange(value, start, end, insertion, start, start + insertion.length);
   }
 

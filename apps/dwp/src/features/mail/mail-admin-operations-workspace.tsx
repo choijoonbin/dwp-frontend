@@ -77,8 +77,6 @@ import type {
 } from './mail-admin-operations-model';
 import type { MailAdminOperationsWorkspaceProps } from './mail-admin-operations-workspace-config';
 
-export type { MailAdminOperationsWorkspaceProps } from './mail-admin-operations-workspace-config';
-
 export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspaceProps) {
   const { surface } = props;
   const { t } = useTranslation('mail');
@@ -90,58 +88,26 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
   const toast = useToast();
   const { hasPermission } = usePermissions();
   const overview = props.overview ?? query.data;
-  const legacyPermissionOverride = props.canManage;
   const canManageConnections =
-    props.canManageConnections ??
-    legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'CONNECTION_MANAGE');
+    props.canManageConnections ?? hasPermission('ADMIN.MAIL', 'CONNECTION_MANAGE');
   const canManageSharedInboxes =
-    props.canManageSharedInboxes ??
-    legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'SHARED_INBOX_MANAGE');
-  const canManagePolicy =
-    props.canManagePolicy ??
-    legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'POLICY_MANAGE');
-  const canManageHolds =
-    props.canManageHolds ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'HOLD_MANAGE');
-  const canPreviewPurge =
-    props.canPreviewPurge ??
-    legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'PURGE_PREVIEW');
+    props.canManageSharedInboxes ?? hasPermission('ADMIN.MAIL', 'SHARED_INBOX_MANAGE');
+  const canManagePolicy = props.canManagePolicy ?? hasPermission('ADMIN.MAIL', 'POLICY_MANAGE');
+  const canManageHolds = props.canManageHolds ?? hasPermission('ADMIN.MAIL', 'HOLD_MANAGE');
+  const canPreviewPurge = props.canPreviewPurge ?? hasPermission('ADMIN.MAIL', 'PURGE_PREVIEW');
   const canAuthorizePurge =
-    props.canAuthorizePurge ??
-    legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'PURGE_AUTHORIZE');
-  const canExecutePurge =
-    props.canExecutePurge ??
-    legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'PURGE_EXECUTE');
-  const canReadAudit =
-    props.canReadAudit ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'AUDIT_READ');
-  const canRevealAudit =
-    props.canRevealAudit ?? legacyPermissionOverride ?? hasPermission('ADMIN.MAIL', 'AUDIT_REVEAL');
-  const legacyDeliveryRecovery = props.canRecoverDeliveries ?? legacyPermissionOverride;
+    props.canAuthorizePurge ?? hasPermission('ADMIN.MAIL', 'PURGE_AUTHORIZE');
+  const canExecutePurge = props.canExecutePurge ?? hasPermission('ADMIN.MAIL', 'PURGE_EXECUTE');
+  const canReadAudit = props.canReadAudit ?? hasPermission('ADMIN.MAIL', 'AUDIT_READ');
+  const canRevealAudit = props.canRevealAudit ?? hasPermission('ADMIN.MAIL', 'AUDIT_REVEAL');
   const canReconcileDeliveries =
-    props.canReconcileDeliveries ??
-    legacyDeliveryRecovery ??
-    hasPermission('ADMIN.MAIL', 'DELIVERY_RECONCILE');
+    props.canReconcileDeliveries ?? hasPermission('ADMIN.MAIL', 'DELIVERY_RECONCILE');
   const canRetryDeliveries =
-    props.canRetryDeliveries ??
-    legacyDeliveryRecovery ??
-    hasPermission('ADMIN.MAIL', 'DELIVERY_RETRY');
+    props.canRetryDeliveries ?? hasPermission('ADMIN.MAIL', 'DELIVERY_RETRY');
   const canCancelDeliveries =
-    props.canCancelDeliveries ??
-    legacyDeliveryRecovery ??
-    hasPermission('ADMIN.MAIL', 'DELIVERY_CANCEL');
-  const canRecoverDeliveries =
-    props.canRecoverDeliveries ??
-    legacyPermissionOverride ??
-    (canReconcileDeliveries || canRetryDeliveries || canCancelDeliveries);
-  const canExportAudit =
-    props.canExportAudit ??
-    legacyPermissionOverride ??
-    hasPermission('ADMIN.MAIL', 'EVIDENCE_EXPORT');
+    props.canCancelDeliveries ?? hasPermission('ADMIN.MAIL', 'DELIVERY_CANCEL');
+  const canRecoverDeliveries = canReconcileDeliveries || canRetryDeliveries || canCancelDeliveries;
+  const canExportAudit = props.canExportAudit ?? hasPermission('ADMIN.MAIL', 'EVIDENCE_EXPORT');
   const canRunAnyMutation =
     canManageConnections ||
     canManageSharedInboxes ||
@@ -454,7 +420,7 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
           <MailAdminOperationsContent
             surface={surface}
             overview={overview}
-            canManage={legacyPermissionOverride ?? canRunAnyMutation}
+            canManage={canRunAnyMutation}
             canManageConnections={canManageConnections}
             canManageSharedInboxes={canManageSharedInboxes}
             canManagePolicy={canManagePolicy}
@@ -464,7 +430,6 @@ export function MailAdminOperationsWorkspace(props: MailAdminOperationsWorkspace
             canExecutePurge={canExecutePurge}
             canReadAudit={canReadAudit}
             canRevealAudit={canRevealAudit}
-            canRecoverDeliveries={canRecoverDeliveries}
             canReconcileDeliveries={canReconcileDeliveries}
             canRetryDeliveries={canRetryDeliveries}
             canCancelDeliveries={canCancelDeliveries}

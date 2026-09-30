@@ -11,6 +11,7 @@ import type { DisplayDomain } from '@dwp-frontend/shared-i18n';
 import type { GroupRoleAssignment } from '@dwp-frontend/shared-utils';
 
 import { resolveRoleAssignmentPresentationState } from './role-assignment-model';
+import { assignmentTypeLabel, roleScopeLabel } from './role-governance-display';
 
 type RoleAssignmentColumnOptions = {
   t: TFunction<'admin'>;
@@ -18,6 +19,7 @@ type RoleAssignmentColumnOptions = {
   roleNamesByCode: ReadonlyMap<string, string>;
   assignableRoleCodes: ReadonlySet<string>;
   busy: boolean;
+  canManage: boolean;
   onRevoke: (assignment: GroupRoleAssignment) => void;
 };
 
@@ -42,6 +44,7 @@ export function createRoleAssignmentColumns({
   roleNamesByCode,
   assignableRoleCodes,
   busy,
+  canManage,
   onRevoke,
 }: RoleAssignmentColumnOptions): GridColDef<GroupRoleAssignment>[] {
   return [
@@ -54,10 +57,7 @@ export function createRoleAssignmentColumns({
       renderCell: ({ row }) => (
         <Box sx={{ minWidth: 0 }}>
           <Typography variant="body2" fontWeight={700} noWrap>
-            {roleNamesByCode.get(row.roleCode) ?? row.roleCode}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap display="block">
-            {row.roleCode}
+            {roleNamesByCode.get(row.roleCode) ?? t('roleGovernance.notAvailable')}
           </Typography>
         </Box>
       ),
@@ -66,10 +66,7 @@ export function createRoleAssignmentColumns({
       field: 'assignmentType',
       headerName: t('roleGovernance.columns.assignmentType'),
       width: 130,
-      valueFormatter: (value) =>
-        value === 'ACTIVE'
-          ? t('roleGovernance.assignmentTypes.ACTIVE')
-          : t('roleGovernance.assignmentTypes.ELIGIBLE'),
+      valueFormatter: (value) => assignmentTypeLabel(String(value), t),
     },
     {
       field: 'scopeType',
@@ -77,7 +74,7 @@ export function createRoleAssignmentColumns({
       minWidth: 170,
       flex: 0.7,
       valueGetter: (_value, row) => {
-        const scope = t(`roleGovernance.scopes.${row.scopeType}`);
+        const scope = roleScopeLabel(row.scopeType, t);
         return row.scopeRef ? `${scope} / ${row.scopeRef}` : scope;
       },
     },
@@ -122,12 +119,12 @@ export function createRoleAssignmentColumns({
             </Typography>
           );
         }
-        const roleName = roleNamesByCode.get(row.roleCode) ?? row.roleCode;
+        const roleName = roleNamesByCode.get(row.roleCode) ?? t('roleGovernance.notAvailable');
         return (
           <ActionButton
             size="small"
             intent="quiet"
-            disabled={busy}
+            disabled={busy || !canManage}
             aria-label={t('roleGovernance.actions.revokeFor', {
               group: row.groupName,
               role: roleName,

@@ -1,23 +1,23 @@
 # R1 제품 Surface 전체 메뉴 분류표
 
-- 상태: Governed ledger v1.15
+- 상태: Governed ledger v1.16
 - 기준일: 2026-09-17
 - 기준 Frontend Commit: `7e87ba2174b8f4de6ef69ff91f183191df61359b` + 본 공통 변경 단위
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
-- Ledger SHA-256: `8d7039d77ce0cc183c11003c9a621547d0bc07a8060daa49a545f3eb2839821c`
+- Ledger SHA-256: `7622ee334e11301bdf34580bc78f556f2c61962c2e4fbf6e09f7df2697c29ae5`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
 ## 1. 범위와 판정
 
-이 표는 현재 Runtime의 정적 Menu Route **227개 전부**를 분류한다. Detail Route, Query View,
+이 표는 현재 Runtime의 정적 Menu Route **229개 전부**를 분류한다. Detail Route, Query View,
 Context Menu와 아직 Navigation Source에 없는 예정 메뉴는 수량에 포함하지 않는다. 각 행의
 `목표 Plane/Task`와 `목표 Surface`는 구현 시 Product Manifest와 자동 Test의 Golden Source가
 된다.
 
-전체 227개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
+전체 229개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
 Surface`는 12개 업무 앱 177개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
-50개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
+52개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
 `work.work`, `activity.work`, `tenant.admin`, `provider.control`, `account.settings`다.
 모든 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간 문법을 사용한다. 비제품 Governed
 Route Key가 필요할 때는 점을 `__`로 치환한 가역 Token만 사용하며 별도 수기 Token Mapping은
@@ -60,11 +60,11 @@ Workplace와 Calendar의 권위·상세·변경 명령은 분리한 채 하나�
 | `work`              |     104 | 개인·참여 업무 101 + 관계 기반 팀 업무 3 |
 | `management`        |      83 | 제품 운영 41 + 제품 설정 42              |
 | `tenant-governance` |      22 | 회사 공통 운영 8 + 회사 공통 설정 14     |
-| `provider-control`  |      10 | Provider 운영 6 + Provider 설정·통제 4   |
+| `provider-control`  |      12 | Provider 운영 6 + Provider 설정·통제 6   |
 | `account`           |       8 | 개인 계정·선호                           |
-| **합계**            | **227** |                                          |
+| **합계**            | **229** |                                          |
 
-Task 기준 합계는 `work 109`, `team 3`, `operations 55`, `administration 60`이다. Account의
+Task 기준 합계는 `work 109`, `team 3`, `operations 55`, `administration 62`이다. Account의
 개인 설정 8개는 Plane은 `account`, Task 집계에서는 `work`로 센다.
 
 ### 표기
@@ -88,8 +88,8 @@ Task 기준 합계는 `work 109`, `team 3`, `operations 55`, `administration 60`
 | `W1b`    |             25 | HCM 대표 Pilot                                                     |
 | `W2`     |             36 | DWAI·ON, Notifications, Spaces                                     |
 | `W3`     |             84 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
-| `Keep`   |             50 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
-| **합계** |        **227** |                                                                    |
+| `Keep`   |             52 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
+| **합계** |        **229** |                                                                    |
 
 ## 2. Workspace, Work와 Activity — 10
 
@@ -433,22 +433,24 @@ Preset 승인이 회사 센터에 제품별 생성·수정·게시·운영 Actio
 `admin.access-reviews`의 Backend 행 단위 Reviewer 제한은 유지한다. 분해 전까지 보안 우회는
 아니지만 일반 Reviewer가 Admin Shell에 들어가는 의미 오류로 기록한다.
 
-## 16. Provider Control Plane — 10 (`Keep`)
+## 16. Provider Control Plane — 12 (`Keep`)
 
-10개 행의 `navigationContextId`는 모두 `provider.control`이다.
+12개 행의 `navigationContextId`는 모두 `provider.control`이다.
 
-| Menu ID                    | 현재 그룹 › 메뉴        | Path                         | Plane/Task | 조건                   | 결정                   |
-| -------------------------- | ----------------------- | ---------------------------- | ---------- | ---------------------- | ---------------------- |
-| `provider.overview`        | 운영 › 운영 지휘        | `/provider/overview`         | PC/O       | `ESTATE_READ`          | Keep                   |
-| `provider.tenants`         | 운영 › 고객 및 테넌트   | `/provider/tenants`          | PC/A       | `ESTATE_READ`          | Keep                   |
-| `provider.operations`      | 운영 › 변경 통제        | `/provider/operations`       | PC/O       | `ESTATE_READ`          | Keep                   |
-| `provider.health`          | 운영 › 서비스 운영      | `/provider/health`           | PC/O       | `HEALTH_READ`          | Keep                   |
-| `provider.featureRollouts` | 통제 › 기능 롤아웃      | `/provider/feature-rollouts` | PC/O       | `FEATURE_ROLLOUT_READ` | Keep                   |
-| `provider.support`         | 통제 › 권한 있는 지원   | `/provider/support`          | PC/O       | `ESTATE_READ`          | Keep; 지원 세션 시작점 |
-| `provider.commercial`      | 통제 › 구독 및 권한     | `/provider/commercial`       | PC/A       | `COMMERCIAL_READ`      | Keep                   |
-| `provider.codeContracts`   | 통제 › 제품 계약        | `/provider/code-contracts`   | PC/A       | `CATALOG_READ`         | Keep                   |
-| `provider.dataGovernance`  | 통제 › 데이터 거버넌스  | `/provider/data-governance`  | PC/A       | `DATA_GOVERNANCE_READ` | Keep                   |
-| `provider.audit`           | 통제 › 거버넌스 및 감사 | `/provider/audit`            | PC/O       | `AUDIT_READ`           | Keep                   |
+| Menu ID                       | 현재 그룹 › 메뉴         | Path                            | Plane/Task | 조건                       | 결정                   |
+| ----------------------------- | ------------------------ | ------------------------------- | ---------- | -------------------------- | ---------------------- |
+| `provider.overview`           | 운영 › 운영 지휘         | `/provider/overview`            | PC/O       | `ESTATE_READ`              | Keep                   |
+| `provider.tenants`            | 운영 › 고객 및 테넌트    | `/provider/tenants`             | PC/A       | `ESTATE_READ`              | Keep                   |
+| `provider.operations`         | 운영 › 변경 통제         | `/provider/operations`          | PC/O       | `ESTATE_READ`              | Keep                   |
+| `provider.health`             | 운영 › 서비스 운영       | `/provider/health`              | PC/O       | `HEALTH_READ`              | Keep                   |
+| `provider.featureRollouts`    | 통제 › 기능 롤아웃       | `/provider/feature-rollouts`    | PC/O       | `FEATURE_ROLLOUT_READ`     | Keep                   |
+| `provider.support`            | 통제 › 권한 있는 지원    | `/provider/support`             | PC/O       | `ESTATE_READ`              | Keep; 지원 세션 시작점 |
+| `provider.commercial`         | 통제 › 구독 및 권한      | `/provider/commercial`          | PC/A       | `COMMERCIAL_READ`          | Keep                   |
+| `provider.resourceGovernance` | 통제 › 리소스 커밋먼트   | `/provider/resource-governance` | PC/A       | `RESOURCE_GOVERNANCE_READ` | Keep                   |
+| `provider.artifactGovernance` | 통제 › 아티팩트 거버넌스 | `/provider/artifact-governance` | PC/A       | `ARTIFACT_GOVERNANCE_READ` | Keep                   |
+| `provider.codeContracts`      | 통제 › 제품 계약         | `/provider/code-contracts`      | PC/A       | `CATALOG_READ`             | Keep                   |
+| `provider.dataGovernance`     | 통제 › 데이터 거버넌스   | `/provider/data-governance`     | PC/A       | `DATA_GOVERNANCE_READ`     | Keep                   |
+| `provider.audit`              | 통제 › 거버넌스 및 감사  | `/provider/audit`               | PC/O       | `AUDIT_READ`               | Keep                   |
 
 ## 17. Account — 8 (`Keep`)
 
@@ -500,12 +502,12 @@ Query·Hash를 보존해 한 번 Redirect하며 대상이 없으면 Workplace Su
 
 ## 19. 검증 불변식
 
-1. 정적 Menu ID와 Path는 각각 227개이고 중복이 없다.
-2. Plane 합계는 `104 + 83 + 22 + 10 + 8 = 227`이다.
-3. Task 합계는 `109 + 3 + 55 + 60 = 227`이다.
+1. 정적 Menu ID와 Path는 각각 229개이고 중복이 없다.
+2. Plane 합계는 `104 + 83 + 22 + 12 + 8 = 229`이다.
+3. Task 합계는 `109 + 3 + 55 + 62 = 229`이다.
 4. `management` 83개가 Work Sidebar에 나타나지 않는다.
 5. 12개 주요 업무 앱의 Work·Team 104개가 Product Management Sidebar에 나타나지 않는다.
-6. 전체 227개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 177개는 정확히 한
+6. 전체 229개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 177개는 정확히 한
    `productSurfaceId`도 가진다.
 7. Legacy Alias는 정적 Menu를 추가하지 않고 대상 Canonical Route와 같은 Surface를 해석한다.
 8. 동적 Detail Route는 Parent Menu의 Surface를 상속하되 Object 권한을 서버에서 다시 검사한다.

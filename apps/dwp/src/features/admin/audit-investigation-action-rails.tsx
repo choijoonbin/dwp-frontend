@@ -45,6 +45,7 @@ import {
   AUDIT_FINDING_STATES,
 } from './audit-investigation-model';
 import { AuditInvestigationSectionHeading } from './audit-investigation-presenters';
+import { auditSeverityLabelKey } from './audit-runtime-presentation';
 
 import type {
   AuditCase,
@@ -514,7 +515,7 @@ export function AuditCaseActionRail({
                 {task.title}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {t(`auditControl.severity.${task.priority}`)}
+                {t(auditSeverityLabelKey(task.priority))}
               </Typography>
             </Box>
           </Stack>

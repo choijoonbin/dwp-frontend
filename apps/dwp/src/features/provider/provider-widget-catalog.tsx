@@ -34,6 +34,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { canRunWidgetRegistryTransition } from './widget-registry-governance-policy';
+import {
+  providerSafeEnumPresentation,
+  providerWidgetEnumTranslationKey,
+} from './provider-safe-enum-presentation';
 
 import type { WidgetDefinition, WidgetEvidence, WidgetVersion } from '@dwp-frontend/shared-utils';
 
@@ -254,7 +258,10 @@ export function ProviderWidgetCatalog({
                     size="small"
                     variant="outlined"
                     label={t(
-                      `widgetCatalog.controlPlane.definitionState.${definition.definitionState}`
+                      providerWidgetEnumTranslationKey(
+                        'widgetDefinitionState',
+                        definition.definitionState
+                      )
                     )}
                   />
                 </ListItemButton>
@@ -361,7 +368,12 @@ function ProviderWidgetDefinitionDetail({
         <Chip size="small" label={display('riskTiers', definition.riskTier)} />
         <Chip
           size="small"
-          label={t(`dataGovernance.classification.${definition.dataClassification}`)}
+          label={t(
+            `dataGovernance.classification.${providerSafeEnumPresentation(
+              'dataClassification',
+              definition.dataClassification
+            )}`
+          )}
         />
         <Chip
           size="small"
@@ -375,10 +387,40 @@ function ProviderWidgetDefinitionDetail({
         {selectedVersion ? (
           <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
             <Chip size="small" label={selectedVersion.semanticVersion} />
-            <Chip size="small" variant="outlined" label={selectedVersion.workflowState} />
-            <Chip size="small" variant="outlined" label={selectedVersion.releaseState} />
-            <Chip size="small" variant="outlined" label={selectedVersion.safetyState} />
-            <Chip size="small" variant="outlined" label={selectedVersion.certificationStatus} />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(
+                providerWidgetEnumTranslationKey(
+                  'widgetWorkflowState',
+                  selectedVersion.workflowState
+                )
+              )}
+            />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(
+                providerWidgetEnumTranslationKey('widgetReleaseState', selectedVersion.releaseState)
+              )}
+            />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(
+                providerWidgetEnumTranslationKey('widgetSafetyState', selectedVersion.safetyState)
+              )}
+            />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t(
+                providerWidgetEnumTranslationKey(
+                  'widgetCertificationStatus',
+                  selectedVersion.certificationStatus
+                )
+              )}
+            />
           </Stack>
         ) : (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -448,7 +490,10 @@ function ProviderWidgetDefinitionDetail({
           <List dense disablePadding sx={{ mt: 0.5 }}>
             {auditEvents.map((event) => (
               <ListItem key={event.eventId} disableGutters>
-                <ListItemText primary={event.eventType} secondary={event.occurredAt} />
+                <ListItemText
+                  primary={t('widgetCatalog.controlPlane.auditEvent')}
+                  secondary={event.occurredAt}
+                />
               </ListItem>
             ))}
           </List>

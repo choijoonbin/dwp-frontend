@@ -77,11 +77,10 @@ function AdminNavigation({ compact = false, onNavigate, supportScopes }: AdminNa
     ...group,
     items: group.items.filter((item) =>
       canAccessAdminNavigationItem(item, {
-        roles: auth.user?.roles ?? [],
+        identity: auth.user,
         permissionsLoaded: isLoaded,
         hasPermission,
         supportScopes,
-        resourceRoles: auth.user?.resourceRoles,
       })
     ),
   })).filter((group) => group.items.length > 0);

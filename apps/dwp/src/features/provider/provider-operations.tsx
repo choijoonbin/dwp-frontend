@@ -20,9 +20,9 @@ import {
   decideProviderOperationApproval,
   executeProviderOperation,
   getProviderOperatorProfile,
+  listAllProviderTenants,
   listProviderOperationApprovals,
   listProviderOperations,
-  listProviderTenants,
   retryProviderOperation,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -36,6 +36,7 @@ import {
   foundationTokens,
 } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -55,14 +56,15 @@ import { alpha } from '@mui/material/styles';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { ProviderOperation, ProviderOperationApproval } from '@dwp-frontend/shared-utils';
 
+import { providerBoundedListCoverage } from './provider-bounded-list-coverage';
 import { ProviderOperationDialog } from './provider-operation-dialog';
+import { providerGateLabel, providerOperationLabel } from './provider-operation-presentation';
 import {
   formatProviderDate,
   ProviderError,
   ProviderLoading,
   ProviderSectionHeading,
   ProviderStatusChip,
-  providerError,
 } from './provider-ui';
 
 function ApprovalDecisionDialog({
@@ -88,13 +90,11 @@ function ApprovalDecisionDialog({
         <Stack gap={2}>
           <Box>
             <Typography variant="subtitle2" fontWeight={750}>
-              {t(`operationTypes.${approval.operationType}`, {
-                defaultValue: approval.operationType,
-              })}
+              {providerOperationLabel(t, approval.operationType)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {approval.tenantName ?? t('operations.notCreated')} /{' '}
-              {display('riskTiers', approval.riskTier)} / {approval.gateKey}
+              {display('riskTiers', approval.riskTier)} / {providerGateLabel(t, approval.gateKey)}
             </Typography>
           </Box>
           <TextField
@@ -179,7 +179,7 @@ export function ProviderOperations() {
   });
   const tenants = useQuery({
     queryKey: ['provider', 'tenants', 'operation-map'],
-    queryFn: () => listProviderTenants({ page: 0, size: 100 }),
+    queryFn: listAllProviderTenants,
   });
   const operator = useQuery({
     queryKey: ['provider', 'operator'],
@@ -206,13 +206,17 @@ export function ProviderOperations() {
   const pendingApprovals = (approvals.data ?? []).filter(
     (approval) => approval.lifecycleState === 'PENDING'
   );
+  const approvalCoverageLimited =
+    approvals.data != null &&
+    providerBoundedListCoverage(approvals.data.length, 200) !== 'COMPLETE';
   const selectedApprovals = (approvals.data ?? []).filter(
     (approval) => approval.operationId === selected?.operationId
   );
   const selectedApprovalPending =
     selected?.lifecycleState === 'PREVIEWED' &&
     selected?.riskTier === 'L3' &&
-    (selectedApprovals.length === 0 ||
+    (approvalCoverageLimited ||
+      selectedApprovals.length === 0 ||
       selectedApprovals.some((approval) => approval.lifecycleState !== 'APPROVED'));
 
   const columns = useMemo<GridColDef<ProviderOperation>[]>(
@@ -225,7 +229,7 @@ export function ProviderOperations() {
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="body2" fontWeight={750} noWrap>
-              {t(`operationTypes.${row.operationType}`, { defaultValue: row.operationType })}
+              {providerOperationLabel(t, row.operationType)}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
               {row.operationId}
@@ -252,7 +256,7 @@ export function ProviderOperations() {
             size="small"
             variant="outlined"
             color={value === 'L3' ? 'warning' : 'default'}
-            label={String(value)}
+            label={display('riskTiers', String(value))}
           />
         ),
       },
@@ -305,7 +309,7 @@ export function ProviderOperations() {
         },
       },
     ],
-    [t, tenantNames]
+    [display, t, tenantNames]
   );
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['provider'] });
@@ -316,8 +320,8 @@ export function ProviderOperations() {
       setSelected(next);
       toast.success(t('operations.executed'));
       await invalidate();
-    } catch (error) {
-      toast.error(providerError(error, t('errors.operation')));
+    } catch {
+      toast.error(t('errors.operation'));
     } finally {
       setBusy(false);
     }
@@ -329,8 +333,8 @@ export function ProviderOperations() {
       setSelected(next);
       toast.success(t('operations.retried'));
       await invalidate();
-    } catch (error) {
-      toast.error(providerError(error, t('errors.operation')));
+    } catch {
+      toast.error(t('errors.operation'));
     } finally {
       setBusy(false);
     }
@@ -343,8 +347,8 @@ export function ProviderOperations() {
       toast.success(t(`approvals.completed.${decision.value}`));
       setDecision(null);
       await invalidate();
-    } catch (error) {
-      toast.error(providerError(error, t('errors.operation')));
+    } catch {
+      toast.error(t('errors.operation'));
     } finally {
       setBusy(false);
     }
@@ -398,11 +402,13 @@ export function ProviderOperations() {
   ).length;
   const controlState = recoveryOperations.length
     ? 'RECOVERY'
-    : pendingApprovals.length
-      ? 'APPROVAL'
-      : runningOperations.length
-        ? 'RUNNING'
-        : 'CLEAR';
+    : approvalCoverageLimited
+      ? 'COVERAGE'
+      : pendingApprovals.length
+        ? 'APPROVAL'
+        : runningOperations.length
+          ? 'RUNNING'
+          : 'CLEAR';
   const controlTone =
     controlState === 'RECOVERY' ? 'error' : controlState === 'CLEAR' ? 'success' : 'warning';
   const observedAt = Math.max(operations.dataUpdatedAt, approvals.dataUpdatedAt);
@@ -427,7 +433,7 @@ export function ProviderOperations() {
             label: t('operations.context.coverage'),
             value: t('operations.context.coverageValue', {
               operations: allOperations.length,
-              tenants: tenants.data?.content.length ?? 0,
+              tenants: tenants.data?.totalElements ?? 0,
             }),
             icon: <Layers3 size={16} />,
           },
@@ -515,8 +521,12 @@ export function ProviderOperations() {
                 <Chip
                   size="small"
                   variant="outlined"
-                  color={pendingApprovals.length ? 'warning' : 'success'}
-                  label={t('operations.pulse.approvals', { count: pendingApprovals.length })}
+                  color={approvalCoverageLimited || pendingApprovals.length ? 'warning' : 'success'}
+                  label={
+                    approvalCoverageLimited
+                      ? t('operations.pulse.approvalsUnavailable')
+                      : t('operations.pulse.approvals', { count: pendingApprovals.length })
+                  }
                 />
                 <Chip
                   size="small"
@@ -533,7 +543,7 @@ export function ProviderOperations() {
               </Stack>
             </Box>
           </Stack>
-          {(primaryRecovery || pendingApprovals.length > 0) && (
+          {(primaryRecovery || pendingApprovals.length > 0 || approvalCoverageLimited) && (
             <Button
               variant="contained"
               color={controlTone}
@@ -567,10 +577,16 @@ export function ProviderOperations() {
       >
         <SignalMetric
           label={t('operations.metrics.awaitingApproval')}
-          value={formatNumber(pendingApprovals.length)}
-          detail={t('operations.signals.approvalDetail', { highRisk: highRiskApprovals })}
+          value={
+            approvalCoverageLimited ? t('notAvailable') : formatNumber(pendingApprovals.length)
+          }
+          detail={
+            approvalCoverageLimited
+              ? t('approvals.coverageLimited')
+              : t('operations.signals.approvalDetail', { highRisk: highRiskApprovals })
+          }
           icon={<ShieldCheck size={18} />}
-          tone={pendingApprovals.length ? 'warning' : 'success'}
+          tone={approvalCoverageLimited || pendingApprovals.length ? 'warning' : 'success'}
         />
         <SignalMetric
           label={t('operations.metrics.running')}
@@ -615,10 +631,21 @@ export function ProviderOperations() {
         <ChangeSection
           title={t('approvals.title')}
           description={t('approvals.description')}
-          action={<Chip size="small" variant="outlined" label={pendingApprovals.length} />}
+          action={
+            <Chip
+              size="small"
+              variant="outlined"
+              label={approvalCoverageLimited ? t('notAvailable') : pendingApprovals.length}
+            />
+          }
         >
           <Box id="provider-approval-queue" sx={{ scrollMarginTop: 96 }}>
-            {pendingApprovals.length === 0 ? (
+            {approvalCoverageLimited && (
+              <Alert severity="warning" sx={{ mb: 1 }}>
+                {t('approvals.coverageLimited')}
+              </Alert>
+            )}
+            {!approvalCoverageLimited && pendingApprovals.length === 0 ? (
               <Stack direction="row" alignItems="center" gap={1.25} sx={{ py: 2 }}>
                 <Box
                   aria-hidden="true"
@@ -643,7 +670,7 @@ export function ProviderOperations() {
                   </Typography>
                 </Box>
               </Stack>
-            ) : (
+            ) : pendingApprovals.length > 0 ? (
               <Stack divider={<Divider flexItem />}>
                 {pendingApprovals.map((approval) => {
                   const requesterBlocked =
@@ -669,9 +696,7 @@ export function ProviderOperations() {
                         <Box sx={{ minWidth: 0, flex: 1 }}>
                           <Stack direction="row" alignItems="center" flexWrap="wrap" gap={0.75}>
                             <Typography variant="body2" fontWeight={750}>
-                              {t(`operationTypes.${approval.operationType}`, {
-                                defaultValue: approval.operationType,
-                              })}
+                              {providerOperationLabel(t, approval.operationType)}
                             </Typography>
                             <Chip
                               size="small"
@@ -679,7 +704,11 @@ export function ProviderOperations() {
                               variant="outlined"
                               label={display('riskTiers', approval.riskTier)}
                             />
-                            <Chip size="small" variant="outlined" label={approval.gateKey} />
+                            <Chip
+                              size="small"
+                              variant="outlined"
+                              label={providerGateLabel(t, approval.gateKey)}
+                            />
                           </Stack>
                           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.45 }}>
                             {approval.requestReason}
@@ -735,7 +764,7 @@ export function ProviderOperations() {
                   );
                 })}
               </Stack>
-            )}
+            ) : null}
           </Box>
         </ChangeSection>
 
@@ -746,7 +775,11 @@ export function ProviderOperations() {
           <Stack divider={<Divider flexItem />}>
             {[
               { key: 'PLAN', count: previewedOperations.length, icon: ListChecks },
-              { key: 'GATE', count: pendingApprovals.length, icon: ShieldCheck },
+              {
+                key: 'GATE',
+                count: approvalCoverageLimited ? t('notAvailable') : pendingApprovals.length,
+                icon: ShieldCheck,
+              },
               { key: 'EXECUTE', count: runningOperations.length, icon: Clock3 },
               { key: 'RECOVER', count: recoveryOperations.length, icon: RotateCcw },
             ].map(({ key, count, icon: Icon }, index) => (
@@ -807,6 +840,11 @@ export function ProviderOperations() {
           columns={columns}
           getRowId={(row) => row.operationId}
           onRowClick={({ row }) => setSelected(row)}
+          onCellKeyDown={(params, event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            setSelected(params.row);
+          }}
           loading={operations.isFetching}
           hideFooter
           maxVisibleRows={12}
@@ -820,6 +858,7 @@ export function ProviderOperations() {
           approvals={selectedApprovals}
           busy={busy}
           approvalPending={selectedApprovalPending}
+          approvalEvidenceUnavailable={approvalCoverageLimited && selected.riskTier === 'L3'}
           onClose={() => setSelected(null)}
           onExecute={canExecute && !selectedApprovalPending ? execute : undefined}
           onRetry={canExecute ? retry : undefined}

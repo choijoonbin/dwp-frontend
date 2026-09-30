@@ -26,6 +26,7 @@ import {
   restoreLocalizationRevision,
   saveLocalizationDraft,
   submitLocalizationRevision,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -59,17 +60,24 @@ import {
   QualitySummary,
   revisionRows,
   rowsToEntries,
-  stateColor,
   TransitionDialog,
   type EntryRow,
   type Transition,
   type WorkspaceView,
 } from './localization-studio-components';
+import {
+  localizationChangeTypeLabelKey,
+  localizationDecisionLabelKey,
+  localizationRevisionStateColor,
+  localizationRevisionStateLabelKey,
+} from './localization-studio-presentation';
 
 export function LocalizationStudio() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canManage = permissionsLoaded && hasPermission('ADMIN.LOCALIZATION', 'MANAGE');
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
   const [selectedRevisionId, setSelectedRevisionId] = useState<string | null>(null);
   const [view, setView] = useState<WorkspaceView>('EDITOR');
@@ -129,6 +137,7 @@ export function LocalizationStudio() {
   };
 
   const run = async (operation: () => Promise<unknown>, message: string) => {
+    if (!canManage) return;
     setBusy(true);
     try {
       await operation();
@@ -143,7 +152,7 @@ export function LocalizationStudio() {
   };
 
   const save = async () => {
-    if (!selectedRevision) return;
+    if (!canManage || !selectedRevision) return;
     const entries = rowsToEntries(rows);
     await run(
       () =>
@@ -157,7 +166,7 @@ export function LocalizationStudio() {
   };
 
   const handleTransition = async (reason: string) => {
-    if (!selectedRevision || !selectedBundle || !transition) return;
+    if (!canManage || !selectedRevision || !selectedBundle || !transition) return;
     const actions: Record<Transition, () => Promise<unknown>> = {
       SUBMIT: () =>
         submitLocalizationRevision(selectedRevision.revisionId, reason, selectedRevision.version),
@@ -242,6 +251,7 @@ export function LocalizationStudio() {
             <ActionButton
               intent="primary"
               startIcon={<Plus size={16} />}
+              disabled={!canManage}
               onClick={() => setCreateOpen(true)}
             >
               {t('localization.actions.createBundle')}
@@ -254,8 +264,8 @@ export function LocalizationStudio() {
             kind="empty"
             title={t('localization.empty.title')}
             description={t('localization.empty.description')}
-            actionLabel={t('localization.actions.createBundle')}
-            onAction={() => setCreateOpen(true)}
+            actionLabel={canManage ? t('localization.actions.createBundle') : undefined}
+            onAction={canManage ? () => setCreateOpen(true) : undefined}
           />
         ) : (
           <Box
@@ -326,8 +336,10 @@ export function LocalizationStudio() {
                           <Typography variant="h6">{selectedRevision.bundleKey}</Typography>
                           <Chip
                             size="small"
-                            color={stateColor[selectedRevision.lifecycleState]}
-                            label={t(`localization.states.${selectedRevision.lifecycleState}`)}
+                            color={localizationRevisionStateColor(selectedRevision.lifecycleState)}
+                            label={t(
+                              localizationRevisionStateLabelKey(selectedRevision.lifecycleState)
+                            )}
                           />
                           <Chip
                             size="small"
@@ -346,7 +358,7 @@ export function LocalizationStudio() {
                         </Typography>
                       </Box>
                       <Stack direction="row" gap={1} flexWrap="wrap">
-                        {selectedRevision.lifecycleState === 'DRAFT' && (
+                        {canManage && selectedRevision.lifecycleState === 'DRAFT' && (
                           <>
                             <ActionButton
                               intent="secondary"
@@ -367,7 +379,7 @@ export function LocalizationStudio() {
                             </ActionButton>
                           </>
                         )}
-                        {selectedRevision.lifecycleState === 'IN_REVIEW' && (
+                        {canManage && selectedRevision.lifecycleState === 'IN_REVIEW' && (
                           <>
                             <ActionButton
                               intent="secondary"
@@ -385,7 +397,7 @@ export function LocalizationStudio() {
                             </ActionButton>
                           </>
                         )}
-                        {selectedRevision.lifecycleState === 'APPROVED' && (
+                        {canManage && selectedRevision.lifecycleState === 'APPROVED' && (
                           <ActionButton
                             intent="primary"
                             startIcon={<Rocket size={16} />}
@@ -394,7 +406,7 @@ export function LocalizationStudio() {
                             {t('localization.actions.publish')}
                           </ActionButton>
                         )}
-                        {closedRevision && !hasOpenRevision && (
+                        {canManage && closedRevision && !hasOpenRevision && (
                           <ActionButton
                             intent="secondary"
                             startIcon={<ArchiveRestore size={16} />}
@@ -403,15 +415,17 @@ export function LocalizationStudio() {
                             {t('localization.actions.restore')}
                           </ActionButton>
                         )}
-                        {selectedRevision.lifecycleState === 'PUBLISHED' && !hasOpenRevision && (
-                          <ActionButton
-                            intent="primary"
-                            startIcon={<Plus size={16} />}
-                            onClick={() => setTransition('NEW_DRAFT')}
-                          >
-                            {t('localization.actions.newDraft')}
-                          </ActionButton>
-                        )}
+                        {canManage &&
+                          selectedRevision.lifecycleState === 'PUBLISHED' &&
+                          !hasOpenRevision && (
+                            <ActionButton
+                              intent="primary"
+                              startIcon={<Plus size={16} />}
+                              onClick={() => setTransition('NEW_DRAFT')}
+                            >
+                              {t('localization.actions.newDraft')}
+                            </ActionButton>
+                          )}
                       </Stack>
                     </Stack>
 
@@ -421,7 +435,7 @@ export function LocalizationStudio() {
                         fullWidth
                         label={t('localization.fields.changeSummary')}
                         value={changeSummary}
-                        disabled={selectedRevision.lifecycleState !== 'DRAFT'}
+                        disabled={!canManage || selectedRevision.lifecycleState !== 'DRAFT'}
                         onChange={(event) => setChangeSummary(event.target.value)}
                       />
                       <FormField
@@ -439,7 +453,7 @@ export function LocalizationStudio() {
                           <MenuItem key={revision.revisionId} value={revision.revisionId}>
                             {t('localization.revision.option', {
                               number: revision.revisionNumber,
-                              state: t(`localization.states.${revision.lifecycleState}`),
+                              state: t(localizationRevisionStateLabelKey(revision.lifecycleState)),
                             })}
                           </MenuItem>
                         ))}
@@ -492,7 +506,12 @@ export function LocalizationStudio() {
 
                   <Box sx={{ p: { xs: 2, md: 2.5 }, minHeight: 320 }}>
                     {view === 'EDITOR' && (
-                      <Editor revision={selectedRevision} rows={rows} onRowsChange={setRows} />
+                      <Editor
+                        revision={selectedRevision}
+                        rows={rows}
+                        editable={canManage}
+                        onRowsChange={setRows}
+                      />
                     )}
                     {view === 'DIFF' &&
                       (diffQuery.isLoading ? (
@@ -511,7 +530,7 @@ export function LocalizationStudio() {
                                 <Typography variant="subtitle2">{entry.key}</Typography>
                                 <Chip
                                   size="small"
-                                  label={t(`localization.diff.states.${entry.changeType}`)}
+                                  label={t(localizationChangeTypeLabelKey(entry.changeType))}
                                 />
                               </Stack>
                               <Stack direction={{ xs: 'column', md: 'row' }} gap={2} sx={{ mt: 1 }}>
@@ -595,7 +614,7 @@ export function LocalizationStudio() {
                             <Box key={decision.decisionId} sx={{ py: 1.5 }}>
                               <Stack direction="row" justifyContent="space-between" gap={1}>
                                 <Typography variant="subtitle2">
-                                  {t(`localization.decisions.${decision.decision}`)}
+                                  {t(localizationDecisionLabelKey(decision.decision))}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
                                   {formatDate(decision.decidedAt, {
@@ -625,7 +644,7 @@ export function LocalizationStudio() {
 
       <CreateBundleDialog
         key={String(createOpen)}
-        open={createOpen}
+        open={canManage && createOpen}
         busy={busy}
         onClose={() => setCreateOpen(false)}
         onSubmit={async (request) => {
@@ -639,7 +658,7 @@ export function LocalizationStudio() {
       />
       <TransitionDialog
         key={transition ?? 'none'}
-        transition={transition}
+        transition={canManage ? transition : null}
         busy={busy}
         onClose={() => setTransition(null)}
         onSubmit={handleTransition}

@@ -7,11 +7,11 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 export const CALENDAR_AVAILABILITY_ATTENDEE_LIMIT = 19;
-export const CALENDAR_AVAILABILITY_HORIZON_DAYS = 14;
+const CALENDAR_AVAILABILITY_HORIZON_DAYS = 14;
 
-export type SchedulingAttendeeIdentity = Readonly<{ personId: string }>;
+type SchedulingAttendeeIdentity = Readonly<{ personId: string }>;
 
-export type SchedulingParticipantSelection = Readonly<{
+type SchedulingParticipantSelection = Readonly<{
   personIds: readonly string[];
   internalCount: number;
   uncheckedCount: number;
@@ -92,7 +92,7 @@ export function calendarSchedulingEvaluationIsUsable(
   );
 }
 
-export type CalendarSchedulingEvaluationState = 'COMPLETE' | 'PARTIAL' | 'STALE' | 'UNAVAILABLE';
+type CalendarSchedulingEvaluationState = 'COMPLETE' | 'PARTIAL' | 'STALE' | 'UNAVAILABLE';
 
 export function calendarSchedulingEvaluationState(
   evaluation: CalendarSchedulingEvaluation | null | undefined,

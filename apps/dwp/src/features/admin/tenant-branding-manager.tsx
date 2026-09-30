@@ -27,6 +27,7 @@ import {
   rollbackTenantBranding,
   updateTenantBranding,
   uploadTenantLogo,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
@@ -45,6 +46,7 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
+import { brandingChangeTypeKey } from './home-revision-presentation';
 
 import type { TenantBranding, TenantBrandingRevision } from '@dwp-frontend/shared-utils';
 
@@ -70,17 +72,27 @@ function safeAccent(value: string): string {
 function RevisionHistory({
   open,
   revisions,
+  hasMore,
+  limit,
+  loading,
+  error,
   busy,
   canWrite,
   onClose,
   onRestore,
+  onRetry,
 }: {
   open: boolean;
   revisions: TenantBrandingRevision[];
+  hasMore: boolean;
+  limit: number;
+  loading: boolean;
+  error: boolean;
   busy: boolean;
   canWrite: boolean;
   onClose: () => void;
   onRestore: (revision: TenantBrandingRevision) => void;
+  onRetry: () => void;
 }) {
   const { t } = useTranslation('admin');
   return (
@@ -93,65 +105,90 @@ function RevisionHistory({
       closeLabel={t('branding.history.close')}
       onClose={onClose}
     >
-      {revisions.length === 0 ? (
+      {loading ? (
+        <Alert severity="info">{t('branding.history.loading')}</Alert>
+      ) : error ? (
+        <Alert
+          severity="error"
+          action={
+            <ActionButton size="small" intent="secondary" onClick={onRetry}>
+              {t('branding.history.retry')}
+            </ActionButton>
+          }
+        >
+          {t('branding.history.error')}
+        </Alert>
+      ) : revisions.length === 0 && !hasMore ? (
         <Alert severity="info">{t('branding.history.empty')}</Alert>
       ) : (
-        <Stack divider={<Divider flexItem />}>
-          {revisions.map((revision) => (
-            <Stack key={revision.revisionId} gap={1} sx={{ py: 1.5 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="subtitle2">
-                    {t(`branding.history.changeTypes.${revision.changeType}`)}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {formatDate(revision.createdAt, {
-                      dateStyle: 'medium',
-                      timeStyle: 'short',
-                    })}
-                  </Typography>
-                </Box>
-                {revision.current ? (
-                  <Chip size="small" color="success" label={t('branding.history.current')} />
-                ) : (
-                  <ActionButton
-                    size="small"
-                    intent="secondary"
-                    startIcon={<RotateCcw size={15} />}
-                    disabled={busy || !canWrite}
-                    onClick={() => onRestore(revision)}
-                  >
-                    {t('branding.history.restore')}
-                  </ActionButton>
-                )}
-              </Stack>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: 'minmax(0, 1fr) auto',
-                  gap: 1,
-                  alignItems: 'center',
-                }}
-              >
-                <Typography variant="body2" noWrap>
-                  {revision.organizationName || t('branding.history.productOnly')}
-                </Typography>
-                <Stack direction="row" alignItems="center" gap={0.75}>
-                  <Box
-                    aria-hidden="true"
-                    sx={{ width: 14, height: 14, bgcolor: revision.accentColor, borderRadius: 0.5 }}
-                  />
-                  <Typography variant="caption" color="text.secondary">
-                    {t('branding.history.version', { version: revision.sourceVersion })}
-                  </Typography>
+        <>
+          {hasMore && (
+            <Alert severity="warning" sx={{ mb: 1.5 }}>
+              {t('branding.history.partial', { limit })}
+            </Alert>
+          )}
+          <Stack divider={<Divider flexItem />}>
+            {revisions.map((revision) => (
+              <Stack key={revision.revisionId} gap={1} sx={{ py: 1.5 }}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="subtitle2">
+                      {t(brandingChangeTypeKey(revision.changeType))}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {formatDate(revision.createdAt, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </Typography>
+                  </Box>
+                  {revision.current ? (
+                    <Chip size="small" color="success" label={t('branding.history.current')} />
+                  ) : (
+                    <ActionButton
+                      size="small"
+                      intent="secondary"
+                      startIcon={<RotateCcw size={15} />}
+                      disabled={busy || !canWrite}
+                      onClick={() => onRestore(revision)}
+                    >
+                      {t('branding.history.restore')}
+                    </ActionButton>
+                  )}
                 </Stack>
-              </Box>
-              <Typography variant="caption" color="text.secondary">
-                {revision.logoOriginalName || t('branding.noLogo')}
-              </Typography>
-            </Stack>
-          ))}
-        </Stack>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: 'minmax(0, 1fr) auto',
+                    gap: 1,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography variant="body2" noWrap>
+                    {revision.organizationName || t('branding.history.productOnly')}
+                  </Typography>
+                  <Stack direction="row" alignItems="center" gap={0.75}>
+                    <Box
+                      aria-hidden="true"
+                      sx={{
+                        width: 14,
+                        height: 14,
+                        bgcolor: revision.accentColor,
+                        borderRadius: 0.5,
+                      }}
+                    />
+                    <Typography variant="caption" color="text.secondary">
+                      {t('branding.history.version', { version: revision.sourceVersion })}
+                    </Typography>
+                  </Stack>
+                </Box>
+                <Typography variant="caption" color="text.secondary">
+                  {revision.logoOriginalName || t('branding.noLogo')}
+                </Typography>
+              </Stack>
+            ))}
+          </Stack>
+        </>
       )}
     </DetailInspector>
   );
@@ -162,8 +199,11 @@ export function TenantBrandingManager() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const supportContext = useCurrentProviderSupportContext();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const hasManagePermission = permissionsLoaded && hasPermission('ADMIN.TENANT_BRANDING', 'MANAGE');
   const canWrite =
-    !supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE');
+    hasManagePermission &&
+    (!supportContext.data || supportContext.data.scopes.includes('TENANT_CONFIGURATION_WRITE'));
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [organizationName, setOrganizationName] = useState('');
   const [accentColor, setAccentColor] = useState('#2457D6');
@@ -261,6 +301,7 @@ export function TenantBrandingManager() {
   };
 
   const run = async (operation: () => Promise<TenantBranding>, successMessage: string) => {
+    if (!canWrite) return;
     setBusy(true);
     setOperationError(null);
     try {
@@ -715,10 +756,15 @@ export function TenantBrandingManager() {
 
       <RevisionHistory
         open={historyOpen}
-        revisions={historyQuery.data ?? []}
+        revisions={historyQuery.data?.items ?? []}
+        hasMore={historyQuery.data?.hasMore ?? false}
+        limit={historyQuery.data?.limit ?? 30}
+        loading={historyQuery.isLoading}
+        error={historyQuery.isError}
         busy={busy}
         canWrite={canWrite}
         onClose={() => setHistoryOpen(false)}
+        onRetry={() => void historyQuery.refetch()}
         onRestore={(revision) => {
           setHistoryOpen(false);
           void run(

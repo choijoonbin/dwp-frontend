@@ -27,7 +27,6 @@ import type {
 export type MailAdminOperationsWorkspaceProps = {
   surface: MailAdminSurface;
   overview?: MailAdminOverview;
-  canManage?: boolean;
   canManageConnections?: boolean;
   canManageSharedInboxes?: boolean;
   canManagePolicy?: boolean;
@@ -37,7 +36,6 @@ export type MailAdminOperationsWorkspaceProps = {
   canExecutePurge?: boolean;
   canReadAudit?: boolean;
   canRevealAudit?: boolean;
-  canRecoverDeliveries?: boolean;
   canReconcileDeliveries?: boolean;
   canRetryDeliveries?: boolean;
   canCancelDeliveries?: boolean;

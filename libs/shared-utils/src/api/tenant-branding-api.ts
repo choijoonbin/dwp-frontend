@@ -1,7 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 import { resolveBrowserMediaUrl } from './browser-media-url';
+import { parseBoundedList } from './bounded-list';
 
 import type { ApiResponse } from '../types';
+import type { BoundedList } from './bounded-list';
 
 export type TenantBranding = {
   organizationName?: string | null;
@@ -30,6 +32,8 @@ export type TenantBrandingRevision = {
   createdAt: string;
   createdBy?: number | null;
 };
+
+export type TenantBrandingRevisionPage = BoundedList<TenantBrandingRevision>;
 
 export function resolveTenantLogoUrl(branding?: TenantBranding | null): string | null {
   return branding?.logoUrl ? resolveBrowserMediaUrl(branding.logoUrl) : null;
@@ -87,11 +91,15 @@ export async function resetTenantLogo(version: number): Promise<TenantBranding> 
   return response.data.data;
 }
 
-export async function getTenantBrandingRevisions(limit = 20): Promise<TenantBrandingRevision[]> {
-  const response = await axiosInstance.get<ApiResponse<TenantBrandingRevision[]>>(
+export async function getTenantBrandingRevisions(limit = 20): Promise<TenantBrandingRevisionPage> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
     `/api/platform/v1/admin/tenant-branding/revisions?limit=${limit}`
   );
-  return response.data.data;
+  return parseBoundedList<TenantBrandingRevision>(
+    response.data.data,
+    50,
+    'Tenant branding revision history'
+  );
 }
 
 export async function rollbackTenantBranding(

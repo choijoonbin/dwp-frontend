@@ -81,6 +81,11 @@ import {
   providerTenantServiceHealth,
 } from './provider-tenant-estate-model';
 import { providerOperationalSnapshotState } from './provider-operational-freshness';
+import {
+  providerIsolationLabel,
+  providerServiceTierLabel,
+  providerTenantLifecycleLabel,
+} from './provider-operation-presentation';
 
 export function ProviderTenants() {
   const { t } = useTranslation('provider');
@@ -270,12 +275,16 @@ export function ProviderTenants() {
     comparisonIdsRef.current = ids;
     updateFilters({ compare: ids.length ? ids.join(',') : null });
   };
-  const attentionTenants = visibleTenants.filter((tenant) =>
-    tenant.services.some((service) => ['DEGRADED', 'FAILED'].includes(service.lifecycleState))
+  const attentionTenants = visibleTenants.filter(
+    (tenant) => providerTenantServiceHealth(tenant) !== 'READY'
   );
   const estateState = providerEstateState(estateValue);
   const estateTone =
-    estateState === 'CRITICAL' ? 'error' : estateState === 'ATTENTION' ? 'warning' : 'success';
+    estateState === 'CRITICAL'
+      ? 'error'
+      : estateState === 'ATTENTION' || estateState === 'UNAVAILABLE'
+        ? 'warning'
+        : 'success';
   const loadedAt = Math.max(tenants.dataUpdatedAt, estate.dataUpdatedAt);
   const liveState = providerOperationalSnapshotState({
     fetching: tenants.isFetching || estate.isFetching,
@@ -578,7 +587,7 @@ export function ProviderTenants() {
               >
                 {PROVIDER_TENANT_LIFECYCLE_STATES.map((value) => (
                   <ToggleButton key={value} value={value}>
-                    {t(`states.${value}`, { defaultValue: value })}
+                    {providerTenantLifecycleLabel(t, value)}
                   </ToggleButton>
                 ))}
               </ToggleButtonGroup>
@@ -616,7 +625,7 @@ export function ProviderTenants() {
                 label:
                   value === 'ALL'
                     ? t('tenants.filters.allTiers')
-                    : t(`tiers.${value}`, { defaultValue: value }),
+                    : providerServiceTierLabel(t, value),
               }))}
               onValueChange={(value) =>
                 updateTenantFilters({ tier: value === 'ALL' ? null : String(value) })
@@ -632,7 +641,7 @@ export function ProviderTenants() {
                 label:
                   value === 'ALL'
                     ? t('tenants.filters.allIsolation')
-                    : t(`isolation.${value}`, { defaultValue: value }),
+                    : providerIsolationLabel(t, value),
               }))}
               onValueChange={(value) =>
                 updateTenantFilters({
@@ -733,15 +742,11 @@ export function ProviderTenants() {
                             [t('tenants.columns.region'), tenant.dataRegion],
                             [
                               t('tenants.columns.tier'),
-                              t(`tiers.${tenant.serviceTier}`, {
-                                defaultValue: tenant.serviceTier,
-                              }),
+                              providerServiceTierLabel(t, tenant.serviceTier),
                             ],
                             [
                               t('tenants.columns.isolation'),
-                              t(`isolation.${tenant.isolationModel}`, {
-                                defaultValue: tenant.isolationModel,
-                              }),
+                              providerIsolationLabel(t, tenant.isolationModel),
                             ],
                             [
                               t('tenants.columns.subscription'),
@@ -791,6 +796,13 @@ export function ProviderTenants() {
                 comparisonIds.includes(String(id)) || comparisonIds.length < 3
               }
               onRowClick={({ row }) => navigate(`/provider/tenants/${row.tenantId}`)}
+              onCellKeyDown={(params, event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                if ((event.target as HTMLElement).closest('button, input, [role="checkbox"]'))
+                  return;
+                event.preventDefault();
+                navigate(`/provider/tenants/${params.row.tenantId}`);
+              }}
               loading={tenants.isFetching}
               mode="server"
               rowCount={tenants.data?.totalElements ?? 0}
@@ -885,7 +897,7 @@ export function ProviderTenants() {
                   <Box key={item.key}>
                     <Stack direction="row" justifyContent="space-between" gap={1}>
                       <Typography variant="body2">
-                        {t(`tiers.${item.key}`, { defaultValue: item.key })}
+                        {providerServiceTierLabel(t, item.key)}
                       </Typography>
                       <Typography variant="body2" fontWeight={750}>
                         {item.count}
@@ -894,7 +906,7 @@ export function ProviderTenants() {
                     <DistributionBar
                       height={6}
                       label={t('tenants.mix.distributionLabel', {
-                        label: t(`tiers.${item.key}`, { defaultValue: item.key }),
+                        label: providerServiceTierLabel(t, item.key),
                         count: item.count,
                         total: totalTierTenants,
                       })}

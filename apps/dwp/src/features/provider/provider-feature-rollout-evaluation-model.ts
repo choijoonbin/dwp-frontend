@@ -3,8 +3,31 @@ export type ProviderFeatureEvaluationSelection = {
   tenantId: string;
 };
 
-export function displayProviderFeatureValue(value: unknown): string {
-  return typeof value === 'string' ? value : (JSON.stringify(value, null, 2) ?? '');
+export type ProviderFeatureValuePresentation =
+  | { kind: 'scalar'; value: string }
+  | { kind: 'collection'; collection: 'OBJECT' | 'ARRAY'; count: number }
+  | { kind: 'unavailable' };
+
+export function providerFeatureValuePresentation(value: unknown): ProviderFeatureValuePresentation {
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return { kind: 'scalar', value: String(value) };
+  }
+  if (Array.isArray(value)) return { kind: 'collection', collection: 'ARRAY', count: value.length };
+  if (value !== null && typeof value === 'object') {
+    return { kind: 'collection', collection: 'OBJECT', count: Object.keys(value).length };
+  }
+  return { kind: 'unavailable' };
+}
+
+const EVALUATION_REASONS = new Set([
+  'DEFAULT',
+  'TARGET_MISS',
+  'PERCENTAGE_EXCLUDED',
+  'ROLLOUT_MATCH',
+]);
+
+export function providerFeatureEvaluationReason(value: string): string {
+  return EVALUATION_REASONS.has(value) ? value : 'UNAVAILABLE';
 }
 
 export function resolveProviderFeatureEvaluationOption(

@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import {
   mailComposeCapabilitiesForAccount,
   mailComposeHasExternalRecipients,
-  mailComposeOptionsCanSend,
 } from './mail-compose-options';
 
 import type { MailComposeOptions } from '@dwp-frontend/shared-utils';
@@ -23,33 +22,6 @@ const options: MailComposeOptions = {
 };
 
 describe('mail compose capability gates', () => {
-  it('requires a valid To recipient even when Cc or Bcc exists', () => {
-    expect(mailComposeOptionsCanSend(options)).toBe(true);
-    expect(
-      mailComposeOptionsCanSend({
-        ...options,
-        recipients: [{ type: 'BCC', name: null, email: 'hidden@example.com' }],
-      })
-    ).toBe(false);
-  });
-
-  it('blocks past schedules and attachments that have not passed scanning', () => {
-    expect(mailComposeOptionsCanSend({ ...options, scheduledAt: '2000-01-01T00:00:00Z' })).toBe(
-      false
-    );
-    expect(
-      mailComposeOptionsCanSend(options, [
-        {
-          attachmentId: 'attachment-1',
-          fileName: 'review.pdf',
-          contentType: 'application/pdf',
-          sizeBytes: 100,
-          scanState: 'SCANNING',
-        },
-      ])
-    ).toBe(false);
-  });
-
   it('switches capability gates with the displayed From account', () => {
     const accountCapabilities = {
       'account-1': { attachments: false },

@@ -3,9 +3,9 @@ import { Temporal } from 'temporal-polyfill';
 
 import type { CalendarEvent } from '@dwp-frontend/shared-utils';
 
-export type CalendarTodayEventPhase = 'ELAPSED' | 'CURRENT' | 'UPCOMING';
+type CalendarTodayEventPhase = 'ELAPSED' | 'CURRENT' | 'UPCOMING';
 
-export type CalendarTodayStreamItem =
+type CalendarTodayStreamItem =
   | Readonly<{
       kind: 'event';
       event: CalendarEvent;
@@ -19,15 +19,15 @@ export type CalendarTodayStreamItem =
       boundary: 'NEXT_EVENT' | 'WORKDAY_END';
     }>;
 
-export type CalendarTodayMetrics = Readonly<{
+type CalendarTodayMetrics = Readonly<{
   eventCount: number;
   meetingMinutes: number;
   focusMinutes: number;
 }>;
 
-export type CalendarWorkdayPhase = 'BEFORE' | 'ACTIVE' | 'AFTER' | 'UNKNOWN';
+type CalendarWorkdayPhase = 'BEFORE' | 'ACTIVE' | 'AFTER' | 'UNKNOWN';
 
-export type CalendarTodayStreamOptions = Readonly<{
+type CalendarTodayStreamOptions = Readonly<{
   minimumOpenMinutes?: number;
   date?: string;
   timeZone?: string;

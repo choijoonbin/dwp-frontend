@@ -27,6 +27,11 @@ import {
   readProductSurfaceTelemetryConsent,
   writeProductSurfaceTelemetryConsent,
 } from '../../observability/product-surface-telemetry-context';
+import {
+  privacyConsentState,
+  privacyRequestEvent,
+  privacyRequestState,
+} from './profile-state-presentation';
 
 const CONSENT_NOTICE_VERSION = 'product-analytics-2026-09';
 const CONSENT_QUERY_KEY = ['account', 'privacy', 'consents'] as const;
@@ -239,7 +244,9 @@ export function ProfilePrivacyControls({ enabled = true }: { enabled?: boolean }
                     <Chip
                       size="small"
                       color={latest.requestState === 'RECEIVED' ? 'warning' : 'default'}
-                      label={t(`profile.privacy.requests.states.${latest.requestState}`)}
+                      label={t(
+                        `profile.privacy.requests.states.${privacyRequestState(latest.requestState)}`
+                      )}
                     />
                   )}
                 </Stack>
@@ -247,18 +254,48 @@ export function ProfilePrivacyControls({ enabled = true }: { enabled?: boolean }
                   {t(`profile.privacy.requests.types.${type}.description`)}
                 </Typography>
                 {latest && (
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ display: 'block', mt: 0.75 }}
-                  >
-                    {t('profile.privacy.requests.createdAt', {
-                      date: formatDate(latest.createdAt, {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      }),
-                    })}
-                  </Typography>
+                  <Stack gap={0.5} sx={{ mt: 0.75 }}>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('profile.privacy.requests.createdAt', {
+                        date: formatDate(latest.createdAt, {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        }),
+                      })}
+                    </Typography>
+                    {latest.receipt && (
+                      <Typography variant="caption" color="text.secondary">
+                        {t('profile.privacy.requests.receipt', {
+                          receiptId: latest.receipt.receiptId,
+                          date: formatDate(latest.receipt.issuedAt, {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          }),
+                        })}
+                      </Typography>
+                    )}
+                    {latest.lifecycle.length > 0 && (
+                      <Stack
+                        component="ol"
+                        gap={0.25}
+                        sx={{ p: 0, m: 0, listStyle: 'none' }}
+                        aria-label={t('profile.privacy.requests.lifecycle')}
+                      >
+                        {latest.lifecycle.map((event) => (
+                          <Typography component="li" variant="caption" key={event.eventId}>
+                            {t(
+                              `profile.privacy.requests.events.${privacyRequestEvent(event.eventType)}`
+                            )}{' '}
+                            ·{' '}
+                            {formatDate(event.occurredAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            })}
+                          </Typography>
+                        ))}
+                      </Stack>
+                    )}
+                  </Stack>
                 )}
               </Box>
               <ActionButton
@@ -304,21 +341,48 @@ export function ProfilePrivacyControls({ enabled = true }: { enabled?: boolean }
                 {t('profile.privacy.loading')}
               </Typography>
             ) : consentQuery.data?.history.length ? (
-              <Stack component="ol" gap={0.75} sx={{ p: 0, mt: 1, mb: 0, listStyle: 'none' }}>
-                {consentQuery.data.history.slice(0, 5).map((entry) => (
-                  <Typography component="li" variant="body2" key={entry.consentId}>
-                    {t(`profile.privacy.history.states.${entry.consentState}`)} ·{' '}
-                    {formatDate(entry.occurredAt, {
-                      dateStyle: 'medium',
-                      timeStyle: 'short',
+              <>
+                <Stack component="ol" gap={0.75} sx={{ p: 0, mt: 1, mb: 0, listStyle: 'none' }}>
+                  {consentQuery.data.history.slice(0, 5).map((entry) => (
+                    <Typography component="li" variant="body2" key={entry.consentId}>
+                      {t(
+                        `profile.privacy.history.states.${privacyConsentState(entry.consentState)}`
+                      )}{' '}
+                      ·{' '}
+                      {formatDate(entry.occurredAt, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </Typography>
+                  ))}
+                </Stack>
+                {(consentQuery.data.history.length > 5 || consentQuery.data.historyHasMore) && (
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ mt: 1, display: 'block' }}
+                  >
+                    {t('profile.privacy.history.recentSummary', {
+                      displayed: Math.min(5, consentQuery.data.history.length),
+                      loaded: consentQuery.data.history.length,
                     })}
                   </Typography>
-                ))}
-              </Stack>
+                )}
+                {consentQuery.data.historyHasMore === true && (
+                  <Alert severity="warning" sx={{ mt: 1 }}>
+                    {t('profile.privacy.history.moreAvailable')}
+                  </Alert>
+                )}
+              </>
             ) : (
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 {t('profile.privacy.history.empty')}
               </Typography>
+            )}
+            {consentQuery.data && (
+              <Alert severity="info" sx={{ mt: 1 }}>
+                {t('profile.privacy.history.coverageBoundary')}
+              </Alert>
             )}
           </Box>
         </Box>

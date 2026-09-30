@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { countSavedViewScopes } from './saved-view-custody-model';
+import { savedViewReasonLabel } from './saved-view-custody-presentation';
 import { displayDate, userIdentityLabel } from './saved-view-custody-ui';
 
 import type {
@@ -150,7 +151,7 @@ export function SavedViewCustodyConfirmDialog({
                 {t('savedViewCustody.confirm.reasonType')}
               </Typography>
               <Typography component="dd" variant="body2" sx={{ m: 0 }}>
-                {t('savedViewCustody.reasons.' + reasonCode)}
+                {savedViewReasonLabel(reasonCode, t)}
               </Typography>
             </Box>
             <Box component="div">

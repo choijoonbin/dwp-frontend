@@ -5,7 +5,6 @@ import type {
   CreateLocalizationBundleRequest,
   LocalizationBundleSummary,
   LocalizationRevision,
-  LocalizationRevisionState,
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -21,24 +20,16 @@ import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import {
+  localizationRevisionStateColor,
+  localizationRevisionStateLabelKey,
+} from './localization-studio-presentation';
 
 export type WorkspaceView = 'EDITOR' | 'DIFF' | 'PREVIEW' | 'HISTORY';
 export type Transition = 'SUBMIT' | 'APPROVE' | 'REJECT' | 'PUBLISH' | 'RESTORE' | 'NEW_DRAFT';
 export type EntryRow = { key: string; source: string; target: string };
 
 export const EMPTY_BUNDLES: LocalizationBundleSummary[] = [];
-
-export const stateColor: Record<
-  LocalizationRevisionState,
-  'default' | 'info' | 'warning' | 'success' | 'error'
-> = {
-  DRAFT: 'default',
-  IN_REVIEW: 'warning',
-  APPROVED: 'info',
-  REJECTED: 'error',
-  PUBLISHED: 'success',
-  SUPERSEDED: 'default',
-};
 
 export function revisionRows(revision: LocalizationRevision): EntryRow[] {
   const keys = new Set([...Object.keys(revision.sourceEntries), ...Object.keys(revision.entries)]);
@@ -123,9 +114,9 @@ export function BundleListItem({
           {state && (
             <Chip
               size="small"
-              color={stateColor[state]}
+              color={localizationRevisionStateColor(state)}
               variant={state === 'PUBLISHED' ? 'filled' : 'outlined'}
-              label={t(`localization.states.${state}`)}
+              label={t(localizationRevisionStateLabelKey(state))}
             />
           )}
         </Stack>
@@ -346,14 +337,16 @@ export function QualitySummary({ revision }: { revision: LocalizationRevision })
 export function Editor({
   revision,
   rows,
+  editable: editableByPermission,
   onRowsChange,
 }: {
   revision: LocalizationRevision;
   rows: EntryRow[];
+  editable: boolean;
   onRowsChange: (rows: EntryRow[]) => void;
 }) {
   const { t } = useTranslation('admin');
-  const editable = revision.lifecycleState === 'DRAFT';
+  const editable = editableByPermission && revision.lifecycleState === 'DRAFT';
   const addRow = () => onRowsChange([...rows, { key: '', source: '', target: '' }]);
   const update = (index: number, field: keyof EntryRow, value: string) =>
     onRowsChange(

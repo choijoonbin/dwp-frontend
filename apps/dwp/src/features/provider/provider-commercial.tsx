@@ -56,6 +56,7 @@ import {
   RenewalProposalDialog,
 } from './provider-commercial-renewals';
 import type { RenewalDecision } from './provider-commercial-renewals';
+import { providerBoundedListCoverage } from './provider-bounded-list-coverage';
 import {
   formatProviderDate,
   ProviderError,
@@ -64,6 +65,7 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
+import { providerServiceTierLabel } from './provider-operation-presentation';
 
 export function ProviderCommercial() {
   const { t } = useTranslation('provider');
@@ -142,7 +144,7 @@ export function ProviderCommercial() {
               {row.planName}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {t(`tiers.${row.serviceTier}`, { defaultValue: row.serviceTier })}
+              {providerServiceTierLabel(t, row.serviceTier)}
             </Typography>
           </Box>
         ),
@@ -258,6 +260,8 @@ export function ProviderCommercial() {
   if (!commercial.data) return null;
 
   const renewalItems = renewals.data ?? [];
+  const renewalCoverageLimited =
+    renewals.data != null && providerBoundedListCoverage(renewalItems.length, 200) !== 'COMPLETE';
   const pendingCount = renewalItems.filter(
     (item) => item.lifecycleState === 'PENDING_APPROVAL'
   ).length;
@@ -320,6 +324,9 @@ export function ProviderCommercial() {
           {t('commercial.renewals.partialFailure')}
         </Alert>
       )}
+      {renewalCoverageLimited && (
+        <Alert severity="warning">{t('commercial.renewals.coverageLimited')}</Alert>
+      )}
       <Box
         sx={{
           display: 'grid',
@@ -336,24 +343,36 @@ export function ProviderCommercial() {
         />
         <SignalMetric
           label={t('commercial.metrics.pendingApproval')}
-          value={formatNumber(pendingCount)}
-          detail={t('commercial.metrics.pendingApprovalDetail')}
+          value={renewalCoverageLimited ? t('notAvailable') : formatNumber(pendingCount)}
+          detail={t(
+            renewalCoverageLimited
+              ? 'commercial.renewals.coverageMetricDetail'
+              : 'commercial.metrics.pendingApprovalDetail'
+          )}
           icon={<FileClock size={18} />}
-          tone={pendingCount ? 'warning' : 'success'}
+          tone={renewalCoverageLimited || pendingCount ? 'warning' : 'success'}
         />
         <SignalMetric
           label={t('commercial.metrics.entitlementChanges')}
-          value={formatNumber(entitlementChangeCount)}
-          detail={t('commercial.metrics.entitlementChangesDetail')}
+          value={renewalCoverageLimited ? t('notAvailable') : formatNumber(entitlementChangeCount)}
+          detail={t(
+            renewalCoverageLimited
+              ? 'commercial.renewals.coverageMetricDetail'
+              : 'commercial.metrics.entitlementChangesDetail'
+          )}
           icon={<GitCompareArrows size={18} />}
-          tone={entitlementChangeCount ? 'info' : 'neutral'}
+          tone={renewalCoverageLimited ? 'warning' : entitlementChangeCount ? 'info' : 'neutral'}
         />
         <SignalMetric
           label={t('commercial.metrics.manualActions')}
-          value={formatNumber(manualActionCount)}
-          detail={t('commercial.metrics.manualActionsDetail')}
+          value={renewalCoverageLimited ? t('notAvailable') : formatNumber(manualActionCount)}
+          detail={t(
+            renewalCoverageLimited
+              ? 'commercial.renewals.coverageMetricDetail'
+              : 'commercial.metrics.manualActionsDetail'
+          )}
           icon={<CircleAlert size={18} />}
-          tone={manualActionCount ? 'error' : 'success'}
+          tone={renewalCoverageLimited || manualActionCount ? 'error' : 'success'}
         />
       </Box>
 
@@ -361,7 +380,17 @@ export function ProviderCommercial() {
         <ProviderSectionHeading
           title={t('commercial.renewals.title')}
           description={t('commercial.renewals.description')}
-          action={<Chip size="small" variant="outlined" label={renewalItems.length} />}
+          action={
+            <Chip
+              size="small"
+              variant="outlined"
+              label={
+                renewalCoverageLimited
+                  ? t('commercial.renewals.coverageBadge', { count: renewalItems.length })
+                  : renewalItems.length
+              }
+            />
+          }
         />
         {!renewals.isError && !renewalItems.length ? (
           <Paper variant="outlined" sx={{ mt: 1.5 }}>
@@ -387,6 +416,11 @@ export function ProviderCommercial() {
               columns={renewalColumns}
               getRowId={(row) => row.renewalRevisionId}
               onRowClick={({ row }) => setSelectedRevisionId(row.renewalRevisionId)}
+              onCellKeyDown={(params, event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                setSelectedRevisionId(params.row.renewalRevisionId);
+              }}
               loading={renewals.isFetching}
               hideFooter
               maxVisibleRows={8}
@@ -505,7 +539,7 @@ export function ProviderCommercial() {
                 <Chip
                   size="small"
                   variant="outlined"
-                  label={t(`tiers.${plan.serviceTier}`, { defaultValue: plan.serviceTier })}
+                  label={providerServiceTierLabel(t, plan.serviceTier)}
                 />
               </Stack>
             </Stack>

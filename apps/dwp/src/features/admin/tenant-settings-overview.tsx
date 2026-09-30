@@ -23,7 +23,7 @@ import {
   listScimConnectors,
 } from '@dwp-frontend/shared-utils';
 import { ActionButton, GuidedEmptyState } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -40,6 +40,8 @@ import {
   type TenantSettingsTask,
 } from './tenant-settings-overview-model';
 import { TenantAuthPolicyWorkflow } from './tenant-auth-policy-workflow';
+import { TenantGovernanceEvidence } from './tenant-governance-evidence';
+import { TenantSettingOwnerRegistryPanel } from './tenant-setting-owner-registry-panel';
 
 type TenantSettingsOverviewProps = Readonly<{
   canReadIdentity: boolean;
@@ -68,6 +70,7 @@ export function TenantSettingsOverview({
   canReadAuditGovernance,
 }: TenantSettingsOverviewProps) {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
   const branding = useQuery({
     queryKey: ['admin', 'settings-overview', 'branding'],
     queryFn: getAdminTenantBranding,
@@ -353,6 +356,10 @@ export function TenantSettingsOverview({
 
       <TenantAuthPolicyWorkflow />
 
+      <TenantGovernanceEvidence />
+
+      <TenantSettingOwnerRegistryPanel />
+
       {canReadAuditGovernance && (
         <Box component="section" aria-labelledby="tenant-settings-recent-change-title">
           <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
@@ -395,7 +402,11 @@ export function TenantSettingsOverview({
                         })}
                       </Typography>
                     </Box>
-                    <Chip size="small" variant="outlined" label={revision.lifecycleState} />
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={display('states', revision.lifecycleState)}
+                    />
                   </Stack>
                 </Box>
               ))

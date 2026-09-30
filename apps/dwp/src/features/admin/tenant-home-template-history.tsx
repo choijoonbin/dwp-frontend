@@ -17,11 +17,13 @@ import {
 } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { homeTemplateRevisionSourceKey } from './home-revision-presentation';
 
 import type { HomeTemplate, HomeTemplateRevision } from '@dwp-frontend/shared-utils';
 
@@ -64,7 +66,7 @@ export function TenantHomeTemplateHistory({
   if (revisionsQuery.isLoading) {
     return <LoadingState label={t('homeWidgets.blueprints.history.loading')} variant="skeleton" />;
   }
-  if (revisionsQuery.isError) {
+  if (revisionsQuery.isError || !revisionsQuery.data) {
     return (
       <ErrorState
         title={t('homeWidgets.blueprints.history.loadFailed')}
@@ -75,7 +77,8 @@ export function TenantHomeTemplateHistory({
     );
   }
 
-  const revisions = revisionsQuery.data ?? [];
+  const revisionPage = revisionsQuery.data;
+  const revisions = revisionPage.items;
   return (
     <Box sx={{ width: 1, borderLeft: 3, borderColor: 'primary.main', pl: 2, py: 1 }}>
       <Typography component="h3" variant="subtitle1">
@@ -84,7 +87,12 @@ export function TenantHomeTemplateHistory({
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25, mb: 1.5 }}>
         {t('homeWidgets.blueprints.history.description')}
       </Typography>
-      {revisions.length === 0 ? (
+      {revisionPage.hasMore && (
+        <Alert severity="warning" sx={{ mb: 1.5 }}>
+          {t('homeWidgets.blueprints.history.partial', { limit: revisionPage.limit })}
+        </Alert>
+      )}
+      {revisions.length === 0 && !revisionPage.hasMore ? (
         <EmptyState
           icon={<History size={24} />}
           title={t('homeWidgets.blueprints.history.empty')}
@@ -112,7 +120,7 @@ export function TenantHomeTemplateHistory({
                   <Chip
                     size="small"
                     variant="outlined"
-                    label={t(`homeWidgets.blueprints.history.sources.${revision.source}`)}
+                    label={t(homeTemplateRevisionSourceKey(revision.source))}
                   />
                 </Stack>
                 <Typography variant="caption" color="text.secondary">

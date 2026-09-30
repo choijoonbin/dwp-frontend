@@ -82,6 +82,12 @@ import {
 import { purgeProviderSupportTenantCache } from './provider-support-cache';
 import { ProviderSupportRequestEvidence } from './provider-support-request-evidence';
 import { ProviderSupportPostReviewEvidence } from './provider-support-post-review-evidence';
+import { providerSupportListMetrics } from './provider-support-list-coverage';
+import {
+  hasUnknownProviderSupportScope,
+  providerSupportModeLabel,
+  providerSupportScopeLabel,
+} from './provider-support-presentation';
 import { ProviderTenantPicker } from './provider-tenant-picker';
 
 function CreateSupportSessionDialog({
@@ -171,9 +177,7 @@ function CreateSupportSessionDialog({
                 label={
                   <Stack direction="row" alignItems="center" gap={0.75}>
                     <Typography variant="body2">
-                      {t(`support.scopes.${scope.scopeCode}`, {
-                        defaultValue: scope.displayName,
-                      })}
+                      {providerSupportScopeLabel(t, scope.scopeCode)}
                     </Typography>
                     <Chip
                       size="small"
@@ -324,16 +328,6 @@ export function ProviderSupport() {
     !supportContext.isLoading &&
     !supportContext.isError;
   const requestedTenantId = searchParams.get('tenantId') ?? undefined;
-  const scopeLabels = useMemo(
-    () =>
-      new Map(
-        (scopeCatalog.data ?? []).map((scope) => [
-          scope.scopeCode,
-          t(`support.scopes.${scope.scopeCode}`, { defaultValue: scope.displayName }),
-        ])
-      ),
-    [scopeCatalog.data, t]
-  );
 
   useEffect(() => {
     if (requestedTenantId && canStartDiagnosis) setCreateOpen(true);
@@ -521,8 +515,21 @@ export function ProviderSupport() {
         headerName: t('support.columns.scopes'),
         minWidth: 260,
         flex: 1.2,
-        valueGetter: (_value, row) =>
-          row.scopes.map((scope) => scopeLabels.get(scope) ?? scope).join(', '),
+        renderCell: ({ row }) => {
+          const unknownScope = hasUnknownProviderSupportScope(row.scopes);
+          return (
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="body2" noWrap>
+                {row.scopes.map((scope) => providerSupportScopeLabel(t, scope)).join(', ')}
+              </Typography>
+              {unknownScope && (
+                <Typography variant="caption" color="warning.main" display="block" noWrap>
+                  {t('support.scopes.unknownEvidence')}
+                </Typography>
+              )}
+            </Box>
+          );
+        },
       },
       {
         field: 'accessMode',
@@ -534,7 +541,7 @@ export function ProviderSupport() {
             variant="outlined"
             color={row.accessMode === 'BREAK_GLASS' ? 'error' : 'default'}
             icon={row.accessMode === 'BREAK_GLASS' ? <ShieldAlert size={14} /> : undefined}
-            label={t(`support.modes.${row.accessMode}`)}
+            label={providerSupportModeLabel(t, row.accessMode)}
           />
         ),
       },
@@ -577,7 +584,7 @@ export function ProviderSupport() {
           ) : null,
       },
     ],
-    [canWrite, revokeSession, scopeLabels, t]
+    [canWrite, revokeSession, t]
   );
 
   const requestColumns = useMemo<GridColDef<ProviderSupportAccessRequest>[]>(
@@ -608,10 +615,13 @@ export function ProviderSupport() {
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="body2" noWrap>
-              {row.scopes
-                .map((scope) => t(`support.scopes.${scope}`, { defaultValue: scope }))
-                .join(', ')}
+              {row.scopes.map((scope) => providerSupportScopeLabel(t, scope)).join(', ')}
             </Typography>
+            {hasUnknownProviderSupportScope(row.scopes) && (
+              <Typography variant="caption" color="warning.main" display="block" noWrap>
+                {t('support.scopes.unknownEvidence')}
+              </Typography>
+            )}
             <Typography variant="caption" color="text.secondary">
               {t('support.minutes', { count: row.durationMinutes })} ·{' '}
               {display('riskTiers', row.riskTier)}
@@ -720,7 +730,9 @@ export function ProviderSupport() {
 
   const allSessions = sessions.data ?? [];
   const allRequests = requests.data ?? [];
-  const requestMetricsUnavailable = !requests.data && (requests.isLoading || requests.isError);
+  const listMetrics = providerSupportListMetrics(requests.data, sessions.data);
+  const requestMetricsUnavailable = listMetrics.pendingApproval == null;
+  const sessionMetricsUnavailable = listMetrics.active == null;
   const visibleSessions = allSessions.filter((session) => {
     if (sessionFilter === 'ALL') return true;
     return sessionFilter === 'ACTIVE'
@@ -730,31 +742,25 @@ export function ProviderSupport() {
   const metrics = [
     {
       label: t('support.metrics.pendingApproval'),
-      value: requestMetricsUnavailable
-        ? '—'
-        : allRequests.filter((request) => request.lifecycleState === 'PENDING_APPROVAL').length,
+      value: listMetrics.pendingApproval ?? '—',
       icon: ShieldCheck,
       unavailable: requestMetricsUnavailable,
     },
     {
       label: t('support.metrics.active'),
-      value: allSessions.filter((session) => session.lifecycleState === 'ACTIVE').length,
+      value: listMetrics.active ?? '—',
       icon: KeyRound,
-      unavailable: false,
+      unavailable: sessionMetricsUnavailable,
     },
     {
       label: t('support.metrics.breakGlass'),
-      value: allSessions.filter(
-        (session) => session.lifecycleState === 'ACTIVE' && session.accessMode === 'BREAK_GLASS'
-      ).length,
+      value: listMetrics.breakGlass ?? '—',
       icon: ShieldAlert,
-      unavailable: false,
+      unavailable: sessionMetricsUnavailable,
     },
     {
       label: t('support.metrics.pendingReview'),
-      value: requestMetricsUnavailable
-        ? '—'
-        : allRequests.filter((request) => request.postReviewState === 'PENDING').length,
+      value: listMetrics.pendingReview ?? '—',
       icon: ClipboardCheck,
       unavailable: requestMetricsUnavailable,
     },
@@ -812,6 +818,9 @@ export function ProviderSupport() {
           ) : undefined
         }
       />
+      {requests.data != null && !listMetrics.requestsComplete && (
+        <Alert severity="warning">{t('support.requestCoverageLimited')}</Alert>
+      )}
       {canWrite && executableScopeCatalog.length === 0 && (
         <Alert severity="warning">{t('support.previewScopeUnavailable')}</Alert>
       )}
@@ -890,6 +899,9 @@ export function ProviderSupport() {
         title={t('support.sessionsTitle')}
         description={t('support.sessionsDescription')}
       />
+      {sessions.data != null && !listMetrics.sessionsComplete && (
+        <Alert severity="warning">{t('support.sessionCoverageLimited')}</Alert>
+      )}
       <ToggleButtonGroup
         exclusive
         size="small"
@@ -917,14 +929,18 @@ export function ProviderSupport() {
         <GuidedEmptyState
           kind={allSessions.length ? 'no-results' : 'first-use'}
           title={
-            allSessions.length
-              ? t('support.empty.noResultsTitle')
-              : t('support.empty.firstUseTitle')
+            !listMetrics.sessionsComplete
+              ? t('support.empty.coverageLimitedTitle')
+              : allSessions.length
+                ? t('support.empty.noResultsTitle')
+                : t('support.empty.firstUseTitle')
           }
           description={
-            allSessions.length
-              ? t('support.empty.noResultsDescription')
-              : t('support.empty.firstUseDescription')
+            !listMetrics.sessionsComplete
+              ? t('support.empty.coverageLimitedDescription')
+              : allSessions.length
+                ? t('support.empty.noResultsDescription')
+                : t('support.empty.firstUseDescription')
           }
           actionLabel={
             allSessions.length

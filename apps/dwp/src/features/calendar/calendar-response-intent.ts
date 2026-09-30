@@ -7,7 +7,7 @@ export type CalendarResponseIntent = Readonly<{
   idempotencyKey: string;
 }>;
 
-export type CalendarResponseCommand = Readonly<{
+type CalendarResponseCommand = Readonly<{
   eventId: string;
   response: Response;
   expectedVersion: number;
@@ -26,9 +26,7 @@ export function prepareCalendarResponseCommand(
 ): Readonly<{ intent: CalendarResponseIntent; command: CalendarResponseCommand }> {
   const fingerprint = `${event.eventId}:${event.version}:${response}`;
   const intent =
-    current?.fingerprint === fingerprint
-      ? current
-      : { fingerprint, idempotencyKey: keyFactory() };
+    current?.fingerprint === fingerprint ? current : { fingerprint, idempotencyKey: keyFactory() };
   return {
     intent,
     command: {

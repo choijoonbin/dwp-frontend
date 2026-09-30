@@ -12,8 +12,8 @@ import {
 
 import type { ProductNavigationItem } from '../../components/product-manifest';
 
-export type CalendarSection = 'start' | 'plan' | 'coordinate' | 'insights' | 'utility' | 'admin';
-export type CalendarView =
+type CalendarSection = 'start' | 'plan' | 'coordinate' | 'insights' | 'utility' | 'admin';
+type CalendarView =
   | 'home'
   | 'schedule'
   | 'focus'
@@ -26,12 +26,12 @@ export type CalendarView =
   | 'admin-company-calendars'
   | 'admin-policies';
 
-export type CalendarNavigationItem = ProductNavigationItem & {
+type CalendarNavigationItem = ProductNavigationItem & {
   section: CalendarSection;
   view: CalendarView;
 };
 
-export type CalendarNavigationGroup = {
+type CalendarNavigationGroup = {
   id: CalendarSection;
   items: readonly CalendarNavigationItem[];
 };

@@ -6,6 +6,7 @@ export type AuthPolicyResponse = {
   ssoLoginEnabled: boolean;
   ssoProviderKey?: string | null;
   requireMfa: boolean;
+  tokenTtlSec?: number | null;
 };
 
 export type LoginOptionsResponse = {

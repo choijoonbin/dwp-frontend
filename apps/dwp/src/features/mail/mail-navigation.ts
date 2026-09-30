@@ -166,8 +166,6 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
   },
 ];
 
-export const MAIL_DEFAULT_PATH = '/mail/home';
-
 export function findMailNavigationItem(pathname: string): MailNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
   return MAIL_NAVIGATION.flatMap((group) => group.items).find((item) => item.path === normalized);

@@ -42,6 +42,13 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
+import {
+  providerGovernanceBehaviorLabel,
+  providerGovernanceGuidanceLabel,
+  providerGovernanceTargetLabel,
+  providerMaintenanceImpactLabel,
+} from './provider-health-presentation';
+import { providerOperationLabel } from './provider-operation-presentation';
 
 type ReliabilityView = 'SLO' | 'DRIFT' | 'MAINTENANCE';
 
@@ -513,6 +520,9 @@ export function ProviderReliability({
 
       {view === 'DRIFT' && (
         <Stack divider={<Divider flexItem />} sx={{ mt: 1 }}>
+          {reliability.data.driftFindingsHasMore === true && (
+            <Alert severity="warning">{t('reliability.drift.coverageLimited')}</Alert>
+          )}
           {reliability.data.driftFindings.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ py: 2.5 }}>
               {t('reliability.drift.empty')}
@@ -536,12 +546,15 @@ export function ProviderReliability({
                     {finding.controlName}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" noWrap display="block">
-                    {finding.tenantName || finding.targetType} · {finding.controlBehavior} ·{' '}
-                    {finding.guidanceLevel}
+                    {finding.tenantName || providerGovernanceTargetLabel(t, finding.targetType)} ·{' '}
+                    {providerGovernanceBehaviorLabel(t, finding.controlBehavior)} ·{' '}
+                    {providerGovernanceGuidanceLabel(t, finding.guidanceLevel)}
                   </Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary">
-                  {finding.remediationOperationType || t('reliability.drift.manualReview')}
+                  {finding.remediationOperationType
+                    ? providerOperationLabel(t, finding.remediationOperationType)
+                    : t('reliability.drift.manualReview')}
                 </Typography>
                 <ProviderStatusChip state={finding.evaluationResult} />
               </Stack>
@@ -552,6 +565,9 @@ export function ProviderReliability({
 
       {view === 'MAINTENANCE' && (
         <Stack divider={<Divider flexItem />} sx={{ mt: 1 }}>
+          {reliability.data.maintenanceWindowsHasMore === true && (
+            <Alert severity="warning">{t('reliability.maintenance.coverageLimited')}</Alert>
+          )}
           {reliability.data.maintenanceWindows.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ py: 2.5 }}>
               {t('reliability.maintenance.empty')}
@@ -571,7 +587,7 @@ export function ProviderReliability({
                   </Typography>
                   <Typography variant="caption" color="text.secondary" noWrap display="block">
                     {maintenance.scopeLabel} ·{' '}
-                    {t(`reliability.maintenance.impact.${maintenance.impactType}`)}
+                    {providerMaintenanceImpactLabel(t, maintenance.impactType)}
                   </Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary">

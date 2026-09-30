@@ -27,10 +27,102 @@
       "TENANT_ADMINISTRATOR": "Tenant administrator"
     },
     "paths": "Managed paths: {{paths}}",
+    "pathCount": "{{count}} settings are governed by the organization policy.",
+    "valueLabels": {
+      "yes": "Yes",
+      "no": "No"
+    },
     "pathLabels": {
       "appearance.fontFamily": "Product font",
       "appearance.accentColor": "Brand accent",
-      "navigation.pattern": "Navigation pattern"
+      "navigation.pattern": "Navigation pattern",
+      "unknown": "Organization-managed setting"
+    },
+    "effective": {
+      "title": "Effective organization settings",
+      "description": "See the exact tenant and user sources that produced each value. Locked values and supported user overrides are identified separately.",
+      "loadError": "Effective setting provenance could not be loaded. Your current values are not inferred from local display state.",
+      "preferenceLoadError": "Locale inheritance state could not be loaded.",
+      "preferenceLoading": "Loading locale inheritance state",
+      "emptyTitle": "No organization-managed settings are available",
+      "emptyDescription": "The setting owner registry has not published any settings for this account.",
+      "locked": "Owner locked",
+      "overrideAllowed": "User override allowed",
+      "settings": {
+        "authentication": {
+          "defaultLoginType": { "title": "Default sign-in method" },
+          "requireMfa": { "title": "Additional verification" },
+          "tokenTtlSec": { "title": "Sign-in duration" }
+        },
+        "identity": {
+          "defaultLocale": { "title": "Organization display language" },
+          "preferredLocale": { "title": "Display language" }
+        },
+        "unknown": {
+          "title": "Organization-managed setting",
+          "value": "Managed policy applied"
+        }
+      },
+      "values": {
+        "login": { "LOCAL": "Email and password", "SSO": "Company single sign-on" },
+        "required": "Required",
+        "optional": "Optional",
+        "hours": "{{count}} hours",
+        "minutes": "{{count}} minutes"
+      },
+      "evidence": {
+        "observed": "Confirmed from current policy",
+        "drifted": "Current value differs from the latest governed publication",
+        "unavailable": "Current state unavailable"
+      },
+      "source": {
+        "organization": "Organization policy",
+        "owner": "Setting owner",
+        "user": "My selection",
+        "unavailable": "Source unavailable"
+      },
+      "overrideState": {
+        "OVERRIDDEN": "Tenant override",
+        "INHERITED": "Owner default inherited",
+        "UNMANAGED_BASELINE": "Owner baseline",
+        "OWNER_LOCKED": "Managed by the authentication policy owner",
+        "DRIFTED": "Publication drift detected",
+        "UNAVAILABLE": "Effective state unavailable"
+      },
+      "lineage": {
+        "organization": "Organization default · {{value}}",
+        "user": "My setting · {{value}}",
+        "owner": "{{owner}} contract v{{version}}",
+        "applied": "Currently applied",
+        "overridden": "Replaced by my setting",
+        "inherited": "Inherits organization default"
+      },
+      "lineageReasons": {
+        "PUBLISHED_AUTH_POLICY": "Matches the latest independently published authentication policy",
+        "DIRECT_OWNER_BASELINE": "Read directly from the current owner",
+        "PUBLISHED_TENANT_OVERRIDE": "Matches the published tenant override",
+        "PUBLISHED_INHERIT_RESTORE": "Matches the published owner-default restoration",
+        "OWNER_CHANGED_OUTSIDE_WORKFLOW": "The owner value changed after the latest authentication-policy publication",
+        "OWNER_CHANGED_OUTSIDE_REGISTRY": "The owner value changed after the latest setting publication",
+        "UNKNOWN": "Owner provenance is unavailable"
+      },
+      "owners": {
+        "authPolicy": "Authentication policy",
+        "tenantDirectory": "Tenant identity directory",
+        "registeredOwner": "Registered setting owner"
+      },
+      "localeOverride": "Locale override {{current}} is active. Restoring inheritance will use the tenant default {{inherited}}.",
+      "localeInherited": "Locale inherits the tenant default {{inherited}}.",
+      "restore": {
+        "action": "Restore inheritance",
+        "title": "Restore tenant locale inheritance",
+        "description": "Remove only your locale override after reviewing the versioned before-and-after values.",
+        "preview": "Current override {{before}} → tenant default {{after}} · source version {{version}}",
+        "cancel": "Cancel",
+        "confirm": "Restore inheritance",
+        "completed": "Tenant locale inheritance restored.",
+        "failed": "The locale changed after this preview or could not be restored. Reload and try again."
+      }
     },
     "exceptions": {
       "title": "My exception requests",
@@ -39,6 +131,8 @@
       "pending": "Pending review",
       "cancel": "Cancel request",
       "loadError": "Exception request history could not be loaded.",
+      "loading": "Loading exception request history",
+      "valueUnavailable": "Available only to the policy owner",
       "emptyTitle": "No exception requests",
       "emptyDescription": "You are currently using your organization's managed defaults.",
       "requestedValue": "Requested value: {{value}} · {{date}}",
@@ -48,7 +142,8 @@
         "APPROVED": "Approved",
         "REJECTED": "Rejected",
         "CANCELLED": "Cancelled",
-        "EXPIRED": "Expired"
+        "EXPIRED": "Expired",
+        "UNAVAILABLE": "State unavailable"
       },
       "dialog": {
         "title": "Request a {{setting}} exception",
@@ -222,9 +317,22 @@
       "empty": "No work application connections are configured for this tenant.",
       "scopes": "Scopes: {{scopes}}",
       "noScopes": "No granted scopes",
+      "permissions": {
+        "mailBasicRead": "Read basic mail information",
+        "mailRead": "Read mail",
+        "mailManage": "Read and manage mail",
+        "calendarRead": "Read calendars",
+        "calendarManage": "Read and manage calendars",
+        "backgroundAccess": "Keep the connection active in the background",
+        "signInIdentity": "Confirm sign-in identity",
+        "basicProfile": "Read basic profile",
+        "emailAddress": "Read email address",
+        "unknown": "Additional permission",
+        "unknownEvidence": "One or more permission details are unavailable. Technical scope codes are not shown or inferred."
+      },
       "lastSync": "Last successful sync: {{date}}",
       "neverSynced": "No successful sync recorded",
-      "actionRequired": "Action required: {{code}}",
+      "actionRequired": "This connection needs attention. Review its status and renew authorization before syncing.",
       "transferBoundary": "This view reports only mail and calendar synchronization returned by the productivity-connection owner. There is no owner contract or API for an aggregated cross-product account-data transfer status.",
       "sync": "Sync now",
       "connect": "Connect",
@@ -234,7 +342,8 @@
         "NOT_CONNECTED": "Not connected",
         "CONNECTED": "Connected",
         "REAUTHORIZATION_REQUIRED": "Renewal required",
-        "REVOKED": "Disconnected"
+        "REVOKED": "Disconnected",
+        "UNAVAILABLE": "Current state unavailable"
       },
       "disconnectDialog": {
         "title": "Disconnect work application",
@@ -283,9 +392,18 @@
         },
         "states": {
           "RECEIVED": "Internally received",
-          "CANCELLED": "Cancelled"
+          "CANCELLED": "Cancelled",
+          "UNAVAILABLE": "Processing state unavailable"
         },
         "createdAt": "Received {{date}}",
+        "receipt": "Intake receipt {{receiptId}} · issued {{date}} · registration evidence only",
+        "lifecycle": "Privacy request lifecycle",
+        "events": {
+          "REQUEST_RECEIVED": "Request registered",
+          "FULFILLMENT_BOUNDARY_RECORDED": "External owner connection required",
+          "REQUEST_CANCELLED": "Request cancelled by owner",
+          "UNAVAILABLE": "Lifecycle evidence unavailable"
+        },
         "cancel": "Cancel request",
         "received": "The privacy request was registered in the internal review ledger.",
         "cancelled": "The privacy request was cancelled.",
@@ -301,9 +419,13 @@
       "history": {
         "title": "Product analytics consent history",
         "empty": "No choices have been recorded.",
+        "recentSummary": "Showing the latest {{displayed}} of {{loaded}} records returned in this response.",
+        "moreAvailable": "Earlier internal consent records exist beyond this bounded response.",
+        "coverageBoundary": "This ledger covers only DWP product analytics consent. HR, identity-provider, and connected-app consent sources are not combined or inferred.",
         "states": {
           "GRANTED": "Granted",
-          "WITHDRAWN": "Withdrawn"
+          "WITHDRAWN": "Withdrawn",
+          "UNAVAILABLE": "Consent state unavailable"
         }
       },
       "ownerBoundary": "This screen owns consent and request-intake records. Data collection, archive creation, account deletion, and completion notices remain incomplete until each owner service is connected for execution."
@@ -358,6 +480,8 @@
     "title": "Security & sessions",
     "workspaceFallback": "Workspace",
     "activeSessions": "Active browser sessions",
+    "emptyTitle": "No active browser sessions were returned",
+    "emptyDescription": "Refresh to check again. No session is inferred when the owner returns an empty list.",
     "loading": "Loading active sessions",
     "current": "Current",
     "deviceLabel": "{{browser}} on {{platform}}",
@@ -387,9 +511,20 @@
       "mfaRequired": "Required by tenant policy",
       "mfaNotRequired": "Not required by tenant policy",
       "mfaDetail": "This is the tenant requirement, not a claim about your enrollment status.",
+      "mfaEnrollment": "My MFA enrollment",
+      "mfaEnrolled": "Registered in the identity directory",
+      "mfaNotEnrolled": "Not registered in the identity directory",
+      "mfaEnrollmentUnavailable": "Enrollment state unavailable",
+      "mfaEnrollmentDetail": "This is your Auth directory registration state. External identity-provider enrollment is not inferred.",
       "methods": {
         "LOCAL": "Password",
-        "SSO": "Enterprise SSO"
+        "SSO": "Enterprise SSO",
+        "UNAVAILABLE": "Sign-in method unavailable"
+      },
+      "protocols": {
+        "OIDC": "OpenID Connect",
+        "SAML": "SAML",
+        "UNAVAILABLE": "Protocol unavailable"
       },
       "states": {
         "healthy": "Ready",
@@ -436,7 +571,8 @@
       "scope": {
         "TENANT": "Tenant",
         "ORG_UNIT": "Organization scope",
-        "RESOURCE": "Resource scope"
+        "RESOURCE": "Resource scope",
+        "UNAVAILABLE": "Scope unavailable"
       },
       "state": {
         "ACTIVE": "Active",
@@ -444,7 +580,8 @@
         "DENIED": "Denied",
         "CANCELLED": "Cancelled",
         "REVOKED": "Revoked",
-        "EXPIRED": "Expired"
+        "EXPIRED": "Expired",
+        "UNAVAILABLE": "State unavailable"
       }
     },
     "actions": {
@@ -456,7 +593,8 @@
       "signingOut": "Signing out..."
     },
     "errors": {
-      "load": "Active sessions could not be loaded."
+      "load": "Active sessions could not be loaded.",
+      "stale": "The latest refresh failed. The last successfully loaded sessions remain visible below."
     },
     "toasts": {
       "otherSessionsSignedOut": "Other sessions have been signed out.",
@@ -581,6 +719,31 @@
         "providerDescription": "Provider-identity values kept separate from customer tenant policy."
       }
     },
+    "workspace": {
+      "title": "Settings workspace freshness",
+      "runtime": {
+        "CURRENT": "Current",
+        "REVIEW_REQUIRED": "Review required",
+        "OFFLINE_CACHED": "Offline · read-only snapshot",
+        "OFFLINE_UNAVAILABLE": "Offline · no snapshot",
+        "REFRESH_FAILED_CACHED": "Refresh failed · read-only snapshot",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "freshness": {
+        "CURRENT": "The current personal-settings snapshot has been explicitly confirmed.",
+        "UNCONFIRMED": "This settings workspace has not been confirmed yet.",
+        "CHANGED_SINCE_CONFIRMATION": "Settings activity changed after the last confirmation. Review and reconfirm it.",
+        "REVIEW_DUE": "The 30-day review interval has elapsed. Reconfirm the workspace after review.",
+        "UNAVAILABLE": "No authoritative personal-settings snapshot is available."
+      },
+      "observedAt": "Owner observed {{date}}",
+      "confirmedAt": "Confirmed {{date}}",
+      "neverConfirmed": "Never confirmed",
+      "memoryOnly": "The last successful response remains visible only in memory. Changes are disabled until a successful refresh.",
+      "refresh": "Refresh",
+      "reconfirm": "I reviewed these settings",
+      "reconfirmError": "The workspace changed or could not be reconfirmed. Refresh and review the latest state."
+    },
     "observations": {
       "label": "Security recommendation and recent-setting observation coverage",
       "security": {
@@ -594,10 +757,13 @@
         "title": "Recent settings activity",
         "loading": "Loading recent activity.",
         "loadError": "Recent settings activity could not be loaded; no activity is inferred.",
+        "providerBoundary": "Personal tenant settings activity is not available for Provider identities.",
         "empty": "No settings activity has been recorded yet.",
+        "unknownSetting": "Setting unavailable",
         "types": {
           "VIEW": "Viewed",
-          "CHANGE": "Changed"
+          "CHANGE": "Changed",
+          "UNAVAILABLE": "Activity type unavailable"
         }
       }
     },

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, RefreshCw, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -6,6 +6,7 @@ import {
   decidePreferenceException,
   listAdminPreferenceExceptions,
   listIdentityUsers,
+  usePermissions,
   useToast,
   type IdentityUserAccess,
   type PreferenceExceptionRequest,
@@ -37,6 +38,12 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import {
+  preferenceExceptionOwnerLabelKey,
+  preferenceExceptionPathLabelKey,
+  preferenceExceptionStatePresentation,
+  preferenceExceptionValuePresentation,
+} from './preference-exception-presentation';
 
 import type { GridColDef } from '@mui/x-data-grid';
 
@@ -50,20 +57,6 @@ const TERMINAL_STATES: PreferenceExceptionState[] = [
   'CANCELLED',
   'EXPIRED',
 ];
-
-const stateColor: Record<PreferenceExceptionState, 'warning' | 'success' | 'error' | 'default'> = {
-  PENDING: 'warning',
-  APPROVED: 'success',
-  REJECTED: 'error',
-  CANCELLED: 'default',
-  EXPIRED: 'default',
-};
-
-function displayValue(value: unknown): string {
-  if (typeof value === 'string') return value;
-  if (value === null || value === undefined) return '—';
-  return JSON.stringify(value);
-}
 
 function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -150,6 +143,8 @@ export function PreferenceExceptionManager() {
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canManage = permissionsLoaded && hasPermission('ADMIN.MANAGED_PREFERENCES', 'MANAGE');
   const [state, setState] = useState<QueueState>('PENDING');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [decision, setDecision] = useState<Decision | null>(null);
@@ -176,6 +171,17 @@ export function PreferenceExceptionManager() {
   const person = (userId: number): IdentityUserAccess | undefined => users.get(userId);
   const personName = (userId: number) =>
     person(userId)?.displayName ?? t('preferenceExceptions.userFallback', { id: userId });
+  const pathLabel = useCallback((path: string) => t(preferenceExceptionPathLabelKey(path)), [t]);
+  const requestedValueLabel = useCallback(
+    (request: PreferenceExceptionRequest) => {
+      const presentation = preferenceExceptionValuePresentation(
+        request.preferencePath,
+        request.requestedValue
+      );
+      return presentation.kind === 'literal' ? presentation.value : t(presentation.key);
+    },
+    [t]
+  );
 
   const columns = useMemo<GridColDef<PreferenceExceptionRequest>[]>(
     () => [
@@ -193,14 +199,14 @@ export function PreferenceExceptionManager() {
         headerName: t('preferenceExceptions.columns.setting'),
         minWidth: 190,
         flex: 1,
-        valueFormatter: (value) => t(`preferenceExceptions.paths.${String(value)}`),
+        valueFormatter: (value) => pathLabel(String(value)),
       },
       {
         field: 'requestedValue',
         headerName: t('preferenceExceptions.columns.requestedValue'),
         minWidth: 150,
         flex: 0.8,
-        valueFormatter: (value) => displayValue(value),
+        valueGetter: (_value, row) => requestedValueLabel(row),
       },
       {
         field: 'requestState',
@@ -209,9 +215,9 @@ export function PreferenceExceptionManager() {
         renderCell: ({ row }) => (
           <Chip
             size="small"
-            color={stateColor[row.requestState]}
+            color={preferenceExceptionStatePresentation(row.requestState).color}
             variant={row.requestState === 'PENDING' ? 'filled' : 'outlined'}
-            label={t(`preferenceExceptions.states.${row.requestState}`)}
+            label={t(preferenceExceptionStatePresentation(row.requestState).labelKey)}
           />
         ),
       },
@@ -223,7 +229,7 @@ export function PreferenceExceptionManager() {
           formatDate(String(value), { dateStyle: 'medium', timeStyle: 'short' }),
       },
     ],
-    [t, users]
+    [pathLabel, requestedValueLabel, t, users]
   );
 
   const refresh = async () => {
@@ -236,7 +242,7 @@ export function PreferenceExceptionManager() {
   };
 
   const submitDecision = async (reason: string, evidenceRef: string) => {
-    if (!selected || !decision) return;
+    if (!canManage || !selected || !decision) return;
     setBusy(true);
     try {
       await decidePreferenceException(selected.requestId, {
@@ -254,8 +260,8 @@ export function PreferenceExceptionManager() {
         )
       );
       setDecision(null);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('common.operationError'));
+    } catch {
+      toast.error(t('common.operationError'));
     } finally {
       setBusy(false);
     }
@@ -265,12 +271,7 @@ export function PreferenceExceptionManager() {
     return <ManagementPanelLoading label={t('preferenceExceptions.loading')} />;
   }
   if (requestsQuery.isError || usersQuery.isError) {
-    const error = requestsQuery.error ?? usersQuery.error;
-    return (
-      <ManagementPanelError
-        message={error instanceof Error ? error.message : t('common.operationError')}
-      />
-    );
+    return <ManagementPanelError message={t('common.operationError')} />;
   }
 
   const counts = STATES.filter((candidate) => candidate !== 'ALL').map((candidate) => ({
@@ -365,6 +366,11 @@ export function PreferenceExceptionManager() {
                 minVisibleRows={5}
                 maxVisibleRows={10}
                 onRowClick={({ row }) => setSelectedId(row.requestId)}
+                onCellKeyDown={({ row }, event) => {
+                  if (event.key !== 'Enter' && event.key !== ' ') return;
+                  event.preventDefault();
+                  setSelectedId(row.requestId);
+                }}
                 sx={{ border: 0, borderRadius: 0 }}
               />
             ) : (
@@ -405,16 +411,18 @@ export function PreferenceExceptionManager() {
                     >
                       <Box sx={{ minWidth: 0 }}>
                         <Typography variant="subtitle2">
-                          {t(`preferenceExceptions.paths.${request.preferencePath}`)}
+                          {pathLabel(request.preferencePath)}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                          {personName(request.userId)} · {displayValue(request.requestedValue)}
+                          {personName(request.userId)} · {requestedValueLabel(request)}
                         </Typography>
                       </Box>
                       <Chip
                         size="small"
-                        color={stateColor[request.requestState]}
-                        label={t(`preferenceExceptions.states.${request.requestState}`)}
+                        color={preferenceExceptionStatePresentation(request.requestState).color}
+                        label={t(
+                          preferenceExceptionStatePresentation(request.requestState).labelKey
+                        )}
                       />
                     </Box>
                   </Box>
@@ -431,21 +439,23 @@ export function PreferenceExceptionManager() {
               {selected && (
                 <DetailInspector
                   open
-                  title={t(`preferenceExceptions.paths.${selected.preferencePath}`)}
+                  title={pathLabel(selected.preferencePath)}
                   subtitle={personName(selected.userId)}
                   closeLabel={t('common.actions.close')}
                   onClose={() => setSelectedId(null)}
                   status={
                     <Chip
                       size="small"
-                      color={stateColor[selected.requestState]}
-                      label={t(`preferenceExceptions.states.${selected.requestState}`)}
+                      color={preferenceExceptionStatePresentation(selected.requestState).color}
+                      label={t(
+                        preferenceExceptionStatePresentation(selected.requestState).labelKey
+                      )}
                     />
                   }
                 >
                   <Stack divider={<Divider flexItem />}>
                     <DetailRow label={t('preferenceExceptions.fields.requestedValue')}>
-                      {displayValue(selected.requestedValue)}
+                      {requestedValueLabel(selected)}
                     </DetailRow>
                     <DetailRow label={t('preferenceExceptions.fields.justification')}>
                       {selected.businessJustification}
@@ -454,7 +464,7 @@ export function PreferenceExceptionManager() {
                       {selected.businessImpact}
                     </DetailRow>
                     <DetailRow label={t('preferenceExceptions.fields.owner')}>
-                      {selected.assignedOwnerRef}
+                      {t(preferenceExceptionOwnerLabelKey(selected.assignedOwnerRef))}
                     </DetailRow>
                     {selected.requestedUntil && (
                       <DetailRow label={t('preferenceExceptions.fields.requestedUntil')}>
@@ -475,7 +485,7 @@ export function PreferenceExceptionManager() {
                       </DetailRow>
                     )}
                   </Stack>
-                  {selected.requestState === 'PENDING' && (
+                  {canManage && selected.requestState === 'PENDING' && (
                     <>
                       <Alert severity="info" sx={{ mt: 2 }}>
                         {t('preferenceExceptions.approvalNotice')}
@@ -520,7 +530,7 @@ export function PreferenceExceptionManager() {
       </Stack>
       <DecisionDialog
         key={`${selected?.requestId ?? 'none'}-${decision ?? 'none'}`}
-        request={selected}
+        request={canManage ? selected : null}
         decision={decision}
         busy={busy}
         onClose={() => setDecision(null)}

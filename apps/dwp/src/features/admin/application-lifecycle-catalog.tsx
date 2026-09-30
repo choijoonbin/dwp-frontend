@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { ArrowUpRight, Search, ShieldCheck } from 'lucide-react';
 import { ActionButton, FormField, GuidedEmptyState } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -14,10 +15,12 @@ import Typography from '@mui/material/Typography';
 import type {
   AppLifecycleCatalogItem,
   AppLifecycleObservationState,
+  AppLifecycleProvenance,
 } from './app-catalog-lifecycle-model';
 
 function observationColor(state: AppLifecycleObservationState) {
   if (state === 'OBSERVED') return 'success' as const;
+  if (state === 'LOADING') return 'info' as const;
   if (state === 'UNAVAILABLE') return 'warning' as const;
   return 'default' as const;
 }
@@ -68,8 +71,12 @@ function ApplicationCard({ item }: { item: AppLifecycleCatalogItem }) {
   const registryDetail =
     item.registry.state === 'OBSERVED'
       ? t('catalog.applications.details.registry', {
-          lifecycle: item.registry.lifecycleState,
-          scope: item.registry.scope,
+          lifecycle: t(`catalog.applications.lifecycle.${item.registry.lifecycleState}`, {
+            defaultValue: t('catalog.applications.lifecycle.UNKNOWN'),
+          }),
+          scope: t(`catalog.applications.scopes.${item.registry.scope}`, {
+            defaultValue: t('catalog.applications.scopes.UNKNOWN'),
+          }),
           revision: item.registry.revision,
         })
       : undefined;
@@ -91,10 +98,10 @@ function ApplicationCard({ item }: { item: AppLifecycleCatalogItem }) {
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.25} justifyContent="space-between">
         <Box sx={{ minWidth: 0 }}>
           <Typography component="h3" variant="h6" noWrap>
-            {item.displayName}
+            {item.displayName ?? t('catalog.applications.unknownName')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {item.appKey}
+            {t('catalog.applications.details.governedIdentity')}
           </Typography>
         </Box>
         {managementLinkAvailable && item.managementPath ? (
@@ -147,7 +154,13 @@ function ApplicationCard({ item }: { item: AppLifecycleCatalogItem }) {
           detail={
             item.currentActorEntitlement.sources.length
               ? t('catalog.applications.details.accessSources', {
-                  sources: item.currentActorEntitlement.sources.join(', '),
+                  sources: item.currentActorEntitlement.sources
+                    .map((source) =>
+                      t(`catalog.applications.accessSources.${source}`, {
+                        defaultValue: t('catalog.applications.accessSources.UNKNOWN'),
+                      })
+                    )
+                    .join(', '),
                 })
               : undefined
           }
@@ -155,12 +168,37 @@ function ApplicationCard({ item }: { item: AppLifecycleCatalogItem }) {
         <Observation
           label={t('catalog.applications.stages.installation')}
           state={item.installation.state}
-          detail={t('catalog.applications.details.ownerContractUnavailable')}
+          detail={
+            item.installation.state === 'OBSERVED'
+              ? t('catalog.applications.details.installation', {
+                  lifecycle: t(
+                    `catalog.applications.lifecycle.${item.installation.lifecycleState}`,
+                    { defaultValue: t('catalog.applications.lifecycle.UNKNOWN') }
+                  ),
+                  active: item.installation.activeSeats,
+                  reserved: item.installation.reservedSeats,
+                  capacity:
+                    item.installation.seatCapacity ??
+                    t('catalog.applications.details.unboundedCapacity'),
+                })
+              : item.installation.state === 'UNAVAILABLE'
+                ? t('catalog.applications.details.ownerContractUnavailable')
+                : undefined
+          }
         />
         <Observation
           label={t('catalog.applications.stages.workforceAssignment')}
           state={item.workforceAssignment.state}
-          detail={t('catalog.applications.details.ownerContractUnavailable')}
+          detail={
+            item.workforceAssignment.state === 'OBSERVED'
+              ? t('catalog.applications.details.workforceAssignments', {
+                  active: item.workforceAssignment.active,
+                  pending: item.workforceAssignment.pending,
+                })
+              : item.workforceAssignment.state === 'UNAVAILABLE'
+                ? t('catalog.applications.details.ownerContractUnavailable')
+                : undefined
+          }
         />
         <Observation
           label={t('catalog.applications.stages.runnable')}
@@ -197,10 +235,14 @@ function ApplicationCard({ item }: { item: AppLifecycleCatalogItem }) {
 
 export function ApplicationLifecycleCatalog({
   items,
+  loading,
   partialFailure,
+  provenance,
 }: {
   items: AppLifecycleCatalogItem[];
+  loading: boolean;
   partialFailure: boolean;
+  provenance: AppLifecycleProvenance;
 }) {
   const { t } = useTranslation('admin');
   const [query, setQuery] = useState('');
@@ -210,7 +252,7 @@ export function ApplicationLifecycleCatalog({
     return normalized
       ? items.filter(
           (item) =>
-            item.displayName.toLowerCase().includes(normalized) ||
+            (item.displayName ?? '').toLowerCase().includes(normalized) ||
             item.appKey.toLowerCase().includes(normalized)
         )
       : items;
@@ -227,25 +269,80 @@ export function ApplicationLifecycleCatalog({
         </Typography>
       </Box>
       <Alert severity="info">{t('catalog.applications.contractBoundary')}</Alert>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+          gap: 1,
+        }}
+      >
+        <Observation
+          label={t('catalog.applications.provenance.authority')}
+          state={provenance.authority.state}
+          detail={
+            provenance.authority.generatedAt
+              ? t('catalog.applications.provenance.authorityDetail', {
+                  observedAt: formatDate(provenance.authority.generatedAt, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  }),
+                  revision: provenance.authority.decisionRevision?.slice(0, 16) ?? '—',
+                  count: provenance.authority.sourceRevisionCount,
+                })
+              : undefined
+          }
+        />
+        <Observation
+          label={t('catalog.applications.provenance.adoption')}
+          state={provenance.adoption.state}
+          detail={
+            provenance.adoption.observedAt
+              ? t('catalog.applications.provenance.adoptionDetail', {
+                  observedAt: formatDate(provenance.adoption.observedAt, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  }),
+                  owners: provenance.adoption.ownerCount,
+                  exclusions: provenance.adoption.exclusionCount,
+                  coverage:
+                    provenance.adoption.coverageState === 'COMPLETE_INTERNAL_OWNERS'
+                      ? t('catalog.applications.provenance.coverage.complete')
+                      : t('catalog.applications.provenance.coverage.unavailable'),
+                })
+              : undefined
+          }
+        />
+      </Box>
+      {loading && <Alert severity="info">{t('catalog.applications.loading')}</Alert>}
       {partialFailure && (
         <Alert severity="warning">{t('catalog.applications.partialFailure')}</Alert>
       )}
-      <FormField
-        size="small"
-        label={t('catalog.applications.search')}
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search size={17} />
-              </InputAdornment>
-            ),
-          },
-        }}
-      />
-      {filtered.length ? (
+      {!loading && (
+        <FormField
+          size="small"
+          label={t('catalog.applications.search')}
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search size={17} />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      )}
+      {loading ? (
+        <Box
+          aria-label={t('catalog.applications.loading')}
+          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', xl: '1fr 1fr' }, gap: 1.5 }}
+        >
+          <Box sx={{ height: 280, borderRadius: 1.5, bgcolor: 'action.hover' }} />
+          <Box sx={{ height: 280, borderRadius: 1.5, bgcolor: 'action.hover' }} />
+        </Box>
+      ) : filtered.length ? (
         <Box
           sx={{
             display: 'grid',

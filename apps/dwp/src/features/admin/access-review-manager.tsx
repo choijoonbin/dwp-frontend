@@ -21,7 +21,7 @@ import {
   decideAccessReviewItem,
   getAccessReviewCampaign,
   listAccessReviewCampaigns,
-  useAuth,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate, useRoleDisplay } from '@dwp-frontend/shared-i18n';
@@ -54,7 +54,7 @@ import {
 } from '../../components/management-panel-state';
 import { localizedRoleIdentityColumn } from './localized-role-column';
 import { AccessReviewCampaignDialog } from './access-review-campaign-dialog';
-import { hasFullTenantAdminRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import { accessReviewLabelKey } from './access-review-presentation';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -64,8 +64,19 @@ import type {
   CreateAccessReviewCampaignRequest,
 } from '@dwp-frontend/shared-utils';
 
-function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+export function resolveAccessReviewCapabilities(
+  permissionsLoaded: boolean,
+  hasPermission: (resourceKey: string, permissionCode: string) => boolean
+) {
+  if (!permissionsLoaded) return { canManage: false, canApprove: false };
+  return {
+    canManage: hasPermission('ADMIN.ACCESS_REVIEWS', 'MANAGE'),
+    canApprove: hasPermission('ADMIN.ACCESS_REVIEWS', 'APPROVE'),
+  };
+}
+
+function errorMessage(_error: unknown, fallback: string): string {
+  return fallback;
 }
 
 function initials(value: string): string {
@@ -100,7 +111,7 @@ function RecommendationChip({ item }: { item: AccessReviewItem }) {
         recommendation === 'REVIEW' ? 'warning' : recommendation === 'KEEP' ? 'success' : 'default'
       }
       variant="outlined"
-      label={t(`accessReviews.recommendations.${recommendation}`)}
+      label={t(accessReviewLabelKey('recommendations', recommendation))}
     />
   );
 }
@@ -211,7 +222,8 @@ function DecisionDialog({
                   {t('accessReviews.evidence.source')}
                 </Typography>
                 <Typography variant="body2">
-                  {item.sourceDisplayName || t(`accessReviews.sources.${item.accessSourceType}`)}
+                  {item.sourceDisplayName ||
+                    t(accessReviewLabelKey('sources', item.accessSourceType))}
                 </Typography>
               </Box>
               <Box>
@@ -236,7 +248,10 @@ function DecisionDialog({
                 </Typography>
                 <Typography variant="body2">
                   {t(
-                    `accessReviews.recommendationReasons.${item.recommendationReason ?? 'EVIDENCE_UNAVAILABLE'}`
+                    accessReviewLabelKey(
+                      'recommendationReasons',
+                      item.recommendationReason ?? 'EVIDENCE_UNAVAILABLE'
+                    )
                   )}
                 </Typography>
               </Box>
@@ -283,12 +298,15 @@ function DecisionDialog({
 export function AccessReviewManager() {
   const { t } = useTranslation('admin');
   const displayRole = useRoleDisplay();
-  const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
-  const canManage = hasFullTenantAdminRole(auth.user?.roles ?? []);
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const { canManage, canApprove } = resolveAccessReviewCapabilities(
+    permissionsLoaded,
+    hasPermission
+  );
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [decisionItem, setDecisionItem] = useState<AccessReviewItem | null>(null);
@@ -335,6 +353,7 @@ export function AccessReviewManager() {
   };
 
   const createCampaign = async (request: CreateAccessReviewCampaignRequest) => {
+    if (!canManage) return;
     setBusy(true);
     try {
       const created = await createAccessReviewCampaign(request);
@@ -350,7 +369,7 @@ export function AccessReviewManager() {
   };
 
   const activate = async () => {
-    if (!selectedCampaign) return;
+    if (!canManage || !selectedCampaign) return;
     setBusy(true);
     try {
       await activateAccessReviewCampaign(selectedCampaign);
@@ -364,7 +383,7 @@ export function AccessReviewManager() {
   };
 
   const decide = async (decision: 'APPROVE' | 'REVOKE', reason: string) => {
-    if (!selectedCampaign || !decisionItem) return;
+    if (!canApprove || !selectedCampaign || !decisionItem) return;
     setBusy(true);
     try {
       await decideAccessReviewItem(selectedCampaign.campaignId, decisionItem, decision, reason);
@@ -379,7 +398,7 @@ export function AccessReviewManager() {
   };
 
   const complete = async () => {
-    if (!selectedCampaign) return;
+    if (!canManage || !selectedCampaign) return;
     setBusy(true);
     try {
       await completeAccessReviewCampaign(selectedCampaign);
@@ -426,7 +445,7 @@ export function AccessReviewManager() {
             <Chip
               size="small"
               variant="outlined"
-              label={t(`accessReviews.sources.${row.accessSourceType}`)}
+              label={t(accessReviewLabelKey('sources', row.accessSourceType))}
             />
             {row.sourceDisplayName && (
               <Typography variant="caption" color="text.secondary" noWrap display="block">
@@ -446,7 +465,10 @@ export function AccessReviewManager() {
             <RecommendationChip item={row} />
             <Typography variant="caption" color="text.secondary" noWrap display="block">
               {t(
-                `accessReviews.recommendationReasons.${row.recommendationReason ?? 'EVIDENCE_UNAVAILABLE'}`
+                accessReviewLabelKey(
+                  'recommendationReasons',
+                  row.recommendationReason ?? 'EVIDENCE_UNAVAILABLE'
+                )
               )}
             </Typography>
           </Box>
@@ -461,7 +483,7 @@ export function AccessReviewManager() {
             size="small"
             color={decisionColor(row.decision)}
             variant={row.decision === 'PENDING' ? 'outlined' : 'filled'}
-            label={t(`accessReviews.decisions.${row.decision}`)}
+            label={t(accessReviewLabelKey('decisions', row.decision))}
           />
         ),
       },
@@ -471,7 +493,7 @@ export function AccessReviewManager() {
         width: 148,
         renderCell: ({ row }) => (
           <Typography variant="caption" fontWeight={650}>
-            {t(`accessReviews.remediation.${row.remediationState}`)}
+            {t(accessReviewLabelKey('remediation', row.remediationState))}
           </Typography>
         ),
       },
@@ -483,7 +505,9 @@ export function AccessReviewManager() {
         filterable: false,
         align: 'right',
         renderCell: ({ row }) =>
-          row.decision === 'PENDING' && selectedCampaign?.lifecycleState === 'ACTIVE' ? (
+          canApprove &&
+          row.decision === 'PENDING' &&
+          selectedCampaign?.lifecycleState === 'ACTIVE' ? (
             <ActionIconButton
               size="small"
               label={t('accessReviews.actions.reviewFor', {
@@ -497,7 +521,7 @@ export function AccessReviewManager() {
           ) : null,
       },
     ],
-    [displayRole, selectedCampaign?.lifecycleState, t]
+    [canApprove, displayRole, selectedCampaign?.lifecycleState, t]
   );
 
   if (campaignsQuery.isLoading) {
@@ -617,7 +641,7 @@ export function AccessReviewManager() {
                         size="small"
                         color={statusColor(campaign.lifecycleState)}
                         variant="outlined"
-                        label={t(`accessReviews.states.${campaign.lifecycleState}`)}
+                        label={t(accessReviewLabelKey('states', campaign.lifecycleState))}
                       />
                     </Stack>
                     <Typography
@@ -626,7 +650,7 @@ export function AccessReviewManager() {
                       display="block"
                       sx={{ mt: 0.5 }}
                     >
-                      {t(`accessReviews.scopes.${campaign.scopeType}`)} ·{' '}
+                      {t(accessReviewLabelKey('scopes', campaign.scopeType))} ·{' '}
                       {formatDateTime(campaign.dueAt)}
                     </Typography>
                     <ProgressMeter
@@ -679,7 +703,7 @@ export function AccessReviewManager() {
                     <Chip
                       size="small"
                       color={statusColor(selectedCampaign.lifecycleState)}
-                      label={t(`accessReviews.states.${selectedCampaign.lifecycleState}`)}
+                      label={t(accessReviewLabelKey('states', selectedCampaign.lifecycleState))}
                     />
                   </Stack>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
@@ -688,7 +712,7 @@ export function AccessReviewManager() {
                   <Stack direction="row" gap={1.5} flexWrap="wrap" sx={{ mt: 1 }}>
                     <Typography variant="caption" color="text.secondary">
                       {t('accessReviews.summary.scope', {
-                        scope: t(`accessReviews.scopes.${selectedCampaign.scopeType}`),
+                        scope: t(accessReviewLabelKey('scopes', selectedCampaign.scopeType)),
                       })}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -699,7 +723,10 @@ export function AccessReviewManager() {
                     <Typography variant="caption" color="text.secondary">
                       {t('accessReviews.summary.reviewer', {
                         value: t(
-                          `accessReviews.reviewerStrategies.${selectedCampaign.reviewerStrategy}`
+                          accessReviewLabelKey(
+                            'reviewerStrategies',
+                            selectedCampaign.reviewerStrategy
+                          )
                         ),
                       })}
                     </Typography>
@@ -787,7 +814,7 @@ export function AccessReviewManager() {
                           <Typography variant="caption" color="text.secondary">
                             {displayRole(item.roleCode, item.roleName).name} ·{' '}
                             {item.sourceDisplayName ||
-                              t(`accessReviews.sources.${item.accessSourceType}`)}
+                              t(accessReviewLabelKey('sources', item.accessSourceType))}
                           </Typography>
                           <Stack direction="row" gap={0.5} sx={{ mt: 0.75 }}>
                             <RecommendationChip item={item} />
@@ -804,10 +831,11 @@ export function AccessReviewManager() {
                         <Chip
                           size="small"
                           color={decisionColor(item.decision)}
-                          label={t(`accessReviews.decisions.${item.decision}`)}
+                          label={t(accessReviewLabelKey('decisions', item.decision))}
                         />
                       </Stack>
-                      {item.decision === 'PENDING' &&
+                      {canApprove &&
+                        item.decision === 'PENDING' &&
                         selectedCampaign.lifecycleState === 'ACTIVE' && (
                           <ActionButton
                             size="small"
@@ -846,14 +874,14 @@ export function AccessReviewManager() {
 
       <AccessReviewCampaignDialog
         key={createOpen ? 'campaign-open' : 'campaign-closed'}
-        open={createOpen}
+        open={canManage && createOpen}
         busy={busy}
         onClose={() => setCreateOpen(false)}
         onCreate={createCampaign}
       />
       <DecisionDialog
         key={decisionItem ? `decision-${decisionItem.itemId}` : 'decision-closed'}
-        item={decisionItem}
+        item={canApprove ? decisionItem : null}
         busy={busy}
         onClose={() => setDecisionItem(null)}
         onDecide={decide}

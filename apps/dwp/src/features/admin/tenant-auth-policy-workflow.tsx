@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, FilePenLine, Send, ShieldCheck, Upload, X } from 'lucide-react';
+import { Check, FilePenLine, RefreshCw, Send, Upload, X } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createTenantAuthPolicyChange,
@@ -10,7 +10,7 @@ import {
   listTenantAuthPolicyChanges,
   publishTenantAuthPolicyChange,
   submitTenantAuthPolicyChange,
-  useAuth,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -30,10 +30,14 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type {
-  TenantAuthPolicyDraft,
-  TenantSettingChangeSet,
-} from '@dwp-frontend/shared-utils';
+import type { TenantAuthPolicyDraft, TenantSettingChangeSet } from '@dwp-frontend/shared-utils';
+
+import {
+  authPolicyCoverageLabelKey,
+  authPolicyImpactConfidenceLabelKey,
+  authPolicyStateLabelKey,
+  resolveTenantAuthPolicyDraft,
+} from './tenant-auth-policy-workflow-model';
 
 type Decision = 'APPROVE' | 'REJECT';
 
@@ -49,9 +53,11 @@ function lifecycleTone(
 
 export function TenantAuthPolicyWorkflow() {
   const { t } = useTranslation('admin');
-  const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canView = permissionsLoaded && hasPermission('ADMIN.IDENTITY_PROVISIONING', 'VIEW');
+  const canManage = permissionsLoaded && hasPermission('ADMIN.IDENTITY_PROVISIONING', 'MANAGE');
   const [draftOpen, setDraftOpen] = useState(false);
   const [decision, setDecision] = useState<{
     change: TenantSettingChangeSet;
@@ -61,14 +67,19 @@ export function TenantAuthPolicyWorkflow() {
   const current = useQuery({
     queryKey: ['admin', 'tenant-settings', 'auth-policy', 'current'],
     queryFn: async () => (await getAuthPolicy()).data,
+    enabled: canManage,
+    retry: false,
   });
   const providers = useQuery({
     queryKey: ['admin', 'tenant-settings', 'auth-policy', 'providers'],
     queryFn: async () => (await getIdentityProviders()).data.filter((provider) => provider.enabled),
+    enabled: canManage,
+    retry: false,
   });
   const changes = useQuery({
     queryKey: ['admin', 'tenant-settings', 'auth-policy', 'changes'],
     queryFn: listTenantAuthPolicyChanges,
+    enabled: canView,
     retry: false,
   });
   const refresh = async () => {
@@ -83,14 +94,19 @@ export function TenantAuthPolicyWorkflow() {
       await refresh();
       toast.success(t('settingsHome.authPolicyWorkflow.saved'));
     },
-    onError: (error) =>
-      toast.error(
-        error instanceof Error ? error.message : t('settingsHome.authPolicyWorkflow.error')
-      ),
+    onError: () => toast.error(t('settingsHome.authPolicyWorkflow.error')),
   });
   const latest = changes.data ?? [];
-  const currentActor = auth.user?.userId;
+  if (!permissionsLoaded) {
+    return <Skeleton variant="rounded" height={128} />;
+  }
+  if (!canView) return null;
 
+  const createSourcesLoading = canManage && (current.isLoading || providers.isLoading);
+  const createSourcesError = canManage && (current.isError || providers.isError);
+  const retrySources = async () => {
+    await Promise.all([current.refetch(), providers.refetch(), changes.refetch()]);
+  };
   return (
     <Box component="section" aria-labelledby="tenant-auth-policy-workflow-title">
       <Stack
@@ -107,44 +123,71 @@ export function TenantAuthPolicyWorkflow() {
             {t('settingsHome.authPolicyWorkflow.description')}
           </Typography>
         </Box>
-        <ActionButton
-          intent="primary"
-          size="small"
-          startIcon={<FilePenLine size={16} aria-hidden="true" />}
-          disabled={!current.data || Boolean(latest.find((change) => ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(change.lifecycleState)))}
-          onClick={() => setDraftOpen(true)}
-        >
-          {t('settingsHome.authPolicyWorkflow.create')}
-        </ActionButton>
+        {canManage && (
+          <ActionButton
+            intent="primary"
+            size="small"
+            startIcon={<FilePenLine size={16} aria-hidden="true" />}
+            disabled={
+              createSourcesLoading ||
+              createSourcesError ||
+              !current.data ||
+              Boolean(
+                latest.find((change) =>
+                  ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(change.lifecycleState)
+                )
+              )
+            }
+            onClick={() => setDraftOpen(true)}
+          >
+            {t('settingsHome.authPolicyWorkflow.create')}
+          </ActionButton>
+        )}
       </Stack>
 
       <InlineFeedback severity="info" sx={{ mt: 1.25 }}>
         {t('settingsHome.authPolicyWorkflow.boundary')}
       </InlineFeedback>
-      {changes.isLoading && <Skeleton variant="rounded" height={128} sx={{ mt: 1.25 }} />}
-      {changes.isError && (
-        <InlineFeedback severity="error" sx={{ mt: 1.25 }}>
+      {(changes.isLoading || createSourcesLoading) && (
+        <Skeleton variant="rounded" height={128} sx={{ mt: 1.25 }} />
+      )}
+      {(changes.isError || createSourcesError) && (
+        <InlineFeedback
+          severity="error"
+          sx={{ mt: 1.25 }}
+          action={
+            <ActionButton
+              intent="quiet"
+              size="small"
+              startIcon={<RefreshCw size={15} aria-hidden="true" />}
+              onClick={() => void retrySources()}
+            >
+              {t('settingsHome.authPolicyWorkflow.retry')}
+            </ActionButton>
+          }
+        >
           {t('settingsHome.authPolicyWorkflow.error')}
         </InlineFeedback>
       )}
-      {!changes.isLoading && !changes.isError && latest.length === 0 && (
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
-          {t('settingsHome.authPolicyWorkflow.empty')}
-        </Typography>
-      )}
+      {!changes.isLoading &&
+        !changes.isError &&
+        !createSourcesLoading &&
+        !createSourcesError &&
+        latest.length === 0 && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
+            {t('settingsHome.authPolicyWorkflow.empty')}
+          </Typography>
+        )}
       <Stack gap={1} sx={{ mt: 1.25 }}>
         {latest.slice(0, 5).map((change) => {
-          const canReview = change.lifecycleState === 'IN_REVIEW' && currentActor !== change.requestedBy;
+          const canReview =
+            change.allowedActions.includes('APPROVE') || change.allowedActions.includes('REJECT');
           return (
             <Box
               key={change.changeSetId}
               sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 1.5 }}
             >
-              <Stack
-                direction={{ xs: 'column', md: 'row' }}
-                justifyContent="space-between"
-                gap={1}
-              >
+              <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" gap={1}>
                 <Box sx={{ minWidth: 0 }}>
                   <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
                     <Typography variant="subtitle2">{change.justification}</Typography>
@@ -152,15 +195,13 @@ export function TenantAuthPolicyWorkflow() {
                       size="small"
                       variant="outlined"
                       color={lifecycleTone(change.lifecycleState)}
-                      label={t(
-                        `settingsHome.authPolicyWorkflow.states.${change.lifecycleState}`
-                      )}
+                      label={t(authPolicyStateLabelKey(change.lifecycleState))}
                     />
                     <Chip
                       size="small"
                       variant="outlined"
                       label={t('settingsHome.authPolicyWorkflow.impact', {
-                        confidence: change.impact.confidence,
+                        confidence: t(authPolicyImpactConfidenceLabelKey(change.impact.confidence)),
                         count: change.impact.populationCount ?? '—',
                       })}
                     />
@@ -177,12 +218,12 @@ export function TenantAuthPolicyWorkflow() {
                   </Typography>
                   <Typography variant="caption" color="text.secondary" display="block">
                     {t('settingsHome.authPolicyWorkflow.coverage', {
-                      coverage: change.impact.coverage,
+                      coverage: t(authPolicyCoverageLabelKey(change.impact.coverage)),
                     })}
                   </Typography>
                 </Box>
                 <Stack direction="row" gap={0.75} flexWrap="wrap" alignItems="center">
-                  {change.lifecycleState === 'DRAFT' && (
+                  {change.allowedActions.includes('SUBMIT') && (
                     <ActionButton
                       size="small"
                       startIcon={<Send size={15} aria-hidden="true" />}
@@ -217,7 +258,7 @@ export function TenantAuthPolicyWorkflow() {
                       </ActionButton>
                     </>
                   )}
-                  {change.lifecycleState === 'APPROVED' && (
+                  {change.allowedActions.includes('PUBLISH') && (
                     <ActionButton
                       size="small"
                       intent="primary"
@@ -235,22 +276,24 @@ export function TenantAuthPolicyWorkflow() {
         })}
       </Stack>
 
-      <AuthPolicyDraftDialog
-        open={draftOpen}
-        current={current.data ?? null}
-        providerKeys={providers.data?.map((provider) => provider.providerKey) ?? []}
-        busy={command.isPending}
-        onClose={() => setDraftOpen(false)}
-        onCreate={async (request) => {
-          await command.mutateAsync(() => createTenantAuthPolicyChange(request));
-          setDraftOpen(false);
-        }}
-      />
+      {canManage && current.data && providers.data && (
+        <AuthPolicyDraftDialog
+          open={draftOpen}
+          current={current.data}
+          providerKeys={providers.data.map((provider) => provider.providerKey)}
+          busy={command.isPending}
+          onClose={() => setDraftOpen(false)}
+          onCreate={async (request) => {
+            await command.mutateAsync(() => createTenantAuthPolicyChange(request));
+            setDraftOpen(false);
+          }}
+        />
+      )}
       <FormDialog
         open={Boolean(decision)}
         title={t(`settingsHome.authPolicyWorkflow.decision.${decision?.decision ?? 'APPROVE'}`)}
-        cancelLabel={t('common.cancel')}
-        submitLabel={t('common.confirm')}
+        cancelLabel={t('common.actions.cancel')}
+        submitLabel={t('common.actions.confirm')}
         busy={command.isPending}
         submitDisabled={decisionReason.trim().length < 10}
         onClose={() => setDecision(null)}
@@ -292,19 +335,17 @@ function AuthPolicyDraftDialog({
 }>) {
   const { t } = useTranslation('admin');
   const initial = useMemo<TenantAuthPolicyDraft>(
-    () =>
-      current ?? {
-        defaultLoginType: 'LOCAL',
-        allowedLoginTypes: ['LOCAL'],
-        localLoginEnabled: true,
-        ssoLoginEnabled: false,
-        ssoProviderKey: null,
-        requireMfa: false,
-      },
+    () => resolveTenantAuthPolicyDraft(current),
     [current]
   );
   const [policy, setPolicy] = useState<TenantAuthPolicyDraft>(initial);
   const [justification, setJustification] = useState('');
+
+  useEffect(() => {
+    if (open) return;
+    setPolicy(initial);
+    setJustification('');
+  }, [initial, open]);
   const setLogin = (type: 'LOCAL' | 'SSO', enabled: boolean) => {
     const allowed = new Set(policy.allowedLoginTypes);
     if (enabled) allowed.add(type);
@@ -316,7 +357,11 @@ function AuthPolicyDraftDialog({
       ssoLoginEnabled: type === 'SSO' ? enabled : value.ssoLoginEnabled,
       ssoProviderKey: type === 'SSO' && !enabled ? null : value.ssoProviderKey,
       defaultLoginType:
-        value.defaultLoginType === type && !enabled ? (type === 'LOCAL' ? 'SSO' : 'LOCAL') : value.defaultLoginType,
+        value.defaultLoginType === type && !enabled
+          ? type === 'LOCAL'
+            ? 'SSO'
+            : 'LOCAL'
+          : value.defaultLoginType,
     }));
   };
   return (
@@ -324,7 +369,7 @@ function AuthPolicyDraftDialog({
       open={open}
       title={t('settingsHome.authPolicyWorkflow.draft.title')}
       description={t('settingsHome.authPolicyWorkflow.draft.description')}
-      cancelLabel={t('common.cancel')}
+      cancelLabel={t('common.actions.cancel')}
       submitLabel={t('settingsHome.authPolicyWorkflow.draft.create')}
       busy={busy}
       submitDisabled={

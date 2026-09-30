@@ -40,6 +40,13 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
 import { RiskScore, SeverityChip, useAuditActionLabel } from './audit-ui';
+import { AuditEvidenceSummary } from './audit-evidence-summary';
+import {
+  auditClassificationLabelKey,
+  auditDomainLabelKey,
+  auditOutcomeLabelKey,
+  strongestAuditClassification,
+} from './audit-runtime-presentation';
 
 import type { GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import type {
@@ -64,16 +71,6 @@ const CLASSIFICATIONS: EventClassification[] = ['INTERNAL', 'CONFIDENTIAL', 'RES
 function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
   const { t } = useTranslation('admin');
   const auditActionLabel = useAuditActionLabel();
-  const states = [
-    { key: 'before', label: t('auditControl.correlation.detail.before'), value: event.beforeState },
-    { key: 'after', label: t('auditControl.correlation.detail.after'), value: event.afterState },
-    {
-      key: 'metadata',
-      label: t('auditControl.correlation.detail.metadata'),
-      value: event.metadata,
-    },
-  ].filter((entry) => Object.keys(entry.value).length > 0);
-
   return (
     <Box sx={{ mt: 2, borderTop: 1, borderColor: 'divider', pt: 2 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
@@ -84,7 +81,6 @@ function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
           <Typography variant="caption" color="text.secondary">
             {t('auditControl.correlation.detail.envelopeVersion', {
               eventId: event.eventId,
-              version: event.schemaVersion,
             })}
           </Typography>
         </Box>
@@ -92,7 +88,7 @@ function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
           size="small"
           variant="outlined"
           color={event.classification === 'RESTRICTED' ? 'error' : 'default'}
-          label={t(`auditControl.correlation.classification.${event.classification}`)}
+          label={t(auditClassificationLabelKey(event.classification))}
         />
       </Stack>
       <Box
@@ -108,7 +104,7 @@ function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
             {t('auditControl.correlation.detail.subject')}
           </Typography>
           <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-            {event.subjectDisplayName || event.subjectId}
+            {event.subjectDisplayName || t('auditControl.evidence.subjectUnavailable')}
           </Typography>
         </Box>
         <Box>
@@ -116,7 +112,7 @@ function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
             {t('auditControl.correlation.detail.actor')}
           </Typography>
           <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-            {event.actorDisplayName || event.actorId || event.actorType}
+            {event.actorDisplayName || t('auditControl.evidence.actorUnavailable')}
           </Typography>
         </Box>
         <Box>
@@ -136,33 +132,13 @@ function EnvelopeEvidence({ event }: { event: EventEnvelope }) {
           </Typography>
         </Box>
       </Box>
-      {states.map((entry) => (
-        <Box key={entry.key} sx={{ mt: 2 }}>
-          <Typography variant="caption" color="text.secondary">
-            {entry.label}
-          </Typography>
-          <Box
-            component="pre"
-            sx={{
-              m: 0,
-              mt: 0.5,
-              p: 1.25,
-              maxHeight: 180,
-              overflow: 'auto',
-              border: 1,
-              borderColor: 'divider',
-              bgcolor: 'action.hover',
-              fontFamily: 'monospace',
-              fontSize: 11.5,
-              lineHeight: 1.55,
-              whiteSpace: 'pre-wrap',
-              overflowWrap: 'anywhere',
-            }}
-          >
-            {JSON.stringify(entry.value, null, 2)}
-          </Box>
-        </Box>
-      ))}
+      <Box sx={{ mt: 2 }}>
+        <AuditEvidenceSummary
+          before={event.beforeState}
+          after={event.afterState}
+          metadataCount={Object.keys(event.metadata).length}
+        />
+      </Box>
     </Box>
   );
 }
@@ -252,7 +228,7 @@ export function AuditEventCorrelations() {
             <Chip
               size="small"
               variant="outlined"
-              label={t(`auditControl.correlation.domain.${row.domains[0]}`)}
+              label={t(auditDomainLabelKey(row.domains[0] ?? 'UNKNOWN'))}
             />
             {row.domains.length > 1 && <Chip size="small" label={`+${row.domains.length - 1}`} />}
           </Stack>
@@ -263,11 +239,7 @@ export function AuditEventCorrelations() {
         headerName: t('auditControl.correlation.columns.classification'),
         width: 124,
         renderCell: ({ row }) => {
-          const value = row.classifications.includes('RESTRICTED')
-            ? 'RESTRICTED'
-            : row.classifications.includes('CONFIDENTIAL')
-              ? 'CONFIDENTIAL'
-              : 'INTERNAL';
+          const value = strongestAuditClassification(row.classifications);
           return (
             <Chip
               size="small"
@@ -275,7 +247,7 @@ export function AuditEventCorrelations() {
                 value === 'RESTRICTED' ? 'error' : value === 'CONFIDENTIAL' ? 'warning' : 'default'
               }
               variant="outlined"
-              label={t(`auditControl.correlation.classification.${value}`)}
+              label={t(auditClassificationLabelKey(value))}
             />
           );
         },
@@ -423,7 +395,7 @@ export function AuditEventCorrelations() {
                 <MenuItem value="ALL">{t('auditControl.correlation.filters.allDomains')}</MenuItem>
                 {domains.map((value) => (
                   <MenuItem key={value} value={value}>
-                    {t(`auditControl.correlation.domain.${value}`)}
+                    {t(auditDomainLabelKey(value))}
                   </MenuItem>
                 ))}
               </FormField>
@@ -443,7 +415,7 @@ export function AuditEventCorrelations() {
                 </MenuItem>
                 {classifications.map((value) => (
                   <MenuItem key={value} value={value}>
-                    {t(`auditControl.correlation.classification.${value}`)}
+                    {t(auditClassificationLabelKey(value))}
                   </MenuItem>
                 ))}
               </FormField>
@@ -455,7 +427,7 @@ export function AuditEventCorrelations() {
               : [
                   {
                     key: 'domain',
-                    label: t(`auditControl.correlation.domain.${domain}`),
+                    label: t(auditDomainLabelKey(domain)),
                     onRemove: () => setDomain('ALL'),
                   },
                 ]),
@@ -464,7 +436,7 @@ export function AuditEventCorrelations() {
               : [
                   {
                     key: 'classification',
-                    label: t(`auditControl.correlation.classification.${classification}`),
+                    label: t(auditClassificationLabelKey(classification)),
                     onRemove: () => setClassification('ALL'),
                   },
                 ]),
@@ -512,6 +484,11 @@ export function AuditEventCorrelations() {
               onPaginationModelChange={setPagination}
               pageSizeOptions={[10, 25, 50, 100]}
               onRowClick={({ row }) => selectCorrelation(row.correlationId)}
+              onCellKeyDown={({ row }, event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                selectCorrelation(row.correlationId);
+              }}
               rowSelectionModel={
                 selectedId ? { type: 'include', ids: new Set([selectedId]) } : undefined
               }
@@ -642,7 +619,7 @@ export function AuditEventCorrelations() {
                       size="small"
                       variant="outlined"
                       icon={<Network size={14} />}
-                      label={t(`auditControl.correlation.domain.${value}`)}
+                      label={t(auditDomainLabelKey(value))}
                     />
                   ))}
                   <Chip
@@ -665,14 +642,14 @@ export function AuditEventCorrelations() {
                     id: event.eventId,
                     title: auditActionLabel(event.eventType),
                     summary: `${event.subjectDisplayName || event.subjectId} / ${t(
-                      `auditControl.correlation.domain.${event.domain}`
+                      auditDomainLabelKey(event.domain)
                     )}`,
                     timestamp: formatDate(event.occurredAt, {
                       dateStyle: 'short',
                       timeStyle: 'medium',
                     }),
                     source: event.sourceService,
-                    status: t(`auditControl.outcome.${event.outcome}`),
+                    status: t(auditOutcomeLabelKey(event.outcome)),
                     icon: event.causationId ? <GitBranch size={15} /> : <Braces size={15} />,
                   }))}
                   onSelect={(item) => setSelectedEventId(item.id)}

@@ -16,4 +16,18 @@ describe('audit policy revision evidence', () => {
       { field: 'requireExportReason', before: false, after: true },
     ]);
   });
+
+  it('fails closed for unknown fields and non-scalar values', () => {
+    expect(
+      policyRevisionEvidenceRows({
+        diff: {
+          internalPolicyDocument: { before: { secret: true }, after: ['raw'] },
+          exportLimitRows: { before: { invalid: true }, after: 5000 },
+        },
+      })
+    ).toEqual([
+      { field: 'UNKNOWN', before: null, after: null },
+      { field: 'exportLimitRows', before: null, after: 5000 },
+    ]);
+  });
 });

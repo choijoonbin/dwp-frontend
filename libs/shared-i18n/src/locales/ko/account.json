@@ -27,10 +27,102 @@
       "TENANT_ADMINISTRATOR": "테넌트 관리자"
     },
     "paths": "관리 경로: {{paths}}",
+    "pathCount": "조직 정책이 {{count}}개 설정을 관리합니다.",
+    "valueLabels": {
+      "yes": "예",
+      "no": "아니요"
+    },
     "pathLabels": {
       "appearance.fontFamily": "제품 글꼴",
       "appearance.accentColor": "브랜드 강조색",
-      "navigation.pattern": "탐색 패턴"
+      "navigation.pattern": "탐색 패턴",
+      "unknown": "조직 관리 설정"
+    },
+    "effective": {
+      "title": "실제 적용 중인 조직 설정",
+      "description": "각 값이 결정된 테넌트·사용자 출처를 확인합니다. 소유자가 잠근 값과 사용자 재정의 가능 값을 구분합니다.",
+      "loadError": "실효 설정의 출처를 불러오지 못했습니다. 화면의 로컬 상태로 현재 값을 추정하지 않습니다.",
+      "preferenceLoadError": "언어 상속 상태를 불러오지 못했습니다.",
+      "preferenceLoading": "언어 상속 상태를 불러오는 중",
+      "emptyTitle": "적용된 조직 관리 설정이 없습니다",
+      "emptyDescription": "설정 소유자 레지스트리가 이 계정에 게시한 설정이 없습니다.",
+      "locked": "소유자 잠금",
+      "overrideAllowed": "사용자 재정의 허용",
+      "settings": {
+        "authentication": {
+          "defaultLoginType": { "title": "기본 로그인 방식" },
+          "requireMfa": { "title": "추가 인증" },
+          "tokenTtlSec": { "title": "로그인 유지 시간" }
+        },
+        "identity": {
+          "defaultLocale": { "title": "조직 표시 언어" },
+          "preferredLocale": { "title": "표시 언어" }
+        },
+        "unknown": {
+          "title": "조직 관리 설정",
+          "value": "관리 정책 적용"
+        }
+      },
+      "values": {
+        "login": { "LOCAL": "이메일과 비밀번호", "SSO": "회사 통합 로그인" },
+        "required": "필수",
+        "optional": "선택",
+        "hours": "{{count}}시간",
+        "minutes": "{{count}}분"
+      },
+      "evidence": {
+        "observed": "현재 정책에서 확인됨",
+        "drifted": "현재 값이 최신 통제 게시 결과와 다름",
+        "unavailable": "현재 상태 확인 불가"
+      },
+      "source": {
+        "organization": "회사 정책",
+        "owner": "설정 소유자",
+        "user": "내 선택",
+        "unavailable": "출처 확인 불가"
+      },
+      "overrideState": {
+        "OVERRIDDEN": "테넌트 재정의",
+        "INHERITED": "소유자 기본값 상속",
+        "UNMANAGED_BASELINE": "소유자 기준값",
+        "OWNER_LOCKED": "인증 정책 소유자가 관리",
+        "DRIFTED": "게시 결과와 실제 값 불일치",
+        "UNAVAILABLE": "적용 상태 확인 불가"
+      },
+      "lineage": {
+        "organization": "회사 기본값 · {{value}}",
+        "user": "내 설정 · {{value}}",
+        "owner": "{{owner}} 계약 v{{version}}",
+        "applied": "현재 적용 중",
+        "overridden": "내 설정으로 대체됨",
+        "inherited": "회사 기본값 상속"
+      },
+      "lineageReasons": {
+        "PUBLISHED_AUTH_POLICY": "최신 독립 승인 인증 정책 게시 결과와 일치",
+        "DIRECT_OWNER_BASELINE": "현재 소유자에서 직접 조회",
+        "PUBLISHED_TENANT_OVERRIDE": "게시된 테넌트 재정의와 일치",
+        "PUBLISHED_INHERIT_RESTORE": "게시된 소유자 기본값 복원과 일치",
+        "OWNER_CHANGED_OUTSIDE_WORKFLOW": "최신 인증 정책 게시 후 소유자 값이 변경됨",
+        "OWNER_CHANGED_OUTSIDE_REGISTRY": "최신 설정 게시 후 소유자 값이 변경됨",
+        "UNKNOWN": "소유자 출처 확인 불가"
+      },
+      "owners": {
+        "authPolicy": "인증 정책",
+        "tenantDirectory": "테넌트 신원 디렉터리",
+        "registeredOwner": "등록된 설정 소유자"
+      },
+      "localeOverride": "언어 재정의 {{current}}가 적용 중입니다. 상속을 복원하면 테넌트 기본값 {{inherited}}를 사용합니다.",
+      "localeInherited": "언어가 테넌트 기본값 {{inherited}}를 상속합니다.",
+      "restore": {
+        "action": "상속 복원",
+        "title": "테넌트 언어 상속 복원",
+        "description": "버전이 표시된 변경 전후 값을 확인한 뒤 내 언어 재정의만 제거합니다.",
+        "preview": "현재 재정의 {{before}} → 테넌트 기본값 {{after}} · 소스 버전 {{version}}",
+        "cancel": "취소",
+        "confirm": "상속 복원",
+        "completed": "테넌트 언어 상속을 복원했습니다.",
+        "failed": "미리보기 이후 언어가 변경되었거나 복원하지 못했습니다. 새로고침 후 다시 시도하세요."
+      }
     },
     "exceptions": {
       "title": "내 예외 요청",
@@ -39,6 +131,8 @@
       "pending": "검토 대기 중",
       "cancel": "요청 취소",
       "loadError": "예외 요청 이력을 불러오지 못했습니다.",
+      "loading": "예외 요청 이력 불러오는 중",
+      "valueUnavailable": "정책 소유자만 확인할 수 있음",
       "emptyTitle": "예외 요청이 없습니다",
       "emptyDescription": "현재 조직 기본값을 그대로 사용하고 있습니다.",
       "requestedValue": "요청 값: {{value}} · {{date}}",
@@ -48,7 +142,8 @@
         "APPROVED": "승인",
         "REJECTED": "반려",
         "CANCELLED": "취소",
-        "EXPIRED": "만료"
+        "EXPIRED": "만료",
+        "UNAVAILABLE": "상태 확인 불가"
       },
       "dialog": {
         "title": "{{setting}} 예외 요청",
@@ -222,9 +317,22 @@
       "empty": "테넌트에서 사용할 수 있도록 구성된 업무 앱 연결이 없습니다.",
       "scopes": "권한 범위: {{scopes}}",
       "noScopes": "부여된 범위 없음",
+      "permissions": {
+        "mailBasicRead": "메일 기본 정보 읽기",
+        "mailRead": "메일 읽기",
+        "mailManage": "메일 읽기 및 관리",
+        "calendarRead": "캘린더 읽기",
+        "calendarManage": "캘린더 읽기 및 관리",
+        "backgroundAccess": "백그라운드에서 연결 유지",
+        "signInIdentity": "로그인 신원 확인",
+        "basicProfile": "기본 프로필 읽기",
+        "emailAddress": "이메일 주소 읽기",
+        "unknown": "추가 권한",
+        "unknownEvidence": "일부 권한 세부 정보를 확인할 수 없습니다. 기술 범위 코드를 표시하거나 의미를 추정하지 않습니다."
+      },
       "lastSync": "마지막 성공 동기화: {{date}}",
       "neverSynced": "성공한 동기화 기록 없음",
-      "actionRequired": "조치 필요: {{code}}",
+      "actionRequired": "이 연결은 확인이 필요합니다. 상태를 검토하고 동기화 전에 권한을 갱신하세요.",
       "transferBoundary": "이 화면은 생산성 연결 소유 서비스가 제공하는 메일·캘린더 동기화 상태만 표시합니다. 모든 제품의 계정 데이터 전송 현황을 합산하는 소유 계약과 API는 현재 없습니다.",
       "sync": "지금 동기화",
       "connect": "연결",
@@ -234,7 +342,8 @@
         "NOT_CONNECTED": "연결 안 됨",
         "CONNECTED": "정상 연결",
         "REAUTHORIZATION_REQUIRED": "권한 갱신 필요",
-        "REVOKED": "연결 해제됨"
+        "REVOKED": "연결 해제됨",
+        "UNAVAILABLE": "현재 상태 확인 불가"
       },
       "disconnectDialog": {
         "title": "업무 앱 연결 해제",
@@ -283,9 +392,18 @@
         },
         "states": {
           "RECEIVED": "내부 접수",
-          "CANCELLED": "취소됨"
+          "CANCELLED": "취소됨",
+          "UNAVAILABLE": "처리 상태 확인 불가"
         },
         "createdAt": "접수 시각: {{date}}",
+        "receipt": "접수 영수증 {{receiptId}} · 발급 {{date}} · 접수 증거 전용",
+        "lifecycle": "개인정보 요청 처리 이력",
+        "events": {
+          "REQUEST_RECEIVED": "요청 접수 기록",
+          "FULFILLMENT_BOUNDARY_RECORDED": "외부 소유 서비스 연결 필요",
+          "REQUEST_CANCELLED": "요청자 취소 기록",
+          "UNAVAILABLE": "처리 이력 확인 불가"
+        },
         "cancel": "요청 취소",
         "received": "개인정보 요청을 내부 검토 원장에 접수했습니다.",
         "cancelled": "개인정보 요청을 취소했습니다.",
@@ -301,9 +419,13 @@
       "history": {
         "title": "제품 분석 동의 이력",
         "empty": "기록된 선택이 없습니다.",
+        "recentSummary": "이번 응답으로 확인한 {{loaded}}건 중 최근 {{displayed}}건을 표시합니다.",
+        "moreAvailable": "이 응답 범위보다 이전의 내부 동의 기록이 더 있습니다.",
+        "coverageBoundary": "이 원장은 DWP 제품 사용성 분석 동의만 포함합니다. HR, ID 제공자와 연결 앱의 동의는 합치거나 추정하지 않습니다.",
         "states": {
           "GRANTED": "동의함",
-          "WITHDRAWN": "동의 철회"
+          "WITHDRAWN": "동의 철회",
+          "UNAVAILABLE": "동의 상태 확인 불가"
         }
       },
       "ownerBoundary": "이 화면은 동의와 요청 접수 원장을 직접 관리합니다. 데이터 수집, 아카이브 생성, 계정 삭제와 완료 통지는 각 소유 서비스의 실행 연동 전까지 완료로 표시하지 않습니다."
@@ -358,6 +480,8 @@
     "title": "보안 및 세션",
     "workspaceFallback": "워크스페이스",
     "activeSessions": "활성 브라우저 세션",
+    "emptyTitle": "반환된 활성 브라우저 세션이 없습니다",
+    "emptyDescription": "새로고침해 다시 확인하세요. 소유 서비스가 빈 목록을 반환한 경우 세션을 추정하지 않습니다.",
     "loading": "활성 세션 불러오는 중",
     "current": "현재 세션",
     "deviceLabel": "{{platform}}의 {{browser}}",
@@ -387,9 +511,20 @@
       "mfaRequired": "테넌트 정책에서 필수",
       "mfaNotRequired": "테넌트 정책에서 필수 아님",
       "mfaDetail": "테넌트 요구 정책이며 사용자의 MFA 등록 상태를 의미하지 않습니다.",
+      "mfaEnrollment": "내 MFA 등록",
+      "mfaEnrolled": "신원 디렉터리에 등록됨",
+      "mfaNotEnrolled": "신원 디렉터리에 등록되지 않음",
+      "mfaEnrollmentUnavailable": "등록 상태 확인 불가",
+      "mfaEnrollmentDetail": "Auth 신원 디렉터리의 사용자 등록 상태입니다. 외부 ID 공급자 등록 상태는 추정하지 않습니다.",
       "methods": {
         "LOCAL": "비밀번호",
-        "SSO": "기업 SSO"
+        "SSO": "기업 SSO",
+        "UNAVAILABLE": "로그인 방식 확인 불가"
+      },
+      "protocols": {
+        "OIDC": "OpenID Connect",
+        "SAML": "SAML",
+        "UNAVAILABLE": "프로토콜 확인 불가"
       },
       "states": {
         "healthy": "준비 완료",
@@ -436,7 +571,8 @@
       "scope": {
         "TENANT": "테넌트",
         "ORG_UNIT": "조직 범위",
-        "RESOURCE": "리소스 범위"
+        "RESOURCE": "리소스 범위",
+        "UNAVAILABLE": "범위 확인 불가"
       },
       "state": {
         "ACTIVE": "활성",
@@ -444,7 +580,8 @@
         "DENIED": "거부",
         "CANCELLED": "취소",
         "REVOKED": "회수",
-        "EXPIRED": "만료"
+        "EXPIRED": "만료",
+        "UNAVAILABLE": "상태 확인 불가"
       }
     },
     "actions": {
@@ -456,7 +593,8 @@
       "signingOut": "로그아웃 중..."
     },
     "errors": {
-      "load": "활성 세션을 불러오지 못했습니다."
+      "load": "활성 세션을 불러오지 못했습니다.",
+      "stale": "최신 갱신에 실패했습니다. 마지막으로 정상 조회한 세션을 아래에 계속 표시합니다."
     },
     "toasts": {
       "otherSessionsSignedOut": "다른 세션에서 로그아웃했습니다.",
@@ -581,6 +719,31 @@
         "providerDescription": "고객 테넌트 관리 정책을 혼합하지 않는 프로바이더 신원 전용 값입니다."
       }
     },
+    "workspace": {
+      "title": "설정 워크스페이스 최신성",
+      "runtime": {
+        "CURRENT": "최신 상태",
+        "REVIEW_REQUIRED": "검토 필요",
+        "OFFLINE_CACHED": "오프라인 · 읽기 전용 스냅샷",
+        "OFFLINE_UNAVAILABLE": "오프라인 · 스냅샷 없음",
+        "REFRESH_FAILED_CACHED": "갱신 실패 · 읽기 전용 스냅샷",
+        "UNAVAILABLE": "확인 불가"
+      },
+      "freshness": {
+        "CURRENT": "현재 개인 설정 스냅샷을 사용자가 명시적으로 확인했습니다.",
+        "UNCONFIRMED": "이 설정 워크스페이스는 아직 확인되지 않았습니다.",
+        "CHANGED_SINCE_CONFIRMATION": "마지막 확인 이후 설정 활동이 변경되었습니다. 검토 후 다시 확인하세요.",
+        "REVIEW_DUE": "30일 검토 주기가 지났습니다. 내용을 검토한 뒤 다시 확인하세요.",
+        "UNAVAILABLE": "개인 설정 정본 스냅샷을 확인할 수 없습니다."
+      },
+      "observedAt": "소유 서비스 확인 {{date}}",
+      "confirmedAt": "사용자 확인 {{date}}",
+      "neverConfirmed": "확인 이력 없음",
+      "memoryOnly": "마지막 성공 응답을 메모리에서만 읽기 전용으로 표시합니다. 정상 갱신 전까지 변경할 수 없습니다.",
+      "refresh": "새로고침",
+      "reconfirm": "설정 검토 완료",
+      "reconfirmError": "워크스페이스가 변경되었거나 확인을 저장하지 못했습니다. 최신 상태를 다시 불러와 검토하세요."
+    },
     "observations": {
       "label": "보안 권장 과업 및 최근 설정 관측 범위",
       "security": {
@@ -594,10 +757,13 @@
         "title": "최근 설정 활동",
         "loading": "최근 활동을 불러오는 중입니다.",
         "loadError": "최근 설정 활동을 불러오지 못했습니다. 활동을 추정하지 않습니다.",
+        "providerBoundary": "프로바이더 신원에서는 개인 테넌트 설정 활동을 제공하지 않습니다.",
         "empty": "아직 기록된 설정 활동이 없습니다.",
+        "unknownSetting": "설정 항목 확인 불가",
         "types": {
           "VIEW": "열람",
-          "CHANGE": "변경"
+          "CHANGE": "변경",
+          "UNAVAILABLE": "활동 유형 확인 불가"
         }
       }
     },

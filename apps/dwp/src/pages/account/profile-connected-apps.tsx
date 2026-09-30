@@ -27,6 +27,12 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {
+  hasUnknownProductivityScope,
+  productivityScopeLabels,
+} from './productivity-scope-presentation';
+import { productivityConnectionState } from './profile-state-presentation';
+
 const CONNECTIONS_QUERY_KEY = ['account', 'productivity-connections'] as const;
 
 function synchronizationKinds(
@@ -187,6 +193,7 @@ export function ProfileConnectedApps({ enabled = true }: { enabled?: boolean }) 
           {connectionsQuery.data.map((connection) => {
             const connected = connection.consentState === 'CONNECTED';
             const busy = authorization.isPending || synchronize.isPending || disconnect.isPending;
+            const visibleScopes = connected ? connection.grantedScopes : connection.requestedScopes;
             return (
               <Box
                 key={connection.connectorId}
@@ -223,7 +230,9 @@ export function ProfileConnectedApps({ enabled = true }: { enabled?: boolean }) 
                     <Chip
                       size="small"
                       color={stateColor(connection.consentState)}
-                      label={t(`profile.connections.states.${connection.consentState}`)}
+                      label={t(
+                        `profile.connections.states.${productivityConnectionState(connection.consentState)}`
+                      )}
                     />
                   </Stack>
                   <Typography
@@ -233,11 +242,19 @@ export function ProfileConnectedApps({ enabled = true }: { enabled?: boolean }) 
                   >
                     {t('profile.connections.scopes', {
                       scopes:
-                        (connected ? connection.grantedScopes : connection.requestedScopes).join(
-                          ', '
-                        ) || t('profile.connections.noScopes'),
+                        productivityScopeLabels(t, visibleScopes).join(', ') ||
+                        t('profile.connections.noScopes'),
                     })}
                   </Typography>
+                  {hasUnknownProductivityScope(visibleScopes) && (
+                    <Typography
+                      variant="caption"
+                      color="warning.main"
+                      sx={{ display: 'block', mt: 0.25 }}
+                    >
+                      {t('profile.connections.permissions.unknownEvidence')}
+                    </Typography>
+                  )}
                   <Typography
                     variant="caption"
                     color="text.secondary"
@@ -254,9 +271,7 @@ export function ProfileConnectedApps({ enabled = true }: { enabled?: boolean }) 
                   </Typography>
                   {connection.actionRequiredCode && (
                     <Alert severity="warning" sx={{ mt: 1 }}>
-                      {t('profile.connections.actionRequired', {
-                        code: connection.actionRequiredCode,
-                      })}
+                      {t('profile.connections.actionRequired')}
                     </Alert>
                   )}
                 </Box>

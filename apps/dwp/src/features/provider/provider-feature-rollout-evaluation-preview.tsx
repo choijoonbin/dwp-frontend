@@ -13,19 +13,30 @@ import Typography from '@mui/material/Typography';
 import type { ProviderFeatureFlag, ProviderTenant } from '@dwp-frontend/shared-utils';
 
 import {
-  displayProviderFeatureValue,
+  providerFeatureEvaluationReason,
   providerFeatureEvaluationResultMatches,
   providerFeatureEvaluationSelectionMatches,
+  providerFeatureValuePresentation,
   resolveProviderFeatureEvaluationOption,
 } from './provider-feature-rollout-evaluation-model';
-import { ProviderSectionHeading, providerError } from './provider-ui';
+import { ProviderSectionHeading } from './provider-ui';
 
 export function ProviderFeatureRolloutEvaluationPreview({
   flags,
   tenants,
+  canReadEstate,
+  tenantLoading,
+  tenantError,
+  tenantReady,
+  onTenantRetry,
 }: {
   flags: ProviderFeatureFlag[];
   tenants: ProviderTenant[];
+  canReadEstate: boolean;
+  tenantLoading: boolean;
+  tenantError: unknown;
+  tenantReady: boolean;
+  onTenantRetry: () => void;
 }) {
   const { t } = useTranslation('provider');
   const [featureKey, setFeatureKey] = useState(flags[0]?.featureKey ?? '');
@@ -54,6 +65,7 @@ export function ProviderFeatureRolloutEvaluationPreview({
   )
     ? evaluation.data
     : undefined;
+  const currentValue = providerFeatureValuePresentation(currentEvaluation?.value);
   const changeFeature = (next: string) => {
     evaluation.reset();
     setFeatureKey(next);
@@ -70,6 +82,27 @@ export function ProviderFeatureRolloutEvaluationPreview({
         description={t('featureRollouts.evaluation.description')}
       />
       <Stack gap={1.5} sx={{ mt: 2 }}>
+        {!canReadEstate && (
+          <Alert severity="warning">{t('featureRollouts.evaluation.tenantDenied')}</Alert>
+        )}
+        {canReadEstate && tenantLoading && (
+          <Alert severity="info">{t('featureRollouts.evaluation.tenantLoading')}</Alert>
+        )}
+        {canReadEstate && Boolean(tenantError) && (
+          <Alert
+            severity="error"
+            action={
+              <ActionButton intent="quiet" size="small" onClick={onTenantRetry}>
+                {t('actions.retryLoad')}
+              </ActionButton>
+            }
+          >
+            {t('featureRollouts.evaluation.tenantError')}
+          </Alert>
+        )}
+        {canReadEstate && tenantReady && tenants.length === 0 && (
+          <Alert severity="info">{t('featureRollouts.evaluation.tenantEmpty')}</Alert>
+        )}
         <Stack direction={{ xs: 'column', md: 'row' }} gap={1.5}>
           <SelectField
             label={t('featureRollouts.fields.feature')}
@@ -88,6 +121,7 @@ export function ProviderFeatureRolloutEvaluationPreview({
               label: `${tenant.displayName} · ${tenant.tenantKey}`,
             }))}
             onValueChange={changeTenant}
+            disabled={!canReadEstate || !tenantReady || tenants.length === 0}
           />
           <ActionButton
             intent="secondary"
@@ -106,17 +140,29 @@ export function ProviderFeatureRolloutEvaluationPreview({
           </ActionButton>
         </Stack>
         {evaluation.isError && mutationMatchesSelection && (
-          <Alert severity="error">{providerError(evaluation.error, t('errors.operation'))}</Alert>
+          <Alert severity="error">{t('errors.operation')}</Alert>
         )}
         {currentEvaluation && (
           <Alert severity={currentEvaluation.reasonCode === 'ROLLOUT_MATCH' ? 'success' : 'info'}>
             <Typography variant="subtitle2">
-              {t(`featureRollouts.evaluation.reasons.${currentEvaluation.reasonCode}`)}
+              {t(
+                `featureRollouts.evaluation.reasons.${providerFeatureEvaluationReason(currentEvaluation.reasonCode)}`
+              )}
             </Typography>
             <Typography variant="body2" sx={{ mt: 0.5 }}>
               {t('featureRollouts.evaluation.result', {
                 tenant: currentEvaluation.tenantKey,
-                value: displayProviderFeatureValue(currentEvaluation.value),
+                value:
+                  currentValue.kind === 'scalar'
+                    ? currentValue.value
+                    : currentValue.kind === 'collection'
+                      ? t('featureRollouts.evaluation.collectionValue', {
+                          type: t(
+                            `featureRollouts.evaluation.collectionTypes.${currentValue.collection}`
+                          ),
+                          count: currentValue.count,
+                        })
+                      : t('notAvailable'),
                 bucket: currentEvaluation.deterministicBucket,
                 exposure: currentEvaluation.exposurePercentage,
               })}

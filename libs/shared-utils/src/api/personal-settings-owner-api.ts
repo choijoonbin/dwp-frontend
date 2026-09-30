@@ -30,6 +30,16 @@ export type PersonalSettingActivity = {
 export type PersonalSettingsWorkspace = {
   favorites: PersonalSettingFavorite[];
   recentActivity: PersonalSettingActivity[];
+  observation: {
+    sourceState: 'AVAILABLE';
+    freshnessState: 'CURRENT' | 'UNCONFIRMED' | 'CHANGED_SINCE_CONFIRMATION' | 'REVIEW_DUE';
+    observedAt: string;
+    lastChangeAt?: string | null;
+    lastConfirmedAt?: string | null;
+    reviewDueAt?: string | null;
+    version: number;
+    offlineBehavior: 'MEMORY_ONLY_READ_ONLY';
+  };
 };
 
 export type PersonalPrivacyConsent = {
@@ -44,6 +54,31 @@ export type PersonalPrivacyConsent = {
 export type PersonalPrivacyConsentLedger = {
   currentProductAnalytics?: PersonalPrivacyConsent | null;
   history: PersonalPrivacyConsent[];
+  historyHasMore: boolean;
+  historyLimit: number;
+  coveredPurposes: Array<'PRODUCT_ANALYTICS'>;
+  coverageState: 'PRODUCT_LOCAL';
+  coverageBoundary: 'CROSS_PRODUCT_CONSENT_SOURCES_NOT_CONNECTED';
+};
+
+export type PersonalPrivacyRequestReceipt = {
+  receiptId: string;
+  receiptType: 'INTAKE';
+  evidenceState: 'INTAKE_ONLY';
+  fulfillmentBoundary: 'PRIVACY_OWNER_EXECUTION_NOT_CONNECTED';
+  requestFingerprint: string;
+  issuedAt: string;
+};
+
+export type PersonalPrivacyRequestEvent = {
+  eventId: string;
+  eventType: 'REQUEST_RECEIVED' | 'FULFILLMENT_BOUNDARY_RECORDED' | 'REQUEST_CANCELLED';
+  requestState: 'RECEIVED' | 'CANCELLED';
+  detailKey:
+    | 'PRIVACY_REQUEST_INTAKE_RECORDED'
+    | 'PRIVACY_OWNER_EXECUTION_NOT_CONNECTED'
+    | 'CANCELLED_BY_REQUEST_OWNER';
+  occurredAt: string;
 };
 
 export type PersonalPrivacyRequest = {
@@ -57,12 +92,24 @@ export type PersonalPrivacyRequest = {
   version: number;
   createdAt: string;
   updatedAt: string;
+  receipt?: PersonalPrivacyRequestReceipt | null;
+  lifecycle: PersonalPrivacyRequestEvent[];
 };
 
 export async function getPersonalSettingsWorkspace(): Promise<PersonalSettingsWorkspace> {
   const response = await axiosInstance.get<ApiResponse<PersonalSettingsWorkspace>>(
     '/api/platform/v1/personal-settings/workspace'
   );
+  return response.data.data;
+}
+
+export async function reconfirmPersonalSettingsWorkspace(
+  version: number
+): Promise<PersonalSettingsWorkspace> {
+  const response = await axiosInstance.post<
+    ApiResponse<PersonalSettingsWorkspace>,
+    { version: number }
+  >('/api/platform/v1/personal-settings/workspace/reconfirm', { version });
   return response.data.data;
 }
 

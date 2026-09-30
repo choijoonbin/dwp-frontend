@@ -25,6 +25,7 @@ import {
   replaceGovernanceRolePermissions,
   revokeGroupRoleAssignment,
   updateGovernanceRole,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -63,9 +64,12 @@ import { RoleAssignmentRevokeDialog } from './role-assignment-revoke-dialog';
 import { effectivePermissionRowId, effectiveRoleRowId } from './role-governance-effective-model';
 import {
   assignmentSourceLabel,
-  localizedCodeLabel,
   permissionEffectLabel,
+  permissionCodeLabel,
   resourceTypeLabel,
+  roleScopeLabel,
+  roleStatusLabel,
+  roleTypeLabel,
 } from './role-governance-display';
 import { RoleGovernanceLayout, type RoleGovernanceView } from './role-governance-layout';
 import { RoleGovernancePermissionDialog } from './role-governance-permission-dialog';
@@ -79,11 +83,11 @@ import type {
   GroupRoleAssignment,
 } from '@dwp-frontend/shared-utils';
 
-function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+function errorMessage(_error: unknown, fallback: string): string {
+  return fallback;
 }
 
-function RolesPanel() {
+function RolesPanel({ canManage }: { canManage: boolean }) {
   const { t } = useTranslation('admin');
   const displayRole = useRoleDisplay();
   const toast = useToast();
@@ -104,6 +108,7 @@ function RolesPanel() {
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['admin', 'governance'] });
 
   const mutate = async (action: () => Promise<unknown>, success: string): Promise<boolean> => {
+    if (!canManage) return false;
     setBusy(true);
     try {
       await action();
@@ -131,8 +136,7 @@ function RolesPanel() {
               {displayRole(row.code, row.name, row.description).name}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {row.code} /{' '}
-              {t(`roleGovernance.roleTypes.${row.roleType}`, { defaultValue: row.roleType })}
+              {row.code} / {roleTypeLabel(row.roleType, t)}
             </Typography>
           </Box>
         ),
@@ -174,7 +178,7 @@ function RolesPanel() {
             size="small"
             variant="outlined"
             color={row.status === 'ACTIVE' ? 'success' : 'default'}
-            label={t(`common.status.${row.status}`, { defaultValue: row.status })}
+            label={roleStatusLabel(row.status, t)}
           />
         ),
       },
@@ -196,7 +200,7 @@ function RolesPanel() {
                 <span>
                   <IconButton
                     size="small"
-                    disabled={systemManaged}
+                    disabled={systemManaged || !canManage}
                     aria-label={permissionLabel}
                     onClick={() => setPermissionRole(row)}
                   >
@@ -208,7 +212,7 @@ function RolesPanel() {
                 <span>
                   <IconButton
                     size="small"
-                    disabled={systemManaged}
+                    disabled={systemManaged || !canManage}
                     aria-label={editLabel}
                     onClick={() => {
                       setEditingRole(row);
@@ -224,7 +228,7 @@ function RolesPanel() {
         },
       },
     ],
-    [displayRole, t]
+    [canManage, displayRole, t]
   );
 
   if (roles.isLoading || resources.isLoading)
@@ -264,11 +268,16 @@ function RolesPanel() {
               <RefreshCw size={18} />
             </IconButton>
           </Tooltip>
-          <Button startIcon={<Boxes size={17} />} onClick={() => setResourceOpen(true)}>
+          <Button
+            startIcon={<Boxes size={17} />}
+            disabled={!canManage}
+            onClick={() => setResourceOpen(true)}
+          >
             {t('roleGovernance.actions.newResource')}
           </Button>
           <Button
             startIcon={<Plus size={17} />}
+            disabled={!canManage}
             onClick={() => {
               setEditingRole(null);
               setDialogOpen(true);
@@ -294,11 +303,15 @@ function RolesPanel() {
                 kind="first-use"
                 title={t('roleGovernance.empty.rolesTitle')}
                 description={t('roleGovernance.empty.rolesDescription')}
-                actionLabel={t('roleGovernance.actions.newRole')}
-                onAction={() => {
-                  setEditingRole(null);
-                  setDialogOpen(true);
-                }}
+                actionLabel={canManage ? t('roleGovernance.actions.newRole') : undefined}
+                onAction={
+                  canManage
+                    ? () => {
+                        setEditingRole(null);
+                        setDialogOpen(true);
+                      }
+                    : undefined
+                }
                 size="compact"
                 announce={false}
               />
@@ -307,7 +320,7 @@ function RolesPanel() {
         }}
         sx={{ border: 0, borderRadius: 0 }}
       />
-      {dialogOpen && (
+      {canManage && dialogOpen && (
         <RoleGovernanceRoleDialog
           role={editingRole}
           open
@@ -329,7 +342,7 @@ function RolesPanel() {
           }}
         />
       )}
-      {permissionRole && (
+      {canManage && permissionRole && (
         <RoleGovernancePermissionDialog
           role={permissionRole}
           resources={resources.data ?? []}
@@ -345,7 +358,7 @@ function RolesPanel() {
           }}
         />
       )}
-      {resourceOpen && (
+      {canManage && resourceOpen && (
         <RoleGovernanceResourceDialog
           open
           busy={busy}
@@ -552,7 +565,7 @@ function AssignmentDialog({
   );
 }
 
-function AssignmentsPanel() {
+function AssignmentsPanel({ canManage }: { canManage: boolean }) {
   const { t } = useTranslation('admin');
   const display = useDisplayDictionary();
   const displayRole = useRoleDisplay();
@@ -589,6 +602,7 @@ function AssignmentsPanel() {
   );
   const mutate = useCallback(
     async (action: () => Promise<unknown>, success: string) => {
+      if (!canManage) return false;
       setBusy(true);
       try {
         await action();
@@ -602,7 +616,7 @@ function AssignmentsPanel() {
         setBusy(false);
       }
     },
-    [queryClient, t, toast]
+    [canManage, queryClient, t, toast]
   );
   const columns = useMemo(
     () =>
@@ -612,9 +626,10 @@ function AssignmentsPanel() {
         roleNamesByCode,
         assignableRoleCodes,
         busy,
+        canManage,
         onRevoke: setPendingRevoke,
       }),
-    [assignableRoleCodes, busy, display, roleNamesByCode, t]
+    [assignableRoleCodes, busy, canManage, display, roleNamesByCode, t]
   );
   if (assignments.isLoading || roles.isLoading || assignableRoles.isLoading)
     return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
@@ -642,7 +657,11 @@ function AssignmentsPanel() {
             </Typography>
           </Box>
         </Stack>
-        <Button startIcon={<Plus size={17} />} onClick={() => setDialogOpen(true)}>
+        <Button
+          startIcon={<Plus size={17} />}
+          disabled={!canManage}
+          onClick={() => setDialogOpen(true)}
+        >
           {t('roleGovernance.actions.newAssignment')}
         </Button>
       </Stack>
@@ -672,15 +691,15 @@ function AssignmentsPanel() {
               kind="first-use"
               title={t('roleGovernance.empty.assignmentsTitle')}
               description={t('roleGovernance.empty.assignmentsDescription')}
-              actionLabel={t('roleGovernance.actions.newAssignment')}
-              onAction={() => setDialogOpen(true)}
+              actionLabel={canManage ? t('roleGovernance.actions.newAssignment') : undefined}
+              onAction={canManage ? () => setDialogOpen(true) : undefined}
               size="compact"
             />
           ),
         }}
         sx={{ border: 0, borderRadius: 0 }}
       />
-      {dialogOpen && (
+      {canManage && dialogOpen && (
         <AssignmentDialog
           open
           roles={(roles.data ?? []).filter((role) => assignableRoleCodes.has(role.code))}
@@ -696,10 +715,10 @@ function AssignmentsPanel() {
         />
       )}
       <RoleAssignmentRevokeDialog
-        assignment={pendingRevoke}
+        assignment={canManage ? pendingRevoke : null}
         roleName={
           pendingRevoke
-            ? (roleNamesByCode.get(pendingRevoke.roleCode) ?? pendingRevoke.roleCode)
+            ? (roleNamesByCode.get(pendingRevoke.roleCode) ?? t('roleGovernance.notAvailable'))
             : ''
         }
         busy={busy}
@@ -719,12 +738,27 @@ function AssignmentsPanel() {
 
 function EffectiveAccessPanel() {
   const { t } = useTranslation('admin');
+  const displayRole = useRoleDisplay();
   const [userQuery, setUserQuery] = useState('');
   const deferredUserQuery = useDeferredValue(userQuery);
   const users = useQuery({
     queryKey: ['admin', 'identity-users', 'effective-access', deferredUserQuery],
     queryFn: () => listIdentityUsers(deferredUserQuery),
   });
+  const roles = useQuery({
+    queryKey: ['admin', 'governance', 'roles'],
+    queryFn: listGovernanceRoles,
+  });
+  const roleNamesByCode = useMemo(
+    () =>
+      new Map(
+        (roles.data ?? []).map((role) => [
+          role.code,
+          displayRole(role.code, role.name, role.description).name,
+        ])
+      ),
+    [displayRole, roles.data]
+  );
   const [userId, setUserId] = useState('');
   const access = useQuery({
     queryKey: ['admin', 'governance', 'effective-access', userId],
@@ -733,7 +767,14 @@ function EffectiveAccessPanel() {
   });
   const roleColumns = useMemo<GridColDef<EffectiveAccess['roles'][number]>[]>(
     () => [
-      { field: 'roleCode', headerName: t('roleGovernance.columns.role'), minWidth: 180, flex: 1 },
+      {
+        field: 'roleCode',
+        headerName: t('roleGovernance.columns.role'),
+        minWidth: 180,
+        flex: 1,
+        valueGetter: (_value, row) =>
+          roleNamesByCode.get(row.roleCode) ?? t('roleGovernance.notAvailable'),
+      },
       {
         field: 'source',
         headerName: t('roleGovernance.columns.source'),
@@ -744,7 +785,7 @@ function EffectiveAccessPanel() {
               {assignmentSourceLabel(row.source, t)}
             </Typography>
             <Typography variant="caption" color="text.secondary" display="block" noWrap>
-              {row.source}
+              {row.sourceGroupName || t('roleGovernance.direct')}
             </Typography>
           </Box>
         ),
@@ -762,11 +803,10 @@ function EffectiveAccessPanel() {
         minWidth: 180,
         flex: 0.8,
         valueGetter: (_value, row) =>
-          [row.scopeType, row.scopeRef].filter(Boolean).join(' / ') ||
-          t('roleGovernance.tenantWide'),
+          [roleScopeLabel(row.scopeType, t), row.scopeRef].filter(Boolean).join(' / '),
       },
     ],
-    [t]
+    [roleNamesByCode, t]
   );
   const permissionColumns = useMemo<GridColDef<EffectiveAccess['permissions'][number]>[]>(
     () => [
@@ -781,7 +821,7 @@ function EffectiveAccessPanel() {
               {row.resourceKey}
             </Typography>
             <Typography variant="caption" color="text.secondary" display="block" noWrap>
-              {localizedCodeLabel(resourceTypeLabel(row.resourceType, t), row.resourceType)}
+              {resourceTypeLabel(row.resourceType, t)}
             </Typography>
           </Box>
         ),
@@ -791,14 +831,7 @@ function EffectiveAccessPanel() {
         headerName: t('roleGovernance.columns.permission'),
         width: 150,
         renderCell: ({ row }) => (
-          <Typography variant="body2">
-            {localizedCodeLabel(
-              t(`roleGovernance.permissionCodes.${row.permissionCode}`, {
-                defaultValue: row.permissionCode,
-              }),
-              row.permissionCode
-            )}
-          </Typography>
+          <Typography variant="body2">{permissionCodeLabel(row.permissionCode, t)}</Typography>
         ),
       },
       {
@@ -813,9 +846,6 @@ function EffectiveAccessPanel() {
               color={row.effect === 'ALLOW' ? 'success' : 'error'}
               label={permissionEffectLabel(row.effect, t)}
             />
-            <Typography variant="caption" color="text.secondary">
-              {row.effect}
-            </Typography>
           </Stack>
         ),
       },
@@ -824,20 +854,24 @@ function EffectiveAccessPanel() {
         headerName: t('roleGovernance.columns.sourceRoles'),
         minWidth: 220,
         flex: 0.8,
-        valueGetter: (_value, row) => row.grantedByRoles.join(', '),
+        valueGetter: (_value, row) =>
+          row.grantedByRoles
+            .map((roleCode) => roleNamesByCode.get(roleCode) ?? t('roleGovernance.notAvailable'))
+            .join(', '),
       },
     ],
-    [t]
+    [roleNamesByCode, t]
   );
-  if (users.isLoading) return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
-  if (users.isError)
+  if (users.isLoading || roles.isLoading)
+    return <ManagementPanelLoading label={t('roleGovernance.loading')} />;
+  if (users.isError || roles.isError)
     return (
       <ErrorState
         title={t('roleGovernance.errors.usersTitle')}
         description={t('roleGovernance.errors.usersDescription')}
         retryLabel={t('roleGovernance.actions.retry')}
-        retrying={users.isFetching}
-        onRetry={() => void users.refetch()}
+        retrying={users.isFetching || roles.isFetching}
+        onRetry={() => void Promise.all([users.refetch(), roles.refetch()])}
       />
     );
   return (
@@ -936,10 +970,12 @@ function EffectiveAccessPanel() {
 
 export function RoleGovernanceManager() {
   const [tab, setTab] = useState<RoleGovernanceView>('roles');
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canManage = permissionsLoaded && hasPermission('ADMIN.ACCESS_GOVERNANCE', 'MANAGE');
   return (
     <RoleGovernanceLayout view={tab} onChange={setTab}>
-      {tab === 'roles' && <RolesPanel />}
-      {tab === 'assignments' && <AssignmentsPanel />}
+      {tab === 'roles' && <RolesPanel canManage={canManage} />}
+      {tab === 'assignments' && <AssignmentsPanel canManage={canManage} />}
       {tab === 'privileged' && <PrivilegedAccessManager />}
       {tab === 'effective' && <EffectiveAccessPanel />}
     </RoleGovernanceLayout>

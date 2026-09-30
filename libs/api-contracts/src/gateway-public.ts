@@ -7026,7 +7026,7 @@ export interface paths {
         };
         get: operations["auth_activation"];
         put?: never;
-        post: operations["auth_activate_1"];
+        post: operations["auth_activate_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7076,7 +7076,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Completes the two-person, responsibility-only bootstrap with an exact-scope APP_ACCESS_APPROVER. The one-time exception for a scope with an effective APP_OWNER and zero effective APP_ACCESS_APPROVER permits an independent APP_CATALOG_ADMIN to approve the first MANUAL user approver requested by that owner. Later approvers require an exact-scope approver. APP_OWNER requires independent APP_CATALOG_ADMIN authority. Product specialist rows, capabilities, and duties cannot be decided here. */
-        post: operations["auth_decideAssignment"];
+        post: operations["auth_decideAssignment_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7097,7 +7097,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** @description Revokes a legacy control-plane responsibility with an exact-scope APP_ACCESS_MANAGER, except APP_OWNER which only APP_CATALOG_ADMIN can revoke. Broad tenant roles alone are forbidden. */
-        patch: operations["auth_revokeAssignment"];
+        patch: operations["auth_revokeAssignment_1"];
         trace?: never;
     };
     "/api/auth/admin/access/app-governance/presets/assignments": {
@@ -7469,6 +7469,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/admin/access/privileged/emergency-principals/{principalId}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_verifyEmergencyPrincipal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/admin/access/privileged/me/eligibilities": {
         parameters: {
             query?: never;
@@ -7558,7 +7574,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["auth_decide_1"];
+        post: operations["auth_decide_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7574,7 +7590,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["auth_revoke"];
+        post: operations["auth_revoke_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7590,7 +7606,23 @@ export interface paths {
         };
         get: operations["auth_campaigns"];
         put?: never;
-        post: operations["auth_create_1"];
+        post: operations["auth_create_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/access/reviews/security-probe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_available"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -7622,7 +7654,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["auth_activate"];
+        post: operations["auth_activate_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7910,7 +7942,7 @@ export interface paths {
         };
         get: operations["auth_list"];
         put?: never;
-        post: operations["auth_create"];
+        post: operations["auth_create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7959,6 +7991,406 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["auth_rotate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_projection_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_assignments"];
+        put?: never;
+        post: operations["auth_createAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/assignments/{assignmentId}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_activateAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/assignments/{assignmentId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_decideAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/assignments/{assignmentId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_revokeAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/capability-overrides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_projection"];
+        put?: never;
+        post: operations["auth_create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/capability-overrides/{changeId}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_activate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/capability-overrides/{changeId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_decide_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/capability-overrides/{changeId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_revoke"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/capability-overrides/{changeId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_submit_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/installations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_createInstallation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/installations/{installationId}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_activateInstallation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/installations/{installationId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_decideInstallation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-app-adoption/installations/{installationId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_submitInstallation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-setting-registry/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_changes"];
+        put?: never;
+        post: operations["auth_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-setting-registry/changes/{changeId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_decide_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-setting-registry/changes/{changeId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_publish_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-setting-registry/changes/{changeId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_submit_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-setting-registry/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_owners"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-settings/access-projection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_accessProjection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-settings/auth-policy/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_authPolicyChanges"];
+        put?: never;
+        post: operations["auth_createAuthPolicyChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-settings/auth-policy/changes/{changeSetId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_decide_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-settings/auth-policy/changes/{changeSetId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-settings/auth-policy/changes/{changeSetId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-settings/governance-snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_governanceSnapshot"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -8264,7 +8696,71 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete: operations["auth_revoke_1"];
+        delete: operations["auth_revoke_2"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/tenant-settings/effective-settings/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_effectiveSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/tenant-settings/effective-settings/me/preferred-locale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_preferredLocale"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/tenant-settings/effective-settings/me/preferred-locale/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_restorePreferredLocale"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/tenant-settings/managed-effective/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_effective"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -13733,7 +14229,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_workspace_1"];
+        get: operations["platform_workspace_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -14661,7 +15157,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_workspace"];
+        get: operations["platform_workspace_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -18648,7 +19144,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["platform_recordView"];
+        post: operations["platform_recordView_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -20858,6 +21354,134 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_reset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/activity/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_recordView"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/favorites/{settingKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateFavorite"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/privacy/consents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_consentLedger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/privacy/consents/product-analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_updateProductAnalyticsConsent"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/privacy/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_privacyRequests"];
+        put?: never;
+        post: operations["platform_createPrivacyRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/privacy/requests/{requestId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["platform_cancelPrivacyRequest"];
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/workspace": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_workspace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/personal-settings/workspace/reconfirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_reconfirmWorkspace"];
         delete?: never;
         options?: never;
         head?: never;
@@ -23461,6 +24085,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/provider/v1/admin/artifact-governance/manifests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_artifacts"];
+        put?: never;
+        post: operations["provider_createArtifact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/manifests/{artifactId}/compatibility": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_assessArtifactCompatibility"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/manifests/{artifactId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_decideArtifact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/manifests/{artifactId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_submitArtifact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/rollout-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_plans"];
+        put?: never;
+        post: operations["provider_createPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/rollout-plans/{planId}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_decidePlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/rollout-plans/{planId}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_appendPlanEvidence"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/rollout-plans/{planId}/ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_markPlanReady"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/artifact-governance/rollout-plans/{planId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_submitPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/provider/v1/admin/audit-events": {
         parameters: {
             query?: never;
@@ -24111,6 +24879,182 @@ export interface paths {
         get: operations["provider_reliabilityControl"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/commitment-changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_resourceChanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/commitment-changes/{changeRequestId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_decideResourceChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/commitment-changes/{changeRequestId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_publishResourceChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/commitments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_commitments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/lifecycle-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_lifecycleRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/lifecycle-requests/{requestId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_decideLifecycleRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/lifecycle-requests/{requestId}/refresh-hold": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_refreshLifecycleHold"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/lifecycle-requests/{requestId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_submitLifecycleRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/tenants/{tenantId}/commitments/{resourceKey}/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_createResourceChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/tenants/{tenantId}/commitments/{resourceKey}/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_ledger"];
+        put?: never;
+        post: operations["provider_appendLedger"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/tenants/{tenantId}/lifecycle-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_createLifecycleRequest"];
         delete?: never;
         options?: never;
         head?: never;
@@ -24959,6 +25903,54 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_approve_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/tenant/settings/data-governance-observation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_dataGovernance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/tenant/settings/plan-eligibility": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_planEligibility"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/tenant/settings/provider-domains": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["provider_domains"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -40676,6 +41668,48 @@ export interface components {
             /** Format: int64 */
             workspaceVersion?: number;
         };
+        auth_AccessGrant: {
+            /** Format: date-time */
+            activatedAt?: string;
+            /** Format: int64 */
+            activatedBy?: number;
+            approvalLineageState?: string;
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            displayName?: string;
+            entitlementKey?: string;
+            entitlementType?: string;
+            lifecycleState?: string;
+            privileged?: boolean;
+            /** Format: int64 */
+            requestedBy?: number;
+            scopeRef?: string;
+            scopeType?: string;
+            sourceId?: string;
+            sourceName?: string;
+            sourceType?: string;
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validTo?: string;
+        };
+        auth_AccessProjection: {
+            coverage?: components["schemas"]["auth_ProjectionCoverage"];
+            /** Format: date-time */
+            observedAt?: string;
+            /** Format: int32 */
+            page?: number;
+            principals?: components["schemas"]["auth_PrincipalAccess"][];
+            /** Format: int32 */
+            size?: number;
+            snapshotId?: string;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
         auth_ActivateAccountRequest: {
             password: string;
         };
@@ -40690,6 +41724,13 @@ export interface components {
             reason: string;
             /** Format: int64 */
             version: number;
+        };
+        auth_ActivationCommand: {
+            activatedBy: string;
+            changeRef: string;
+            checksum: string;
+            /** Format: int64 */
+            expectedRevision: number;
         };
         auth_ActivationRequest: {
             /** Format: int32 */
@@ -40714,6 +41755,25 @@ export interface components {
             /** Format: int64 */
             userId?: number;
         };
+        auth_AdoptionProjection: {
+            coverageState?: string;
+            exclusions?: string[];
+            includedOwners?: string[];
+            installations?: components["schemas"]["auth_Installation"][];
+            /** Format: date-time */
+            observedAt?: string;
+            requestableAppResourceKeys?: string[];
+        };
+        auth_ApiResponseAccessProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AccessProjection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseActivateAccountResponse: {
             correlationId?: string;
             data?: components["schemas"]["auth_ActivateAccountResponse"];
@@ -40727,6 +41787,16 @@ export interface components {
         auth_ApiResponseActivationSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_ActivationSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseAdoptionProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AdoptionProjection"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -40787,6 +41857,26 @@ export interface components {
         auth_ApiResponseCampaignSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_CampaignSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseChange: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_Change"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseChangeSet: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_ChangeSet"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -40904,6 +41994,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseInstallation: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_Installation"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseItemSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_ItemSummary"];
@@ -40944,6 +42044,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseListAssignment: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_Assignment"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseListAuthSessionResponse: {
             correlationId?: string;
             data?: components["schemas"]["auth_AuthSessionResponse"][];
@@ -40964,6 +42074,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseListChange: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_Change"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseListChangeSet: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_ChangeSet"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseListConnectorSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_ConnectorSummary"][];
@@ -40977,6 +42107,16 @@ export interface components {
         auth_ApiResponseListDelegatedScopeSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_DelegatedScopeSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseListEffectiveSetting: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_EffectiveSetting"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -41024,6 +42164,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseListOwnerDescriptor: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_OwnerDescriptor"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseListPermissionDTO: {
             correlationId?: string;
             data?: components["schemas"]["auth_PermissionDTO"][];
@@ -41037,16 +42187,6 @@ export interface components {
         auth_ApiResponseListPolicySummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_PolicySummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        auth_ApiResponseListProvisioningEvent: {
-            correlationId?: string;
-            data?: components["schemas"]["auth_ProvisioningEvent"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -41194,6 +42334,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_Projection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseProvisioningEventPage: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_ProvisioningEventPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseRequestSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_RequestSummary"];
@@ -41244,9 +42404,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseTenantGovernanceSnapshot: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_TenantGovernanceSnapshot"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseUserAccessSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_UserAccessSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseUserPreferenceState: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_UserPreferenceState"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -41428,35 +42608,42 @@ export interface components {
         };
         auth_Assignment: {
             /** Format: date-time */
+            activatedAt?: string;
+            /** Format: int64 */
+            activatedBy?: number;
+            /** Format: uuid */
+            activationReceiptId?: string;
+            allowedActions?: string[];
+            /** Format: date-time */
             approvedAt?: string;
             /** Format: int64 */
             approvedBy?: number;
-            approvedByName?: string;
             /** Format: uuid */
             assignmentId?: string;
-            assignmentSource?: string;
             /** Format: date-time */
             createdAt?: string;
             decisionReason?: string;
-            /** @description Actor-specific, non-authoritative hint that the current dashboard viewer may decide this assignment through the one-time first APP_ACCESS_APPROVER bootstrap path. The decision endpoint always revalidates authority, independence, state, scope, and version. */
-            firstApproverBootstrapEligible?: boolean;
+            externalSettlementState?: string;
+            /** Format: uuid */
+            installationId?: string;
             justification?: string;
             lifecycleState?: string;
-            principalName?: string;
-            principalRef?: string;
-            principalType?: string;
+            productKey?: string;
             /** Format: int64 */
             requestedBy?: number;
-            requestedByName?: string;
-            /** Format: uuid */
-            resourceSetId?: string;
-            resourceSetKey?: string;
-            resourceSetName?: string;
-            responsibilityCode?: string;
+            revocationReason?: string;
             /** Format: date-time */
-            reviewDueAt?: string;
+            revokedAt?: string;
+            /** Format: int64 */
+            revokedBy?: number;
+            /** Format: int32 */
+            seatQuantity?: number;
+            sourceType?: string;
             /** Format: date-time */
             updatedAt?: string;
+            userDisplayName?: string;
+            /** Format: int64 */
+            userId?: number;
             /** Format: date-time */
             validFrom?: string;
             /** Format: date-time */
@@ -41470,6 +42657,16 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        auth_AuthPolicyDraft: {
+            allowedLoginTypes: string[];
+            defaultLoginType: string;
+            localLoginEnabled: boolean;
+            requireMfa: boolean;
+            ssoLoginEnabled: boolean;
+            ssoProviderKey?: string;
+            /** Format: int32 */
+            tokenTtlSec?: number;
+        };
         auth_AuthPolicyResponse: {
             allowedLoginTypes?: string[];
             defaultLoginType?: string;
@@ -41479,6 +42676,8 @@ export interface components {
             ssoProviderKey?: string;
             /** Format: int64 */
             tenantId?: number;
+            /** Format: int32 */
+            tokenTtlSec?: number;
         };
         auth_AuthSessionResponse: {
             current?: boolean;
@@ -41532,6 +42731,82 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        auth_Change: {
+            allowedActions?: string[];
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            beforeValue?: components["schemas"]["auth_JsonNode"];
+            /** Format: uuid */
+            changeId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            decisionReason?: string;
+            desiredState?: string;
+            /** Format: int64 */
+            impactCount?: number;
+            impactCoverage?: string;
+            /** Format: date-time */
+            impactObservedAt?: string;
+            justification?: string;
+            lifecycleState?: string;
+            ownerKey?: string;
+            /** Format: int64 */
+            ownerVersion?: number;
+            preview?: components["schemas"]["auth_Preview"];
+            proposedValue?: components["schemas"]["auth_JsonNode"];
+            /** Format: uuid */
+            publishReceiptId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            /** Format: int64 */
+            requestedBy?: number;
+            settingKey?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        auth_ChangeSet: {
+            allowedActions?: string[];
+            beforeHash?: string;
+            beforeState?: components["schemas"]["auth_JsonNode"];
+            /** Format: uuid */
+            changeSetId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            /** Format: int64 */
+            decidedBy?: number;
+            decisionReason?: string;
+            impact?: components["schemas"]["auth_Impact"];
+            justification?: string;
+            lifecycleState?: string;
+            ownerRef?: string;
+            ownerType?: string;
+            proposedHash?: string;
+            proposedState?: components["schemas"]["auth_JsonNode"];
+            /** Format: uuid */
+            publishReceiptId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            /** Format: int64 */
+            requestedBy?: number;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         auth_ConnectorSummary: {
             allowedOperations?: string[];
             /** Format: uuid */
@@ -41577,14 +42852,17 @@ export interface components {
             validTo: string;
         };
         auth_CreateAssignmentRequest: {
-            justification: string;
-            principalRef: string;
-            principalType: string;
             /** Format: uuid */
-            resourceSetId: string;
-            responsibilityCode: string;
+            installationId: string;
+            justification: string;
+            /** Format: int64 */
+            userId: number;
             /** Format: date-time */
             validTo?: string;
+        };
+        auth_CreateAuthPolicyChangeRequest: {
+            justification: string;
+            policy: components["schemas"]["auth_AuthPolicyDraft"];
         };
         auth_CreateCampaignRequest: {
             description?: string;
@@ -41597,6 +42875,12 @@ export interface components {
             /** Format: int64 */
             scopeRef?: number;
             scopeType: string;
+        };
+        auth_CreateChangeRequest: {
+            desiredState: string;
+            justification: string;
+            proposedValue?: components["schemas"]["auth_JsonNode"];
+            settingKey: string;
         };
         auth_CreateDelegatedScopeRequest: {
             actionCode: string;
@@ -41643,6 +42927,14 @@ export interface components {
             /** Format: date-time */
             validTo?: string;
         };
+        auth_CreateInstallationRequest: {
+            appResourceKey: string;
+            installationKind: string;
+            justification: string;
+            productKey: string;
+            /** Format: int32 */
+            seatCapacity?: number;
+        };
         auth_CreateOrganizationUnitRequest: {
             description?: string;
             name: string;
@@ -41651,12 +42943,11 @@ export interface components {
             parentOrgUnitId?: number;
         };
         auth_CreateRequest: {
-            allowedOperations: string[];
-            connectorKey: string;
-            /** Format: int32 */
-            credentialTtlDays: number;
-            displayName: string;
-            purpose: string;
+            contractKey: string;
+            desiredState: string;
+            justification: string;
+            /** Format: date-time */
+            validTo?: string;
         };
         auth_CreateResourceRequest: {
             key: string;
@@ -41708,6 +42999,12 @@ export interface components {
             principals?: components["schemas"]["auth_Principal"][];
             resourceSets?: components["schemas"]["auth_ResourceSet"][];
             responsibilities?: components["schemas"]["auth_Responsibility"][];
+        };
+        auth_DecisionCommand: {
+            decision: string;
+            reason: string;
+            /** Format: int64 */
+            version: number;
         };
         auth_DecisionRequest: {
             decision: string;
@@ -41796,6 +43093,17 @@ export interface components {
             /** Format: date-time */
             validTo?: string;
         };
+        auth_EffectiveCapability: {
+            activeOverride?: components["schemas"]["auth_Change"];
+            baselineState?: string;
+            effectiveSource?: string;
+            effectiveState?: string;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            lineage?: components["schemas"]["auth_Lineage"][];
+            overrideState?: string;
+            policy?: components["schemas"]["auth_Policy"];
+        };
         auth_EffectivePermission: {
             effect?: string;
             grantedByRoles?: string[];
@@ -41815,6 +43123,19 @@ export interface components {
             sourceGroupName?: string;
             /** Format: date-time */
             validTo?: string;
+        };
+        auth_EffectiveSetting: {
+            effectiveSource?: string;
+            effectiveValue?: components["schemas"]["auth_JsonNode"];
+            /** Format: date-time */
+            evaluatedAt?: string;
+            freshnessState?: string;
+            localizedLabelKey?: string;
+            overrideState?: string;
+            provenance?: components["schemas"]["auth_Provenance"][];
+            settingKey?: string;
+            /** Format: date-time */
+            sourceUpdatedAt?: string;
         };
         auth_EligibilitySummary: {
             /** Format: uuid */
@@ -41848,11 +43169,20 @@ export interface components {
             /** Format: uuid */
             emergencyPrincipalId?: string;
             justification?: string;
+            /** Format: date-time */
+            lastVerifiedAt?: string;
+            /** Format: int64 */
+            lastVerifiedBy?: number;
             lifecycleState?: string;
             /** Format: date-time */
             reviewDueAt?: string;
             /** Format: int64 */
             userId?: number;
+            /** Format: date-time */
+            verificationDueAt?: string;
+            verificationMethod?: string;
+            verificationReference?: string;
+            verificationStatus?: string;
             /** Format: int64 */
             version?: number;
         };
@@ -41938,6 +43268,53 @@ export interface components {
             providerKey?: string;
             providerType?: string;
         };
+        auth_Impact: {
+            confidence?: string;
+            coverage?: string;
+            exclusions?: string[];
+            /** Format: date-time */
+            observedAt?: string;
+            /** Format: int64 */
+            populationCount?: number;
+        };
+        auth_Installation: {
+            /** Format: date-time */
+            activatedAt?: string;
+            /** Format: int64 */
+            activatedBy?: number;
+            /** Format: uuid */
+            activationReceiptId?: string;
+            /** Format: int64 */
+            activeSeats?: number;
+            allowedActions?: string[];
+            appResourceKey?: string;
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            decisionReason?: string;
+            externalExecutorState?: string;
+            /** Format: uuid */
+            installationId?: string;
+            installationKind?: string;
+            justification?: string;
+            lifecycleState?: string;
+            productKey?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            /** Format: int64 */
+            reservedSeats?: number;
+            /** Format: int32 */
+            seatCapacity?: number;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         auth_ItemSummary: {
             /** Format: int64 */
             accessSourceId?: number;
@@ -41997,6 +43374,18 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        auth_Lineage: {
+            /** Format: date-time */
+            effectiveFrom?: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            level?: string;
+            ownerKey?: string;
+            reason?: string;
+            /** Format: uuid */
+            receiptId?: string;
+            state?: string;
+        };
         auth_ListResponseGroupResponse: {
             Resources?: components["schemas"]["auth_GroupResponse"][];
             /** Format: int32 */
@@ -42036,13 +43425,24 @@ export interface components {
             tenantId?: string;
             userId?: string;
         };
+        auth_LoginVerification: {
+            blockingReasons?: string[];
+            configuredProviderKey?: string;
+            externalProbeState?: string;
+            internalPrerequisiteState?: string;
+            /** Format: date-time */
+            lastExternalProbeAt?: string;
+        };
         auth_MeResponse: {
+            department?: string;
             displayName?: string;
             email?: string;
             groups?: components["schemas"]["auth_GroupMembershipDTO"][];
             identityPlane?: string;
+            identitySourceType?: string;
             jobTitle?: string;
             legacyRoleFallbackAllowed?: boolean;
+            mfaEnabled?: boolean;
             permissions?: components["schemas"]["auth_PermissionDTO"][];
             /** Format: uuid */
             personPublicId?: string;
@@ -42058,6 +43458,7 @@ export interface components {
             tenantName?: string;
             /** Format: int64 */
             userId?: number;
+            workerNumber?: string;
         };
         auth_Member: {
             display?: string;
@@ -42113,6 +43514,46 @@ export interface components {
             updatedBy?: number;
             /** Format: int64 */
             version?: number;
+        };
+        auth_OwnerCoverage: {
+            allowedActions?: string[];
+            exclusions?: string[];
+            freshnessState?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            ownerKey?: string;
+            /** Format: date-time */
+            sourceUpdatedAt?: string;
+            state?: string;
+        };
+        auth_OwnerDescriptor: {
+            activationMode?: string;
+            adapterState?: string;
+            allowedActions?: string[];
+            defaultValue?: components["schemas"]["auth_JsonNode"];
+            editorKind?: string;
+            freshnessState?: string;
+            lifecycleState?: string;
+            localizedLabelKey?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            overridePolicy?: string;
+            ownerKey?: string;
+            ownerService?: string;
+            /** Format: int64 */
+            ownerVersion?: number;
+            resolutionStrategy?: string;
+            settingKey?: string;
+            /** Format: date-time */
+            sourceUpdatedAt?: string;
+            valueType?: string;
+        };
+        auth_OwnerObservation: {
+            exclusions?: string[];
+            /** Format: date-time */
+            observedAt?: string;
+            ownerKey?: string;
+            state?: string;
         };
         auth_PageResultDirectoryGroupSummary: {
             content?: components["schemas"]["auth_DirectoryGroupSummary"][];
@@ -42201,6 +43642,30 @@ export interface components {
             /** Format: int64 */
             resourceId: number;
         };
+        auth_Policy: {
+            action?: string;
+            /** Format: uuid */
+            activeBundleId?: string;
+            /** Format: int64 */
+            activeRevision?: number;
+            allowedActions?: string[];
+            appResourceKey?: string;
+            contractKey?: string;
+            contractOwner?: string;
+            /** Format: int32 */
+            maxDurationDays?: number;
+            overrideMode?: string;
+            planEligibilityState?: string;
+            productKey?: string;
+            reasonCode?: string;
+            resolvedCapabilityCode?: string;
+            riskTier?: string;
+            ruleKey?: string;
+            ruleOwner?: string;
+            /** Format: int64 */
+            ruleVersion?: number;
+            surfaceKey?: string;
+        };
         auth_PolicySummary: {
             activationMode?: string;
             /** Format: int32 */
@@ -42220,11 +43685,36 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        auth_Preview: {
+            beforeValue?: components["schemas"]["auth_JsonNode"];
+            coverage?: string;
+            effectiveAfter?: components["schemas"]["auth_JsonNode"];
+            /** Format: int64 */
+            impactedPrincipalCount?: number;
+            /** Format: date-time */
+            observedAt?: string;
+            settingKey?: string;
+            sourceAfter?: string;
+            warnings?: string[];
+        };
         auth_Principal: {
             detail?: string;
             displayName?: string;
             ref?: string;
             type?: string;
+        };
+        auth_PrincipalAccess: {
+            displayName?: string;
+            email?: string;
+            grants?: components["schemas"]["auth_AccessGrant"][];
+            mfaEnabled?: boolean;
+            /** Format: int32 */
+            pendingApprovalCount?: number;
+            /** Format: date-time */
+            sourceUpdatedAt?: string;
+            status?: string;
+            /** Format: int64 */
+            userId?: number;
         };
         auth_ProductSurfaceStepUpAuthenticationError: {
             correlationId?: string;
@@ -42331,6 +43821,31 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_Projection: {
+            capabilities?: components["schemas"]["auth_EffectiveCapability"][];
+            changes?: components["schemas"]["auth_Change"][];
+            coverageState?: string;
+            exclusions?: string[];
+            includedOwners?: string[];
+            /** Format: date-time */
+            observedAt?: string;
+        };
+        auth_ProjectionCoverage: {
+            exclusions?: string[];
+            /** Format: date-time */
+            freshestSourceUpdatedAt?: string;
+            includedOwners?: string[];
+            owners?: components["schemas"]["auth_OwnerCoverage"][];
+            state?: string;
+        };
+        auth_Provenance: {
+            evaluation?: string;
+            level?: string;
+            localizedOwnerLabelKey?: string;
+            /** Format: int64 */
+            ownerVersion?: number;
+            reason?: string;
+        };
         auth_ProvisioningEvent: {
             /** Format: uuid */
             connectorId?: string;
@@ -42345,6 +43860,32 @@ export interface components {
             resourceId?: string;
             resourceType?: string;
             summary?: string;
+        };
+        auth_ProvisioningEventPage: {
+            coverageState?: string;
+            hasMore?: boolean;
+            items?: components["schemas"]["auth_ProvisioningEvent"][];
+            /** Format: int32 */
+            limit?: number;
+        };
+        auth_ReasonedCommand: {
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        auth_RecoveryCoverage: {
+            exclusions?: string[];
+            /** Format: date-time */
+            freshestVerificationAt?: string;
+            /** Format: int64 */
+            notVerified?: number;
+            /** Format: int64 */
+            overdue?: number;
+            state?: string;
+            /** Format: int64 */
+            total?: number;
+            /** Format: int64 */
+            verified?: number;
         };
         auth_RedirectView: {
             applicationContext?: components["schemas"]["auth_ApplicationContext"];
@@ -42479,12 +44020,21 @@ export interface components {
             /** Format: int32 */
             sortOrder?: number;
         };
+        auth_RestorePreferenceCommand: {
+            /** Format: int64 */
+            version: number;
+        };
         auth_RevokeAppAdminPresetRequest: {
             reason: string;
             /** Format: int64 */
             version: number;
         };
         auth_RevokeAssignmentRequest: {
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        auth_RevokeCommand: {
             reason: string;
             /** Format: int64 */
             version: number;
@@ -42602,6 +44152,26 @@ export interface components {
             taglibLocation?: string;
             taglibURI?: string;
         };
+        auth_TenantDirectoryProjection: {
+            defaultLocale?: string;
+            /** Format: date-time */
+            sourceUpdatedAt?: string;
+            state?: string;
+            tenantCode?: string;
+            /** Format: int64 */
+            tenantId?: number;
+            tenantName?: string;
+        };
+        auth_TenantGovernanceSnapshot: {
+            effectiveSettings?: components["schemas"]["auth_EffectiveSetting"][];
+            loginVerification?: components["schemas"]["auth_LoginVerification"];
+            /** Format: date-time */
+            observedAt?: string;
+            policyOwners?: components["schemas"]["auth_OwnerObservation"][];
+            providerDomain?: components["schemas"]["auth_OwnerObservation"];
+            recoveryVerification?: components["schemas"]["auth_RecoveryCoverage"];
+            tenantDirectory?: components["schemas"]["auth_TenantDirectoryProjection"];
+        };
         auth_UpdateDirectoryGroupRequest: {
             description?: string;
             displayName: string;
@@ -42672,6 +44242,16 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        auth_UserPreferenceState: {
+            preferredLocale?: string;
+            tenantDefaultLocale?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            userId?: number;
+            /** Format: int64 */
+            version?: number;
+        };
         auth_UserRequest: {
             active?: boolean;
             displayName?: string;
@@ -42696,7 +44276,19 @@ export interface components {
             title?: string;
             userName?: string;
         };
+        auth_VerifyEmergencyPrincipalRequest: {
+            evidenceReference: string;
+            method: string;
+            /** Format: date-time */
+            nextVerificationDueAt: string;
+            /** Format: int64 */
+            version: number;
+        };
         auth_VersionRequest: {
+            /** Format: int64 */
+            version: number;
+        };
+        auth_VersionedCommand: {
             /** Format: int64 */
             version: number;
         };
@@ -49602,6 +51194,15 @@ export interface components {
             preview?: components["schemas"]["platform_ActivationPreview"];
             receipt?: components["schemas"]["platform_CommandReceipt"];
         };
+        platform_Activity: {
+            /** Format: uuid */
+            activityId?: string;
+            activityType?: string;
+            changedFields?: string[];
+            /** Format: date-time */
+            occurredAt?: string;
+            settingKey?: string;
+        };
         platform_ActivityCoverage: {
             excludedProvenance?: string[];
             includesLegacy?: boolean;
@@ -50111,6 +51712,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseActivity: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Activity"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseActivityEvent: {
             correlationId?: string;
             data?: components["schemas"]["platform_ActivityEvent"];
@@ -50244,6 +51855,16 @@ export interface components {
         platform_ApiResponseAppAccessRequest: {
             correlationId?: string;
             data?: components["schemas"]["platform_AppAccessRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseAppAccessRequestPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_AppAccessRequestPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -50424,6 +52045,16 @@ export interface components {
         platform_ApiResponseBookingSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_BookingSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseBrandingRevisionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_BrandingRevisionPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -50764,6 +52395,26 @@ export interface components {
         platform_ApiResponseConnectorStatus: {
             correlationId?: string;
             data?: components["schemas"]["platform_ConnectorStatus"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseConsent: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Consent"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseConsentLedger: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ConsentLedger"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -51191,6 +52842,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseFavorite: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Favorite"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseFavoriteReceipt: {
             correlationId?: string;
             data?: components["schemas"]["platform_FavoriteReceipt"];
@@ -51371,6 +53032,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseHomeExperienceRevisionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeExperienceRevisionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseHomeOverviewResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_HomeOverviewResponse"];
@@ -51411,6 +53082,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseHomeTemplatePage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeTemplatePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseHomeTemplateResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_HomeTemplateResponse"];
@@ -51421,9 +53102,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseHomeTemplateRevisionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeTemplateRevisionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseHomeViewResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_HomeViewResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseHomeViewRevisionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HomeViewRevisionPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -51504,6 +53205,16 @@ export interface components {
         platform_ApiResponseInspectionStatus: {
             correlationId?: string;
             data?: components["schemas"]["platform_InspectionStatus"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseIntegrityCheckpointPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_IntegrityCheckpointPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -51671,16 +53382,6 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        platform_ApiResponseListAppAccessRequest: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_AppAccessRequest"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         platform_ApiResponseListAssignedResource: {
             correlationId?: string;
             data?: components["schemas"]["platform_AssignedResource"][];
@@ -51704,16 +53405,6 @@ export interface components {
         platform_ApiResponseListBookingSummary: {
             correlationId?: string;
             data?: components["schemas"]["platform_BookingSummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListBrandingRevisionResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_BrandingRevisionResponse"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -51931,49 +53622,9 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        platform_ApiResponseListHomeExperienceRevisionResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_HomeExperienceRevisionResponse"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListHomeTemplateResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_HomeTemplateResponse"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListHomeTemplateRevisionResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_HomeTemplateRevisionResponse"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         platform_ApiResponseListHomeViewResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_HomeViewResponse"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListHomeViewRevisionResponse: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_HomeViewRevisionResponse"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -52001,16 +53652,6 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        platform_ApiResponseListIntegrityCheckpoint: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_IntegrityCheckpoint"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         platform_ApiResponseListKioskDevice: {
             correlationId?: string;
             data?: components["schemas"]["platform_KioskDevice"][];
@@ -52031,29 +53672,9 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        platform_ApiResponseListOrphanLifecycleResult: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_OrphanLifecycleResult"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         platform_ApiResponseListOrphanedView: {
             correlationId?: string;
             data?: components["schemas"]["platform_OrphanedView"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListOwnershipTransferSummary: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_OwnershipTransferSummary"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -52094,6 +53715,16 @@ export interface components {
         platform_ApiResponseListPreferenceExceptionRequest: {
             correlationId?: string;
             data?: components["schemas"]["platform_PreferenceExceptionRequest"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListPrivacyRequest: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PrivacyRequest"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -52234,26 +53865,6 @@ export interface components {
         platform_ApiResponseListSharedInboxMemberCandidate: {
             correlationId?: string;
             data?: components["schemas"]["platform_SharedInboxMemberCandidate"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListSubject: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_Subject"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListSyncRun: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_SyncRun"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -52501,6 +54112,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseOrphanLifecyclePage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_OrphanLifecyclePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseOrphanLifecycleResult: {
             correlationId?: string;
             data?: components["schemas"]["platform_OrphanLifecycleResult"];
@@ -52534,6 +54155,16 @@ export interface components {
         platform_ApiResponseOwnershipTransfer: {
             correlationId?: string;
             data?: components["schemas"]["platform_OwnershipTransfer"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseOwnershipTransferPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_OwnershipTransferPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -52724,6 +54355,16 @@ export interface components {
         platform_ApiResponsePreview: {
             correlationId?: string;
             data?: components["schemas"]["platform_Preview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponsePrivacyRequest: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PrivacyRequest"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -53461,9 +55102,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseSubjectPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SubjectPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseSyncRun: {
             correlationId?: string;
             data?: components["schemas"]["platform_SyncRun"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseSyncRunPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SyncRunPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -54253,6 +55914,13 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_AppAccessRequestPage: {
+            coverageState?: string;
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_AppAccessRequest"][];
+            /** Format: int32 */
+            limit?: number;
+        };
         platform_AppEntry: {
             appKey?: string;
             badge?: components["schemas"]["platform_Badge"];
@@ -54871,6 +56539,12 @@ export interface components {
             organizationName?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_BrandingRevisionPage: {
+            hasMore: boolean;
+            items: components["schemas"]["platform_BrandingRevisionResponse"][];
+            /** Format: int32 */
+            limit: number;
         };
         platform_BrandingRevisionResponse: {
             accentColor?: string;
@@ -56021,6 +57695,26 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_Consent: {
+            /** Format: uuid */
+            consentId?: string;
+            consentState?: string;
+            noticeVersion?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            purposeKey?: string;
+            source?: string;
+        };
+        platform_ConsentLedger: {
+            coverageBoundary?: string;
+            coverageState?: string;
+            coveredPurposes?: string[];
+            currentProductAnalytics?: components["schemas"]["platform_Consent"];
+            history?: components["schemas"]["platform_Consent"][];
+            historyHasMore?: boolean;
+            /** Format: int32 */
+            historyLimit?: number;
+        };
         platform_ConsentSnapshot: {
             feedbackUseConsent?: boolean;
             feedbackUseEnabled?: boolean;
@@ -56309,6 +58003,13 @@ export interface components {
             validFrom?: string;
             /** Format: date-time */
             validTo?: string;
+        };
+        platform_CreatePrivacyRequest: {
+            accountDeletionAcknowledged?: boolean;
+            acknowledgementValid?: boolean;
+            reason?: string;
+            requestType: string;
+            requestedScope: string;
         };
         platform_CreateRegistryEntryRequest: {
             artifactVersion: string;
@@ -57650,6 +59351,14 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_Favorite: {
+            favorite?: boolean;
+            settingKey?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_FavoriteReceipt: {
             /** Format: uuid */
             auditEventId: string;
@@ -58341,6 +60050,12 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_HomeExperienceRevisionPage: {
+            hasMore: boolean;
+            items: components["schemas"]["platform_HomeExperienceRevisionResponse"][];
+            /** Format: int32 */
+            limit: number;
+        };
         platform_HomeExperienceRevisionResponse: {
             /**
              * @description Aggregate scopes that a rollback to this revision replaces.
@@ -58479,6 +60194,12 @@ export interface components {
             headline?: string;
             subheadline?: string;
         };
+        platform_HomeTemplatePage: {
+            hasMore: boolean;
+            items: components["schemas"]["platform_HomeTemplateResponse"][];
+            /** Format: int32 */
+            limit: number;
+        };
         platform_HomeTemplateResponse: {
             audience: components["schemas"]["platform_TemplateAudience"];
             layout: components["schemas"]["platform_HomeLayoutPayload"];
@@ -58498,6 +60219,12 @@ export interface components {
             updatedAt?: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_HomeTemplateRevisionPage: {
+            hasMore: boolean;
+            items: components["schemas"]["platform_HomeTemplateRevisionResponse"][];
+            /** Format: int32 */
+            limit: number;
         };
         platform_HomeTemplateRevisionResponse: {
             /** Format: date-time */
@@ -58576,6 +60303,12 @@ export interface components {
             widgetConfigurations: {
                 [key: string]: components["schemas"]["platform_WidgetConfigurationPayload"];
             };
+        };
+        platform_HomeViewRevisionPage: {
+            hasMore: boolean;
+            items: components["schemas"]["platform_HomeViewRevisionResponse"][];
+            /** Format: int32 */
+            limit: number;
         };
         platform_HomeViewRevisionResponse: {
             changeSummary?: string;
@@ -58858,6 +60591,13 @@ export interface components {
             verificationStatus?: string;
             /** Format: date-time */
             verifiedAt?: string;
+        };
+        platform_IntegrityCheckpointPage: {
+            coverageState?: string;
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_IntegrityCheckpoint"][];
+            /** Format: int32 */
+            limit?: number;
         };
         platform_InternalComment: {
             authorName?: string;
@@ -59409,6 +61149,12 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_OrphanLifecyclePage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_OrphanLifecycleResult"][];
+            /** Format: int32 */
+            limit?: number;
+        };
         platform_OrphanLifecycleResult: {
             action?: string;
             /** Format: uuid */
@@ -59567,6 +61313,12 @@ export interface components {
             transferBatchId?: string;
             /** Format: int32 */
             transferredCount?: number;
+        };
+        platform_OwnershipTransferPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_OwnershipTransferSummary"][];
+            /** Format: int32 */
+            limit?: number;
         };
         platform_OwnershipTransferRequest: {
             disposition: string;
@@ -60345,6 +62097,43 @@ export interface components {
             explicitConfirmation?: boolean;
             reason: string;
         };
+        platform_PrivacyRequest: {
+            /** Format: date-time */
+            createdAt?: string;
+            fulfillmentAvailable?: boolean;
+            fulfillmentBoundary?: string;
+            lifecycle?: components["schemas"]["platform_PrivacyRequestEvent"][];
+            reason?: string;
+            receipt?: components["schemas"]["platform_PrivacyRequestReceipt"];
+            /** Format: uuid */
+            requestId?: string;
+            requestState?: string;
+            requestType?: string;
+            requestedScope?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_PrivacyRequestEvent: {
+            detailKey?: string;
+            /** Format: uuid */
+            eventId?: string;
+            eventType?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            requestState?: string;
+        };
+        platform_PrivacyRequestReceipt: {
+            evidenceState?: string;
+            fulfillmentBoundary?: string;
+            /** Format: date-time */
+            issuedAt?: string;
+            /** Format: uuid */
+            receiptId?: string;
+            receiptType?: string;
+            requestFingerprint?: string;
+        };
         platform_PrivacySummary: {
             /** Format: int64 */
             anonymizedBookingCount?: number;
@@ -60781,6 +62570,9 @@ export interface components {
             /** Format: int64 */
             expectedCommandVersion: number;
             reason: string;
+        };
+        platform_RecordViewRequest: {
+            settingKey: string;
         };
         platform_RecoveryPreview: {
             exceptionId?: string;
@@ -62840,6 +64632,12 @@ export interface components {
             /** Format: int64 */
             userId?: number;
         };
+        platform_SubjectPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_Subject"][];
+            /** Format: int32 */
+            limit?: number;
+        };
         platform_Summary: {
             /** Format: double */
             bookedMinutes?: number;
@@ -62897,6 +64695,12 @@ export interface components {
             upsertCount?: number;
             /** Format: int64 */
             userId?: number;
+        };
+        platform_SyncRunPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_SyncRun"][];
+            /** Format: int32 */
+            limit?: number;
         };
         platform_Template: {
             /** Format: uuid */
@@ -63215,6 +65019,10 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_UpdateConsentRequest: {
+            granted: boolean;
+            noticeVersion: string;
+        };
         platform_UpdateDeviceLayoutRequest: {
             overlay: components["schemas"]["platform_DeviceLayoutOverlay"];
             /** Format: int64 */
@@ -63266,6 +65074,11 @@ export interface components {
             version: number;
             /** @enum {string} */
             visibility: "DEFAULT" | "PUBLIC" | "PRIVATE" | "CONFIDENTIAL";
+        };
+        platform_UpdateFavoriteRequest: {
+            favorite: boolean;
+            /** Format: int64 */
+            version: number;
         };
         platform_UpdateHomeCompositionPolicyRequest: {
             policy: components["schemas"]["platform_HomeCompositionPolicy"];
@@ -65786,11 +67599,9 @@ export interface components {
             reason: string;
         };
         platform_Workspace: {
-            currentTree?: components["schemas"]["platform_AdminNode"][];
-            currentValidation?: components["schemas"]["platform_ValidationReport"];
-            draft?: components["schemas"]["platform_Revision"];
-            history?: components["schemas"]["platform_Revision"][];
-            published?: components["schemas"]["platform_Revision"];
+            favorites?: components["schemas"]["platform_Favorite"][];
+            observation?: components["schemas"]["platform_WorkspaceObservation"];
+            recentActivity?: components["schemas"]["platform_Activity"][];
         };
         platform_WorkspaceApp: {
             /** Format: uuid */
@@ -65818,6 +67629,21 @@ export interface components {
             pinned?: boolean;
             requiredPermissionCode?: string;
             resourceKey?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkspaceObservation: {
+            freshnessState?: string;
+            /** Format: date-time */
+            lastChangeAt?: string;
+            /** Format: date-time */
+            lastConfirmedAt?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            offlineBehavior?: string;
+            /** Format: date-time */
+            reviewDueAt?: string;
+            sourceState?: string;
             /** Format: int64 */
             version?: number;
         };
@@ -65886,6 +67712,12 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        provider_ActiveOverride: {
+            /** Format: uuid */
+            changeRequestId?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+        };
         provider_AdministratorInvitationConflictError: {
             correlationId?: string;
             /** @enum {string} */
@@ -65906,6 +67738,36 @@ export interface components {
         provider_ApiResponseAccessRequestLedgerItem: {
             correlationId?: string;
             data?: components["schemas"]["provider_AccessRequestLedgerItem"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseArtifactManifest: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ArtifactManifest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseArtifactRolloutEvidence: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ArtifactRolloutEvidence"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseArtifactRolloutPlan: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ArtifactRolloutPlan"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -65953,9 +67815,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponseDataGovernanceProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_DataGovernanceProjection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponseDomainChallenge: {
             correlationId?: string;
             data?: components["schemas"]["provider_DomainChallenge"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseDomainProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_DomainProjection"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -66013,6 +67895,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponseLedgerEntry: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_LedgerEntry"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseLedgerPage: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_LedgerPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponseListAccessRequestLedgerItem: {
             correlationId?: string;
             data?: components["schemas"]["provider_AccessRequestLedgerItem"][];
@@ -66023,9 +67925,39 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponseListArtifactManifest: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ArtifactManifest"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseListArtifactRolloutPlan: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ArtifactRolloutPlan"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponseListAuditEventSummary: {
             correlationId?: string;
             data?: components["schemas"]["provider_AuditEventSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseListCommitment: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_Commitment"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -66093,6 +68025,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponseListResourceCommitmentChange: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ResourceCommitmentChange"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponseListRollout: {
             correlationId?: string;
             data?: components["schemas"]["provider_Rollout"][];
@@ -66126,6 +68068,16 @@ export interface components {
         provider_ApiResponseListSupportScopeSummary: {
             correlationId?: string;
             data?: components["schemas"]["provider_SupportScopeSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseListTenantLifecycleRequest: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_TenantLifecycleRequest"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -66193,6 +68145,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponsePlanEligibilityProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_PlanEligibilityProjection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponsePolicy: {
             correlationId?: string;
             data?: components["schemas"]["provider_Policy"];
@@ -66216,6 +68178,16 @@ export interface components {
         provider_ApiResponseResolution: {
             correlationId?: string;
             data?: components["schemas"]["provider_Resolution"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseResourceCommitmentChange: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ResourceCommitmentChange"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -66313,6 +68285,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponseTenantLifecycleRequest: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_TenantLifecycleRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponseTenantSummary: {
             correlationId?: string;
             data?: components["schemas"]["provider_TenantSummary"];
@@ -66332,6 +68314,22 @@ export interface components {
             success?: boolean;
             /** Format: date-time */
             timestamp?: string;
+        };
+        provider_AppendArtifactEvidenceRequest: {
+            evidence: components["schemas"]["provider_JsonNode"];
+            evidenceState: string;
+            evidenceType: string;
+        };
+        provider_AppendLedgerEntryRequest: {
+            amount: number;
+            currencyCode?: string;
+            entryType: string;
+            evidenceRef: string;
+            idempotencyKey: string;
+            /** Format: date-time */
+            occurredAt: string;
+            reason: string;
+            unit: string;
         };
         provider_ApplicationStatus: {
             /** Format: int32 */
@@ -66373,6 +68371,144 @@ export interface components {
         };
         provider_ApprovalDecisionRequest: {
             decision: string;
+            reason: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_ArtifactCapabilityDelta: {
+            added?: string[];
+            increased?: string[];
+            removed?: string[];
+        };
+        provider_ArtifactClientCompatibility: {
+            clientType?: string;
+            minimumVersion?: string;
+            state?: string;
+        };
+        provider_ArtifactCompatibilitySummary: {
+            capabilities?: components["schemas"]["provider_ArtifactCapabilityDelta"];
+            clients?: components["schemas"]["provider_ArtifactClientCompatibility"][];
+            dependencies?: components["schemas"]["provider_ArtifactDependencyCompatibility"][];
+            rollbackReadiness?: components["schemas"]["provider_RollbackReadiness"];
+            schema?: components["schemas"]["provider_ArtifactSchemaCompatibility"];
+        };
+        provider_ArtifactDependencyCompatibility: {
+            dependencyKey?: string;
+            observedVersion?: string;
+            requiredVersion?: string;
+            state?: string;
+        };
+        provider_ArtifactManifest: {
+            /** Format: uuid */
+            artifactId?: string;
+            artifactType?: string;
+            artifactVersion?: string;
+            compatibility?: components["schemas"]["provider_ArtifactCompatibilitySummary"];
+            compatibilityEvidence?: components["schemas"]["provider_JsonNode"];
+            compatibilityPolicy?: components["schemas"]["provider_JsonNode"];
+            compatibilityState?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            createdBy?: number;
+            declaredDigest?: string;
+            distributionState?: string;
+            lifecycleState?: string;
+            manifest?: components["schemas"]["provider_JsonNode"];
+            /** Format: int32 */
+            manifestSchemaVersion?: number;
+            productKey?: string;
+            reviews?: components["schemas"]["provider_ArtifactReview"][];
+            signatureState?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            updatedBy?: number;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_ArtifactReview: {
+            /** Format: uuid */
+            artifactId?: string;
+            decision?: string;
+            evidence?: components["schemas"]["provider_JsonNode"];
+            reason?: string;
+            /** Format: uuid */
+            reviewId?: string;
+            /** Format: date-time */
+            reviewedAt?: string;
+            /** Format: int64 */
+            reviewedBy?: number;
+        };
+        provider_ArtifactReviewDecisionRequest: {
+            decision: string;
+            evidence: components["schemas"]["provider_JsonNode"];
+            reason: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_ArtifactRolloutDecisionRequest: {
+            decision: string;
+            reason: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_ArtifactRolloutEvidence: {
+            evidence?: components["schemas"]["provider_JsonNode"];
+            /** Format: uuid */
+            evidenceId?: string;
+            evidenceState?: string;
+            evidenceType?: string;
+            /** Format: date-time */
+            recordedAt?: string;
+            /** Format: int64 */
+            recordedBy?: number;
+            /** Format: uuid */
+            rolloutPlanId?: string;
+            source?: string;
+        };
+        provider_ArtifactRolloutPlan: {
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            /** Format: uuid */
+            artifactId?: string;
+            artifactVersion?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            decisionReason?: string;
+            evidence?: components["schemas"]["provider_ArtifactRolloutEvidence"][];
+            executorState?: string;
+            lifecycleState?: string;
+            name?: string;
+            productKey?: string;
+            reason?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            rollbackFeasibility?: string;
+            rollbackPlan?: components["schemas"]["provider_JsonNode"];
+            rollbackReadiness?: components["schemas"]["provider_RollbackReadiness"];
+            /** Format: uuid */
+            rolloutPlanId?: string;
+            stages?: components["schemas"]["provider_JsonNode"];
+            /** Format: date-time */
+            submittedAt?: string;
+            targetScope?: components["schemas"]["provider_JsonNode"];
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_ArtifactSchemaCompatibility: {
+            currentVersion?: string;
+            migrationState?: string;
+            state?: string;
+            targetVersion?: string;
+        };
+        provider_AssessArtifactCompatibilityRequest: {
+            compatibilityState: string;
+            evidence: components["schemas"]["provider_JsonNode"];
             reason: string;
             /** Format: int64 */
             version?: number;
@@ -66470,6 +68606,7 @@ export interface components {
         };
         provider_CommandCenter: {
             actionQueue?: components["schemas"]["provider_ActionItem"][];
+            actionQueueHasMore?: boolean;
             /** Format: int64 */
             activeIncidents?: number;
             cells?: components["schemas"]["provider_CellPosture"][];
@@ -66496,6 +68633,69 @@ export interface components {
             trialSubscriptions?: number;
             /** Format: int64 */
             uncontractedOrganizations?: number;
+        };
+        provider_Commitment: {
+            activeOverride?: components["schemas"]["provider_ActiveOverride"];
+            budgetLimit?: number;
+            controlMode?: string;
+            controlPeriod?: components["schemas"]["provider_ControlPeriod"];
+            controlScope?: string;
+            currencyCode?: string;
+            externalFeedState?: string;
+            internalEvidenceFreshness?: components["schemas"]["provider_InternalEvidenceFreshness"];
+            lifecycleState?: string;
+            /** Format: uuid */
+            providerTenantId?: string;
+            quotaLimit?: number;
+            resourceKey?: string;
+            sourceSystem?: string;
+            tenantDisplayName?: string;
+            tenantKey?: string;
+            totals?: components["schemas"]["provider_LedgerTotals"];
+            unit?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_CommitmentDefinition: {
+            budgetLimit?: number;
+            controlMode?: string;
+            /** Format: date-time */
+            controlPeriodEndsAt?: string;
+            /** Format: date-time */
+            controlPeriodStartsAt?: string;
+            currencyCode?: string;
+            lifecycleState?: string;
+            quotaLimit?: number;
+            unit?: string;
+        };
+        provider_ControlPeriod: {
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            state?: string;
+        };
+        provider_CreateArtifactManifestRequest: {
+            artifactType: string;
+            artifactVersion: string;
+            compatibilityPolicy: components["schemas"]["provider_JsonNode"];
+            declaredDigest?: string;
+            manifest: components["schemas"]["provider_JsonNode"];
+            /** Format: int32 */
+            manifestSchemaVersion?: number;
+            productKey: string;
+        };
+        provider_CreateArtifactRolloutPlanRequest: {
+            /** Format: uuid */
+            artifactId: string;
+            name: string;
+            reason: string;
+            rollbackFeasibility: string;
+            rollbackPlan?: components["schemas"]["provider_JsonNode"];
+            stages: components["schemas"]["provider_JsonNode"];
+            targetScope: components["schemas"]["provider_JsonNode"];
         };
         provider_CreateDomainRequest: {
             domainName: string;
@@ -66564,6 +68764,18 @@ export interface components {
             scopeRef?: string;
             scopeType: string;
         };
+        provider_CreateResourceCommitmentChangeRequest: {
+            /** Format: int64 */
+            baselineCommitmentVersion?: number;
+            changeKind: string;
+            /** Format: uuid */
+            commercialRenewalRevisionId?: string;
+            justification: string;
+            /** Format: date-time */
+            overrideExpiresAt?: string;
+            proposed: components["schemas"]["provider_UpsertCommitmentRequest"];
+            requestKey: string;
+        };
         provider_CreateRevisionRequest: {
             /** Format: date-time */
             effectiveFrom?: string;
@@ -66613,6 +68825,10 @@ export interface components {
             /** Format: uuid */
             tenantId: string;
         };
+        provider_CreateTenantLifecycleRequest: {
+            justification: string;
+            requestedAction: string;
+        };
         provider_DataAsset: {
             assetKey?: string;
             businessDomain?: string;
@@ -66644,6 +68860,18 @@ export interface components {
             tenantScoped?: boolean;
             /** Format: int64 */
             totalBytes?: number;
+        };
+        provider_DataGovernanceProjection: {
+            coverageState?: string;
+            exclusions?: string[];
+            observationState?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            ownerService?: string;
+            policies?: components["schemas"]["provider_PolicyObservation"][];
+            /** Format: date-time */
+            sourceLastChangedAt?: string;
+            tenantLifecycleHoldObservations?: components["schemas"]["provider_TenantLifecycleHoldObservation"][];
         };
         provider_DatabaseSummary: {
             businessDomains?: string[];
@@ -66711,6 +68939,35 @@ export interface components {
             recordName?: string;
             recordType?: string;
             recordValue?: string;
+        };
+        provider_DomainObservation: {
+            /** Format: uuid */
+            domainId?: string;
+            domainName?: string;
+            domainType?: string;
+            evidenceFreshnessState?: string;
+            /** Format: date-time */
+            lastCheckedAt?: string;
+            primaryDomain?: boolean;
+            /** Format: date-time */
+            sourceChangedAt?: string;
+            verificationMethod?: string;
+            verificationState?: string;
+            /** Format: date-time */
+            verifiedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_DomainProjection: {
+            coverageState?: string;
+            domains?: components["schemas"]["provider_DomainObservation"][];
+            exclusions?: string[];
+            observationState?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            ownerService?: string;
+            /** Format: date-time */
+            sourceLastChangedAt?: string;
         };
         provider_EntitlementAdoption: {
             /** Format: int64 */
@@ -66888,12 +69145,66 @@ export interface components {
             operatorName?: string;
             visibility?: string;
         };
+        provider_InternalEvidenceFreshness: {
+            /** Format: int64 */
+            entryCount?: number;
+            /** Format: date-time */
+            latestOccurredAt?: string;
+            /** Format: date-time */
+            latestRecordedAt?: string;
+            state?: string;
+        };
         provider_IssueAdministratorInvitationRequest: {
             /** Format: int32 */
             expiresInMinutes: number;
             justification: string;
         };
         provider_JsonNode: unknown;
+        provider_LedgerEntry: {
+            amount?: number;
+            /** Format: date-time */
+            controlPeriodEndsAt?: string;
+            /** Format: date-time */
+            controlPeriodStartsAt?: string;
+            currencyCode?: string;
+            entryType?: string;
+            evidenceRef?: string;
+            idempotencyKey?: string;
+            /** Format: uuid */
+            ledgerEntryId?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            /** Format: uuid */
+            providerTenantId?: string;
+            reason?: string;
+            /** Format: date-time */
+            recordedAt?: string;
+            /** Format: int64 */
+            recordedBy?: number;
+            resourceKey?: string;
+            unit?: string;
+        };
+        provider_LedgerPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["provider_LedgerEntry"][];
+            /** Format: int32 */
+            limit?: number;
+        };
+        provider_LedgerTotals: {
+            adjusted?: number;
+            allocated?: number;
+            allocationBalance?: number;
+            budgetControlState?: string;
+            budgetReleased?: number;
+            budgetReservationBalance?: number;
+            budgetReserved?: number;
+            budgetSpentInternalEvidence?: number;
+            meteredInternalEvidence?: number;
+            quotaControlState?: string;
+            released?: number;
+            remainingBudget?: number;
+            remainingQuota?: number;
+        };
         provider_LifecycleRequest: {
             justification: string;
             state: string;
@@ -67092,6 +69403,31 @@ export interface components {
             /** Format: int32 */
             totalPages?: number;
         };
+        provider_PlanEligibilityProjection: {
+            coverageState?: string;
+            exclusions?: string[];
+            observationState?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            ownerService?: string;
+            plan?: components["schemas"]["provider_PlanObservation"];
+            products?: components["schemas"]["provider_ProductEligibilityObservation"][];
+            /** Format: date-time */
+            sourceLastChangedAt?: string;
+        };
+        provider_PlanObservation: {
+            displayName?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            planKey?: string;
+            /** Format: int32 */
+            planVersion?: number;
+            /** Format: int64 */
+            sourceVersion?: number;
+            /** Format: date-time */
+            startsAt?: string;
+            subscriptionState?: string;
+        };
         provider_Policy: {
             description?: string;
             displayName?: string;
@@ -67106,6 +69442,39 @@ export interface components {
             scopeType?: string;
             /** Format: int64 */
             version?: number;
+        };
+        provider_PolicyObservation: {
+            coverage?: string;
+            /** Format: date-time */
+            effectiveFrom?: string;
+            effectiveState?: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            evidenceState?: string;
+            freshnessState?: string;
+            impactFingerprint?: string;
+            legalHoldActive?: boolean;
+            ownerService?: string;
+            policyType?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int32 */
+            retentionDays?: number;
+            /** Format: int32 */
+            revisionNumber?: number;
+            /** Format: date-time */
+            sourceChangedAt?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
+        };
+        provider_ProductEligibilityObservation: {
+            appResourceKey?: string;
+            eligibilityState?: string;
+            entitlementKey?: string;
+            entitlementType?: string;
+            productKey?: string;
+            /** Format: date-time */
+            sourceChangedAt?: string;
         };
         provider_Provenance: {
             /** Format: date-time */
@@ -67159,6 +69528,7 @@ export interface components {
             /** Format: int64 */
             atRiskObjectives?: number;
             driftFindings?: components["schemas"]["provider_GovernanceDriftSummary"][];
+            driftFindingsHasMore?: boolean;
             /** Format: int64 */
             exhaustedObjectives?: number;
             /** Format: date-time */
@@ -67166,6 +69536,7 @@ export interface components {
             /** Format: int64 */
             healthyObjectives?: number;
             maintenanceWindows?: components["schemas"]["provider_MaintenanceWindowSummary"][];
+            maintenanceWindowsHasMore?: boolean;
             objectives?: components["schemas"]["provider_ServiceLevelObjectiveSummary"][];
             /** Format: int64 */
             openDriftFindings?: number;
@@ -67191,6 +69562,52 @@ export interface components {
             resolvedAt?: string;
             settingId?: string;
             target?: components["schemas"]["provider_ScopeTarget"];
+        };
+        provider_ResourceCommitmentChange: {
+            baseline?: components["schemas"]["provider_CommitmentDefinition"];
+            /** Format: int64 */
+            baselineCommitmentVersion?: number;
+            changeKind?: string;
+            /** Format: uuid */
+            changeRequestId?: string;
+            /** Format: uuid */
+            commercialRenewalRevisionId?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            /** Format: int64 */
+            decidedBy?: number;
+            /** Format: date-time */
+            decisionDueAt?: string;
+            decisionReason?: string;
+            justification?: string;
+            lifecycleState?: string;
+            /** Format: date-time */
+            overrideExpiresAt?: string;
+            proposed?: components["schemas"]["provider_CommitmentDefinition"];
+            /** Format: uuid */
+            providerTenantId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            /** Format: date-time */
+            requestedAt?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            reservationState?: string;
+            resourceKey?: string;
+            tenantDisplayName?: string;
+            tenantKey?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_ResourceCommitmentChangeDecisionRequest: {
+            decision: string;
+            reason: string;
+            /** Format: int64 */
+            version?: number;
         };
         provider_RetryOperationRequest: {
             justification: string;
@@ -67237,6 +69654,11 @@ export interface components {
             justification: string;
             /** Format: int64 */
             version: number;
+        };
+        provider_RollbackReadiness: {
+            executionBoundary?: string;
+            reasons?: string[];
+            state?: string;
         };
         provider_Rollout: {
             /** Format: date-time */
@@ -67285,6 +69707,8 @@ export interface components {
             scopeType?: "USER" | "TENANT" | "PROVIDER" | "APPLICATION";
         };
         provider_ServiceHealthOverview: {
+            /** Format: int64 */
+            activeIncidentCount?: number;
             cells?: components["schemas"]["provider_CellPosture"][];
             /** Format: int64 */
             degradedInstances?: number;
@@ -67297,6 +69721,7 @@ export interface components {
             /** Format: int64 */
             impactedTenants?: number;
             incidents?: components["schemas"]["provider_ServiceIncidentSummary"][];
+            incidentsHasMore?: boolean;
             operatingState?: string;
             /** Format: int64 */
             pendingInstances?: number;
@@ -67692,6 +70117,59 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        provider_TenantLifecycleDecisionRequest: {
+            decision: string;
+            reason: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        provider_TenantLifecycleHoldObservation: {
+            /** Format: int32 */
+            evidenceReferenceCount?: number;
+            evidenceState?: string;
+            executionState?: string;
+            freshnessState?: string;
+            holdEvaluationState?: string;
+            /** Format: uuid */
+            lifecycleRequestId?: string;
+            lifecycleState?: string;
+            requestedAction?: string;
+            /** Format: date-time */
+            sourceChangedAt?: string;
+            /** Format: int64 */
+            sourceVersion?: number;
+        };
+        provider_TenantLifecycleRequest: {
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            decisionReason?: string;
+            executionState?: string;
+            holdEvaluationState?: string;
+            holdEvidenceRefs?: string[];
+            justification?: string;
+            /** Format: uuid */
+            lifecycleRequestId?: string;
+            lifecycleState?: string;
+            /** Format: uuid */
+            providerTenantId?: string;
+            requestedAction?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: int64 */
+            submittedBy?: number;
+            tenantDisplayName?: string;
+            tenantKey?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         provider_TenantSummary: {
             administratorPosture?: components["schemas"]["provider_TenantAdministratorPosture"];
             /** Format: int64 */
@@ -67732,6 +70210,20 @@ export interface components {
             /** Format: int64 */
             version: number;
             visibility: string;
+        };
+        provider_UpsertCommitmentRequest: {
+            budgetLimit?: number;
+            controlMode: string;
+            /** Format: date-time */
+            controlPeriodEndsAt: string;
+            /** Format: date-time */
+            controlPeriodStartsAt: string;
+            currencyCode?: string;
+            lifecycleState: string;
+            quotaLimit?: number;
+            unit: string;
+            /** Format: int64 */
+            version?: number;
         };
         provider_ValidationContract: {
             ownerRevalidatesOnWrite?: boolean;
@@ -84406,7 +86898,7 @@ export interface operations {
             };
         };
     };
-    auth_activate_1: {
+    auth_activate_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -84481,7 +86973,7 @@ export interface operations {
             };
         };
     };
-    auth_decideAssignment: {
+    auth_decideAssignment_1: {
         parameters: {
             query?: never;
             header?: {
@@ -84510,7 +87002,7 @@ export interface operations {
             };
         };
     };
-    auth_revokeAssignment: {
+    auth_revokeAssignment_1: {
         parameters: {
             query?: never;
             header?: {
@@ -85315,6 +87807,35 @@ export interface operations {
             };
         };
     };
+    auth_verifyEmergencyPrincipal: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                principalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_VerifyEmergencyPrincipalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseEmergencyPrincipalSummary"];
+                };
+            };
+        };
+    };
     auth_myEligibilities: {
         parameters: {
             query?: never;
@@ -85459,7 +87980,7 @@ export interface operations {
             };
         };
     };
-    auth_decide_1: {
+    auth_decide_4: {
         parameters: {
             query?: never;
             header?: {
@@ -85488,7 +88009,7 @@ export interface operations {
             };
         };
     };
-    auth_revoke: {
+    auth_revoke_1: {
         parameters: {
             query?: never;
             header?: {
@@ -85534,12 +88055,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListCampaignSummary"];
+                    "*/*": {
+                        [key: string]: boolean;
+                    } | components["schemas"]["auth_ApiResponseListCampaignSummary"];
                 };
             };
         };
     };
-    auth_create_1: {
+    auth_create_3: {
         parameters: {
             query?: never;
             header?: {
@@ -85562,6 +88085,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_ApiResponseCampaignSummary"];
+                };
+            };
+        };
+    };
+    auth_available: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: boolean;
+                    };
                 };
             };
         };
@@ -85590,7 +88135,7 @@ export interface operations {
             };
         };
     };
-    auth_activate: {
+    auth_activate_1: {
         parameters: {
             query?: never;
             header?: {
@@ -86217,7 +88762,7 @@ export interface operations {
             };
         };
     };
-    auth_create: {
+    auth_create_2: {
         parameters: {
             query?: never;
             header?: {
@@ -86264,7 +88809,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListProvisioningEvent"];
+                    "*/*": components["schemas"]["auth_ApiResponseProvisioningEventPage"];
                 };
             };
         };
@@ -86323,6 +88868,789 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_ApiResponseCredentialIssued"];
+                };
+            };
+        };
+    };
+    auth_projection_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAdoptionProjection"];
+                };
+            };
+        };
+    };
+    auth_assignments: {
+        parameters: {
+            query?: {
+                installationId?: string;
+            };
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListAssignment"];
+                };
+            };
+        };
+    };
+    auth_createAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_CreateAssignmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                };
+            };
+        };
+    };
+    auth_activateAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_ActivationCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                };
+            };
+        };
+    };
+    auth_decideAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_DecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                };
+            };
+        };
+    };
+    auth_revokeAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_RevokeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                };
+            };
+        };
+    };
+    auth_projection: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseProjection"];
+                };
+            };
+        };
+    };
+    auth_create_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_CreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_activate: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_ReasonedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_decide_3: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_DecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_revoke: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_ReasonedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_submit_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_VersionedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_createInstallation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_CreateInstallationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseInstallation"];
+                };
+            };
+        };
+    };
+    auth_activateInstallation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                installationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_ActivationCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseInstallation"];
+                };
+            };
+        };
+    };
+    auth_decideInstallation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                installationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_DecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseInstallation"];
+                };
+            };
+        };
+    };
+    auth_submitInstallation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                installationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_VersionedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseInstallation"];
+                };
+            };
+        };
+    };
+    auth_changes: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListChange"];
+                };
+            };
+        };
+    };
+    auth_create: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_CreateChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_decide_2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_DecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_publish_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_VersionedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_submit_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_VersionedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                };
+            };
+        };
+    };
+    auth_owners: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListOwnerDescriptor"];
+                };
+            };
+        };
+    };
+    auth_accessProjection: {
+        parameters: {
+            query?: {
+                query?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseAccessProjection"];
+                };
+            };
+        };
+    };
+    auth_authPolicyChanges: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListChangeSet"];
+                };
+            };
+        };
+    };
+    auth_createAuthPolicyChange: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_CreateAuthPolicyChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChangeSet"];
+                };
+            };
+        };
+    };
+    auth_decide_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeSetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_DecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChangeSet"];
+                };
+            };
+        };
+    };
+    auth_publish: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeSetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_VersionedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChangeSet"];
+                };
+            };
+        };
+    };
+    auth_submit: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeSetId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_VersionedCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseChangeSet"];
+                };
+            };
+        };
+    };
+    auth_governanceSnapshot: {
+        parameters: {
+            query?: {
+                userId?: number;
+            };
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseTenantGovernanceSnapshot"];
                 };
             };
         };
@@ -86417,7 +89745,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListIdentityProviderResponse"];
+                    "*/*": {
+                        [key: string]: boolean;
+                    } | components["schemas"]["auth_ApiResponseListIdentityProviderResponse"];
                 };
             };
         };
@@ -86533,7 +89863,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseAuthPolicyResponse"];
+                    "*/*": {
+                        [key: string]: boolean;
+                    } | components["schemas"]["auth_ApiResponseAuthPolicyResponse"];
                 };
             };
         };
@@ -86624,7 +89956,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseLoginOptionsResponse"];
+                    "*/*": {
+                        [key: string]: boolean;
+                    } | components["schemas"]["auth_ApiResponseLoginOptionsResponse"];
                 };
             };
         };
@@ -86860,7 +90194,7 @@ export interface operations {
             };
         };
     };
-    auth_revoke_1: {
+    auth_revoke_2: {
         parameters: {
             query?: never;
             header?: {
@@ -86880,6 +90214,99 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_ApiResponseVoid"];
+                };
+            };
+        };
+    };
+    auth_effectiveSettings: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListEffectiveSetting"];
+                };
+            };
+        };
+    };
+    auth_preferredLocale: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseUserPreferenceState"];
+                };
+            };
+        };
+    };
+    auth_restorePreferredLocale: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_RestorePreferenceCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseUserPreferenceState"];
+                };
+            };
+        };
+    };
+    auth_effective: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseListEffectiveSetting"];
                 };
             };
         };
@@ -95031,7 +98458,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListAppAccessRequest"];
+                    "*/*": components["schemas"]["platform_ApiResponseAppAccessRequestPage"];
                 };
             };
         };
@@ -95596,7 +99023,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListIntegrityCheckpoint"];
+                    "*/*": components["schemas"]["platform_ApiResponseIntegrityCheckpointPage"];
                 };
             };
         };
@@ -95616,7 +99043,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListIntegrityCheckpoint"];
+                    "*/*": components["schemas"]["platform_ApiResponseIntegrityCheckpointPage"];
                 };
             };
         };
@@ -97000,7 +100427,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListHomeExperienceRevisionResponse"];
+                    "*/*": components["schemas"]["platform_ApiResponseHomeExperienceRevisionPage"];
                 };
             };
         };
@@ -97222,7 +100649,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListSyncRun"];
+                    "*/*": components["schemas"]["platform_ApiResponseSyncRunPage"];
                 };
             };
         };
@@ -97244,12 +100671,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListSubject"];
+                    "*/*": components["schemas"]["platform_ApiResponseSubjectPage"];
                 };
             };
         };
     };
-    platform_workspace_1: {
+    platform_workspace_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -99026,7 +102453,7 @@ export interface operations {
             };
         };
     };
-    platform_workspace: {
+    platform_workspace_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -100050,7 +103477,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListOrphanLifecycleResult"];
+                    "*/*": components["schemas"]["platform_ApiResponseOrphanLifecyclePage"];
                 };
             };
         };
@@ -100180,7 +103607,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListOwnershipTransferSummary"];
+                    "*/*": components["schemas"]["platform_ApiResponseOwnershipTransferPage"];
                 };
             };
         };
@@ -100546,7 +103973,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListBrandingRevisionResponse"];
+                    "*/*": components["schemas"]["platform_ApiResponseBrandingRevisionPage"];
                 };
             };
         };
@@ -107502,7 +110929,7 @@ export interface operations {
             };
         };
     };
-    platform_recordView: {
+    platform_recordView_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -109192,7 +112619,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListHomeTemplateResponse"];
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplatePage"];
                 };
             };
             /** @description Invalid request */
@@ -109602,7 +113029,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListHomeTemplateRevisionResponse"];
+                    "*/*": components["schemas"]["platform_ApiResponseHomeTemplateRevisionPage"];
                 };
             };
             /** @description Invalid request */
@@ -110416,7 +113843,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListHomeViewRevisionResponse"];
+                    "*/*": components["schemas"]["platform_ApiResponseHomeViewRevisionPage"];
                 };
             };
             /** @description Invalid request */
@@ -112947,6 +116374,224 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponsePersonalPreferenceResponse"];
+                };
+            };
+        };
+    };
+    platform_recordView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RecordViewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseActivity"];
+                };
+            };
+        };
+    };
+    platform_updateFavorite: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                settingKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateFavoriteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseFavorite"];
+                };
+            };
+        };
+    };
+    platform_consentLedger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseConsentLedger"];
+                };
+            };
+        };
+    };
+    platform_updateProductAnalyticsConsent: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_UpdateConsentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseConsent"];
+                };
+            };
+        };
+    };
+    platform_privacyRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListPrivacyRequest"];
+                };
+            };
+        };
+    };
+    platform_createPrivacyRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreatePrivacyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePrivacyRequest"];
+                };
+            };
+        };
+    };
+    platform_cancelPrivacyRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePrivacyRequest"];
+                };
+            };
+        };
+    };
+    platform_workspace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkspace"];
+                };
+            };
+        };
+    };
+    platform_reconfirmWorkspace: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_VersionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseWorkspace"];
                 };
             };
         };
@@ -118221,6 +121866,294 @@ export interface operations {
             };
         };
     };
+    provider_artifacts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseListArtifactManifest"];
+                };
+            };
+        };
+    };
+    provider_createArtifact: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_CreateArtifactManifestRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactManifest"];
+                };
+            };
+        };
+    };
+    provider_assessArtifactCompatibility: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                artifactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_AssessArtifactCompatibilityRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactManifest"];
+                };
+            };
+        };
+    };
+    provider_decideArtifact: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                artifactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_ArtifactReviewDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactManifest"];
+                };
+            };
+        };
+    };
+    provider_submitArtifact: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                artifactId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_VersionedReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactManifest"];
+                };
+            };
+        };
+    };
+    provider_plans: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseListArtifactRolloutPlan"];
+                };
+            };
+        };
+    };
+    provider_createPlan: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_CreateArtifactRolloutPlanRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactRolloutPlan"];
+                };
+            };
+        };
+    };
+    provider_decidePlan: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                planId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_ArtifactRolloutDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactRolloutPlan"];
+                };
+            };
+        };
+    };
+    provider_appendPlanEvidence: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                planId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_AppendArtifactEvidenceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactRolloutEvidence"];
+                };
+            };
+        };
+    };
+    provider_markPlanReady: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                planId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_VersionedReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactRolloutPlan"];
+                };
+            };
+        };
+    };
+    provider_submitPlan: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                planId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_VersionedReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactRolloutPlan"];
+                };
+            };
+        };
+    };
     provider_auditEvents: {
         parameters: {
             query?: {
@@ -119274,6 +123207,323 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["provider_ApiResponseReliabilityControlOverview"];
+                };
+            };
+        };
+    };
+    provider_resourceChanges: {
+        parameters: {
+            query?: {
+                tenantId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseListResourceCommitmentChange"];
+                };
+            };
+        };
+    };
+    provider_decideResourceChange: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_ResourceCommitmentChangeDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseResourceCommitmentChange"];
+                };
+            };
+        };
+    };
+    provider_publishResourceChange: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                changeRequestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_VersionedReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseResourceCommitmentChange"];
+                };
+            };
+        };
+    };
+    provider_commitments: {
+        parameters: {
+            query?: {
+                tenantId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseListCommitment"];
+                };
+            };
+        };
+    };
+    provider_lifecycleRequests: {
+        parameters: {
+            query?: {
+                tenantId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseListTenantLifecycleRequest"];
+                };
+            };
+        };
+    };
+    provider_decideLifecycleRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_TenantLifecycleDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseTenantLifecycleRequest"];
+                };
+            };
+        };
+    };
+    provider_refreshLifecycleHold: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_VersionedReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseTenantLifecycleRequest"];
+                };
+            };
+        };
+    };
+    provider_submitLifecycleRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_VersionedReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseTenantLifecycleRequest"];
+                };
+            };
+        };
+    };
+    provider_createResourceChange: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                tenantId: string;
+                resourceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_CreateResourceCommitmentChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseResourceCommitmentChange"];
+                };
+            };
+        };
+    };
+    provider_ledger: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                tenantId: string;
+                resourceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseLedgerPage"];
+                };
+            };
+        };
+    };
+    provider_appendLedger: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                tenantId: string;
+                resourceKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_AppendLedgerEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseLedgerEntry"];
+                };
+            };
+        };
+    };
+    provider_createLifecycleRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                tenantId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_CreateTenantLifecycleRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseTenantLifecycleRequest"];
                 };
             };
         };
@@ -120842,6 +125092,66 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseRuntimeEnableApprovalResponse"];
+                };
+            };
+        };
+    };
+    provider_dataGovernance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseDataGovernanceProjection"];
+                };
+            };
+        };
+    };
+    provider_planEligibility: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponsePlanEligibilityProjection"];
+                };
+            };
+        };
+    };
+    provider_domains: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseDomainProjection"];
                 };
             };
         };

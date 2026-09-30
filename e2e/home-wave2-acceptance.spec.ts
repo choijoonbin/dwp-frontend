@@ -39,6 +39,12 @@ import {
 import type { Locator } from '@playwright/test';
 
 const FIXED_NOW = HOME_WAVE2_FIXED_NOW;
+const FULL_PAGE_SCREENSHOT_OPTIONS = {
+  animations: 'disabled',
+  caret: 'hide',
+  fullPage: true,
+  scale: 'css',
+} as const;
 test.setTimeout(120_000);
 
 test.beforeEach(async ({ page }, testInfo) => {
@@ -216,12 +222,7 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
 
     await stabilizeHomeWave2Visual(page);
     await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
-    await expect(page).toHaveScreenshot(`home-wave2-${item.id}.png`, {
-      animations: 'disabled',
-      caret: 'hide',
-      fullPage: true,
-      scale: 'css',
-    });
+    await expect(page).toHaveScreenshot(`home-wave2-${item.id}.png`, FULL_PAGE_SCREENSHOT_OPTIONS);
   }
 });
 
@@ -865,12 +866,10 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
   await expectNoDocumentOrNestedScroll(root);
   await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
-  await expect(page).toHaveScreenshot('home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    scale: 'css',
-  });
+  await expect(page).toHaveScreenshot(
+    'home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01.png',
+    FULL_PAGE_SCREENSHOT_OPTIONS
+  );
 
   await cdp.send('Emulation.clearDeviceMetricsOverride');
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -909,12 +908,10 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
   expect(largeTextGroupColumns.every((count) => count <= 2)).toBe(true);
   await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
-  await expect(page).toHaveScreenshot('home-wave2-C06-TEXT-200-D1440-r04.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    scale: 'css',
-  });
+  await expect(page).toHaveScreenshot(
+    'home-wave2-C06-TEXT-200-D1440-r04.png',
+    FULL_PAGE_SCREENSHOT_OPTIONS
+  );
 });
 
 test('long English content wraps without clipping or deleting its accessible meaning', async ({
@@ -944,12 +941,10 @@ test('long English content wraps without clipping or deleting its accessible mea
   await expectNoDocumentOrNestedScroll(root);
   await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
-  await expect(page).toHaveScreenshot('home-wave2-C07-LONG-EN-D1280-r02.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    scale: 'css',
-  });
+  await expect(page).toHaveScreenshot(
+    'home-wave2-C07-LONG-EN-D1280-r02.png',
+    FULL_PAGE_SCREENSHOT_OPTIONS
+  );
 });
 
 test('dark and forced-color modes retain contrast, focus, and structure', async ({ page }) => {
@@ -974,12 +969,10 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
   await expectNoDocumentOrNestedScroll(root);
   await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
-  await expect(page).toHaveScreenshot('home-wave2-C08-DARK-D1440-r02.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    scale: 'css',
-  });
+  await expect(page).toHaveScreenshot(
+    'home-wave2-C08-DARK-D1440-r02.png',
+    FULL_PAGE_SCREENSHOT_OPTIONS
+  );
 
   await remockHomeWave2ClassicSession(page, {
     locale: 'ko',
@@ -996,12 +989,10 @@ test('dark and forced-color modes retain contrast, focus, and structure', async 
   await expect(page.locator(':focus')).toBeVisible();
   await stabilizeHomeWave2Visual(page);
   await expectNoSeriousAccessibilityViolations(page, '[data-testid="classic-home"]');
-  await expect(page).toHaveScreenshot('home-wave2-C09-HIGH-CONTRAST-D1440-r04.png', {
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: true,
-    scale: 'css',
-  });
+  await expect(page).toHaveScreenshot(
+    'home-wave2-C09-HIGH-CONTRAST-D1440-r04.png',
+    FULL_PAGE_SCREENSHOT_OPTIONS
+  );
 
   await expectNoDocumentOrNestedScroll(root);
 });

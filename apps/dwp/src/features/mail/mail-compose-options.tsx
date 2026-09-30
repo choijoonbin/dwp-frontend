@@ -625,19 +625,6 @@ export function MailComposeOptionsFields({
   );
 }
 
-export function mailComposeOptionsCanSend(
-  options: MailComposeOptions,
-  attachments: MailAttachment[] = []
-) {
-  const recipients = options.recipients;
-  return (
-    recipients.some((item) => item.type === 'TO') &&
-    recipients.every((item) => /^\S+@\S+\.\S+$/u.test(item.email)) &&
-    (!options.scheduledAt || new Date(options.scheduledAt).getTime() > Date.now()) &&
-    attachments.every((item) => item.scanState === 'READY')
-  );
-}
-
 export function mailComposeHasExternalRecipients(
   recipients: readonly MailRecipient[],
   senderEmail: string | null | undefined

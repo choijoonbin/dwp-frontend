@@ -59,7 +59,6 @@ export type AdminNavigationItem = {
   icon: LucideIcon;
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
-  requiredAnyRoleCodes?: readonly string[];
   requiredResponsibilityCodes?: readonly string[];
 };
 
@@ -79,6 +78,8 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'branding',
         path: '/admin/experience/branding',
         icon: Building2,
+        requiredResourceKey: 'ADMIN.TENANT_BRANDING',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'experience',
@@ -93,12 +94,16 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'preference-exceptions',
         path: '/admin/experience/preference-exceptions',
         icon: SlidersHorizontal,
+        requiredResourceKey: 'ADMIN.MANAGED_PREFERENCES',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'experience',
         view: 'localization',
         path: '/admin/experience/localization',
         icon: Languages,
+        requiredResourceKey: 'ADMIN.LOCALIZATION',
+        requiredPermissionCode: 'VIEW',
       },
     ],
   },
@@ -121,7 +126,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         icon: Boxes,
         requiredResourceKey: 'ADMIN.APP_GOVERNANCE',
         requiredPermissionCode: 'VIEW',
-        requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
         requiredResponsibilityCodes: [
           'APP_OWNER',
           'APP_ACCESS_MANAGER',
@@ -136,7 +140,6 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         icon: AppWindow,
         requiredResourceKey: 'ADMIN.APP_ACCESS_REQUESTS',
         requiredPermissionCode: 'VIEW',
-        requiredAnyRoleCodes: ['APP_CATALOG_ADMIN'],
         requiredResponsibilityCodes: [
           'APP_OWNER',
           'APP_ACCESS_MANAGER',
@@ -149,12 +152,16 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'access-reviews',
         path: '/admin/identity/access-reviews',
         icon: ClipboardCheck,
+        requiredResourceKey: 'ADMIN.ACCESS_REVIEWS',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'identity',
         view: 'roles',
         path: '/admin/identity/roles',
         icon: KeyRound,
+        requiredResourceKey: 'ADMIN.ACCESS_GOVERNANCE',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'identity',
@@ -191,24 +198,32 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         view: 'catalog',
         path: '/admin/platform/catalog',
         icon: Network,
+        requiredResourceKey: 'ADMIN.PLATFORM_CATALOG',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'platform',
         view: 'reference-data',
         path: '/admin/platform/reference-data',
         icon: Database,
+        requiredResourceKey: 'ADMIN.REFERENCE_DATA',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'platform',
         view: 'registry',
         path: '/admin/platform/registry',
         icon: Boxes,
+        requiredResourceKey: 'ADMIN.PLATFORM_REGISTRY',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'platform',
         view: 'navigation',
         path: '/admin/platform/navigation',
         icon: FolderTree,
+        requiredResourceKey: 'ADMIN.NAVIGATION',
+        requiredPermissionCode: 'VIEW',
       },
     ],
   },
@@ -236,6 +251,7 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         path: '/admin/governance/api-monitoring',
         icon: ChartNoAxesCombined,
         requiredResourceKey: 'ADMIN.API_MONITORING',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'governance',
@@ -243,6 +259,7 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         path: '/admin/governance/audit-overview',
         icon: ScrollText,
         requiredResourceKey: 'ADMIN.AUDIT_VIEW',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'governance',
@@ -258,6 +275,7 @@ export const ADMIN_NAVIGATION: AdminNavigationGroup[] = [
         path: '/admin/governance/audit-events',
         icon: SearchCheck,
         requiredResourceKey: 'ADMIN.AUDIT_VIEW',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'governance',
@@ -280,6 +298,7 @@ const LEGACY_ADMIN_ITEMS: AdminNavigationItem[] = [
     path: '/admin/governance/audit',
     icon: ScrollText,
     requiredResourceKey: 'ADMIN.AUDIT_VIEW',
+    requiredPermissionCode: 'VIEW',
   },
 ];
 

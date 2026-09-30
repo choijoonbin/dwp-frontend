@@ -8,6 +8,7 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { homeExperienceChangeTypeKey, homeExperienceScopeKey } from './home-revision-presentation';
 
 import type { HomeExperienceRevision } from '@dwp-frontend/shared-utils';
 
@@ -23,11 +24,12 @@ export type HomeExperienceHistoryState = 'LOADING' | 'ERROR' | 'EMPTY' | 'READY'
 export function resolveHomeExperienceHistoryState(
   loading: boolean,
   error: boolean,
-  revisionCount: number
+  revisionCount: number,
+  hasMore = false
 ): HomeExperienceHistoryState {
   if (loading) return 'LOADING';
   if (error) return 'ERROR';
-  return revisionCount === 0 ? 'EMPTY' : 'READY';
+  return revisionCount === 0 && !hasMore ? 'EMPTY' : 'READY';
 }
 
 export function homeExperienceRevisionScopes(revision: HomeExperienceRevision): string[] {
@@ -37,6 +39,8 @@ export function homeExperienceRevisionScopes(revision: HomeExperienceRevision): 
 export function HomeExperienceRevisionHistory({
   open,
   revisions,
+  hasMore,
+  limit,
   loading,
   error,
   busy,
@@ -47,6 +51,8 @@ export function HomeExperienceRevisionHistory({
 }: {
   open: boolean;
   revisions: HomeExperienceRevision[];
+  hasMore: boolean;
+  limit: number;
   loading: boolean;
   error: boolean;
   busy: boolean;
@@ -56,7 +62,7 @@ export function HomeExperienceRevisionHistory({
   onRetry: () => void;
 }) {
   const { t } = useTranslation('admin');
-  const state = resolveHomeExperienceHistoryState(loading, error, revisions.length);
+  const state = resolveHomeExperienceHistoryState(loading, error, revisions.length, hasMore);
   return (
     <DetailInspector
       open={open}
@@ -83,61 +89,72 @@ export function HomeExperienceRevisionHistory({
       ) : state === 'EMPTY' ? (
         <Alert severity="info">{t('homeExperience.history.empty')}</Alert>
       ) : (
-        <Stack divider={<Divider flexItem />}>
-          {revisions.map((revision) => (
-            <Stack key={revision.revisionId} gap={1} sx={{ py: 1.5 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="subtitle2">
-                    {t(`homeExperience.history.changeTypes.${revision.changeType}`)}
+        <>
+          {hasMore && (
+            <Alert severity="warning" sx={{ mb: 1.5 }}>
+              {t('homeExperience.history.partial', { limit })}
+            </Alert>
+          )}
+          <Stack divider={<Divider flexItem />}>
+            {revisions.map((revision) => (
+              <Stack key={revision.revisionId} gap={1} sx={{ py: 1.5 }}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="subtitle2">
+                      {t(homeExperienceChangeTypeKey(revision.changeType))}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {formatDate(revision.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}
+                    </Typography>
+                  </Box>
+                  {revision.current ? (
+                    <Chip
+                      size="small"
+                      color="success"
+                      label={t('homeExperience.history.current')}
+                    />
+                  ) : (
+                    <ActionButton
+                      size="small"
+                      intent="secondary"
+                      startIcon={<RotateCcw size={15} />}
+                      disabled={busy || !canWrite}
+                      onClick={() => onRestore(revision)}
+                    >
+                      {t('homeExperience.history.restore')}
+                    </ActionButton>
+                  )}
+                </Stack>
+                <Typography variant="body2" noWrap>
+                  {revision.headline || t('homeExperience.history.defaultCopy')}
+                </Typography>
+                <Stack direction="row" gap={0.75} flexWrap="wrap">
+                  {homeExperienceRevisionScopes(revision).map((scope) => (
+                    <Chip
+                      key={scope}
+                      size="small"
+                      variant="outlined"
+                      label={t(homeExperienceScopeKey(scope))}
+                    />
+                  ))}
+                </Stack>
+                <Stack direction="row" justifyContent="space-between" gap={2}>
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {revision.backgroundOriginalName || t('homeExperience.builtInBackground')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {formatDate(revision.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}
+                    {t('homeExperience.history.summary', {
+                      locales: t('homeExperience.history.localeCount', {
+                        count: revision.localeCount,
+                      }),
+                      version: revision.sourceVersion,
+                    })}
                   </Typography>
-                </Box>
-                {revision.current ? (
-                  <Chip size="small" color="success" label={t('homeExperience.history.current')} />
-                ) : (
-                  <ActionButton
-                    size="small"
-                    intent="secondary"
-                    startIcon={<RotateCcw size={15} />}
-                    disabled={busy || !canWrite}
-                    onClick={() => onRestore(revision)}
-                  >
-                    {t('homeExperience.history.restore')}
-                  </ActionButton>
-                )}
+                </Stack>
               </Stack>
-              <Typography variant="body2" noWrap>
-                {revision.headline || t('homeExperience.history.defaultCopy')}
-              </Typography>
-              <Stack direction="row" gap={0.75} flexWrap="wrap">
-                {homeExperienceRevisionScopes(revision).map((scope) => (
-                  <Chip
-                    key={scope}
-                    size="small"
-                    variant="outlined"
-                    label={t(`homeExperience.history.scopes.${scope}`)}
-                  />
-                ))}
-              </Stack>
-              <Stack direction="row" justifyContent="space-between" gap={2}>
-                <Typography variant="caption" color="text.secondary" noWrap>
-                  {revision.backgroundOriginalName || t('homeExperience.builtInBackground')}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t('homeExperience.history.summary', {
-                    locales: t('homeExperience.history.localeCount', {
-                      count: revision.localeCount,
-                    }),
-                    version: revision.sourceVersion,
-                  })}
-                </Typography>
-              </Stack>
-            </Stack>
-          ))}
-        </Stack>
+            ))}
+          </Stack>
+        </>
       )}
     </DetailInspector>
   );

@@ -144,7 +144,11 @@ export function DwaionRoutineApprovalQueue({
           <ActionButton
             intent="quiet"
             startIcon={
-              loading ? <CircularProgress size={16} color="inherit" /> : <RefreshCw size={16} />
+              loading ? (
+                <CircularProgress size={16} color="inherit" aria-hidden="true" />
+              ) : (
+                <RefreshCw size={16} />
+              )
             }
             onClick={onRetry}
             disabled={loading || busy}
@@ -168,7 +172,7 @@ export function DwaionRoutineApprovalQueue({
           </Alert>
         ) : loading && commands.length === 0 ? (
           <Stack role="status" direction="row" alignItems="center" gap={1} sx={{ p: 2 }}>
-            <CircularProgress size={18} />
+            <CircularProgress size={18} aria-hidden="true" />
             <Typography variant="body2" color="text.secondary">
               {copy.approvalQueue.loading}
             </Typography>

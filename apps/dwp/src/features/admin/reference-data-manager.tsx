@@ -14,6 +14,7 @@ import {
   updateReferenceItem,
   retireReferenceItem,
   activateReferenceItem,
+  usePermissions,
 } from '@dwp-frontend/shared-utils';
 
 import {
@@ -48,6 +49,8 @@ export function ReferenceDataManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canManage = permissionsLoaded && hasPermission('ADMIN.REFERENCE_DATA', 'MANAGE');
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -148,6 +151,7 @@ export function ReferenceDataManager() {
   };
 
   const run = async (operation: () => Promise<ReferenceSetDetail>, successMessage: string) => {
+    if (!canManage) return false;
     setBusy(true);
     try {
       await acceptDetail(await operation(), successMessage);
@@ -196,7 +200,7 @@ export function ReferenceDataManager() {
   };
 
   const confirmAction = async () => {
-    if (!detail || !pendingAction) return;
+    if (!canManage || !detail || !pendingAction) return;
     let completed = false;
     if (pendingAction.kind === 'activate-set') {
       completed = await run(
@@ -288,13 +292,14 @@ export function ReferenceDataManager() {
         filteredItems={filteredItems}
         activityQuery={activityQuery}
         activities={activities}
+        canManage={canManage}
         setSetDialogMode={setSetDialogMode}
         setItemDialog={setItemDialog}
         setPendingAction={setPendingAction}
       />
 
       <ReferenceSetDialog
-        open={Boolean(setDialogMode)}
+        open={canManage && Boolean(setDialogMode)}
         value={setDialogMode === 'edit' ? detail : null}
         busy={busy}
         onClose={() => setSetDialogMode(null)}
@@ -302,14 +307,14 @@ export function ReferenceDataManager() {
         onUpdate={updateSet}
       />
       <ReferenceItemDialog
-        open={Boolean(itemDialog)}
+        open={canManage && Boolean(itemDialog)}
         value={itemDialog?.mode === 'edit' ? itemDialog.item : null}
         busy={busy}
         onClose={() => setItemDialog(null)}
         onCreate={saveItem}
         onUpdate={updateItem}
       />
-      {confirmCopy && (
+      {canManage && confirmCopy && (
         <ConfirmActionDialog
           open
           {...confirmCopy}

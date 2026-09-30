@@ -38,6 +38,7 @@ import {
   publishNavigationDraft,
   restoreNavigationRevision,
   saveNavigationDraft,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -66,6 +67,7 @@ import {
   SortableNavigationRow,
   ValidationPanel,
 } from './navigation-studio-view-parts';
+import { navigationRevisionStateLabelKey } from './navigation-studio-presentation';
 
 import type { DragEndEvent } from '@dnd-kit/core';
 import type {
@@ -197,6 +199,8 @@ export function NavigationManager() {
   const { t, i18n } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canManage = permissionsLoaded && hasPermission('ADMIN.NAVIGATION', 'MANAGE');
   const temporaryId = useRef(-1);
   const [tree, setTree] = useState<NavigationNode[]>([]);
   const [changeSummary, setChangeSummary] = useState('');
@@ -271,20 +275,21 @@ export function NavigationManager() {
   };
 
   const run = async (action: () => Promise<unknown>, message: string) => {
+    if (!canManage) return;
     setBusy(true);
     try {
       await action();
       await refresh();
       toast.success(message);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('common.operationError'));
+    } catch {
+      toast.error(t('common.operationError'));
     } finally {
       setBusy(false);
     }
   };
 
   const save = async (): Promise<NavigationRevision | null> => {
-    if (!draft) return null;
+    if (!canManage || !draft) return null;
     let saved: NavigationRevision | null = null;
     await run(async () => {
       saved = await saveNavigationDraft(draft.navigationRevisionId, {
@@ -298,7 +303,7 @@ export function NavigationManager() {
 
   const confirmPendingAction = async () => {
     const action = pendingAction;
-    if (!action) return;
+    if (!canManage || !action) return;
     try {
       if (action.type === 'PUBLISH' && draft) {
         await run(async () => {
@@ -336,7 +341,7 @@ export function NavigationManager() {
   };
 
   const onDialogSave = async (request: CreateNavigationRequest) => {
-    if (!draft) return;
+    if (!canManage || !draft) return;
     const current = editing;
     const item: NavigationNode = current
       ? {
@@ -373,7 +378,7 @@ export function NavigationManager() {
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
-    if (!draft || !over || active.id === over.id) return;
+    if (!canManage || !draft || !over || active.id === over.id) return;
     const activeParent = (active.data.current?.parentId as number | null | undefined) ?? null;
     const overParent = (over.data.current?.parentId as number | null | undefined) ?? null;
     if (activeParent !== overParent) return;
@@ -468,14 +473,14 @@ export function NavigationManager() {
                 <ActionButton
                   intent="quiet"
                   startIcon={<X size={17} />}
-                  disabled={busy}
+                  disabled={!canManage || busy}
                   onClick={() => setPendingAction({ type: 'CANCEL' })}
                 >
                   {t('navigationManager.studio.actions.cancelDraft')}
                 </ActionButton>
                 <ActionButton
                   startIcon={<Save size={17} />}
-                  disabled={busy || !dirty}
+                  disabled={!canManage || busy || !dirty}
                   onClick={() => void save()}
                 >
                   {t('navigationManager.studio.actions.save')}
@@ -483,7 +488,7 @@ export function NavigationManager() {
                 <ActionButton
                   intent="primary"
                   startIcon={<Send size={17} />}
-                  disabled={busy || (!dirty && !draft.validation.valid)}
+                  disabled={!canManage || busy || (!dirty && !draft.validation.valid)}
                   onClick={() => setPendingAction({ type: 'PUBLISH' })}
                 >
                   {t('navigationManager.studio.actions.publish')}
@@ -493,7 +498,7 @@ export function NavigationManager() {
               <ActionButton
                 intent="primary"
                 startIcon={<Plus size={17} />}
-                disabled={busy}
+                disabled={!canManage || busy}
                 onClick={() =>
                   void run(
                     () => createNavigationDraft(),
@@ -514,6 +519,7 @@ export function NavigationManager() {
             fullWidth
             label={t('navigationManager.studio.changeSummary')}
             value={changeSummary}
+            disabled={!canManage}
             onChange={(event) => setChangeSummary(event.target.value)}
             supportingText={t('navigationManager.studio.changeSummaryHelp')}
             slotProps={{ htmlInput: { maxLength: 500 } }}
@@ -550,7 +556,7 @@ export function NavigationManager() {
               </Stack>
               <ActionButton
                 startIcon={<Plus size={16} />}
-                disabled={!draft || busy}
+                disabled={!canManage || !draft || busy}
                 onClick={() => {
                   setEditing(null);
                   setDialogOpen(true);
@@ -579,7 +585,7 @@ export function NavigationManager() {
                         key={node.navigationItemId}
                         node={node}
                         language={i18n.resolvedLanguage ?? 'en'}
-                        editing={Boolean(draft)}
+                        editing={canManage && Boolean(draft)}
                         busy={busy}
                         expanded={expanded}
                         onToggle={(itemId) =>
@@ -591,10 +597,12 @@ export function NavigationManager() {
                           })
                         }
                         onEdit={(nodeToEdit) => {
+                          if (!canManage) return;
                           setEditing(nodeToEdit);
                           setDialogOpen(true);
                         }}
-                        onLifecycle={(changed) =>
+                        onLifecycle={(changed) => {
+                          if (!canManage) return;
                           setTree(
                             normalizeTree(
                               mapNode(tree, changed.navigationItemId, (node) =>
@@ -603,8 +611,8 @@ export function NavigationManager() {
                                   : { ...node, lifecycleState: 'ACTIVE' }
                               )
                             )
-                          )
-                        }
+                          );
+                        }}
                       />
                     ))}
                   </Box>
@@ -615,9 +623,9 @@ export function NavigationManager() {
                 kind="first-use"
                 title={t('navigationManager.emptyState.title')}
                 description={t('navigationManager.emptyState.description')}
-                actionLabel={draft ? t('navigationManager.actions.new') : undefined}
+                actionLabel={canManage && draft ? t('navigationManager.actions.new') : undefined}
                 onAction={
-                  draft
+                  canManage && draft
                     ? () => {
                         setEditing(null);
                         setDialogOpen(true);
@@ -666,7 +674,11 @@ export function NavigationManager() {
                       revision: revision.revisionNumber,
                     })}
                   </Typography>
-                  <Chip size="small" variant="outlined" label={revision.lifecycleState} />
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={t(navigationRevisionStateLabelKey(revision.lifecycleState))}
+                  />
                 </Stack>
                 <Box sx={{ minWidth: 0, flex: 1 }}>
                   <Typography variant="body2" noWrap>
@@ -689,7 +701,12 @@ export function NavigationManager() {
                   <ActionButton
                     size="small"
                     startIcon={<ArchiveRestore size={15} />}
-                    disabled={Boolean(draft) || busy || revision.lifecycleState === 'CANCELLED'}
+                    disabled={
+                      !canManage ||
+                      Boolean(draft) ||
+                      busy ||
+                      revision.lifecycleState === 'CANCELLED'
+                    }
                     onClick={() => setPendingAction({ type: 'RESTORE', revision })}
                   >
                     {t('navigationManager.studio.actions.restore')}
@@ -701,7 +718,7 @@ export function NavigationManager() {
         </Box>
       </Stack>
 
-      {dialogOpen ? (
+      {canManage && dialogOpen ? (
         <NavigationDialog
           item={editing}
           groups={allNodes}
@@ -714,7 +731,7 @@ export function NavigationManager() {
         />
       ) : null}
 
-      {confirmCopy ? (
+      {canManage && confirmCopy ? (
         <ConfirmDialog
           open
           title={confirmCopy.title}

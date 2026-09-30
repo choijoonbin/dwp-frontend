@@ -27,6 +27,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { homeExperienceRevisionScopes } from './home-experience-revision-history';
+import { homeExperienceChangeTypeKey, homeExperienceScopeKey } from './home-revision-presentation';
 
 import type { HomeExperienceRevision } from '@dwp-frontend/shared-utils';
 
@@ -70,7 +71,12 @@ export function HomeStudioReleasePanel() {
   if (experienceQuery.isLoading || historyQuery.isLoading) {
     return <LoadingState label={t('homeStudio.release.loading')} variant="skeleton" />;
   }
-  if (experienceQuery.isError || historyQuery.isError || !experienceQuery.data) {
+  if (
+    experienceQuery.isError ||
+    historyQuery.isError ||
+    !experienceQuery.data ||
+    !historyQuery.data
+  ) {
     return (
       <ErrorState
         title={t('homeStudio.release.loadFailed')}
@@ -84,7 +90,8 @@ export function HomeStudioReleasePanel() {
     );
   }
 
-  const revisions = historyQuery.data ?? [];
+  const revisionPage = historyQuery.data;
+  const revisions = revisionPage.items;
   return (
     <Stack gap={3} data-testid="admin-home-release-history">
       <InlineFeedback severity="info" icon={<ShieldCheck size={19} />}>
@@ -98,10 +105,20 @@ export function HomeStudioReleasePanel() {
         />
         <Chip
           variant="outlined"
-          label={t('homeStudio.release.revisionCount', { count: revisions.length })}
+          label={t(
+            revisionPage.hasMore
+              ? 'homeStudio.release.revisionCountPartial'
+              : 'homeStudio.release.revisionCount',
+            { count: revisions.length, limit: revisionPage.limit }
+          )}
         />
       </Stack>
-      {revisions.length === 0 ? (
+      {revisionPage.hasMore && (
+        <InlineFeedback severity="warning">
+          {t('homeStudio.release.partial', { limit: revisionPage.limit })}
+        </InlineFeedback>
+      )}
+      {revisions.length === 0 && !revisionPage.hasMore ? (
         <EmptyState icon={<History size={28} />} title={t('homeExperience.history.empty')} />
       ) : (
         <Stack
@@ -122,7 +139,7 @@ export function HomeStudioReleasePanel() {
               <Box>
                 <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
                   <Typography variant="subtitle1">
-                    {t(`homeExperience.history.changeTypes.${revision.changeType}`)}
+                    {t(homeExperienceChangeTypeKey(revision.changeType))}
                   </Typography>
                   {revision.current && (
                     <Chip
@@ -141,7 +158,7 @@ export function HomeStudioReleasePanel() {
                       key={scope}
                       size="small"
                       variant="outlined"
-                      label={t(`homeExperience.history.scopes.${scope}`)}
+                      label={t(homeExperienceScopeKey(scope))}
                     />
                   ))}
                 </Stack>
@@ -167,7 +184,7 @@ export function HomeStudioReleasePanel() {
           version: restoreCandidate?.sourceVersion ?? '',
           scopes: restoreCandidate
             ? homeExperienceRevisionScopes(restoreCandidate)
-                .map((scope) => t(`homeExperience.history.scopes.${scope}`))
+                .map((scope) => t(homeExperienceScopeKey(scope)))
                 .join(', ')
             : '',
         })}

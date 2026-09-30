@@ -35,6 +35,7 @@ import {
 } from '@dwp-frontend/design-system';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -45,6 +46,11 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { ScimCreateDialog, ScimRotationDialog } from './identity-provisioning-credential-dialogs';
+import {
+  scimConnectorOperationLabelKey,
+  scimEventOperationLabelKey,
+  scimEventResourceLabelKey,
+} from './identity-provisioning-presentation';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -53,8 +59,8 @@ import type {
   ScimProvisioningEvent,
 } from '@dwp-frontend/shared-utils';
 
-function message(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+function message(_error: unknown, fallback: string): string {
+  return fallback;
 }
 
 function StateChip({ state }: { state: string }) {
@@ -233,7 +239,12 @@ function ConnectorInspector({
               </Typography>
               <Stack component="dd" direction="row" gap={0.5} flexWrap="wrap" sx={{ m: 0 }}>
                 {connector.allowedOperations.map((operation) => (
-                  <Chip key={operation} size="small" variant="outlined" label={operation} />
+                  <Chip
+                    key={operation}
+                    size="small"
+                    variant="outlined"
+                    label={t(scimConnectorOperationLabelKey(operation))}
+                  />
                 ))}
               </Stack>
               <Typography component="dt" variant="caption">
@@ -308,7 +319,8 @@ function ConnectorInspector({
                   <Box key={event.eventId} sx={{ py: 1, borderBottom: 1, borderColor: 'divider' }}>
                     <Stack direction="row" justifyContent="space-between" gap={1}>
                       <Typography variant="body2" fontWeight={700}>
-                        {event.resourceType} {event.operation}
+                        {t(scimEventResourceLabelKey(event.resourceType))} ·{' '}
+                        {t(scimEventOperationLabelKey(event.operation))}
                       </Typography>
                       <StateChip state={event.outcome} />
                     </Stack>
@@ -450,7 +462,10 @@ export function IdentityProvisioningManager() {
         headerName: t('provisioning.scim.columns.operations'),
         minWidth: 220,
         flex: 0.8,
-        valueGetter: (_value, row) => row.allowedOperations.join(', '),
+        valueGetter: (_value, row) =>
+          row.allowedOperations
+            .map((operation) => t(scimConnectorOperationLabelKey(operation)))
+            .join(', '),
       },
       {
         field: 'health',
@@ -543,6 +558,7 @@ export function IdentityProvisioningManager() {
         field: 'operation',
         headerName: t('provisioning.scim.eventColumns.operation'),
         width: 116,
+        valueGetter: (_value, row) => t(scimEventOperationLabelKey(row.operation)),
       },
       {
         field: 'resourceType',
@@ -551,7 +567,9 @@ export function IdentityProvisioningManager() {
         flex: 0.8,
         renderCell: ({ row }) => (
           <Box sx={{ minWidth: 0 }}>
-            <Typography variant="body2">{row.resourceType}</Typography>
+            <Typography variant="body2">
+              {t(scimEventResourceLabelKey(row.resourceType))}
+            </Typography>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
               {row.resourceId || row.summary}
             </Typography>
@@ -582,7 +600,8 @@ export function IdentityProvisioningManager() {
       <ManagementPanelError message={message(connectorsQuery.error, t('common.operationError'))} />
     );
   const connectors = connectorsQuery.data ?? [];
-  const events = eventsQuery.data ?? [];
+  const eventPage = eventsQuery.data;
+  const events = eventPage?.items ?? [];
   const inspectedConnector =
     connectors.find((connector) => connector.connectorId === inspectedConnectorId) ?? null;
   const activeConnectors = connectors.filter(
@@ -778,6 +797,11 @@ export function IdentityProvisioningManager() {
           minVisibleRows={3}
           maxVisibleRows={8}
           onRowClick={({ row }) => setInspectedConnectorId(row.connectorId)}
+          onCellKeyDown={({ row }, event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            setInspectedConnectorId(row.connectorId);
+          }}
           stickyColumns={{ left: ['displayName'], right: ['actions'] }}
           sx={{ border: 0, borderRadius: 0, '& .MuiDataGrid-row': { cursor: 'pointer' } }}
         />
@@ -806,8 +830,21 @@ export function IdentityProvisioningManager() {
               </Typography>
             </Box>
           </Stack>
-          <Chip size="small" variant="outlined" label={events.length} />
+          <Chip
+            size="small"
+            variant="outlined"
+            label={
+              eventPage?.hasMore
+                ? t('provisioning.scim.activity.countAtLeast', { count: eventPage.limit })
+                : events.length
+            }
+          />
         </Stack>
+        {eventPage?.hasMore && (
+          <Alert severity="warning" sx={{ mx: 2, mb: 1.5 }}>
+            {t('provisioning.scim.activity.partialCoverage', { count: eventPage.limit })}
+          </Alert>
+        )}
         {eventsQuery.isError ? (
           <Typography variant="body2" color="error.main" sx={{ px: 2, pb: 2 }}>
             {t('provisioning.scim.activity.loadError')}

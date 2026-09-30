@@ -210,6 +210,13 @@ export type AppAccessRequest = {
   updatedAt: string;
 };
 
+export type AppAccessRequestPage = {
+  items: AppAccessRequest[];
+  limit: number;
+  hasMore: boolean;
+  coverageState: 'COMPLETE_WITHIN_FILTER' | 'TRUNCATED_AT_LIMIT';
+};
+
 export type WorkspaceAppLaunch = {
   appId: string;
   launchMode: string;
@@ -736,8 +743,8 @@ export async function cancelWorkspaceAppAccessRequest(
 
 export async function listAppAccessRequests(
   state: AppAccessRequest['state'] | 'ALL' = 'ALL'
-): Promise<AppAccessRequest[]> {
-  const response = await axiosInstance.get<ApiResponse<AppAccessRequest[]>>(
+): Promise<AppAccessRequestPage> {
+  const response = await axiosInstance.get<ApiResponse<AppAccessRequestPage>>(
     `/api/platform/v1/admin/app-access-requests?state=${state}`
   );
   return response.data.data;

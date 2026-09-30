@@ -16,12 +16,11 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type {
-  SavedViewCustodyUser,
-  SavedViewOwnershipDisposition,
-} from '@dwp-frontend/shared-utils';
+import type { SavedViewCustodyUser } from '@dwp-frontend/shared-utils';
 import type { TFunction } from 'i18next';
 import type { LucideIcon } from 'lucide-react';
+
+import { savedViewDispositionLabel, savedViewStatusLabel } from './saved-view-custody-presentation';
 
 const SURFACE_TRANSLATION_KEYS: Record<string, string> = {
   'communications.work': 'savedViewCustody.surfaces.communicationsWork',
@@ -44,21 +43,16 @@ export function userIdentityLabel(user: SavedViewCustodyUser) {
   return user.email ? user.displayName + ' (' + user.email + ')' : user.displayName;
 }
 
-export function statusLabel(status: string, t: TFunction<'admin'>) {
-  return t('savedViewCustody.statuses.' + status, { defaultValue: status });
-}
-
 export function userOptionLabel(user: SavedViewCustodyUser, t: TFunction<'admin'>) {
-  return userIdentityLabel(user) + ' · ' + statusLabel(user.status, t);
+  return userIdentityLabel(user) + ' · ' + savedViewStatusLabel(user.status, t);
 }
 
 export function displayDate(value?: string | null) {
   return value ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }) : '-';
 }
 
-export function dispositionLabel(value: SavedViewOwnershipDisposition, t: TFunction<'admin'>) {
-  return t('savedViewCustody.dispositions.' + value);
-}
+export const dispositionLabel = savedViewDispositionLabel;
+export const statusLabel = savedViewStatusLabel;
 
 export function surfaceLabel(value: string, t: TFunction<'admin'>) {
   const key = SURFACE_TRANSLATION_KEYS[value];
@@ -114,7 +108,7 @@ function StatusMetric({
 }: {
   label: string;
   helper: string;
-  value: number | null;
+  value: number | string | null;
   icon: LucideIcon;
   onClick: () => void;
 }) {
@@ -360,7 +354,7 @@ export function SavedViewCustodyMetrics({
 }: {
   orphanedCount: number | null;
   expiringSoon: number | null;
-  historyCount: number | null;
+  historyCount: number | string | null;
   updatedAt: string | null;
   refreshing: boolean;
   onOpenOrphaned: () => void;

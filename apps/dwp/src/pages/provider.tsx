@@ -12,6 +12,8 @@ import {
   HeartPulse,
   LifeBuoy,
   ListChecks,
+  PackageCheck,
+  WalletCards,
 } from 'lucide-react';
 import { PageCanvas } from '@dwp-frontend/design-system';
 import { useQuery } from '@tanstack/react-query';
@@ -68,6 +70,16 @@ const ProviderDataGovernance = lazy(() =>
     default: module.ProviderDataGovernance,
   }))
 );
+const ProviderResourceGovernance = lazy(() =>
+  import('../features/provider/provider-resource-governance').then((module) => ({
+    default: module.ProviderResourceGovernance,
+  }))
+);
+const ProviderArtifactGovernance = lazy(() =>
+  import('../features/provider/provider-artifact-governance').then((module) => ({
+    default: module.ProviderArtifactGovernance,
+  }))
+);
 const ProviderAudit = lazy(() =>
   import('../features/provider/provider-audit').then((module) => ({
     default: module.ProviderAudit,
@@ -94,6 +106,16 @@ const views = {
     icon: BadgeDollarSign,
     content: ProviderCommercial,
     permission: 'COMMERCIAL_READ',
+  },
+  'resource-governance': {
+    icon: WalletCards,
+    content: ProviderResourceGovernance,
+    permission: 'RESOURCE_GOVERNANCE_READ',
+  },
+  'artifact-governance': {
+    icon: PackageCheck,
+    content: ProviderArtifactGovernance,
+    permission: 'ARTIFACT_GOVERNANCE_READ',
   },
   'code-contracts': {
     icon: Braces,

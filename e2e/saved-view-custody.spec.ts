@@ -876,6 +876,24 @@ test('history feeds remain independently usable when lifecycle history is unavai
   ).toBeVisible();
 });
 
+test('bounded history is labeled as partial instead of a complete ledger', async ({ page }) => {
+  await mockShellSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await mockCustodyWorkspace(page, {
+    historyHasMore: true,
+    seedOwnershipHistory: true,
+  });
+
+  await page.goto('/admin/identity/saved-view-custody');
+  await expect(page.getByRole('button', { name: /Recent action records: 1\+/ })).toBeVisible();
+  await page.getByRole('tab', { name: 'Action history' }).click();
+  await expect(
+    page.getByText(/Only the newest records in each audit feed are loaded/)
+  ).toBeVisible();
+});
+
 test('the ownership workflow stays usable when auxiliary registers fail', async ({
   page,
 }, testInfo) => {

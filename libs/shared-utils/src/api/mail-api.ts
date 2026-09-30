@@ -559,74 +559,6 @@ export async function replyToMailThread(
   return response.data.data;
 }
 
-export async function retryMailDelivery(
-  threadId: string,
-  messageId: string
-): Promise<MailThreadDetail> {
-  const response = await axiosInstance.post<ApiResponse<MailThreadDetail>>(
-    `/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/messages/${encodeURIComponent(messageId)}/retry`,
-    {}
-  );
-  return response.data.data;
-}
-
-export async function composeMail(input: {
-  toEmail: string;
-  toName?: string | null;
-  subject: string;
-  body: string;
-  classification: MailClassification;
-  externalRecipientConfirmed: boolean;
-  deliveryMode: 'SEND' | 'DRAFT';
-  idempotencyKey: string;
-}): Promise<MailThreadDetail> {
-  const response = await axiosInstance.post<ApiResponse<MailThreadDetail>, typeof input>(
-    '/api/platform/v1/mail/messages',
-    input
-  );
-  return response.data.data;
-}
-
-export async function createMailDraft(input: MailDraftSaveInput): Promise<MailThreadDetail> {
-  const response = await axiosInstance.post<ApiResponse<MailThreadDetail>, MailDraftSaveInput>(
-    '/api/platform/v1/mail/drafts',
-    input
-  );
-  return response.data.data;
-}
-
-export async function saveMailDraft(
-  threadId: string,
-  input: MailDraftSaveInput & { version: number }
-): Promise<MailThreadDetail> {
-  const response = await axiosInstance.put<
-    ApiResponse<MailThreadDetail>,
-    MailDraftSaveInput & { version: number }
-  >(`/api/platform/v1/mail/drafts/${encodeURIComponent(threadId)}`, input);
-  return response.data.data;
-}
-
-export async function updateMailDraft(
-  threadId: string,
-  input: {
-    toEmail: string;
-    toName?: string | null;
-    subject: string;
-    body: string;
-    classification: MailClassification;
-    externalRecipientConfirmed: boolean;
-    deliveryMode: 'SEND' | 'DRAFT';
-    idempotencyKey: string;
-    version: number;
-  }
-): Promise<MailThreadDetail> {
-  const response = await axiosInstance.put<ApiResponse<MailThreadDetail>, typeof input>(
-    `/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/draft`,
-    input
-  );
-  return response.data.data;
-}
-
 export async function decideMailProposal(
   proposalId: string,
   decision: 'ACCEPT' | 'DISMISS',
@@ -792,14 +724,6 @@ export async function archiveMailRule(ruleId: string, version: number): Promise<
     `/api/platform/v1/mail/organization/rules/${encodeURIComponent(ruleId)}/archive`,
     { version }
   );
-}
-
-export async function runMailRule(ruleId: string): Promise<MailRuleRun> {
-  const response = await axiosInstance.post<ApiResponse<MailRuleRun>>(
-    `/api/platform/v1/mail/organization/rules/${encodeURIComponent(ruleId)}/run`,
-    {}
-  );
-  return response.data.data;
 }
 
 export async function getMailRuleBackfillPreview(

@@ -2,7 +2,7 @@ import { defineProductManifest } from '../../components/product-manifest';
 import { projectProductSurfaceNavigation } from '../../components/product-surface-navigation-projection';
 import { CALENDAR_NAVIGATION } from './calendar-navigation';
 
-export const CALENDAR_WORK_NAVIGATION = projectProductSurfaceNavigation(CALENDAR_NAVIGATION, {
+const CALENDAR_WORK_NAVIGATION = projectProductSurfaceNavigation(CALENDAR_NAVIGATION, {
   home: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
@@ -37,7 +37,7 @@ export const CALENDAR_WORK_NAVIGATION = projectProductSurfaceNavigation(CALENDAR
   },
 });
 
-export const CALENDAR_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(CALENDAR_NAVIGATION, {
+const CALENDAR_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(CALENDAR_NAVIGATION, {
   'admin-overview': {
     taskKind: 'operations',
     access: { type: 'capability', capabilityContractKey: 'calendar.operations.read' },

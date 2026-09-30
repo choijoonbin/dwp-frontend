@@ -29,12 +29,15 @@ import {
   publishAuditPolicyRevision,
   rollbackAuditPolicyRevision,
   submitAuditPolicyRevision,
+  useAuth,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { ActionButton, ActionIconButton, FormField } from '@dwp-frontend/design-system';
 
 import { alpha } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -47,10 +50,19 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
-import { AuditPolicyRevisionEvidence } from './audit-policy-revision-evidence';
+import {
+  AuditPolicyRevisionEvidence,
+  policyRevisionFieldLabelKey,
+} from './audit-policy-revision-evidence';
+import {
+  auditPolicyRevisionActions,
+  integrityVerificationPresentation,
+  type AuditPolicyRevisionAction,
+} from './audit-governance-actions';
+import { TenantDataGovernanceEvidence } from './tenant-owner-projection-evidence';
 
 import type {
-  AuditIntegrityCheckpoint,
+  AuditIntegrityCheckpointPage,
   AuditPolicyRevision,
   AuditRetentionPolicy,
 } from '@dwp-frontend/shared-utils';
@@ -162,8 +174,9 @@ function LifecycleStep({
   );
 }
 
-function IntegrityLedger({ items }: { items: AuditIntegrityCheckpoint[] }) {
+function IntegrityLedger({ page }: { page: AuditIntegrityCheckpointPage }) {
   const { t } = useTranslation('admin');
+  const items = page.items;
   if (!items.length) {
     return (
       <Stack alignItems="center" gap={1} sx={{ py: 6 }}>
@@ -176,6 +189,11 @@ function IntegrityLedger({ items }: { items: AuditIntegrityCheckpoint[] }) {
   }
   return (
     <Stack>
+      {page.hasMore && (
+        <Alert severity="warning" sx={{ m: 2, mb: 0 }}>
+          {t('auditControl.governance.integrityPartialCoverage', { count: page.limit })}
+        </Alert>
+      )}
       {items.map((item, index) => (
         <Stack
           key={item.checkpointId}
@@ -206,11 +224,15 @@ function IntegrityLedger({ items }: { items: AuditIntegrityCheckpoint[] }) {
                 width: 14,
                 height: 14,
                 borderRadius: '50%',
-                bgcolor: item.verificationStatus === 'VERIFIED' ? 'success.main' : 'warning.main',
+                bgcolor: integrityVerificationPresentation(item.verificationStatus).verified
+                  ? 'success.main'
+                  : 'warning.main',
                 color: 'common.white',
               }}
             >
-              {item.verificationStatus === 'VERIFIED' && <CheckCircle2 size={10} />}
+              {integrityVerificationPresentation(item.verificationStatus).verified && (
+                <CheckCircle2 size={10} />
+              )}
             </Box>
           </Box>
           <Box minWidth={0} flex={1}>
@@ -221,14 +243,8 @@ function IntegrityLedger({ items }: { items: AuditIntegrityCheckpoint[] }) {
               <Chip
                 size="small"
                 variant="outlined"
-                color={
-                  item.verificationStatus === 'VERIFIED'
-                    ? 'success'
-                    : item.verificationStatus === 'FAILED'
-                      ? 'error'
-                      : 'warning'
-                }
-                label={t(`auditControl.integrityStatus.${item.verificationStatus}`)}
+                color={integrityVerificationPresentation(item.verificationStatus).color}
+                label={t(integrityVerificationPresentation(item.verificationStatus).labelKey)}
               />
             </Stack>
             <Stack
@@ -253,8 +269,6 @@ function IntegrityLedger({ items }: { items: AuditIntegrityCheckpoint[] }) {
   );
 }
 
-type PolicyRevisionAction = 'submit' | 'approve' | 'reject' | 'publish' | 'rollback';
-
 function revisionColor(state: string): 'default' | 'info' | 'warning' | 'success' | 'error' {
   if (state === 'PUBLISHED' || state === 'APPROVED') return 'success';
   if (state === 'IN_REVIEW' || state === 'DRAFT') return 'warning';
@@ -268,13 +282,17 @@ function PolicyRevisionLedger({
   activeRevisionId,
   reason,
   busy,
+  actorId,
+  canConfigure,
   onAction,
 }: {
   items: AuditPolicyRevision[];
   activeRevisionId?: string | null;
   reason: string;
   busy: boolean;
-  onAction: (revision: AuditPolicyRevision, action: PolicyRevisionAction) => void;
+  actorId?: string | null;
+  canConfigure: boolean;
+  onAction: (revision: AuditPolicyRevision, action: AuditPolicyRevisionAction) => void;
 }) {
   const { t } = useTranslation('admin');
   const display = useDisplayDictionary();
@@ -290,6 +308,7 @@ function PolicyRevisionLedger({
       {items.map((revision) => {
         const active = revision.revisionId === activeRevisionId;
         const changedFields = Object.keys(revision.diff);
+        const allowedActions = auditPolicyRevisionActions(revision, actorId, canConfigure);
         return (
           <Box key={revision.revisionId} sx={{ px: 2.5, py: 2 }}>
             <Stack
@@ -337,9 +356,7 @@ function PolicyRevisionLedger({
                         key={field}
                         size="small"
                         variant="outlined"
-                        label={t(`auditControl.governance.revisions.fields.${field}`, {
-                          defaultValue: field,
-                        })}
+                        label={t(policyRevisionFieldLabelKey(field))}
                       />
                     ))
                   ) : (
@@ -368,7 +385,7 @@ function PolicyRevisionLedger({
                 </Stack>
               </Box>
               <Stack direction="row" gap={1} flexWrap="wrap" justifyContent="flex-end">
-                {revision.lifecycleState === 'DRAFT' && (
+                {allowedActions.includes('submit') && (
                   <ActionButton
                     intent="secondary"
                     size="small"
@@ -379,7 +396,7 @@ function PolicyRevisionLedger({
                     {t('auditControl.governance.revisions.submit')}
                   </ActionButton>
                 )}
-                {revision.lifecycleState === 'IN_REVIEW' && (
+                {allowedActions.includes('approve') && allowedActions.includes('reject') && (
                   <>
                     <ActionButton
                       intent="danger"
@@ -401,7 +418,7 @@ function PolicyRevisionLedger({
                     </ActionButton>
                   </>
                 )}
-                {revision.lifecycleState === 'APPROVED' && (
+                {allowedActions.includes('publish') && (
                   <ActionButton
                     intent="primary"
                     size="small"
@@ -412,7 +429,7 @@ function PolicyRevisionLedger({
                     {t('auditControl.governance.revisions.publish')}
                   </ActionButton>
                 )}
-                {revision.lifecycleState === 'SUPERSEDED' && (
+                {allowedActions.includes('rollback') && (
                   <ActionButton
                     intent="secondary"
                     size="small"
@@ -434,6 +451,9 @@ function PolicyRevisionLedger({
 
 export function AuditGovernance() {
   const { t } = useTranslation('admin');
+  const auth = useAuth();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canConfigure = permissionsLoaded && hasPermission('ADMIN.AUDIT_CONFIGURE', 'MANAGE');
   const toast = useToast();
   const queryClient = useQueryClient();
   const policyQuery = useQuery({ queryKey: ['audit-control', 'policy'], queryFn: getAuditPolicy });
@@ -488,7 +508,7 @@ export function AuditGovernance() {
       action,
     }: {
       revision: AuditPolicyRevision;
-      action: PolicyRevisionAction;
+      action: AuditPolicyRevisionAction;
     }) => {
       if (action === 'submit') return submitAuditPolicyRevision(revision, reason.trim());
       if (action === 'approve') {
@@ -521,7 +541,7 @@ export function AuditGovernance() {
     onError: () => toast.error(t('common.operationError')),
   });
 
-  const latestCheckpoint = useMemo(() => integrityQuery.data?.[0], [integrityQuery.data]);
+  const latestCheckpoint = useMemo(() => integrityQuery.data?.items[0], [integrityQuery.data]);
 
   if (policyQuery.isLoading || revisionsQuery.isLoading || integrityQuery.isLoading || !policy) {
     return <ManagementPanelLoading label={t('auditControl.loading')} />;
@@ -547,6 +567,7 @@ export function AuditGovernance() {
     <Box
       sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}
     >
+      <TenantDataGovernanceEvidence />
       <Box
         sx={{
           display: 'grid',
@@ -685,6 +706,8 @@ export function AuditGovernance() {
           activeRevisionId={policyQuery.data?.activeRevisionId}
           reason={reason}
           busy={revisionActionMutation.isPending}
+          actorId={auth.user ? String(auth.user.userId) : null}
+          canConfigure={canConfigure}
           onAction={(revision, action) => revisionActionMutation.mutate({ revision, action })}
         />
       </Box>
@@ -900,7 +923,16 @@ export function AuditGovernance() {
               </Box>
             </Stack>
           </Box>
-          <IntegrityLedger items={integrityQuery.data ?? []} />
+          <IntegrityLedger
+            page={
+              integrityQuery.data ?? {
+                items: [],
+                limit: 90,
+                hasMore: false,
+                coverageState: 'COMPLETE_WITHIN_FILTER',
+              }
+            }
+          />
         </Box>
       </Box>
     </Box>

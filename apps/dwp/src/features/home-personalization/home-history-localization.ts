@@ -3,6 +3,7 @@ import type { TFunction } from 'i18next';
 import type { HomeViewSource } from '@dwp-frontend/shared-utils';
 
 const revisionSources = new Set<HomeViewSource>(['USER', 'TEMPLATE', 'AI', 'RESTORE', 'UNDO']);
+const templateLifecycles = new Set(['DRAFT', 'PUBLISHED', 'REVOKED']);
 
 const fixedSummaryKeys: Readonly<Record<string, string>> = {
   'Home view created': 'history.summaries.created',
@@ -25,8 +26,16 @@ export function homeRevisionSourceLabel(
   t: TFunction<'homeStudio'>,
   source: string | null | undefined
 ): string {
-  const sourceKey = revisionSources.has(source as HomeViewSource) ? source : 'UNKNOWN';
+  const sourceKey = revisionSources.has(source as HomeViewSource) ? source : 'UNAVAILABLE';
   return t(`history.sources.${sourceKey}`);
+}
+
+export function homeTemplateLifecycleLabel(
+  t: TFunction<'homeStudio'>,
+  lifecycle: string | null | undefined
+): string {
+  const lifecycleKey = lifecycle && templateLifecycles.has(lifecycle) ? lifecycle : 'UNAVAILABLE';
+  return t(`templates.lifecycle.${lifecycleKey}`);
 }
 
 export function homeRevisionSummaryLabel(

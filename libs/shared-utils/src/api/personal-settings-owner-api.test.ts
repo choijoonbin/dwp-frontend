@@ -5,6 +5,7 @@ import {
   createPersonalPrivacyRequest,
   getPersonalPrivacyConsentLedger,
   getPersonalSettingsWorkspace,
+  reconfirmPersonalSettingsWorkspace,
   recordPersonalSettingView,
   updatePersonalSettingFavorite,
   updateProductAnalyticsConsent,
@@ -17,18 +18,34 @@ beforeEach(() => vi.resetAllMocks());
 
 describe('personal settings owner API', () => {
   it('uses the tenant/user-bound workspace and versioned favorite routes', async () => {
-    const workspace = { favorites: [], recentActivity: [] };
+    const workspace = {
+      favorites: [],
+      recentActivity: [],
+      observation: {
+        sourceState: 'AVAILABLE',
+        freshnessState: 'UNCONFIRMED',
+        observedAt: '2026-09-29T10:00:00',
+        version: 0,
+        offlineBehavior: 'MEMORY_ONLY_READ_ONLY',
+      },
+    };
     const favorite = { settingKey: 'security', favorite: true, version: 1 };
     http.get.mockResolvedValue({ data: { data: workspace } });
     http.put.mockResolvedValue({ data: { data: favorite } });
 
     await expect(getPersonalSettingsWorkspace()).resolves.toEqual(workspace);
     await expect(updatePersonalSettingFavorite('security', true, 0)).resolves.toEqual(favorite);
+    http.post.mockResolvedValue({ data: { data: workspace } });
+    await expect(reconfirmPersonalSettingsWorkspace(0)).resolves.toEqual(workspace);
     expect(http.get).toHaveBeenCalledWith('/api/platform/v1/personal-settings/workspace');
     expect(http.put).toHaveBeenCalledWith('/api/platform/v1/personal-settings/favorites/security', {
       favorite: true,
       version: 0,
     });
+    expect(http.post).toHaveBeenCalledWith(
+      '/api/platform/v1/personal-settings/workspace/reconfirm',
+      { version: 0 }
+    );
   });
 
   it('records a settings view through the owner route', async () => {
@@ -48,7 +65,15 @@ describe('personal settings owner API', () => {
   });
 
   it('keeps consent and request intake separate from external fulfillment', async () => {
-    const ledger = { currentProductAnalytics: null, history: [] };
+    const ledger = {
+      currentProductAnalytics: null,
+      history: [],
+      historyHasMore: false,
+      historyLimit: 50,
+      coveredPurposes: ['PRODUCT_ANALYTICS'],
+      coverageState: 'PRODUCT_LOCAL',
+      coverageBoundary: 'CROSS_PRODUCT_CONSENT_SOURCES_NOT_CONNECTED',
+    };
     const consent = {
       consentId: 'c1',
       purposeKey: 'PRODUCT_ANALYTICS',
@@ -67,6 +92,15 @@ describe('personal settings owner API', () => {
       version: 0,
       createdAt: '2026-09-17T10:00:00',
       updatedAt: '2026-09-17T10:00:00',
+      receipt: {
+        receiptId: 'receipt-1',
+        receiptType: 'INTAKE',
+        evidenceState: 'INTAKE_ONLY',
+        fulfillmentBoundary: 'PRIVACY_OWNER_EXECUTION_NOT_CONNECTED',
+        requestFingerprint: 'a'.repeat(64),
+        issuedAt: '2026-09-17T10:00:00',
+      },
+      lifecycle: [],
     };
     http.get.mockResolvedValue({ data: { data: ledger } });
     http.put.mockResolvedValue({ data: { data: consent } });

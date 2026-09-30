@@ -1,6 +1,8 @@
 import { axiosInstance } from '../axios-instance';
+import { parseBoundedList } from './bounded-list';
 
 import type { ApiResponse } from '../types';
+import type { BoundedList } from './bounded-list';
 import type { HomeExperienceVariant } from './home-experience-api';
 import type { HomePreferenceLayout, HomeSurfaceKey } from './home-preference-api';
 
@@ -137,6 +139,10 @@ export type HomeTemplateRevision = {
   createdAt: string;
   createdBy: number;
 };
+
+export type HomeTemplatePage = BoundedList<HomeTemplate>;
+export type HomeTemplateRevisionPage = BoundedList<HomeTemplateRevision>;
+export type HomeViewRevisionPage = BoundedList<HomeViewRevision>;
 
 export type HomeComposerOperation =
   | 'MOVE_WIDGET'
@@ -375,11 +381,11 @@ export async function updateHomeDeviceLayout(
   };
 }
 
-export async function getHomeViewRevisions(viewId: string): Promise<HomeViewRevision[]> {
-  const response = await axiosInstance.get<ApiResponse<HomeViewRevision[]>>(
+export async function getHomeViewRevisions(viewId: string): Promise<HomeViewRevisionPage> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${VIEW_BASE}/${encodeURIComponent(viewId)}/revisions`
   );
-  return response.data.data;
+  return parseBoundedList<HomeViewRevision>(response.data.data, 50, 'Home revision history');
 }
 
 export async function restoreHomeViewRevision(
@@ -396,18 +402,22 @@ export async function restoreHomeViewRevision(
   return response.data.data;
 }
 
-export async function getHomeTemplates(): Promise<HomeTemplate[]> {
-  const response = await axiosInstance.get<ApiResponse<HomeTemplate[]>>(TEMPLATE_BASE);
-  return response.data.data;
+export async function getHomeTemplates(): Promise<HomeTemplatePage> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(TEMPLATE_BASE);
+  return parseBoundedList<HomeTemplate>(response.data.data, 100, 'Home template list');
 }
 
 export async function getHomeTemplateRevisions(
   templateId: string
-): Promise<HomeTemplateRevision[]> {
-  const response = await axiosInstance.get<ApiResponse<HomeTemplateRevision[]>>(
+): Promise<HomeTemplateRevisionPage> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${TEMPLATE_BASE}/${encodeURIComponent(templateId)}/revisions`
   );
-  return response.data.data;
+  return parseBoundedList<HomeTemplateRevision>(
+    response.data.data,
+    50,
+    'Home template revision history'
+  );
 }
 
 export async function createHomeTemplate(

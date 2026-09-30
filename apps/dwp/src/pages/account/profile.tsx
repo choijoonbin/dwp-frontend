@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { BriefcaseBusiness, Building2, Database, Mail, ShieldCheck, UserRound } from 'lucide-react';
 import { getMe } from '@dwp-frontend/shared-utils';
+import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { ActionButton, PageCanvas } from '@dwp-frontend/design-system';
@@ -89,6 +90,7 @@ function ProfileField({
 
 export default function ProfilePage() {
   const { t } = useTranslation('account');
+  const display = useDisplayDictionary();
   const auth = useAuth();
   const meQuery = useQuery({
     queryKey: ['auth', 'me'],
@@ -97,6 +99,7 @@ export default function ProfilePage() {
   });
 
   const profile = meQuery.data;
+  const workforceIdentity = profile?.identitySourceType === 'HRIS';
   // The authenticated shell identity is available before this owner query resolves. Use it as
   // the plane boundary so a provider session never starts a tenant workspace connection request
   // during the profile-loading frame.
@@ -177,14 +180,26 @@ export default function ProfilePage() {
               <ProfileField
                 icon={BriefcaseBusiness}
                 label={t('profile.fields.department')}
-                value={t('profile.valueUnavailable')}
-                source={t('profile.sources.notProvided')}
+                value={profile.department || t('profile.valueUnavailable')}
+                source={t(
+                  profile.department
+                    ? workforceIdentity
+                      ? 'profile.sources.workforce'
+                      : 'profile.sources.authIdentity'
+                    : 'profile.sources.notProvided'
+                )}
               />
               <ProfileField
                 icon={UserRound}
                 label={t('profile.fields.employeeId')}
-                value={t('profile.valueUnavailable')}
-                source={t('profile.sources.notProvided')}
+                value={profile.workerNumber || t('profile.valueUnavailable')}
+                source={t(
+                  profile.workerNumber
+                    ? workforceIdentity
+                      ? 'profile.sources.workforce'
+                      : 'profile.sources.authIdentity'
+                    : 'profile.sources.notProvided'
+                )}
               />
               <ProfileField
                 icon={BriefcaseBusiness}
@@ -221,7 +236,7 @@ export default function ProfilePage() {
                 value={
                   <Stack direction="row" gap={0.75} flexWrap="wrap">
                     {(profile.roles ?? []).map((role) => (
-                      <Chip key={role} size="small" label={role} />
+                      <Chip key={role} size="small" label={display('roleNames', role)} />
                     ))}
                   </Stack>
                 }

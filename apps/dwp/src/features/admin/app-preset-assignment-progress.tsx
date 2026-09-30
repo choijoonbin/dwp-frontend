@@ -12,6 +12,12 @@ import {
   resolvePresetAssignmentProgress,
   type PresetAssignmentActorStage,
 } from './app-preset-assignment-progress-model';
+import {
+  appAssignmentStateLabelKey,
+  appDutyLabelKey,
+  appPrincipalTypeLabelKey,
+  appRequestChannelLabelKey,
+} from './app-governance-presentation';
 
 import type { AppAdminPresetAssignment } from '@dwp-frontend/shared-utils';
 
@@ -113,7 +119,7 @@ export function AppPresetAssignmentProgress({
                 ? 'warning'
                 : 'info'
           }
-          label={t(`appGovernance.states.${assignment.lifecycleState}`)}
+          label={t(appAssignmentStateLabelKey(assignment.lifecycleState))}
         />
       </Stack>
 
@@ -131,19 +137,19 @@ export function AppPresetAssignmentProgress({
       >
         <Fact
           label={t('appGovernance.presets.progress.target')}
-          value={`${assignment.principalName} · ${assignment.principalType}:${assignment.principalRef}`}
+          value={`${assignment.principalName} · ${t(appPrincipalTypeLabelKey(assignment.principalType))}`}
         />
         <Fact
           label={t('appGovernance.presets.progress.package')}
-          value={`${assignment.presetName} · ${assignment.presetCode} v${assignment.catalogVersion}`}
+          value={`${assignment.presetName} · ${t('appGovernance.presets.presetMetadata', { version: assignment.catalogVersion })}`}
         />
         <Fact
           label={t('appGovernance.presets.progress.scope')}
-          value={`${assignment.resourceSetName} · ${assignment.resourceSetKey}`}
+          value={assignment.resourceSetName}
         />
         <Fact
           label={t('appGovernance.presets.progress.channel')}
-          value={assignment.requestChannel}
+          value={t(appRequestChannelLabelKey(assignment.requestChannel))}
         />
         <Fact
           label={t('appGovernance.presets.progress.validTo')}
@@ -156,7 +162,7 @@ export function AppPresetAssignmentProgress({
         <Fact
           label={t('appGovernance.presets.progress.duties')}
           value={
-            assignment.duties.map((duty) => duty.dutyCode).join(', ') ||
+            assignment.duties.map((duty) => t(appDutyLabelKey(duty.dutyCode))).join(', ') ||
             t('appGovernance.presets.progress.noDuties')
           }
         />

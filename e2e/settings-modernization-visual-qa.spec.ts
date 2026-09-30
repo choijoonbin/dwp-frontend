@@ -146,21 +146,33 @@ async function mockProviderSettings(
   });
 }
 
-async function prepareSurface(page: Page, surface: (typeof surfaces)[number]) {
-  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+async function prepareSurface(
+  page: Page,
+  surface: (typeof surfaces)[number],
+  appearance: { mode: 'light' | 'dark'; highContrast: boolean } = {
+    mode: 'light',
+    highContrast: false,
+  }
+) {
+  await page.emulateMedia({ colorScheme: appearance.mode, reducedMotion: 'reduce' });
   await mockShellSession(page, [...surface.roles], {
     identityPlane: surface.identityPlane,
     locale: 'en',
     permissions: [...FULL_PRODUCT_PERMISSIONS],
     appearance: {
-      mode: 'light',
+      mode: appearance.mode,
       density: 'standard',
-      highContrast: false,
+      highContrast: appearance.highContrast,
       reduceMotion: true,
     },
   });
   if (surface.identityPlane === 'PROVIDER') await mockProviderSettings(page);
 }
+
+const appearanceVariants = [
+  { name: 'dark', mode: 'dark', highContrast: false },
+  { name: 'high-contrast', mode: 'light', highContrast: true },
+] as const;
 
 async function expectNoHorizontalOverflow(page: Page, context: string) {
   const geometry = await page.evaluate(() => ({
@@ -245,6 +257,24 @@ for (const surface of surfaces) {
       await expectNoSeriousAccessibilityViolations(page, `${surface.key} ${viewport.name}`);
       await page.screenshot({
         path: `${EVIDENCE_DIRECTORY}/${surface.key}-${viewport.name}.png`,
+        fullPage: true,
+        animations: 'disabled',
+      });
+    });
+  }
+
+  for (const appearance of appearanceVariants) {
+    test(`${surface.key} is usable in ${appearance.name}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await prepareSurface(page, surface, appearance);
+      await page.goto(surface.path);
+
+      await expect(page.getByRole('heading', { name: surface.heading, level: 1 })).toBeVisible();
+      await expectNoHorizontalOverflow(page, `${surface.key} ${appearance.name}`);
+      await expectKeyboardFocusInMain(page, `${surface.key} ${appearance.name}`);
+      await expectNoSeriousAccessibilityViolations(page, `${surface.key} ${appearance.name}`);
+      await page.screenshot({
+        path: `${EVIDENCE_DIRECTORY}/${surface.key}-${appearance.name}.png`,
         fullPage: true,
         animations: 'disabled',
       });

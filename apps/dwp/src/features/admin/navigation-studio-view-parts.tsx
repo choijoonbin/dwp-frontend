@@ -35,6 +35,10 @@ import type {
   NavigationNode,
   NavigationValidationReport,
 } from '@dwp-frontend/shared-utils';
+import {
+  navigationNodeLifecycleLabelKey,
+  navigationNodeTypeLabelKey,
+} from './navigation-studio-presentation';
 
 function localizedLabel(node: NavigationNode, language: string): string {
   const canonical = language.split('-')[0];
@@ -138,7 +142,7 @@ export function SortableNavigationRow({
             <Chip
               size="small"
               variant="outlined"
-              label={t(`navigationManager.types.${node.itemType}`)}
+              label={t(navigationNodeTypeLabelKey(node.itemType))}
             />
           </Stack>
           <Typography variant="caption" color="text.secondary" display="block" noWrap>
@@ -159,7 +163,7 @@ export function SortableNavigationRow({
                 ? 'warning'
                 : 'default'
           }
-          label={t(`common.lifecycle.${node.lifecycleState}`)}
+          label={t(navigationNodeLifecycleLabelKey(node.lifecycleState))}
         />
         <ActionIconButton
           label={t('common.actions.edit')}

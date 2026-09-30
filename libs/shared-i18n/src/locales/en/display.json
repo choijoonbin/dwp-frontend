@@ -60,6 +60,7 @@
     "READY": "Ready",
     "REJECTED": "Rejected",
     "RESOLVED": "Resolved",
+    "REVIEW_REQUIRED": "Review required",
     "REVIEWED": "Reviewed",
     "RETIRED": "Retired",
     "REVOKED": "Revoked",
@@ -77,7 +78,10 @@
     "UNAVAILABLE": "Unavailable",
     "VERIFIED": "Verified",
     "WAIVED": "Waived",
-    "WARNING": "Warning"
+    "WARNING": "Warning",
+    "APPROVED_FOR_HANDOFF": "Approved for handoff",
+    "BLOCKED_BY_HOLD": "Blocked by legal hold",
+    "ENABLED": "Enabled"
   },
   "outcomes": {
     "COMMITTED": "Recorded",
@@ -109,7 +113,18 @@
     "SUCCESS": "Successful",
     "SUPPRESSED": "Suppressed",
     "VALIDATED": "Validated",
-    "WARN": "Passed with warnings"
+    "WARN": "Passed with warnings",
+    "ACCESS_DENIED": "Access denied",
+    "DEGRADED": "Degraded",
+    "EVENT_AND_RESOURCES_RESTORED": "Event and resources restored",
+    "EVENT_AND_RESOURCE_REBOOK_REQUESTED": "Event restored; resource rebooking requested",
+    "EXPECTED_TRANSIENT": "Expected transient difference",
+    "GUIDED": "Guided",
+    "HEALTHY": "Healthy",
+    "MATCH": "Match",
+    "MISMATCH": "Mismatch",
+    "PARTIALLY_APPLIED": "Partially applied",
+    "UNAVAILABLE": "Unavailable"
   },
   "severities": {
     "ALL": "All severities",
@@ -125,7 +140,10 @@
     "SEV2": "Severity 2",
     "SEV3": "Severity 3",
     "SEV4": "Severity 4",
-    "WARNING": "Warning"
+    "WARNING": "Warning",
+    "P1": "Priority 1",
+    "P2": "Priority 2",
+    "P3": "Priority 3"
   },
   "entityKinds": {
     "AGENT": "Agent",
@@ -341,7 +359,26 @@
     "WORKSPACE_SAVED_VIEW_DELETED": "Saved view deleted",
     "WORKSPACE_SAVED_VIEW_UPDATED": "Saved view updated",
     "WORKSPACE_SEARCH_EXECUTED": "Workspace search executed",
-    "WORKSPACE_SEARCH_RESULT_SELECTED": "Workspace search result selected"
+    "WORKSPACE_SEARCH_RESULT_SELECTED": "Workspace search result selected",
+    "ACTIVATE": "Activated",
+    "BACKUP_LEDGER": "Backup ledger created",
+    "BOOKING_IMPACT": "Booking impact reviewed",
+    "COMPENSATE": "Compensated",
+    "DEACTIVATE": "Deactivated",
+    "FULFILLMENT_BOUNDARY_RECORDED": "Fulfillment boundary recorded",
+    "LINE_CANCELLATION_REQUIRES_REVIEW": "Line cancellation requires review",
+    "LINE_CANCELLATION_RESULT_UNKNOWN": "Line cancellation result unknown",
+    "PREVIEW": "Previewed",
+    "REJECT": "Rejected",
+    "REPLACE": "Replaced",
+    "REPLAY_CONNECTOR": "Connector replayed",
+    "REQUEST_RECEIVED": "Request received",
+    "REVIEW_NOTIFICATION": "Notification review requested",
+    "ROLLBACK": "Rolled back",
+    "SIGNED_CERTIFICATE": "Signed certificate issued",
+    "SKIP_QUARANTINED_AND_CONTINUE": "Skipped quarantined items and continued",
+    "SUBMIT": "Submitted",
+    "UPDATE": "Updated"
   },
   "sourceTypes": {
     "CALENDAR": "Calendar",
@@ -502,7 +539,10 @@
     "TENANT": "Tenant",
     "USER": "User",
     "VERSION": "Version",
-    "WP_DELEGATION": "Workplace administration delegation"
+    "WP_DELEGATION": "Workplace administration delegation",
+    "APPROVAL_TASK": "Approval task",
+    "OUTBOX_EVENT": "Outbox event",
+    "POLICY": "Policy"
   },
   "relationTypes": {
     "CONSUMES": "Consumes",

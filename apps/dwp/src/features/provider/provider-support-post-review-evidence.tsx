@@ -14,6 +14,12 @@ import Typography from '@mui/material/Typography';
 import type { ProviderSupportAccessRequest } from '@dwp-frontend/shared-utils';
 
 import { isProviderPostReviewEvidenceReady } from './provider-support-post-review-evidence-model';
+import {
+  hasUnknownProviderSupportScope,
+  providerSupportAnomalyLabel,
+  providerSupportDecisionLabel,
+  providerSupportScopeLabel,
+} from './provider-support-presentation';
 import { formatProviderDate } from './provider-ui';
 
 export function ProviderSupportPostReviewEvidence({
@@ -63,7 +69,7 @@ export function ProviderSupportPostReviewEvidence({
           >
             {[
               [t('support.columns.session'), evidence.data.supportSessionId],
-              [t('support.columns.state'), evidence.data.sessionLifecycleState],
+              [t('support.columns.state'), display('states', evidence.data.sessionLifecycleState)],
               [
                 t('support.postReviewEvidence.period'),
                 `${formatProviderDate(evidence.data.evidenceFrom)} – ${formatProviderDate(
@@ -72,12 +78,16 @@ export function ProviderSupportPostReviewEvidence({
               ],
               [
                 t('support.postReviewEvidence.grantedScopes'),
-                evidence.data.grantedScopes.join(', '),
+                evidence.data.grantedScopes
+                  .map((scope) => providerSupportScopeLabel(t, scope))
+                  .join(', '),
               ],
               [
                 t('support.postReviewEvidence.observedScopes'),
                 evidence.data.observedScopes.length > 0
-                  ? evidence.data.observedScopes.join(', ')
+                  ? evidence.data.observedScopes
+                      .map((scope) => providerSupportScopeLabel(t, scope))
+                      .join(', ')
                   : t('support.postReviewEvidence.noObservedScope'),
               ],
               [
@@ -130,13 +140,17 @@ export function ProviderSupportPostReviewEvidence({
             <Alert severity="info">{t('support.postReviewEvidence.noUseConfirmed')}</Alert>
           ) : null}
 
+          {hasUnknownProviderSupportScope([
+            ...evidence.data.grantedScopes,
+            ...evidence.data.observedScopes,
+            ...evidence.data.events.flatMap((event) => (event.scope ? [event.scope] : [])),
+          ]) && <Alert severity="warning">{t('support.scopes.unknownEvidence')}</Alert>}
+
           {evidence.data.anomalies.length > 0 && (
             <Alert severity="warning">
               {t('support.postReviewEvidence.anomalies', {
                 value: evidence.data.anomalies
-                  .map((anomaly) =>
-                    t(`support.postReviewEvidence.anomaly.${anomaly}`, { defaultValue: anomaly })
-                  )
+                  .map((anomaly) => providerSupportAnomalyLabel(t, anomaly))
                   .join(', '),
               })}
             </Alert>
@@ -161,7 +175,7 @@ export function ProviderSupportPostReviewEvidence({
                       <Chip
                         size="small"
                         color={event.decision === 'ALLOW' ? 'success' : 'warning'}
-                        label={t(`support.postReviewEvidence.decision.${event.decision}`)}
+                        label={providerSupportDecisionLabel(t, event.decision)}
                       />
                       <Typography
                         variant="body2"
@@ -181,12 +195,16 @@ export function ProviderSupportPostReviewEvidence({
                     </Typography>
                     {event.scope && (
                       <Typography variant="caption" color="text.secondary" display="block">
-                        {t('support.postReviewEvidence.scope', { value: event.scope })}
+                        {t('support.postReviewEvidence.scope', {
+                          value: providerSupportScopeLabel(t, event.scope),
+                        })}
                       </Typography>
                     )}
                     {event.reasonCode && (
                       <Typography variant="caption" color="text.secondary" display="block">
-                        {t('support.postReviewEvidence.reason', { value: event.reasonCode })}
+                        {t('support.postReviewEvidence.reason', {
+                          value: t('support.postReviewEvidence.reasonUnavailable'),
+                        })}
                       </Typography>
                     )}
                     <Typography

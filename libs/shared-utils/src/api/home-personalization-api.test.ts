@@ -284,14 +284,20 @@ describe('home personalization API boundary', () => {
   });
 
   it('reads template revisions and restores one as a retry-safe draft', async () => {
-    const readFetch = vi
-      .fn()
-      .mockResolvedValue(jsonResponse([{ templateRevisionId: 'revision-1', source: 'PUBLISH' }]));
+    const readFetch = vi.fn().mockResolvedValue(
+      jsonResponse({
+        items: [{ templateRevisionId: 'revision-1', source: 'PUBLISH' }],
+        hasMore: false,
+        limit: 50,
+      })
+    );
     vi.stubGlobal('fetch', readFetch);
 
-    await expect(getHomeTemplateRevisions('template/1')).resolves.toEqual([
-      { templateRevisionId: 'revision-1', source: 'PUBLISH' },
-    ]);
+    await expect(getHomeTemplateRevisions('template/1')).resolves.toEqual({
+      items: [{ templateRevisionId: 'revision-1', source: 'PUBLISH' }],
+      hasMore: false,
+      limit: 50,
+    });
     expect(readFetch.mock.calls[0]?.[0]).toBe(
       '/api/platform/v1/home-templates/template%2F1/revisions'
     );

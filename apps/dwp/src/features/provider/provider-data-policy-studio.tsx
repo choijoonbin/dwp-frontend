@@ -57,8 +57,13 @@ import {
   ProviderLoading,
   ProviderSectionHeading,
   ProviderStatusChip,
-  providerError,
 } from './provider-ui';
+import {
+  providerPolicyImpactCode,
+  providerPolicyScopePresentation,
+  providerPolicyTypePresentation,
+} from './provider-data-policy-presentation';
+import { ProviderDataPolicyRuleSummary } from './provider-data-policy-rule-summary';
 
 type PolicyAction = 'preview' | 'submit' | 'approve' | 'reject' | 'publish' | 'rollback';
 
@@ -389,8 +394,8 @@ function PolicyEditorDialog({
           justification: justification.trim(),
         });
       }
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t('errors.operation'));
+    } catch {
+      setError(t('errors.operation'));
     }
   };
   return (
@@ -588,6 +593,14 @@ function RevisionInspector({
   onAction: (action: PolicyAction) => void;
 }) {
   const { t } = useTranslation('provider');
+  const impactLabel = (value: string) => {
+    const presentation = providerPolicyImpactCode(value);
+    return presentation
+      ? t(`dataGovernance.policy.impact.codes.${presentation.code}`, {
+          detail: presentation.detail,
+        })
+      : t('dataGovernance.policy.impact.codes.UNKNOWN');
+  };
   const actions: Array<{ action: PolicyAction; icon: ReactNode }> = [];
   if (canWrite && revision.lifecycleState === 'DRAFT') {
     actions.push({ action: 'preview', icon: <GitCompareArrows size={16} /> });
@@ -614,26 +627,21 @@ function RevisionInspector({
         <Chip
           size="small"
           variant="outlined"
-          label={t(`dataGovernance.policy.types.${policy.policyType}`)}
+          label={t(
+            `dataGovernance.policy.types.${providerPolicyTypePresentation(policy.policyType)}`
+          )}
         />
         <Chip
           size="small"
           variant="outlined"
-          label={t(`dataGovernance.policy.scopes.${policy.scopeType}`)}
+          label={t(
+            `dataGovernance.policy.scopes.${providerPolicyScopePresentation(policy.scopeType)}`
+          )}
         />
         {policy.scopeRef && <Chip size="small" variant="outlined" label={policy.scopeRef} />}
-        <Chip size="small" variant="outlined" label={policy.ownerService} />
+        <Chip size="small" variant="outlined" label={t('dataGovernance.policy.registeredOwner')} />
       </Stack>
-      <Box>
-        <Typography variant="subtitle2">{t('dataGovernance.policy.fields.rule')}</Typography>
-        <Typography
-          component="pre"
-          variant="body2"
-          sx={{ m: 0, mt: 0.75, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
-        >
-          {JSON.stringify(revision.policyRule, null, 2)}
-        </Typography>
-      </Box>
+      <ProviderDataPolicyRuleSummary type={policy.policyType} revision={revision} />
       <Divider />
       <Box>
         <Typography variant="subtitle2">{t('dataGovernance.policy.impact.title')}</Typography>
@@ -657,10 +665,7 @@ function RevisionInspector({
                 </Typography>
                 {revision.impact.blockers.map((item) => (
                   <Typography key={item} variant="body2" sx={{ mt: 0.35 }}>
-                    {t(`dataGovernance.policy.impact.codes.${item.split(':')[0]}`, {
-                      detail: item.split(':').slice(1).join(':'),
-                      defaultValue: item,
-                    })}
+                    {impactLabel(item)}
                   </Typography>
                 ))}
               </Alert>
@@ -672,10 +677,7 @@ function RevisionInspector({
                 </Typography>
                 {revision.impact.warnings.map((item) => (
                   <Typography key={item} variant="body2" sx={{ mt: 0.35 }}>
-                    {t(`dataGovernance.policy.impact.codes.${item.split(':')[0]}`, {
-                      detail: item.split(':').slice(1).join(':'),
-                      defaultValue: item,
-                    })}
+                    {impactLabel(item)}
                   </Typography>
                 ))}
               </Alert>
@@ -771,7 +773,7 @@ export function ProviderDataPolicyStudio({
       setDialog(null);
       toast.success(t('dataGovernance.policy.completed'));
     },
-    onError: (error) => toast.error(providerError(error, t('errors.operation'))),
+    onError: () => toast.error(t('errors.operation')),
   });
 
   if (policies.isLoading || operator.isLoading) return <ProviderLoading />;
@@ -866,10 +868,15 @@ export function ProviderDataPolicyStudio({
                       {latest && <ProviderStatusChip state={latest.lifecycleState} />}
                     </Stack>
                     <Typography variant="caption" color="text.secondary" noWrap>
-                      {t(`dataGovernance.policy.types.${policy.policyType}`)} · {policy.policyKey}
+                      {t(
+                        `dataGovernance.policy.types.${providerPolicyTypePresentation(policy.policyType)}`
+                      )}{' '}
+                      · {policy.policyKey}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" noWrap>
-                      {t(`dataGovernance.policy.scopes.${policy.scopeType}`)}
+                      {t(
+                        `dataGovernance.policy.scopes.${providerPolicyScopePresentation(policy.scopeType)}`
+                      )}
                       {policy.scopeRef ? ` · ${policy.scopeRef}` : ''}
                     </Typography>
                   </Stack>

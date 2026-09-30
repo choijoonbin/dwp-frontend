@@ -34,6 +34,8 @@ import type {
   ProviderDatabaseAssetSummary,
 } from '@dwp-frontend/shared-utils';
 
+import { providerSafeEnumPresentation } from './provider-safe-enum-presentation';
+
 export const PROVIDER_DATABASE_COLOR: Record<string, string> = {
   auth: '#2f6feb',
   people: '#16866a',
@@ -119,7 +121,9 @@ export function ProviderDatabaseScope({
             size="small"
             variant="outlined"
             color={database.status === 'AVAILABLE' ? 'success' : 'error'}
-            label={t(`dataGovernance.status.${database.status}`)}
+            label={t(
+              `dataGovernance.status.${providerSafeEnumPresentation('dataStatus', database.status)}`
+            )}
           />
         </Stack>
         <Typography variant="caption" color="text.secondary" noWrap>
@@ -172,7 +176,12 @@ export function ProviderAssetInspector({ asset }: { asset?: ProviderDataAsset })
           size="small"
           variant="outlined"
           color={asset.dataClassification === 'RESTRICTED' ? 'error' : 'default'}
-          label={t(`dataGovernance.classification.${asset.dataClassification}`)}
+          label={t(
+            `dataGovernance.classification.${providerSafeEnumPresentation(
+              'dataClassification',
+              asset.dataClassification
+            )}`
+          )}
         />
         {asset.tenantScoped && (
           <Chip
@@ -259,7 +268,12 @@ export function ProviderAssetInspector({ asset }: { asset?: ProviderDataAsset })
                       )}
                       {column.classification !== 'INTERNAL' && (
                         <Tooltip
-                          title={t(`dataGovernance.classification.${column.classification}`)}
+                          title={t(
+                            `dataGovernance.classification.${providerSafeEnumPresentation(
+                              'dataClassification',
+                              column.classification
+                            )}`
+                          )}
                         >
                           <ShieldCheck size={14} />
                         </Tooltip>
@@ -288,7 +302,9 @@ export function ProviderFindingInspector({ finding }: { finding?: ProviderDataGo
     );
   }
   const target = finding.assetKey?.split('.').at(-1) ?? finding.databaseKey;
-  const localizedTitle = `${t(`dataGovernance.categories.${finding.category}`)} · ${target}`;
+  const safeCategory = providerSafeEnumPresentation('dataFindingCategory', finding.category);
+  const safeSeverity = providerSafeEnumPresentation('dataFindingSeverity', finding.severity);
+  const localizedTitle = `${t(`dataGovernance.categories.${safeCategory}`)} · ${target}`;
   return (
     <Stack gap={2}>
       <Box>
@@ -299,30 +315,26 @@ export function ProviderFindingInspector({ finding }: { finding?: ProviderDataGo
             color={
               finding.severity === 'CRITICAL' || finding.severity === 'HIGH' ? 'error' : 'warning'
             }
-            label={t(`dataGovernance.severity.${finding.severity}`)}
+            label={t(`dataGovernance.severity.${safeSeverity}`)}
           />
           <Chip
             size="small"
             variant="outlined"
-            label={t(`dataGovernance.categories.${finding.category}`)}
+            label={t(`dataGovernance.categories.${safeCategory}`)}
           />
         </Stack>
         <Typography component="h3" variant="h6">
           {localizedTitle}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-          {t(`dataGovernance.findings.${finding.category}.description`, {
-            defaultValue: finding.detail,
-          })}
+          {t(`dataGovernance.findings.${safeCategory}.description`)}
         </Typography>
       </Box>
       <Divider />
       <Box>
         <Typography variant="subtitle2">{t('dataGovernance.quality.recommendation')}</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-          {t(`dataGovernance.findings.${finding.category}.recommendation`, {
-            defaultValue: finding.recommendation,
-          })}
+          {t(`dataGovernance.findings.${safeCategory}.recommendation`)}
         </Typography>
       </Box>
       <Box>

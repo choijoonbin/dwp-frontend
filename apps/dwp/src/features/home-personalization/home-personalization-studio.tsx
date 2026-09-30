@@ -896,7 +896,9 @@ export function HomePersonalizationStudio({
                 <LoadingState label={t('common.loading')} variant="skeleton" />
               ) : (
                 <HomeTemplatesSection
-                  templates={templatesQuery.data ?? []}
+                  templates={templatesQuery.data?.items ?? []}
+                  hasMore={templatesQuery.data?.hasMore ?? false}
+                  limit={templatesQuery.data?.limit ?? 100}
                   view={selectedView}
                   canManage={hasPermission('ADMIN.HOME_TEMPLATE', 'MANAGE')}
                   busy={busy}
@@ -923,11 +925,15 @@ export function HomePersonalizationStudio({
                   retrying={revisionsQuery.isFetching}
                   onRetry={() => void revisionsQuery.refetch()}
                 />
+              ) : revisionsQuery.isLoading ? (
+                <LoadingState label={t('common.loading')} variant="skeleton" />
               ) : (
                 <HomeHistorySection
                   view={selectedView}
-                  revisions={revisionsQuery.data ?? []}
-                  busy={busy || revisionsQuery.isLoading}
+                  revisions={revisionsQuery.data?.items ?? []}
+                  hasMore={revisionsQuery.data?.hasMore ?? false}
+                  limit={revisionsQuery.data?.limit ?? 50}
+                  busy={busy}
                   onRestore={(revision) => {
                     conflictRecovery.rememberMutation(({ viewVersion }) =>
                       restoreMutation.mutate({ revision, version: viewVersion })

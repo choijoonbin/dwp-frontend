@@ -472,6 +472,15 @@ test('catalog assurance restores deep links and records governed false-positive 
   await expect(page.getByText('DWP_CATALOG_IMPACT v1')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Accountable owner is missing' })).toBeVisible();
   await expect(page.getByText(`Evidence SHA-256: ${'a'.repeat(64)}`)).toBeVisible();
+  const findingCell = page
+    .getByRole('grid', { name: 'Catalog assurance findings' })
+    .getByRole('row')
+    .filter({ hasText: 'Accountable owner is missing' })
+    .getByRole('gridcell')
+    .first();
+  await findingCell.focus();
+  await expect(findingCell).toBeFocused();
+  await page.keyboard.press('Enter');
 
   await page.getByRole('button', { name: 'Record disposition' }).click();
   const dialog = page.getByRole('dialog', { name: 'Record finding disposition' });
