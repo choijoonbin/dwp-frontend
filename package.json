@@ -71,6 +71,7 @@
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build",
     "test:e2e": "playwright test",
+    "test:e2e:hris-w1-live": "playwright test --config playwright.hris-w1-live.config.ts",
     "test:e2e:widget-library-off": "playwright test --config playwright.widget-library-off.config.ts",
     "test:e2e:provider": "playwright test e2e/provider-access-boundary.spec.ts e2e/provider-acceptance-evidence.spec.ts e2e/provider-command-center.spec.ts e2e/provider-critical-operations.spec.ts e2e/provider-customer-estate.spec.ts --project=chromium --project=mobile --workers=1",
     "test:performance": "vite build && playwright test --config playwright.performance.config.ts",
