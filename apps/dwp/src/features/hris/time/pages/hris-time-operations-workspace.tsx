@@ -111,9 +111,7 @@ export function HrisTimeOperationsWorkspaceRuntime({
  */
 export function HrisTimeOperationsWorkspace({ ownerBinding }: HrisTimeOperationsWorkspaceProps) {
   const requestScope = useHrisTimeOperationsRequestScope();
-  const simulationExecutor = useProductActionMutation(
-    HRIS_TIME_WORK_PLAN_SIMULATE_ACTION_CONTRACT
-  );
+  const simulationExecutor = useProductActionMutation(HRIS_TIME_WORK_PLAN_SIMULATE_ACTION_CONTRACT);
   const defaultOwnerBinding = useMemo<HrisTimeWorkPlanOperationsOwnerBinding>(
     () => ({
       dataSource: createHrisTimeWorkPlanDataSource(hrisTimeWorkPlanHttpClient),

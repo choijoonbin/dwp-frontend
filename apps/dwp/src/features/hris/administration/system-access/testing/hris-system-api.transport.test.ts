@@ -31,9 +31,7 @@ describe('HRIS system owner transport', () => {
       '/api/platform/v1/hris/configuration/projection?view=system&contextScopeKey=scope%3Ahcm%2Fsettings-west',
     ]);
     expect(
-      fetchMock.mock.calls.every(
-        ([, init]) => (init as RequestInit).signal instanceof AbortSignal
-      )
+      fetchMock.mock.calls.every(([, init]) => (init as RequestInit).signal instanceof AbortSignal)
     ).toBe(true);
   });
 });

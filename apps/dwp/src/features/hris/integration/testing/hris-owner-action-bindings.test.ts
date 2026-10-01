@@ -56,11 +56,9 @@ describe('HRIS owner action bindings', () => {
       ),
       'utf8'
     );
-    expect(adapter).toContain(
-      'createHrisTimeWorkPlanDataSource(hrisTimeWorkPlanHttpClient)'
-    );
-    expect(adapter).toContain(
-      'useProductActionMutation(\n    HRIS_TIME_WORK_PLAN_SIMULATE_ACTION_CONTRACT\n  )'
+    expect(adapter).toContain('createHrisTimeWorkPlanDataSource(hrisTimeWorkPlanHttpClient)');
+    expect(adapter).toMatch(
+      /useProductActionMutation\(\s*HRIS_TIME_WORK_PLAN_SIMULATE_ACTION_CONTRACT\s*\)/
     );
     expect(adapter).toContain('ownerBinding={ownerBinding ?? defaultOwnerBinding}');
   });

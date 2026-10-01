@@ -43,7 +43,6 @@ const lifecycleIcon = {
   EXTERNAL: ExternalLink,
 } satisfies Record<HrisLifecycle, typeof CircleDashed>;
 
-
 type HrisProductMapProps = {
   initialSurface?: HrisWorkSurface;
   canOpenPath: (path: string) => boolean;

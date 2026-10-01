@@ -126,20 +126,34 @@ describe('buildPayrollSelfServiceModel', () => {
   });
 
   it('rejects reversed periods, sparse lists and colliding statement identities', () => {
-    expect(() => buildPayrollSelfServiceModel(workspace({ nextCycle: {
-      ...workspace().nextCycle!, periodStart: '2026-10-01',
-    } }))).toThrow(/Invalid payroll source/);
-    expect(() => buildPayrollSelfServiceModel(workspace({ statements: new Array(1) })))
-      .toThrow(/Invalid payroll source/);
-    expect(() => buildPayrollSelfServiceModel(workspace({ statements: [statement(), statement()] })))
-      .toThrow(/Invalid payroll source/);
+    expect(() =>
+      buildPayrollSelfServiceModel(
+        workspace({
+          nextCycle: {
+            ...workspace().nextCycle!,
+            periodStart: '2026-10-01',
+          },
+        })
+      )
+    ).toThrow(/Invalid payroll source/);
+    expect(() => buildPayrollSelfServiceModel(workspace({ statements: new Array(1) }))).toThrow(
+      /Invalid payroll source/
+    );
+    expect(() =>
+      buildPayrollSelfServiceModel(workspace({ statements: [statement(), statement()] }))
+    ).toThrow(/Invalid payroll source/);
   });
 
   it('does not echo rejected source values or accept nested source references', () => {
-    const source = workspace({ nextCycle: {
-      ...workspace().nextCycle!, name: { secret: 'sensitive-value' },
-    } } as unknown as Partial<PayrollWorkspaceSource>);
-    expect(() => buildPayrollSelfServiceModel(source)).toThrow('Invalid payroll source: nextCycle.name');
+    const source = workspace({
+      nextCycle: {
+        ...workspace().nextCycle!,
+        name: { secret: 'sensitive-value' },
+      },
+    } as unknown as Partial<PayrollWorkspaceSource>);
+    expect(() => buildPayrollSelfServiceModel(source)).toThrow(
+      'Invalid payroll source: nextCycle.name'
+    );
     expect(() => buildPayrollSelfServiceModel(source)).not.toThrow(/sensitive-value/);
   });
 });
@@ -197,19 +211,32 @@ describe('pay statement availability', () => {
   });
 
   it('accepts calendar-valid leap dates, explicit offsets and fractional publication instants', () => {
-    expect(buildPayrollSelfServiceModel(workspace({ nextCycle: {
-      ...workspace().nextCycle!, periodStart: '2024-02-01', periodEnd: '2024-02-29',
-      payDate: '2024-02-15',
-    } })).nextCycle?.periodEnd).toBe('2024-02-29');
-    expect(toPayrollStatementModel(statement({
-      publishedAt: '2026-08-25T09:30:00.123456789+09:00',
-    })).publishedAt).toBe('2026-08-25T09:30:00.123456789+09:00');
+    expect(
+      buildPayrollSelfServiceModel(
+        workspace({
+          nextCycle: {
+            ...workspace().nextCycle!,
+            periodStart: '2024-02-01',
+            periodEnd: '2024-02-29',
+            payDate: '2024-02-15',
+          },
+        })
+      ).nextCycle?.periodEnd
+    ).toBe('2024-02-29');
+    expect(
+      toPayrollStatementModel(
+        statement({
+          publishedAt: '2026-08-25T09:30:00.123456789+09:00',
+        })
+      ).publishedAt
+    ).toBe('2026-08-25T09:30:00.123456789+09:00');
     expect(toPayrollStatementModel(statement({ publishedAt: null })).publishedAt).toBeNull();
     expect(toPayrollStatementModel(statement({ publishedAt: undefined })).publishedAt).toBeNull();
   });
 
   it('rejects non-string availability through its public normalizer', () => {
-    expect(() => normalizePayrollStatementAvailability(7 as unknown as string))
-      .toThrow(/Invalid payroll source/);
+    expect(() => normalizePayrollStatementAvailability(7 as unknown as string)).toThrow(
+      /Invalid payroll source/
+    );
   });
 });

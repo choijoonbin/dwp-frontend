@@ -76,7 +76,12 @@ const KNOWN_AVAILABILITY = new Set<PayrollStatementAvailability>([
 ]);
 
 const DATA_ORIGINS = new Set<PayrollDataOrigin>([
-  'SOURCE', 'MANUAL', 'REFERENCE', 'MIXED', 'NONE', 'UNKNOWN',
+  'SOURCE',
+  'MANUAL',
+  'REFERENCE',
+  'MIXED',
+  'NONE',
+  'UNKNOWN',
 ]);
 
 function invalidSource(path: string): never {
@@ -129,11 +134,16 @@ function civilDate(value: unknown, path: string): string {
 function publicationInstant(value: unknown, path: string): string | null {
   if (value === null || value === undefined) return null;
   const result = text(value, path);
-  const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-](\d{2}):(\d{2}))$/.exec(result);
+  const match =
+    /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-](\d{2}):(\d{2}))$/.exec(
+      result
+    );
   if (!match) invalidSource(path);
   civilDate(match[1], path);
   if (
-    Number(match[2]) > 23 || Number(match[3]) > 59 || Number(match[4]) > 59 ||
+    Number(match[2]) > 23 ||
+    Number(match[3]) > 59 ||
+    Number(match[4]) > 59 ||
     (match[6] !== undefined && (Number(match[6]) > 23 || Number(match[7]) > 59)) ||
     !Number.isFinite(Date.parse(result))
   ) {

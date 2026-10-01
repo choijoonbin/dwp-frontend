@@ -24,9 +24,7 @@
     "apps/dwp/src/features/hris/people/testing/contract.test.ts": "import {publicWitness} from '../index'; export const witness=publicWitness;"
   },
   "fixtureAliases": {
-    "@hris-fixture/*": [
-      "apps/dwp/src/features/hris/*"
-    ]
+    "@hris-fixture/*": ["apps/dwp/src/features/hris/*"]
   },
   "negatives": [
     {

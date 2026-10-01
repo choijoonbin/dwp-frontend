@@ -36,7 +36,11 @@ import type { PerformanceCycleCopy } from '../model/performance-cycle-copy';
 
 function formatInstant(value: string | null, locale: string): string {
   if (!value) return '';
-  return formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }, resolveSupportedLocale(locale));
+  return formatDate(
+    value,
+    { dateStyle: 'medium', timeStyle: 'short' },
+    resolveSupportedLocale(locale)
+  );
 }
 
 function OpaqueReference({ children }: { children: string | null }) {

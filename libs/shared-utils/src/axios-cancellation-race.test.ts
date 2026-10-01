@@ -23,15 +23,18 @@ function delayedBody(responseType: 'json' | 'blob' = 'json') {
     started.resolve();
     return body.promise;
   });
-  vi.stubGlobal('fetch', vi.fn(async (_url: string, init?: RequestInit) => {
-    signal = init?.signal ?? undefined;
-    return {
-      ok: true,
-      status: 200,
-      headers: new Headers(),
-      [responseType === 'json' ? 'text' : 'blob']: read,
-    } as unknown as Response;
-  }));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (_url: string, init?: RequestInit) => {
+      signal = init?.signal ?? undefined;
+      return {
+        ok: true,
+        status: 200,
+        headers: new Headers(),
+        [responseType === 'json' ? 'text' : 'blob']: read,
+      } as unknown as Response;
+    })
+  );
   return { body, started, signal: () => signal };
 }
 
@@ -49,9 +52,13 @@ describe('HTTP cancellation race preserves the first abort source', () => {
       const response = delayedBody(responseType);
       const caller = new AbortController();
       const remove = vi.spyOn(caller.signal, 'removeEventListener');
-      const request = sessionHttp.get('/api/cancellation-race', {
-        signal: caller.signal, timeoutMs: 25, responseType,
-      }).catch((error: unknown) => error);
+      const request = sessionHttp
+        .get('/api/cancellation-race', {
+          signal: caller.signal,
+          timeoutMs: 25,
+          responseType,
+        })
+        .catch((error: unknown) => error);
       await response.started.promise;
       await vi.advanceTimersByTimeAsync(5);
       caller.abort('scope-replaced');
@@ -71,9 +78,12 @@ describe('HTTP cancellation race preserves the first abort source', () => {
     vi.useFakeTimers();
     const response = delayedBody();
     const caller = new AbortController();
-    const request = sessionHttp.get('/api/cancellation-race', {
-      signal: caller.signal, timeoutMs: 25,
-    }).catch((error: unknown) => error);
+    const request = sessionHttp
+      .get('/api/cancellation-race', {
+        signal: caller.signal,
+        timeoutMs: 25,
+      })
+      .catch((error: unknown) => error);
     await response.started.promise;
     caller.abort('scope-replaced');
     await vi.advanceTimersByTimeAsync(30);
@@ -90,9 +100,12 @@ describe('HTTP cancellation race preserves the first abort source', () => {
     const response = delayedBody();
     const caller = new AbortController();
     caller.abort('scope-replaced');
-    const request = sessionHttp.get('/api/cancellation-race', {
-      signal: caller.signal, timeoutMs: 25,
-    }).catch((error: unknown) => error);
+    const request = sessionHttp
+      .get('/api/cancellation-race', {
+        signal: caller.signal,
+        timeoutMs: 25,
+      })
+      .catch((error: unknown) => error);
     await response.started.promise;
     await vi.advanceTimersByTimeAsync(30);
     response.body.resolve('{"data":"obsolete"}');
@@ -105,9 +118,12 @@ describe('HTTP cancellation race preserves the first abort source', () => {
     vi.useFakeTimers();
     const response = delayedBody();
     const caller = new AbortController();
-    const request = sessionHttp.get('/api/cancellation-race', {
-      signal: caller.signal, timeoutMs: 25,
-    }).catch((error: unknown) => error);
+    const request = sessionHttp
+      .get('/api/cancellation-race', {
+        signal: caller.signal,
+        timeoutMs: 25,
+      })
+      .catch((error: unknown) => error);
     await response.started.promise;
     await vi.advanceTimersByTimeAsync(25);
     caller.abort('scope-replaced');
@@ -122,9 +138,12 @@ describe('HTTP cancellation race preserves the first abort source', () => {
     const response = delayedBody();
     const caller = new AbortController();
     globalThis.setTimeout(() => caller.abort('scope-replaced'), 25);
-    const request = sessionHttp.get('/api/cancellation-race', {
-      signal: caller.signal, timeoutMs: 25,
-    }).catch((error: unknown) => error);
+    const request = sessionHttp
+      .get('/api/cancellation-race', {
+        signal: caller.signal,
+        timeoutMs: 25,
+      })
+      .catch((error: unknown) => error);
     await response.started.promise;
     await vi.advanceTimersByTimeAsync(30);
     response.body.resolve('{"data":"obsolete"}');
@@ -137,9 +156,12 @@ describe('HTTP cancellation race preserves the first abort source', () => {
     vi.useFakeTimers();
     const response = delayedBody();
     const caller = new AbortController();
-    const request = sessionHttp.get('/api/cancellation-race', {
-      signal: caller.signal, timeoutMs: 25,
-    }).catch((error: unknown) => error);
+    const request = sessionHttp
+      .get('/api/cancellation-race', {
+        signal: caller.signal,
+        timeoutMs: 25,
+      })
+      .catch((error: unknown) => error);
     await response.started.promise;
     globalThis.setTimeout(() => caller.abort('scope-replaced'), 25);
     await vi.advanceTimersByTimeAsync(30);
