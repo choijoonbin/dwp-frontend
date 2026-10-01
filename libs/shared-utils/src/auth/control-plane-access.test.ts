@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   IdentityPlaneContractError,
+  canEnterTenantControlPlane,
   isProviderIdentity,
   isTenantIdentity,
   resolveIdentityPlane,
@@ -26,6 +27,28 @@ describe('durable identity plane contract', () => {
     expect(resolveIdentityPlane(identity)).toBe('TENANT');
     expect(isProviderIdentity(identity)).toBe(false);
     expect(isTenantIdentity(identity)).toBe(true);
+  });
+
+  it('uses projected exact authority instead of a built-in tenant role name', () => {
+    const customRoleIdentity = {
+      identityPlane: 'TENANT' as const,
+      roles: ['CUSTOM_GROUP_ADMIN'],
+      resourceRoles: [],
+    };
+
+    expect(canEnterTenantControlPlane(customRoleIdentity, true)).toBe(true);
+    expect(
+      canEnterTenantControlPlane(
+        { identityPlane: 'TENANT', roles: ['TENANT_ADMIN'], resourceRoles: [] },
+        false
+      )
+    ).toBe(false);
+    expect(
+      canEnterTenantControlPlane(
+        { identityPlane: 'PROVIDER', roles: [], resourceRoles: [] },
+        true
+      )
+    ).toBe(false);
   });
 
   it.each([

@@ -33,14 +33,15 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
+import {
+  catalogCriticalityStroke,
+  catalogKindLabelKey,
+  catalogRelationTypeLabelKey,
+} from './catalog-presentation';
+
 import type { LucideIcon } from 'lucide-react';
 import type { Edge, Node, NodeProps } from '@xyflow/react';
-import type {
-  CatalogCriticality,
-  CatalogEntityKind,
-  CatalogGraph,
-  CatalogGraphNode,
-} from '@dwp-frontend/shared-utils';
+import type { CatalogEntityKind, CatalogGraph, CatalogGraphNode } from '@dwp-frontend/shared-utils';
 
 const NODE_WIDTH = 252;
 const NODE_HEIGHT = 124;
@@ -75,12 +76,6 @@ const kindColors: Partial<Record<CatalogEntityKind, string>> = {
   POLICY: '#9F1239',
   AGENT: '#6D28D9',
   TOOL: '#A16207',
-};
-
-const criticalityColors: Record<CatalogCriticality, string> = {
-  INFORMATIONAL: '#64748B',
-  OPERATIONAL: '#0284C7',
-  CRITICAL: '#DC2626',
 };
 
 type CatalogNodeData = { node: CatalogGraphNode };
@@ -123,7 +118,7 @@ function CatalogNode({ data, selected }: NodeProps<CatalogFlowNode>) {
           <Icon size={15} strokeWidth={1.9} />
         </Box>
         <Typography variant="caption" color="text.secondary" noWrap sx={{ flex: 1 }}>
-          {entity.kind.replace(/_/g, ' ')}
+          {t(catalogKindLabelKey(entity.kind))}
         </Typography>
         {entity.scope === 'GLOBAL_PRODUCT' && (
           <Chip label={t('catalog.graph.global')} size="small" variant="outlined" />
@@ -195,18 +190,18 @@ export function CatalogGraphView({
             `${relation.sourceRef}:${relation.relationType}:${relation.targetRef}:${index}`,
           source: relation.sourceRef,
           target: relation.targetRef,
-          label: relation.relationType.replace(/_/g, ' '),
+          label: t(catalogRelationTypeLabelKey(relation.relationType)),
           markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
           animated: relation.relationType === 'SYNCHRONIZES',
           style: {
-            stroke: criticalityColors[relation.criticality],
+            stroke: catalogCriticalityStroke(relation.criticality),
             strokeWidth: relation.criticality === 'CRITICAL' ? 2 : 1.35,
             strokeDasharray: relation.relationOrigin === 'DECLARED' ? undefined : '5 4',
           },
           labelStyle: { fontSize: 9, fill: theme.palette.text.secondary },
           labelBgStyle: { fill: theme.palette.background.paper, fillOpacity: 0.92 },
         })),
-    [graph.relations, nodeRefs, theme]
+    [graph.relations, nodeRefs, t, theme]
   );
   const nodes = useMemo(
     () =>

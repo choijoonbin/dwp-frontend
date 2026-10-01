@@ -61,6 +61,7 @@ import {
   targetLabel,
   useAuditActionLabel,
 } from './audit-ui';
+import { auditCategoryLabelKey } from './audit-runtime-presentation';
 
 import type { GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import type {
@@ -287,7 +288,7 @@ export function AuditExplorer() {
               {auditActionLabel(row.action)}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap>
-              {t(`auditControl.category.${row.category}`)}
+              {t(auditCategoryLabelKey(row.category))}
             </Typography>
           </Box>
         ),
@@ -297,7 +298,7 @@ export function AuditExplorer() {
         headerName: t('auditControl.events.columns.actor'),
         minWidth: 150,
         flex: 0.75,
-        valueGetter: (_, row) => actorLabel(row),
+        valueGetter: (_, row) => actorLabel(row, t('auditControl.evidence.actorUnavailable')),
       },
       {
         field: 'targetDisplayName',
@@ -675,6 +676,11 @@ export function AuditExplorer() {
           onPaginationModelChange={setPagination}
           pageSizeOptions={[25, 50, 100]}
           onRowClick={({ row }) => setSelected(row)}
+          onCellKeyDown={({ row }, event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            setSelected(row);
+          }}
           sx={{
             border: 0,
             borderRadius: 0,
@@ -697,7 +703,8 @@ export function AuditExplorer() {
                   <SeverityChip severity={event.severity} />
                 </Stack>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  {actorLabel(event)} / {targetLabel(event)}
+                  {actorLabel(event, t('auditControl.evidence.actorUnavailable'))} /{' '}
+                  {targetLabel(event)}
                 </Typography>
                 <Stack
                   direction="row"

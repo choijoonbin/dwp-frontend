@@ -29,6 +29,113 @@
       "unavailable": "Unavailable",
       "notConfigured": "Not configured",
       "openDetail": "Manage details",
+      "governance": {
+        "loading": "Loading tenant sources and effective values",
+        "loadError": "The tenant source could not be confirmed. An unobserved state is not treated as healthy.",
+        "title": "Organization source, login readiness, and setting provenance",
+        "description": "Separates state observed directly by Auth at {{observedAt}} from external owner boundaries.",
+        "externalBoundary": "The external IdP login verifier is not connected. Ready internal prerequisites are not reported as a successful external login.",
+        "states": {
+          "OBSERVED": "Observed",
+          "READY": "Ready",
+          "READY_FOR_EXTERNAL_PROBE": "Awaiting external verification",
+          "NOT_REQUIRED": "Verification not required",
+          "BLOCKED": "Blocked",
+          "UNAVAILABLE": "Unavailable",
+          "ATTENTION_REQUIRED": "Needs attention",
+          "OWNER_ADAPTER_UNAVAILABLE": "Owner connection unavailable",
+          "UNKNOWN": "State unavailable"
+        },
+        "owners": {
+          "PROVIDER_TENANT_DOMAIN": "Provider tenant domain",
+          "UNKNOWN": "Owning system"
+        },
+        "reasons": {
+          "ENABLED_IDENTITY_PROVIDER_NOT_OBSERVED": "No enabled sign-in provider was observed",
+          "EXTERNAL_IDP_LOGIN_EXECUTOR_NOT_CONNECTED": "External sign-in verification is not connected",
+          "PROVIDER_TENANT_MAPPING_NOT_EXPOSED_TO_AUTH": "Auth cannot read the provider tenant mapping",
+          "DOMAIN_DNS_VERIFICATION_NOT_OWNED_BY_AUTH": "Domain DNS verification belongs to another system",
+          "UNKNOWN": "Review detailed evidence in the owning system"
+        },
+        "directory": {
+          "title": "Tenant directory",
+          "tenant": "Organization",
+          "code": "Tenant code",
+          "locale": "Default locale"
+        },
+        "login": {
+          "title": "Login verification readiness",
+          "provider": "Configured IdP",
+          "externalProbe": "External login test",
+          "blocks": "Blocking evidence"
+        },
+        "recovery": {
+          "title": "Recovery account verification coverage",
+          "total": "Total",
+          "verified": "Verified",
+          "overdue": "Overdue"
+        },
+        "domain": {
+          "title": "Domain owner boundary",
+          "owner": "Owning service",
+          "boundary": "Excluded coverage"
+        },
+        "effective": {
+          "title": "Effective values and inheritance lineage",
+          "description": "Shows Tenant and User candidates together and explains the server-resolved winner, lock, and override policy.",
+          "locked": "Organization locked",
+          "overrideAllowed": "User override allowed",
+          "unknownSetting": "Organization-managed setting",
+          "unknownValue": "Managed policy applied",
+          "settings": {
+            "authentication": {
+              "defaultLoginType": "Default sign-in method",
+              "requireMfa": "Additional verification",
+              "tokenTtlSec": "Sign-in duration"
+            },
+            "identity": { "preferredLocale": "Display language" }
+          },
+          "values": {
+            "login": { "LOCAL": "Email and password", "SSO": "Company single sign-on" },
+            "locales": {
+              "en": "English",
+              "en-US": "English (United States)",
+              "ko": "Korean",
+              "ko-KR": "Korean (South Korea)"
+            },
+            "required": "Required",
+            "optional": "Optional",
+            "minutes": "{{count}} minutes"
+          },
+          "sources": {
+            "PROVIDER": "Provider policy",
+            "TENANT": "Organization policy",
+            "USER": "User setting",
+            "UNKNOWN": "Source unavailable"
+          },
+          "lineage": {
+            "PROVIDER": "Provider baseline · {{value}}",
+            "TENANT": "Organization default · {{value}}",
+            "USER": "User setting · {{value}}",
+            "UNKNOWN": "Source unavailable · {{value}}"
+          },
+          "evaluations": {
+            "WINNER": "Currently applied",
+            "OVERRIDDEN": "Replaced by a higher-priority setting",
+            "INHERITED": "Inherits the parent default",
+            "UNKNOWN": "Resolution unavailable"
+          }
+        },
+        "restore": {
+          "action": "Restore locale inheritance",
+          "title": "Restore the organization locale",
+          "description": "Remove the user override and inherit the organization default again.",
+          "preview": "Remove the {{before}} override and apply {{after}}. Conflicts are checked against version {{version}}.",
+          "confirm": "Restore inheritance",
+          "completed": "Organization locale inheritance was restored.",
+          "failed": "The setting version changed or inheritance could not be restored. Refresh and try again."
+        }
+      },
       "priority": {
         "title": "Priority tasks",
         "description": "Only work reported by the Auth, SCIM, app access, and audit policy owners appears here.",
@@ -116,6 +223,7 @@
       "create": "Create policy draft",
       "empty": "No authentication policy changes are recorded.",
       "error": "Authentication policy changes could not be loaded.",
+      "retry": "Retry loading",
       "saved": "Authentication policy workflow updated.",
       "submit": "Submit for review",
       "approve": "Approve",
@@ -131,7 +239,17 @@
         "APPROVED": "Approved",
         "REJECTED": "Rejected",
         "PUBLISHED": "Published",
-        "SUPERSEDED": "Superseded"
+        "SUPERSEDED": "Superseded",
+        "UNKNOWN": "Workflow state unavailable"
+      },
+      "confidence": {
+        "UNKNOWN": "Unconfirmed",
+        "ESTIMATED": "Estimated",
+        "EXACT": "Exact"
+      },
+      "coverageStates": {
+        "INTERNAL_AUTH_DIRECTORY_ACTIVE_IDENTITIES": "active identities in the internal Auth directory",
+        "UNKNOWN": "impact coverage unavailable"
       },
       "decision": {
         "APPROVE": "Approve authentication policy change",
@@ -674,7 +792,8 @@
     "lifecycle": {
       "DRAFT": "Draft",
       "ACTIVE": "Active",
-      "RETIRED": "Retired"
+      "RETIRED": "Retired",
+      "UNKNOWN": "Lifecycle unavailable"
     }
   },
   "productivity": {
@@ -713,19 +832,22 @@
       "HEALTHY": "Healthy",
       "DEGRADED": "Degraded",
       "AUTHENTICATION_REQUIRED": "Reconsent required",
-      "UNAVAILABLE": "Unavailable"
+      "UNAVAILABLE": "Unavailable",
+      "UNKNOWN": "Health unavailable"
     },
     "lifecycle": {
       "DRAFT": "Draft",
       "ACTIVE": "Active",
       "SUSPENDED": "Suspended",
-      "RETIRED": "Retired"
+      "RETIRED": "Retired",
+      "UNKNOWN": "Lifecycle unavailable"
     },
     "policyStates": {
       "REVIEW_REQUIRED": "Security review required",
       "APPROVED": "Approved",
       "REVOKED": "Revoked",
-      "BLOCKED": "Blocked"
+      "BLOCKED": "Blocked",
+      "UNKNOWN": "Policy state unavailable"
     },
     "auth": {
       "DELEGATED": "User delegated"
@@ -749,6 +871,15 @@
     "scopes": {
       "title": "Approved least-privilege contract",
       "description": "Mail is limited to basic metadata and calendar access is read only. Tenant-wide application permissions are prohibited."
+    },
+    "scopeLabels": {
+      "OPENID": "Sign-in identity",
+      "PROFILE": "Basic profile",
+      "OFFLINE_ACCESS": "Renew delegated access",
+      "USER_READ": "Read the signed-in user",
+      "MAIL_READ_BASIC": "Read basic mail metadata",
+      "CALENDARS_READ": "Read calendars",
+      "UNKNOWN": "Scope unavailable"
     },
     "signals": {
       "title": "Operational signals",
@@ -783,28 +914,45 @@
       "tokenExpiry": "Access token expiry",
       "lastSync": "Last success",
       "userId": "User {{id}}",
-      "empty": "No user has completed delegated consent yet."
+      "empty": "No user has completed delegated consent yet.",
+      "loading": "Loading user consent evidence…",
+      "loadError": "User consent evidence could not be loaded. No empty state is inferred.",
+      "retry": "Retry",
+      "partial": "Showing the latest {{limit}} users. Earlier consent records exist outside this response."
     },
     "consentStates": {
       "NOT_CONNECTED": "Not connected",
       "CONNECTED": "Connected",
       "REAUTHORIZATION_REQUIRED": "Reconsent required",
-      "REVOKED": "Revoked"
+      "REVOKED": "Revoked",
+      "UNKNOWN": "Consent state unavailable"
     },
     "resources": {
       "MAIL": "Mail metadata",
-      "CALENDAR": "Calendar"
+      "CALENDAR": "Calendar",
+      "UNKNOWN": "Resource unavailable"
     },
     "runStates": {
       "RUNNING": "Running",
       "SUCCEEDED": "Succeeded",
       "PARTIAL": "Partial",
       "FAILED": "Failed",
-      "BLOCKED": "Blocked"
+      "BLOCKED": "Blocked",
+      "UNKNOWN": "Run state unavailable"
+    },
+    "syncModes": {
+      "INITIAL": "Initial synchronization",
+      "DELTA": "Incremental synchronization",
+      "RESET": "Full resynchronization",
+      "UNKNOWN": "Synchronization mode unavailable"
     },
     "runs": {
       "errors": "{{count}} errors",
-      "empty": "No synchronization evidence is available yet."
+      "empty": "No synchronization evidence is available yet.",
+      "loading": "Loading synchronization evidence…",
+      "loadError": "Synchronization evidence could not be loaded. No empty state is inferred.",
+      "retry": "Retry",
+      "partial": "Showing the latest {{limit}} runs. Earlier execution evidence exists outside this response."
     },
     "policy": {
       "leastPrivilege": "Least privilege",
@@ -828,16 +976,113 @@
     "searchUsers": "Search users",
     "noUsers": "No users found",
     "noRole": "No role",
+    "unknownRole": "Managed role",
+    "statusUnknown": "Status unavailable",
+    "roleDescriptionUnavailable": "Role details are managed by the identity owner.",
     "userFallback": "User {{id}}",
     "mfaEnabled": "MFA on",
     "mfaDisabled": "MFA off",
     "additionalRoles": "{{count}} more roles",
     "inheritedCount": "{{count}} inherited",
     "projection": {
-      "coverage": "Unified internal snapshot {{snapshot}} observed {{observedAt}} across {{owners}} Auth owners.",
+      "loading": "Loading the unified internal access snapshot. No missing entitlement is inferred while owners are responding.",
+      "coverage": "Unified internal access for {{identities}} identities across {{pages}} verified page(s), observed {{observedAt}} from {{owners}} Auth owners.",
       "exclusions": "Explicit exclusions: {{exclusions}}",
       "unavailable": "The unified internal access snapshot is unavailable. The individual identity owner remains visible, but app and pending-approval coverage is unconfirmed.",
-      "appPresetCount": "{{count}} app · {{pending}} pending"
+      "appPresetCount": "{{count}} app · {{pending}} pending",
+      "inspectorTitle": "Unified internal entitlements",
+      "inspectorDescription": "Shows role, group, privileged, and app preset provenance with approval lineage from the Auth source.",
+      "ownerCoverage": "{{owner}} · {{freshness}}",
+      "freshness": {
+        "FRESH": "Fresh",
+        "STALE": "Stale",
+        "NO_DATA": "No data",
+        "UNKNOWN": "Freshness unavailable"
+      },
+      "owners": {
+        "AUTH_USER_DIRECTORY": "User directory",
+        "DIRECT_ROLE_ASSIGNMENTS": "Direct role assignments",
+        "GROUP_ROLE_ASSIGNMENTS": "Group role assignments",
+        "PRIVILEGED_ACCESS_GRANTS": "Privileged access grants",
+        "APP_ADMIN_PRESET_ASSIGNMENTS": "App administration presets",
+        "AUTH_TENANT_APP_WORKFORCE_ASSIGNMENTS": "Tenant app workforce assignments",
+        "AUTH_PRODUCT_AUTHORIZATION_CATALOG": "Product authorization catalog",
+        "AUTH_TENANT_CAPABILITY_OVERRIDE": "Tenant capability restrictions",
+        "UNKNOWN": "Registered access owner"
+      },
+      "lifecycle": {
+        "ACTIVE": "Active",
+        "PENDING_APPROVAL": "Pending approval",
+        "APPROVED": "Approved; activation pending",
+        "PERMISSION_SATISFIED": "Base permission satisfied",
+        "TENANT_DISABLED": "Disabled by tenant policy",
+        "BLOCKED_BY_INSTALLATION": "Blocked because the tenant installation is not enabled",
+        "UNKNOWN": "Owner state unavailable"
+      },
+      "scopes": {
+        "TENANT": "Entire tenant",
+        "ORG_UNIT": "Specific organizational unit",
+        "RESOURCE": "Specific governed resource",
+        "RESOURCE_SET": "Governed resource set",
+        "APP": "Application boundary",
+        "UNKNOWN": "Owner-defined scope"
+      },
+      "actorEvidence": {
+        "RECORDED": "recorded",
+        "NOT_RECORDED": "not required or not yet recorded"
+      },
+      "sourceDetails": {
+        "DIRECT": "Recorded direct membership",
+        "GROUP": "Active access group",
+        "PRIVILEGED": "Recorded time-bound activation",
+        "APP_PRESET": "Governed direct preset assignment",
+        "APP_PRESET_GROUP": "Active preset group",
+        "TENANT_APP_ASSIGNMENT": "Tenant-controlled app workforce assignment",
+        "PRODUCT_AUTHORIZATION": "Active product authorization catalog",
+        "TENANT_CAPABILITY_SUPPRESSION": "Approved tenant capability restriction",
+        "UNKNOWN": "Owner-managed source"
+      },
+      "exclusionLabels": {
+        "EXTERNAL_IDP_GROUPS_NOT_SYNCHRONIZED_TO_AUTH": "External identity-provider groups that are not synchronized to Auth",
+        "EXTERNAL_SAAS_LICENSES_AND_SEATS": "External SaaS licenses and seats",
+        "ROUTE_PREDICATES_EVALUATED_ONLY_AT_REQUEST_TIME": "Route predicates evaluated only when a request is made",
+        "SCOPED_CAPABILITIES_REQUIRE_RUNTIME_ROUTE_EVALUATION": "Scoped capabilities that require runtime route evaluation",
+        "UNKNOWN": "Additional owner-declared coverage exclusion"
+      },
+      "sourceLine": "{{sourceType}} source · {{source}}",
+      "entitlementTypes": {
+        "ROLE": "Role",
+        "APP_PRESET": "App administration preset",
+        "APP_WORKFORCE": "Workforce app access",
+        "CAPABILITY": "Product capability",
+        "UNKNOWN": "Entitlement type unavailable"
+      },
+      "sourceTypes": {
+        "DIRECT": "Direct assignment",
+        "GROUP": "Group assignment",
+        "PRIVILEGED": "Time-bound privileged access",
+        "APP_PRESET": "Direct app preset",
+        "APP_PRESET_GROUP": "Group app preset",
+        "TENANT_APP_ASSIGNMENT": "Tenant app assignment",
+        "PRODUCT_AUTHORIZATION": "Product authorization contract",
+        "TENANT_CAPABILITY_SUPPRESSION": "Tenant capability restriction",
+        "UNKNOWN": "Source type unavailable"
+      },
+      "lineageStates": {
+        "NOT_APPLICABLE": "No approval required",
+        "ACTIVATED": "Activated privilege",
+        "ACTIVATED_INDEPENDENTLY": "Independently approved and activated",
+        "REVIEW_PENDING": "Review pending",
+        "ACTIVATION_PENDING": "Activation pending",
+        "COMPLETE": "Approval and activation complete",
+        "CLOSED": "Closed",
+        "RUNTIME_EVALUATION_REQUIRED": "Permission satisfied; runtime checks remain",
+        "TENANT_SUPPRESSED": "Disabled by an approved tenant restriction",
+        "UNKNOWN": "Approval lineage unavailable"
+      },
+      "scopeLine": "Scope · {{scope}}",
+      "lineage": "{{state}} · request {{requester}} → approval {{approver}} → activation {{activator}}",
+      "noInternalGrants": "No entitlement is currently observed from an internal Auth owner. External SaaS licenses are excluded."
     },
     "roleFamilies": {
       "WORKSPACE": "Baseline access",
@@ -852,7 +1097,8 @@
       "SELF": "You cannot change your own roles.",
       "IDENTITY_INACTIVE": "Roles cannot be changed for inactive or suspended identities.",
       "PROTECTED_ROLE": "Users with peer, higher, or control-plane roles cannot be changed.",
-      "ROLE_ASSIGNMENT_REQUIRES_TENANT_ADMIN": "Identity administrators can inspect access, but tenant role delegation requires a tenant administrator."
+      "ROLE_ASSIGNMENT_REQUIRES_TENANT_ADMIN": "Identity administrators can inspect access, but tenant role delegation requires a tenant administrator.",
+      "UNKNOWN": "Role management is unavailable until the identity owner confirms the boundary."
     },
     "columns": {
       "user": "User",
@@ -869,6 +1115,7 @@
       "editRolesFor": "Edit roles for {{name}}",
       "editDirectRoles": "Edit direct roles",
       "reviewEffectiveAccess": "Review effective access",
+      "reviewEffectiveAccessFor": "Review effective access for {{name}}",
       "save": "Save access",
       "saving": "Saving access"
     },
@@ -895,10 +1142,12 @@
     "sources": {
       "direct": "Direct",
       "group": "Group",
+      "privileged": "Privileged assignment",
       "app_access_request": "Approved app request",
       "admin_direct": "Governed direct assignment",
       "access_package": "Access package",
-      "governed": "Governed entitlement"
+      "governed": "Governed entitlement",
+      "unknown": "Source unavailable"
     },
     "inspector": {
       "title": "Effective access",
@@ -981,6 +1230,7 @@
       "subtitle": "Immutable snapshots and recoverable brand assets",
       "close": "Close brand publication history",
       "empty": "History begins with the next publication.",
+      "partial": "More than {{limit}} brand revisions exist. This history shows only the newest first page.",
       "loading": "Loading home publication history.",
       "error": "Home publication history could not be loaded.",
       "retry": "Try again",
@@ -993,7 +1243,8 @@
         "SETTINGS_PUBLISHED": "Brand definition published",
         "ASSET_PUBLISHED": "Logo published",
         "ASSET_RESET": "Logo removed",
-        "ROLLBACK": "Prior revision restored"
+        "ROLLBACK": "Prior revision restored",
+        "UNAVAILABLE": "Unavailable"
       }
     },
     "actions": {
@@ -1172,6 +1423,8 @@
       "namingDescription": "This list uses the existing HomeTemplate API for complete home layouts. A widget preset will contain one definition reference and data-free configuration in a later contract.",
       "title": "Shared home blueprints",
       "count": "{{count}} blueprint revisions",
+      "countPartial": "Showing a bounded first page of blueprints",
+      "partial": "More than {{limit}} home blueprints exist. This view shows only the first page.",
       "openHomeStudio": "Open personal home",
       "saved": "The home blueprint lifecycle was updated.",
       "saveFailed": "The home blueprint lifecycle could not be updated.",
@@ -1185,7 +1438,8 @@
       "lifecycle": {
         "DRAFT": "Draft",
         "PUBLISHED": "Published",
-        "REVOKED": "Revoked"
+        "REVOKED": "Revoked",
+        "UNAVAILABLE": "Unavailable"
       },
       "confirm": {
         "publish": {
@@ -1206,6 +1460,7 @@
         "title": "{{name}} revision history",
         "description": "Restoring a snapshot creates a new draft. The published blueprint remains unchanged until that draft is explicitly published.",
         "empty": "No blueprint revisions are available",
+        "partial": "More than {{limit}} revisions exist. This history shows only the newest first page.",
         "revision": "Revision {{revision}}",
         "restore": "Restore as draft",
         "restored": "The blueprint revision was restored as a new draft.",
@@ -1215,7 +1470,8 @@
           "UPDATE": "Updated",
           "PUBLISH": "Published",
           "REVOKE": "Revoked",
-          "RESTORE": "Restored"
+          "RESTORE": "Restored",
+          "UNAVAILABLE": "Unavailable"
         },
         "confirm": {
           "title": "Restore this blueprint revision as a draft?",
@@ -1243,7 +1499,8 @@
         "AVAILABLE": "Available",
         "ALREADY_ADDED": "Already placed",
         "DEPRECATED": "Deprecated",
-        "DENY": "Denied"
+        "DENY": "Denied",
+        "UNKNOWN": "Effective state unavailable"
       },
       "noPublicReason": "No public decision reason",
       "publicReasons": {
@@ -1254,7 +1511,23 @@
         "TEMPORARILY_UNAVAILABLE": "Temporarily stopped by a safety or availability control",
         "DEPRECATED": "Deprecated for new placement",
         "AVAILABLE": "Available for placement",
-        "ALREADY_ADDED": "Already placed on Home"
+        "ALREADY_ADDED": "Already placed on Home",
+        "UNKNOWN": "Decision reason unavailable"
+      },
+      "placements": {
+        "CLASSIC_PERSONAL": "Classic personal area",
+        "FLOW_PERSONAL": "Flow personal area",
+        "FLOW_GOVERNED": "Flow governed area",
+        "MZ_PERSONAL": "MZ personal area",
+        "MZ_GOVERNED": "MZ governed area",
+        "UNKNOWN": "Placement context unavailable"
+      },
+      "policyStates": {
+        "DRAFT": "Draft",
+        "PUBLISHED": "Published",
+        "SUPERSEDED": "Superseded",
+        "REVOKED": "Revoked",
+        "UNKNOWN": "Policy state unavailable"
       },
       "required": "Required placement",
       "policyTitle": "Tenant policy head",
@@ -1449,6 +1722,7 @@
       "error": "Home publication history could not be loaded.",
       "retry": "Retry",
       "empty": "History begins with the next publication.",
+      "partial": "More than {{limit}} home revisions exist. This history shows only the newest first page.",
       "current": "Current",
       "restore": "Restore",
       "defaultCopy": "Default DWP copy",
@@ -1460,14 +1734,16 @@
         "ASSET_PUBLISHED": "Background published",
         "ASSET_RESET": "Built-in background restored",
         "EXPERIENCE_PUBLISHED": "Complete home experience published",
-        "ROLLBACK": "Prior revision restored"
+        "ROLLBACK": "Prior revision restored",
+        "UNAVAILABLE": "Unavailable"
       },
       "scopes": {
         "PRESENTATION": "Copy & presentation",
         "BACKGROUND": "Background image",
         "BACKGROUND_ASSET": "Background image",
         "LAUNCHPAD": "App dock",
-        "COMPOSITION": "Home composition policy"
+        "COMPOSITION": "Home composition policy",
+        "UNAVAILABLE": "Unavailable"
       }
     },
     "fields": {
@@ -1821,10 +2097,12 @@
       "emptyDescription": "Auditable activity will appear here after the first change.",
       "systemActor": "Platform service",
       "userActor": "User {{id}}",
+      "unknownActor": "Actor unavailable",
       "outcomes": {
         "SUCCESS": "Success",
         "DENIED": "Denied",
-        "FAILED": "Failed"
+        "FAILED": "Failed",
+        "UNKNOWN": "Outcome unavailable"
       },
       "actions": {
         "seeded": "Initial operational catalog provisioned",
@@ -1835,7 +2113,8 @@
         "itemCreated": "Reference value created",
         "itemUpdated": "Reference value updated",
         "itemActivated": "Reference value activated",
-        "itemRetired": "Reference value retired"
+        "itemRetired": "Reference value retired",
+        "UNKNOWN": "Managed change activity"
       }
     },
     "columns": {
@@ -1919,6 +2198,7 @@
     "loading": "Loading product registry",
     "search": "Search registry",
     "entries": "Product registry entries",
+    "paginationLabel": "Product registry pages",
     "noEntries": "No registry entries",
     "allTypes": "All types",
     "allStates": "All states",
@@ -1930,13 +2210,15 @@
       "TOOL": "Tool",
       "POLICY": "Policy",
       "API": "API contract",
-      "DATA_PRODUCT": "Data product"
+      "DATA_PRODUCT": "Data product",
+      "UNKNOWN": "Registry type unavailable"
     },
     "risk": {
       "LOW": "Low",
       "MEDIUM": "Medium",
       "HIGH": "High",
-      "CRITICAL": "Critical"
+      "CRITICAL": "Critical",
+      "UNKNOWN": "Severity unavailable"
     },
     "fields": {
       "type": "Registry type",
@@ -2051,7 +2333,8 @@
     "observation": {
       "GATEWAY": "Gateway",
       "SERVICE": "Services",
-      "ALL": "All hops"
+      "ALL": "All hops",
+      "UNKNOWN": "Observation point unavailable"
     },
     "outcomes": {
       "ALL": "All outcomes",
@@ -2209,12 +2492,14 @@
         "PLATFORM_WORKSPACE": "Platform & workspace",
         "PROVIDER_OPERATIONS": "Provider operations",
         "AI_AUTOMATION": "AI & automation",
-        "DATA_GOVERNANCE": "Data governance"
+        "DATA_GOVERNANCE": "Data governance",
+        "UNKNOWN": "Domain unavailable"
       },
       "classification": {
         "INTERNAL": "Internal",
         "CONFIDENTIAL": "Confidential",
-        "RESTRICTED": "Restricted"
+        "RESTRICTED": "Restricted",
+        "UNKNOWN": "Classification unavailable"
       },
       "detail": {
         "title": "Incident flow detail",
@@ -2232,7 +2517,7 @@
         "before": "Before",
         "after": "After",
         "metadata": "Governed metadata",
-        "envelopeVersion": "{{eventId}} / schema v{{version}}"
+        "envelopeVersion": "Evidence {{eventId}}"
       }
     },
     "windows": {
@@ -2290,7 +2575,8 @@
       "PROVISIONING": "Provisioning",
       "AI_ACTION": "AI action",
       "POLICY_DENIED": "Policy denied",
-      "SYSTEM_EVENT": "System"
+      "SYSTEM_EVENT": "System",
+      "UNKNOWN": "Category unavailable"
     },
     "severity": {
       "ALL": "All severities",
@@ -2298,13 +2584,15 @@
       "LOW": "Low",
       "MEDIUM": "Medium",
       "HIGH": "High",
-      "CRITICAL": "Critical"
+      "CRITICAL": "Critical",
+      "UNKNOWN": "Severity unavailable"
     },
     "outcome": {
       "ALL": "All outcomes",
       "SUCCESS": "Success",
       "DENIED": "Denied",
-      "FAILED": "Failed"
+      "FAILED": "Failed",
+      "UNKNOWN": "Outcome unavailable"
     },
     "kpi": {
       "events": "Evidence events",
@@ -2395,6 +2683,44 @@
       "copy": "Copy value",
       "copied": "Value copied"
     },
+    "evidence": {
+      "governedSource": "Governed DWP service",
+      "actorUnavailable": "Actor details unavailable",
+      "subjectUnavailable": "Subject details unavailable",
+      "targetUnavailable": "Target details unavailable",
+      "roleUnavailable": "Role evidence unavailable",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "unavailable": "Value retained in protected evidence",
+      "beforeLabel": "Before:",
+      "afterLabel": "After:",
+      "noItemizedChange": "No itemized scalar change is available for this event.",
+      "protectedMetadata": "{{count}} additional metadata field(s) are retained in protected audit storage.",
+      "retention": {
+        "STANDARD": "Standard retention",
+        "EXTENDED": "Extended retention",
+        "LEGAL_HOLD": "Legal hold",
+        "UNAVAILABLE": "Retention policy unavailable"
+      },
+      "fields": {
+        "status": "Status",
+        "lifecycle": "Lifecycle",
+        "enabled": "Availability",
+        "mfaEnabled": "MFA enrollment",
+        "requireMfa": "MFA requirement",
+        "displayName": "Display name",
+        "name": "Name",
+        "title": "Title",
+        "loginType": "Default sign-in method",
+        "tokenLifetime": "Session lifetime",
+        "retentionDays": "Retention period",
+        "outcome": "Outcome",
+        "decision": "Decision",
+        "role": "Role",
+        "version": "Revision",
+        "managedField": "Managed field"
+      }
+    },
     "export": {
       "open": "Export evidence",
       "title": "Export audit evidence",
@@ -2414,26 +2740,30 @@
       "ACKNOWLEDGED": "Acknowledged",
       "INVESTIGATING": "Investigating",
       "RESOLVED": "Resolved",
-      "DISMISSED": "Dismissed"
+      "DISMISSED": "Dismissed",
+      "UNKNOWN": "Finding state unavailable"
     },
     "caseStatus": {
       "OPEN": "Open",
       "INVESTIGATING": "Investigating",
       "CONTAINED": "Contained",
       "RESOLVED": "Resolved",
-      "CLOSED": "Closed"
+      "CLOSED": "Closed",
+      "UNKNOWN": "Case state unavailable"
     },
     "sla": {
       "ON_TRACK": "On track",
       "AT_RISK": "At risk",
       "BREACHED": "SLA breached",
-      "COMPLETED": "Completed"
+      "COMPLETED": "Completed",
+      "UNKNOWN": "SLA state unavailable"
     },
     "entity": {
       "relationship": {
         "ACTOR": "Actor",
         "TARGET": "Target",
-        "SOURCE": "Source"
+        "SOURCE": "Source",
+        "UNKNOWN": "Relationship unavailable"
       }
     },
     "activity": {
@@ -2446,9 +2776,20 @@
       "NOTE_ADDED": "Investigator note added",
       "TASK_CREATED": "Investigation task created",
       "TASK_UPDATED": "Investigation task updated",
-      "RESOLUTION_RECORDED": "Resolution decision recorded"
+      "RESOLUTION_RECORDED": "Resolution decision recorded",
+      "UNKNOWN": "Managed investigation activity"
+    },
+    "sourceServices": {
+      "AUTH": "Identity service",
+      "PLATFORM": "Workspace service",
+      "PROVIDER": "Provider control service",
+      "GATEWAY": "Access gateway",
+      "NOTIFICATION": "Notification service",
+      "AUTOMATION": "Automation service",
+      "UNKNOWN": "Managed audit source"
     },
     "investigations": {
+      "managedFinding": "Managed finding",
       "views": "Investigation views",
       "findings": "Findings",
       "cases": "Cases",
@@ -2635,7 +2976,13 @@
           "exportLimitRows": "Export limit",
           "requireExportReason": "Export reason requirement",
           "integrityEnabled": "Integrity checkpoints",
-          "highRiskThreshold": "High-risk threshold"
+          "highRiskThreshold": "High-risk threshold",
+          "UNKNOWN": "Owner-managed policy field"
+        },
+        "values": {
+          "enabled": "Enabled",
+          "disabled": "Disabled",
+          "unavailable": "Value unavailable"
         }
       },
       "integrity": "Integrity checkpoints",
@@ -2650,12 +2997,14 @@
       "signature": "Checkpoint hash",
       "status": "Verification",
       "noCheckpoints": "No integrity checkpoints have been generated yet.",
+      "integrityPartialCoverage": "Showing the newest {{count}} integrity checkpoints. Older checkpoints remain retained in the owner ledger.",
       "recordCount": "{{count}} sealed records"
     },
     "integrityStatus": {
       "VERIFIED": "Verified",
       "FAILED": "Failed",
-      "UNAVAILABLE": "Key unavailable"
+      "UNAVAILABLE": "Key unavailable",
+      "UNKNOWN": "Verification state unavailable"
     }
   },
   "audit": {
@@ -2676,12 +3025,14 @@
     },
     "sources": {
       "IDENTITY": "Identity",
-      "PLATFORM": "Platform"
+      "PLATFORM": "Platform",
+      "UNKNOWN": "Audit source unavailable"
     },
     "actorTypes": {
       "USER": "User",
       "AGENT": "Agent",
-      "SYSTEM": "System"
+      "SYSTEM": "System",
+      "UNKNOWN": "Actor type unavailable"
     },
     "actions": {
       "announcement": {
@@ -2833,6 +3184,8 @@
       "activity": {
         "title": "Recent provisioning activity",
         "description": "Redacted inbound SCIM operations across tenant connectors.",
+        "countAtLeast": "{{count}}+",
+        "partialCoverage": "Showing the newest {{count}} records. More owner records exist, so this view does not claim complete coverage.",
         "empty": "No provisioning activity has been received yet.",
         "loadError": "Provisioning activity is temporarily unavailable. Connector controls remain available."
       },
@@ -2842,6 +3195,26 @@
         "resource": "Resource",
         "outcome": "Outcome",
         "occurredAt": "Occurred at"
+      },
+      "eventOperations": {
+        "CREATE": "Create",
+        "REPLACE": "Replace",
+        "PATCH": "Update",
+        "DELETE": "Delete",
+        "READ": "Read",
+        "SEARCH": "Search",
+        "UNKNOWN": "Operation unavailable"
+      },
+      "eventResources": {
+        "USER": "User",
+        "GROUP": "Group",
+        "CONFIG": "Connector configuration",
+        "UNKNOWN": "Resource unavailable"
+      },
+      "connectorOperations": {
+        "USERS": "User provisioning",
+        "GROUPS": "Group provisioning",
+        "UNKNOWN": "Provisioning scope unavailable"
       },
       "inspector": {
         "title": "Connector readiness",
@@ -2930,32 +3303,38 @@
     "states": {
       "DRAFT": "Draft",
       "ACTIVE": "Active",
-      "COMPLETED": "Completed"
+      "COMPLETED": "Completed",
+      "UNKNOWN": "Campaign state unavailable"
     },
     "scopes": {
       "TENANT": "Entire tenant",
       "ROLE": "Specific role",
-      "GROUP": "Specific group"
+      "GROUP": "Specific group",
+      "UNKNOWN": "Review scope unavailable"
     },
     "reviewerStrategies": {
       "TENANT_ADMIN": "Tenant administrators",
-      "NAMED_REVIEWER": "Named reviewer"
+      "NAMED_REVIEWER": "Named reviewer",
+      "UNKNOWN": "Reviewer strategy unavailable"
     },
     "sources": {
       "DIRECT": "Direct",
-      "GROUP": "Inherited from group"
+      "GROUP": "Inherited from group",
+      "UNKNOWN": "Access source unavailable"
     },
     "recommendations": {
       "KEEP": "Keep signal",
       "REVIEW": "Review signal",
-      "UNAVAILABLE": "No signal"
+      "UNAVAILABLE": "No signal",
+      "UNKNOWN": "Recommendation unavailable"
     },
     "recommendationReasons": {
       "RECENT_ACTIVITY": "Recent sign-in evidence",
       "PRIVILEGED_ROLE": "Privileged role requires explicit review",
       "NEVER_SIGNED_IN": "No sign-in evidence",
       "INACTIVE_90_DAYS": "No sign-in in the last 90 days",
-      "EVIDENCE_UNAVAILABLE": "Evidence was unavailable at activation"
+      "EVIDENCE_UNAVAILABLE": "Evidence was unavailable at activation",
+      "UNKNOWN": "Evidence basis unavailable"
     },
     "evidence": {
       "source": "Assignment source",
@@ -2967,13 +3346,15 @@
     "decisions": {
       "PENDING": "Pending",
       "APPROVE": "Approve",
-      "REVOKE": "Revoke"
+      "REVOKE": "Revoke",
+      "UNKNOWN": "Decision unavailable"
     },
     "remediation": {
       "NOT_REQUIRED": "No remediation",
       "PENDING": "Pending removal",
       "APPLIED": "Applied",
-      "MANUAL_REQUIRED": "Owner review required"
+      "MANUAL_REQUIRED": "Owner review required",
+      "UNKNOWN": "Remediation state unavailable"
     },
     "columns": {
       "subject": "Identity",
@@ -3068,7 +3449,14 @@
     },
     "roleTypes": {
       "SYSTEM": "System",
-      "CUSTOM": "Custom"
+      "CUSTOM": "Custom",
+      "UNKNOWN": "Role type unavailable"
+    },
+    "statuses": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "RETIRED": "Retired",
+      "UNKNOWN": "Role status unavailable"
     },
     "tabs": {
       "label": "Role governance views",
@@ -3135,7 +3523,8 @@
     "effects": {
       "NONE": "None",
       "ALLOW": "Allow",
-      "DENY": "Deny"
+      "DENY": "Deny",
+      "UNKNOWN": "Effect unavailable"
     },
     "permissionCodes": {
       "VIEW": "View",
@@ -3146,27 +3535,32 @@
       "EXECUTE": "Execute",
       "APPROVE": "Approve",
       "EXPORT": "Export",
-      "PUBLISH": "Publish"
+      "PUBLISH": "Publish",
+      "UNKNOWN": "Permission unavailable"
     },
     "resourceTypes": {
       "APP": "Application",
       "NAVIGATION": "Navigation",
       "API": "API",
       "ACTION": "Action",
-      "DATA": "Data"
+      "DATA": "Data",
+      "UNKNOWN": "Resource type unavailable"
     },
     "sources": {
       "DIRECT": "Direct assignment",
-      "GROUP": "Inherited from group"
+      "GROUP": "Inherited from group",
+      "UNKNOWN": "Assignment source unavailable"
     },
     "assignmentTypes": {
       "ACTIVE": "Applies immediately",
-      "ELIGIBLE": "Activate after approval"
+      "ELIGIBLE": "Activate after approval",
+      "UNKNOWN": "Assignment type unavailable"
     },
     "scopes": {
       "TENANT": "Entire tenant",
       "ORG_UNIT": "Organization",
-      "RESOURCE": "Resource"
+      "RESOURCE": "Resource",
+      "UNKNOWN": "Scope unavailable"
     },
     "assignmentSummary": {
       "label": "Group role assignment summary",
@@ -3298,17 +3692,20 @@
     "activationModes": {
       "SELF_SERVICE": "Self-activate without approval",
       "APPROVAL": "Activate after administrator approval",
-      "DISABLED": "Activation disabled"
+      "DISABLED": "Activation disabled",
+      "UNKNOWN": "Activation mode unavailable"
     },
     "assurance": {
       "SESSION": "Authenticated session",
       "MFA": "Multifactor authentication",
-      "PHISHING_RESISTANT": "Phishing-resistant authentication"
+      "PHISHING_RESISTANT": "Phishing-resistant authentication",
+      "UNKNOWN": "Assurance level unavailable"
     },
     "emergencyModes": {
       "DISABLED": "Disabled",
       "REGISTERED_PRINCIPAL": "Registered emergency principal",
-      "DUAL_APPROVAL": "Two-person approval"
+      "DUAL_APPROVAL": "Two-person approval",
+      "UNKNOWN": "Emergency mode unavailable"
     },
     "principalTypes": {
       "USER": "User",
@@ -3322,7 +3719,8 @@
       "REVOKED": "Revoked",
       "EXPIRED": "Expired",
       "RETIRED": "Retired",
-      "SUSPENDED": "Suspended"
+      "SUSPENDED": "Suspended",
+      "UNKNOWN": "Lifecycle state unavailable"
     },
     "actions": {
       "approve": "Approve",
@@ -3335,7 +3733,8 @@
     "actionsCatalog": {
       "ACCESS.ASSIGNMENT.MANAGE": "Manage role assignments in scope",
       "ACCESS.ROLE.MANAGE": "Manage role definitions",
-      "ACCESS.RESOURCE.MANAGE": "Manage protected resources"
+      "ACCESS.RESOURCE.MANAGE": "Manage protected resources",
+      "UNKNOWN": "Delegated action unavailable"
     },
     "decision": {
       "description": "Decide {{person}}'s request for {{role}}. Self-approval is blocked by the server.",
@@ -3395,7 +3794,8 @@
       "states": {
         "NOT_VERIFIED": "Not verified",
         "VERIFIED": "Verified",
-        "OVERDUE": "Verification overdue"
+        "OVERDUE": "Verification overdue",
+        "UNKNOWN": "Verification state unavailable"
       }
     },
     "toasts": {
@@ -3414,10 +3814,25 @@
     "loadError": "The catalog could not be loaded. Refresh and try again.",
     "search": "Search assets, references, or owners",
     "allKinds": "All asset types",
+    "ownerManaged": "Governed owner assigned",
+    "ownerUnavailable": "Owner unavailable",
+    "openGraphFor": "Review relationships for {{name}}",
     "applications": {
       "title": "Application lifecycle catalog",
+      "unknownName": "Unnamed governed application",
+      "loading": "Loading application owner records. Observed and unavailable states will appear after each owner responds.",
       "description": "Review each application against the owner records that are actually available to this tenant and the current administrator.",
-      "contractBoundary": "Installation and workforce assignment are not exposed by a tenant owner read contract. They remain unconfirmed here instead of being inferred from registry or administrator records.",
+      "contractBoundary": "Installation, reserved seats, and workforce assignments come from their tenant owners. Runtime health and external SaaS settlement stay unconfirmed until those owners report them.",
+      "provenance": {
+        "authority": "Authorization owner evidence",
+        "authorityDetail": "Observed {{observedAt}} · decision {{revision}} · {{count}} source revisions",
+        "adoption": "Tenant adoption owner evidence",
+        "adoptionDetail": "Observed {{observedAt}} · {{coverage}} · {{owners}} owners · {{exclusions}} exclusions",
+        "coverage": {
+          "complete": "all internal owners covered",
+          "unavailable": "owner coverage unavailable"
+        }
+      },
       "partialFailure": "One or more owner records are unavailable. Unavailable evidence is kept separate from a confirmed negative state.",
       "search": "Search applications or resource keys",
       "emptyTitle": "No applications match this view",
@@ -3426,12 +3841,39 @@
       "observation": {
         "OBSERVED": "Observed",
         "NOT_OBSERVED": "Not observed",
+        "LOADING": "Loading owner record",
         "UNAVAILABLE": "Owner unavailable"
       },
       "management": {
         "OBSERVED": "Management access confirmed",
         "NOT_OBSERVED": "Management access not observed",
+        "LOADING": "Loading management access",
         "UNAVAILABLE": "Management access unconfirmed"
+      },
+      "lifecycle": {
+        "ACTIVE": "Active",
+        "DRAFT": "Draft",
+        "IN_REVIEW": "In review",
+        "APPROVED": "Approved",
+        "ENABLED": "Enabled",
+        "SUSPENDED": "Suspended",
+        "REJECTED": "Rejected",
+        "RETIRED": "Retired",
+        "UNKNOWN": "Owner-managed state"
+      },
+      "scopes": {
+        "GLOBAL": "Global",
+        "ORGANIZATION": "Organization",
+        "TENANT": "Tenant",
+        "USER": "User",
+        "UNKNOWN": "Owner-managed scope"
+      },
+      "accessSources": {
+        "ENTITLEMENT": "Product entitlement",
+        "MANAGEMENT": "Scoped management responsibility",
+        "RELATIONSHIP": "Resource relationship",
+        "SUPPORT": "Approved support session",
+        "UNKNOWN": "Governed authority"
       },
       "stages": {
         "registry": "Application registry",
@@ -3442,10 +3884,14 @@
         "runnable": "Current actor runnable surface"
       },
       "details": {
+        "governedIdentity": "Governed application identity",
         "registry": "{{lifecycle}} · {{scope}} · revision {{revision}}",
         "boundaryCount_one": "{{count}} governed admin scope",
         "boundaryCount_other": "{{count}} governed admin scopes",
         "accessSources": "Authority source: {{sources}}",
+        "installation": "{{lifecycle}} · {{active}} active · {{reserved}} reserved / {{capacity}}",
+        "unboundedCapacity": "No internal limit",
+        "workforceAssignments": "Workforce assignments: {{active}} active · {{pending}} pending",
         "surfaceCount_one": "{{count}} work surface",
         "surfaceCount_other": "{{count}} work surfaces",
         "ownerContractUnavailable": "No tenant owner read contract",
@@ -3487,7 +3933,8 @@
     },
     "scopes": {
       "TENANT": "Tenant",
-      "GLOBAL_PRODUCT": "Global product"
+      "GLOBAL_PRODUCT": "Global product",
+      "UNKNOWN": "Scope unavailable"
     },
     "kinds": {
       "REFERENCE_SET": "Reference data",
@@ -3502,7 +3949,8 @@
       "CODE_SET": "System code contract",
       "SERVICE": "Runtime service",
       "NAVIGATION": "Navigation item",
-      "PERMISSION": "Permission"
+      "PERMISSION": "Permission",
+      "UNKNOWN": "Asset type unavailable"
     },
     "graph": {
       "all": "Showing the full governed catalog",
@@ -3521,9 +3969,11 @@
     "criticality": {
       "INFORMATIONAL": "Informational",
       "OPERATIONAL": "Operational",
-      "CRITICAL": "Critical"
+      "CRITICAL": "Critical",
+      "UNKNOWN": "Criticality unavailable"
     },
     "relation": {
+      "previewCoverage": "Showing {{shown}} of {{total}} connected relationships. Use the graph or inventory to inspect the full neighborhood.",
       "dialogTitle": "Declare catalog relationship",
       "source": "Source asset",
       "target": "Target asset",
@@ -3542,7 +3992,8 @@
         "GOVERNS": "Governs",
         "NAVIGATES_TO": "Navigates to",
         "REQUIRES_PERMISSION": "Requires permission",
-        "SYNCHRONIZES": "Synchronizes"
+        "SYNCHRONIZES": "Synchronizes",
+        "UNKNOWN": "Relationship type unavailable"
       }
     },
     "impact": {
@@ -3553,6 +4004,7 @@
       "direct": "Direct",
       "transitive": "Transitive",
       "none": "No downstream dependency was detected.",
+      "previewCoverage": "Showing {{shown}} of {{total}} impacted assets. Open the inventory or graph to inspect the full impact set.",
       "distance": "{{count}} hop",
       "rule": "Decision rule: {{key}} v{{version}}",
       "operations": {
@@ -3594,20 +4046,25 @@
       "findings": {
         "OWNER_MISSING": "Accountable owner is missing",
         "ORPHAN_ASSET": "No catalog relationship was observed",
-        "DEPRECATION_IMPACT": "Deprecated asset still has active consumers"
+        "DEPRECATION_IMPACT": "Deprecated asset still has active consumers",
+        "UNKNOWN": "Finding type unavailable"
       },
       "states": {
         "OPEN": "Open",
         "ACKNOWLEDGED": "Acknowledged",
         "FALSE_POSITIVE": "False positive",
         "ACCEPTED_RISK": "Risk accepted",
-        "RESOLVED": "Resolved"
+        "RESOLVED": "Resolved",
+        "UNKNOWN": "Disposition unavailable"
       },
       "inspector": {
         "title": "Finding evidence",
         "select": "Select a finding to review its rule, signals, and evidence hash.",
         "hash": "Evidence SHA-256: {{hash}}",
-        "disposition": "Recorded disposition: {{reason}}"
+        "disposition": "Recorded disposition: {{reason}}",
+        "evidenceRetained": "Protected evidence retained ({{count}} fields)",
+        "entityRevision": "Asset revision",
+        "directDependents": "Direct dependents"
       },
       "disposition": {
         "title": "Record finding disposition",
@@ -3650,7 +4107,8 @@
     "root": "Top level",
     "types": {
       "GROUP": "Group",
-      "APP": "Application"
+      "APP": "Application",
+      "UNKNOWN": "Navigation item type unavailable"
     },
     "fields": {
       "key": "Navigation key",
@@ -3748,7 +4206,14 @@
       "history": {
         "title": "Revision history",
         "revision": "Revision {{revision}}",
-        "noSummary": "No change summary was provided"
+        "noSummary": "No change summary was provided",
+        "states": {
+          "draft": "Draft",
+          "published": "Published",
+          "superseded": "Superseded",
+          "cancelled": "Cancelled",
+          "unavailable": "State unavailable"
+        }
       },
       "toasts": {
         "created": "Navigation draft created.",
@@ -3765,6 +4230,306 @@
     "attention": "Review {{pending}} pending approvals and {{ownerless}} app scopes without an owner.",
     "viewLabel": "Application governance view",
     "controlResponsibilitiesNotice": "This view manages only app ownership and access approval, fulfillment, and review responsibilities. App configuration administrators and product specialist duties must be requested, approved, and activated together through an app admin preset.",
+    "adoption": {
+      "loading": "Loading tenant app adoption and seat assignments",
+      "loadError": "The app adoption owner could not be loaded. The failure was not converted into an empty result.",
+      "unbounded": "No limit",
+      "receipt": "Activation receipt {{id}}",
+      "receiptShort": "Activation receipt",
+      "capabilities": {
+        "title": "Effective app capabilities",
+        "description": "Inspect every capability in the active authorization bundle by app and temporarily suppress only capabilities whose owner permits it.",
+        "loading": "Loading app capability policy",
+        "loadError": "The app capability policy owner could not be loaded.",
+        "emptyTitle": "No app capability contracts are published",
+        "emptyDescription": "The authorization owner returned a complete result with no active app capabilities for this tenant.",
+        "boundary": "A tenant exception cannot add a capability or expand authority. A suppression requires an app owner request, an independent access approver, and an independent access manager activation.",
+        "externalBoundary": "External SaaS capability application remains unavailable until its execution owner supplies a receipt.",
+        "count": "{{count}} governed capabilities",
+        "bundleRevision": "Authorization bundle r{{revision}}",
+        "provenance": "Effective source: {{source}} · Risk tier: {{risk}}",
+        "expires": "Tenant suppression expires {{date}}",
+        "capabilityLabel": "{{surface}} · {{action}}",
+        "workflowChange": "{{product}} · {{capability}} · {{desired}}",
+        "workflowTitle": "Capability change requests",
+        "receipt": "Activation receipt {{id}}",
+        "observation": "Authorization owner observed {{observedAt}} · {{coverage}}",
+        "changeMeta": "Baseline authorization bundle r{{revision}} · expires {{expiry}}",
+        "noExpiry": "Continues after baseline restoration",
+        "commandContext": "App {{product}} · capability {{capability}} · change {{desired}} · baseline bundle r{{revision}} · expires {{expiry}}",
+        "effectiveStates": {
+          "ENABLED": "Enabled",
+          "DISABLED": "Disabled by tenant",
+          "UNKNOWN": "Effective state unavailable"
+        },
+        "overrideModes": {
+          "OWNER_LOCKED": "Locked by catalog owner",
+          "ALLOW_DISABLE": "Tenant suppression allowed",
+          "UNKNOWN": "Override policy unavailable"
+        },
+        "sources": {
+          "GLOBAL_AUTHORIZATION_BUNDLE": "Global authorization catalog",
+          "TENANT_OVERRIDE": "Approved tenant exception",
+          "UNKNOWN": "Effective source unavailable"
+        },
+        "surfaces": {
+          "policy": "Policy controls",
+          "catalog": "Catalog controls",
+          "design": "Design controls",
+          "configuration": "Configuration controls",
+          "directory": "Directory controls",
+          "lifecycle": "Lifecycle controls",
+          "operations": "Operations controls",
+          "personal": "Personal workspace",
+          "team": "Team workspace",
+          "management": "Management workspace",
+          "admin": "Administration workspace",
+          "work": "Work workspace",
+          "unknown": "Governed capability"
+        },
+        "capabilityActions": {
+          "VIEW": "View",
+          "CREATE": "Create",
+          "UPDATE": "Update",
+          "DELETE": "Delete",
+          "MANAGE": "Manage",
+          "APPROVE": "Approve",
+          "PUBLISH": "Publish",
+          "EXPORT": "Export",
+          "EXECUTE": "Execute",
+          "unknown": "Controlled action"
+        },
+        "riskTiers": {
+          "LOW": "Low",
+          "MEDIUM": "Medium",
+          "HIGH": "High",
+          "CRITICAL": "Critical",
+          "UNKNOWN": "Owner classified"
+        },
+        "desiredStates": {
+          "DISABLED": "Suppress for this tenant",
+          "INHERIT": "Restore the baseline",
+          "UNKNOWN": "Requested state unavailable"
+        },
+        "plan": {
+          "loading": "Plan eligibility is loading",
+          "permissionRequired": "Plan eligibility requires app governance view access",
+          "unavailable": "The Provider plan owner is unavailable",
+          "notRegistered": "This product has no Provider entitlement binding",
+          "noActivePlan": "No active plan",
+          "summary": "Plan: {{plan}} v{{version}} · {{state}}",
+          "observation": "Provider plan owner observed {{observedAt}} · source changed {{sourceChangedAt}} · {{coverage}}",
+          "sourceUnavailable": "source change time unavailable",
+          "coverageStates": {
+            "CURRENT_SUBSCRIPTION_AND_TENANT_ENTITLEMENTS": "current subscription and tenant entitlements covered",
+            "UNKNOWN": "plan coverage unavailable"
+          },
+          "states": {
+            "ELIGIBLE": "Eligible",
+            "NO_ACTIVE_SUBSCRIPTION": "No active subscription",
+            "SUBSCRIPTION_SUSPENDED": "Subscription suspended",
+            "NOT_INCLUDED_IN_PLAN": "Not included in plan",
+            "NOT_ASSIGNED_TO_TENANT": "Not assigned to tenant",
+            "TENANT_ENTITLEMENT_SUSPENDED": "Tenant entitlement suspended",
+            "CATALOG_RETIRED": "Entitlement retired",
+            "UNKNOWN": "Plan eligibility unavailable"
+          }
+        },
+        "workflowStates": {
+          "DRAFT": "Draft",
+          "IN_REVIEW": "In review",
+          "APPROVED": "Approved",
+          "REJECTED": "Rejected",
+          "ACTIVE": "Effective",
+          "REVOKED": "Revoked",
+          "SUPERSEDED": "Superseded",
+          "UNKNOWN": "Workflow state unavailable"
+        },
+        "actions": {
+          "REQUEST_DISABLE": "Request suppression",
+          "REQUEST_INHERIT": "Request baseline restore",
+          "CREATE_DRAFT": "Create change draft",
+          "SUBMIT": "Request independent review",
+          "APPROVE": "Approve",
+          "REJECT": "Reject",
+          "ACTIVATE": "Activate",
+          "REVOKE": "Revoke"
+        },
+        "fields": {
+          "validTo": "Suppression expires at",
+          "justification": "Change justification",
+          "reason": "Decision evidence"
+        },
+        "dialogs": {
+          "DISABLED": {
+            "title": "App capability suppression draft",
+            "description": "Suppress this capability for up to {{days}} days. This never grants authority and requires independent approval and activation."
+          },
+          "INHERIT": {
+            "title": "Restore baseline app policy draft",
+            "description": "Remove the tenant suppression and restore the active authorization bundle baseline."
+          },
+          "commands": {
+            "APPROVE": {
+              "title": "Independent approval",
+              "description": "An access approver other than the requester reviews impact and expiry."
+            },
+            "REJECT": {
+              "title": "Reject change",
+              "description": "Record the rejection reason as audit evidence."
+            },
+            "ACTIVATE": {
+              "title": "Activate approved change",
+              "description": "An access manager other than the requester and approver applies the change and creates a receipt."
+            },
+            "REVOKE": {
+              "title": "Revoke tenant exception",
+              "description": "Revoke the current exception and immediately restore the global authorization baseline."
+            }
+          }
+        },
+        "toasts": {
+          "completed": "The app capability policy change was recorded.",
+          "failed": "Check policy state, assigned app scope, and separation of duties."
+        }
+      },
+      "coverage": {
+        "title": "Internal owner coverage",
+        "description": "Auth directly owns app adoption, the authorization catalog, and seat reservations. Included owners: {{owners}}",
+        "observation": "Observed {{observedAt}} · {{coverage}}",
+        "exclusions": "External execution boundary: {{exclusions}}. Unconnected SaaS provisioning or license settlement is never shown as successful.",
+        "owners": {
+          "AUTH_PRODUCT_AUTHORIZATION_CATALOG": "Authorization catalog",
+          "AUTH_TENANT_APP_INSTALLATION": "Tenant app adoption",
+          "AUTH_WORKFORCE_SEAT_RESERVATION": "Workforce seat reservation",
+          "unknown": "Registered internal owner"
+        },
+        "exclusionReasons": {
+          "EXTERNAL_SAAS_PROVISIONING": "External SaaS provisioning is not connected",
+          "EXTERNAL_LICENSE_SETTLEMENT": "External license settlement is not connected",
+          "PRODUCT_RUNTIME_HEALTH_AND_RUNNABILITY": "Runtime health remains with each product owner",
+          "unknown": "An external execution owner is not connected"
+        },
+        "states": {
+          "COMPLETE_INTERNAL_OWNERS": "all internal owners covered",
+          "UNKNOWN": "internal owner coverage unavailable"
+        }
+      },
+      "products": {
+        "approvals": "Approvals",
+        "calendar": "Calendar",
+        "communications": "Communications",
+        "dwaion": "DWAI·ON",
+        "hcm": "HR",
+        "mail": "Mail",
+        "meetings": "Meetings",
+        "messaging": "Messaging",
+        "notifications": "Notifications",
+        "services": "Service requests",
+        "spaces": "Spaces",
+        "workplace": "Workplace",
+        "unknown": "Governed application"
+      },
+      "installations": {
+        "title": "Tenant app adoption",
+        "description": "Separate draft, independent review, approval, and activation while tracking real seat reservations.",
+        "emptyTitle": "No adoption requests",
+        "emptyDescription": "Choose an internal catalog app to create a reviewable adoption draft.",
+        "kind": "Execution owner",
+        "seats": "Seats",
+        "seatValue": "{{active}} active · {{reserved}} reserved / {{capacity}}",
+        "seatState": "Reservation state",
+        "executor": "External executor",
+        "governedIdentity": "Governed application identity"
+      },
+      "assignments": {
+        "title": "Workforce app assignments and seat reservations",
+        "description": "Separate requester, approver, and activator, reserving a seat from approval.",
+        "emptyTitle": "No workforce assignments",
+        "emptyDescription": "Request a governed user assignment for an enabled internal app.",
+        "userId": "User {{id}}",
+        "validTo": "Until {{date}}",
+        "noExpiry": "No expiry"
+      },
+      "actions": {
+        "requestInstallation": "Request app adoption",
+        "requestAssignment": "Request user assignment",
+        "createDraft": "Create adoption draft",
+        "submitForApproval": "Request approval",
+        "SUBMIT": "Submit for review",
+        "APPROVE": "Approve",
+        "REJECT": "Reject",
+        "ACTIVATE": "Activate",
+        "REVOKE": "Revoke"
+      },
+      "fields": {
+        "product": "Application",
+        "kind": "Adoption execution mode",
+        "seatCapacity": "Contract seat capacity",
+        "seatCapacityError": "Seat capacity must be a whole number greater than zero.",
+        "justification": "Request justification",
+        "installation": "Enabled application",
+        "user": "User",
+        "validTo": "Expires at",
+        "reason": "Decision evidence"
+      },
+      "kinds": {
+        "INTERNAL_AUTH_CONTROLLED": "DWP Auth controlled",
+        "EXTERNAL_SERVICE": "External SaaS execution required",
+        "UNKNOWN": "Execution owner unavailable"
+      },
+      "executorStates": {
+        "NOT_REQUIRED": "No external executor required",
+        "UNAVAILABLE": "Not connected",
+        "UNKNOWN": "Executor state unavailable"
+      },
+      "seatStates": {
+        "AVAILABLE": "Seats available",
+        "FULL": "Capacity reached",
+        "UNBOUNDED": "No internal capacity"
+      },
+      "states": {
+        "DRAFT": "Draft",
+        "IN_REVIEW": "In review",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "ENABLED": "Enabled",
+        "PENDING_APPROVAL": "Pending approval",
+        "ACTIVE": "Assignment active",
+        "DENIED": "Denied",
+        "REVOKED": "Revoked",
+        "UNKNOWN": "Lifecycle state unavailable"
+      },
+      "dialogs": {
+        "installationTitle": "Tenant app adoption draft",
+        "installationDescription": "A separate approver and activator are required after this request is created.",
+        "assignmentTitle": "Workforce app assignment request",
+        "assignmentDescription": "Approval reserves a seat; a separate actor must activate the internal entitlement.",
+        "externalBoundary": "The external SaaS provisioning executor is not connected. An approval record can be created, but DWP will not report external activation as successful.",
+        "commands": {
+          "APPROVE": {
+            "title": "Independent approval",
+            "description": "Review scope and seat impact as an actor other than the requester and record evidence."
+          },
+          "REJECT": {
+            "title": "Reject request",
+            "description": "Record an auditable reason for rejection."
+          },
+          "ACTIVATE": {
+            "title": "Activate approved item",
+            "description": "An actor other than the requester and approver completes activation and creates a receipt."
+          },
+          "REVOKE": {
+            "title": "Revoke assignment",
+            "description": "Revoke the current assignment and record the reason and execution time."
+          }
+        }
+      },
+      "toasts": {
+        "completed": "The app adoption change was recorded.",
+        "failed": "Check the current state and actor separation requirements, then try again."
+      }
+    },
     "bootstrap": {
       "badge": "First approver setup",
       "approveButton": "Approve setup",
@@ -3776,7 +4541,8 @@
     "views": {
       "assignments": "Responsibility assignments",
       "presets": "App admin presets",
-      "boundaries": "App resource sets"
+      "boundaries": "App resource sets",
+      "adoption": "App adoption and seats"
     },
     "metrics": {
       "activeAssignments": "Active responsibilities",
@@ -3845,7 +4611,39 @@
       "APP_CONFIG_ADMIN": "App configuration administrator",
       "APP_ACCESS_MANAGER": "App access fulfiller",
       "APP_ACCESS_APPROVER": "App access approver",
-      "APP_ACCESS_REVIEWER": "App access reviewer"
+      "APP_ACCESS_REVIEWER": "App access reviewer",
+      "UNKNOWN": "Responsibility unavailable"
+    },
+    "presentation": {
+      "catalogUnavailable": "The product owner has not approved this preset for requests.",
+      "duties": {
+        "approvalDesignDraft": "Draft approval designs",
+        "approvalDesignPublish": "Publish approval designs",
+        "approvalPolicyDraft": "Draft approval policies",
+        "approvalPolicyPublish": "Publish approval policies",
+        "approvalOperationsExecute": "Operate approval cases",
+        "approvalOperationsAudit": "Review approval operations",
+        "approvalSignatureRead": "Read signature integration status",
+        "managed": "Managed specialist duty"
+      },
+      "reviewReasons": {
+        "presetWorkflowReviewRequired": "Existing access requires governed preset review",
+        "managed": "Governed access review required"
+      },
+      "evidence": {
+        "retained": "Governed evidence retained",
+        "unavailable": "Evidence unavailable"
+      },
+      "principalTypes": {
+        "user": "User",
+        "group": "Group",
+        "managed": "Managed principal"
+      },
+      "requestChannels": {
+        "selfService": "Self-service request",
+        "governance": "Governance workflow",
+        "managed": "Managed request channel"
+      }
     },
     "states": {
       "PENDING_APPROVAL": "Pending approval",
@@ -3853,15 +4651,16 @@
       "ACTIVE": "Active",
       "DENIED": "Denied",
       "REVOKED": "Revoked",
-      "EXPIRED": "Expired"
+      "EXPIRED": "Expired",
+      "UNKNOWN": "Lifecycle state unavailable"
     },
     "assignmentTable": "Scoped application responsibility assignments",
     "noExpiry": "No expiration",
     "reviewDue": "Review due {{value}}",
     "assignmentCount": "{{count}} active",
     "presets": {
-      "principalMetadata": "{{type}} · {{ref}}",
-      "presetMetadata": "{{code}} · v{{version}}",
+      "principalMetadata": "{{type}}",
+      "presetMetadata": "Catalog version {{version}}",
       "title": "Product-specific administrator duties",
       "description": "Assign responsibility and the minimum specialist duties through one auditable approval flow.",
       "atomicNotice": "Responsibility, app scope, and specialist duties are approved, activated, and revoked together. Partial fulfillment is not allowed.",
@@ -3917,7 +4716,8 @@
       "reviewStates": {
         "OPEN": "Pending review",
         "RESOLVED": "Resolved",
-        "DISMISSED": "Dismissed"
+        "DISMISSED": "Dismissed",
+        "UNKNOWN": "Review state unavailable"
       }
     },
     "empty": {
@@ -3944,6 +4744,7 @@
   "appAccess": {
     "loading": "Loading app access requests",
     "filterLabel": "Request state",
+    "partialCoverage": "Showing the newest {{count}} requests. More requests exist, so counts and filtered results are partial.",
     "states": {
       "ALL": "All",
       "PENDING": "Pending",
@@ -3951,7 +4752,8 @@
       "REVOKED": "Revoked",
       "REJECTED": "Rejected",
       "CANCELLED": "Cancelled",
-      "EXPIRED": "Expired"
+      "EXPIRED": "Expired",
+      "UNKNOWN": "State unavailable"
     },
     "fields": {
       "requester": "Requester",
@@ -3983,7 +4785,8 @@
       "SUCCEEDED": "Access active",
       "FAILED": "Execution failed",
       "REVOKED": "Access revoked",
-      "EXPIRED": "Access expired"
+      "EXPIRED": "Access expired",
+      "UNKNOWN": "Execution state unavailable"
     },
     "fulfillmentDescriptions": {
       "NOT_REQUIRED": "No runtime entitlement action is required for this decision.",
@@ -3991,7 +4794,8 @@
       "SUCCEEDED": "Auth is enforcing the entitlement. Revocation takes effect on the next request.",
       "FAILED": "The entitlement authority rejected or could not complete the last attempt. Review the evidence and retry.",
       "REVOKED": "The runtime entitlement has been removed from the authority source.",
-      "EXPIRED": "The approved entitlement reached its policy end time and is no longer effective."
+      "EXPIRED": "The approved entitlement reached its policy end time and is no longer effective.",
+      "UNKNOWN": "The execution owner did not return a supported lifecycle state. No action is available."
     },
     "fulfillment": {
       "title": "Runtime entitlement lifecycle",
@@ -4009,7 +4813,9 @@
     },
     "empty": {
       "title": "No requests in this state",
-      "description": "There is no app access work to review for the selected state."
+      "description": "There is no app access work to review for the selected state.",
+      "partialTitle": "No matching request in the loaded range",
+      "partialDescription": "The newest {{count}} requests do not include this state. More requests exist, so this is not a complete empty result."
     },
     "toasts": {
       "approved": "The access request was approved.",
@@ -4093,12 +4899,14 @@
     },
     "subjectTypes": {
       "ROLE": "Role default",
-      "USER": "User override"
+      "USER": "User override",
+      "UNKNOWN": "Subject type unavailable"
     },
     "roles": {
       "ADMIN": "Unified administrator",
       "HR_ADMIN": "HR administrator",
-      "PEOPLE_ADMIN": "People operations administrator"
+      "PEOPLE_ADMIN": "People operations administrator",
+      "UNKNOWN": "Managed role unavailable"
     },
     "roleDescriptions": {
       "ADMIN": "Existing unified administrator policy",
@@ -4108,23 +4916,27 @@
     "populations": {
       "TENANT": "All SKAX organizations",
       "ORG_UNIT": "Selected organization only",
-      "ORG_TREE": "Selected organization and descendants"
+      "ORG_TREE": "Selected organization and descendants",
+      "UNKNOWN": "Organization scope unavailable"
     },
     "fieldGroups": {
       "DIRECTORY": "Directory basics",
       "WORKER_IDENTIFIERS": "Worker and assignment identifiers",
       "EMPLOYMENT": "Employment and assignment history",
-      "JOB_GRADE": "Job grade and level"
+      "JOB_GRADE": "Job grade and level",
+      "UNKNOWN": "Data group unavailable"
     },
     "actions": {
       "READ": "Read data",
-      "EXPORT": "Export data"
+      "EXPORT": "Export data",
+      "UNKNOWN": "Action unavailable"
     },
     "states": {
       "ACTIVE": "Active",
       "SCHEDULED": "Scheduled",
       "REVOKED": "Revoked",
-      "EXPIRED": "Expired"
+      "EXPIRED": "Expired",
+      "UNKNOWN": "Policy state unavailable"
     },
     "fields": {
       "subjectType": "Subject type",
@@ -4247,7 +5059,34 @@
     "paths": {
       "appearance.fontFamily": "Product font",
       "appearance.accentColor": "Brand accent",
-      "navigation.pattern": "Navigation pattern"
+      "navigation.pattern": "Navigation pattern",
+      "appearance": {
+        "fontFamily": "Product font",
+        "accentColor": "Brand accent"
+      },
+      "navigation": { "pattern": "Navigation pattern" },
+      "accessibility": {
+        "highContrast": "High contrast",
+        "reduceMotion": "Reduced motion",
+        "underlineLinks": "Underlined links",
+        "reduceTransparency": "Reduced transparency"
+      },
+      "unknown": "Managed setting"
+    },
+    "values": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "unavailable": "Value available only to the policy owner",
+      "navigation": {
+        "sidebar": "Sidebar",
+        "rail": "Compact rail",
+        "top": "Top navigation"
+      }
+    },
+    "owners": {
+      "tenantAdmin": "Tenant administration",
+      "settingsAdmin": "Settings administration",
+      "managed": "Managed policy owner"
     },
     "states": {
       "PENDING": "Pending",
@@ -4255,6 +5094,7 @@
       "REJECTED": "Rejected",
       "CANCELLED": "Cancelled",
       "EXPIRED": "Expired",
+      "UNKNOWN": "State unavailable",
       "ALL": "All"
     },
     "actions": {
@@ -4312,7 +5152,8 @@
       "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "PUBLISHED": "Published",
-      "SUPERSEDED": "Superseded"
+      "SUPERSEDED": "Superseded",
+      "UNKNOWN": "Revision state unavailable"
     },
     "fields": {
       "bundleKey": "Bundle key",
@@ -4380,7 +5221,8 @@
         "ADDED": "Added",
         "UPDATED": "Updated",
         "REMOVED": "Removed",
-        "UNCHANGED": "Unchanged"
+        "UNCHANGED": "Unchanged",
+        "UNKNOWN": "Change type unavailable"
       }
     },
     "preview": {
@@ -4398,7 +5240,8 @@
       "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "PUBLISHED": "Published",
-      "RESTORED": "Restored as a new draft"
+      "RESTORED": "Restored as a new draft",
+      "UNKNOWN": "Decision unavailable"
     },
     "transitions": {
       "reasonHelp": "Enter at least 5 characters. This reason is retained as immutable decision evidence.",
@@ -4487,6 +5330,7 @@
       "expiringSoonHelp": "Deadlines that need attention",
       "recentTransfers": "Recent action records",
       "recentTransfersHelp": "Latest 50 records from each audit feed",
+      "partialHistory": "Only the newest records in each audit feed are loaded. More history exists, so counts and empty filtered results are partial.",
       "refreshing": "Refreshing operational status",
       "updatedAt": "Last successful refresh {{value}}",
       "notUpdated": "No successful refresh yet"
@@ -4537,7 +5381,8 @@
     },
     "dispositions": {
       "TRANSFER": "Transfer ownership to a new steward",
-      "RETAIN_ORPHANED": "Suspend now and archive automatically"
+      "RETAIN_ORPHANED": "Suspend now and archive automatically",
+      "UNKNOWN": "Outcome unavailable"
     },
     "dispositionHelp": {
       "TRANSFER": "Keep visibility and saved configuration unchanged, and assign an active user as owner.",
@@ -4546,12 +5391,14 @@
     "reasons": {
       "OFFBOARDING": "Offboarding or transfer",
       "TEAM_REORGANIZATION": "Team reorganization",
-      "OWNER_CORRECTION": "Owner correction"
+      "OWNER_CORRECTION": "Owner correction",
+      "UNKNOWN": "Reason unavailable"
     },
     "scopes": {
       "PERSONAL": "Personal",
       "TEAM": "Team",
-      "TENANT": "Organization"
+      "TENANT": "Organization",
+      "UNKNOWN": "Visibility unavailable"
     },
     "statuses": {
       "ACTIVE": "Active",
@@ -4559,7 +5406,8 @@
       "SUSPENDED": "Suspended",
       "LOCKED": "Locked",
       "DEACTIVATED": "Deactivated",
-      "INVITED": "Invited"
+      "INVITED": "Invited",
+      "UNKNOWN": "Status unavailable"
     },
     "surfaces": {
       "communicationsWork": "News and messaging work",
@@ -4775,12 +5623,14 @@
       "actions": {
         "REASSIGN": "Reassigned",
         "EXTEND_RETENTION": "Archive deadline extended",
-        "ARCHIVE_NOW": "Archived immediately"
+        "ARCHIVE_NOW": "Archived immediately",
+        "UNKNOWN": "Action unavailable"
       },
       "outcomes": {
         "REASSIGN": "New steward: {{owner}}",
         "EXTEND_RETENTION": "New archive date: {{value}}",
-        "ARCHIVE_NOW": "Moved to archived state"
+        "ARCHIVE_NOW": "Moved to archived state",
+        "UNKNOWN": "Outcome unavailable"
       }
     },
     "confirm": {
@@ -5168,6 +6018,101 @@
     "exited": "Support session ended.",
     "exitFailed": "The support session could not be ended. Try again."
   },
+  "settingRegistry": {
+    "title": "Setting owner registry",
+    "description": "Review typed owners, preview effective impact, and publish versioned tenant overrides through independent approval.",
+    "ownerCount": "{{count}} connected owners",
+    "ownerVersion": "version {{version}}",
+    "loadError": "Setting owners could not be loaded. No owner state is inferred.",
+    "adapter": {
+      "CONNECTED": "Owner connected",
+      "UNAVAILABLE": "Adapter unavailable",
+      "UNKNOWN": "Adapter state unavailable"
+    },
+    "owners": {
+      "AUTH_POLICY": "Authentication policy",
+      "AUTH_TENANT_DIRECTORY": "Tenant identity directory",
+      "registered": "Registered setting owner"
+    },
+    "services": {
+      "auth": "Identity and access service",
+      "registered": "Registered owner service"
+    },
+    "resolution": {
+      "TENANT_OVERRIDE_OR_OWNER_DEFAULT": "Tenant value or owner default",
+      "UNKNOWN": "Resolution policy unavailable"
+    },
+    "freshness": {
+      "FRESH": "Current owner value observed",
+      "STALE": "Owner value needs refresh",
+      "NO_DATA": "Owner value unavailable",
+      "DRIFTED": "Current value differs from the latest governed publication",
+      "UNKNOWN": "Owner freshness unavailable"
+    },
+    "lifecycle": {
+      "DRAFT": "Draft",
+      "IN_REVIEW": "In independent review",
+      "APPROVED": "Approved for publication",
+      "REJECTED": "Rejected",
+      "PUBLISHED": "Published",
+      "SUPERSEDED": "Superseded",
+      "UNKNOWN": "Lifecycle state unavailable"
+    },
+    "values": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "ownerOnly": "Owner-specific editor required",
+      "unavailable": "Value unavailable",
+      "registeredSetting": "Registered managed setting",
+      "login": {
+        "LOCAL": "Email and password",
+        "SSO": "Company single sign-on"
+      },
+      "durationMinutes": "{{count}} minutes"
+    },
+    "actions": {
+      "propose": "Propose value",
+      "inherit": "Restore inheritance",
+      "createDraft": "Create draft",
+      "cancel": "Cancel",
+      "SUBMIT": "Submit for review",
+      "APPROVE": "Approve",
+      "REJECT": "Reject",
+      "PUBLISH": "Publish",
+      "UNKNOWN": "Action unavailable"
+    },
+    "changes": {
+      "title": "Versioned change workflow",
+      "loading": "Loading versioned setting changes",
+      "loadError": "Setting changes could not be loaded.",
+      "emptyTitle": "No active setting change",
+      "emptyDescription": "Create a draft from a connected owner to preview and review a tenant override.",
+      "preview": "{{before}} → {{after}} · {{count}} internal identities in measured scope",
+      "receipt": "Publication receipt {{receipt}}"
+    },
+    "create": {
+      "valueTitle": "Propose tenant value",
+      "inheritTitle": "Restore owner inheritance",
+      "description": "The draft captures an observed before value and exact owner-applied after value.",
+      "value": "Proposed value",
+      "justification": "Justification",
+      "inheritPreview": "The owner default {{value}} will become effective after approval and publication."
+    },
+    "command": {
+      "description": "The server revalidates version, actor separation, and owner state before transition.",
+      "reason": "Independent decision reason",
+      "preview": "{{before}} → {{after}} · impact scope {{count}} identities",
+      "SUBMIT": { "title": "Submit setting change" },
+      "APPROVE": { "title": "Approve setting change" },
+      "REJECT": { "title": "Reject setting change" },
+      "PUBLISH": { "title": "Publish through owner adapter" }
+    },
+    "feedback": {
+      "draftCreated": "Setting change draft created.",
+      "commandCompleted": "Setting workflow advanced.",
+      "commandFailed": "The setting command failed. Reload the current version and try again."
+    }
+  },
   "homeStudio": {
     "eyebrow": "Tenant home governance",
     "title": "Home Studio",
@@ -5199,6 +6144,8 @@
       "currentVersion": "Current release v{{version}}",
       "revisionCount_one": "{{count}} revision",
       "revisionCount_other": "{{count}} revisions",
+      "revisionCountPartial": "Newest first page",
+      "partial": "More than {{limit}} releases exist. Counts and empty state are withheld beyond this first page.",
       "rollbackImpact": "Restore release v{{version}}. Affected scopes: {{scopes}}."
     },
     "audit": {
@@ -5211,7 +6158,29 @@
       "noCorrelation": "No correlation ID",
       "page": "Page {{page}} of {{total}}",
       "previousPage": "Previous page",
-      "nextPage": "Next page"
+      "nextPage": "Next page",
+      "actions": {
+        "settingsUpdated": "Home settings updated",
+        "experiencePublished": "Home experience published",
+        "launchpadUpdated": "App dock updated",
+        "compositionUpdated": "Home composition updated",
+        "backgroundUploaded": "Background published",
+        "backgroundReset": "Background reset",
+        "rolledBack": "Home release restored",
+        "managed": "Governed Home change"
+      },
+      "targets": {
+        "experience": "Home experience",
+        "launchpad": "App dock configuration",
+        "composition": "Home composition policy",
+        "managed": "Managed Home resource"
+      },
+      "outcomes": {
+        "success": "Succeeded",
+        "denied": "Denied",
+        "failed": "Failed",
+        "unavailable": "Outcome unavailable"
+      }
     }
   }
 }

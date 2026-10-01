@@ -202,8 +202,13 @@ export async function listRegistryEntries(options?: {
   query?: string;
   registryType?: RegistryType | 'ALL';
   lifecycle?: ReferenceLifecycle | 'ALL';
+  page?: number;
+  size?: number;
 }): Promise<PageResult<RegistryEntry>> {
-  const search = new URLSearchParams({ page: '0', size: '100' });
+  const search = new URLSearchParams({
+    page: String(Math.max(0, options?.page ?? 0)),
+    size: String(Math.max(1, Math.min(100, options?.size ?? 100))),
+  });
   if (options?.query?.trim()) search.set('query', options.query.trim());
   if (options?.registryType && options.registryType !== 'ALL') {
     search.set('registryType', options.registryType);

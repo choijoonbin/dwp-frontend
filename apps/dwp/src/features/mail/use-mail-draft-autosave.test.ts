@@ -4,14 +4,14 @@ import { act, createElement, StrictMode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { createMailDraft, saveMailDraft } = vi.hoisted(() => ({
-  createMailDraft: vi.fn(),
-  saveMailDraft: vi.fn(),
+const { createAdvancedMailDraftMock, saveAdvancedMailDraftMock } = vi.hoisted(() => ({
+  createAdvancedMailDraftMock: vi.fn(),
+  saveAdvancedMailDraftMock: vi.fn(),
 }));
 
 vi.mock('@dwp-frontend/shared-utils', () => ({
-  createAdvancedMailDraft: createMailDraft,
-  saveAdvancedMailDraft: saveMailDraft,
+  createAdvancedMailDraft: createAdvancedMailDraftMock,
+  saveAdvancedMailDraft: saveAdvancedMailDraftMock,
   HttpError: class HttpError extends Error {
     constructor(
       message: string,
@@ -101,8 +101,8 @@ describe('mail draft autosave', () => {
   beforeEach(() => {
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
     vi.useFakeTimers();
-    createMailDraft.mockReset();
-    saveMailDraft.mockReset();
+    createAdvancedMailDraftMock.mockReset();
+    saveAdvancedMailDraftMock.mockReset();
     host = document.createElement('div');
     document.body.append(host);
     root = createRoot(host);
@@ -127,11 +127,11 @@ describe('mail draft autosave', () => {
       )
     );
     await act(async () => vi.advanceTimersByTimeAsync(2_000));
-    expect(createMailDraft).not.toHaveBeenCalled();
-    expect(saveMailDraft).not.toHaveBeenCalled();
+    expect(createAdvancedMailDraftMock).not.toHaveBeenCalled();
+    expect(saveAdvancedMailDraftMock).not.toHaveBeenCalled();
     expect(latest.status).toBe('SAVED');
 
-    saveMailDraft.mockResolvedValue(detail('draft-1', 8));
+    saveAdvancedMailDraftMock.mockResolvedValue(detail('draft-1', 8));
     await act(async () =>
       root.render(
         strictHarness({
@@ -143,29 +143,31 @@ describe('mail draft autosave', () => {
       )
     );
     await act(async () => vi.advanceTimersByTimeAsync(1_750));
-    expect(saveMailDraft).toHaveBeenCalledWith(
+    expect(saveAdvancedMailDraftMock).toHaveBeenCalledWith(
       'draft-1',
       expect.objectContaining({ body: 'Updated draft body', version: 7 })
     );
-    expect(createMailDraft).not.toHaveBeenCalled();
+    expect(createAdvancedMailDraftMock).not.toHaveBeenCalled();
     expect(latest.status).toBe('SAVED');
   });
 
   it('retries one uncertain create with the same idempotency key', async () => {
     const fields = { toEmail: '', subject: 'Subject-only draft', body: '' };
-    createMailDraft
+    createAdvancedMailDraftMock
       .mockRejectedValueOnce(new Error('network'))
       .mockResolvedValueOnce(detail('draft-2', 1));
     await act(async () => root.render(strictHarness({ fields })));
     await act(async () => vi.advanceTimersByTimeAsync(1_750));
     expect(latest.status).toBe('ERROR');
-    const firstInput = createMailDraft.mock.calls[0]?.[0];
+    const firstInput = createAdvancedMailDraftMock.mock.calls[0]?.[0];
 
     await act(async () => {
       await latest.saveNow();
     });
-    expect(createMailDraft).toHaveBeenCalledTimes(2);
-    expect(createMailDraft.mock.calls[1]?.[0].idempotencyKey).toBe(firstInput.idempotencyKey);
+    expect(createAdvancedMailDraftMock).toHaveBeenCalledTimes(2);
+    expect(createAdvancedMailDraftMock.mock.calls[1]?.[0].idempotencyKey).toBe(
+      firstInput.idempotencyKey
+    );
     expect(latest.identity).toEqual({ threadId: 'draft-2', version: 1 });
   });
 
@@ -175,7 +177,7 @@ describe('mail draft autosave', () => {
       release = resolve;
     });
     const onSaved = vi.fn();
-    createMailDraft.mockReturnValue(pending);
+    createAdvancedMailDraftMock.mockReturnValue(pending);
 
     await act(async () =>
       root.render(
@@ -186,7 +188,7 @@ describe('mail draft autosave', () => {
       )
     );
     await act(async () => vi.advanceTimersByTimeAsync(1_750));
-    expect(createMailDraft).toHaveBeenCalledTimes(1);
+    expect(createAdvancedMailDraftMock).toHaveBeenCalledTimes(1);
 
     await act(async () => root.render(null));
     await act(async () => release(detail('draft-old-session', 1)));
@@ -196,24 +198,24 @@ describe('mail draft autosave', () => {
 
   it('creates a new command after a rejected payload is corrected', async () => {
     const initial = { toEmail: 'invalid', subject: 'Planning note', body: 'Draft body' };
-    createMailDraft
+    createAdvancedMailDraftMock
       .mockRejectedValueOnce(new HttpError('Invalid recipient', 400))
       .mockResolvedValueOnce(detail('draft-3', 1));
     await act(async () => root.render(strictHarness({ fields: initial })));
     await act(async () => vi.advanceTimersByTimeAsync(1_750));
     expect(latest.status).toBe('ERROR');
-    const rejectedInput = createMailDraft.mock.calls[0]?.[0];
+    const rejectedInput = createAdvancedMailDraftMock.mock.calls[0]?.[0];
 
     await act(async () =>
       root.render(strictHarness({ fields: { ...initial, toEmail: 'mina.kim@sk.com' } }))
     );
     await act(async () => vi.advanceTimersByTimeAsync(1_750));
 
-    expect(createMailDraft).toHaveBeenCalledTimes(2);
-    expect(createMailDraft.mock.calls[1]?.[0]).toMatchObject({
+    expect(createAdvancedMailDraftMock).toHaveBeenCalledTimes(2);
+    expect(createAdvancedMailDraftMock.mock.calls[1]?.[0]).toMatchObject({
       toEmail: 'mina.kim@sk.com',
     });
-    expect(createMailDraft.mock.calls[1]?.[0].idempotencyKey).not.toBe(
+    expect(createAdvancedMailDraftMock.mock.calls[1]?.[0].idempotencyKey).not.toBe(
       rejectedInput.idempotencyKey
     );
     expect(latest.status).toBe('SAVED');
@@ -259,11 +261,11 @@ describe('mail draft autosave', () => {
     expect(mailDraftHasContent(fields)).toBe(true);
     expect(mailDraftPayload(fields)).toMatchObject({ composeOptions: fields.composeOptions });
 
-    createMailDraft.mockResolvedValue(detail('draft-options-only', 1));
+    createAdvancedMailDraftMock.mockResolvedValue(detail('draft-options-only', 1));
     await act(async () => root.render(strictHarness({ fields })));
     await act(async () => vi.advanceTimersByTimeAsync(1_750));
 
-    expect(createMailDraft).toHaveBeenCalledWith(
+    expect(createAdvancedMailDraftMock).toHaveBeenCalledWith(
       expect.objectContaining({
         subject: undefined,
         body: undefined,

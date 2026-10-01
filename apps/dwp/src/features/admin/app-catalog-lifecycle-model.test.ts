@@ -6,7 +6,10 @@ import type {
   ProductSurfaceContextListData,
 } from '@dwp-frontend/shared-utils';
 
-import { buildAppLifecycleCatalog } from './app-catalog-lifecycle-model';
+import {
+  buildAppLifecycleCatalog,
+  buildAppLifecycleProvenance,
+} from './app-catalog-lifecycle-model';
 
 const manifest = {
   id: 'mail',
@@ -89,7 +92,7 @@ const authority = {
 } as unknown as ProductSurfaceContextListData;
 
 describe('application lifecycle catalog', () => {
-  it('keeps installation and workforce assignment unconfirmed even when admin data exists', () => {
+  it('joins tenant installation and workforce assignment owners without inferring runnability', () => {
     const [item] = buildAppLifecycleCatalog({
       catalogEntities: [registry],
       catalogStatus: 'ready',
@@ -98,14 +101,67 @@ describe('application lifecycle catalog', () => {
       governanceStatus: 'ready',
       authority,
       authorityStatus: 'ready',
+      adoption: {
+        observedAt: '2026-09-29T00:00:00Z',
+        coverageState: 'COMPLETE_INTERNAL_OWNERS',
+        includedOwners: ['AUTH_TENANT_APP_INSTALLATION'],
+        exclusions: ['EXTERNAL_SAAS_PROVISIONING'],
+        requestableAppResourceKeys: ['APP.MAIL'],
+        installations: [
+          {
+            installationId: 'installation-mail',
+            productKey: 'mail',
+            appResourceKey: 'APP.MAIL',
+            installationKind: 'INTERNAL_AUTH_CONTROLLED',
+            lifecycleState: 'ENABLED',
+            externalExecutorState: 'NOT_REQUIRED',
+            seatCapacity: 50,
+            reservedSeats: 2,
+            activeSeats: 1,
+            justification: 'Adopt Mail for the tenant workforce.',
+            requestedBy: 10,
+            version: 3,
+            createdAt: '2026-09-29T00:00:00Z',
+            updatedAt: '2026-09-29T00:00:00Z',
+            allowedActions: ['REQUEST_ASSIGNMENT'],
+          },
+        ],
+      },
+      adoptionStatus: 'ready',
+      workforceAssignments: [
+        {
+          assignmentId: 'assignment-mail',
+          installationId: 'installation-mail',
+          productKey: 'mail',
+          userId: 40,
+          userDisplayName: 'Mail administrator',
+          lifecycleState: 'ACTIVE',
+          seatQuantity: 1,
+          sourceType: 'TENANT_DIRECT',
+          externalSettlementState: 'NOT_REQUIRED',
+          justification: 'Assign Mail for tenant administration.',
+          requestedBy: 10,
+          version: 3,
+          createdAt: '2026-09-29T00:00:00Z',
+          updatedAt: '2026-09-29T00:00:00Z',
+          allowedActions: [],
+        },
+      ],
+      workforceAssignmentsStatus: 'ready',
     });
 
     expect(item).toMatchObject({
       registry: { state: 'OBSERVED', lifecycleState: 'ACTIVE', revision: 7 },
       tenantAdminBoundary: { state: 'OBSERVED', count: 1 },
       currentActorEntitlement: { state: 'OBSERVED', sources: ['ENTITLEMENT'] },
-      installation: { state: 'UNAVAILABLE' },
-      workforceAssignment: { state: 'UNAVAILABLE' },
+      installation: {
+        state: 'OBSERVED',
+        lifecycleState: 'ENABLED',
+        activeSeats: 1,
+        reservedSeats: 2,
+        seatCapacity: 50,
+      },
+      workforceAssignment: { state: 'OBSERVED', active: 1, pending: 0 },
       runnable: { state: 'OBSERVED', surfaceCount: 1 },
       adminAssignments: { state: 'OBSERVED', active: 1, pending: 0 },
       managementPath: '/mail/admin/overview',
@@ -140,6 +196,27 @@ describe('application lifecycle catalog', () => {
     expect(item?.registry.state).toBe('UNAVAILABLE');
   });
 
+  it('keeps loading distinct from an unavailable owner and a confirmed negative', () => {
+    const [item] = buildAppLifecycleCatalog({
+      catalogEntities: [],
+      catalogStatus: 'loading',
+      manifests: [manifest],
+      governanceStatus: 'loading',
+      authorityStatus: 'loading',
+      adoptionStatus: 'loading',
+      workforceAssignmentsStatus: 'loading',
+    });
+
+    expect(item?.registry.state).toBe('LOADING');
+    expect(item?.tenantAdminBoundary.state).toBe('LOADING');
+    expect(item?.currentActorEntitlement.state).toBe('LOADING');
+    expect(item?.installation.state).toBe('LOADING');
+    expect(item?.workforceAssignment.state).toBe('LOADING');
+    expect(item?.runnable.state).toBe('LOADING');
+    expect(item?.adminAssignments.state).toBe('LOADING');
+    expect(item?.managementAccess).toBe('LOADING');
+  });
+
   it('counts a preset aggregate and its underlying responsibility assignment once', () => {
     const dashboard = {
       ...governance,
@@ -164,5 +241,65 @@ describe('application lifecycle catalog', () => {
     });
 
     expect(item?.adminAssignments).toEqual({ state: 'OBSERVED', active: 1, pending: 0 });
+  });
+
+  it('preserves authority revision and tenant-owner coverage provenance', () => {
+    const provenance = buildAppLifecycleProvenance({
+      authority: {
+        ...authority,
+        generatedAt: '2026-09-29T01:00:00Z',
+        decisionRevision: 'decision-7',
+        sourceRevisions: { auth: 'auth-7', policy: 'policy-4' },
+      } as ProductSurfaceContextListData,
+      authorityStatus: 'ready',
+      adoption: {
+        observedAt: '2026-09-29T01:01:00Z',
+        coverageState: 'COMPLETE_INTERNAL_OWNERS',
+        includedOwners: ['AUTH_TENANT_APP_INSTALLATION'],
+        exclusions: ['EXTERNAL_SAAS_PROVISIONING'],
+        requestableAppResourceKeys: [],
+        installations: [],
+      },
+      adoptionStatus: 'ready',
+    });
+
+    expect(provenance).toEqual({
+      authority: {
+        state: 'OBSERVED',
+        generatedAt: '2026-09-29T01:00:00Z',
+        decisionRevision: 'decision-7',
+        sourceRevisionCount: 2,
+      },
+      adoption: {
+        state: 'OBSERVED',
+        observedAt: '2026-09-29T01:01:00Z',
+        coverageState: 'COMPLETE_INTERNAL_OWNERS',
+        ownerCount: 1,
+        exclusionCount: 1,
+      },
+    });
+  });
+
+  it('keeps an authority-only internal app key out of the display name', () => {
+    const [item] = buildAppLifecycleCatalog({
+      catalogEntities: [],
+      catalogStatus: 'ready',
+      manifests: [],
+      governanceStatus: 'ready',
+      authority: {
+        ...authority,
+        contexts: [
+          {
+            ...authority.contexts[0],
+            productKey: 'internal-product',
+            appResourceKey: 'APP.INTERNAL_ONLY',
+          },
+        ],
+      } as ProductSurfaceContextListData,
+      authorityStatus: 'ready',
+    });
+
+    expect(item?.appKey).toBe('APP.INTERNAL_ONLY');
+    expect(item?.displayName).toBeUndefined();
   });
 });

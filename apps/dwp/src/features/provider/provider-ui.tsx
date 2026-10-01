@@ -95,7 +95,28 @@ export function ProviderStatusChip({ state }: { state: string }) {
         ? 'warning'
         : 'default';
 
-  return <Chip size="small" variant="outlined" color={color} label={display('states', state)} />;
+  const highContrastSurface =
+    color === 'default'
+      ? {
+          bgcolor: 'text.primary',
+          color: 'background.paper',
+          borderColor: 'text.primary',
+        }
+      : {
+          bgcolor: `${color}.main`,
+          color: `${color}.contrastText`,
+          borderColor: `${color}.main`,
+        };
+
+  return (
+    <Chip
+      size="small"
+      variant="outlined"
+      color={color}
+      label={display('states', state)}
+      sx={{ 'html[data-contrast="high"] &': highContrastSurface }}
+    />
+  );
 }
 
 export function ProviderLoading() {

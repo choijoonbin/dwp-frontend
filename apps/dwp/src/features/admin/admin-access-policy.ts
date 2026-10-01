@@ -1,54 +1,69 @@
-import type { ResourceRoleDTO } from '@dwp-frontend/shared-utils/api/auth-api';
+import type { MeResponse } from '@dwp-frontend/shared-utils/api/auth-api';
 import {
   canEnterTenantControlPlane,
-  hasFullTenantAdminRole,
-  hasProviderControlPlaneRole,
-  hasTenantControlPlaneRole,
+  isTenantIdentity,
 } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
-import type { AdminNavigationItem } from './admin-navigation';
+import { ADMIN_NAVIGATION, type AdminNavigationItem } from './admin-navigation';
 
 type PermissionLookup = (resourceKey: string, permissionCode?: string) => boolean;
 
 type AdminItemAccess = {
-  roles: readonly string[];
+  identity:
+    | Pick<MeResponse, 'identityPlane' | 'roles' | 'resourceRoles'>
+    | null
+    | undefined;
   permissionsLoaded: boolean;
   hasPermission: PermissionLookup;
   supportScopes?: readonly string[];
-  resourceRoles?: readonly ResourceRoleDTO[];
 };
 
-export function canEnterCompanyAdministration(
-  roles: readonly string[],
-  administrationAppEntitled: boolean,
-  resourceRoles: readonly ResourceRoleDTO[] = []
-): boolean {
-  if (hasProviderControlPlaneRole(roles)) return false;
-  return canEnterTenantControlPlane(roles, administrationAppEntitled, false, resourceRoles);
+type CompanyAdministrationAccess = {
+  identity:
+    | Pick<MeResponse, 'identityPlane' | 'roles' | 'resourceRoles'>
+    | null
+    | undefined;
+  permissionsLoaded: boolean;
+  hasPermission: PermissionLookup;
+};
+
+export function canEnterCompanyAdministration(access: CompanyAdministrationAccess): boolean {
+  const hasAuthorizedAdministrationEntry =
+    access.permissionsLoaded &&
+    access.hasPermission('APP.ADMINISTRATION', 'VIEW') &&
+    ADMIN_NAVIGATION.some((group) =>
+      group.items.some((item) =>
+        canAccessAdminNavigationItem(item, {
+          identity: access.identity,
+          permissionsLoaded: access.permissionsLoaded,
+          hasPermission: access.hasPermission,
+        })
+      )
+    );
+
+  return canEnterTenantControlPlane(
+    access.identity,
+    hasAuthorizedAdministrationEntry
+  );
 }
 
 export function canAccessAdminNavigationItem(
   item: AdminNavigationItem,
   access: AdminItemAccess
 ): boolean {
-  if (hasProviderControlPlaneRole(access.roles)) return false;
+  if (!isTenantIdentity(access.identity)) return false;
 
   if (
     item.requiredResponsibilityCodes?.some((responsibility) =>
-      (access.resourceRoles ?? []).some((role) => role.responsibilityCode === responsibility)
+      (access.identity?.resourceRoles ?? []).some(
+        (role) => role.responsibilityCode === responsibility
+      )
     )
   ) {
     return true;
   }
 
-  if (!hasTenantControlPlaneRole(access.roles)) return false;
-  if (
-    item.requiredAnyRoleCodes &&
-    !item.requiredAnyRoleCodes.some((role) => access.roles.includes(role))
-  ) {
-    return false;
-  }
-  if (!item.requiredResourceKey) return hasFullTenantAdminRole(access.roles);
+  if (!item.requiredResourceKey || !item.requiredPermissionCode) return false;
   return (
     access.permissionsLoaded &&
     access.hasPermission(item.requiredResourceKey, item.requiredPermissionCode)

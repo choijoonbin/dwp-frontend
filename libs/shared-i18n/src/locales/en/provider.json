@@ -18,6 +18,8 @@
     "featureRollouts": "Feature rollouts",
     "support": "Privileged support",
     "commercial": "Subscriptions & rights",
+    "resourceGovernance": "Resource commitments",
+    "artifactGovernance": "Artifact governance",
     "codeContracts": "Product contracts",
     "dataGovernance": "Data governance",
     "audit": "Governance & audit",
@@ -73,6 +75,14 @@
     "commercial": {
       "title": "Subscriptions & entitlements",
       "description": "Manage service plans, contracts, renewal risk, and entitlement adoption."
+    },
+    "resource-governance": {
+      "title": "Resource commitments",
+      "description": "Set internal capacity and budget controls, then retain immutable resource evidence."
+    },
+    "artifact-governance": {
+      "title": "Artifact & rollout governance",
+      "description": "Review artifact declarations and prepare internal rollout readiness without external deployment execution."
     },
     "code-contracts": {
       "title": "Product contract registry",
@@ -207,6 +217,15 @@
   "featureRollouts": {
     "contextLabel": "Feature rollout operating boundary",
     "distributionBoundary": "This surface manages typed feature-configuration revisions and staged exposure only. Application binaries, packages, and database schemas cannot be distributed here because no authoritative distribution owner is connected.",
+    "selfDecisionBlocked": "You requested this rollout. A different authorized operator must approve or reject it.",
+    "targetingAll": "All eligible tenants are in scope.",
+    "targetingUnavailable": "The targeting payload is not a supported typed structure. Refresh before acting.",
+    "targetingValue": "{{group}} · {{value}}",
+    "partial": {
+      "flags": "The feature registry is unavailable. Flag totals and new rollout actions remain unavailable.",
+      "rollouts": "The rollout owner could not refresh. Cached revisions remain visible and may be stale.",
+      "operator": "Operator permissions could not be verified. Governed actions remain disabled."
+    },
     "context": {
       "registry": "Configuration registry",
       "flagCount": "{{count}} flags",
@@ -242,6 +261,11 @@
     "actions": {
       "newFlag": "Register feature",
       "newRollout": "Design rollout",
+      "addValue": "Add value",
+      "removeValue": "Remove value",
+      "addObjectEntry": "Add object field",
+      "addStage": "Add stage",
+      "removeStage": "Remove stage",
       "submit": "Request approval",
       "approve": "Approve",
       "reject": "Reject",
@@ -272,17 +296,31 @@
       "description": "Business description",
       "ownerService": "Owner service",
       "valueType": "Value type",
-      "defaultValue": "Default value JSON",
-      "schema": "Configuration schema JSON",
+      "defaultValue": "Default value",
+      "schema": "Configuration constraints",
+      "schemaDescription": "Constraint description",
+      "minimum": "Minimum value",
+      "maximum": "Maximum value",
+      "requiredKeys": "Required object fields",
+      "typedValue": "Typed value",
+      "objectEntries": "Object fields",
+      "objectKey": "Field name",
+      "objectValueType": "Field type",
+      "objectValue": "Field value",
+      "listValue": "Value",
       "riskTier": "Risk tier",
       "rolloutName": "Rollout name",
       "strategy": "Strategy",
       "stagePercentages": "Stage exposure",
+      "stagePercentage": "Exposure percentage",
       "observationMinutes": "Minimum observation (minutes)",
-      "rolloutValue": "Rollout value JSON",
-      "targeting": "Targeting JSON",
-      "healthGate": "Health gate JSON",
-      "observedHealth": "Observed health JSON",
+      "rolloutValue": "Rollout value",
+      "targeting": "Targeting criteria",
+      "healthGate": "Health gate",
+      "observedHealth": "Observed health",
+      "maxErrorRate": "Maximum error rate (%)",
+      "maxP95LatencyMs": "Maximum p95 latency (ms)",
+      "minSuccessRate": "Minimum success rate (%)",
       "justification": "Business justification",
       "reason": "Decision reason",
       "tenant": "Evaluation tenant"
@@ -290,14 +328,52 @@
     "strategies": {
       "RING": "Ring-based stages",
       "PERCENTAGE": "Percentage stages",
-      "ALL_AT_ONCE": "All targets at once"
+      "ALL_AT_ONCE": "All targets at once",
+      "UNAVAILABLE": "Strategy unavailable"
+    },
+    "valueTypes": {
+      "BOOLEAN": "Boolean",
+      "STRING": "Text",
+      "NUMBER": "Number",
+      "JSON": "Structured object",
+      "UNAVAILABLE": "Unavailable"
+    },
+    "riskTiers": {
+      "L1": "L1 · low risk",
+      "L2": "L2 · controlled risk",
+      "L3": "L3 · high risk"
+    },
+    "boolean": {
+      "true": "Enabled",
+      "false": "Disabled"
+    },
+    "targeting": {
+      "tenantIds": "Tenant IDs",
+      "tenantKeys": "Tenant keys",
+      "regions": "Regions",
+      "serviceTiers": "Service tiers",
+      "isolationModels": "Isolation models"
     },
     "validation": {
       "schemaObject": "The configuration schema must be a JSON object.",
       "objectJson": "Targeting and health gates must be JSON objects.",
-      "percentages": "Exposure values must be numbers greater than zero and at most 100."
+      "percentages": "Exposure values must be numbers greater than zero and at most 100.",
+      "VALUE_REQUIRED": "Enter a typed value.",
+      "NUMBER_REQUIRED": "Enter a valid number.",
+      "ENTRY_KEY_REQUIRED": "Every object field needs a name.",
+      "ENTRY_DUPLICATE": "Object field names must be unique.",
+      "SCHEMA_RANGE": "The minimum value cannot exceed the maximum value.",
+      "TARGET_VALUE_REQUIRED": "Target values cannot be empty.",
+      "STAGE_REQUIRED": "At least one rollout stage is required.",
+      "STAGE_PERCENTAGE": "Every exposure must be greater than 0 and at most 100.",
+      "STAGE_INCREASING": "Stage exposure must strictly increase.",
+      "STAGE_FINAL": "The final stage must reach 100 percent.",
+      "ALL_AT_ONCE_STAGE": "All-at-once requires one 100 percent stage.",
+      "OBSERVATION_MINUTES": "Observation minutes must be a non-negative whole number.",
+      "HEALTH_VALUE": "Health evidence must contain valid bounded numeric values."
     },
     "stageName": "Stage {{index}} · {{percentage}}%",
+    "stageIndex": "Stage {{index}}",
     "revision": "Revision {{revision}}",
     "revisionIdentity": "{{key}} · revision {{revision}}",
     "requester": "Requester #{{id}}",
@@ -352,14 +428,25 @@
         "DEFAULT": "No active revision; the default value applies",
         "TARGET_MISS": "Targeting does not match; the default value applies",
         "PERCENTAGE_EXCLUDED": "Target matches but is outside current exposure",
-        "ROLLOUT_MATCH": "The active rollout value applies"
+        "ROLLOUT_MATCH": "The active rollout value applies",
+        "UNAVAILABLE": "The evaluation reason is unavailable"
+      },
+      "tenantDenied": "Estate read permission is required to choose a tenant for evaluation.",
+      "tenantLoading": "Loading the complete tenant estate…",
+      "tenantError": "The tenant estate could not be loaded. Evaluation is unavailable until it is retried.",
+      "tenantEmpty": "There are no tenants available for feature evaluation.",
+      "collectionValue": "{{type}} with {{count}} top-level item(s)",
+      "collectionTypes": {
+        "OBJECT": "Structured object",
+        "ARRAY": "Structured list"
       }
     }
   },
   "domainTypes": {
     "LOGIN": "Sign-in",
     "EMAIL": "Email",
-    "CUSTOM": "Custom"
+    "CUSTOM": "Custom",
+    "UNAVAILABLE": "Domain type unavailable"
   },
   "operationTypes": {
     "TENANT_ONBOARD": "Tenant onboarding",
@@ -392,9 +479,11 @@
     "state": {
       "HEALTHY": "All systems operating normally",
       "ATTENTION": "Operational review is required",
-      "CRITICAL": "Immediate response is required"
+      "CRITICAL": "Immediate response is required",
+      "UNAVAILABLE": "Operating state is unavailable"
     },
-    "lastEvaluated": "Last evaluated {{value}}",
+    "lastEvaluated": "Latest successful evaluation {{value}}",
+    "noEvaluation": "No successful evaluation has been observed",
     "context": {
       "label": "Operations command scope",
       "scope": "Scope",
@@ -414,8 +503,11 @@
       "HEALTHY": "All customer environments are operating within normal ranges with no active incidents.",
       "ATTENTION": "Review {{actions}} actions and {{incidents}} incidents in impact order.",
       "CRITICAL": "Respond immediately to {{critical}} critical actions and {{incidents}} incidents.",
+      "UNAVAILABLE": "The latest owner operating state could not be verified. Review the available evidence before acting.",
       "incidents": "{{count}} active incidents",
       "actions": "{{count}} queued actions",
+      "actionsLimited": "{{count}}+ recent queued actions",
+      "coverageLimited": "The priority queue shows the {{count}} highest-ranked actions. Additional actions may exist.",
       "openPriority": "Open top priority"
     },
     "expiringContracts_one": "1 renewal within 90 days",
@@ -450,13 +542,16 @@
       "CRITICAL": "Critical",
       "HIGH": "High",
       "MEDIUM": "Medium",
-      "LOW": "Low"
+      "LOW": "Low",
+      "UNKNOWN": "Priority unavailable"
     },
     "queue": {
       "title": "Priority action queue",
       "description": "Operational actions ordered by customer impact and risk.",
       "emptyTitle": "No urgent actions in this scope",
       "empty": "Maintain the current posture while waiting for the next automated evaluation.",
+      "coverageLimitedTitle": "No matching action in the visible priority window",
+      "coverageLimited": "Additional owner actions may exist outside the {{count}} highest-ranked items.",
       "filterLabel": "Priority action severity filter",
       "filters": {
         "all": "All",
@@ -471,7 +566,47 @@
       "COMMERCIAL": "Contract & renewal",
       "RELIABILITY": "Reliability objective",
       "GOVERNANCE_DRIFT": "Governance drift",
-      "MAINTENANCE": "Planned maintenance"
+      "MAINTENANCE": "Planned maintenance",
+      "unavailable": "Owner state unavailable"
+    },
+    "action": {
+      "unavailableTitle": "Owner evidence unavailable",
+      "unavailableDetail": "The action payload is not a supported typed state. Open the owner surface or refresh before acting.",
+      "changeReviewRequired": "Governed change review is required.",
+      "serviceState": "{{tenant}} · {{state}}",
+      "domainState": "Domain verification · {{state}}",
+      "renewal": "{{plan}} renewal review",
+      "errorBudget": "{{value}} error budget remains",
+      "errorBudgetUnavailable": "Error budget evidence is unavailable",
+      "governanceTarget": "Target · {{target}}",
+      "governanceTargetWithTenant": "{{tenant}} · {{target}}",
+      "maintenanceImpact": "{{trackingKey}} · {{impact}} impact",
+      "serviceStates": {
+        "READY": "Ready",
+        "PROVISIONING": "Provisioning",
+        "DEGRADED": "Degraded",
+        "FAILED": "Failed"
+      },
+      "verificationStates": {
+        "PENDING": "Pending",
+        "FAILED": "Failed"
+      },
+      "targetTypes": {
+        "GLOBAL": "Global estate",
+        "ORGANIZATION": "Customer company",
+        "TENANT": "Tenant",
+        "SERVICE": "Service",
+        "SERVICE_INSTANCE": "Service instance",
+        "DEPLOYMENT_CELL": "Deployment cell",
+        "OPERATOR": "Provider operator"
+      },
+      "impactTypes": {
+        "NONE": "No customer",
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "SERVICE_DISRUPTION": "Service disruption"
+      }
     },
     "services": {
       "title": "Service portfolio health",
@@ -484,8 +619,14 @@
       "failed": "Failed",
       "allHealthyTitle": "All services are within normal ranges",
       "allHealthyDetail": "{{services}} services and {{instances}} instances are ready.",
+      "empty": "No active services are registered for observation.",
       "impacted": "{{count}} impacted tenants",
-      "breakdown": "{{name}}: {{healthy}} healthy, {{pending}} provisioning, {{degraded}} degraded, {{failed}} failed"
+      "breakdown": "{{name}}: {{healthy}} healthy, {{pending}} provisioning, {{degraded}} degraded, {{failed}} failed",
+      "observation": {
+        "CURRENT": "Last successful observation {{value}}",
+        "STALE": "Last successful observation {{value}} · stale",
+        "UNOBSERVED": "No successful observation"
+      }
     },
     "cells": {
       "title": "Deployment cell capacity",
@@ -569,12 +710,14 @@
       "title": {
         "HEALTHY": "The customer estate is within normal bounds",
         "ATTENTION": "Tenant lifecycle review is required",
-        "CRITICAL": "Failed tenants require immediate response"
+        "CRITICAL": "Failed tenants require immediate response",
+        "UNAVAILABLE": "Customer estate state is unavailable"
       },
       "detail": {
         "HEALTHY": "Every customer environment is active with no failed provisioning work.",
         "ATTENTION": "Review contract and operating state for {{provisioning}} provisioning and {{suspended}} suspended tenants.",
-        "CRITICAL": "Recover {{failed}} failed tenants in customer-impact and failed-step order."
+        "CRITICAL": "Recover {{failed}} failed tenants in customer-impact and failed-step order.",
+        "UNAVAILABLE": "The owner aggregate is incomplete. Refresh before relying on estate health."
       },
       "failed": "{{count}} failed",
       "provisioning": "{{count}} provisioning",
@@ -674,17 +817,20 @@
     "pulse": {
       "title": {
         "RECOVERY": "Failed changes require recovery",
+        "COVERAGE": "Approval coverage needs verification",
         "APPROVAL": "Changes are awaiting independent approval",
         "RUNNING": "Approved changes are executing",
         "CLEAR": "Change control is within normal bounds"
       },
       "detail": {
         "RECOVERY": "Review {{recovery}} recovery items in failed-step and customer-impact order.",
+        "COVERAGE": "The owner returned its 200-record boundary. Approval totals and all-clear state remain unavailable.",
         "APPROVAL": "Validate risk, business justification, and separation of duties for {{approvals}} pending approvals.",
         "RUNNING": "Tracking execution progress and service evidence for {{running}} running changes.",
         "CLEAR": "Every control gate is satisfied with no change awaiting execution or recovery."
       },
       "approvals": "{{count}} awaiting approval",
+      "approvalsUnavailable": "Approval total unavailable",
       "running": "{{count}} running",
       "recovery": "{{count}} requiring recovery",
       "openRecovery": "Open recovery item",
@@ -743,7 +889,13 @@
       "title": "Approval gates",
       "description": "Validate risk-qualified roles and requester-approver separation of duties.",
       "notRequired": "This change does not require a separate independent approval gate.",
+      "requiredEvidenceUnavailable": "Required independent approval evidence is not available for this operation. Execution remains blocked.",
+      "coverageUnavailable": "Required approval evidence may be outside the visible owner window. Execution remains blocked until the owner evidence is verified.",
       "gate": "Gate {{order}} · {{key}}",
+      "unknown": "Governed review",
+      "labels": {
+        "RISK_REVIEW": "Risk review"
+      },
       "separationOfDuties": "Separation of duties",
       "requestedBy": "Requested by {{name}} · {{value}}",
       "decidedBy": "Decided by {{name}} · {{value}} · {{reason}}"
@@ -756,6 +908,40 @@
     "completed": "Completed",
     "attempts": "{{count}} attempts",
     "attemptLabel": "Attempt {{number}}",
+    "unknownOperation": "Governed provider change",
+    "unknownStep": "Governed execution step",
+    "operationFailure": "The operation did not complete. Review the governed retry evidence before continuing.",
+    "stepFailure": "This step did not complete. Technical details remain in the protected execution evidence.",
+    "attemptFailure": "This attempt failed. Technical details remain in the protected execution evidence.",
+    "services": {
+      "provider": "Provider control service",
+      "auth": "Identity service",
+      "platform": "Workspace platform service",
+      "people": "People service",
+      "assetStorage": "Tenant asset storage",
+      "unknown": "Governed service owner"
+    },
+    "planValues": {
+      "unknown": "Value available only in protected execution evidence",
+      "serviceTier": {
+        "STANDARD": "Standard",
+        "ENTERPRISE": "Enterprise",
+        "REGULATED": "Regulated"
+      },
+      "isolation": {
+        "POOL": "Shared capacity pool",
+        "BRIDGE": "Dedicated bridge",
+        "SILO": "Dedicated silo"
+      },
+      "impact": {
+        "NO_IMPACT": "No customer impact",
+        "BRIEF_INTERRUPTION": "Brief interruption",
+        "DEGRADED_PERFORMANCE": "Degraded performance",
+        "SERVICE_UNAVAILABLE": "Service unavailable",
+        "FAILOVER": "Service failover",
+        "OTHER": "Other reviewed impact"
+      }
+    },
     "impact": {
       "title": "Execution impact",
       "description": "Review customer, placement, isolation, and service scope before approval and execution.",
@@ -788,9 +974,10 @@
   },
   "approvals": {
     "title": "Change approval queue",
-    "description": "High-risk operations require a role-qualified approver who is separate from the requester.",
-    "emptyTitle": "All approval gates are clear",
-    "empty": "No changes are awaiting approval.",
+    "description": "Shows up to the 200 most recent approval records. High-risk operations require an independent role-qualified approver.",
+    "coverageLimited": "The owner returned 200 records, so older pending approvals may exist. Totals and all-clear status are withheld.",
+    "emptyTitle": "No pending approval in the loaded records",
+    "empty": "The loaded recent approval window contains no pending change.",
     "expires": "Expires {{value}}",
     "independentReviewerRequired": "Independent reviewer required",
     "fields": {
@@ -842,12 +1029,14 @@
       "title": {
         "HEALTHY": "Customer services are within normal ranges",
         "ATTENTION": "Service operations review is required",
-        "CRITICAL": "Immediate service response is required"
+        "CRITICAL": "Immediate service response is required",
+        "UNAVAILABLE": "Service operating state is unavailable"
       },
       "detail": {
         "HEALTHY": "Every service meets its operating threshold with no active incident or customer impact.",
         "ATTENTION": "Review {{incidents}} incidents, {{impacted}} impacted tenants, and {{exceptions}} exceptional instances in impact order.",
-        "CRITICAL": "Respond immediately to {{incidents}} incidents and {{exceptions}} exceptional instances to limit customer impact."
+        "CRITICAL": "Respond immediately to {{incidents}} incidents and {{exceptions}} exceptional instances to limit customer impact.",
+        "UNAVAILABLE": "The owner operating state could not be verified. Review incident and service evidence before acting."
       },
       "incidents": "{{count}} active incidents",
       "impacted": "{{count}} impacted tenants",
@@ -884,6 +1073,12 @@
       "allHealthyDetail": "{{services}} services and {{instances}} instances are ready.",
       "expand": "Show services",
       "collapse": "Collapse services",
+      "criticality": {
+        "STANDARD": "Standard criticality",
+        "HIGH": "High criticality",
+        "CRITICAL": "Critical service",
+        "UNKNOWN": "Criticality unavailable"
+      },
       "breakdown": "{{name}}: {{healthy}} healthy, {{pending}} provisioning, {{degraded}} degraded, {{failed}} failed",
       "exceptions": "{{count}} exceptional instances · {{impacted}} impacted tenants"
     },
@@ -904,7 +1099,8 @@
       "REGION": "Region",
       "CELL": "Deployment cell",
       "SERVICE": "Service",
-      "TENANT": "Tenant"
+      "TENANT": "Tenant",
+      "UNKNOWN": "Scope unavailable"
     },
     "incidents": {
       "title": "Customer-impacting incidents",
@@ -912,6 +1108,8 @@
       "filterLabel": "Incident state filter",
       "emptyTitle": "No active incidents in this scope",
       "empty": "No incidents match the selected scope.",
+      "coverageLimited": "The owner returned the 100 highest-priority incidents. Exact counts remain authoritative, but older incident rows may not be shown.",
+      "coverageLimitedEmpty": "No matching incident is visible in the current 100-row owner window. Older matching incidents may exist.",
       "unassigned": "Unassigned",
       "createTitle": "Declare service incident",
       "createNotice": "An incident formally records customer impact and operational ownership. Every change is audited.",
@@ -971,10 +1169,30 @@
     },
     "drift": {
       "empty": "No operating targets currently diverge from their baseline.",
-      "manualReview": "Manual review"
+      "manualReview": "Manual review",
+      "coverageLimited": "Showing the first 200 drift findings. The exact total remains available above.",
+      "valueUnavailable": "Governed value unavailable",
+      "targetType": {
+        "ORGANIZATION": "Organization",
+        "TENANT": "Tenant",
+        "SERVICE_INSTANCE": "Service instance",
+        "DOMAIN": "Domain",
+        "CELL": "Deployment cell"
+      },
+      "behavior": {
+        "PREVENTIVE": "Preventive",
+        "DETECTIVE": "Detective",
+        "PROACTIVE": "Proactive"
+      },
+      "guidance": {
+        "MANDATORY": "Mandatory",
+        "STRONGLY_RECOMMENDED": "Strongly recommended",
+        "ELECTIVE": "Elective"
+      }
     },
     "maintenance": {
       "empty": "There is no recent or upcoming maintenance.",
+      "coverageLimited": "Showing the first 200 maintenance windows. The exact active total remains available above.",
       "reviewRequested": "The notice policy was validated and independent change approval was requested.",
       "noticeCompliant": "Notice met",
       "noticeRisk": "Notice risk",
@@ -1006,7 +1224,8 @@
         "DEGRADED_PERFORMANCE": "Temporary degradation",
         "SERVICE_UNAVAILABLE": "Service unavailable",
         "FAILOVER": "Service failover",
-        "OTHER": "Other impact"
+        "OTHER": "Other impact",
+        "UNKNOWN": "Impact unavailable"
       }
     }
   },
@@ -1014,9 +1233,11 @@
     "title": "Support sessions",
     "description": "Separate approved access from emergency access and revoke active sessions immediately.",
     "workflowTitle": "Support access lifecycle",
-    "workflowDescription": "Request, independently review, activate, expire, and close every customer access path with evidence.",
+    "workflowDescription": "Review up to the 300 most recent access requests, then independently approve, activate, expire, and close each path with evidence.",
     "sessionsTitle": "Active and historical sessions",
-    "sessionsDescription": "Monitor issued credentials, emergency access, expiration, and immediate revocation.",
+    "sessionsDescription": "Monitor up to the 200 most recent issued credentials, emergency access, expiration, and immediate revocation.",
+    "requestCoverageLimited": "The owner returned 300 requests. Older pending approvals or reviews may exist, so request aggregates are unavailable.",
+    "sessionCoverageLimited": "The owner returned 200 sessions. Older active sessions may exist, so session aggregates and empty states are unavailable.",
     "createTitle": "Start tenant diagnosis with time-bound access",
     "elevationWarning": "A standard request is recorded first. A different authorized operator must approve it before activation.",
     "partialRequests": "The request ledger is temporarily unavailable. Session monitoring remains available; request actions are disabled.",
@@ -1033,6 +1254,7 @@
       "error": "Tenant search is temporarily unavailable"
     },
     "modes": {
+      "unknown": "Support access mode unavailable",
       "STANDARD": "Approved standard access",
       "BREAK_GLASS": "Emergency access"
     },
@@ -1114,20 +1336,25 @@
       "showing": "Showing the latest {{shown}} of {{total}} total evidence events. Readiness uses the complete server aggregate, not this display slice.",
       "scope": "Actual scope · {{value}}",
       "reason": "Denial reason · {{value}}",
+      "reasonUnavailable": "Reason recorded in protected audit evidence",
       "correlation": "Canonical correlation · {{value}}",
       "decision": {
         "ALLOW": "Allowed",
-        "DENY": "Denied"
+        "DENY": "Denied",
+        "UNKNOWN": "Decision unavailable"
       },
       "anomaly": {
         "DENIED_ATTEMPTS": "denied command attempts",
         "MALFORMED_EVIDENCE": "malformed or unclassifiable audit evidence",
         "TENANT_BINDING_MISMATCH": "tenant binding mismatch",
         "SESSION_BINDING_MISMATCH": "session binding mismatch",
-        "INVALID_CORRELATION_EVIDENCE": "non-canonical correlation evidence"
+        "INVALID_CORRELATION_EVIDENCE": "non-canonical correlation evidence",
+        "UNKNOWN": "unclassified review evidence"
       }
     },
     "empty": {
+      "coverageLimitedTitle": "Session coverage is incomplete",
+      "coverageLimitedDescription": "No matching session appears in the recent window, but older matching sessions may exist.",
       "firstUseTitle": "There are no support sessions",
       "firstUseDescription": "Request time-bound access only after confirming customer approval, least-privilege scopes, and expiration.",
       "noResultsTitle": "No support sessions match this state",
@@ -1156,6 +1383,8 @@
       "actions": "Next action"
     },
     "scopes": {
+      "unknown": "Support scope unavailable",
+      "unknownEvidence": "Support scope information could not be verified. No internal code is shown or inferred.",
       "TENANT_EXPERIENCE_PREVIEW": "Preview redacted tenant experience configuration",
       "TENANT_CONFIGURATION_READ": "Read tenant configuration",
       "TENANT_CONFIGURATION_WRITE": "Change tenant configuration",
@@ -1249,8 +1478,11 @@
     },
     "renewals": {
       "title": "Renewal decision queue",
-      "description": "Review commercial changes, customer and entitlement impact, approval evidence, and delivery readiness.",
+      "description": "Review up to the 200 most recent commercial changes, customer and entitlement impact, approval evidence, and delivery readiness.",
       "partialFailure": "Subscription data remains available, but the renewal decision queue could not be loaded.",
+      "coverageLimited": "The owner returned 200 renewal records. Older pending decisions may exist, so aggregate renewal metrics are unavailable.",
+      "coverageMetricDetail": "Unavailable because the recent renewal window may be truncated",
+      "coverageBadge": "{{count}}+ recent",
       "emptyTitle": "No renewal proposals",
       "emptyDescription": "Create a proposal from a customer subscription when its plan, term, or contract reference must change.",
       "createTitle": "Propose renewal for {{company}}",
@@ -1345,18 +1577,22 @@
       "TENANT": "Tenant",
       "CHANGE_MANAGEMENT": "Change management",
       "DATA_GOVERNANCE": "Data governance",
-      "TENANT_LIFECYCLE": "Tenant lifecycle"
+      "TENANT_LIFECYCLE": "Tenant lifecycle",
+      "UNAVAILABLE": "Unavailable category"
     },
     "detail": {
       "title": "Audit event details",
       "target": "Target",
       "rawCode": "Raw evidence code",
-      "snapshot": "Redacted event snapshot"
+      "snapshot": "Redacted event snapshot",
+      "snapshotSummary": "{{count}} redacted evidence field(s) are retained. Values remain hidden in this view.",
+      "snapshotUnavailable": "The redacted evidence summary cannot be displayed safely."
     },
     "outcomes": {
       "SUCCESS": "Success",
       "FAILED": "Failed",
-      "DENIED": "Denied"
+      "DENIED": "Denied",
+      "UNAVAILABLE": "Unavailable"
     }
   },
   "contractSurfaces": {
@@ -1450,7 +1686,37 @@
       "resultCount_other": "{{count}} authoritative definitions",
       "definitionState": {
         "ACTIVE": "Active",
-        "RETIRED": "Retired"
+        "RETIRED": "Retired",
+        "UNAVAILABLE": "Definition state unavailable"
+      },
+      "workflowState": {
+        "DRAFT": "Draft",
+        "VALIDATED": "Validated",
+        "SUBMITTED": "Submitted for review",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "UNAVAILABLE": "Workflow state unavailable"
+      },
+      "releaseState": {
+        "UNPUBLISHED": "Unpublished",
+        "PUBLISHED": "Published",
+        "BLOCKED": "Blocked",
+        "DEPRECATED": "Deprecated",
+        "UNAVAILABLE": "Release state unavailable"
+      },
+      "safetyState": {
+        "CLEAR": "Safety checks clear",
+        "QUARANTINED": "Quarantined",
+        "REVOKED": "Revoked",
+        "UNAVAILABLE": "Safety state unavailable"
+      },
+      "certificationStatus": {
+        "NOT_RUN": "Not run",
+        "PASS": "Passed",
+        "FAIL": "Failed",
+        "EXPIRED": "Expired",
+        "WAIVED": "Waived",
+        "UNAVAILABLE": "Certification status unavailable"
       },
       "certified": "Current evidence gate passed",
       "evidenceIncomplete": "Certification evidence incomplete",
@@ -1472,6 +1738,7 @@
         "rollback": "Rollback"
       },
       "auditTitle": "Registry audit events",
+      "auditEvent": "Governed registry event",
       "auditEmpty": "No registry event is available."
     }
   },
@@ -1518,12 +1785,14 @@
     "listSummary": "{{values}} values · {{consumers}} consumers",
     "states": {
       "REGISTERED": "Verified",
-      "INCOMPLETE": "Action required"
+      "INCOMPLETE": "Action required",
+      "UNAVAILABLE": "Verification state unavailable"
     },
     "levels": {
       "SYSTEM": "System fixed",
       "EXTENSIBLE": "Product extensible",
-      "USER": "User defined"
+      "USER": "User defined",
+      "UNAVAILABLE": "Configuration level unavailable"
     },
     "kinds": {
       "REFERENCE": "Reference code",
@@ -1531,7 +1800,8 @@
       "SECURITY": "Security contract",
       "PROTOCOL": "Protocol",
       "OBSERVABILITY": "Observability contract",
-      "REGISTRY_META": "Registry metadata"
+      "REGISTRY_META": "Registry metadata",
+      "UNAVAILABLE": "Contract kind unavailable"
     },
     "tabs": {
       "label": "Product code contract detail views",
@@ -1555,7 +1825,8 @@
     },
     "visibility": {
       "ADMIN_ONLY": "Provider operators only",
-      "RUNTIME": "Readable by approved runtime consumers"
+      "RUNTIME": "Readable by approved runtime consumers",
+      "UNAVAILABLE": "Runtime exposure unavailable"
     },
     "enforcementSummary": "{{enforced}} of {{bindings}} verified",
     "valuesLabel": "Canonical product code values",
@@ -1639,13 +1910,15 @@
       "PUBLIC": "Public",
       "INTERNAL": "Internal",
       "CONFIDENTIAL": "Confidential",
-      "RESTRICTED": "Restricted"
+      "RESTRICTED": "Restricted",
+      "UNAVAILABLE": "Classification unavailable"
     },
     "severity": {
       "CRITICAL": "Critical",
       "HIGH": "High",
       "MEDIUM": "Medium",
-      "LOW": "Low"
+      "LOW": "Low",
+      "UNAVAILABLE": "Severity unavailable"
     },
     "categories": {
       "SOURCE_UNAVAILABLE": "Metadata connectivity",
@@ -1656,7 +1929,8 @@
       "UNINDEXED_FOREIGN_KEY": "Index review",
       "DUPLICATE_FOREIGN_KEY": "Duplicate constraint",
       "ANNOTATION_DRIFT": "Catalog drift",
-      "LINEAGE_DRIFT": "Lineage drift"
+      "LINEAGE_DRIFT": "Lineage drift",
+      "UNAVAILABLE": "Finding category unavailable"
     },
     "findings": {
       "SOURCE_UNAVAILABLE": {
@@ -1694,6 +1968,10 @@
       "LINEAGE_DRIFT": {
         "description": "A registered data-flow source or target is absent from the live source catalog.",
         "recommendation": "Confirm the owning process, then repair or retire the lineage contract."
+      },
+      "UNAVAILABLE": {
+        "description": "This finding uses an unsupported category and cannot be displayed in detail.",
+        "recommendation": "Refresh the catalog after the owning service publishes a supported finding category."
       }
     },
     "relationships": {
@@ -1747,7 +2025,8 @@
         "ownerService": "Owning service",
         "rule": "Versioned policy rule",
         "justification": "Revision justification",
-        "reason": "Decision or operation reason"
+        "reason": "Decision or operation reason",
+        "enforcement": "Tenant enforcement"
       },
       "types": {
         "CLASSIFICATION": "Classification",
@@ -1757,12 +2036,14 @@
         "DELETION": "Deletion",
         "LEGAL_HOLD": "Legal hold",
         "RESTRICTED_FIELD": "Restricted fields",
-        "TENANT_RLS": "Tenant row isolation"
+        "TENANT_RLS": "Tenant row isolation",
+        "UNKNOWN": "Policy type unavailable"
       },
       "scopes": {
         "GLOBAL": "All governed assets",
         "DATABASE": "Database boundary",
-        "ASSET": "Single catalog asset"
+        "ASSET": "Single catalog asset",
+        "UNKNOWN": "Policy scope unavailable"
       },
       "deletionModes": {
         "SOFT_DELETE": "Soft delete",
@@ -1826,13 +2107,23 @@
           "NON_TENANT_ASSETS_EXCLUDED": "Non-tenant assets are excluded from row-isolation enforcement: {{detail}}",
           "RUNTIME_RESIDENCY_ADAPTER_REQUIRES_R3_04": "Runtime residency enforcement remains locked until R3-04 infrastructure approval.",
           "DELETION_WORKER_REQUIRES_APPROVED_INFRASTRUCTURE": "The deletion worker remains locked until its infrastructure and runbook are approved.",
-          "ACTIVE_LEGAL_HOLD": "An active legal hold blocks retention or deletion for this scope: {{detail}}"
+          "ACTIVE_LEGAL_HOLD": "An active legal hold blocks retention or deletion for this scope: {{detail}}",
+          "UNKNOWN": "An unavailable policy impact was recorded."
         }
       },
       "history": "Revision history",
       "empty": {
         "title": "No governed data policies yet",
         "description": "Register the first policy against a live catalog scope; publication will require impact evidence and an independent approver."
+      },
+      "registeredOwner": "Registered policy owner",
+      "ruleUnavailable": "The policy rule cannot be projected safely. Review it in the owning control plane.",
+      "boolean": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "enforcement": {
+        "REQUIRED": "Required"
       }
     },
     "graph": {
@@ -1930,7 +2221,13 @@
       "recordName": "Host name",
       "recordValue": "Record value",
       "verify": "Verify DNS",
-      "checked": "Domain verification result updated."
+      "checked": "Domain verification result updated.",
+      "verificationMethods": {
+        "DNS_TXT": "DNS TXT record",
+        "HTTP": "HTTP ownership check",
+        "INTERNAL": "Provider-owned verification",
+        "UNAVAILABLE": "Verification method unavailable"
+      }
     },
     "administrators": {
       "title": "Company administrators",
@@ -1991,14 +2288,17 @@
     "effective": {
       "loading": "Resolving the target setting",
       "denied": "You do not have permission to read this target's effective value.",
-      "error": "The target setting could not be resolved."
+      "error": "The target setting could not be resolved.",
+      "collectionSummary": "{{type}} · {{count}} top-level item(s)",
+      "valueUnavailable": "The effective value cannot be displayed safely."
     },
     "resolution": {
       "RESOLVED": "The effective value was resolved.",
       "REDACTED": "The effective value is redacted by sensitivity policy. Reason: {{reason}}",
       "UNSUPPORTED_SETTING": "This setting is unsupported or is not readable. Reason: {{reason}}",
       "UNSUPPORTED_SCOPE": "This setting does not support the selected scope. Reason: {{reason}}",
-      "VALUE_UNAVAILABLE": "The effective value is currently unavailable. Reason: {{reason}}"
+      "VALUE_UNAVAILABLE": "The effective value is currently unavailable. Reason: {{reason}}",
+      "UNAVAILABLE_STATE": "The effective state cannot be displayed because the owner returned an unsupported status."
     },
     "observationUnsupported": "The published effective value is known, but no application receipt connector is available for its runtime targets. This is not treated as applied.",
     "sampledGatewayObservation": "Feature rollout evidence covers a sampled authoritative Gateway request path. It does not assert convergence across every Gateway replica.",
@@ -2014,7 +2314,8 @@
       "APPROVED": "Approved",
       "PUBLISH_REQUESTED": "Publish requested",
       "PUBLISHED": "Published",
-      "FAILED": "Processing failed"
+      "FAILED": "Processing failed",
+      "UNAVAILABLE_STATE": "Desired state unavailable"
     },
     "version": "Version · {{value}}",
     "publishAcceptedAt": "Publish accepted {{value}}",
@@ -2024,7 +2325,8 @@
       "REDACTED": "Redacted",
       "UNSUPPORTED_SETTING": "Unsupported setting",
       "UNSUPPORTED_SCOPE": "Unsupported scope",
-      "VALUE_UNAVAILABLE": "Value unavailable"
+      "VALUE_UNAVAILABLE": "Value unavailable",
+      "UNAVAILABLE_STATE": "State unavailable"
     },
     "applicationStates": {
       "NOT_CONFIGURED": "No application state",
@@ -2039,7 +2341,8 @@
       "PARTIAL": "Partially applied",
       "DRIFTED": "Drift detected",
       "FAILED": "Application failed",
-      "OBSERVATION_STALE": "Observation is stale"
+      "OBSERVATION_STALE": "Observation is stale",
+      "UNAVAILABLE_STATE": "Application state unavailable"
     },
     "observationCounts": "Observed {{observed}}/{{expected}} · converged {{converged}} · failed {{failed}} · drifted {{drifted}}",
     "resolvedAt": "Resolved {{resolvedAt}} · latest application observation {{observedAt}}",
@@ -2049,6 +2352,55 @@
       "description": "Sources that participated in resolution are shown from highest to lowest precedence.",
       "version": "v{{version}} · {{date}}",
       "empty": "No value provenance is available for display."
+    },
+    "metadata": {
+      "registeredOwner": "Registered configuration owner",
+      "unavailable": "Unavailable classification",
+      "valueType": {
+        "BOOLEAN": "Boolean",
+        "STRING": "Text",
+        "NUMBER": "Number",
+        "OBJECT": "Structured object",
+        "ARRAY": "Structured list",
+        "JSON": "Typed JSON value"
+      },
+      "riskTier": {
+        "LOW": "Low risk",
+        "MEDIUM": "Medium risk",
+        "HIGH": "High risk",
+        "CRITICAL": "Critical risk"
+      },
+      "workflow": {
+        "DIRECT": "Direct change",
+        "REVIEW_AND_PUBLISH": "Review and publish",
+        "APPROVE_AND_ACTIVATE": "Approve and activate",
+        "OWNER_MANAGED": "Owner managed"
+      },
+      "lifecycle": {
+        "ACTIVE": "Active definition",
+        "DEPRECATED": "Deprecated",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "resolutionReason": {
+        "SETTING_NOT_REGISTERED": "Setting is not registered",
+        "SCOPE_NOT_SUPPORTED_BY_OWNER": "Scope is not supported by the owner",
+        "VALUE_REDACTED_BY_SENSITIVITY": "Value is redacted by sensitivity policy",
+        "OWNER_VALUE_RESOLVED": "Owner returned an effective value"
+      },
+      "sourceType": {
+        "DEFAULT": "Default",
+        "PROVIDER_POLICY": "Provider policy",
+        "TENANT_POLICY": "Tenant policy",
+        "USER_PREFERENCE": "User preference",
+        "ACTIVE_ROLLOUT": "Active rollout",
+        "APPLICATION_OVERRIDE": "Application override"
+      },
+      "decisionCode": {
+        "DEFAULT": "Default value selected",
+        "TARGET_MISS": "Target did not match",
+        "PERCENTAGE_EXCLUDED": "Outside current exposure",
+        "ROLLOUT_MATCH": "Active rollout matched"
+      }
     }
   },
   "tenantExperiencePreview": {
@@ -2115,6 +2467,520 @@
       "apps": "{{count}} configured apps",
       "empty": "No enabled launchpad groups are present in the published configuration.",
       "excluded": "Excluded by contract: {{values}}"
+    }
+  },
+  "resourceGovernance": {
+    "contextLabel": "Internal resource governance",
+    "boundary": "Commitments and ledger entries are provider-owned internal evidence. They do not represent external usage, invoices, or a billing-system balance.",
+    "commitmentGuidance": "Propose a capacity or budget commitment for independent review. Contract changes require a published commercial renewal; temporary overrides expire automatically.",
+    "ledgerGuidance": "Ledger rows are immutable internal evidence. Budget rows use CURRENCY_MINOR; metering never asserts an external usage feed.",
+    "tenantSelectionUnavailable": "Changing a tenant commitment or recording its evidence needs estate-read access. View-only governance records remain available.",
+    "operatorLoading": "Verifying the current provider operator and permissions.",
+    "operatorUnavailable": "Operator permissions could not be verified. Governed actions remain disabled.",
+    "catalogLoading": "Loading the complete tenant and published-renewal catalogs. Change actions remain disabled until coverage is verified.",
+    "tenantCatalogUnavailable": "The complete tenant catalog is unavailable. Commitment changes remain disabled.",
+    "renewalCatalogUnavailable": "Published commercial renewal evidence is unavailable. Commitment changes remain disabled.",
+    "createTitle": "Create resource commitment",
+    "editTitle": "Edit resource commitment",
+    "newCommitment": "New commitment",
+    "editCommitment": "Edit commitment",
+    "ledgerTitle": "Internal evidence · {{key}}",
+    "recordEvidence": "Record evidence",
+    "completed": "The internal governance record was saved.",
+    "resourceKeyHelp": "Example: workspace.seats. Use lowercase keys with letters, numbers, dots, underscores, or hyphens.",
+    "validation": {
+      "commitmentIdentity": "Choose a tenant and enter a resource key.",
+      "limit": "Set at least one quota or budget limit.",
+      "currency": "Budget evidence requires the commitment currency.",
+      "controlPeriod": "The control period must end after it starts.",
+      "justification": "A business justification is required for independent review.",
+      "commercialEvidence": "Enter a valid published commercial renewal revision ID.",
+      "overrideExpiry": "A temporary override requires an expiry for an existing commitment.",
+      "amount": "Enter an amount greater than zero.",
+      "ledgerEvidence": "Evidence reference and reason are required."
+    },
+    "fields": {
+      "tenant": "Tenant",
+      "resourceKey": "Resource key",
+      "unit": "Unit",
+      "lifecycle": "Lifecycle",
+      "quotaLimit": "Quota limit",
+      "budgetLimit": "Budget limit",
+      "currency": "Currency",
+      "controlPeriodStartsAt": "Control period starts",
+      "controlPeriodEndsAt": "Control period ends",
+      "controlMode": "Limit control mode",
+      "entryType": "Evidence type",
+      "amount": "Amount",
+      "evidenceRef": "Internal evidence reference",
+      "reason": "Reason"
+    },
+    "entryTypes": {
+      "ALLOCATE": "Allocate",
+      "RELEASE": "Release",
+      "METER": "Manual metering evidence",
+      "ADJUST": "Adjust allocation",
+      "BUDGET_RESERVE": "Reserve budget",
+      "BUDGET_RELEASE": "Release budget reservation",
+      "BUDGET_SPEND": "Record internal budget spend"
+    },
+    "context": {
+      "source": "Source of record",
+      "internalOnly": "Internal control plane",
+      "externalFeed": "External usage and billing feed",
+      "activePeriods": "Active control periods",
+      "unavailable": "Unavailable"
+    },
+    "controlModes": {
+      "SOFT_ALERT": "Soft alert",
+      "HARD_BLOCK": "Hard block"
+    },
+    "freshness": {
+      "LEGACY_UNCONFIGURED": "Control period not configured",
+      "PERIOD_NOT_ACTIVE": "Control period is not active",
+      "NO_CURRENT_PERIOD_EVIDENCE": "No current-period evidence",
+      "CURRENT_PERIOD_EVIDENCE": "Current-period internal evidence"
+    },
+    "periodLabel": "{{start}} to {{end}}",
+    "metrics": {
+      "commitments": "Commitments",
+      "commitmentsDetail": "Tenant resource controls with durable limits.",
+      "active": "Active controls",
+      "activeDetail": "Commitments that can receive internal evidence.",
+      "budgets": "Budget controls",
+      "budgetsDetail": "Internal budget limits, not invoices.",
+      "allocationBalance": "Allocation balance",
+      "remainingQuota": "Remaining quota",
+      "meteredInternalEvidence": "Manual meter evidence",
+      "remainingBudget": "Remaining budget"
+    },
+    "inventoryTitle": "Resource commitments",
+    "inventoryDescription": "Review tenant capacity and budget limits before recording immutable internal evidence.",
+    "gridLabel": "Tenant resource commitments",
+    "columns": {
+      "tenant": "Tenant",
+      "resource": "Resource",
+      "quota": "Quota",
+      "budget": "Budget",
+      "control": "Control",
+      "state": "State"
+    },
+    "empty": {
+      "title": "No resource commitments",
+      "description": "Create a tenant resource commitment to begin an internal evidence ledger."
+    },
+    "ledgerInventory": "Internal evidence ledger",
+    "ledgerDescription": "Immutable allocation, release, metering, and budget evidence for this commitment.",
+    "ledgerLoadError": "The ledger could not be loaded. Refresh to try again.",
+    "ledgerPartial": "Showing the newest {{count}} ledger entries. Older immutable evidence exists outside this response, so this is a partial view.",
+    "ledgerEmpty": "No internal evidence has been recorded for this commitment.",
+    "changes": {
+      "title": "Resource change review queue",
+      "description": "Compare the baseline and proposal, record an independent decision, then publish against the reviewed version.",
+      "reservationUnavailable": "Vendor reservation unavailable",
+      "loading": "Loading resource change requests.",
+      "loadError": "Resource change requests could not be loaded.",
+      "emptyTitle": "No resource changes awaiting governance",
+      "emptyDescription": "New and edited commitments appear here before they can affect internal controls.",
+      "newBaseline": "This proposal creates the first reviewed commitment; there is no prior baseline.",
+      "changed": "Changed",
+      "changeKind": "Change evidence type",
+      "kinds": {
+        "CONTRACT_CHANGE": "Contract-backed change",
+        "TEMPORARY_OVERRIDE": "Temporary internal override"
+      },
+      "commercialRevisionId": "Published commercial renewal revision ID",
+      "commercialRevisionHelp": "The renewal must be PUBLISHED and belong to the selected tenant organization.",
+      "noCommercialEvidence": "No published commercial renewal is available for this organization. Publish the commercial renewal before requesting this commitment change.",
+      "overrideExpiresAt": "Override expires",
+      "overrideExpiryHelp": "Use 15 minutes to 30 days. Expiry is enforced without an external executor.",
+      "justification": "Business justification",
+      "justificationHelp": "Explain the customer or operational reason for this reviewed change.",
+      "requestReview": "Request independent review",
+      "approveAction": "Approve change",
+      "rejectAction": "Reject change",
+      "publishAction": "Publish reviewed control",
+      "confirmAction": "Confirm",
+      "decisionGuidance": "The requester cannot decide their own change. Approval does not reserve vendor capacity or create a billing fact.",
+      "selfApprovalBlocked": "You requested this change. An independent resource approver must record the decision.",
+      "publishTitle": "Publish reviewed resource control",
+      "publishGuidance": "Publishing checks the exact reviewed baseline. Contract changes update the internal commitment; temporary overrides expire automatically.",
+      "reviewDue": "Review due {{date}}",
+      "commercialEvidence": "Commercial evidence {{id}}",
+      "overrideExpiry": "Override expires {{date}}",
+      "activeOverride": "Temporary override until {{date}}",
+      "decision": {
+        "APPROVED": {
+          "title": "Approve resource change"
+        },
+        "REJECTED": {
+          "title": "Reject resource change"
+        }
+      }
+    },
+    "lifecycle": {
+      "title": "Tenant retirement and purge governance",
+      "description": "Record Retire and Purge as separate requests, verify legal-hold boundaries, and route an independently approved request to its owner service.",
+      "executionBoundary": "Approval authorizes an internal owner handoff only. It does not retire a tenant, delete data, or clear a legal hold; owner-service evidence is still required.",
+      "readBoundary": "Estate-read permission is required to view tenant lifecycle requests.",
+      "tenantCatalogUnavailable": "The complete tenant catalog is unavailable. New lifecycle requests remain disabled.",
+      "selfDecisionBlocked": "You requested or submitted this lifecycle request. A different authorized operator must record the decision.",
+      "createTitle": "Create tenant lifecycle request",
+      "createAction": "Request retire or purge",
+      "createGuidance": "Purge remains separate from Retire. An active global legal hold blocks the request; other hold scopes are reverified by the owner service during handoff.",
+      "requestedAction": "Requested action",
+      "justification": "Business justification",
+      "refreshTitle": "Refresh legal-hold state",
+      "submitTitle": "Request independent approval",
+      "transitionGuidance": "The reason is retained as audit evidence. This transition does not execute retirement or deletion.",
+      "confirmAction": "Save",
+      "refreshAction": "Refresh hold state",
+      "submitAction": "Request approval",
+      "approveAction": "Approve owner handoff",
+      "rejectAction": "Reject request",
+      "ownerHandoff": "Execution boundary",
+      "executionStates": {
+        "NOT_STARTED": "Owner handoff not started",
+        "NOT_REQUIRED": "No owner execution required",
+        "MANUAL_ACTION_REQUIRED": "Owner action required",
+        "COMPLETED": "Owner handoff completed",
+        "UNAVAILABLE": "Owner execution state unavailable"
+      },
+      "completed": "The tenant lifecycle governance record was saved.",
+      "emptyTitle": "No open lifecycle requests",
+      "emptyDescription": "Create a Retire or Purge request when independent approval and an owner handoff need to be recorded.",
+      "actions": {
+        "RETIRE": "Contract retirement",
+        "PURGE": "Permanent purge"
+      },
+      "hold": {
+        "OWNER_VERIFICATION_REQUIRED": "Owner hold verification required",
+        "ACTIVE_GLOBAL_LEGAL_HOLD": "Active global legal hold"
+      },
+      "decision": {
+        "APPROVED": {
+          "title": "Approve owner handoff"
+        },
+        "REJECTED": {
+          "title": "Reject lifecycle request"
+        }
+      }
+    },
+    "unknownValue": "Unavailable value",
+    "units": {
+      "SEAT": "Seats",
+      "GIB": "GiB",
+      "REQUEST": "Requests",
+      "CURRENCY_MINOR": "Currency minor units",
+      "COUNT": "Count"
+    },
+    "commitmentLifecycle": {
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "RETIRED": "Retired"
+    }
+  },
+  "artifactGovernance": {
+    "contextLabel": "Artifact and rollout governance",
+    "externalBoundary": "This control plane records artifact declarations, independent review, internal readiness, and evidence only. Registry signing, package distribution, and deployment execution are unavailable.",
+    "manifestGuidance": "Declare a product artifact and compatibility policy. Keep credentials out of JSON; only secret:// references are permitted when a secret reference is necessary.",
+    "compatibilityGuidance": "Record an internal compatibility assessment for {{product}} {{version}}. It is not a package-signing or runtime deployment assertion.",
+    "typedEvidenceGuidance": "Schema, client, dependency, capability, and rollback evidence must use the typed structure shown below. The compatibility decision is derived from that evidence.",
+    "reviewGuidance": "An independent reviewer must decide this artifact. The author cannot approve their own declaration.",
+    "planGuidance": "A rollout plan can only use an independently approved, compatible artifact. READY means internally ready; it never starts deployment.",
+    "submitArtifactGuidance": "Submit this compatible draft for an independent artifact review.",
+    "submitPlanGuidance": "Submit this internally prepared rollout plan for an independent decision.",
+    "planDecisionGuidance": "A plan requester cannot decide their own plan. This decision does not dispatch a deployment.",
+    "readyGuidance": "Mark the independently approved plan internally ready. No package distribution or deployment will run.",
+    "evidenceGuidance": "Record internal evidence for {{name}}. Observation evidence is fixed to NOT_DISPATCHED because no executor is connected.",
+    "createManifestTitle": "Register artifact manifest",
+    "createManifest": "Register artifact",
+    "compatibilityTitle": "Assess compatibility",
+    "recordCompatibility": "Record compatibility",
+    "submitArtifact": "Request artifact review",
+    "approveArtifact": "Approve artifact",
+    "returnArtifact": "Return artifact",
+    "createPlanTitle": "Create rollout plan",
+    "createPlan": "Create plan",
+    "submitPlan": "Request plan approval",
+    "approvePlan": "Approve plan",
+    "rejectPlan": "Reject plan",
+    "markReady": "Mark internally ready",
+    "recordEvidence": "Record evidence",
+    "saveAction": "Save decision",
+    "completed": "The internal artifact-governance record was saved.",
+    "digestHelp": "Optional lowercase SHA-256 declaration. It is not a verified signature.",
+    "noEligibleArtifacts": "An approved compatible artifact is required before a rollout plan can be created.",
+    "executorUnavailable": "External execution unavailable",
+    "artifactDetail": "{{type}} artifact · last updated {{updated}}",
+    "reviewHistory": "Independent review history",
+    "evidenceHistory": "Internal evidence history",
+    "typed": {
+      "compatibilityOverview": "Typed compatibility evidence",
+      "schemaCompatibility": "Schema compatibility",
+      "migrationState": "Migration state",
+      "rollbackReadiness": "Rollback readiness",
+      "noBlockingReasons": "No blocking reasons declared",
+      "clientCompatibility": "Client compatibility",
+      "minimumVersion": "Minimum version {{version}}",
+      "dependencies": "Required dependencies",
+      "requiredObserved": "Required {{required}} · observed {{observed}}",
+      "noneDeclared": "None declared",
+      "capabilityDelta": "Capability change boundary",
+      "added": "Added",
+      "removed": "Removed",
+      "increased": "Increased",
+      "none": "None",
+      "internalPlanBoundary": "These targets, stages, and recovery steps are internal planning records. They do not represent live traffic, distribution, or deployment execution.",
+      "targetScope": "Declared target scope",
+      "environment": "Environment",
+      "targetPercentage": "Target percentage",
+      "tenants": "Tenant keys",
+      "cohorts": "Cohort keys",
+      "allEligible": "All eligible tenants",
+      "rolloutStages": "Governed stages",
+      "stageConditions": "Minimum observation {{minutes}} minutes · {{gate}}",
+      "approvalRequired": "approval gate required",
+      "noApprovalGate": "no approval gate",
+      "invalidProjection": "The declared structure cannot be projected safely.",
+      "recoveryPlan": "Declared recovery plan",
+      "strategy": "Strategy",
+      "targetVersion": "Recovery target version",
+      "dataHandling": "Data handling",
+      "validationChecks": "Validation checks",
+      "manualSteps": "Manual steps",
+      "noRollbackDeclared": "No typed recovery plan is declared.",
+      "blockingReasons": "{{count}} controlled review note(s) recorded"
+    },
+    "manifestInventory": "Artifact declarations",
+    "manifestInventoryDescription": "Product artifact manifests and their independent review state.",
+    "planInventory": "Governed rollout plans",
+    "planInventoryDescription": "Internal release preparation without external package distribution or execution.",
+    "emptyArtifacts": {
+      "title": "No artifact declarations",
+      "description": "Register a manifest before assessing compatibility and requesting review."
+    },
+    "emptyPlans": {
+      "title": "No rollout plans",
+      "description": "Create a plan only after an artifact is independently approved and compatible."
+    },
+    "context": {
+      "manifests": "Artifact declarations",
+      "execution": "External execution",
+      "unavailable": "Unavailable"
+    },
+    "metrics": {
+      "manifests": "Artifact manifests",
+      "manifestsDetail": "Declared product artifacts under internal governance.",
+      "approved": "Independently approved",
+      "approvedDetail": "Compatible artifacts cleared by a different operator.",
+      "ready": "Internally ready",
+      "readyDetail": "Plans ready for a future external executor, not deployed."
+    },
+    "fields": {
+      "productKey": "Product key",
+      "artifactVersion": "Artifact version",
+      "artifactType": "Artifact type",
+      "schemaVersion": "Manifest schema version",
+      "manifest": "Manifest details",
+      "compatibilityPolicy": "Compatibility policy",
+      "digest": "Declared digest",
+      "compatibilityState": "Compatibility state",
+      "evidence": "Review evidence",
+      "reason": "Reason",
+      "artifact": "Approved compatible artifact",
+      "planName": "Plan name",
+      "targetScope": "Target scope",
+      "stages": "Rollout stages",
+      "rollbackFeasibility": "Rollback feasibility",
+      "rollbackPlan": "Recovery plan",
+      "evidenceType": "Evidence type",
+      "evidenceState": "Evidence state",
+      "entrypoint": "Entrypoint",
+      "packageReference": "Package reference",
+      "changeSummary": "Change summary",
+      "currentVersion": "Current version",
+      "targetVersion": "Target version",
+      "clientType": "Client type",
+      "dependencyKey": "Dependency key",
+      "requiredVersion": "Required version",
+      "observedVersion": "Observed version",
+      "rollbackReasons": "Rollback review notes",
+      "rollbackRequired": "Recovery plan required",
+      "allowAdded": "Allow added capabilities",
+      "allowRemoved": "Allow removed capabilities",
+      "allowIncreased": "Allow increased capabilities",
+      "listValue": "Value",
+      "sourceReference": "Evidence source reference",
+      "evidenceSummary": "Evidence summary",
+      "validationChecks": "Validation checks",
+      "stageKey": "Stage key",
+      "observationMinutes": "Minimum observation (minutes)"
+    },
+    "validation": {
+      "schemaVersion": "Manifest schema version must be a positive whole number.",
+      "digest": "Declared digest must be a lowercase 64-character SHA-256 value.",
+      "typedCompatibility": "Compatibility evidence is incomplete or does not match the typed policy structure.",
+      "MANIFEST_REQUIRED": "Complete the required manifest fields with a positive schema version.",
+      "POLICY_REQUIRED": "Complete the version, migration, and recovery policy fields.",
+      "POLICY_DUPLICATE": "Client and dependency keys must be unique and complete.",
+      "COMPATIBILITY_INVALID": "The compatibility evidence is incomplete or conflicts with the declared policy.",
+      "TARGET_INVALID": "Enter an environment and a whole target percentage from 1 to 100.",
+      "STAGE_REQUIRED": "Add between 1 and 20 rollout stages.",
+      "STAGE_INVALID": "Each stage needs a unique key, a whole percentage from 1 to 100, and non-negative observation minutes.",
+      "STAGE_INCREASING": "Stage target percentages must strictly increase.",
+      "ROLLBACK_INVALID": "Complete the recovery strategy, target version, data handling, and at least one validation check.",
+      "EVIDENCE_REQUIRED": "Evidence needs a source reference, summary, and at least one validation check."
+    },
+    "compatibility": {
+      "COMPATIBLE": "Compatible",
+      "REVIEW_REQUIRED": "Review required",
+      "BLOCKED": "Blocked",
+      "NOT_EVALUATED": "Not evaluated"
+    },
+    "rollback": {
+      "DECLARED": "Declared",
+      "NOT_DECLARED": "Not declared",
+      "UNAVAILABLE": "Unavailable"
+    },
+    "evidenceTypes": {
+      "COMPATIBILITY": "Compatibility",
+      "PRE_FLIGHT": "Pre-flight",
+      "OBSERVATION": "Observation",
+      "ROLLBACK_FEASIBILITY": "Rollback feasibility",
+      "MANUAL_RECEIPT": "Manual receipt"
+    },
+    "evidenceStates": {
+      "PASSED": "Passed",
+      "FAILED": "Failed",
+      "INCONCLUSIVE": "Inconclusive",
+      "NOT_DISPATCHED": "Not dispatched"
+    },
+    "review": {
+      "APPROVED": {
+        "title": "Approve artifact",
+        "action": "Approve"
+      },
+      "RETURNED": {
+        "title": "Return artifact",
+        "action": "Return"
+      }
+    },
+    "planDecision": {
+      "APPROVED": {
+        "title": "Approve rollout plan"
+      },
+      "REJECTED": {
+        "title": "Reject rollout plan"
+      }
+    },
+    "ownerFailures": {
+      "operator": "Operator authorization could not be verified. Governance actions are unavailable until it is reloaded.",
+      "manifests": "Artifact declarations could not be loaded. Cached plan data remains visible, but manifest counts and actions are unavailable.",
+      "plans": "Rollout plans could not be loaded. Cached artifact data remains visible, but plan counts and actions are unavailable."
+    },
+    "independentReviewRequired": "A different authorized operator must review this artifact because its author cannot decide it.",
+    "independentPlanDecisionRequired": "A different authorized operator must decide this rollout plan because its requester cannot decide it.",
+    "evidenceTitle": "Record internal rollout evidence",
+    "stageIndex": "Stage {{index}}",
+    "actions": {
+      "addItem": "Add value",
+      "addRequirement": "Add requirement",
+      "addStage": "Add stage",
+      "removeItem": "Remove item"
+    },
+    "enums": {
+      "unavailable": "Unavailable value",
+      "artifactType": {
+        "WEB_APP": "Web application",
+        "SERVICE": "Service",
+        "WORKER": "Worker",
+        "SCHEMA": "Schema",
+        "CONFIG_BUNDLE": "Configuration bundle"
+      },
+      "migrationState": {
+        "ADDITIVE_ONLY": "Additive only",
+        "DUAL_WRITE": "Dual write",
+        "MANUAL_REVIEW": "Manual review",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "compatibilityState": {
+        "PASSED": "Passed",
+        "REVIEW_REQUIRED": "Review required",
+        "BLOCKED": "Blocked",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "compatibilityDecision": {
+        "NOT_EVALUATED": "Not evaluated",
+        "COMPATIBLE": "Compatible",
+        "REVIEW_REQUIRED": "Review required",
+        "BLOCKED": "Blocked"
+      },
+      "rollbackState": {
+        "READY": "Ready",
+        "REVIEW_REQUIRED": "Review required",
+        "BLOCKED": "Blocked",
+        "UNAVAILABLE": "Unavailable",
+        "NOT_EVALUATED": "Not evaluated",
+        "NOT_DECLARED": "Not declared",
+        "INTERNALLY_READY": "Internally ready",
+        "EVIDENCE_REQUIRED": "Evidence required"
+      },
+      "rollbackStrategy": {
+        "TRAFFIC_REVERT": "Traffic revert",
+        "CONFIG_REVERT": "Configuration revert",
+        "MANUAL_RESTORE": "Manual restore",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "dataHandling": {
+        "PRESERVE_CURRENT_SCHEMA": "Preserve current schema",
+        "RESTORE_SNAPSHOT": "Restore snapshot",
+        "MANUAL_RECONCILIATION": "Manual reconciliation"
+      },
+      "reviewDecision": {
+        "APPROVED": "Approved",
+        "RETURNED": "Returned"
+      },
+      "rolloutDecision": {
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "artifactLifecycle": {
+        "DRAFT": "Draft",
+        "REVIEW_REQUIRED": "Review required",
+        "APPROVED": "Approved",
+        "RETURNED": "Returned"
+      },
+      "planLifecycle": {
+        "DRAFT": "Draft",
+        "PENDING_APPROVAL": "Pending approval",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "READY": "Internally ready",
+        "CANCELLED": "Cancelled"
+      },
+      "rollbackFeasibility": {
+        "DECLARED": "Declared",
+        "NOT_DECLARED": "Not declared",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "evidenceType": {
+        "COMPATIBILITY": "Compatibility",
+        "PRE_FLIGHT": "Pre-flight",
+        "OBSERVATION": "Observation",
+        "ROLLBACK_FEASIBILITY": "Rollback feasibility",
+        "MANUAL_RECEIPT": "Manual receipt"
+      },
+      "evidenceState": {
+        "PASSED": "Passed",
+        "FAILED": "Failed",
+        "INCONCLUSIVE": "Inconclusive",
+        "NOT_DISPATCHED": "Not dispatched"
+      },
+      "executionBoundary": {
+        "INTERNAL_PLAN_ONLY": "Internal plan only",
+        "EXTERNAL_EXECUTOR_UNAVAILABLE": "External executor unavailable"
+      }
     }
   }
 }

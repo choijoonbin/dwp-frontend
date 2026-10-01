@@ -11,7 +11,7 @@ import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import type { Theme } from '@mui/material/styles';
 
-export type CalendarCanvasArchetype =
+type CalendarCanvasArchetype =
   'temporal' | 'command' | 'queue' | 'coach' | 'policy' | 'master-detail';
 
 export function CalendarCanvas({
@@ -354,7 +354,7 @@ export function CalendarRecommendationRow({
   );
 }
 
-export type CalendarWeekBalanceDay = Readonly<{
+type CalendarWeekBalanceDay = Readonly<{
   key: string;
   label: string;
   meetingMinutes: number;

@@ -32,6 +32,7 @@ import {
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
@@ -58,6 +59,11 @@ import {
   ProviderStatusChip,
   providerError,
 } from './provider-ui';
+import {
+  providerIncidentScopeLabel,
+  providerServiceCriticalityLabel,
+} from './provider-health-presentation';
+import { providerOperatingStatePresentation } from './provider-command-center-presentation';
 import { ProviderReliability } from './provider-reliability';
 
 export function ProviderHealth() {
@@ -158,6 +164,8 @@ export function ProviderHealth() {
   const activeIncidents = health.data.incidents.filter(
     (incident) => !['RESOLVED', 'CLOSED'].includes(incident.lifecycleState)
   );
+  const activeIncidentCount = health.data.activeIncidentCount ?? activeIncidents.length;
+  const incidentsHaveMore = health.data.incidentsHasMore === true;
   const exceptionInstances =
     health.data.pendingInstances + health.data.degradedInstances + health.data.failedInstances;
   const serviceReadiness = health.data.totalInstances
@@ -180,12 +188,15 @@ export function ProviderHealth() {
       right.impactedTenants;
     return rightExceptions - leftExceptions || left.displayName.localeCompare(right.displayName);
   });
+  const operatingState = providerOperatingStatePresentation(health.data.operatingState);
   const operatingTone =
-    health.data.operatingState === 'CRITICAL'
+    operatingState === 'CRITICAL'
       ? 'error'
-      : health.data.operatingState === 'ATTENTION'
+      : operatingState === 'ATTENTION'
         ? 'warning'
-        : 'success';
+        : operatingState === 'HEALTHY'
+          ? 'success'
+          : 'warning';
   const liveState = health.isFetching || reliability.isFetching ? 'syncing' : 'live';
 
   return (
@@ -268,7 +279,7 @@ export function ProviderHealth() {
                 bgcolor: 'background.paper',
               }}
             >
-              {health.data.operatingState === 'HEALTHY' ? (
+              {operatingState === 'HEALTHY' ? (
                 <ShieldCheck size={20} />
               ) : (
                 <AlertTriangle size={20} />
@@ -276,11 +287,11 @@ export function ProviderHealth() {
             </Box>
             <Box minWidth={0}>
               <Typography component="h2" variant="h5">
-                {t(`health.pulse.title.${health.data.operatingState}`)}
+                {t(`health.pulse.title.${operatingState}`)}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                {t(`health.pulse.detail.${health.data.operatingState}`, {
-                  incidents: activeIncidents.length,
+                {t(`health.pulse.detail.${operatingState}`, {
+                  incidents: activeIncidentCount,
                   impacted: health.data.impactedTenants,
                   exceptions: exceptionInstances,
                 })}
@@ -289,8 +300,8 @@ export function ProviderHealth() {
                 <Chip
                   size="small"
                   variant="outlined"
-                  color={activeIncidents.length ? 'error' : 'success'}
-                  label={t('health.pulse.incidents', { count: activeIncidents.length })}
+                  color={activeIncidentCount ? 'error' : 'success'}
+                  label={t('health.pulse.incidents', { count: activeIncidentCount })}
                 />
                 <Chip
                   size="small"
@@ -310,14 +321,15 @@ export function ProviderHealth() {
           {canManageIncidents && (
             <Button
               variant="contained"
-              color={activeIncidents.length ? operatingTone : 'primary'}
-              startIcon={activeIncidents.length ? <HeartPulse size={17} /> : <Plus size={17} />}
+              color={activeIncidentCount ? operatingTone : 'primary'}
+              startIcon={activeIncidentCount ? <HeartPulse size={17} /> : <Plus size={17} />}
+              disabled={activeIncidentCount > 0 && !activeIncidents[0]}
               onClick={() =>
                 activeIncidents[0] ? setSelected(activeIncidents[0]) : setCreateOpen(true)
               }
               sx={{ alignSelf: { xs: 'flex-start', md: 'center' }, flexShrink: 0 }}
             >
-              {activeIncidents.length
+              {activeIncidentCount
                 ? t('health.pulse.openIncident')
                 : t('health.incidents.actions.create')}
             </Button>
@@ -354,7 +366,7 @@ export function ProviderHealth() {
         <SignalMetric
           label={t('health.signals.customerImpact')}
           value={formatNumber(health.data.impactedTenants)}
-          detail={t('health.signals.customerImpactDetail', { incidents: activeIncidents.length })}
+          detail={t('health.signals.customerImpactDetail', { incidents: activeIncidentCount })}
           icon={<Users size={18} />}
           tone={health.data.impactedTenants ? 'error' : 'success'}
         />
@@ -432,6 +444,11 @@ export function ProviderHealth() {
             </Stack>
           }
         >
+          {incidentsHaveMore && (
+            <Alert severity="warning" sx={{ mb: 1.25 }}>
+              {t('health.incidents.coverageLimited')}
+            </Alert>
+          )}
           {visibleIncidents.length === 0 ? (
             <Stack direction="row" alignItems="center" gap={1.25} sx={{ py: 2 }}>
               <Box
@@ -450,11 +467,17 @@ export function ProviderHealth() {
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight={750}>
-                  {t('health.incidents.emptyTitle')}
+                  {t(
+                    incidentsHaveMore
+                      ? 'health.incidents.coverageLimitedEmpty'
+                      : 'health.incidents.emptyTitle'
+                  )}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t('health.incidents.empty')}
-                </Typography>
+                {!incidentsHaveMore && (
+                  <Typography variant="caption" color="text.secondary">
+                    {t('health.incidents.empty')}
+                  </Typography>
+                )}
               </Box>
             </Stack>
           ) : (
@@ -501,8 +524,8 @@ export function ProviderHealth() {
                         color="text.secondary"
                         sx={{ mt: 0.65, display: 'block' }}
                       >
-                        {incident.tenantName || t(`health.scopes.${incident.impactScope}`)} ·{' '}
-                        {incident.ownerName || t('health.incidents.unassigned')} ·{' '}
+                        {incident.tenantName || providerIncidentScopeLabel(t, incident.impactScope)}{' '}
+                        · {incident.ownerName || t('health.incidents.unassigned')} ·{' '}
                         {formatProviderDate(incident.detectedAt)}
                       </Typography>
                     </Box>
@@ -584,7 +607,11 @@ export function ProviderHealth() {
                           <Typography variant="body2" fontWeight={750}>
                             {service.displayName}
                           </Typography>
-                          <Chip size="small" variant="outlined" label={service.criticality} />
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={providerServiceCriticalityLabel(t, service.criticality)}
+                          />
                         </Stack>
                         <Typography variant="caption" color="text.secondary">
                           {t('health.services.coverage', {

@@ -27,12 +27,23 @@ import Typography from '@mui/material/Typography';
 import type { ProviderOperation, ProviderOperationApproval } from '@dwp-frontend/shared-utils';
 
 import { formatProviderDate, parseProviderJson, ProviderStatusChip } from './provider-ui';
+import {
+  providerGateLabel,
+  providerImpactLabel,
+  providerIsolationLabel,
+  providerOperationGateEvidenceState,
+  providerOperationLabel,
+  providerServiceLabel,
+  providerServiceTierLabel,
+  providerStepLabel,
+} from './provider-operation-presentation';
 
 type Props = {
   operation: ProviderOperation;
   approvals?: ProviderOperationApproval[];
   busy: boolean;
   approvalPending?: boolean;
+  approvalEvidenceUnavailable?: boolean;
   onClose: () => void;
   onExecute?: (operation: ProviderOperation) => Promise<void>;
   onRetry?: (operation: ProviderOperation, justification: string) => Promise<void>;
@@ -49,6 +60,7 @@ export function ProviderOperationDialog({
   approvals = [],
   busy,
   approvalPending = false,
+  approvalEvidenceUnavailable = false,
   onClose,
   onExecute,
   onRetry,
@@ -59,24 +71,28 @@ export function ProviderOperationDialog({
   const plan = parseProviderJson(operation.plan);
   const canExecute = operation.lifecycleState === 'PREVIEWED' && onExecute;
   const canRetry = ['FAILED', 'PARTIAL'].includes(operation.lifecycleState) && onRetry;
+  const gateEvidenceState = providerOperationGateEvidenceState(approvals.length, approvalPending);
   const impact: Array<[string, unknown]> =
     operation.operationType === 'TENANT_ONBOARD'
       ? [
           [t('operations.impact.tenant'), plan.displayName ?? plan.tenantKey],
           [t('operations.impact.environment'), plan.environmentKey],
           [t('operations.impact.region'), plan.dataRegion],
-          [t('operations.impact.serviceTier'), plan.serviceTier],
-          [t('operations.impact.isolation'), plan.isolationModel],
+          [t('operations.impact.serviceTier'), providerServiceTierLabel(t, plan.serviceTier)],
+          [t('operations.impact.isolation'), providerIsolationLabel(t, plan.isolationModel)],
           [t('operations.impact.domain'), plan.primaryDomain],
           [t('operations.impact.entitlements'), plan.entitlements],
         ]
       : [
-          [t('operations.impact.scope'), plan.scopeType],
+          [
+            t('operations.impact.scope'),
+            display('scopeTypes', typeof plan.scopeType === 'string' ? plan.scopeType : null),
+          ],
           [
             t('operations.impact.target'),
             plan.tenantId ?? plan.deploymentCellId ?? plan.regionKey ?? plan.serviceKey ?? 'GLOBAL',
           ],
-          [t('operations.impact.type'), plan.impactType],
+          [t('operations.impact.type'), providerImpactLabel(t, plan.impactType)],
           [t('operations.impact.expectedSeconds'), plan.expectedImpactSeconds],
           [
             t('operations.impact.window'),
@@ -87,12 +103,16 @@ export function ProviderOperationDialog({
   return (
     <Dialog open onClose={busy ? undefined : onClose} fullWidth maxWidth="md">
       <DialogTitle>{t('operations.reviewTitle')}</DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers tabIndex={0}>
         <Stack gap={2.5}>
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={1}>
             <Box>
               <Typography variant="h6">
-                {String(plan.displayName ?? plan.tenantKey ?? operation.operationType)}
+                {String(
+                  plan.displayName ??
+                    plan.tenantKey ??
+                    providerOperationLabel(t, operation.operationType)
+                )}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {operation.operationId}
@@ -109,7 +129,9 @@ export function ProviderOperationDialog({
             </Stack>
           </Stack>
 
-          {operation.failureMessage && <Alert severity="error">{operation.failureMessage}</Alert>}
+          {operation.failureMessage && (
+            <Alert severity="error">{t('operations.operationFailure')}</Alert>
+          )}
           {approvalPending && <Alert severity="info">{t('operations.approvalRequired')}</Alert>}
 
           <Box>
@@ -154,7 +176,20 @@ export function ProviderOperationDialog({
             <Typography variant="caption" color="text.secondary">
               {t('operations.gates.description')}
             </Typography>
-            {approvals.length === 0 ? (
+            {approvalEvidenceUnavailable && approvals.length > 0 && (
+              <Alert severity="warning" icon={<ShieldCheck size={18} />} sx={{ mt: 1 }}>
+                {t('operations.gates.coverageUnavailable')}
+              </Alert>
+            )}
+            {gateEvidenceState === 'REQUIRED_EVIDENCE_UNAVAILABLE' ? (
+              <Alert severity="warning" icon={<ShieldCheck size={18} />} sx={{ mt: 1 }}>
+                {t(
+                  approvalEvidenceUnavailable
+                    ? 'operations.gates.coverageUnavailable'
+                    : 'operations.gates.requiredEvidenceUnavailable'
+                )}
+              </Alert>
+            ) : gateEvidenceState === 'NOT_REQUIRED' ? (
               <Alert severity="success" icon={<ShieldCheck size={18} />} sx={{ mt: 1 }}>
                 {t('operations.gates.notRequired')}
               </Alert>
@@ -205,10 +240,14 @@ export function ProviderOperationDialog({
                           <Typography variant="body2" fontWeight={750}>
                             {t('operations.gates.gate', {
                               order: approval.gateOrder,
-                              key: approval.gateKey,
+                              key: providerGateLabel(t, approval.gateKey),
                             })}
                           </Typography>
-                          <Chip size="small" variant="outlined" label={approval.requiredRoleCode} />
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={display('roleNames', approval.requiredRoleCode)}
+                          />
                           {approval.separationOfDuties && (
                             <Chip
                               size="small"
@@ -357,16 +396,15 @@ export function ProviderOperationDialog({
                     >
                       <Box sx={{ minWidth: 0, flex: 1 }}>
                         <Typography variant="body2" fontWeight={700}>
-                          {step.order}. {t(`steps.${step.stepKey}`, { defaultValue: step.stepKey })}
+                          {step.order}. {providerStepLabel(t, step.stepKey)}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {step.targetService}
+                          {providerServiceLabel(t, step.targetService)}
                           {step.externalReference ? ` / ${step.externalReference}` : ''}
                         </Typography>
                         {step.lastErrorMessage && (
                           <Typography variant="caption" color="error.main" display="block">
-                            {step.lastErrorCode ? `${step.lastErrorCode}: ` : ''}
-                            {step.lastErrorMessage}
+                            {t('operations.stepFailure')}
                           </Typography>
                         )}
                       </Box>
@@ -418,8 +456,7 @@ export function ProviderOperationDialog({
                             <ProviderStatusChip state={attempt.lifecycleState} />
                             {attempt.errorMessage && (
                               <Typography variant="caption" color="error.main">
-                                {attempt.errorCode ? `${attempt.errorCode}: ` : ''}
-                                {attempt.errorMessage}
+                                {t('operations.attemptFailure')}
                               </Typography>
                             )}
                           </Stack>

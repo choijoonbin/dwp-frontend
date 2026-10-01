@@ -19,6 +19,16 @@ describe('resolveProviderLandingPath', () => {
     );
   });
 
+  it('exposes the internal resource and artifact control planes only to their read authorities', () => {
+    expect(resolveProviderLandingPath(['RESOURCE_GOVERNANCE_READ'])).toBe(
+      '/provider/resource-governance'
+    );
+    expect(resolveProviderLandingPath(['ARTIFACT_GOVERNANCE_READ'])).toBe(
+      '/provider/artifact-governance'
+    );
+    expect(resolveProviderLandingPath(['ARTIFACT_GOVERNANCE_APPROVE'])).toBeNull();
+  });
+
   it('lands a support-only operator on the support workspace', () => {
     expect(resolveProviderLandingPath(['SUPPORT_ACCESS_READ'])).toBe('/provider/support');
   });

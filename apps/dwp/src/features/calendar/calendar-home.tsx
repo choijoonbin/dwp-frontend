@@ -57,6 +57,7 @@ import type {
   CalendarEvent,
   CalendarEventType,
   CalendarResponseStatus,
+  DwaionProposalHandoffBinding,
 } from '@dwp-frontend/shared-utils';
 
 type CalendarHomeCreateState = Readonly<{
@@ -66,7 +67,7 @@ type CalendarHomeCreateState = Readonly<{
   title?: string;
   attendeeEmails?: string[];
   fromDwaion?: boolean;
-  dwaionProposalBinding?: import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding;
+  dwaionProposalBinding?: DwaionProposalHandoffBinding;
 }>;
 
 function requestedCalendarType(value: string | null): CalendarEventType {

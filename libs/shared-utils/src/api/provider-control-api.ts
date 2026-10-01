@@ -5,3 +5,4 @@ export * from './provider-control-tenant-client';
 export * from './provider-control-support-client';
 export * from './provider-control-data-governance-client';
 export * from './provider-control-feature-rollout-client';
+export * from './provider-control-resource-governance-client';

@@ -65,13 +65,70 @@ export type ReplaceIdentityRolesRequest = {
   version: number;
 };
 
-export async function listIdentityUsers(query = ''): Promise<PageResult<IdentityUserAccess>> {
-  const search = new URLSearchParams({ page: '0', size: '100' });
+const IDENTITY_PAGE_SIZE = 100;
+const MAX_IDENTITY_PAGES = 10_000;
+
+async function getIdentityUsersPage(
+  query: string,
+  page: number,
+  signal?: AbortSignal
+): Promise<PageResult<IdentityUserAccess>> {
+  const search = new URLSearchParams({ page: String(page), size: String(IDENTITY_PAGE_SIZE) });
   if (query.trim()) search.set('query', query.trim());
   const response = await axiosInstance.get<ApiResponse<PageResult<IdentityUserAccess>>>(
-    `/api/auth/admin/identity/users?${search.toString()}`
+    `/api/auth/admin/identity/users?${search.toString()}`,
+    signal ? { signal } : undefined
   );
   return response.data.data;
+}
+
+function assertIdentityPage(
+  page: PageResult<IdentityUserAccess>,
+  expectedPage: number,
+  first: PageResult<IdentityUserAccess>
+): void {
+  if (
+    page.page !== expectedPage ||
+    page.size !== first.size ||
+    page.totalElements !== first.totalElements ||
+    page.totalPages !== first.totalPages ||
+    page.content.length > page.size
+  ) {
+    throw new Error('IDENTITY_DIRECTORY_PAGINATION_CHANGED');
+  }
+}
+
+export async function listIdentityUsers(
+  query = '',
+  signal?: AbortSignal
+): Promise<PageResult<IdentityUserAccess>> {
+  const first = await getIdentityUsersPage(query, 0, signal);
+  if (
+    first.page !== 0 ||
+    first.size < 1 ||
+    first.totalElements < 0 ||
+    first.totalPages < 0 ||
+    first.totalPages > MAX_IDENTITY_PAGES ||
+    first.content.length > first.size
+  ) {
+    throw new Error('IDENTITY_DIRECTORY_PAGINATION_INVALID');
+  }
+
+  const content = [...first.content];
+  for (let pageNumber = 1; pageNumber < first.totalPages; pageNumber += 1) {
+    const page = await getIdentityUsersPage(query, pageNumber, signal);
+    assertIdentityPage(page, pageNumber, first);
+    content.push(...page.content);
+  }
+
+  if (content.length !== first.totalElements) {
+    throw new Error('IDENTITY_DIRECTORY_COVERAGE_INCOMPLETE');
+  }
+  if (new Set(content.map((user) => user.userId)).size !== content.length) {
+    throw new Error('IDENTITY_DIRECTORY_DUPLICATE_PRINCIPAL');
+  }
+
+  return { ...first, content };
 }
 
 export async function listIdentityRoles(): Promise<IdentityRole[]> {

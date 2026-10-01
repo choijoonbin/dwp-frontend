@@ -65,12 +65,13 @@ export type ProviderCellPosture = {
 };
 
 export type ProviderCommandCenter = {
-  generatedAt: string;
+  generatedAt?: string | null;
   operatingState: 'HEALTHY' | 'ATTENTION' | 'CRITICAL';
   estate: ProviderEstateOverview;
   activeIncidents: number;
   expiringSubscriptions: number;
   actionQueue: ProviderActionItem[];
+  actionQueueHasMore: boolean;
   services: ProviderServicePosture[];
   cells: ProviderCellPosture[];
   recentActivity: ProviderRecentActivity[];
@@ -374,6 +375,8 @@ export type ProviderServiceHealthOverview = {
   degradedInstances: number;
   failedInstances: number;
   impactedTenants: number;
+  activeIncidentCount: number;
+  incidentsHasMore: boolean;
   services: ProviderServicePosture[];
   cells: ProviderCellPosture[];
   incidents: ProviderServiceIncident[];
@@ -444,6 +447,8 @@ export type ProviderReliabilityControl = {
   exhaustedObjectives: number;
   openDriftFindings: number;
   upcomingMaintenance: number;
+  driftFindingsHasMore: boolean;
+  maintenanceWindowsHasMore: boolean;
   objectives: ProviderServiceLevelObjective[];
   driftFindings: ProviderGovernanceDrift[];
   maintenanceWindows: ProviderMaintenanceWindow[];

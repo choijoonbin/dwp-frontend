@@ -76,6 +76,7 @@ import {
   userIdentityLabel,
   userOptionLabel,
 } from './saved-view-custody-ui';
+import { savedViewReasonLabel, savedViewScopeLabel } from './saved-view-custody-presentation';
 
 export function SavedViewCustodyManager() {
   const { t } = useTranslation('admin');
@@ -300,6 +301,9 @@ export function SavedViewCustodyManager() {
     history.dataUpdatedAt,
     orphanActionHistory.dataUpdatedAt
   );
+  const historyCount =
+    (history.data?.items.length ?? 0) + (orphanActionHistory.data?.items.length ?? 0);
+  const historyHasMore = Boolean(history.data?.hasMore || orphanActionHistory.data?.hasMore);
 
   const candidateColumns = useSavedViewCandidateColumns();
   const executeLabel =
@@ -321,7 +325,9 @@ export function SavedViewCustodyManager() {
         historyCount={
           history.isError || orphanActionHistory.isError
             ? null
-            : (history.data?.length ?? 0) + (orphanActionHistory.data?.length ?? 0)
+            : historyHasMore
+              ? `${historyCount}+`
+              : historyCount
         }
         updatedAt={registersUpdatedAt > 0 ? new Date(registersUpdatedAt).toISOString() : null}
         refreshing={orphaned.isFetching || history.isFetching || orphanActionHistory.isFetching}
@@ -609,7 +615,7 @@ export function SavedViewCustodyManager() {
                   value={reasonCode}
                   options={SAVED_VIEW_OWNERSHIP_REASONS.map((value) => ({
                     value,
-                    label: t('savedViewCustody.reasons.' + value),
+                    label: savedViewReasonLabel(value, t),
                   }))}
                   onValueChange={(value) => value && setReasonCode(value)}
                 />
@@ -810,7 +816,7 @@ export function SavedViewCustodyManager() {
                             size="small"
                             variant="outlined"
                             label={t('savedViewCustody.preview.scopeCount', {
-                              scope: t('savedViewCustody.scopes.' + scope),
+                              scope: savedViewScopeLabel(scope, t),
                               count: scopeCounts[scope],
                             })}
                           />
@@ -911,15 +917,18 @@ export function SavedViewCustodyManager() {
           aria-labelledby="saved-view-custody-tab-HISTORY"
         >
           <Stack gap={4}>
+            {historyHasMore && (
+              <Alert severity="warning">{t('savedViewCustody.metrics.partialHistory')}</Alert>
+            )}
             <SavedViewOwnershipHistory
-              data={history.data ?? []}
+              data={history.data?.items ?? []}
               loading={history.isLoading}
               error={history.isError}
               knownUsers={knownUsers}
               onRetry={() => void history.refetch()}
             />
             <SavedViewOrphanActionHistory
-              data={orphanActionHistory.data ?? []}
+              data={orphanActionHistory.data?.items ?? []}
               loading={orphanActionHistory.isLoading}
               error={orphanActionHistory.isError}
               knownUsers={knownUsers}

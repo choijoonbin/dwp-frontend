@@ -1,0 +1,108 @@
+{
+  "loading": "Provider 소유자 근거를 불러오는 중",
+  "permissions": {
+    "domains": "도메인 소유자 근거를 보려면 ID 프로비저닝 조회 권한이 필요합니다.",
+    "governance": "보존 및 법적 보존 소유자 근거를 보려면 감사 조회 권한이 필요합니다."
+  },
+  "errors": {
+    "AUTHORITY_REVOKED": "Provider 소유자 근거를 조회하기 전에 권한이 변경되었습니다. 접근 권한을 새로 확인한 후 다시 시도하세요.",
+    "TENANT_MAPPING_MISSING": "이 테넌트에는 활성 Provider 컨트롤 플레인 매핑이 없어 소유자 근거를 조회할 수 없습니다.",
+    "UNAVAILABLE": "Provider 소유자에 연결할 수 없습니다. 기존 설정은 표시되지만 현재 소유자 상태는 확인되지 않았습니다."
+  },
+  "domains": {
+    "title": "Provider 소유 도메인",
+    "description": "{{observedAt}} 기준 실시간 소유자 관측입니다. 검증 비밀값과 DNS 챌린지 값은 반환하지 않습니다.",
+    "total": "도메인 {{count}}개",
+    "verified": "검증 완료 {{count}}개",
+    "attention": "근거 확인 필요 {{count}}개",
+    "primary": "기본 도메인",
+    "typeAndMethod": "{{type}} · {{method}}",
+    "freshness": "근거: {{state}}",
+    "lastChecked": "마지막 확인: {{value}}",
+    "empty": "Provider 소유자가 이 테넌트의 취소되지 않은 도메인을 보고하지 않았습니다."
+  },
+  "governance": {
+    "title": "Provider 보존 및 법적 보존 관측",
+    "description": "{{observedAt}} 기준 실시간 소유자 관측입니다. 원본 규칙, 사유, 행위자와 근거 참조값은 마스킹됩니다.",
+    "retentionCount": "활성 보존 정책 {{count}}개",
+    "legalHoldCount": "활성 법적 보존 {{count}}개",
+    "blockedCount": "수명주기 차단 {{count}}개",
+    "policies": "글로벌 소유자 정책",
+    "policyTitle": "{{type}} · 리비전 {{revision}}",
+    "tenantHolds": "현재 테넌트 수명주기 평가",
+    "retentionDays": "보존 기간: {{count}}일",
+    "legalHoldActive": "글로벌 법적 보존이 활성 상태입니다.",
+    "legalHoldInactive": "글로벌 법적 보존이 비활성 상태입니다.",
+    "policyEvidence": "{{freshness}} · {{evidence}} · 지문 {{fingerprint}}",
+    "holdEvidence": "{{evidence}} · 마스킹된 참조 {{count}}개",
+    "changedAt": "소유자 원본 변경: {{value}}",
+    "noPolicies": "이 소유자가 보고한 활성 글로벌 보존 또는 법적 보존 정책이 없습니다.",
+    "noTenantHolds": "기록된 테넌트 수명주기 보존 평가가 없습니다."
+  },
+  "coverage": {
+    "domains": "이 테넌트의 취소되지 않은 도메인만 포함합니다. 소유자 원본 최종 변경 {{changedAt}}.",
+    "governance": "글로벌 정책과 이 테넌트의 기록된 수명주기 평가를 포함합니다. 소유자 원본 최종 변경 {{changedAt}}."
+  },
+  "states": {
+    "PENDING": "대기 중",
+    "VERIFIED": "검증 완료",
+    "FAILED": "실패",
+    "SCHEDULED": "예약됨",
+    "ACTIVE": "활성",
+    "INACTIVE": "비활성",
+    "EXPIRED": "만료됨",
+    "DRAFT": "초안",
+    "PENDING_APPROVAL": "승인 대기",
+    "APPROVED_FOR_HANDOFF": "소유자 전달 승인",
+    "REJECTED": "거부됨",
+    "BLOCKED_BY_HOLD": "보존 정책으로 차단됨",
+    "CANCELLED": "취소됨",
+    "UNKNOWN": "상태 확인 불가"
+  },
+  "domainTypes": {
+    "LOGIN": "로그인 도메인",
+    "EMAIL": "이메일 도메인",
+    "CUSTOM": "사용자 지정 도메인",
+    "UNKNOWN": "도메인 유형 확인 불가"
+  },
+  "verificationMethods": {
+    "DNS_TXT": "DNS TXT 검증",
+    "HTTP": "HTTP 검증",
+    "INTERNAL": "Provider 확인",
+    "UNKNOWN": "검증 방식 확인 불가"
+  },
+  "freshness": {
+    "OWNER_ATTESTED": "소유자 확인",
+    "NOT_OBSERVED": "아직 관측되지 않음",
+    "RECORDED_AT": "기록된 근거",
+    "CURRENT_OWNER_REVISION": "현재 소유자 리비전",
+    "UNKNOWN": "최신성 확인 불가"
+  },
+  "evidence": {
+    "NOT_RECORDED": "기록된 근거 없음",
+    "IMPACT_FINGERPRINT_RECORDED": "영향 지문 기록됨",
+    "REFERENCES_REDACTED": "근거 참조값 마스킹됨",
+    "UNKNOWN": "근거 상태 확인 불가"
+  },
+  "policyTypes": {
+    "RETENTION": "보존",
+    "LEGAL_HOLD": "법적 보존",
+    "UNKNOWN": "정책 유형 확인 불가"
+  },
+  "actions": {
+    "RETIRE": "테넌트 사용 종료",
+    "PURGE": "테넌트 데이터 삭제",
+    "UNKNOWN": "수명주기 작업 확인 불가"
+  },
+  "holdStates": {
+    "OWNER_VERIFICATION_REQUIRED": "수명주기 실행 전에 소유자 확인이 필요합니다.",
+    "ACTIVE_GLOBAL_LEGAL_HOLD": "활성 글로벌 법적 보존으로 수명주기 실행이 차단되었습니다.",
+    "UNKNOWN": "보존 평가 확인 불가"
+  },
+  "exclusions": {
+    "TENANT_SCOPED_HOLD_OWNER_NOT_CONNECTED": "테넌트 범위 보존 소유자가 연결되지 않았습니다.",
+    "EXTERNAL_SHARING_OWNER_NOT_CONNECTED": "외부 공유 소유자가 연결되지 않았습니다.",
+    "PHYSICAL_RETENTION_OR_DELETION_EXECUTION_NOT_OBSERVED": "물리적 보존 및 삭제 실행은 관측되지 않습니다.",
+    "UNKNOWN": "소유자 경계 확인 불가"
+  }
+}

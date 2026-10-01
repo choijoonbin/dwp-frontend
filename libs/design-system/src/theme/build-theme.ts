@@ -15,6 +15,8 @@ type BuildDwpThemeInput = {
 };
 
 const HEX_COLOR = /^#[0-9a-f]{6}$/i;
+const TOUCH_TARGET_MEDIA = '@media (max-width:599.95px), (pointer: coarse)';
+const MINIMUM_TOUCH_TARGET = 44;
 
 function safeColor(candidate: string): string {
   return HEX_COLOR.test(candidate) ? candidate : foundationTokens.color.product.primary;
@@ -148,6 +150,10 @@ export function buildDwpTheme({
       MuiButtonBase: {
         styleOverrides: {
           root: {
+            [TOUCH_TARGET_MEDIA]: {
+              minWidth: MINIMUM_TOUCH_TARGET,
+              minHeight: MINIMUM_TOUCH_TARGET,
+            },
             '&.Mui-focusVisible, &:focus-visible': {
               outline: `3px solid ${highContrast ? primary : focusRing}`,
               outlineOffset: 2,
@@ -165,6 +171,7 @@ export function buildDwpTheme({
         styleOverrides: {
           root: {
             minHeight: metrics.controlHeight,
+            [TOUCH_TARGET_MEDIA]: { minHeight: MINIMUM_TOUCH_TARGET },
             borderRadius: tokens.radius.control,
             textTransform: 'none',
             transition: reduceMotion
@@ -229,9 +236,53 @@ export function buildDwpTheme({
           root: {
             width: metrics.controlHeight,
             height: metrics.controlHeight,
+            [TOUCH_TARGET_MEDIA]: {
+              width: MINIMUM_TOUCH_TARGET,
+              height: MINIMUM_TOUCH_TARGET,
+            },
             '&.Mui-focusVisible, &:focus-visible': {
               outline: `3px solid ${highContrast ? primary : focusRing}`,
               outlineOffset: 2,
+            },
+          },
+        },
+      },
+      MuiCheckbox: {
+        styleOverrides: {
+          root: {
+            [TOUCH_TARGET_MEDIA]: {
+              width: MINIMUM_TOUCH_TARGET,
+              height: MINIMUM_TOUCH_TARGET,
+            },
+          },
+        },
+      },
+      MuiRadio: {
+        styleOverrides: {
+          root: {
+            [TOUCH_TARGET_MEDIA]: {
+              width: MINIMUM_TOUCH_TARGET,
+              height: MINIMUM_TOUCH_TARGET,
+            },
+          },
+        },
+      },
+      MuiSwitch: {
+        styleOverrides: {
+          root: {
+            [TOUCH_TARGET_MEDIA]: {
+              minWidth: MINIMUM_TOUCH_TARGET,
+              minHeight: MINIMUM_TOUCH_TARGET,
+            },
+          },
+        },
+      },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            [TOUCH_TARGET_MEDIA]: {
+              minWidth: MINIMUM_TOUCH_TARGET,
+              minHeight: MINIMUM_TOUCH_TARGET,
             },
           },
         },
@@ -258,12 +309,19 @@ export function buildDwpTheme({
       },
       MuiMenuItem: {
         styleOverrides: {
-          root: { minHeight: metrics.itemHeight, borderRadius: tokens.radius.compact },
+          root: {
+            minHeight: metrics.itemHeight,
+            borderRadius: tokens.radius.compact,
+            [TOUCH_TARGET_MEDIA]: { minHeight: MINIMUM_TOUCH_TARGET },
+          },
         },
       },
       MuiInputBase: {
         styleOverrides: {
-          root: { minHeight: metrics.controlHeight },
+          root: {
+            minHeight: metrics.controlHeight,
+            [TOUCH_TARGET_MEDIA]: { minHeight: MINIMUM_TOUCH_TARGET },
+          },
           input: {
             '&:-webkit-autofill': {
               WebkitBoxShadow: `0 0 0 100px ${dark ? tokens.color.neutral[800] : tokens.color.neutral[0]} inset`,
@@ -277,6 +335,7 @@ export function buildDwpTheme({
       MuiToggleButton: {
         styleOverrides: {
           root: {
+            [TOUCH_TARGET_MEDIA]: { minHeight: MINIMUM_TOUCH_TARGET },
             color: highContrast
               ? dark
                 ? '#FFFFFF'
@@ -364,6 +423,12 @@ export function buildDwpTheme({
             lineHeight: 'normal',
             '& .MuiChip-root': { height: 24 },
             '& .MuiIconButton-root': { width: 32, height: 32 },
+            [TOUCH_TARGET_MEDIA]: {
+              '& .MuiIconButton-root': {
+                width: MINIMUM_TOUCH_TARGET,
+                height: MINIMUM_TOUCH_TARGET,
+              },
+            },
           },
           row: {
             '&.Mui-selected': { backgroundColor: alpha(primary, highContrast ? 0.28 : 0.1) },

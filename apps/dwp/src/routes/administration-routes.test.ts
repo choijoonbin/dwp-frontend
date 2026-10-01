@@ -55,6 +55,15 @@ function expectProviderRedirect(result: ReactNode) {
   expect(result.props).toMatchObject({ to: '/provider', replace: true });
 }
 
+function expectForbiddenRedirect(result: ReactNode) {
+  expect(isValidElement(result)).toBe(true);
+  if (!isValidElement<{ to: string; replace: boolean }>(result)) {
+    throw new Error('Expected an access-denied redirect element.');
+  }
+  expect(result.type).toBe(Navigate);
+  expect(result.props).toMatchObject({ to: '/403', replace: true });
+}
+
 function administrationRoute(path: string) {
   const matches = administrationRoutes.filter((route) => route.path === path);
   expect(matches, path).toHaveLength(1);
@@ -66,7 +75,7 @@ describe('administration identity-plane route boundary', () => {
     routeMocks.useAuth.mockReturnValue({
       user: {
         identityPlane: 'PROVIDER',
-        roles: ['PROVIDER_SUPPORT'],
+        roles: [],
         resourceRoles: [],
       },
     });
@@ -110,14 +119,60 @@ describe('administration identity-plane route boundary', () => {
     expect(TenantAdminSectionRedirect()).toBe(routeFallback);
   });
 
-  it('renders the authorized tenant settings home when no legacy view is requested', () => {
+  it('admits a custom tenant role only with exact shell and leaf permissions', () => {
+    const child = createElement('span', null, 'custom admin');
     routeMocks.useAuth.mockReturnValue({
-      user: { identityPlane: 'TENANT', roles: ['ADMIN'], resourceRoles: [] },
+      user: {
+        identityPlane: 'TENANT',
+        roles: ['CUSTOM_GROUP_IDENTITY_REVIEWER'],
+        resourceRoles: [],
+      },
     });
     routeMocks.usePermissions.mockReturnValue({
       permissions: [],
       isLoaded: true,
+      hasPermission: vi.fn(
+        (resourceKey: string, permissionCode?: string) =>
+          permissionCode === 'VIEW' &&
+          ['APP.ADMINISTRATION', 'ADMIN.ACCESS_GOVERNANCE'].includes(resourceKey)
+      ),
+    });
+
+    expect(TenantAdminRouteGuard({ children: child })).toBe(child);
+
+    routeMocks.usePermissions.mockReturnValue({
+      permissions: [],
+      isLoaded: true,
+      hasPermission: vi.fn(() => false),
+    });
+    expectForbiddenRedirect(TenantAdminRouteGuard({ children: child }));
+  });
+
+  it('denies a roleless Provider identity even when tenant permissions are present', () => {
+    routeMocks.usePermissions.mockReturnValue({
+      permissions: [],
+      isLoaded: true,
       hasPermission: vi.fn(() => true),
+    });
+
+    expectForbiddenRedirect(TenantAdminRouteGuard({ children: createElement('span') }));
+  });
+
+  it('renders the authorized tenant settings home when no legacy view is requested', () => {
+    routeMocks.useAuth.mockReturnValue({
+      user: {
+        identityPlane: 'TENANT',
+        roles: ['CUSTOM_GROUP_IDENTITY_REVIEWER'],
+        resourceRoles: [],
+      },
+    });
+    routeMocks.usePermissions.mockReturnValue({
+      permissions: [],
+      isLoaded: true,
+      hasPermission: vi.fn(
+        (resourceKey: string, permissionCode?: string) =>
+          resourceKey === 'ADMIN.ACCESS_GOVERNANCE' && permissionCode === 'VIEW'
+      ),
     });
     routeMocks.useSearchParams.mockReturnValue([new URLSearchParams()]);
 

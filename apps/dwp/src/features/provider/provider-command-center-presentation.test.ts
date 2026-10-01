@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest';
 import type { ProviderCommandCenter } from '@dwp-frontend/shared-utils';
 
 import {
+  providerActionSeverityPresentation,
   providerCommandCenterPresentationState,
   providerCustomerImpactTone,
+  providerOperatingStatePresentation,
 } from './provider-command-center-presentation';
 
 function command(overrides: Partial<ProviderCommandCenter> = {}): ProviderCommandCenter {
@@ -26,6 +28,7 @@ function command(overrides: Partial<ProviderCommandCenter> = {}): ProviderComman
     activeIncidents: 0,
     expiringSubscriptions: 0,
     actionQueue: [],
+    actionQueueHasMore: false,
     services: [],
     cells: [],
     recentActivity: [],
@@ -81,6 +84,20 @@ describe('provider command-center presentation state', () => {
     expect(providerCommandCenterPresentationState(command({ operatingState: 'CRITICAL' }))).toBe(
       'CRITICAL'
     );
+  });
+
+  it('fails closed when the owner returns an unknown operating state', () => {
+    expect(providerOperatingStatePresentation('DEGRADED_INTERNAL')).toBe('UNAVAILABLE');
+    expect(
+      providerCommandCenterPresentationState(
+        command({ operatingState: 'DEGRADED_INTERNAL' as ProviderCommandCenter['operatingState'] })
+      )
+    ).toBe('UNAVAILABLE');
+  });
+
+  it('fails closed when the owner returns an unknown action severity', () => {
+    expect(providerActionSeverityPresentation('INTERNAL_PRIORITY')).toBe('UNKNOWN');
+    expect(providerActionSeverityPresentation('CRITICAL')).toBe('CRITICAL');
   });
 
   it('does not show customer impact as successful while impacted-tenant evidence exists', () => {

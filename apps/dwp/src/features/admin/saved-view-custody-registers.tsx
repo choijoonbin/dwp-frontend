@@ -29,6 +29,7 @@ import {
   surfaceLabel,
   userIdentityLabel,
 } from './saved-view-custody-ui';
+import { savedViewReasonLabel, savedViewScopeLabel } from './saved-view-custody-presentation';
 
 import type {
   OrphanedSavedView,
@@ -100,7 +101,7 @@ export function OrphanedSavedViewRegister({
         field: 'scope',
         headerName: t('savedViewCustody.columns.scope'),
         width: 120,
-        valueFormatter: (value) => t('savedViewCustody.scopes.' + String(value)),
+        valueFormatter: (value) => savedViewScopeLabel(String(value), t),
       },
       {
         field: 'retentionUntil',
@@ -217,7 +218,7 @@ export function OrphanedSavedViewRegister({
                           <Typography variant="subtitle2">{view.name}</Typography>
                           <Typography variant="body2" color="text.secondary">
                             {surfaceLabel(view.surfaceKey, t)} ·{' '}
-                            {t('savedViewCustody.scopes.' + view.scope)}
+                            {savedViewScopeLabel(view.scope, t)}
                           </Typography>
                           {view.reassignmentBlockReason === 'SHARED_NAME_CONFLICT' ? (
                             <Typography component="p" variant="caption" color="warning.main">
@@ -370,7 +371,7 @@ export function SavedViewOwnershipHistory({
         field: 'reasonCode',
         headerName: t('savedViewCustody.columns.reasonCode'),
         minWidth: 150,
-        valueFormatter: (value) => t('savedViewCustody.reasons.' + String(value)),
+        valueFormatter: (value) => savedViewReasonLabel(String(value), t),
       },
       {
         field: 'sourceReference',
@@ -491,7 +492,7 @@ export function SavedViewOwnershipHistory({
                             {t('savedViewCustody.columns.reasonCode')}
                           </Typography>
                           <Typography component="dd" variant="body2" sx={{ m: 0 }}>
-                            {t('savedViewCustody.reasons.' + entry.reasonCode)}
+                            {savedViewReasonLabel(entry.reasonCode, t)}
                           </Typography>
                         </Box>
                       </Stack>

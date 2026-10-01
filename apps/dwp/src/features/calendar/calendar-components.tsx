@@ -73,7 +73,7 @@ export function calendarDate(value: string | Date, language: string, includeWeek
   );
 }
 
-export function calendarDuration(event: Pick<CalendarEvent, 'startsAt' | 'endsAt'>) {
+function calendarDuration(event: Pick<CalendarEvent, 'startsAt' | 'endsAt'>) {
   return Math.max(
     0,
     Math.round((new Date(event.endsAt).getTime() - new Date(event.startsAt).getTime()) / 60_000)

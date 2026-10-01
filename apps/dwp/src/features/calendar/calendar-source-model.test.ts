@@ -136,9 +136,9 @@ describe('calendar source model', () => {
             canStar: true,
           },
         }),
-        'canEdit',
-        true
+        'canEdit'
       )
     ).toBe(false);
+    expect(eventCapability(event(), 'canEdit')).toBe(false);
   });
 });

@@ -3,7 +3,12 @@ import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import type { ApiHistoryOutcome, ApiHistoryWindow, AuditWindow } from '@dwp-frontend/shared-utils';
 
 export function apiMonitoringErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+  void error;
+  return fallback;
+}
+
+export function apiMonitoringObservationLabelKey(value: string): string {
+  return `apiMonitoring.observation.${['GATEWAY', 'SERVICE', 'ALL'].includes(value) ? value : 'UNKNOWN'}`;
 }
 
 export function apiMonitoringEventTimestamp(value: string): string {

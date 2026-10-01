@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { EnterpriseDataGrid, FormField, GuidedEmptyState } from '@dwp-frontend/design-system';
-import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -17,6 +16,11 @@ import {
   surfaceLabel,
   userIdentityLabel,
 } from './saved-view-custody-ui';
+import {
+  savedViewLifecycleActionLabel,
+  savedViewReasonLabel,
+  savedViewScopeLabel,
+} from './saved-view-custody-presentation';
 
 import type { OrphanLifecycleResult, SavedViewCustodyUser } from '@dwp-frontend/shared-utils';
 import type { GridColDef } from '@mui/x-data-grid';
@@ -36,7 +40,6 @@ export function SavedViewOrphanActionHistory({
   onRetry: () => void;
 }) {
   const { t } = useTranslation('admin');
-  const display = useDisplayDictionary();
   const mobile = useMediaQuery<Theme>((theme) => theme.breakpoints.down('sm'));
   const [query, setQuery] = useState('');
   const ownerLabel = useCallback(
@@ -81,7 +84,9 @@ export function SavedViewOrphanActionHistory({
           ? t('savedViewCustody.actionHistory.outcomes.EXTEND_RETENTION', {
               value: displayDate(row.nextRetentionUntil),
             })
-          : t('savedViewCustody.actionHistory.outcomes.ARCHIVE_NOW'),
+          : row.action === 'ARCHIVE_NOW'
+            ? t('savedViewCustody.actionHistory.outcomes.ARCHIVE_NOW')
+            : t('savedViewCustody.actionHistory.outcomes.UNKNOWN'),
     [ownerLabel, t]
   );
 
@@ -98,7 +103,7 @@ export function SavedViewOrphanActionHistory({
               {row.savedViewName}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap title={row.savedViewId}>
-              {surfaceLabel(row.surfaceKey, t)} · {t('savedViewCustody.scopes.' + row.scope)}
+              {surfaceLabel(row.surfaceKey, t)} · {savedViewScopeLabel(row.scope, t)}
             </Typography>
           </Stack>
         ),
@@ -111,7 +116,7 @@ export function SavedViewOrphanActionHistory({
         renderCell: ({ row }) => (
           <Stack justifyContent="center" sx={{ height: '100%', minWidth: 0 }}>
             <Typography variant="body2" fontWeight={650}>
-              {display('auditActions', row.action)}
+              {savedViewLifecycleActionLabel(row.action, t)}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap>
               {outcomeLabel(row)}
@@ -123,7 +128,7 @@ export function SavedViewOrphanActionHistory({
         field: 'reasonCode',
         headerName: t('savedViewCustody.columns.reasonCode'),
         minWidth: 150,
-        valueFormatter: (value) => t('savedViewCustody.reasons.' + String(value)),
+        valueFormatter: (value) => savedViewReasonLabel(String(value), t),
       },
       {
         field: 'sourceReference',
@@ -154,7 +159,7 @@ export function SavedViewOrphanActionHistory({
         valueFormatter: (value) => displayDate(String(value)),
       },
     ],
-    [display, outcomeLabel, ownerLabel, t]
+    [outcomeLabel, ownerLabel, t]
   );
 
   return (
@@ -208,7 +213,7 @@ export function SavedViewOrphanActionHistory({
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {surfaceLabel(entry.surfaceKey, t)} ·{' '}
-                          {t('savedViewCustody.scopes.' + entry.scope)}
+                          {savedViewScopeLabel(entry.scope, t)}
                         </Typography>
                         <Typography
                           component="p"
@@ -221,7 +226,7 @@ export function SavedViewOrphanActionHistory({
                       </Box>
                       <Box>
                         <Typography variant="body2" fontWeight={700}>
-                          {display('auditActions', entry.action)}
+                          {savedViewLifecycleActionLabel(entry.action, t)}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {outcomeLabel(entry)}

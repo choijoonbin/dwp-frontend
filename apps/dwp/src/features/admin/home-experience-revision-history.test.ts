@@ -8,5 +8,6 @@ describe('resolveHomeExperienceHistoryState', () => {
     expect(resolveHomeExperienceHistoryState(false, true, 0)).toBe('ERROR');
     expect(resolveHomeExperienceHistoryState(false, false, 0)).toBe('EMPTY');
     expect(resolveHomeExperienceHistoryState(false, false, 1)).toBe('READY');
+    expect(resolveHomeExperienceHistoryState(false, false, 0, true)).toBe('READY');
   });
 });

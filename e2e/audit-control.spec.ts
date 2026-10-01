@@ -8,6 +8,10 @@ function envelope(data: unknown) {
   return JSON.stringify({ status: 'SUCCESS', message: 'OK', success: true, data });
 }
 
+function checkpointPage(items: unknown[]) {
+  return { items, limit: 90, hasMore: false, coverageState: 'COMPLETE_WITHIN_FILTER' };
+}
+
 async function mockAuditSession(page: Page) {
   await mockAuthenticatedRuntime(page);
   await page.route('**/api/auth/me', (route) =>
@@ -742,13 +746,15 @@ async function mockAuditControl(page: Page) {
       );
       return fulfillJson(route, action === 'publish' ? currentPolicy : next);
     }
-    if (path.endsWith('/integrity') && method === 'GET') return fulfillJson(route, checkpoints);
+    if (path.endsWith('/integrity') && method === 'GET') {
+      return fulfillJson(route, checkpointPage(checkpoints));
+    }
     if (path.endsWith('/integrity/checkpoint') && method === 'POST') {
       checkpoints = [
         { ...checkpoint, checkpointId: '50000000-0000-0000-0000-000000000002' },
         ...checkpoints,
       ];
-      return fulfillJson(route, checkpoints);
+      return fulfillJson(route, checkpointPage(checkpoints));
     }
     if (path.endsWith('/exports') && method === 'POST') {
       return fulfillJson(route, {
@@ -796,7 +802,16 @@ test('auditors assess posture, inspect immutable evidence, and export a governed
   ).toBeVisible();
   const desktop = (page.viewportSize()?.width ?? 0) >= 1200;
   if (desktop) {
-    await expect(page.getByRole('grid', { name: 'Cross-domain incident flows' })).toBeVisible();
+    const correlationGrid = page.getByRole('grid', { name: 'Cross-domain incident flows' });
+    await expect(correlationGrid).toBeVisible();
+    const correlationCell = correlationGrid
+      .getByRole('row')
+      .filter({ hasText: 'Role assignment denied' })
+      .getByRole('gridcell')
+      .first();
+    await correlationCell.focus();
+    await expect(correlationCell).toBeFocused();
+    await page.keyboard.press('Enter');
   } else {
     await page.getByText('Role assignment denied', { exact: true }).first().click();
   }
@@ -817,7 +832,19 @@ test('auditors assess posture, inspect immutable evidence, and export a governed
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByText('Investigation view saved.')).toBeVisible();
   await expect(page.getByLabel('Saved views')).toHaveText(/Privileged access review/);
-  await page.getByText('Role assignment denied', { exact: true }).click();
+  if (desktop) {
+    const evidenceCell = page
+      .getByRole('grid', { name: 'Audit evidence' })
+      .getByRole('row')
+      .filter({ hasText: 'Role assignment denied' })
+      .getByRole('gridcell')
+      .first();
+    await evidenceCell.focus();
+    await expect(evidenceCell).toBeFocused();
+    await page.keyboard.press('Enter');
+  } else {
+    await page.getByText('Role assignment denied', { exact: true }).click();
+  }
   await expect(
     page.getByRole('heading', { name: 'Role assignment denied', level: 2 })
   ).toBeVisible();

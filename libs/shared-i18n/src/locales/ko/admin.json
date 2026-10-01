@@ -29,6 +29,113 @@
       "unavailable": "확인 불가",
       "notConfigured": "설정되지 않음",
       "openDetail": "상세 관리",
+      "governance": {
+        "loading": "테넌트 정본과 적용값을 불러오는 중",
+        "loadError": "테넌트 정본을 확인하지 못했습니다. 미확인 상태를 정상으로 간주하지 않습니다.",
+        "title": "조직 정본·로그인 준비·설정 출처",
+        "description": "{{observedAt}}에 Auth가 직접 관찰한 상태와 외부 owner 경계를 구분합니다.",
+        "externalBoundary": "외부 IdP 로그인 검증기는 연결되지 않았습니다. 내부 선행 조건이 준비되어도 실제 외부 로그인 성공으로 표시하지 않습니다.",
+        "states": {
+          "OBSERVED": "확인됨",
+          "READY": "준비됨",
+          "READY_FOR_EXTERNAL_PROBE": "외부 확인 대기",
+          "NOT_REQUIRED": "확인 불필요",
+          "BLOCKED": "차단됨",
+          "UNAVAILABLE": "확인 불가",
+          "ATTENTION_REQUIRED": "점검 필요",
+          "OWNER_ADAPTER_UNAVAILABLE": "담당 시스템 연결 안 됨",
+          "UNKNOWN": "상태 미확인"
+        },
+        "owners": {
+          "PROVIDER_TENANT_DOMAIN": "프로바이더 테넌트 도메인",
+          "UNKNOWN": "담당 시스템"
+        },
+        "reasons": {
+          "ENABLED_IDENTITY_PROVIDER_NOT_OBSERVED": "활성화된 로그인 제공자를 확인하지 못함",
+          "EXTERNAL_IDP_LOGIN_EXECUTOR_NOT_CONNECTED": "외부 로그인 검증 연결 안 됨",
+          "PROVIDER_TENANT_MAPPING_NOT_EXPOSED_TO_AUTH": "프로바이더의 테넌트 연결 정보를 Auth에서 조회할 수 없음",
+          "DOMAIN_DNS_VERIFICATION_NOT_OWNED_BY_AUTH": "도메인 DNS 검증은 별도 담당 시스템 소유",
+          "UNKNOWN": "세부 근거는 담당 시스템에서 확인 필요"
+        },
+        "directory": {
+          "title": "테넌트 디렉터리",
+          "tenant": "조직",
+          "code": "테넌트 코드",
+          "locale": "기본 언어"
+        },
+        "login": {
+          "title": "로그인 검증 준비",
+          "provider": "설정된 IdP",
+          "externalProbe": "외부 로그인 테스트",
+          "blocks": "차단 근거"
+        },
+        "recovery": {
+          "title": "복구 계정 검증 범위",
+          "total": "전체",
+          "verified": "검증됨",
+          "overdue": "기한 초과"
+        },
+        "domain": {
+          "title": "도메인 owner 경계",
+          "owner": "담당 owner",
+          "boundary": "미포함 범위"
+        },
+        "effective": {
+          "title": "현재 적용값과 상속 계보",
+          "description": "Tenant와 User 후보를 함께 표시하고 실제 승자, 잠금, override 가능 여부를 서버 계산 결과로 설명합니다.",
+          "locked": "조직 잠금",
+          "overrideAllowed": "사용자 override 허용",
+          "unknownSetting": "조직 관리 설정",
+          "unknownValue": "관리 정책 적용",
+          "settings": {
+            "authentication": {
+              "defaultLoginType": "기본 로그인 방식",
+              "requireMfa": "추가 인증",
+              "tokenTtlSec": "로그인 유지 시간"
+            },
+            "identity": { "preferredLocale": "표시 언어" }
+          },
+          "values": {
+            "login": { "LOCAL": "이메일과 비밀번호", "SSO": "회사 통합 로그인" },
+            "locales": {
+              "en": "영어",
+              "en-US": "영어(미국)",
+              "ko": "한국어",
+              "ko-KR": "한국어(대한민국)"
+            },
+            "required": "필수",
+            "optional": "선택",
+            "minutes": "{{count}}분"
+          },
+          "sources": {
+            "PROVIDER": "프로바이더 정책",
+            "TENANT": "회사 정책",
+            "USER": "사용자 설정",
+            "UNKNOWN": "출처 확인 불가"
+          },
+          "lineage": {
+            "PROVIDER": "프로바이더 기준값 · {{value}}",
+            "TENANT": "회사 기본값 · {{value}}",
+            "USER": "사용자 설정 · {{value}}",
+            "UNKNOWN": "출처 확인 불가 · {{value}}"
+          },
+          "evaluations": {
+            "WINNER": "현재 적용 중",
+            "OVERRIDDEN": "더 높은 우선순위 설정으로 대체됨",
+            "INHERITED": "상위 기본값 상속",
+            "UNKNOWN": "적용 판단 미확인"
+          }
+        },
+        "restore": {
+          "action": "언어 상속 복원",
+          "title": "조직 기본 언어로 복원",
+          "description": "사용자 override를 제거하고 조직 기본값을 다시 상속합니다.",
+          "preview": "{{before}} override를 제거해 {{after}}를 적용합니다. 현재 버전 {{version}}을 기준으로 충돌을 검사합니다.",
+          "confirm": "상속 복원",
+          "completed": "조직 기본 언어 상속을 복원했습니다.",
+          "failed": "설정 버전이 변경됐거나 복원할 수 없습니다. 새로 고친 뒤 다시 시도하세요."
+        }
+      },
       "priority": {
         "title": "우선 처리 과업",
         "description": "Auth, SCIM, 앱 권한과 감사 정책 담당 시스템에서 확인된 작업만 표시합니다.",
@@ -116,6 +223,7 @@
       "create": "정책 초안 만들기",
       "empty": "기록된 인증 정책 변경이 없습니다.",
       "error": "인증 정책 변경 이력을 불러오지 못했습니다.",
+      "retry": "다시 불러오기",
       "saved": "인증 정책 워크플로를 갱신했습니다.",
       "submit": "검토 요청",
       "approve": "승인",
@@ -131,7 +239,17 @@
         "APPROVED": "승인됨",
         "REJECTED": "반려됨",
         "PUBLISHED": "게시됨",
-        "SUPERSEDED": "대체됨"
+        "SUPERSEDED": "대체됨",
+        "UNKNOWN": "워크플로 상태 확인 불가"
+      },
+      "confidence": {
+        "UNKNOWN": "확인되지 않음",
+        "ESTIMATED": "추정",
+        "EXACT": "정확"
+      },
+      "coverageStates": {
+        "INTERNAL_AUTH_DIRECTORY_ACTIVE_IDENTITIES": "내부 Auth 디렉터리의 활성 사용자",
+        "UNKNOWN": "영향 범위 확인 불가"
       },
       "decision": {
         "APPROVE": "인증 정책 변경 승인",
@@ -674,7 +792,8 @@
     "lifecycle": {
       "DRAFT": "초안",
       "ACTIVE": "활성",
-      "RETIRED": "종료"
+      "RETIRED": "종료",
+      "UNKNOWN": "수명주기 확인 불가"
     }
   },
   "productivity": {
@@ -713,19 +832,22 @@
       "HEALTHY": "정상",
       "DEGRADED": "주의",
       "AUTHENTICATION_REQUIRED": "재동의 필요",
-      "UNAVAILABLE": "사용 불가"
+      "UNAVAILABLE": "사용 불가",
+      "UNKNOWN": "상태 확인 불가"
     },
     "lifecycle": {
       "DRAFT": "초안",
       "ACTIVE": "활성",
       "SUSPENDED": "중지",
-      "RETIRED": "종료"
+      "RETIRED": "종료",
+      "UNKNOWN": "수명주기 확인 불가"
     },
     "policyStates": {
       "REVIEW_REQUIRED": "보안 검토 필요",
       "APPROVED": "승인됨",
       "REVOKED": "회수됨",
-      "BLOCKED": "차단됨"
+      "BLOCKED": "차단됨",
+      "UNKNOWN": "정책 상태 확인 불가"
     },
     "auth": {
       "DELEGATED": "사용자 위임"
@@ -749,6 +871,15 @@
     "scopes": {
       "title": "승인된 최소 권한 계약",
       "description": "메일은 기본 메타데이터만 읽고, 일정은 읽기 전용입니다. 애플리케이션 전체 권한은 허용하지 않습니다."
+    },
+    "scopeLabels": {
+      "OPENID": "로그인 신원",
+      "PROFILE": "기본 프로필",
+      "OFFLINE_ACCESS": "위임 접근 갱신",
+      "USER_READ": "로그인 사용자 조회",
+      "MAIL_READ_BASIC": "기본 메일 메타데이터 조회",
+      "CALENDARS_READ": "캘린더 조회",
+      "UNKNOWN": "범위 확인 불가"
     },
     "signals": {
       "title": "운영 신호",
@@ -783,28 +914,45 @@
       "tokenExpiry": "액세스 토큰 만료",
       "lastSync": "마지막 성공",
       "userId": "사용자 {{id}}",
-      "empty": "아직 동의 연결을 완료한 사용자가 없습니다."
+      "empty": "아직 동의 연결을 완료한 사용자가 없습니다.",
+      "loading": "사용자 동의 증적을 불러오는 중입니다…",
+      "loadError": "사용자 동의 증적을 불러오지 못했습니다. 빈 상태로 추정하지 않습니다.",
+      "retry": "다시 시도",
+      "partial": "최근 {{limit}}명의 사용자만 표시합니다. 이 응답 범위보다 이전 동의 기록이 더 있습니다."
     },
     "consentStates": {
       "NOT_CONNECTED": "연결 안 됨",
       "CONNECTED": "연결됨",
       "REAUTHORIZATION_REQUIRED": "재동의 필요",
-      "REVOKED": "철회됨"
+      "REVOKED": "철회됨",
+      "UNKNOWN": "동의 상태 확인 불가"
     },
     "resources": {
       "MAIL": "메일 메타데이터",
-      "CALENDAR": "일정"
+      "CALENDAR": "일정",
+      "UNKNOWN": "리소스 확인 불가"
     },
     "runStates": {
       "RUNNING": "실행 중",
       "SUCCEEDED": "성공",
       "PARTIAL": "부분 완료",
       "FAILED": "실패",
-      "BLOCKED": "차단"
+      "BLOCKED": "차단",
+      "UNKNOWN": "실행 상태 확인 불가"
+    },
+    "syncModes": {
+      "INITIAL": "초기 동기화",
+      "DELTA": "증분 동기화",
+      "RESET": "전체 재동기화",
+      "UNKNOWN": "동기화 방식 확인 불가"
     },
     "runs": {
       "errors": "오류 {{count}}",
-      "empty": "아직 동기화 실행 증적이 없습니다."
+      "empty": "아직 동기화 실행 증적이 없습니다.",
+      "loading": "동기화 실행 증적을 불러오는 중입니다…",
+      "loadError": "동기화 실행 증적을 불러오지 못했습니다. 빈 상태로 추정하지 않습니다.",
+      "retry": "다시 시도",
+      "partial": "최근 {{limit}}건의 실행만 표시합니다. 이 응답 범위보다 이전 실행 증적이 더 있습니다."
     },
     "policy": {
       "leastPrivilege": "최소 권한",
@@ -828,16 +976,113 @@
     "searchUsers": "사용자 검색",
     "noUsers": "사용자가 없습니다.",
     "noRole": "할당된 역할 없음",
+    "unknownRole": "관리 역할",
+    "statusUnknown": "상태 확인 불가",
+    "roleDescriptionUnavailable": "역할 세부 정보는 신원 소유자가 관리합니다.",
     "userFallback": "사용자 {{id}}",
     "mfaEnabled": "MFA 켜짐",
     "mfaDisabled": "MFA 꺼짐",
     "additionalRoles": "추가 역할 {{count}}개",
     "inheritedCount": "상속 {{count}}",
     "projection": {
-      "coverage": "Auth 내부 소유자 {{owners}}개의 통합 스냅샷 {{snapshot}} · {{observedAt}} 관측",
+      "loading": "통합 내부 접근 스냅샷을 불러오고 있습니다. 소유자가 응답하는 동안 엔타이틀먼트가 없다고 추정하지 않습니다.",
+      "coverage": "Auth 내부 소유자 {{owners}}개에서 {{identities}}명, 검증 페이지 {{pages}}개의 통합 접근 권한을 {{observedAt}}에 관측",
       "exclusions": "명시적 제외 범위: {{exclusions}}",
       "unavailable": "통합 내부 접근 스냅샷을 불러오지 못했습니다. 개별 신원 정본은 계속 표시하지만 앱 및 승인 대기 범위는 확인되지 않았습니다.",
-      "appPresetCount": "앱 {{count}} · 대기 {{pending}}"
+      "appPresetCount": "앱 {{count}} · 대기 {{pending}}",
+      "inspectorTitle": "내부 통합 entitlement",
+      "inspectorDescription": "역할, 그룹, 특권, 앱 Preset의 출처와 승인 계보를 Auth 정본에서 표시합니다.",
+      "ownerCoverage": "{{owner}} · {{freshness}}",
+      "freshness": {
+        "FRESH": "최신",
+        "STALE": "오래됨",
+        "NO_DATA": "데이터 없음",
+        "UNKNOWN": "최신성 확인 불가"
+      },
+      "owners": {
+        "AUTH_USER_DIRECTORY": "사용자 디렉터리",
+        "DIRECT_ROLE_ASSIGNMENTS": "직접 역할 할당",
+        "GROUP_ROLE_ASSIGNMENTS": "그룹 역할 할당",
+        "PRIVILEGED_ACCESS_GRANTS": "특권 접근 부여",
+        "APP_ADMIN_PRESET_ASSIGNMENTS": "앱 관리 프리셋",
+        "AUTH_TENANT_APP_WORKFORCE_ASSIGNMENTS": "테넌트 앱 사용자 할당",
+        "AUTH_PRODUCT_AUTHORIZATION_CATALOG": "제품 권한 카탈로그",
+        "AUTH_TENANT_CAPABILITY_OVERRIDE": "테넌트 capability 제한",
+        "UNKNOWN": "등록된 접근 소유자"
+      },
+      "lifecycle": {
+        "ACTIVE": "활성",
+        "PENDING_APPROVAL": "승인 대기",
+        "APPROVED": "승인 완료 · 활성화 대기",
+        "PERMISSION_SATISFIED": "기본 권한 충족",
+        "TENANT_DISABLED": "테넌트 정책으로 비활성화",
+        "BLOCKED_BY_INSTALLATION": "테넌트 설치가 활성화되지 않아 차단됨",
+        "UNKNOWN": "소유자 상태 확인 불가"
+      },
+      "scopes": {
+        "TENANT": "테넌트 전체",
+        "ORG_UNIT": "특정 조직 단위",
+        "RESOURCE": "특정 관리 리소스",
+        "RESOURCE_SET": "관리 리소스 집합",
+        "APP": "애플리케이션 범위",
+        "UNKNOWN": "소유자 정의 범위"
+      },
+      "actorEvidence": {
+        "RECORDED": "기록됨",
+        "NOT_RECORDED": "불필요 또는 아직 기록되지 않음"
+      },
+      "sourceDetails": {
+        "DIRECT": "기록된 직접 멤버십",
+        "GROUP": "활성 접근 그룹",
+        "PRIVILEGED": "기록된 기간 제한 활성화",
+        "APP_PRESET": "통제된 직접 프리셋 할당",
+        "APP_PRESET_GROUP": "활성 프리셋 그룹",
+        "TENANT_APP_ASSIGNMENT": "테넌트 제어 앱 사용자 할당",
+        "PRODUCT_AUTHORIZATION": "활성 제품 권한 카탈로그",
+        "TENANT_CAPABILITY_SUPPRESSION": "승인된 테넌트 capability 제한",
+        "UNKNOWN": "소유자 관리 출처"
+      },
+      "exclusionLabels": {
+        "EXTERNAL_IDP_GROUPS_NOT_SYNCHRONIZED_TO_AUTH": "Auth에 동기화되지 않은 외부 IdP 그룹",
+        "EXTERNAL_SAAS_LICENSES_AND_SEATS": "외부 SaaS 라이선스 및 좌석",
+        "ROUTE_PREDICATES_EVALUATED_ONLY_AT_REQUEST_TIME": "요청 시점에만 평가되는 라우트 조건",
+        "SCOPED_CAPABILITIES_REQUIRE_RUNTIME_ROUTE_EVALUATION": "런타임 라우트 평가가 필요한 범위 지정 capability",
+        "UNKNOWN": "소유자가 선언한 추가 제외 범위"
+      },
+      "sourceLine": "{{sourceType}} 출처 · {{source}}",
+      "entitlementTypes": {
+        "ROLE": "역할",
+        "APP_PRESET": "앱 관리 프리셋",
+        "APP_WORKFORCE": "근무자 앱 접근",
+        "CAPABILITY": "제품 capability",
+        "UNKNOWN": "엔타이틀먼트 유형 확인 불가"
+      },
+      "sourceTypes": {
+        "DIRECT": "직접 할당",
+        "GROUP": "그룹 할당",
+        "PRIVILEGED": "기간 제한 특권 접근",
+        "APP_PRESET": "직접 앱 프리셋",
+        "APP_PRESET_GROUP": "그룹 앱 프리셋",
+        "TENANT_APP_ASSIGNMENT": "테넌트 앱 할당",
+        "PRODUCT_AUTHORIZATION": "제품 권한 계약",
+        "TENANT_CAPABILITY_SUPPRESSION": "테넌트 capability 제한",
+        "UNKNOWN": "출처 유형 확인 불가"
+      },
+      "lineageStates": {
+        "NOT_APPLICABLE": "승인 불필요",
+        "ACTIVATED": "특권 활성화",
+        "ACTIVATED_INDEPENDENTLY": "독립 승인 및 활성화 완료",
+        "REVIEW_PENDING": "검토 대기",
+        "ACTIVATION_PENDING": "활성화 대기",
+        "COMPLETE": "승인·활성화 완료",
+        "CLOSED": "종료",
+        "RUNTIME_EVALUATION_REQUIRED": "권한 충족 · 런타임 검증 필요",
+        "TENANT_SUPPRESSED": "승인된 테넌트 제한으로 비활성화",
+        "UNKNOWN": "승인 계보 확인 불가"
+      },
+      "scopeLine": "적용 범위 · {{scope}}",
+      "lineage": "{{state}} · 요청 {{requester}} → 승인 {{approver}} → 활성화 {{activator}}",
+      "noInternalGrants": "현재 Auth 내부 owner에서 확인된 entitlement가 없습니다. 외부 SaaS 라이선스는 이 결과에 포함되지 않습니다."
     },
     "roleFamilies": {
       "WORKSPACE": "기본 접근",
@@ -852,7 +1097,8 @@
       "SELF": "자신의 역할은 변경할 수 없습니다.",
       "IDENTITY_INACTIVE": "비활성 또는 정지된 계정은 역할을 변경할 수 없습니다.",
       "PROTECTED_ROLE": "동급·상위 또는 통제 영역 역할을 보유한 사용자는 변경할 수 없습니다.",
-      "ROLE_ASSIGNMENT_REQUIRES_TENANT_ADMIN": "ID 관리자는 권한을 조회할 수 있지만 테넌트 역할 위임은 회사 관리자가 수행해야 합니다."
+      "ROLE_ASSIGNMENT_REQUIRES_TENANT_ADMIN": "ID 관리자는 권한을 조회할 수 있지만 테넌트 역할 위임은 회사 관리자가 수행해야 합니다.",
+      "UNKNOWN": "신원 소유자가 관리 경계를 확인할 때까지 역할을 변경할 수 없습니다."
     },
     "columns": {
       "user": "사용자",
@@ -869,6 +1115,7 @@
       "editRolesFor": "{{name}} 역할 수정",
       "editDirectRoles": "직접 역할 수정",
       "reviewEffectiveAccess": "유효 권한 검토",
+      "reviewEffectiveAccessFor": "{{name}}의 유효 권한 검토",
       "save": "접근 권한 저장",
       "saving": "접근 권한 저장 중"
     },
@@ -895,10 +1142,12 @@
     "sources": {
       "direct": "직접",
       "group": "그룹",
+      "privileged": "특권 할당",
       "app_access_request": "승인된 앱 요청",
       "admin_direct": "통제된 직접 할당",
       "access_package": "접근 패키지",
-      "governed": "통제된 권한"
+      "governed": "통제된 권한",
+      "unknown": "출처 확인 불가"
     },
     "inspector": {
       "title": "유효 접근 권한",
@@ -981,6 +1230,7 @@
       "subtitle": "불변 스냅샷과 복구 가능한 브랜드 자산",
       "close": "브랜드 게시 이력 닫기",
       "empty": "다음 게시부터 이력이 기록됩니다.",
+      "partial": "브랜드 리비전이 {{limit}}개보다 많아 최신 첫 페이지만 표시합니다.",
       "loading": "홈 게시 이력을 불러오는 중입니다.",
       "error": "홈 게시 이력을 불러오지 못했습니다.",
       "retry": "다시 시도",
@@ -993,7 +1243,8 @@
         "SETTINGS_PUBLISHED": "브랜드 정의 게시",
         "ASSET_PUBLISHED": "로고 게시",
         "ASSET_RESET": "로고 제거",
-        "ROLLBACK": "이전 리비전 복구"
+        "ROLLBACK": "이전 리비전 복구",
+        "UNAVAILABLE": "확인 불가"
       }
     },
     "actions": {
@@ -1074,6 +1325,8 @@
       "namingDescription": "이 목록은 홈 전체 배치를 저장하는 기존 HomeTemplate API를 사용합니다. 위젯 프리셋은 다음 계약에서 정의 하나의 참조와 데이터 없는 설정만 포함합니다.",
       "title": "공유 홈 청사진",
       "count": "청사진 개정 {{count}}개",
+      "countPartial": "청사진 첫 페이지 일부를 표시 중",
+      "partial": "홈 청사진이 {{limit}}개보다 많아 첫 페이지만 표시합니다.",
       "openHomeStudio": "개인 홈 열기",
       "saved": "홈 청사진 수명주기를 변경했습니다.",
       "saveFailed": "홈 청사진 수명주기를 변경하지 못했습니다.",
@@ -1087,7 +1340,8 @@
       "lifecycle": {
         "DRAFT": "초안",
         "PUBLISHED": "게시됨",
-        "REVOKED": "회수됨"
+        "REVOKED": "회수됨",
+        "UNAVAILABLE": "확인 불가"
       },
       "confirm": {
         "publish": {
@@ -1108,6 +1362,7 @@
         "title": "{{name}} 리비전 이력",
         "description": "스냅샷을 복구하면 새 초안이 생성됩니다. 이 초안을 명시적으로 게시하기 전까지 게시된 청사진은 바뀌지 않습니다.",
         "empty": "사용 가능한 청사진 리비전이 없습니다",
+        "partial": "리비전이 {{limit}}개보다 많아 최신 첫 페이지만 표시합니다.",
         "revision": "리비전 {{revision}}",
         "restore": "초안으로 복구",
         "restored": "청사진 리비전을 새 초안으로 복구했습니다.",
@@ -1117,7 +1372,8 @@
           "UPDATE": "수정",
           "PUBLISH": "게시",
           "REVOKE": "회수",
-          "RESTORE": "복구"
+          "RESTORE": "복구",
+          "UNAVAILABLE": "확인 불가"
         },
         "confirm": {
           "title": "이 청사진 리비전을 초안으로 복구할까요?",
@@ -1145,7 +1401,8 @@
         "AVAILABLE": "사용 가능",
         "ALREADY_ADDED": "이미 배치됨",
         "DEPRECATED": "지원 중단 예정",
-        "DENY": "사용 불가"
+        "DENY": "사용 불가",
+        "UNKNOWN": "적용 상태 확인 불가"
       },
       "noPublicReason": "공개 판정 사유 없음",
       "publicReasons": {
@@ -1156,7 +1413,23 @@
         "TEMPORARILY_UNAVAILABLE": "안전 또는 가용성 통제로 일시 중지되었습니다",
         "DEPRECATED": "신규 배치가 중단되었습니다",
         "AVAILABLE": "배치할 수 있습니다",
-        "ALREADY_ADDED": "이미 홈에 배치되었습니다"
+        "ALREADY_ADDED": "이미 홈에 배치되었습니다",
+        "UNKNOWN": "판정 사유 확인 불가"
+      },
+      "placements": {
+        "CLASSIC_PERSONAL": "클래식 개인 영역",
+        "FLOW_PERSONAL": "플로우 개인 영역",
+        "FLOW_GOVERNED": "플로우 관리 영역",
+        "MZ_PERSONAL": "MZ 개인 영역",
+        "MZ_GOVERNED": "MZ 관리 영역",
+        "UNKNOWN": "배치 영역 확인 불가"
+      },
+      "policyStates": {
+        "DRAFT": "초안",
+        "PUBLISHED": "게시됨",
+        "SUPERSEDED": "대체됨",
+        "REVOKED": "회수됨",
+        "UNKNOWN": "정책 상태 확인 불가"
       },
       "required": "필수 배치",
       "policyTitle": "테넌트 정책 헤드",
@@ -1351,6 +1624,7 @@
       "error": "홈 게시 이력을 불러오지 못했습니다.",
       "retry": "다시 시도",
       "empty": "다음 게시부터 이력이 기록됩니다.",
+      "partial": "홈 리비전이 {{limit}}개보다 많아 최신 첫 페이지만 표시합니다.",
       "current": "현재",
       "restore": "복구",
       "defaultCopy": "DWP 기본 문구",
@@ -1362,14 +1636,16 @@
         "ASSET_PUBLISHED": "배경 이미지 게시",
         "ASSET_RESET": "기본 배경 복원",
         "EXPERIENCE_PUBLISHED": "홈 경험 전체 게시",
-        "ROLLBACK": "이전 리비전 복구"
+        "ROLLBACK": "이전 리비전 복구",
+        "UNAVAILABLE": "확인 불가"
       },
       "scopes": {
         "PRESENTATION": "문구·표현",
         "BACKGROUND": "배경 이미지",
         "BACKGROUND_ASSET": "배경 이미지",
         "LAUNCHPAD": "앱 Dock",
-        "COMPOSITION": "홈 구성 정책"
+        "COMPOSITION": "홈 구성 정책",
+        "UNAVAILABLE": "확인 불가"
       }
     },
     "fields": {
@@ -1723,10 +1999,12 @@
       "emptyDescription": "첫 변경이 완료되면 감사 가능한 활동 이력이 여기에 표시됩니다.",
       "systemActor": "플랫폼 서비스",
       "userActor": "사용자 {{id}}",
+      "unknownActor": "수행자 확인 불가",
       "outcomes": {
         "SUCCESS": "성공",
         "DENIED": "거부",
-        "FAILED": "실패"
+        "FAILED": "실패",
+        "UNKNOWN": "결과 확인 불가"
       },
       "actions": {
         "seeded": "초기 운영 카탈로그 구성",
@@ -1737,7 +2015,8 @@
         "itemCreated": "기준정보 항목 생성",
         "itemUpdated": "기준정보 항목 수정",
         "itemActivated": "기준정보 항목 활성화",
-        "itemRetired": "기준정보 항목 종료"
+        "itemRetired": "기준정보 항목 종료",
+        "UNKNOWN": "관리형 변경 활동"
       }
     },
     "columns": {
@@ -1821,6 +2100,7 @@
     "loading": "제품 레지스트리 불러오는 중",
     "search": "레지스트리 검색",
     "entries": "제품 레지스트리 항목",
+    "paginationLabel": "제품 레지스트리 페이지",
     "noEntries": "레지스트리 항목이 없습니다.",
     "allTypes": "전체 유형",
     "allStates": "전체 상태",
@@ -1832,13 +2112,15 @@
       "TOOL": "도구",
       "POLICY": "정책",
       "API": "API 계약",
-      "DATA_PRODUCT": "데이터 제품"
+      "DATA_PRODUCT": "데이터 제품",
+      "UNKNOWN": "레지스트리 유형 확인 불가"
     },
     "risk": {
       "LOW": "낮음",
       "MEDIUM": "보통",
       "HIGH": "높음",
-      "CRITICAL": "매우 높음"
+      "CRITICAL": "매우 높음",
+      "UNKNOWN": "위험 등급 확인 불가"
     },
     "fields": {
       "type": "레지스트리 유형",
@@ -1953,7 +2235,8 @@
     "observation": {
       "GATEWAY": "게이트웨이",
       "SERVICE": "서비스",
-      "ALL": "전체 홉"
+      "ALL": "전체 홉",
+      "UNKNOWN": "관측 지점 확인 불가"
     },
     "outcomes": {
       "ALL": "전체 결과",
@@ -2111,12 +2394,14 @@
         "PLATFORM_WORKSPACE": "플랫폼 및 워크스페이스",
         "PROVIDER_OPERATIONS": "프로바이더 운영",
         "AI_AUTOMATION": "AI 및 자동화",
-        "DATA_GOVERNANCE": "데이터 거버넌스"
+        "DATA_GOVERNANCE": "데이터 거버넌스",
+        "UNKNOWN": "도메인 확인 불가"
       },
       "classification": {
         "INTERNAL": "내부",
         "CONFIDENTIAL": "기밀",
-        "RESTRICTED": "제한"
+        "RESTRICTED": "제한",
+        "UNKNOWN": "분류 확인 불가"
       },
       "detail": {
         "title": "사건 흐름 상세",
@@ -2134,7 +2419,7 @@
         "before": "변경 전",
         "after": "변경 후",
         "metadata": "통제 메타데이터",
-        "envelopeVersion": "{{eventId}} / 스키마 v{{version}}"
+        "envelopeVersion": "증적 {{eventId}}"
       }
     },
     "windows": {
@@ -2192,7 +2477,8 @@
       "PROVISIONING": "프로비저닝",
       "AI_ACTION": "AI 활동",
       "POLICY_DENIED": "정책 거부",
-      "SYSTEM_EVENT": "시스템"
+      "SYSTEM_EVENT": "시스템",
+      "UNKNOWN": "범주 확인 불가"
     },
     "severity": {
       "ALL": "전체 심각도",
@@ -2200,13 +2486,15 @@
       "LOW": "낮음",
       "MEDIUM": "보통",
       "HIGH": "높음",
-      "CRITICAL": "치명적"
+      "CRITICAL": "치명적",
+      "UNKNOWN": "심각도 확인 불가"
     },
     "outcome": {
       "ALL": "전체 결과",
       "SUCCESS": "성공",
       "DENIED": "거부",
-      "FAILED": "실패"
+      "FAILED": "실패",
+      "UNKNOWN": "결과 확인 불가"
     },
     "kpi": {
       "events": "증적 이벤트",
@@ -2297,6 +2585,44 @@
       "copy": "값 복사",
       "copied": "값을 복사했습니다."
     },
+    "evidence": {
+      "governedSource": "통제된 DWP 서비스",
+      "actorUnavailable": "수행자 정보 확인 불가",
+      "subjectUnavailable": "대상 주체 정보 확인 불가",
+      "targetUnavailable": "대상 정보 확인 불가",
+      "roleUnavailable": "역할 증적 확인 불가",
+      "enabled": "사용",
+      "disabled": "사용 안 함",
+      "unavailable": "보호된 증적 저장소에 보관된 값",
+      "beforeLabel": "변경 전:",
+      "afterLabel": "변경 후:",
+      "noItemizedChange": "이 이벤트에는 항목별 스칼라 변경이 없습니다.",
+      "protectedMetadata": "추가 메타데이터 {{count}}개는 보호된 감사 저장소에 보관됩니다.",
+      "retention": {
+        "STANDARD": "표준 보존",
+        "EXTENDED": "연장 보존",
+        "LEGAL_HOLD": "법적 보존",
+        "UNAVAILABLE": "보존 정책 확인 불가"
+      },
+      "fields": {
+        "status": "상태",
+        "lifecycle": "수명주기",
+        "enabled": "사용 여부",
+        "mfaEnabled": "MFA 등록",
+        "requireMfa": "MFA 요구",
+        "displayName": "표시 이름",
+        "name": "이름",
+        "title": "제목",
+        "loginType": "기본 로그인 방식",
+        "tokenLifetime": "세션 수명",
+        "retentionDays": "보존 기간",
+        "outcome": "결과",
+        "decision": "결정",
+        "role": "역할",
+        "version": "리비전",
+        "managedField": "관리 항목"
+      }
+    },
     "export": {
       "open": "증적 반출",
       "title": "감사 증적 반출",
@@ -2316,26 +2642,30 @@
       "ACKNOWLEDGED": "확인",
       "INVESTIGATING": "조사 중",
       "RESOLVED": "해결",
-      "DISMISSED": "제외"
+      "DISMISSED": "제외",
+      "UNKNOWN": "탐지 상태 확인 불가"
     },
     "caseStatus": {
       "OPEN": "열림",
       "INVESTIGATING": "조사 중",
       "CONTAINED": "통제됨",
       "RESOLVED": "해결",
-      "CLOSED": "종료"
+      "CLOSED": "종료",
+      "UNKNOWN": "케이스 상태 확인 불가"
     },
     "sla": {
       "ON_TRACK": "정상",
       "AT_RISK": "기한 임박",
       "BREACHED": "SLA 초과",
-      "COMPLETED": "완료"
+      "COMPLETED": "완료",
+      "UNKNOWN": "SLA 상태 확인 불가"
     },
     "entity": {
       "relationship": {
         "ACTOR": "수행자",
         "TARGET": "대상",
-        "SOURCE": "수집원"
+        "SOURCE": "수집원",
+        "UNKNOWN": "관계 확인 불가"
       }
     },
     "activity": {
@@ -2348,9 +2678,20 @@
       "NOTE_ADDED": "조사자 노트 추가",
       "TASK_CREATED": "조사 작업 생성",
       "TASK_UPDATED": "조사 작업 변경",
-      "RESOLUTION_RECORDED": "해결 판단 기록"
+      "RESOLUTION_RECORDED": "해결 판단 기록",
+      "UNKNOWN": "관리형 조사 활동"
+    },
+    "sourceServices": {
+      "AUTH": "ID 서비스",
+      "PLATFORM": "워크스페이스 서비스",
+      "PROVIDER": "프로바이더 제어 서비스",
+      "GATEWAY": "접근 게이트웨이",
+      "NOTIFICATION": "알림 서비스",
+      "AUTOMATION": "자동화 서비스",
+      "UNKNOWN": "관리형 감사 소스"
     },
     "investigations": {
+      "managedFinding": "관리형 탐지",
       "views": "조사 보기",
       "findings": "탐지 항목",
       "cases": "케이스",
@@ -2537,7 +2878,13 @@
           "exportLimitRows": "반출 한도",
           "requireExportReason": "반출 사유 필수",
           "integrityEnabled": "무결성 체크포인트",
-          "highRiskThreshold": "고위험 임계값"
+          "highRiskThreshold": "고위험 임계값",
+          "UNKNOWN": "소유자가 관리하는 정책 항목"
+        },
+        "values": {
+          "enabled": "사용",
+          "disabled": "사용 안 함",
+          "unavailable": "값 확인 불가"
         }
       },
       "integrity": "무결성 체크포인트",
@@ -2552,12 +2899,14 @@
       "signature": "체크포인트 해시",
       "status": "검증",
       "noCheckpoints": "아직 생성된 무결성 체크포인트가 없습니다.",
+      "integrityPartialCoverage": "최신 무결성 체크포인트 {{count}}건을 표시합니다. 이전 체크포인트는 소유자 원장에 계속 보존됩니다.",
       "recordCount": "봉인 레코드 {{count}}건"
     },
     "integrityStatus": {
       "VERIFIED": "검증됨",
       "FAILED": "실패",
-      "UNAVAILABLE": "키 미설정"
+      "UNAVAILABLE": "키 미설정",
+      "UNKNOWN": "검증 상태 확인 불가"
     }
   },
   "audit": {
@@ -2578,12 +2927,14 @@
     },
     "sources": {
       "IDENTITY": "인증 및 권한",
-      "PLATFORM": "플랫폼"
+      "PLATFORM": "플랫폼",
+      "UNKNOWN": "감사 출처 확인 불가"
     },
     "actorTypes": {
       "USER": "사용자",
       "AGENT": "에이전트",
-      "SYSTEM": "시스템"
+      "SYSTEM": "시스템",
+      "UNKNOWN": "수행자 유형 확인 불가"
     },
     "actions": {
       "announcement": {
@@ -2735,6 +3086,8 @@
       "activity": {
         "title": "최근 프로비저닝 활동",
         "description": "테넌트 커넥터에서 수신한 마스킹된 SCIM 작업입니다.",
+        "countAtLeast": "{{count}}+",
+        "partialCoverage": "최신 {{count}}건을 표시합니다. 소유자 레코드가 더 있으므로 전체 범위라고 판단하지 않습니다.",
         "empty": "아직 수신된 프로비저닝 활동이 없습니다.",
         "loadError": "프로비저닝 활동을 일시적으로 불러올 수 없습니다. 커넥터 통제 기능은 계속 사용할 수 있습니다."
       },
@@ -2744,6 +3097,26 @@
         "resource": "리소스",
         "outcome": "결과",
         "occurredAt": "발생 시각"
+      },
+      "eventOperations": {
+        "CREATE": "생성",
+        "REPLACE": "교체",
+        "PATCH": "변경",
+        "DELETE": "삭제",
+        "READ": "조회",
+        "SEARCH": "검색",
+        "UNKNOWN": "작업 확인 불가"
+      },
+      "eventResources": {
+        "USER": "사용자",
+        "GROUP": "그룹",
+        "CONFIG": "커넥터 구성",
+        "UNKNOWN": "리소스 확인 불가"
+      },
+      "connectorOperations": {
+        "USERS": "사용자 프로비저닝",
+        "GROUPS": "그룹 프로비저닝",
+        "UNKNOWN": "프로비저닝 범위 확인 불가"
       },
       "inspector": {
         "title": "커넥터 준비 상태",
@@ -2832,32 +3205,38 @@
     "states": {
       "DRAFT": "초안",
       "ACTIVE": "진행 중",
-      "COMPLETED": "완료"
+      "COMPLETED": "완료",
+      "UNKNOWN": "캠페인 상태 확인 불가"
     },
     "scopes": {
       "TENANT": "테넌트 전체",
       "ROLE": "특정 역할",
-      "GROUP": "특정 그룹"
+      "GROUP": "특정 그룹",
+      "UNKNOWN": "검토 범위 확인 불가"
     },
     "reviewerStrategies": {
       "TENANT_ADMIN": "테넌트 관리자",
-      "NAMED_REVIEWER": "지정 검토자"
+      "NAMED_REVIEWER": "지정 검토자",
+      "UNKNOWN": "검토자 전략 확인 불가"
     },
     "sources": {
       "DIRECT": "직접 할당",
-      "GROUP": "그룹 상속"
+      "GROUP": "그룹 상속",
+      "UNKNOWN": "권한 출처 확인 불가"
     },
     "recommendations": {
       "KEEP": "유지 신호",
       "REVIEW": "검토 신호",
-      "UNAVAILABLE": "신호 없음"
+      "UNAVAILABLE": "신호 없음",
+      "UNKNOWN": "권고 확인 불가"
     },
     "recommendationReasons": {
       "RECENT_ACTIVITY": "최근 로그인 근거 있음",
       "PRIVILEGED_ROLE": "특권 역할은 명시적 검토 필요",
       "NEVER_SIGNED_IN": "로그인 근거 없음",
       "INACTIVE_90_DAYS": "최근 90일 로그인 없음",
-      "EVIDENCE_UNAVAILABLE": "활성화 시점에 근거 확인 불가"
+      "EVIDENCE_UNAVAILABLE": "활성화 시점에 근거 확인 불가",
+      "UNKNOWN": "근거 기준 확인 불가"
     },
     "evidence": {
       "source": "할당 출처",
@@ -2869,13 +3248,15 @@
     "decisions": {
       "PENDING": "검토 대기",
       "APPROVE": "유지 승인",
-      "REVOKE": "회수"
+      "REVOKE": "회수",
+      "UNKNOWN": "판단 확인 불가"
     },
     "remediation": {
       "NOT_REQUIRED": "후속 조치 없음",
       "PENDING": "회수 대기",
       "APPLIED": "적용 완료",
-      "MANUAL_REQUIRED": "소유자 검토 필요"
+      "MANUAL_REQUIRED": "소유자 검토 필요",
+      "UNKNOWN": "후속 조치 상태 확인 불가"
     },
     "columns": {
       "subject": "사용자",
@@ -2970,7 +3351,14 @@
     },
     "roleTypes": {
       "SYSTEM": "시스템",
-      "CUSTOM": "사용자 정의"
+      "CUSTOM": "사용자 정의",
+      "UNKNOWN": "역할 유형 확인 불가"
+    },
+    "statuses": {
+      "ACTIVE": "활성",
+      "INACTIVE": "비활성",
+      "RETIRED": "종료",
+      "UNKNOWN": "역할 상태 확인 불가"
     },
     "tabs": {
       "label": "역할 거버넌스 보기",
@@ -3037,7 +3425,8 @@
     "effects": {
       "NONE": "없음",
       "ALLOW": "허용",
-      "DENY": "거부"
+      "DENY": "거부",
+      "UNKNOWN": "효과 확인 불가"
     },
     "permissionCodes": {
       "VIEW": "조회",
@@ -3048,27 +3437,32 @@
       "EXECUTE": "실행",
       "APPROVE": "승인",
       "EXPORT": "반출",
-      "PUBLISH": "게시"
+      "PUBLISH": "게시",
+      "UNKNOWN": "권한 확인 불가"
     },
     "resourceTypes": {
       "APP": "애플리케이션",
       "NAVIGATION": "내비게이션",
       "API": "API",
       "ACTION": "작업",
-      "DATA": "데이터"
+      "DATA": "데이터",
+      "UNKNOWN": "리소스 유형 확인 불가"
     },
     "sources": {
       "DIRECT": "직접 할당",
-      "GROUP": "그룹 상속"
+      "GROUP": "그룹 상속",
+      "UNKNOWN": "할당 출처 확인 불가"
     },
     "assignmentTypes": {
       "ACTIVE": "즉시 적용",
-      "ELIGIBLE": "승인 후 활성화"
+      "ELIGIBLE": "승인 후 활성화",
+      "UNKNOWN": "할당 유형 확인 불가"
     },
     "scopes": {
       "TENANT": "전체 테넌트",
       "ORG_UNIT": "조직",
-      "RESOURCE": "리소스"
+      "RESOURCE": "리소스",
+      "UNKNOWN": "범위 확인 불가"
     },
     "assignmentSummary": {
       "label": "그룹 역할 할당 현황",
@@ -3200,17 +3594,20 @@
     "activationModes": {
       "SELF_SERVICE": "승인 없이 본인 활성화",
       "APPROVAL": "관리자 승인 후 활성화",
-      "DISABLED": "활성화 중지"
+      "DISABLED": "활성화 중지",
+      "UNKNOWN": "활성화 방식 확인 불가"
     },
     "assurance": {
       "SESSION": "인증 세션",
       "MFA": "다중 인증",
-      "PHISHING_RESISTANT": "피싱 방지 인증"
+      "PHISHING_RESISTANT": "피싱 방지 인증",
+      "UNKNOWN": "보증 수준 확인 불가"
     },
     "emergencyModes": {
       "DISABLED": "사용 안 함",
       "REGISTERED_PRINCIPAL": "등록된 긴급 계정",
-      "DUAL_APPROVAL": "2인 승인"
+      "DUAL_APPROVAL": "2인 승인",
+      "UNKNOWN": "긴급 접근 방식 확인 불가"
     },
     "principalTypes": {
       "USER": "사용자",
@@ -3224,7 +3621,8 @@
       "REVOKED": "회수",
       "EXPIRED": "만료",
       "RETIRED": "종료",
-      "SUSPENDED": "중지"
+      "SUSPENDED": "중지",
+      "UNKNOWN": "수명주기 상태 확인 불가"
     },
     "actions": {
       "approve": "승인",
@@ -3237,7 +3635,8 @@
     "actionsCatalog": {
       "ACCESS.ASSIGNMENT.MANAGE": "범위 내 역할 할당 관리",
       "ACCESS.ROLE.MANAGE": "역할 정의 관리",
-      "ACCESS.RESOURCE.MANAGE": "보호 리소스 관리"
+      "ACCESS.RESOURCE.MANAGE": "보호 리소스 관리",
+      "UNKNOWN": "위임 작업 확인 불가"
     },
     "decision": {
       "description": "{{person}}의 {{role}} 요청을 판단합니다. 자기 승인은 서버에서 차단됩니다.",
@@ -3297,7 +3696,8 @@
       "states": {
         "NOT_VERIFIED": "미검증",
         "VERIFIED": "검증됨",
-        "OVERDUE": "검증 기한 초과"
+        "OVERDUE": "검증 기한 초과",
+        "UNKNOWN": "검증 상태 확인 불가"
       }
     },
     "toasts": {
@@ -3316,10 +3716,25 @@
     "loadError": "카탈로그를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.",
     "search": "자산, 참조 또는 소유자 검색",
     "allKinds": "모든 자산 유형",
+    "ownerManaged": "통제된 담당자 지정됨",
+    "ownerUnavailable": "담당자 확인 불가",
+    "openGraphFor": "{{name}} 관계 검토",
     "applications": {
       "title": "애플리케이션 수명주기 카탈로그",
+      "unknownName": "이름이 확인되지 않은 관리 앱",
+      "loading": "애플리케이션 소유자 정본을 불러오고 있습니다. 각 소유자의 응답 후 관측 상태와 조회 불가 상태를 표시합니다.",
       "description": "이 테넌트와 현재 관리자에게 실제로 제공된 소유자 정본을 기준으로 앱별 상태를 확인합니다.",
-      "contractBoundary": "테넌트 설치와 일반 사용자 할당은 테넌트 조회 계약으로 제공되지 않습니다. 레지스트리나 관리자 기록으로 추정하지 않고 미확인 상태로 유지합니다.",
+      "contractBoundary": "설치, 예약 좌석, 일반 사용자 할당은 각 테넌트 소유자의 기록으로 확인합니다. 런타임 상태와 외부 SaaS 정산은 해당 소유자가 보고하기 전까지 미확인으로 유지합니다.",
+      "provenance": {
+        "authority": "권한 소유자 증적",
+        "authorityDetail": "관측 {{observedAt}} · 결정 {{revision}} · 원본 개정 {{count}}개",
+        "adoption": "테넌트 도입 소유자 증적",
+        "adoptionDetail": "관측 {{observedAt}} · {{coverage}} · 소유자 {{owners}}개 · 제외 {{exclusions}}개",
+        "coverage": {
+          "complete": "모든 내부 소유자 포함",
+          "unavailable": "소유자 범위 확인 불가"
+        }
+      },
       "partialFailure": "일부 소유자 정본을 불러오지 못했습니다. 조회 불가와 실제 미관측 상태를 구분해 표시합니다.",
       "search": "애플리케이션 또는 리소스 키 검색",
       "emptyTitle": "조건에 맞는 애플리케이션이 없습니다",
@@ -3328,12 +3743,39 @@
       "observation": {
         "OBSERVED": "관측됨",
         "NOT_OBSERVED": "관측되지 않음",
+        "LOADING": "소유자 정본 불러오는 중",
         "UNAVAILABLE": "소유자 조회 불가"
       },
       "management": {
         "OBSERVED": "관리 접근 확인됨",
         "NOT_OBSERVED": "관리 접근 미관측",
+        "LOADING": "관리 접근 확인 중",
         "UNAVAILABLE": "관리 접근 미확인"
+      },
+      "lifecycle": {
+        "ACTIVE": "활성",
+        "DRAFT": "초안",
+        "IN_REVIEW": "검토 중",
+        "APPROVED": "승인됨",
+        "ENABLED": "사용 중",
+        "SUSPENDED": "중지됨",
+        "REJECTED": "반려됨",
+        "RETIRED": "종료됨",
+        "UNKNOWN": "소유자 관리 상태"
+      },
+      "scopes": {
+        "GLOBAL": "전체",
+        "ORGANIZATION": "조직",
+        "TENANT": "테넌트",
+        "USER": "사용자",
+        "UNKNOWN": "소유자 관리 범위"
+      },
+      "accessSources": {
+        "ENTITLEMENT": "제품 엔타이틀먼트",
+        "MANAGEMENT": "범위형 관리 책임",
+        "RELATIONSHIP": "리소스 관계",
+        "SUPPORT": "승인된 지원 세션",
+        "UNKNOWN": "관리된 권한 정본"
       },
       "stages": {
         "registry": "앱 레지스트리",
@@ -3344,10 +3786,14 @@
         "runnable": "현재 행위자 실행 화면"
       },
       "details": {
+        "governedIdentity": "관리 대상 애플리케이션 식별자",
         "registry": "{{lifecycle}} · {{scope}} · 개정 {{revision}}",
         "boundaryCount_one": "관리 범위 {{count}}개",
         "boundaryCount_other": "관리 범위 {{count}}개",
         "accessSources": "권한 정본: {{sources}}",
+        "installation": "{{lifecycle}} · 활성 {{active}} · 예약 {{reserved}} / {{capacity}}",
+        "unboundedCapacity": "내부 상한 없음",
+        "workforceAssignments": "근무자 할당: 활성 {{active}} · 승인 대기 {{pending}}",
         "surfaceCount_one": "업무 화면 {{count}}개",
         "surfaceCount_other": "업무 화면 {{count}}개",
         "ownerContractUnavailable": "테넌트 소유자 조회 계약 없음",
@@ -3389,7 +3835,8 @@
     },
     "scopes": {
       "TENANT": "테넌트",
-      "GLOBAL_PRODUCT": "제품 전역"
+      "GLOBAL_PRODUCT": "제품 전역",
+      "UNKNOWN": "범위 확인 불가"
     },
     "kinds": {
       "REFERENCE_SET": "기준정보",
@@ -3404,7 +3851,8 @@
       "CODE_SET": "시스템 코드 계약",
       "SERVICE": "실행 서비스",
       "NAVIGATION": "내비게이션 항목",
-      "PERMISSION": "권한"
+      "PERMISSION": "권한",
+      "UNKNOWN": "자산 유형 확인 불가"
     },
     "graph": {
       "all": "전체 관리 카탈로그를 표시합니다",
@@ -3423,9 +3871,11 @@
     "criticality": {
       "INFORMATIONAL": "정보",
       "OPERATIONAL": "운영",
-      "CRITICAL": "핵심"
+      "CRITICAL": "핵심",
+      "UNKNOWN": "중요도 확인 불가"
     },
     "relation": {
+      "previewCoverage": "연결 관계 {{total}}건 중 {{shown}}건을 표시합니다. 전체 주변 관계는 그래프 또는 인벤토리에서 확인하세요.",
       "dialogTitle": "카탈로그 관계 선언",
       "source": "출발 자산",
       "target": "대상 자산",
@@ -3444,7 +3894,8 @@
         "GOVERNS": "관리",
         "NAVIGATES_TO": "메뉴 연결",
         "REQUIRES_PERMISSION": "권한 필요",
-        "SYNCHRONIZES": "동기화"
+        "SYNCHRONIZES": "동기화",
+        "UNKNOWN": "관계 유형 확인 불가"
       }
     },
     "impact": {
@@ -3455,6 +3906,7 @@
       "direct": "직접 영향",
       "transitive": "전이 영향",
       "none": "하위 의존성이 탐지되지 않았습니다.",
+      "previewCoverage": "영향 자산 {{total}}개 중 {{shown}}개를 표시합니다. 전체 영향 범위는 인벤토리 또는 그래프에서 확인하세요.",
       "distance": "{{count}}단계",
       "rule": "판정 규칙: {{key}} v{{version}}",
       "operations": {
@@ -3496,20 +3948,25 @@
       "findings": {
         "OWNER_MISSING": "책임 소유자가 없습니다",
         "ORPHAN_ASSET": "카탈로그 관계가 관찰되지 않았습니다",
-        "DEPRECATION_IMPACT": "폐기 대상 자산을 사용 중인 소비처가 있습니다"
+        "DEPRECATION_IMPACT": "폐기 대상 자산을 사용 중인 소비처가 있습니다",
+        "UNKNOWN": "발견 유형 확인 불가"
       },
       "states": {
         "OPEN": "열림",
         "ACKNOWLEDGED": "확인됨",
         "FALSE_POSITIVE": "오탐",
         "ACCEPTED_RISK": "위험 수용",
-        "RESOLVED": "해결됨"
+        "RESOLVED": "해결됨",
+        "UNKNOWN": "처분 상태 확인 불가"
       },
       "inspector": {
         "title": "발견사항 근거",
         "select": "발견사항을 선택해 판정 규칙, 신호와 근거 해시를 검토하세요.",
         "hash": "근거 SHA-256: {{hash}}",
-        "disposition": "기록된 처분: {{reason}}"
+        "disposition": "기록된 처분: {{reason}}",
+        "evidenceRetained": "보호된 근거 {{count}}개 필드를 보관 중입니다",
+        "entityRevision": "자산 개정",
+        "directDependents": "직접 의존 자산"
       },
       "disposition": {
         "title": "발견사항 처분 기록",
@@ -3552,7 +4009,8 @@
     "root": "최상위",
     "types": {
       "GROUP": "그룹",
-      "APP": "애플리케이션"
+      "APP": "애플리케이션",
+      "UNKNOWN": "내비게이션 항목 유형 확인 불가"
     },
     "fields": {
       "key": "내비게이션 키",
@@ -3650,7 +4108,14 @@
       "history": {
         "title": "개정 이력",
         "revision": "개정 {{revision}}",
-        "noSummary": "변경 요약이 없습니다"
+        "noSummary": "변경 요약이 없습니다",
+        "states": {
+          "draft": "초안",
+          "published": "게시됨",
+          "superseded": "대체됨",
+          "cancelled": "취소됨",
+          "unavailable": "상태 확인 불가"
+        }
       },
       "toasts": {
         "created": "내비게이션 초안을 생성했습니다.",
@@ -3667,6 +4132,306 @@
     "attention": "승인 대기 {{pending}}건 · 소유자 없는 앱 범위 {{ownerless}}건을 확인하세요.",
     "viewLabel": "앱 책임 관리 보기",
     "controlResponsibilitiesNotice": "이 보기는 앱 소유자와 접근 승인·이행·검토 책임만 관리합니다. 앱 설정 관리자와 제품 전문 직무는 앱 관리자 Preset에서 함께 요청·승인·활성화해야 합니다.",
+    "adoption": {
+      "loading": "테넌트 앱 도입과 좌석 할당을 불러오는 중",
+      "loadError": "앱 도입 정본을 불러오지 못했습니다. 실패를 빈 결과로 처리하지 않았습니다.",
+      "unbounded": "상한 없음",
+      "receipt": "활성화 영수증 {{id}}",
+      "receiptShort": "활성화 영수증",
+      "capabilities": {
+        "title": "앱 기능 유효 정책",
+        "description": "활성 권한 번들의 전체 기능을 앱별로 확인하고, 허용된 기능만 테넌트에서 일시 중지합니다.",
+        "loading": "앱 기능 정책을 불러오는 중",
+        "loadError": "앱 기능 정책 정본을 불러오지 못했습니다.",
+        "emptyTitle": "게시된 앱 기능 계약이 없습니다",
+        "emptyDescription": "권한 소유자가 이 테넌트에 활성 앱 기능이 없는 완전한 결과를 반환했습니다.",
+        "boundary": "테넌트 예외는 기능을 추가하거나 권한을 확대할 수 없습니다. 기능 중지는 앱 소유자 요청, 독립 승인자 검토, 독립 접근 관리자 활성화 순서로 적용됩니다.",
+        "externalBoundary": "외부 SaaS 기능 적용은 실행 소유자가 영수증을 제공하기 전까지 확인 불가로 유지됩니다.",
+        "count": "관리 기능 {{count}}개",
+        "bundleRevision": "권한 번들 r{{revision}}",
+        "provenance": "현재 출처: {{source}} · 위험 등급: {{risk}}",
+        "expires": "테넌트 중지 만료: {{date}}",
+        "capabilityLabel": "{{surface}} · {{action}}",
+        "workflowChange": "{{product}} · {{capability}} · {{desired}}",
+        "workflowTitle": "기능 변경 요청",
+        "receipt": "활성화 영수증 {{id}}",
+        "observation": "권한 소유자 관측 {{observedAt}} · {{coverage}}",
+        "changeMeta": "기준 권한 번들 r{{revision}} · 만료 {{expiry}}",
+        "noExpiry": "기본 정책 복원 후 계속 적용",
+        "commandContext": "앱 {{product}} · 기능 {{capability}} · 변경 {{desired}} · 기준 번들 r{{revision}} · 만료 {{expiry}}",
+        "effectiveStates": {
+          "ENABLED": "사용 가능",
+          "DISABLED": "테넌트에서 중지",
+          "UNKNOWN": "유효 상태 확인 불가"
+        },
+        "overrideModes": {
+          "OWNER_LOCKED": "정본 소유자 잠금",
+          "ALLOW_DISABLE": "테넌트 중지 허용",
+          "UNKNOWN": "재정의 정책 확인 불가"
+        },
+        "sources": {
+          "GLOBAL_AUTHORIZATION_BUNDLE": "전역 권한 정본",
+          "TENANT_OVERRIDE": "승인된 테넌트 예외",
+          "UNKNOWN": "유효 출처 확인 불가"
+        },
+        "surfaces": {
+          "policy": "정책 제어",
+          "catalog": "카탈로그 제어",
+          "design": "설계 제어",
+          "configuration": "구성 제어",
+          "directory": "디렉터리 제어",
+          "lifecycle": "수명주기 제어",
+          "operations": "운영 제어",
+          "personal": "개인 업무 영역",
+          "team": "팀 업무 영역",
+          "management": "관리 업무 영역",
+          "admin": "관리자 업무 영역",
+          "work": "업무 영역",
+          "unknown": "관리 대상 기능"
+        },
+        "capabilityActions": {
+          "VIEW": "조회",
+          "CREATE": "생성",
+          "UPDATE": "변경",
+          "DELETE": "삭제",
+          "MANAGE": "관리",
+          "APPROVE": "승인",
+          "PUBLISH": "게시",
+          "EXPORT": "내보내기",
+          "EXECUTE": "실행",
+          "unknown": "통제 작업"
+        },
+        "riskTiers": {
+          "LOW": "낮음",
+          "MEDIUM": "보통",
+          "HIGH": "높음",
+          "CRITICAL": "매우 높음",
+          "UNKNOWN": "소유자 분류"
+        },
+        "desiredStates": {
+          "DISABLED": "이 테넌트에서 중지",
+          "INHERIT": "기본 정책 복원",
+          "UNKNOWN": "요청 상태 확인 불가"
+        },
+        "plan": {
+          "loading": "요금제 적격성을 확인하는 중",
+          "permissionRequired": "요금제 적격성 조회에는 앱 거버넌스 조회 권한이 필요합니다",
+          "unavailable": "Provider 요금제 소유자를 조회할 수 없습니다",
+          "notRegistered": "이 제품은 Provider 엔타이틀먼트에 연결되지 않았습니다",
+          "noActivePlan": "활성 요금제 없음",
+          "summary": "요금제: {{plan}} v{{version}} · {{state}}",
+          "observation": "Provider 요금제 소유자 관측 {{observedAt}} · 원본 변경 {{sourceChangedAt}} · {{coverage}}",
+          "sourceUnavailable": "원본 변경 시각 확인 불가",
+          "coverageStates": {
+            "CURRENT_SUBSCRIPTION_AND_TENANT_ENTITLEMENTS": "현재 구독과 테넌트 엔타이틀먼트 포함",
+            "UNKNOWN": "요금제 범위 확인 불가"
+          },
+          "states": {
+            "ELIGIBLE": "사용 가능",
+            "NO_ACTIVE_SUBSCRIPTION": "활성 구독 없음",
+            "SUBSCRIPTION_SUSPENDED": "구독 중지",
+            "NOT_INCLUDED_IN_PLAN": "요금제에 포함되지 않음",
+            "NOT_ASSIGNED_TO_TENANT": "테넌트에 할당되지 않음",
+            "TENANT_ENTITLEMENT_SUSPENDED": "테넌트 엔타이틀먼트 중지",
+            "CATALOG_RETIRED": "엔타이틀먼트 종료",
+            "UNKNOWN": "요금제 사용 가능 여부 확인 불가"
+          }
+        },
+        "workflowStates": {
+          "DRAFT": "초안",
+          "IN_REVIEW": "검토 중",
+          "APPROVED": "승인됨",
+          "REJECTED": "반려됨",
+          "ACTIVE": "적용 중",
+          "REVOKED": "회수됨",
+          "SUPERSEDED": "새 변경으로 대체됨",
+          "UNKNOWN": "워크플로 상태 확인 불가"
+        },
+        "actions": {
+          "REQUEST_DISABLE": "기능 중지 요청",
+          "REQUEST_INHERIT": "기본 정책 복원 요청",
+          "CREATE_DRAFT": "변경 초안 만들기",
+          "SUBMIT": "독립 검토 요청",
+          "APPROVE": "승인",
+          "REJECT": "반려",
+          "ACTIVATE": "적용",
+          "REVOKE": "회수"
+        },
+        "fields": {
+          "validTo": "중지 만료 시각",
+          "justification": "변경 요청 사유",
+          "reason": "결정 근거"
+        },
+        "dialogs": {
+          "DISABLED": {
+            "title": "앱 기능 중지 초안",
+            "description": "최대 {{days}}일 동안 기능을 중지할 수 있습니다. 권한은 추가되지 않으며 별도 승인과 적용이 필요합니다."
+          },
+          "INHERIT": {
+            "title": "기본 앱 정책 복원 초안",
+            "description": "현재 테넌트 중지를 해제하고 활성 권한 번들의 기본 정책으로 복원합니다."
+          },
+          "commands": {
+            "APPROVE": {
+              "title": "독립 승인",
+              "description": "요청자와 다른 앱 접근 승인자가 영향과 만료를 검토합니다."
+            },
+            "REJECT": {
+              "title": "변경 반려",
+              "description": "반려 사유를 감사 근거로 기록합니다."
+            },
+            "ACTIVATE": {
+              "title": "승인 변경 적용",
+              "description": "요청자와 승인자가 아닌 앱 접근 관리자가 적용하고 영수증을 생성합니다."
+            },
+            "REVOKE": {
+              "title": "테넌트 예외 회수",
+              "description": "현재 예외를 회수하고 즉시 전역 권한 정본으로 복원합니다."
+            }
+          }
+        },
+        "toasts": {
+          "completed": "앱 기능 정책 변경을 기록했습니다.",
+          "failed": "정책 상태, 담당 범위, 역할 분리 조건을 확인하세요."
+        }
+      },
+      "coverage": {
+        "title": "내부 정본 범위",
+        "description": "Auth가 앱 도입, 권한 카탈로그, 좌석 예약을 직접 관리합니다. 포함 owner: {{owners}}",
+        "observation": "관측 {{observedAt}} · {{coverage}}",
+        "exclusions": "외부 실행 경계: {{exclusions}}. 연결되지 않은 SaaS 프로비저닝이나 라이선스 정산을 성공으로 표시하지 않습니다.",
+        "owners": {
+          "AUTH_PRODUCT_AUTHORIZATION_CATALOG": "권한 카탈로그",
+          "AUTH_TENANT_APP_INSTALLATION": "테넌트 앱 도입",
+          "AUTH_WORKFORCE_SEAT_RESERVATION": "근무자 좌석 예약",
+          "unknown": "등록된 내부 소유자"
+        },
+        "exclusionReasons": {
+          "EXTERNAL_SAAS_PROVISIONING": "외부 SaaS 프로비저닝이 연결되지 않음",
+          "EXTERNAL_LICENSE_SETTLEMENT": "외부 라이선스 정산이 연결되지 않음",
+          "PRODUCT_RUNTIME_HEALTH_AND_RUNNABILITY": "런타임 상태는 각 제품 소유자가 관리",
+          "unknown": "외부 실행 소유자가 연결되지 않음"
+        },
+        "states": {
+          "COMPLETE_INTERNAL_OWNERS": "모든 내부 소유자 포함",
+          "UNKNOWN": "내부 소유자 범위 확인 불가"
+        }
+      },
+      "products": {
+        "approvals": "결재",
+        "calendar": "캘린더",
+        "communications": "커뮤니케이션",
+        "dwaion": "DWAI·ON",
+        "hcm": "인사",
+        "mail": "메일",
+        "meetings": "회의",
+        "messaging": "메시징",
+        "notifications": "알림",
+        "services": "서비스 요청",
+        "spaces": "스페이스",
+        "workplace": "워크플레이스",
+        "unknown": "관리 대상 애플리케이션"
+      },
+      "installations": {
+        "title": "테넌트 앱 도입",
+        "description": "초안, 독립 검토, 승인, 활성화를 분리하고 실제 좌석 예약을 추적합니다.",
+        "emptyTitle": "도입 요청이 없습니다",
+        "emptyDescription": "내부 카탈로그 앱을 선택해 검토 가능한 도입 초안을 만드세요.",
+        "kind": "실행 소유자",
+        "seats": "좌석",
+        "seatValue": "활성 {{active}} · 예약 {{reserved}} / {{capacity}}",
+        "seatState": "예약 가능 상태",
+        "executor": "외부 실행기",
+        "governedIdentity": "관리 대상 애플리케이션 식별자"
+      },
+      "assignments": {
+        "title": "근무자 앱 할당과 좌석 예약",
+        "description": "요청, 승인, 활성화 담당자를 분리하고 승인 시점부터 좌석을 예약합니다.",
+        "emptyTitle": "근무자 할당이 없습니다",
+        "emptyDescription": "활성화된 내부 앱에서 사용자 할당을 승인 절차로 요청할 수 있습니다.",
+        "userId": "사용자 {{id}}",
+        "validTo": "{{date}}까지",
+        "noExpiry": "만료 없음"
+      },
+      "actions": {
+        "requestInstallation": "앱 도입 요청",
+        "requestAssignment": "사용자 할당 요청",
+        "createDraft": "도입 초안 만들기",
+        "submitForApproval": "승인 요청",
+        "SUBMIT": "검토 제출",
+        "APPROVE": "승인",
+        "REJECT": "반려",
+        "ACTIVATE": "활성화",
+        "REVOKE": "회수"
+      },
+      "fields": {
+        "product": "앱",
+        "kind": "도입 실행 방식",
+        "seatCapacity": "계약 좌석 상한",
+        "seatCapacityError": "좌석 상한은 1 이상의 정수여야 합니다.",
+        "justification": "요청 사유",
+        "installation": "활성 앱",
+        "user": "사용자",
+        "validTo": "만료 시각",
+        "reason": "결정 근거"
+      },
+      "kinds": {
+        "INTERNAL_AUTH_CONTROLLED": "DWP Auth 내부 통제",
+        "EXTERNAL_SERVICE": "외부 SaaS 실행 필요",
+        "UNKNOWN": "실행 소유자 확인 불가"
+      },
+      "executorStates": {
+        "NOT_REQUIRED": "외부 실행 불필요",
+        "UNAVAILABLE": "연결되지 않음",
+        "UNKNOWN": "실행기 상태 확인 불가"
+      },
+      "seatStates": {
+        "AVAILABLE": "예약 가능",
+        "FULL": "상한 도달",
+        "UNBOUNDED": "내부 상한 미설정"
+      },
+      "states": {
+        "DRAFT": "초안",
+        "IN_REVIEW": "검토 중",
+        "APPROVED": "승인됨",
+        "REJECTED": "반려됨",
+        "ENABLED": "활성",
+        "PENDING_APPROVAL": "승인 대기",
+        "ACTIVE": "할당 활성",
+        "DENIED": "거절됨",
+        "REVOKED": "회수됨",
+        "UNKNOWN": "수명주기 상태 확인 불가"
+      },
+      "dialogs": {
+        "installationTitle": "테넌트 앱 도입 초안",
+        "installationDescription": "도입 요청을 만든 뒤 별도 담당자의 승인과 활성화가 필요합니다.",
+        "assignmentTitle": "근무자 앱 할당 요청",
+        "assignmentDescription": "승인되면 좌석을 예약하며, 별도 담당자가 활성화해야 실제 내부 권한이 유효해집니다.",
+        "externalBoundary": "외부 SaaS 프로비저닝 실행기가 연결되지 않았습니다. 승인 기록은 만들 수 있지만 DWP가 외부 활성화를 성공으로 처리하지 않습니다.",
+        "commands": {
+          "APPROVE": {
+            "title": "독립 승인",
+            "description": "요청자와 다른 담당자로서 범위와 좌석 영향을 검토하고 근거를 남깁니다."
+          },
+          "REJECT": {
+            "title": "요청 반려",
+            "description": "반려 사유를 감사 가능한 근거로 남깁니다."
+          },
+          "ACTIVATE": {
+            "title": "승인 항목 활성화",
+            "description": "요청자와 승인자가 아닌 담당자가 최종 활성화하고 영수증을 생성합니다."
+          },
+          "REVOKE": {
+            "title": "할당 회수",
+            "description": "현재 할당을 회수하고 사유와 실행 시각을 기록합니다."
+          }
+        }
+      },
+      "toasts": {
+        "completed": "앱 도입 변경을 기록했습니다.",
+        "failed": "현재 상태 또는 담당자 분리 조건을 확인한 뒤 다시 시도하세요."
+      }
+    },
     "bootstrap": {
       "badge": "최초 승인자 지정",
       "approveButton": "지정 승인",
@@ -3678,7 +4443,8 @@
     "views": {
       "assignments": "책임 할당",
       "presets": "앱 관리자 Preset",
-      "boundaries": "앱 리소스 범위"
+      "boundaries": "앱 리소스 범위",
+      "adoption": "앱 도입·좌석"
     },
     "metrics": {
       "activeAssignments": "활성 책임",
@@ -3747,7 +4513,39 @@
       "APP_CONFIG_ADMIN": "앱 설정 관리자",
       "APP_ACCESS_MANAGER": "앱 접근 실행자",
       "APP_ACCESS_APPROVER": "앱 접근 승인자",
-      "APP_ACCESS_REVIEWER": "앱 접근 검토자"
+      "APP_ACCESS_REVIEWER": "앱 접근 검토자",
+      "UNKNOWN": "책임 확인 불가"
+    },
+    "presentation": {
+      "catalogUnavailable": "제품 소유자가 이 Preset의 요청 사용을 승인하지 않았습니다.",
+      "duties": {
+        "approvalDesignDraft": "결재 설계 초안 작성",
+        "approvalDesignPublish": "결재 설계 게시",
+        "approvalPolicyDraft": "결재 정책 초안 작성",
+        "approvalPolicyPublish": "결재 정책 게시",
+        "approvalOperationsExecute": "결재 건 운영",
+        "approvalOperationsAudit": "결재 운영 검토",
+        "approvalSignatureRead": "전자서명 연동 상태 조회",
+        "managed": "관리형 전문 직무"
+      },
+      "reviewReasons": {
+        "presetWorkflowReviewRequired": "기존 권한의 통제된 Preset 검토 필요",
+        "managed": "통제된 접근 권한 검토 필요"
+      },
+      "evidence": {
+        "retained": "통제된 증적 보관됨",
+        "unavailable": "증적 확인 불가"
+      },
+      "principalTypes": {
+        "user": "사용자",
+        "group": "그룹",
+        "managed": "관리 대상 주체"
+      },
+      "requestChannels": {
+        "selfService": "셀프서비스 요청",
+        "governance": "거버넌스 워크플로",
+        "managed": "관리 요청 경로"
+      }
     },
     "states": {
       "PENDING_APPROVAL": "승인 대기",
@@ -3755,15 +4553,16 @@
       "ACTIVE": "활성",
       "DENIED": "반려",
       "REVOKED": "회수",
-      "EXPIRED": "만료"
+      "EXPIRED": "만료",
+      "UNKNOWN": "수명주기 상태 확인 불가"
     },
     "assignmentTable": "범위형 앱 책임 할당",
     "noExpiry": "만료 없음",
     "reviewDue": "재검토 {{value}}",
     "assignmentCount": "활성 {{count}}",
     "presets": {
-      "principalMetadata": "{{type}} · {{ref}}",
-      "presetMetadata": "{{code}} · v{{version}}",
+      "principalMetadata": "{{type}}",
+      "presetMetadata": "카탈로그 버전 {{version}}",
       "title": "앱별 관리자 직무",
       "description": "관리 책임과 최소 전문 직무를 하나의 감사 가능한 승인 흐름으로 지정합니다.",
       "atomicNotice": "책임, 앱 범위, 전문 직무는 함께 승인·활성화·회수됩니다. 일부 직무만 적용되는 부분 성공은 허용하지 않습니다.",
@@ -3819,7 +4618,8 @@
       "reviewStates": {
         "OPEN": "검토 대기",
         "RESOLVED": "검토 완료",
-        "DISMISSED": "검토 제외"
+        "DISMISSED": "검토 제외",
+        "UNKNOWN": "검토 상태 확인 불가"
       }
     },
     "empty": {
@@ -3846,6 +4646,7 @@
   "appAccess": {
     "loading": "앱 접근 요청을 불러오는 중",
     "filterLabel": "요청 상태",
+    "partialCoverage": "최신 {{count}}건의 요청을 표시합니다. 더 많은 요청이 있어 건수와 필터 결과는 일부 범위입니다.",
     "states": {
       "ALL": "전체",
       "PENDING": "검토 대기",
@@ -3853,7 +4654,8 @@
       "REVOKED": "회수됨",
       "REJECTED": "반려됨",
       "CANCELLED": "취소됨",
-      "EXPIRED": "기한 만료"
+      "EXPIRED": "기한 만료",
+      "UNKNOWN": "상태 확인 불가"
     },
     "fields": {
       "requester": "요청자",
@@ -3885,7 +4687,8 @@
       "SUCCEEDED": "접근 활성",
       "FAILED": "권한 실행 실패",
       "REVOKED": "접근 회수",
-      "EXPIRED": "접근 만료"
+      "EXPIRED": "접근 만료",
+      "UNKNOWN": "실행 상태 확인 불가"
     },
     "fulfillmentDescriptions": {
       "NOT_REQUIRED": "이 결정에는 실제 권한 원장 작업이 필요하지 않습니다.",
@@ -3893,7 +4696,8 @@
       "SUCCEEDED": "Auth가 권한을 적용하고 있습니다. 회수 시 다음 요청부터 즉시 차단됩니다.",
       "FAILED": "권한 원장이 마지막 실행을 거부했거나 완료하지 못했습니다. 실패 증적을 확인한 뒤 재시도하세요.",
       "REVOKED": "권한 원천에서 실제 접근 권한이 제거되었습니다.",
-      "EXPIRED": "정책 종료 시각에 도달해 승인 권한이 더 이상 유효하지 않습니다."
+      "EXPIRED": "정책 종료 시각에 도달해 승인 권한이 더 이상 유효하지 않습니다.",
+      "UNKNOWN": "실행 담당자가 지원되는 수명주기 상태를 반환하지 않아 작업을 수행할 수 없습니다."
     },
     "fulfillment": {
       "title": "실제 권한 수명주기",
@@ -3911,7 +4715,9 @@
     },
     "empty": {
       "title": "이 상태의 요청이 없습니다",
-      "description": "선택한 상태에서 검토할 앱 접근 요청이 없습니다."
+      "description": "선택한 상태에서 검토할 앱 접근 요청이 없습니다.",
+      "partialTitle": "불러온 범위에 일치하는 요청이 없습니다",
+      "partialDescription": "최신 {{count}}건에 이 상태의 요청이 없습니다. 더 많은 요청이 있어 전체 결과가 비었다고 판단하지 않습니다."
     },
     "toasts": {
       "approved": "접근 요청을 승인했습니다.",
@@ -3995,12 +4801,14 @@
     },
     "subjectTypes": {
       "ROLE": "역할 기본",
-      "USER": "개인 예외"
+      "USER": "개인 예외",
+      "UNKNOWN": "대상 유형 확인 불가"
     },
     "roles": {
       "ADMIN": "통합 관리자",
       "HR_ADMIN": "HR 관리자",
-      "PEOPLE_ADMIN": "인력 운영 관리자"
+      "PEOPLE_ADMIN": "인력 운영 관리자",
+      "UNKNOWN": "관리 역할 확인 불가"
     },
     "roleDescriptions": {
       "ADMIN": "기존 통합 관리자 정책",
@@ -4010,23 +4818,27 @@
     "populations": {
       "TENANT": "SKAX 전체 조직",
       "ORG_UNIT": "선택 조직만",
-      "ORG_TREE": "선택 조직 및 하위 조직"
+      "ORG_TREE": "선택 조직 및 하위 조직",
+      "UNKNOWN": "조직 범위 확인 불가"
     },
     "fieldGroups": {
       "DIRECTORY": "기본 프로필",
       "WORKER_IDENTIFIERS": "사번·배치 식별정보",
       "EMPLOYMENT": "고용·배치 이력",
-      "JOB_GRADE": "직급·등급"
+      "JOB_GRADE": "직급·등급",
+      "UNKNOWN": "데이터 그룹 확인 불가"
     },
     "actions": {
       "READ": "데이터 열람",
-      "EXPORT": "데이터 반출"
+      "EXPORT": "데이터 반출",
+      "UNKNOWN": "작업 확인 불가"
     },
     "states": {
       "ACTIVE": "활성",
       "SCHEDULED": "시작 예정",
       "REVOKED": "회수됨",
-      "EXPIRED": "만료됨"
+      "EXPIRED": "만료됨",
+      "UNKNOWN": "정책 상태 확인 불가"
     },
     "fields": {
       "subjectType": "대상 유형",
@@ -4149,7 +4961,34 @@
     "paths": {
       "appearance.fontFamily": "제품 글꼴",
       "appearance.accentColor": "브랜드 강조색",
-      "navigation.pattern": "탐색 패턴"
+      "navigation.pattern": "탐색 패턴",
+      "appearance": {
+        "fontFamily": "제품 글꼴",
+        "accentColor": "브랜드 강조색"
+      },
+      "navigation": { "pattern": "탐색 패턴" },
+      "accessibility": {
+        "highContrast": "고대비",
+        "reduceMotion": "동작 줄이기",
+        "underlineLinks": "링크 밑줄",
+        "reduceTransparency": "투명 효과 줄이기"
+      },
+      "unknown": "관리형 설정"
+    },
+    "values": {
+      "enabled": "사용",
+      "disabled": "사용 안 함",
+      "unavailable": "정책 담당자만 값을 확인할 수 있습니다",
+      "navigation": {
+        "sidebar": "사이드바",
+        "rail": "축소 레일",
+        "top": "상단 탐색"
+      }
+    },
+    "owners": {
+      "tenantAdmin": "테넌트 관리",
+      "settingsAdmin": "설정 관리",
+      "managed": "관리 정책 담당자"
     },
     "states": {
       "PENDING": "검토 대기",
@@ -4157,6 +4996,7 @@
       "REJECTED": "반려",
       "CANCELLED": "취소",
       "EXPIRED": "만료",
+      "UNKNOWN": "상태 확인 불가",
       "ALL": "전체"
     },
     "actions": {
@@ -4214,7 +5054,8 @@
       "APPROVED": "승인",
       "REJECTED": "반려",
       "PUBLISHED": "게시됨",
-      "SUPERSEDED": "대체됨"
+      "SUPERSEDED": "대체됨",
+      "UNKNOWN": "개정 상태 확인 불가"
     },
     "fields": {
       "bundleKey": "번들 Key",
@@ -4282,7 +5123,8 @@
         "ADDED": "추가",
         "UPDATED": "수정",
         "REMOVED": "제거",
-        "UNCHANGED": "변경 없음"
+        "UNCHANGED": "변경 없음",
+        "UNKNOWN": "변경 유형 확인 불가"
       }
     },
     "preview": {
@@ -4300,7 +5142,8 @@
       "APPROVED": "승인",
       "REJECTED": "반려",
       "PUBLISHED": "게시",
-      "RESTORED": "새 초안으로 복원"
+      "RESTORED": "새 초안으로 복원",
+      "UNKNOWN": "결정 확인 불가"
     },
     "transitions": {
       "reasonHelp": "5자 이상 입력하세요. 이 사유는 변경 불가 결정 근거로 보존됩니다.",
@@ -4389,6 +5232,7 @@
       "expiringSoonHelp": "만료 일정 확인 필요",
       "recentTransfers": "최근 처리 기록",
       "recentTransfersHelp": "감사 이력별 최신 기록 최대 50건",
+      "partialHistory": "각 감사 이력의 최신 기록만 불러왔습니다. 이전 기록이 더 있으므로 건수와 필터 결과는 일부 범위입니다.",
       "refreshing": "운영 현황 갱신 중",
       "updatedAt": "마지막 정상 갱신 {{value}}",
       "notUpdated": "아직 정상 갱신 기록이 없습니다"
@@ -4439,7 +5283,8 @@
     },
     "dispositions": {
       "TRANSFER": "새 담당자에게 소유권 이전",
-      "RETAIN_ORPHANED": "사용 중지 후 자동 보관"
+      "RETAIN_ORPHANED": "사용 중지 후 자동 보관",
+      "UNKNOWN": "처리 결과 확인 불가"
     },
     "dispositionHelp": {
       "TRANSFER": "공개 범위와 저장된 설정은 유지하고 소유자만 활성 사용자로 변경합니다.",
@@ -4448,12 +5293,14 @@
     "reasons": {
       "OFFBOARDING": "퇴직·이동",
       "TEAM_REORGANIZATION": "팀 개편",
-      "OWNER_CORRECTION": "소유자 정정"
+      "OWNER_CORRECTION": "소유자 정정",
+      "UNKNOWN": "사유 확인 불가"
     },
     "scopes": {
       "PERSONAL": "개인",
       "TEAM": "팀 공유",
-      "TENANT": "조직 공유"
+      "TENANT": "조직 공유",
+      "UNKNOWN": "공개 범위 확인 불가"
     },
     "statuses": {
       "ACTIVE": "활성",
@@ -4461,7 +5308,8 @@
       "SUSPENDED": "일시 중지",
       "LOCKED": "잠김",
       "DEACTIVATED": "비활성",
-      "INVITED": "초대됨"
+      "INVITED": "초대됨",
+      "UNKNOWN": "상태 확인 불가"
     },
     "surfaces": {
       "communicationsWork": "소식·메시지 업무",
@@ -4677,12 +5525,14 @@
       "actions": {
         "REASSIGN": "새 담당자에게 재지정",
         "EXTEND_RETENTION": "자동 보관 기한 연장",
-        "ARCHIVE_NOW": "즉시 보관"
+        "ARCHIVE_NOW": "즉시 보관",
+        "UNKNOWN": "조치 확인 불가"
       },
       "outcomes": {
         "REASSIGN": "새 담당자: {{owner}}",
         "EXTEND_RETENTION": "새 자동 보관일: {{value}}",
-        "ARCHIVE_NOW": "보관 상태로 전환"
+        "ARCHIVE_NOW": "보관 상태로 전환",
+        "UNKNOWN": "처리 결과 확인 불가"
       }
     },
     "confirm": {
@@ -5168,6 +6018,101 @@
       "save": "홈 구성 정책을 게시하지 못했습니다."
     }
   },
+  "settingRegistry": {
+    "title": "설정 소유자 레지스트리",
+    "description": "타입이 지정된 소유자를 확인하고 실효 영향을 미리본 뒤 독립 승인으로 테넌트 재정의를 게시합니다.",
+    "ownerCount": "연결된 소유자 {{count}}개",
+    "ownerVersion": "버전 {{version}}",
+    "loadError": "설정 소유자를 불러오지 못했습니다. 소유자 상태를 추정하지 않습니다.",
+    "adapter": {
+      "CONNECTED": "소유자 연결됨",
+      "UNAVAILABLE": "어댑터 사용 불가",
+      "UNKNOWN": "어댑터 상태 확인 불가"
+    },
+    "owners": {
+      "AUTH_POLICY": "인증 정책",
+      "AUTH_TENANT_DIRECTORY": "테넌트 신원 디렉터리",
+      "registered": "등록된 설정 소유자"
+    },
+    "services": {
+      "auth": "신원 및 접근 서비스",
+      "registered": "등록된 소유자 서비스"
+    },
+    "resolution": {
+      "TENANT_OVERRIDE_OR_OWNER_DEFAULT": "테넌트 값 또는 소유자 기본값",
+      "UNKNOWN": "적용 정책 확인 불가"
+    },
+    "freshness": {
+      "FRESH": "현재 소유자 값 확인됨",
+      "STALE": "소유자 값 갱신 필요",
+      "NO_DATA": "소유자 값 확인 불가",
+      "DRIFTED": "현재 값이 최신 통제 게시 결과와 다름",
+      "UNKNOWN": "소유자 최신성 확인 불가"
+    },
+    "lifecycle": {
+      "DRAFT": "초안",
+      "IN_REVIEW": "독립 검토 중",
+      "APPROVED": "게시 승인됨",
+      "REJECTED": "반려됨",
+      "PUBLISHED": "게시됨",
+      "SUPERSEDED": "새 게시로 대체됨",
+      "UNKNOWN": "수명주기 상태 확인 불가"
+    },
+    "values": {
+      "enabled": "사용",
+      "disabled": "사용 안 함",
+      "ownerOnly": "소유자 전용 편집 필요",
+      "unavailable": "값 확인 불가",
+      "registeredSetting": "등록된 관리 설정",
+      "login": {
+        "LOCAL": "이메일과 비밀번호",
+        "SSO": "회사 통합 로그인"
+      },
+      "durationMinutes": "{{count}}분"
+    },
+    "actions": {
+      "propose": "값 제안",
+      "inherit": "상속 복원",
+      "createDraft": "초안 생성",
+      "cancel": "취소",
+      "SUBMIT": "검토 요청",
+      "APPROVE": "승인",
+      "REJECT": "반려",
+      "PUBLISH": "게시",
+      "UNKNOWN": "작업 확인 불가"
+    },
+    "changes": {
+      "title": "버전 변경 워크플로",
+      "loading": "버전 설정 변경을 불러오는 중",
+      "loadError": "설정 변경을 불러오지 못했습니다.",
+      "emptyTitle": "진행 중인 설정 변경 없음",
+      "emptyDescription": "연결된 소유자에서 초안을 생성해 테넌트 재정의 영향을 미리보고 검토하세요.",
+      "preview": "{{before}} → {{after}} · 측정 범위 내부 신원 {{count}}명",
+      "receipt": "게시 영수증 {{receipt}}"
+    },
+    "create": {
+      "valueTitle": "테넌트 값 제안",
+      "inheritTitle": "소유자 상속 복원",
+      "description": "초안은 관측된 변경 전 값과 소유자가 적용할 정확한 변경 후 값을 기록합니다.",
+      "value": "제안 값",
+      "justification": "변경 사유",
+      "inheritPreview": "승인과 게시 후 소유자 기본값 {{value}}가 실효값이 됩니다."
+    },
+    "command": {
+      "description": "전환 전에 서버가 버전, 행위자 분리, 소유자 상태를 다시 검증합니다.",
+      "reason": "독립 결정 사유",
+      "preview": "{{before}} → {{after}} · 영향 범위 신원 {{count}}명",
+      "SUBMIT": { "title": "설정 변경 검토 요청" },
+      "APPROVE": { "title": "설정 변경 승인" },
+      "REJECT": { "title": "설정 변경 반려" },
+      "PUBLISH": { "title": "소유자 어댑터로 게시" }
+    },
+    "feedback": {
+      "draftCreated": "설정 변경 초안을 생성했습니다.",
+      "commandCompleted": "설정 워크플로를 진행했습니다.",
+      "commandFailed": "설정 명령을 처리하지 못했습니다. 현재 버전을 다시 불러온 뒤 재시도하세요."
+    }
+  },
   "homeStudio": {
     "eyebrow": "테넌트 홈 거버넌스",
     "title": "Home Studio",
@@ -5199,6 +6144,8 @@
       "currentVersion": "현재 릴리스 v{{version}}",
       "revisionCount_one": "리비전 {{count}}개",
       "revisionCount_other": "리비전 {{count}}개",
+      "revisionCountPartial": "최신 첫 페이지",
+      "partial": "릴리스가 {{limit}}개보다 많아 첫 페이지만 표시하며 전체 개수와 빈 상태를 단정하지 않습니다.",
       "rollbackImpact": "릴리스 v{{version}}을 복구합니다. 영향 범위: {{scopes}}."
     },
     "audit": {
@@ -5211,7 +6158,29 @@
       "noCorrelation": "상관관계 ID 없음",
       "page": "{{total}}페이지 중 {{page}}페이지",
       "previousPage": "이전 페이지",
-      "nextPage": "다음 페이지"
+      "nextPage": "다음 페이지",
+      "actions": {
+        "settingsUpdated": "홈 설정 변경",
+        "experiencePublished": "홈 경험 게시",
+        "launchpadUpdated": "앱 도크 변경",
+        "compositionUpdated": "홈 구성 정책 변경",
+        "backgroundUploaded": "배경 게시",
+        "backgroundReset": "배경 초기화",
+        "rolledBack": "홈 릴리스 복원",
+        "managed": "관리된 홈 변경"
+      },
+      "targets": {
+        "experience": "홈 경험",
+        "launchpad": "앱 도크 구성",
+        "composition": "홈 구성 정책",
+        "managed": "관리 대상 홈 리소스"
+      },
+      "outcomes": {
+        "success": "성공",
+        "denied": "거부됨",
+        "failed": "실패",
+        "unavailable": "결과 확인 불가"
+      }
     }
   }
 }

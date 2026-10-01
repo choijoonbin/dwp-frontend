@@ -9,6 +9,8 @@ import {
   HeartPulse,
   LifeBuoy,
   ListChecks,
+  PackageCheck,
+  WalletCards,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
@@ -60,6 +62,18 @@ export const PROVIDER_NAVIGATION: readonly ProviderNavigationGroup[] = [
         path: '/provider/commercial',
         icon: BadgeDollarSign,
         permission: 'COMMERCIAL_READ',
+      },
+      {
+        key: 'resourceGovernance',
+        path: '/provider/resource-governance',
+        icon: WalletCards,
+        permission: 'RESOURCE_GOVERNANCE_READ',
+      },
+      {
+        key: 'artifactGovernance',
+        path: '/provider/artifact-governance',
+        icon: PackageCheck,
+        permission: 'ARTIFACT_GOVERNANCE_READ',
       },
       {
         key: 'codeContracts',

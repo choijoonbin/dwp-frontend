@@ -45,7 +45,7 @@ export function RecoveryAccountVerificationDialog({
       description={t('privilegedAccess.verification.description', {
         name: principal?.displayName ?? '',
       })}
-      cancelLabel={t('common.cancel')}
+      cancelLabel={t('common.actions.cancel')}
       submitLabel={t('privilegedAccess.verification.submit')}
       busy={busy}
       submitDisabled={evidenceReference.trim().length < 10 || !nextVerificationDueAt}

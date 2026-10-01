@@ -25,9 +25,9 @@ import {
   createProviderFeatureRollout,
   decideProviderFeatureRollout,
   getProviderOperatorProfile,
+  listAllProviderTenants,
   listProviderFeatureFlags,
   listProviderFeatureRollouts,
-  listProviderTenants,
   pauseProviderFeatureRollout,
   resumeProviderFeatureRollout,
   rollbackProviderFeatureRollout,
@@ -38,10 +38,7 @@ import {
   ActionButton,
   EmptyState,
   EnterpriseDataGrid,
-  FormDialog,
-  FormField,
   OperationalContextBar,
-  SelectField,
   SignalMetric,
 } from '@dwp-frontend/design-system';
 
@@ -55,11 +52,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import type { GridColDef } from '@mui/x-data-grid';
-import type {
-  ProviderFeatureFlag,
-  ProviderFeatureRollout,
-  ProviderFeatureValue,
-} from '@dwp-frontend/shared-utils';
+import type { ProviderFeatureRollout } from '@dwp-frontend/shared-utils';
 
 import {
   formatProviderDate,
@@ -67,420 +60,30 @@ import {
   ProviderLoading,
   ProviderSectionHeading,
   ProviderStatusChip,
-  providerError,
 } from './provider-ui';
-import { displayProviderFeatureValue } from './provider-feature-rollout-evaluation-model';
+import {
+  FeatureFlagDialog,
+  FeatureRolloutActionDialog,
+  FeatureRolloutDialog,
+} from './provider-feature-rollout-dialogs';
+import type { RolloutAction } from './provider-feature-rollout-dialogs';
+import {
+  canDecideFeatureRollout,
+  featureRolloutStrategyPresentation,
+  rolloutTargetingPresentation,
+} from './provider-feature-rollout-form-model';
 import { ProviderFeatureRolloutEvaluationPreview } from './provider-feature-rollout-evaluation-preview';
 import { ProviderSettingsResolution } from './provider-settings-resolution';
 
-type RolloutAction =
-  'submit' | 'approve' | 'reject' | 'activate' | 'pause' | 'resume' | 'advance' | 'rollback';
-
-function parseJson(value: string, label: string): unknown {
-  try {
-    return JSON.parse(value) as unknown;
-  } catch {
-    throw new Error(`${label} JSON is invalid.`);
-  }
-}
-
-function FlagDialog({
-  busy,
-  onClose,
-  onSave,
-}: {
-  busy: boolean;
-  onClose: () => void;
-  onSave: (request: Parameters<typeof createProviderFeatureFlag>[0]) => Promise<void>;
-}) {
-  const { t } = useTranslation('provider');
-  const [featureKey, setFeatureKey] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [description, setDescription] = useState('');
-  const [ownerService, setOwnerService] = useState('dwp-platform-server');
-  const [valueType, setValueType] = useState<ProviderFeatureFlag['valueType']>('BOOLEAN');
-  const [defaultValue, setDefaultValue] = useState('false');
-  const [schema, setSchema] = useState('{}');
-  const [riskTier, setRiskTier] = useState<ProviderFeatureFlag['riskTier']>('L2');
-  const [error, setError] = useState<string | null>(null);
-
-  const save = async () => {
-    try {
-      const parsedDefault = parseJson(defaultValue, t('featureRollouts.fields.defaultValue'));
-      const parsedSchema = parseJson(schema, t('featureRollouts.fields.schema'));
-      if (!parsedSchema || Array.isArray(parsedSchema) || typeof parsedSchema !== 'object') {
-        throw new Error(t('featureRollouts.validation.schemaObject'));
-      }
-      await onSave({
-        featureKey: featureKey.trim(),
-        displayName: displayName.trim(),
-        description: description.trim(),
-        ownerService: ownerService.trim(),
-        valueType,
-        defaultValue: parsedDefault as ProviderFeatureValue,
-        configurationSchema: parsedSchema as Record<string, unknown>,
-        riskTier,
-      });
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t('errors.operation'));
-    }
-  };
-
-  return (
-    <FormDialog
-      open
-      maxWidth="md"
-      title={t('featureRollouts.createFlag.title')}
-      cancelLabel={t('actions.cancel')}
-      submitLabel={t('featureRollouts.createFlag.action')}
-      busy={busy}
-      submitDisabled={
-        !featureKey.trim() || !displayName.trim() || !description.trim() || !ownerService.trim()
-      }
-      onClose={onClose}
-      onSubmit={save}
-    >
-      <Stack gap={2}>
-        <Alert severity="info">{t('featureRollouts.createFlag.guidance')}</Alert>
-        {error && <Alert severity="error">{error}</Alert>}
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <FormField
-            required
-            label={t('featureRollouts.fields.featureKey')}
-            value={featureKey}
-            onChange={(event) => setFeatureKey(event.target.value)}
-            supportingText={t('featureRollouts.createFlag.keyHint')}
-          />
-          <FormField
-            required
-            label={t('featureRollouts.fields.displayName')}
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-          />
-        </Stack>
-        <FormField
-          required
-          multiline
-          minRows={2}
-          label={t('featureRollouts.fields.description')}
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-        />
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <FormField
-            required
-            label={t('featureRollouts.fields.ownerService')}
-            value={ownerService}
-            onChange={(event) => setOwnerService(event.target.value)}
-          />
-          <SelectField
-            label={t('featureRollouts.fields.valueType')}
-            value={valueType}
-            options={(['BOOLEAN', 'STRING', 'NUMBER', 'JSON'] as const).map((type) => ({
-              value: type,
-              label: type,
-            }))}
-            onValueChange={(next) => setValueType(next as ProviderFeatureFlag['valueType'])}
-          />
-          <SelectField
-            label={t('featureRollouts.fields.riskTier')}
-            value={riskTier}
-            options={(['L1', 'L2', 'L3'] as const).map((tier) => ({
-              value: tier,
-              label: tier,
-            }))}
-            onValueChange={(next) => setRiskTier(next as ProviderFeatureFlag['riskTier'])}
-          />
-        </Stack>
-        <Stack direction={{ xs: 'column', md: 'row' }} gap={2}>
-          <FormField
-            required
-            multiline
-            minRows={4}
-            label={t('featureRollouts.fields.defaultValue')}
-            value={defaultValue}
-            onChange={(event) => setDefaultValue(event.target.value)}
-            supportingText={t('featureRollouts.createFlag.secretHint')}
-          />
-          <FormField
-            required
-            multiline
-            minRows={4}
-            label={t('featureRollouts.fields.schema')}
-            value={schema}
-            onChange={(event) => setSchema(event.target.value)}
-          />
-        </Stack>
-      </Stack>
-    </FormDialog>
-  );
-}
-
-function RolloutDialog({
-  flags,
-  busy,
-  onClose,
-  onSave,
-}: {
-  flags: ProviderFeatureFlag[];
-  busy: boolean;
-  onClose: () => void;
-  onSave: (
-    featureKey: string,
-    request: Parameters<typeof createProviderFeatureRollout>[1]
-  ) => Promise<void>;
-}) {
-  const { t } = useTranslation('provider');
-  const [featureKey, setFeatureKey] = useState(flags[0]?.featureKey ?? '');
-  const selectedFlag = flags.find((flag) => flag.featureKey === featureKey);
-  const [name, setName] = useState('');
-  const [value, setValue] = useState(
-    selectedFlag ? displayProviderFeatureValue(selectedFlag.defaultValue) : 'false'
-  );
-  const [targeting, setTargeting] = useState('{}');
-  const [strategy, setStrategy] = useState<ProviderFeatureRollout['strategy']>('RING');
-  const [percentages, setPercentages] = useState('5,25,100');
-  const [observationMinutes, setObservationMinutes] = useState('30');
-  const [healthGate, setHealthGate] = useState(
-    '{\n  "maxErrorRate": 1,\n  "maxP95LatencyMs": 800\n}'
-  );
-  const [justification, setJustification] = useState('');
-  const [error, setError] = useState<string | null>(null);
-
-  const changeFeature = (next: string) => {
-    setFeatureKey(next);
-    const flag = flags.find((item) => item.featureKey === next);
-    if (flag) setValue(displayProviderFeatureValue(flag.defaultValue));
-  };
-
-  const save = async () => {
-    try {
-      const parsedValue = parseJson(value, t('featureRollouts.fields.rolloutValue'));
-      const parsedTargeting = parseJson(targeting, t('featureRollouts.fields.targeting'));
-      const parsedHealth = parseJson(healthGate, t('featureRollouts.fields.healthGate'));
-      if (
-        !parsedTargeting ||
-        Array.isArray(parsedTargeting) ||
-        typeof parsedTargeting !== 'object' ||
-        !parsedHealth ||
-        Array.isArray(parsedHealth) ||
-        typeof parsedHealth !== 'object'
-      ) {
-        throw new Error(t('featureRollouts.validation.objectJson'));
-      }
-      const values = percentages
-        .split(',')
-        .map((part) => Number(part.trim()))
-        .filter((part) => Number.isFinite(part));
-      if (!values.length || values.some((part) => part <= 0 || part > 100)) {
-        throw new Error(t('featureRollouts.validation.percentages'));
-      }
-      await onSave(featureKey, {
-        name: name.trim(),
-        rolloutValue: parsedValue as ProviderFeatureValue,
-        targeting: parsedTargeting as Record<string, unknown>,
-        strategy,
-        justification: justification.trim(),
-        stages: values.map((percentage, index) => ({
-          stageName: t('featureRollouts.stageName', { index: index + 1, percentage }),
-          exposurePercentage: percentage,
-          minimumObservationMinutes: Number(observationMinutes),
-          healthGate: parsedHealth as Record<string, unknown>,
-        })),
-      });
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t('errors.operation'));
-    }
-  };
-
-  return (
-    <FormDialog
-      open
-      maxWidth="md"
-      title={t('featureRollouts.createRollout.title')}
-      cancelLabel={t('actions.cancel')}
-      submitLabel={t('featureRollouts.createRollout.action')}
-      busy={busy}
-      submitDisabled={!featureKey || !name.trim() || !justification.trim()}
-      onClose={onClose}
-      onSubmit={save}
-    >
-      <Stack gap={2}>
-        <Alert severity="warning">{t('featureRollouts.createRollout.guidance')}</Alert>
-        {error && <Alert severity="error">{error}</Alert>}
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <SelectField
-            required
-            label={t('featureRollouts.fields.feature')}
-            value={featureKey}
-            options={flags.map((flag) => ({
-              value: flag.featureKey,
-              label: `${flag.displayName} · ${flag.featureKey}`,
-            }))}
-            onValueChange={changeFeature}
-          />
-          <FormField
-            required
-            label={t('featureRollouts.fields.rolloutName')}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-        </Stack>
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-          <SelectField
-            label={t('featureRollouts.fields.strategy')}
-            value={strategy}
-            options={(['RING', 'PERCENTAGE', 'ALL_AT_ONCE'] as const).map((item) => ({
-              value: item,
-              label: t(`featureRollouts.strategies.${item}`),
-            }))}
-            onValueChange={(next) => setStrategy(next as ProviderFeatureRollout['strategy'])}
-          />
-          <FormField
-            required
-            label={t('featureRollouts.fields.stagePercentages')}
-            value={percentages}
-            onChange={(event) => setPercentages(event.target.value)}
-            supportingText={t('featureRollouts.createRollout.stageHint')}
-          />
-          <FormField
-            required
-            type="number"
-            label={t('featureRollouts.fields.observationMinutes')}
-            value={observationMinutes}
-            onChange={(event) => setObservationMinutes(event.target.value)}
-            slotProps={{ htmlInput: { min: 0, step: 5 } }}
-          />
-        </Stack>
-        <Stack direction={{ xs: 'column', md: 'row' }} gap={2}>
-          <FormField
-            required
-            multiline
-            minRows={5}
-            label={t('featureRollouts.fields.rolloutValue')}
-            value={value}
-            onChange={(event) => setValue(event.target.value)}
-          />
-          <FormField
-            required
-            multiline
-            minRows={5}
-            label={t('featureRollouts.fields.targeting')}
-            value={targeting}
-            onChange={(event) => setTargeting(event.target.value)}
-            supportingText={t('featureRollouts.createRollout.targetHint')}
-          />
-          <FormField
-            required
-            multiline
-            minRows={5}
-            label={t('featureRollouts.fields.healthGate')}
-            value={healthGate}
-            onChange={(event) => setHealthGate(event.target.value)}
-          />
-        </Stack>
-        <FormField
-          required
-          multiline
-          minRows={2}
-          label={t('featureRollouts.fields.justification')}
-          value={justification}
-          onChange={(event) => setJustification(event.target.value)}
-        />
-      </Stack>
-    </FormDialog>
-  );
-}
-
-function ActionDialog({
-  rollout,
-  action,
-  busy,
-  onClose,
-  onSubmit,
-}: {
-  rollout: ProviderFeatureRollout;
-  action: RolloutAction;
-  busy: boolean;
-  onClose: () => void;
-  onSubmit: (reason: string, health: Record<string, unknown>) => Promise<void>;
-}) {
-  const { t } = useTranslation('provider');
-  const [reason, setReason] = useState('');
-  const [health, setHealth] = useState(
-    '{\n  "maxErrorRate": 0,\n  "maxP95LatencyMs": 0,\n  "minSuccessRate": 100\n}'
-  );
-  const [error, setError] = useState<string | null>(null);
-  const dangerous = ['reject', 'rollback'].includes(action);
-  const save = async () => {
-    try {
-      const parsed = action === 'advance' ? parseJson(health, 'Health evidence') : {};
-      if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') {
-        throw new Error(t('featureRollouts.validation.objectJson'));
-      }
-      await onSubmit(reason.trim(), parsed as Record<string, unknown>);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t('errors.operation'));
-    }
-  };
-  return (
-    <FormDialog
-      open
-      title={t(`featureRollouts.actionDialog.${action}.title`)}
-      cancelLabel={t('actions.cancel')}
-      submitLabel={t(`featureRollouts.actions.${action}`)}
-      submitIntent={dangerous ? 'danger' : 'primary'}
-      busy={busy}
-      submitDisabled={!reason.trim()}
-      onClose={onClose}
-      onSubmit={save}
-    >
-      <Stack gap={2}>
-        <Box>
-          <Typography variant="subtitle2" fontWeight={750}>
-            {rollout.name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('featureRollouts.revisionIdentity', {
-              key: rollout.featureKey,
-              revision: rollout.revisionNumber,
-            })}
-          </Typography>
-        </Box>
-        <Alert severity={dangerous ? 'warning' : 'info'}>
-          {t(`featureRollouts.actionDialog.${action}.description`)}
-        </Alert>
-        {error && <Alert severity="error">{error}</Alert>}
-        {action === 'advance' && (
-          <FormField
-            required
-            multiline
-            minRows={5}
-            label={t('featureRollouts.fields.observedHealth')}
-            value={health}
-            onChange={(event) => setHealth(event.target.value)}
-          />
-        )}
-        <FormField
-          required
-          multiline
-          minRows={3}
-          label={t('featureRollouts.fields.reason')}
-          value={reason}
-          onChange={(event) => setReason(event.target.value)}
-        />
-      </Stack>
-    </FormDialog>
-  );
-}
-
 function RolloutInspector({
   rollout,
+  operatorId,
   canWrite,
   canApprove,
   onAction,
 }: {
   rollout: ProviderFeatureRollout;
+  operatorId?: number | null;
   canWrite: boolean;
   canApprove: boolean;
   onAction: (action: RolloutAction) => void;
@@ -489,11 +92,13 @@ function RolloutInspector({
   const activeStage = rollout.stages.find(
     (stage) => stage.stageOrder === rollout.currentStageOrder
   );
+  const targeting = rolloutTargetingPresentation(rollout.targeting);
+  const decisionAllowed = canDecideFeatureRollout(rollout, operatorId, canApprove);
   const actions: Array<{ action: RolloutAction; icon: ReactNode }> = [];
   if (canWrite && rollout.lifecycleState === 'DRAFT') {
     actions.push({ action: 'submit', icon: <Send size={16} /> });
   }
-  if (canApprove && rollout.lifecycleState === 'PENDING_APPROVAL') {
+  if (decisionAllowed && rollout.lifecycleState === 'PENDING_APPROVAL') {
     actions.push({ action: 'approve', icon: <Check size={16} /> });
     actions.push({ action: 'reject', icon: <X size={16} /> });
   }
@@ -529,7 +134,9 @@ function RolloutInspector({
           <Chip
             size="small"
             variant="outlined"
-            label={t(`featureRollouts.strategies.${rollout.strategy}`)}
+            label={t(
+              `featureRollouts.strategies.${featureRolloutStrategyPresentation(rollout.strategy)}`
+            )}
           />
           <Chip
             size="small"
@@ -556,13 +163,31 @@ function RolloutInspector({
           <Typography variant="caption" color="text.secondary">
             {t('featureRollouts.fields.targeting')}
           </Typography>
-          <Typography
-            component="pre"
-            variant="body2"
-            sx={{ m: 0, mt: 0.5, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
-          >
-            {JSON.stringify(rollout.targeting, null, 2)}
-          </Typography>
+          {targeting === null ? (
+            <Alert severity="warning" sx={{ mt: 0.75 }}>
+              {t('featureRollouts.targetingUnavailable')}
+            </Alert>
+          ) : targeting.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {t('featureRollouts.targetingAll')}
+            </Typography>
+          ) : (
+            <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 0.75 }}>
+              {targeting.flatMap((group) =>
+                group.values.map((value) => (
+                  <Chip
+                    key={`${group.key}:${value}`}
+                    size="small"
+                    variant="outlined"
+                    label={t('featureRollouts.targetingValue', {
+                      group: t(`featureRollouts.targeting.${group.key}`),
+                      value,
+                    })}
+                  />
+                ))
+              )}
+            </Stack>
+          )}
         </Box>
         <Divider />
         <Box>
@@ -603,6 +228,12 @@ function RolloutInspector({
             })}
           </Alert>
         )}
+        {canApprove &&
+          rollout.lifecycleState === 'PENDING_APPROVAL' &&
+          !decisionAllowed &&
+          operatorId === rollout.requestedBy && (
+            <Alert severity="info">{t('featureRollouts.selfDecisionBlocked')}</Alert>
+          )}
         <Stack direction="row" flexWrap="wrap" gap={1}>
           {actions.map(({ action, icon }) => (
             <ActionButton
@@ -643,17 +274,21 @@ export function ProviderFeatureRollouts() {
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
   });
-  const canReadEstate = operator.data?.permissions.includes('ESTATE_READ') ?? false;
+  const operatorReady = operator.isSuccess;
+  const canReadEstate =
+    operatorReady && (operator.data?.permissions.includes('ESTATE_READ') ?? false);
   const tenants = useQuery({
     queryKey: ['provider', 'tenants', 'rollout-evaluation'],
-    queryFn: () => listProviderTenants({ page: 0, size: 100 }),
+    queryFn: listAllProviderTenants,
     enabled: canReadEstate,
   });
   const selected = (rollouts.data ?? []).find(
     (rollout) => rollout.rolloutRevisionId === selectedId
   );
-  const canWrite = operator.data?.permissions.includes('FEATURE_ROLLOUT_WRITE') ?? false;
-  const canApprove = operator.data?.permissions.includes('FEATURE_ROLLOUT_APPROVE') ?? false;
+  const canWrite =
+    operatorReady && (operator.data?.permissions.includes('FEATURE_ROLLOUT_WRITE') ?? false);
+  const canApprove =
+    operatorReady && (operator.data?.permissions.includes('FEATURE_ROLLOUT_APPROVE') ?? false);
   const pendingCount = (rollouts.data ?? []).filter(
     (rollout) => rollout.lifecycleState === 'PENDING_APPROVAL'
   ).length;
@@ -670,7 +305,7 @@ export function ProviderFeatureRollouts() {
       setDialog(null);
       toast.success(t('featureRollouts.completed'));
     },
-    onError: (error) => toast.error(providerError(error, t('errors.operation'))),
+    onError: () => toast.error(t('errors.operation')),
   });
 
   const columns = useMemo<GridColDef<ProviderFeatureRollout>[]>(
@@ -698,7 +333,8 @@ export function ProviderFeatureRollouts() {
         field: 'strategy',
         headerName: t('featureRollouts.columns.strategy'),
         minWidth: 150,
-        valueFormatter: (value) => t(`featureRollouts.strategies.${String(value)}`),
+        valueFormatter: (value) =>
+          t(`featureRollouts.strategies.${featureRolloutStrategyPresentation(String(value))}`),
       },
       {
         field: 'currentStageOrder',
@@ -807,7 +443,7 @@ export function ProviderFeatureRollouts() {
               <ActionButton
                 intent="primary"
                 startIcon={<GitPullRequestArrow size={16} />}
-                disabled={!flags.data?.length}
+                disabled={!flags.isSuccess || !flags.data.length}
                 onClick={() => setDialog('rollout')}
               >
                 {t('featureRollouts.actions.newRollout')}
@@ -817,6 +453,42 @@ export function ProviderFeatureRollouts() {
         }
       />
       <Alert severity="info">{t('featureRollouts.distributionBoundary')}</Alert>
+      {flags.isError && (
+        <Alert
+          severity="warning"
+          action={
+            <ActionButton intent="quiet" size="small" onClick={() => void flags.refetch()}>
+              {t('actions.retryLoad')}
+            </ActionButton>
+          }
+        >
+          {t('featureRollouts.partial.flags')}
+        </Alert>
+      )}
+      {rollouts.isError && (
+        <Alert
+          severity="warning"
+          action={
+            <ActionButton intent="quiet" size="small" onClick={() => void rollouts.refetch()}>
+              {t('actions.retryLoad')}
+            </ActionButton>
+          }
+        >
+          {t('featureRollouts.partial.rollouts')}
+        </Alert>
+      )}
+      {operator.isError && (
+        <Alert
+          severity="warning"
+          action={
+            <ActionButton intent="quiet" size="small" onClick={() => void operator.refetch()}>
+              {t('actions.retryLoad')}
+            </ActionButton>
+          }
+        >
+          {t('featureRollouts.partial.operator')}
+        </Alert>
+      )}
       <Box
         sx={{
           display: 'grid',
@@ -826,7 +498,7 @@ export function ProviderFeatureRollouts() {
       >
         <SignalMetric
           label={t('featureRollouts.metrics.flags')}
-          value={String(flags.data?.length ?? 0)}
+          value={flags.isSuccess ? String(flags.data.length) : t('notAvailable')}
           detail={t('featureRollouts.metrics.flagsDetail')}
           icon={<Flag size={18} />}
         />
@@ -862,6 +534,11 @@ export function ProviderFeatureRollouts() {
               minVisibleRows={3}
               maxVisibleRows={8}
               onRowClick={({ row }) => setSelectedId(row.rolloutRevisionId)}
+              onCellKeyDown={(params, event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                setSelectedId(params.row.rolloutRevisionId);
+              }}
               getRowClassName={({ row }) =>
                 row.rolloutRevisionId === selectedId ? 'Mui-selected' : ''
               }
@@ -875,7 +552,7 @@ export function ProviderFeatureRollouts() {
                   <ActionButton
                     intent="primary"
                     startIcon={<GitPullRequestArrow size={16} />}
-                    disabled={!flags.data?.length}
+                    disabled={!flags.isSuccess || !flags.data.length}
                     onClick={() => setDialog('rollout')}
                   >
                     {t('featureRollouts.actions.newRollout')}
@@ -889,6 +566,7 @@ export function ProviderFeatureRollouts() {
       {selected && (
         <RolloutInspector
           rollout={selected}
+          operatorId={operator.data?.operatorId}
           canWrite={canWrite}
           canApprove={canApprove}
           onAction={setDialog}
@@ -897,6 +575,11 @@ export function ProviderFeatureRollouts() {
       <ProviderFeatureRolloutEvaluationPreview
         flags={flags.data ?? []}
         tenants={tenants.data?.content ?? []}
+        canReadEstate={canReadEstate}
+        tenantLoading={tenants.isLoading}
+        tenantError={tenants.error}
+        tenantReady={tenants.isSuccess}
+        onTenantRetry={() => void tenants.refetch()}
       />
       <ProviderSettingsResolution
         tenants={tenants.data?.content ?? []}
@@ -905,8 +588,8 @@ export function ProviderFeatureRollouts() {
         tenantError={tenants.error}
         onTenantRetry={() => void tenants.refetch()}
       />
-      {dialog === 'flag' && (
-        <FlagDialog
+      {dialog === 'flag' && canWrite && (
+        <FeatureFlagDialog
           busy={mutation.isPending}
           onClose={() => setDialog(null)}
           onSave={async (request) => {
@@ -914,8 +597,8 @@ export function ProviderFeatureRollouts() {
           }}
         />
       )}
-      {dialog === 'rollout' && (
-        <RolloutDialog
+      {dialog === 'rollout' && canWrite && flags.isSuccess && (
+        <FeatureRolloutDialog
           flags={flags.data ?? []}
           busy={mutation.isPending}
           onClose={() => setDialog(null)}
@@ -930,7 +613,7 @@ export function ProviderFeatureRollouts() {
         />
       )}
       {selected && dialog && !['flag', 'rollout'].includes(dialog) && (
-        <ActionDialog
+        <FeatureRolloutActionDialog
           rollout={selected}
           action={dialog as RolloutAction}
           busy={mutation.isPending}

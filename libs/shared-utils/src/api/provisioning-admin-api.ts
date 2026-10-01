@@ -37,6 +37,13 @@ export type ScimProvisioningEvent = {
   occurredAt: string;
 };
 
+export type ScimProvisioningEventPage = {
+  items: ScimProvisioningEvent[];
+  limit: number;
+  hasMore: boolean;
+  coverageState: 'COMPLETE_WITHIN_FILTER' | 'TRUNCATED_AT_LIMIT';
+};
+
 export type ScimCredentialIssued = {
   connector: ScimConnector;
   bearerToken: string;
@@ -52,10 +59,10 @@ export async function listScimConnectors(): Promise<ScimConnector[]> {
 export async function listScimProvisioningEvents(
   connectorId?: string,
   limit = 100
-): Promise<ScimProvisioningEvent[]> {
+): Promise<ScimProvisioningEventPage> {
   const search = new URLSearchParams({ limit: String(limit) });
   if (connectorId) search.set('connectorId', connectorId);
-  const response = await axiosInstance.get<ApiResponse<ScimProvisioningEvent[]>>(
+  const response = await axiosInstance.get<ApiResponse<ScimProvisioningEventPage>>(
     `${BASE}/events?${search.toString()}`
   );
   return response.data.data;

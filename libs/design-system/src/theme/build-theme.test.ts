@@ -181,6 +181,50 @@ describe('buildDwpTheme', () => {
     expect(menuItemRoot.minHeight).toBe(foundationTokens.density.compact.itemHeight);
   });
 
+  it('keeps interactive controls at least 44px on narrow or coarse-pointer surfaces', () => {
+    const theme = buildDwpTheme({ ...baseInput, density: 'compact' });
+    const media = '@media (max-width:599.95px), (pointer: coarse)';
+    const buttonRoot = theme.components?.MuiButton?.styleOverrides?.root as Record<string, unknown>;
+    const iconButtonRoot = theme.components?.MuiIconButton?.styleOverrides?.root as Record<
+      string,
+      unknown
+    >;
+    const menuItemRoot = theme.components?.MuiMenuItem?.styleOverrides?.root as Record<
+      string,
+      unknown
+    >;
+    const inputRoot = theme.components?.MuiInputBase?.styleOverrides?.root as Record<
+      string,
+      unknown
+    >;
+    const toggleRoot = theme.components?.MuiToggleButton?.styleOverrides?.root as Record<
+      string,
+      unknown
+    >;
+    const buttonBaseRoot = theme.components?.MuiButtonBase?.styleOverrides?.root as Record<
+      string,
+      unknown
+    >;
+    const checkboxRoot = theme.components?.MuiCheckbox?.styleOverrides?.root as Record<
+      string,
+      unknown
+    >;
+    const radioRoot = theme.components?.MuiRadio?.styleOverrides?.root as Record<string, unknown>;
+    const switchRoot = theme.components?.MuiSwitch?.styleOverrides?.root as Record<string, unknown>;
+    const tabRoot = theme.components?.MuiTab?.styleOverrides?.root as Record<string, unknown>;
+
+    expect(buttonBaseRoot[media]).toMatchObject({ minWidth: 44, minHeight: 44 });
+    expect(buttonRoot[media]).toMatchObject({ minHeight: 44 });
+    expect(iconButtonRoot[media]).toMatchObject({ width: 44, height: 44 });
+    expect(menuItemRoot[media]).toMatchObject({ minHeight: 44 });
+    expect(inputRoot[media]).toMatchObject({ minHeight: 44 });
+    expect(toggleRoot[media]).toMatchObject({ minHeight: 44 });
+    expect(checkboxRoot[media]).toMatchObject({ width: 44, height: 44 });
+    expect(radioRoot[media]).toMatchObject({ width: 44, height: 44 });
+    expect(switchRoot[media]).toMatchObject({ minWidth: 44, minHeight: 44 });
+    expect(tabRoot[media]).toMatchObject({ minWidth: 44, minHeight: 44 });
+  });
+
   it('neutralizes browser autofill colors without hiding the entered value', () => {
     const theme = buildDwpTheme(baseInput);
     const input = theme.components?.MuiInputBase?.styleOverrides?.input as {

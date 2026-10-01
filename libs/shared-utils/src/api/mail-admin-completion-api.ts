@@ -753,13 +753,6 @@ export async function executeMailPurge(
   return response.data.data;
 }
 
-export async function getMailPurgeJob(jobId: string): Promise<MailPurgeJob> {
-  const response = await axiosInstance.get<ApiResponse<MailPurgeJob>>(
-    `/api/platform/v1/admin/mail/retention/purge-jobs/${encodeURIComponent(jobId)}`
-  );
-  return response.data.data;
-}
-
 export async function getMailDeliveryAudit(input: {
   page?: number;
   pageSize?: number;

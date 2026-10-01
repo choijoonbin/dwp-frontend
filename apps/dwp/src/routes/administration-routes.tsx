@@ -3,7 +3,6 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
-import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import {
   Navigate,
   useLocation,
@@ -57,12 +56,13 @@ export function AdminRouteGuard({ children }: { children: React.ReactNode }) {
 
 export function TenantAdminRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
-  const { permissions, isLoaded } = usePermissions();
-  const roles = auth.user?.roles ?? [];
-  const appPermitted = isAppResourceEntitled('APP.ADMINISTRATION', permissions);
-  const resourceRoles = auth.user?.resourceRoles ?? [];
+  const { hasPermission, isLoaded } = usePermissions();
   if (!isLoaded) return routeFallback;
-  const regularAccess = canEnterCompanyAdministration(roles, appPermitted, resourceRoles);
+  const regularAccess = canEnterCompanyAdministration({
+    identity: auth.user,
+    permissionsLoaded: isLoaded,
+    hasPermission,
+  });
   return regularAccess ? children : <Navigate to="/403" replace />;
 }
 
@@ -82,14 +82,12 @@ export function TenantAdminLegacyRedirect() {
   const auth = useAuth();
   const { hasPermission, isLoaded } = usePermissions();
   const [searchParams] = useSearchParams();
-  const roles = auth.user?.roles ?? [];
   if (!isLoaded) return routeFallback;
   const items = ADMIN_NAVIGATION.flatMap((group) => group.items).filter((item) =>
     canAccessAdminNavigationItem(item, {
-      roles,
+      identity: auth.user,
       permissionsLoaded: isLoaded,
       hasPermission,
-      resourceRoles: auth.user?.resourceRoles,
     })
   );
   if (items.length === 0) return <Navigate to="/403" replace />;
@@ -137,14 +135,12 @@ export function TenantAdminSectionRedirect() {
   const auth = useAuth();
   const { section } = useParams();
   const { hasPermission, isLoaded } = usePermissions();
-  const roles = auth.user?.roles ?? [];
   if (!isLoaded) return routeFallback;
   const destination = ADMIN_NAVIGATION.find((group) => group.id === section)?.items.find((item) =>
     canAccessAdminNavigationItem(item, {
-      roles,
+      identity: auth.user,
       permissionsLoaded: isLoaded,
       hasPermission,
-      resourceRoles: auth.user?.resourceRoles,
     })
   )?.path;
   return <Navigate to={destination ?? '/403'} replace />;

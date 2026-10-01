@@ -68,6 +68,9 @@ import {
 import { ProviderTenantDiagnosisBoundary } from './provider-tenant-diagnosis-boundary';
 import { ProviderTenantEntitlementsEditor } from './provider-tenant-entitlements-editor';
 import { providerOperationalSnapshotState } from './provider-operational-freshness';
+import { providerIsolationLabel } from './provider-operation-presentation';
+import { providerSafeEnumPresentation } from './provider-safe-enum-presentation';
+import { ProviderTenantSupportHistory } from './provider-tenant-support-history';
 import { useProviderTenantEntitlementDraft } from './use-provider-tenant-entitlement-draft';
 
 function DetailField({ label, value }: { label: string; value: React.ReactNode }) {
@@ -476,7 +479,7 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
           },
           {
             label: t('tenantDetail.context.placement'),
-            value: `${value.dataRegion} / ${t(`isolation.${value.isolationModel}`)}`,
+            value: `${value.dataRegion} / ${providerIsolationLabel(t, value.isolationModel)}`,
             icon: <Layers3 size={16} />,
           },
           {
@@ -715,7 +718,7 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
               <DetailField label={t('fields.timeZone')} value={value.timeZone} />
               <DetailField
                 label={t('fields.isolation')}
-                value={t(`isolation.${value.isolationModel}`)}
+                value={providerIsolationLabel(t, value.isolationModel)}
               />
               <DetailField
                 label={t('fields.createdAt')}
@@ -799,7 +802,16 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
                       {domain.domainName}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {t(`domainTypes.${domain.domainType}`)} / {domain.verificationMethod}
+                      {t(
+                        `domainTypes.${providerSafeEnumPresentation('domainType', domain.domainType)}`
+                      )}{' '}
+                      /{' '}
+                      {t(
+                        `tenantDetail.domains.verificationMethods.${providerSafeEnumPresentation(
+                          'domainVerificationMethod',
+                          domain.verificationMethod
+                        )}`
+                      )}
                     </Typography>
                   </Box>
                   {domain.primaryDomain && (
@@ -925,39 +937,7 @@ export function ProviderTenantDetail({ tenantId }: { tenantId: string }) {
                 {t('tenantDetail.support.unavailable')}
               </Alert>
             ) : (
-              <Stack
-                divider={<Divider flexItem />}
-                sx={{ mt: 1.25, borderBlock: 1, borderColor: 'divider' }}
-              >
-                {(sessions.data ?? []).length === 0 ? (
-                  <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-                    {t('tenantDetail.support.empty')}
-                  </Typography>
-                ) : (
-                  (sessions.data ?? []).map((session) => (
-                    <Stack
-                      key={session.supportSessionId}
-                      direction={{ xs: 'column', sm: 'row' }}
-                      alignItems={{ xs: 'stretch', sm: 'center' }}
-                      gap={1.25}
-                      sx={{ py: 1.25 }}
-                    >
-                      <Box sx={{ minWidth: 0, flex: 1 }}>
-                        <Typography variant="body2" fontWeight={700}>
-                          {session.operatorName}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {session.scopes.map((scope) => t(`support.scopes.${scope}`)).join(', ')}
-                        </Typography>
-                      </Box>
-                      <Typography variant="caption" color="text.secondary">
-                        {formatProviderDate(session.expiresAt)}
-                      </Typography>
-                      <ProviderStatusChip state={session.lifecycleState} />
-                    </Stack>
-                  ))
-                )}
-              </Stack>
+              <ProviderTenantSupportHistory sessions={sessions.data ?? []} />
             ))}
         </Box>
       )}

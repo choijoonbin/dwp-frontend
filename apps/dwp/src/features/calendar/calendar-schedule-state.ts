@@ -13,10 +13,7 @@ export function calendarScheduleInitialRange(now = new Date()) {
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
-export function sameCalendarSelection(
-  left: readonly string[],
-  right: readonly string[]
-): boolean {
+export function sameCalendarSelection(left: readonly string[], right: readonly string[]): boolean {
   return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
@@ -45,7 +42,7 @@ function hasControlCharacter(value: string): boolean {
   });
 }
 
-export function isCalendarScheduleView(value: unknown): value is CalendarScheduleView {
+function isCalendarScheduleView(value: unknown): value is CalendarScheduleView {
   return typeof value === 'string' && SCHEDULE_VIEWS.has(value as CalendarScheduleView);
 }
 

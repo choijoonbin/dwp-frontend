@@ -30,6 +30,17 @@ output/screen22-*/
 output/screen23-*/
 output/subagent-01-13-*/
 output/floor-target-debug/
+# Approval Playwright runs are disposable. Canonical visual baselines live beside the specs;
+# design-source and documented handoff directories remain available for intentional tracking.
+output/approval-admin-v2-*/
+output/approval-home-*/
+output/approval-policy-high-source/
+output/approval-policy-source-*/
+output/approval-quorum-*/
+output/approval-root-*/
+output/approval-task-documents-*/
+output/test-evidence/approval-admin-v2-*/
+output/waveb-*/
 *.tsbuildinfo
 
 # Local environment

@@ -23,12 +23,14 @@ import {
 import type { GridColDef } from '@mui/x-data-grid';
 import type { PlatformAuditEvent } from '@dwp-frontend/shared-utils';
 
+import { auditActorTypeLabelKey, auditSourceLabelKey } from './audit-log-presentation';
+
 type UnifiedAuditEvent = PlatformAuditEvent & {
   source: 'IDENTITY' | 'PLATFORM';
 };
 
-function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+function errorMessage(_error: unknown, fallback: string): string {
+  return fallback;
 }
 
 function formatTimestamp(value: string): string {
@@ -71,7 +73,7 @@ export function AuditLog() {
         headerName: t('audit.columns.source'),
         width: 104,
         renderCell: ({ row }) => (
-          <Chip label={t(`audit.sources.${row.source}`)} size="small" variant="outlined" />
+          <Chip label={t(auditSourceLabelKey(row.source))} size="small" variant="outlined" />
         ),
       },
       {
@@ -96,9 +98,7 @@ export function AuditLog() {
         headerName: t('audit.columns.actor'),
         width: 116,
         renderCell: ({ row }) =>
-          `${t(`audit.actorTypes.${row.actorType}`, { defaultValue: row.actorType })} ${
-            row.actorId ?? '—'
-          }`,
+          `${t(auditActorTypeLabelKey(row.actorType))} ${row.actorId ?? '—'}`,
       },
       {
         field: 'outcome',
@@ -216,9 +216,8 @@ export function AuditLog() {
                   color="text.secondary"
                   sx={{ display: 'block', mt: 1 }}
                 >
-                  {formatTimestamp(event.occurredAt)} / {t(`audit.sources.${event.source}`)} /{' '}
-                  {t(`audit.actorTypes.${event.actorType}`, { defaultValue: event.actorType })}{' '}
-                  {event.actorId ?? '—'}
+                  {formatTimestamp(event.occurredAt)} / {t(auditSourceLabelKey(event.source))} /{' '}
+                  {t(auditActorTypeLabelKey(event.actorType))} {event.actorId ?? '—'}
                 </Typography>
                 {event.correlationId && (
                   <Typography

@@ -5,8 +5,8 @@ import { Ban, KeyRound, RefreshCw, Search, ShieldAlert } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   getProviderAuditInsights,
+  listAllProviderTenants,
   listProviderAuditEvents,
-  listProviderTenants,
 } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
 import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
@@ -32,15 +32,20 @@ import type { ProviderAuditEvent } from '@dwp-frontend/shared-utils';
 
 import {
   formatProviderDate,
-  parseProviderJson,
   ProviderError,
   ProviderLoading,
   ProviderSectionHeading,
 } from './provider-ui';
+import {
+  providerAuditCategory,
+  providerAuditOutcome,
+  providerAuditSnapshotFieldCount,
+} from './provider-audit-presentation';
 
 function AuditEventDialog({ event, onClose }: { event: ProviderAuditEvent; onClose: () => void }) {
   const { t } = useTranslation('provider');
   const display = useDisplayDictionary();
+  const snapshotFieldCount = providerAuditSnapshotFieldCount(event.redactedSnapshot);
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>{t('audit.detail.title')}</DialogTitle>
@@ -55,11 +60,17 @@ function AuditEventDialog({ event, onClose }: { event: ProviderAuditEvent; onClo
           >
             {[
               [t('audit.columns.time'), formatProviderDate(event.occurredAt)],
-              [t('audit.columns.category'), t(`audit.categories.${event.eventCategory}`)],
+              [
+                t('audit.columns.category'),
+                t(`audit.categories.${providerAuditCategory(event.eventCategory)}`),
+              ],
               [t('audit.columns.operator'), event.operatorName ?? '-'],
               [t('audit.columns.tenant'), event.tenantKey ?? t('audit.global')],
               [t('audit.columns.action'), display('auditActions', event.action)],
-              [t('audit.columns.outcome'), t(`audit.outcomes.${event.outcome}`)],
+              [
+                t('audit.columns.outcome'),
+                t(`audit.outcomes.${providerAuditOutcome(event.outcome)}`),
+              ],
               [
                 t('audit.detail.target'),
                 `${display('targetTypes', event.targetType)} / ${event.targetId}`,
@@ -78,36 +89,13 @@ function AuditEventDialog({ event, onClose }: { event: ProviderAuditEvent; onClo
           </Box>
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
-              {t('audit.detail.rawCode')}
-            </Typography>
-            <Box
-              component="code"
-              sx={{ display: 'block', p: 1.5, bgcolor: 'action.hover', overflowWrap: 'anywhere' }}
-            >
-              {event.action}
-            </Box>
-          </Box>
-          <Box>
-            <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
               {t('audit.detail.snapshot')}
             </Typography>
-            <Box
-              component="pre"
-              sx={{
-                m: 0,
-                p: 1.5,
-                maxHeight: 320,
-                overflow: 'auto',
-                bgcolor: 'action.hover',
-                border: 1,
-                borderColor: 'divider',
-                fontSize: '0.75rem',
-                whiteSpace: 'pre-wrap',
-                overflowWrap: 'anywhere',
-              }}
-            >
-              {JSON.stringify(parseProviderJson(event.redactedSnapshot), null, 2)}
-            </Box>
+            <Alert severity={snapshotFieldCount === null ? 'warning' : 'info'}>
+              {snapshotFieldCount === null
+                ? t('audit.detail.snapshotUnavailable')
+                : t('audit.detail.snapshotSummary', { count: snapshotFieldCount })}
+            </Alert>
           </Box>
         </Stack>
       </DialogContent>
@@ -140,7 +128,7 @@ export function ProviderAudit() {
   });
   const tenants = useQuery({
     queryKey: ['provider', 'tenants', 'audit'],
-    queryFn: () => listProviderTenants({ page: 0, size: 100 }),
+    queryFn: listAllProviderTenants,
   });
   const visibleEvents = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -228,7 +216,7 @@ export function ProviderAudit() {
         headerName: t('audit.columns.category'),
         minWidth: 155,
         flex: 0.65,
-        valueFormatter: (value: string) => t(`audit.categories.${value}`, { defaultValue: value }),
+        valueFormatter: (value: string) => t(`audit.categories.${providerAuditCategory(value)}`),
       },
       {
         field: 'tenantKey',
@@ -253,7 +241,7 @@ export function ProviderAudit() {
             size="small"
             variant="outlined"
             color={value === 'SUCCESS' ? 'success' : value === 'FAILED' ? 'error' : 'warning'}
-            label={t(`audit.outcomes.${String(value)}`, { defaultValue: String(value) })}
+            label={t(`audit.outcomes.${providerAuditOutcome(String(value))}`)}
           />
         ),
       },
@@ -374,7 +362,7 @@ export function ProviderAudit() {
             <MenuItem value="ALL">{t('audit.allCategories')}</MenuItem>
             {insights.data.categories.map((item) => (
               <MenuItem key={item.key} value={item.key}>
-                {t(`audit.categories.${item.key}`, { defaultValue: item.key })} ({item.count})
+                {t(`audit.categories.${providerAuditCategory(item.key)}`)} ({item.count})
               </MenuItem>
             ))}
           </TextField>
@@ -400,6 +388,11 @@ export function ProviderAudit() {
           columns={columns}
           getRowId={(row) => row.auditEventId}
           onRowClick={({ row }) => selectEvent(row)}
+          onCellKeyDown={(params, event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            selectEvent(params.row);
+          }}
           loading={events.isFetching}
           hideFooter
           maxVisibleRows={14}

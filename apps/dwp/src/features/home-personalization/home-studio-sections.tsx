@@ -46,7 +46,11 @@ import {
   homeWidgetContentContract,
 } from './home-widget-content-contract';
 import { buildFlowDeviceWidthControls, mergeFlowDeviceWidthOverrides } from './home-device-overlay';
-import { homeRevisionSourceLabel, homeRevisionSummaryLabel } from './home-history-localization';
+import {
+  homeRevisionSourceLabel,
+  homeRevisionSummaryLabel,
+  homeTemplateLifecycleLabel,
+} from './home-history-localization';
 import type { HomeWorkstyleIntent } from './home-personalization-model';
 
 function flowDeviceSizeLabel(size: HomeWidgetSize) {
@@ -528,6 +532,8 @@ export function HomeDeviceSection({
 
 export function HomeTemplatesSection({
   templates,
+  hasMore,
+  limit,
   view,
   canManage,
   busy,
@@ -537,6 +543,8 @@ export function HomeTemplatesSection({
   onRevoke,
 }: {
   templates: readonly HomeTemplate[];
+  hasMore: boolean;
+  limit: number;
   view: HomeView | null;
   canManage: boolean;
   busy: boolean;
@@ -568,7 +576,8 @@ export function HomeTemplatesSection({
           ) : undefined
         }
       />
-      {templates.length === 0 ? (
+      {hasMore && <Alert severity="warning">{t('templates.partial', { limit })}</Alert>}
+      {templates.length === 0 && !hasMore ? (
         <EmptyState title={t('templates.empty')} size="standard" />
       ) : (
         <Stack
@@ -590,7 +599,7 @@ export function HomeTemplatesSection({
                   <Typography variant="subtitle1">{template.name}</Typography>
                   <Chip
                     size="small"
-                    label={template.lifecycle}
+                    label={homeTemplateLifecycleLabel(t, template.lifecycle)}
                     color={template.lifecycle === 'PUBLISHED' ? 'success' : 'default'}
                   />
                 </Stack>
@@ -665,11 +674,15 @@ export function HomeTemplatesSection({
 export function HomeHistorySection({
   view,
   revisions,
+  hasMore,
+  limit,
   busy,
   onRestore,
 }: {
   view: HomeView | null;
   revisions: readonly HomeViewRevision[];
+  hasMore: boolean;
+  limit: number;
   busy: boolean;
   onRestore: (revision: HomeViewRevision) => void;
 }) {
@@ -679,7 +692,8 @@ export function HomeHistorySection({
   return (
     <>
       <StudioSectionHeading title={t('history.title')} description={t('history.description')} />
-      {revisions.length === 0 ? (
+      {hasMore && <Alert severity="warning">{t('history.partial', { limit })}</Alert>}
+      {revisions.length === 0 && !hasMore ? (
         <EmptyState icon={<History size={28} />} title={t('history.empty')} size="standard" />
       ) : (
         <Stack

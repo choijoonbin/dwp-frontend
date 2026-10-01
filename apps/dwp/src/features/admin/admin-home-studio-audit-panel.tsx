@@ -12,6 +12,12 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {
+  homeStudioAuditActionLabelKey,
+  homeStudioAuditOutcomeLabelKey,
+  homeStudioAuditTargetLabelKey,
+} from './home-studio-audit-presentation';
+
 export function HomeStudioAuditPanel() {
   const { t } = useTranslation('admin');
   const [page, setPage] = useState(0);
@@ -69,15 +75,17 @@ export function HomeStudioAuditPanel() {
         {events.map((event) => (
           <Stack component="li" key={event.auditEventId} gap={0.75} sx={{ px: 1, py: 2 }}>
             <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-              <Typography variant="subtitle2">{event.action}</Typography>
+              <Typography variant="subtitle2">
+                {t(homeStudioAuditActionLabelKey(event.action))}
+              </Typography>
               <Chip
                 size="small"
                 color={event.outcome === 'SUCCESS' ? 'success' : 'error'}
-                label={event.outcome}
+                label={t(homeStudioAuditOutcomeLabelKey(event.outcome))}
               />
             </Stack>
             <Typography variant="body2" color="text.secondary">
-              {event.targetType} · {event.targetId}
+              {t(homeStudioAuditTargetLabelKey(event.targetType))}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {formatDate(event.occurredAt, { dateStyle: 'medium', timeStyle: 'medium' })} ·{' '}

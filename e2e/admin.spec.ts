@@ -7,6 +7,7 @@ import {
   DEFAULT_ADMIN_PERMISSIONS,
   mockAdminSession,
 } from './support/admin-session';
+import { scimEvidence, scimPage } from './support/shell-session-contracts';
 
 type Item = {
   code: string;
@@ -1000,37 +1001,12 @@ test('identity administrators inspect SCIM readiness and provisioning evidence',
     version: 3,
   };
   let rotationPayload: unknown = null;
-  const events = [
-    {
-      eventId: 'scim-event-1',
-      connectorId: connector.connectorId,
-      connectorName: connector.displayName,
-      operation: 'PATCH',
-      resourceType: 'Group',
-      resourceId: 'engineering-managers',
-      outcome: 'FAILED' as const,
-      correlationId: 'scim-correlation-1',
-      summary: 'Group member reference could not be resolved',
-      occurredAt: '2026-08-12T01:45:00Z',
-    },
-    {
-      eventId: 'scim-event-2',
-      connectorId: connector.connectorId,
-      connectorName: connector.displayName,
-      operation: 'POST',
-      resourceType: 'User',
-      resourceId: 'dana.kim@example.com',
-      outcome: 'SUCCESS' as const,
-      correlationId: 'scim-correlation-2',
-      summary: 'User provisioned',
-      occurredAt: '2026-08-12T01:40:00Z',
-    },
-  ];
+  const events = scimEvidence(connector);
 
   await page.route('**/api/auth/admin/provisioning/scim/connectors**', async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (route.request().method() === 'GET' && path.endsWith('/events')) {
-      await route.fulfill({ contentType: 'application/json', body: envelope(events) });
+      await route.fulfill({ contentType: 'application/json', body: envelope(scimPage(events)) });
       return;
     }
     if (route.request().method() === 'GET') {
@@ -1065,12 +1041,18 @@ test('identity administrators inspect SCIM readiness and provisioning evidence',
   await expect(page.getByText('2 failed', { exact: true })).toBeVisible();
   await expect(page.getByText('engineering-managers', { exact: true })).toBeVisible();
 
-  await page.getByRole('row').filter({ hasText: 'entra-production' }).click();
+  const connectorCell = page
+    .getByRole('row')
+    .filter({ hasText: 'entra-production' })
+    .getByRole('gridcell')
+    .first();
+  await connectorCell.focus();
+  await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: 'Microsoft Entra ID', level: 2 })).toBeVisible();
   await expect(page.getByText('Activation readiness', { exact: true })).toBeVisible();
   await expect(page.getByText('Supported attribute contract', { exact: true })).toBeVisible();
   await expect(page.getByText('Recent connector evidence', { exact: true })).toBeVisible();
-  await expect(page.getByText('Group PATCH', { exact: true })).toBeVisible();
+  await expect(page.getByText('Group · Update', { exact: true })).toBeVisible();
   await expect(page.getByText('Group member reference could not be resolved')).toBeVisible();
   await expect(page.locator('input[value$="/api/auth/scim/v2"]')).toBeVisible();
 

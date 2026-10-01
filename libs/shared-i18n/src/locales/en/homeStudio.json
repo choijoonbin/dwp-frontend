@@ -145,12 +145,19 @@
     "title": "Governed work templates",
     "description": "Published templates apply as a personal copy, separate from the source and later edits.",
     "empty": "No templates are currently available.",
+    "partial": "More than {{limit}} templates exist. This view shows only the first page.",
     "apply": "Apply to my home",
     "draftFromCurrent": "Draft from current home",
     "publish": "Publish",
     "revoke": "Revoke",
     "audience": "Audience {{audience}}",
     "applied": "Template applied as a new version.",
+    "lifecycle": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "REVOKED": "Revoked",
+      "UNAVAILABLE": "Unavailable"
+    },
     "confirm": {
       "apply": {
         "title": "Apply this template?",
@@ -173,6 +180,7 @@
     "title": "Version history",
     "description": "Restoring creates a new version instead of overwriting history.",
     "empty": "There is no saved version history yet.",
+    "partial": "More than {{limit}} versions exist. This view shows only the newest first page.",
     "revision": "Version {{number}}",
     "restore": "Restore this version",
     "restored": "The selected version was restored as a new version.",
@@ -183,7 +191,8 @@
       "AI": "AI proposal",
       "RESTORE": "Version restore",
       "UNDO": "Undo",
-      "UNKNOWN": "Home change"
+      "UNKNOWN": "Home change",
+      "UNAVAILABLE": "Unavailable"
     },
     "summaries": {
       "created": "Home created.",

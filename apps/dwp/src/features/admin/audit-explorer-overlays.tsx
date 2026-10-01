@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { BookmarkPlus, Copy, Download, FileJson2, FolderInput, ShieldCheck, X } from 'lucide-react';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary, useRoleDisplay } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -21,41 +21,11 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { OutcomeChip, RiskScore, SeverityChip, actorLabel, targetLabel } from './audit-ui';
+import { OutcomeChip, RiskScore, SeverityChip } from './audit-ui';
+import { AuditEvidenceSummary } from './audit-evidence-summary';
+import { auditRetentionLabelKey } from './audit-evidence-presentation';
 
 import type { AuditCase, AuditEvent, AuditWindow } from '@dwp-frontend/shared-utils';
-
-function JsonState({ label, value }: { label: string; value: Record<string, unknown> }) {
-  return (
-    <Box sx={{ minWidth: 0 }}>
-      <Typography variant="overline" color="text.secondary">
-        {label}
-      </Typography>
-      <Box
-        component="pre"
-        sx={{
-          minHeight: 120,
-          maxHeight: 260,
-          overflow: 'auto',
-          m: 0,
-          mt: 0.75,
-          p: 1.5,
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 1,
-          bgcolor: 'action.hover',
-          fontFamily: 'monospace',
-          fontSize: 12,
-          lineHeight: 1.6,
-          whiteSpace: 'pre-wrap',
-          overflowWrap: 'anywhere',
-        }}
-      >
-        {JSON.stringify(value, null, 2)}
-      </Box>
-    </Box>
-  );
-}
 
 function DetailRow({ label, value }: { label: string; value?: string | number | null }) {
   return (
@@ -89,6 +59,8 @@ export function AuditEventDrawer({
   onCopy: (value?: string | null) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
+  const roleDisplay = useRoleDisplay();
   return (
     <Drawer
       anchor="right"
@@ -114,7 +86,7 @@ export function AuditEventDrawer({
                 {actionLabel(selected.action)}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                {selected.sourceService} / {selected.sourceModule}
+                {t('auditControl.evidence.governedSource')}
               </Typography>
               {canInvestigate && (
                 <Button
@@ -151,17 +123,30 @@ export function AuditEventDrawer({
             />
             <DetailRow
               label={t('auditControl.events.columns.actor')}
-              value={actorLabel(selected)}
+              value={
+                selected.actorDisplayName ||
+                selected.actorPrincipal ||
+                t('auditControl.evidence.actorUnavailable')
+              }
             />
             <DetailRow
               label={t('auditControl.events.columns.target')}
-              value={`${selected.targetType} / ${targetLabel(selected)}`}
+              value={`${display('targetTypes', selected.targetType)} / ${
+                selected.targetDisplayName || t('auditControl.evidence.targetUnavailable')
+              }`}
             />
             <DetailRow
               label={t('auditControl.detail.roles')}
-              value={selected.actorRoles.join(', ') || '—'}
+              value={
+                selected.actorRoles
+                  .map((role) => roleDisplay(role, t('auditControl.evidence.roleUnavailable')).name)
+                  .join(', ') || t('auditControl.evidence.roleUnavailable')
+              }
             />
-            <DetailRow label={t('auditControl.detail.retention')} value={selected.retentionClass} />
+            <DetailRow
+              label={t('auditControl.detail.retention')}
+              value={t(auditRetentionLabelKey(selected.retentionClass))}
+            />
             <Divider sx={{ my: 2 }} />
             <Typography component="h3" variant="subtitle1">
               {t('auditControl.detail.traceability')}
@@ -189,39 +174,12 @@ export function AuditEventDrawer({
             <Typography component="h3" variant="subtitle1" sx={{ mb: 1.5 }}>
               {t('auditControl.detail.change')}
             </Typography>
-            {selected.changedFields.length > 0 && (
-              <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mb: 1.5 }}>
-                {selected.changedFields.map((field) => (
-                  <Typography
-                    key={field}
-                    component="span"
-                    variant="caption"
-                    sx={{
-                      px: 0.75,
-                      py: 0.25,
-                      bgcolor: 'action.selected',
-                      color: 'primary.main',
-                      borderRadius: 0.5,
-                    }}
-                  >
-                    {field}
-                  </Typography>
-                ))}
-              </Stack>
-            )}
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-                gap: 1.5,
-              }}
-            >
-              <JsonState label={t('auditControl.detail.before')} value={selected.beforeState} />
-              <JsonState label={t('auditControl.detail.after')} value={selected.afterState} />
-            </Box>
-            <Box sx={{ mt: 2 }}>
-              <JsonState label={t('auditControl.detail.metadata')} value={selected.metadata} />
-            </Box>
+            <AuditEvidenceSummary
+              before={selected.beforeState}
+              after={selected.afterState}
+              changedFields={selected.changedFields}
+              metadataCount={Object.keys(selected.metadata).length}
+            />
           </Box>
         </Box>
       )}

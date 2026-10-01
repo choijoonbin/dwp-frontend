@@ -11,6 +11,11 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { formatReferenceDateTime, referenceDataErrorMessage } from './reference-data-manager-model';
+import {
+  referenceActivityActionLabelKey,
+  referenceActivityActorLabelKey,
+  referenceActivityOutcomeLabelKey,
+} from './reference-data-activity-presentation';
 
 import type { PlatformAuditEvent } from '@dwp-frontend/shared-utils';
 
@@ -29,31 +34,6 @@ export function ReferenceDataActivity({
 }: ReferenceDataActivityProps) {
   const { t } = useTranslation('admin');
   const theme = useTheme();
-
-  const activityLabel = (event: PlatformAuditEvent) => {
-    switch (event.action) {
-      case 'reference-set.seeded':
-        return t('referenceData.activity.actions.seeded');
-      case 'reference-set.created':
-        return t('referenceData.activity.actions.setCreated');
-      case 'reference-set.updated':
-        return t('referenceData.activity.actions.setUpdated');
-      case 'reference-set.activated':
-        return t('referenceData.activity.actions.setActivated');
-      case 'reference-set.retired':
-        return t('referenceData.activity.actions.setRetired');
-      case 'reference-item.created':
-        return t('referenceData.activity.actions.itemCreated');
-      case 'reference-item.updated':
-        return t('referenceData.activity.actions.itemUpdated');
-      case 'reference-item.activated':
-        return t('referenceData.activity.actions.itemActivated');
-      case 'reference-item.retired':
-        return t('referenceData.activity.actions.itemRetired');
-      default:
-        return event.action;
-    }
-  };
 
   return (
     <Box component="section" aria-label={t('referenceData.activity.title')}>
@@ -115,7 +95,7 @@ export function ReferenceDataActivity({
               </Box>
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="body2" fontWeight={700} noWrap>
-                  {activityLabel(event)}
+                  {t(referenceActivityActionLabelKey(event.action))}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -124,16 +104,14 @@ export function ReferenceDataActivity({
                   sx={{ display: 'block' }}
                 >
                   {event.targetId} ·{' '}
-                  {event.actorType === 'SERVICE'
-                    ? t('referenceData.activity.systemActor')
-                    : t('referenceData.activity.userActor', { id: event.actorId })}
+                  {t(referenceActivityActorLabelKey(event.actorType), { id: event.actorId })}
                 </Typography>
               </Box>
               <Chip
                 size="small"
-                color={event.outcome === 'SUCCESS' ? 'success' : 'error'}
+                color={event.outcome === 'SUCCESS' ? 'success' : 'warning'}
                 variant="outlined"
-                label={t(`referenceData.activity.outcomes.${event.outcome}`)}
+                label={t(referenceActivityOutcomeLabelKey(event.outcome))}
                 sx={{ gridColumn: { xs: '2', sm: 'auto' }, justifySelf: 'start' }}
               />
               <Typography

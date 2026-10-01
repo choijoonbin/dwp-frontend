@@ -1,0 +1,108 @@
+{
+  "loading": "Loading Provider owner evidence",
+  "permissions": {
+    "domains": "Domain owner evidence requires Identity Provisioning view permission.",
+    "governance": "Retention and legal-hold owner evidence requires Audit view permission."
+  },
+  "errors": {
+    "AUTHORITY_REVOKED": "Your permission changed before the Provider owner evidence was read. Refresh access before retrying.",
+    "TENANT_MAPPING_MISSING": "This tenant has no active Provider control-plane mapping, so owner evidence is unavailable.",
+    "UNAVAILABLE": "The Provider owner could not be reached. Existing settings remain visible, but their current owner state is unconfirmed."
+  },
+  "domains": {
+    "title": "Provider-owned domains",
+    "description": "Live owner observation at {{observedAt}}. Verification secrets and DNS challenge values are never returned.",
+    "total": "{{count}} domains",
+    "verified": "{{count}} verified",
+    "attention": "{{count}} need evidence",
+    "primary": "Primary",
+    "typeAndMethod": "{{type}} · {{method}}",
+    "freshness": "Evidence: {{state}}",
+    "lastChecked": "Last checked: {{value}}",
+    "empty": "The Provider owner reports no non-revoked domains for this tenant."
+  },
+  "governance": {
+    "title": "Provider retention and legal-hold observation",
+    "description": "Live owner observation at {{observedAt}}. Raw rules, justifications, actors, and evidence references are redacted.",
+    "retentionCount": "{{count}} active retention",
+    "legalHoldCount": "{{count}} active legal holds",
+    "blockedCount": "{{count}} lifecycle blocks",
+    "policies": "Global owner policies",
+    "policyTitle": "{{type}} · revision {{revision}}",
+    "tenantHolds": "Current tenant lifecycle evaluations",
+    "retentionDays": "Retention period: {{count}} days",
+    "legalHoldActive": "Global legal hold is active",
+    "legalHoldInactive": "Global legal hold is inactive",
+    "policyEvidence": "{{freshness}} · {{evidence}} · fingerprint {{fingerprint}}",
+    "holdEvidence": "{{evidence}} · {{count}} redacted references",
+    "changedAt": "Owner source changed: {{value}}",
+    "noPolicies": "No active global retention or legal-hold policy is reported by this owner.",
+    "noTenantHolds": "No tenant lifecycle hold evaluation has been recorded."
+  },
+  "coverage": {
+    "domains": "Coverage is limited to this tenant's non-revoked domains. Owner source last changed {{changedAt}}.",
+    "governance": "Coverage includes global policies and this tenant's recorded lifecycle evaluations. Owner source last changed {{changedAt}}."
+  },
+  "states": {
+    "PENDING": "Pending",
+    "VERIFIED": "Verified",
+    "FAILED": "Failed",
+    "SCHEDULED": "Scheduled",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "EXPIRED": "Expired",
+    "DRAFT": "Draft",
+    "PENDING_APPROVAL": "Pending approval",
+    "APPROVED_FOR_HANDOFF": "Approved for owner handoff",
+    "REJECTED": "Rejected",
+    "BLOCKED_BY_HOLD": "Blocked by hold",
+    "CANCELLED": "Cancelled",
+    "UNKNOWN": "State unavailable"
+  },
+  "domainTypes": {
+    "LOGIN": "Login domain",
+    "EMAIL": "Email domain",
+    "CUSTOM": "Custom domain",
+    "UNKNOWN": "Domain type unavailable"
+  },
+  "verificationMethods": {
+    "DNS_TXT": "DNS TXT verification",
+    "HTTP": "HTTP verification",
+    "INTERNAL": "Provider attestation",
+    "UNKNOWN": "Verification method unavailable"
+  },
+  "freshness": {
+    "OWNER_ATTESTED": "owner attested",
+    "NOT_OBSERVED": "not yet observed",
+    "RECORDED_AT": "recorded evidence",
+    "CURRENT_OWNER_REVISION": "current owner revision",
+    "UNKNOWN": "freshness unavailable"
+  },
+  "evidence": {
+    "NOT_RECORDED": "no evidence recorded",
+    "IMPACT_FINGERPRINT_RECORDED": "impact fingerprint recorded",
+    "REFERENCES_REDACTED": "evidence references redacted",
+    "UNKNOWN": "evidence state unavailable"
+  },
+  "policyTypes": {
+    "RETENTION": "Retention",
+    "LEGAL_HOLD": "Legal hold",
+    "UNKNOWN": "Policy type unavailable"
+  },
+  "actions": {
+    "RETIRE": "Retire tenant",
+    "PURGE": "Purge tenant data",
+    "UNKNOWN": "Lifecycle action unavailable"
+  },
+  "holdStates": {
+    "OWNER_VERIFICATION_REQUIRED": "Owner verification is required before lifecycle execution.",
+    "ACTIVE_GLOBAL_LEGAL_HOLD": "An active global legal hold blocks lifecycle execution.",
+    "UNKNOWN": "Hold evaluation unavailable."
+  },
+  "exclusions": {
+    "TENANT_SCOPED_HOLD_OWNER_NOT_CONNECTED": "Tenant-scoped hold owner is not connected.",
+    "EXTERNAL_SHARING_OWNER_NOT_CONNECTED": "External sharing owner is not connected.",
+    "PHYSICAL_RETENTION_OR_DELETION_EXECUTION_NOT_OBSERVED": "Physical retention and deletion execution are not observed.",
+    "UNKNOWN": "An owner-declared boundary is unavailable."
+  }
+}

@@ -33,6 +33,7 @@ type OrphanedViewRow = {
 export type CustodyWorkspaceOptions = {
   failRegisters?: boolean;
   failLifecycleHistory?: boolean;
+  historyHasMore?: boolean;
   seedOwnershipHistory?: boolean;
   previewNameConflict?: boolean;
   conflictOnFirstExecution?: boolean;
@@ -230,7 +231,11 @@ export async function mockCustodyWorkspace(page: Page, options?: CustodyWorkspac
           body: JSON.stringify({ status: 'ERROR', message: 'Lifecycle history unavailable' }),
         });
       }
-      return fulfillSuccess(route, lifecycleActions);
+      return fulfillSuccess(route, {
+        items: lifecycleActions,
+        limit: 50,
+        hasMore: Boolean(options?.historyHasMore),
+      });
     }
     if (path.endsWith('/orphaned') && request.method() === 'GET') {
       if (options?.failRegisters) {
@@ -250,7 +255,11 @@ export async function mockCustodyWorkspace(page: Page, options?: CustodyWorkspac
           body: JSON.stringify({ status: 'ERROR', message: 'Registry unavailable' }),
         });
       }
-      return fulfillSuccess(route, transfers);
+      return fulfillSuccess(route, {
+        items: transfers,
+        limit: 50,
+        hasMore: Boolean(options?.historyHasMore),
+      });
     }
     if (path.endsWith('/preview') && request.method() === 'POST') {
       previewPayload = request.postDataJSON() as Record<string, unknown>;

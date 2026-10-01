@@ -20,6 +20,19 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { severityColor } from './audit-ui';
+import { auditRetentionLabelKey } from './audit-evidence-presentation';
+import {
+  auditActivityLabelKey,
+  auditActorLabel,
+  auditCaseStateLabelKey,
+  auditEntityRelationshipLabelKey,
+  auditFindingStateLabelKey,
+  auditOutcomeLabelKey,
+  auditSeverityLabelKey,
+  auditSlaColor,
+  auditSlaLabelKey,
+  auditSourceServiceLabelKey,
+} from './audit-runtime-presentation';
 
 import type { ReactNode } from 'react';
 import type {
@@ -150,7 +163,7 @@ export function AuditFindingQueueItem({
             size="small"
             variant="outlined"
             color={severityColor(item.severity)}
-            label={t(`auditControl.severity.${item.severity}`)}
+            label={t(auditSeverityLabelKey(item.severity))}
           />
           <Typography variant="caption" fontWeight={750} color="text.secondary">
             {item.riskScore}
@@ -174,9 +187,9 @@ export function AuditFindingQueueItem({
         sx={{ mt: 1 }}
       >
         <Typography variant="caption" color="text.secondary" noWrap>
-          {item.sourceService}
+          {t(auditSourceServiceLabelKey(item.sourceService))}
         </Typography>
-        <Chip size="small" label={t(`auditControl.findingStatus.${item.status}`)} />
+        <Chip size="small" label={t(auditFindingStateLabelKey(item.status))} />
       </Stack>
     </Box>
   );
@@ -192,8 +205,7 @@ export function AuditCaseQueueItem({
   onSelect: () => void;
 }) {
   const { t } = useTranslation('admin');
-  const slaColor =
-    item.slaState === 'BREACHED' ? 'error' : item.slaState === 'AT_RISK' ? 'warning' : 'success';
+  const slaColor = auditSlaColor(item.slaState);
   return (
     <Box
       component="button"
@@ -226,7 +238,7 @@ export function AuditCaseQueueItem({
           size="small"
           color={slaColor}
           variant="outlined"
-          label={t(`auditControl.sla.${item.slaState}`)}
+          label={t(auditSlaLabelKey(item.slaState))}
         />
       </Stack>
       <Typography component="p" variant="subtitle2" sx={{ mt: 1 }}>
@@ -237,7 +249,7 @@ export function AuditCaseQueueItem({
           size="small"
           variant="outlined"
           color={severityColor(item.severity)}
-          label={t(`auditControl.severity.${item.severity}`)}
+          label={t(auditSeverityLabelKey(item.severity))}
         />
         <Typography variant="caption" color="text.secondary" noWrap>
           {item.ownerActorId || t('auditControl.investigations.unassigned')}
@@ -273,7 +285,7 @@ function EntityNode({ entity }: { entity: AuditCaseEntity }) {
         </Avatar>
         <Box minWidth={0}>
           <Typography variant="caption" color="text.secondary">
-            {t(`auditControl.entity.relationship.${entity.relationship}`)}
+            {t(auditEntityRelationshipLabelKey(entity.relationship))}
           </Typography>
           <Typography variant="body2" fontWeight={700} noWrap>
             {entity.displayName || entity.entityId}
@@ -347,8 +359,9 @@ function EventTimeline({ events, limit = 8 }: { events: AuditEvent[]; limit?: nu
               </Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {event.actorDisplayName || event.actorPrincipal || event.actorId || event.actorType} →{' '}
-              {event.targetDisplayName || event.targetId} · {event.sourceService}
+              {auditActorLabel(event, t('auditControl.investigations.unknownActor'))} →{' '}
+              {event.targetDisplayName || event.targetId} ·{' '}
+              {t(auditSourceServiceLabelKey(event.sourceService))}
             </Typography>
           </Box>
         </Stack>
@@ -382,7 +395,7 @@ function ActivityTimeline({ activities }: { activities: AuditCaseActivity[] }) {
             </Avatar>
             <Box minWidth={0} flex={1}>
               <Typography variant="body2" fontWeight={isNote ? 600 : 700}>
-                {isNote ? activity.message : t(`auditControl.activity.${activity.activityType}`)}
+                {isNote ? activity.message : t(auditActivityLabelKey(activity.activityType))}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {activity.actorId} ·{' '}
@@ -408,9 +421,13 @@ export function AuditFindingDossier({ context }: { context: AuditFindingContext 
           <Chip
             size="small"
             color={severityColor(finding.severity)}
-            label={t(`auditControl.severity.${finding.severity}`)}
+            label={t(auditSeverityLabelKey(finding.severity))}
           />
-          <Chip size="small" variant="outlined" label={finding.ruleKey} />
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t('auditControl.investigations.managedFinding')}
+          />
           <Typography variant="caption" color="text.secondary">
             {t('auditControl.investigations.occurrences', { count: finding.occurrenceCount })}
           </Typography>
@@ -512,11 +529,11 @@ export function AuditFindingDossier({ context }: { context: AuditFindingContext 
             {[
               [t('auditControl.detail.eventId'), primary.eventId],
               [t('auditControl.detail.correlation'), primary.correlationId || '—'],
+              [t('auditControl.events.columns.outcome'), t(auditOutcomeLabelKey(primary.outcome))],
               [
-                t('auditControl.events.columns.outcome'),
-                t(`auditControl.outcome.${primary.outcome}`),
+                t('auditControl.detail.retention'),
+                t(auditRetentionLabelKey(primary.retentionClass)),
               ],
-              [t('auditControl.detail.retention'), primary.retentionClass],
             ].map(([label, value]) => (
               <Box key={label} sx={{ px: 1.5, py: 1.25, bgcolor: 'action.hover' }}>
                 <Typography variant="caption" color="text.secondary">
@@ -552,20 +569,14 @@ export function AuditCaseDossier({ workspace }: { workspace: AuditCaseWorkspace 
             size="small"
             variant="outlined"
             color={severityColor(item.severity)}
-            label={t(`auditControl.severity.${item.severity}`)}
+            label={t(auditSeverityLabelKey(item.severity))}
           />
-          <Chip size="small" label={t(`auditControl.caseStatus.${item.status}`)} />
+          <Chip size="small" label={t(auditCaseStateLabelKey(item.status))} />
           <Chip
             size="small"
             variant="outlined"
-            color={
-              item.slaState === 'BREACHED'
-                ? 'error'
-                : item.slaState === 'AT_RISK'
-                  ? 'warning'
-                  : 'success'
-            }
-            label={t(`auditControl.sla.${item.slaState}`)}
+            color={auditSlaColor(item.slaState)}
+            label={t(auditSlaLabelKey(item.slaState))}
           />
         </Stack>
         <Typography component="h2" variant="h5" sx={{ mt: 1.25 }}>

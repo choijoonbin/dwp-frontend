@@ -19,6 +19,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { formatProviderDate, ProviderStatusChip } from './provider-ui';
+import { providerServiceTierLabel } from './provider-operation-presentation';
 
 import type {
   ProviderServicePlanPortfolio,
@@ -124,9 +125,7 @@ export function RenewalProposalDialog({
               .filter((plan) => plan.lifecycleState === 'ACTIVE')
               .map((plan) => ({
                 value: plan.planKey,
-                label: `${plan.planName} · ${t(`tiers.${plan.serviceTier}`, {
-                  defaultValue: plan.serviceTier,
-                })}`,
+                label: `${plan.planName} · ${providerServiceTierLabel(t, plan.serviceTier)}`,
               }))}
             onValueChange={setTargetPlanKey}
           />

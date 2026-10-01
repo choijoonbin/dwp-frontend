@@ -11,7 +11,6 @@ import {
   Network,
   Plus,
   RefreshCw,
-  Search,
   ShieldAlert,
   ShieldCheck,
   Unlink,
@@ -23,27 +22,22 @@ import {
   dispositionCatalogFinding,
   evaluateCatalogAssurance,
   getAppGovernanceDashboard,
+  getTenantAppAdoptionProjection,
+  listTenantAppAssignments,
   getCatalogAssurance,
   getCatalogGraph,
   getCatalogImpact,
   getCatalogOverview,
   retireCatalogRelation,
+  usePermissions,
   useProductSurfaceAuthority,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import {
-  ActionButton,
-  ActionIconButton,
-  EnterpriseDataGrid,
-  FormDialog,
-  FormField,
-} from '@dwp-frontend/design-system';
-
+import { ActionButton, ActionIconButton, FormDialog, FormField } from '@dwp-frontend/design-system';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
@@ -52,15 +46,27 @@ import Tabs from '@mui/material/Tabs';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-
 import { CatalogGraphView } from './catalog-graph';
 import { AssuranceWorkspace, FindingDispositionDialog } from './catalog-assurance-workspace';
 import { CatalogMetric } from './catalog-metric';
+import {
+  APPLICATION_LIFECYCLE_OWNER_QUERY_KEYS,
+  CATALOG_CRITICALITIES,
+  CATALOG_RELATION_TYPES,
+} from './catalog-explorer-options';
 import { ApplicationLifecycleCatalog } from './application-lifecycle-catalog';
-import { buildAppLifecycleCatalog } from './app-catalog-lifecycle-model';
+import { CatalogInventoryPanel } from './catalog-inventory-panel';
+import {
+  catalogCriticalityLabelKey,
+  catalogKindLabelKey,
+  catalogRelationTypeLabelKey,
+  catalogScopeLabelKey,
+} from './catalog-presentation';
+import {
+  buildAppLifecycleCatalog,
+  buildAppLifecycleProvenance,
+} from './app-catalog-lifecycle-model';
 import { GOVERNED_PRODUCT_ENTRY_CATALOG } from '../../components/product-entry-point-catalog';
-
-import type { GridColDef } from '@mui/x-data-grid';
 import type {
   CatalogAssuranceFinding,
   CatalogCriticality,
@@ -71,39 +77,7 @@ import type {
   CatalogRelationType,
 } from '@dwp-frontend/shared-utils';
 import type { FindingDecision } from './catalog-assurance-workspace';
-
 type View = 'applications' | 'graph' | 'inventory' | 'assurance';
-
-const KINDS: Array<CatalogEntityKind | 'ALL'> = [
-  'ALL',
-  'APP',
-  'CONNECTOR',
-  'API',
-  'DATA_PRODUCT',
-  'REFERENCE_SET',
-  'CODE_SET',
-  'NAVIGATION',
-  'PERMISSION',
-  'SERVICE',
-  'AGENT',
-  'TOOL',
-  'POLICY',
-  'CONNECTOR_INSTANCE',
-];
-
-const RELATION_TYPES: CatalogRelationType[] = [
-  'DEPENDS_ON',
-  'CONSUMES',
-  'PRODUCES',
-  'EXPOSES',
-  'GOVERNS',
-  'NAVIGATES_TO',
-  'REQUIRES_PERMISSION',
-  'SYNCHRONIZES',
-];
-
-const CRITICALITIES: CatalogCriticality[] = ['INFORMATIONAL', 'OPERATIONAL', 'CRITICAL'];
-
 function RelationDialog({
   source,
   entities,
@@ -172,9 +146,9 @@ function RelationDialog({
             size="small"
             onChange={(event) => setRelationType(event.target.value as CatalogRelationType)}
           >
-            {RELATION_TYPES.map((type) => (
+            {CATALOG_RELATION_TYPES.map((type) => (
               <MenuItem key={type} value={type}>
-                {t(`catalog.relation.types.${type}`)}
+                {t(catalogRelationTypeLabelKey(type))}
               </MenuItem>
             ))}
           </FormField>
@@ -186,7 +160,7 @@ function RelationDialog({
             size="small"
             onChange={(event) => setCriticality(event.target.value as CatalogCriticality)}
           >
-            {CRITICALITIES.map((value) => (
+            {CATALOG_CRITICALITIES.map((value) => (
               <MenuItem key={value} value={value}>
                 {t(`catalog.criticality.${value}`)}
               </MenuItem>
@@ -204,7 +178,6 @@ function RelationDialog({
     </FormDialog>
   );
 }
-
 function ImpactPanel({ impact }: { impact: CatalogImpact }) {
   const { t } = useTranslation('admin');
   return (
@@ -255,6 +228,14 @@ function ImpactPanel({ impact }: { impact: CatalogImpact }) {
         </Typography>
       ) : (
         <Stack component="ol" sx={{ listStyle: 'none', p: 0, m: 0, mt: 1 }} divider={<Divider />}>
+          {impact.impactedEntities.length > 8 && (
+            <Typography component="li" variant="caption" color="text.secondary" sx={{ py: 1 }}>
+              {t('catalog.impact.previewCoverage', {
+                shown: 8,
+                total: impact.impactedEntities.length,
+              })}
+            </Typography>
+          )}
           {impact.impactedEntities.slice(0, 8).map((item) => (
             <Box component="li" key={item.entity.ref} sx={{ py: 1 }}>
               <Stack direction="row" alignItems="center" gap={1}>
@@ -265,14 +246,16 @@ function ImpactPanel({ impact }: { impact: CatalogImpact }) {
                   </Typography>
                   <Typography variant="caption" color="text.secondary" noWrap display="block">
                     {t('catalog.impact.distance', { count: item.distance })} ·{' '}
-                    {item.relationTypes.join(', ')}
+                    {item.relationTypes
+                      .map((relationType) => t(catalogRelationTypeLabelKey(relationType)))
+                      .join(', ')}
                   </Typography>
                 </Box>
                 <Chip
                   size="small"
                   color={item.highestCriticality === 'CRITICAL' ? 'error' : 'default'}
                   variant="outlined"
-                  label={t(`catalog.criticality.${item.highestCriticality}`)}
+                  label={t(catalogCriticalityLabelKey(item.highestCriticality))}
                 />
               </Stack>
             </Box>
@@ -282,13 +265,14 @@ function ImpactPanel({ impact }: { impact: CatalogImpact }) {
     </Box>
   );
 }
-
 export function CatalogExplorer() {
   const { t } = useTranslation('admin');
   const display = useDisplayDictionary();
   const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canManage = permissionsLoaded && hasPermission('ADMIN.PLATFORM_CATALOG', 'MANAGE');
   const surfaceAuthority = useProductSurfaceAuthority();
   const [view, setViewState] = useState<View>(() => {
     const requested = searchParams.get('view');
@@ -308,7 +292,6 @@ export function CatalogExplorer() {
   );
   const [dispositionTarget, setDispositionTarget] = useState<CatalogAssuranceFinding | null>(null);
   const [busy, setBusy] = useState(false);
-
   const overviewQuery = useQuery({
     queryKey: ['admin', 'catalog', 'overview'],
     queryFn: () => getCatalogOverview(),
@@ -333,7 +316,16 @@ export function CatalogExplorer() {
     queryFn: getAppGovernanceDashboard,
     enabled: view === 'applications',
   });
-
+  const appAdoptionQuery = useQuery({
+    queryKey: ['admin', 'tenant-app-adoption', 'projection'],
+    queryFn: getTenantAppAdoptionProjection,
+    enabled: view === 'applications',
+  });
+  const appWorkforceAssignmentsQuery = useQuery({
+    queryKey: ['admin', 'tenant-app-adoption', 'assignments'],
+    queryFn: () => listTenantAppAssignments(),
+    enabled: view === 'applications',
+  });
   const updateLocationState = (nextView: View, findingId?: string | null) => {
     setViewState(nextView);
     setSearchParams(
@@ -348,14 +340,11 @@ export function CatalogExplorer() {
       { replace: true }
     );
   };
-
   const setView = (nextView: View) => updateLocationState(nextView, selectedFindingId);
-
   const selectFinding = (findingId: string) => {
     setSelectedFindingId(findingId);
     updateLocationState('assurance', findingId);
   };
-
   const entities = useMemo(() => overviewQuery.data?.entities ?? [], [overviewQuery.data]);
   const applicationItems = useMemo(
     () =>
@@ -380,13 +369,53 @@ export function CatalogExplorer() {
             : surfaceAuthority.status === 'loading'
               ? 'loading'
               : 'unavailable',
+        adoption: appAdoptionQuery.data,
+        adoptionStatus: appAdoptionQuery.isError
+          ? 'unavailable'
+          : appAdoptionQuery.data
+            ? 'ready'
+            : 'loading',
+        workforceAssignments: appWorkforceAssignmentsQuery.data,
+        workforceAssignmentsStatus: appWorkforceAssignmentsQuery.isError
+          ? 'unavailable'
+          : appWorkforceAssignmentsQuery.data
+            ? 'ready'
+            : 'loading',
       }),
     [
+      appAdoptionQuery.data,
+      appAdoptionQuery.isError,
       appGovernanceQuery.data,
       appGovernanceQuery.isError,
+      appWorkforceAssignmentsQuery.data,
+      appWorkforceAssignmentsQuery.isError,
       entities,
       overviewQuery.data,
       overviewQuery.isError,
+      surfaceAuthority.snapshot?.envelope,
+      surfaceAuthority.status,
+    ]
+  );
+  const applicationProvenance = useMemo(
+    () =>
+      buildAppLifecycleProvenance({
+        authority: surfaceAuthority.snapshot?.envelope,
+        authorityStatus:
+          surfaceAuthority.status === 'ready'
+            ? 'ready'
+            : surfaceAuthority.status === 'loading'
+              ? 'loading'
+              : 'unavailable',
+        adoption: appAdoptionQuery.data,
+        adoptionStatus: appAdoptionQuery.isError
+          ? 'unavailable'
+          : appAdoptionQuery.data
+            ? 'ready'
+            : 'loading',
+      }),
+    [
+      appAdoptionQuery.data,
+      appAdoptionQuery.isError,
       surfaceAuthority.snapshot?.envelope,
       surfaceAuthority.status,
     ]
@@ -404,7 +433,6 @@ export function CatalogExplorer() {
       );
     });
   }, [deferredQuery, entities, kind]);
-
   const connectedRelations = useMemo(
     () =>
       (graphQuery.data?.relations ?? []).filter(
@@ -412,35 +440,39 @@ export function CatalogExplorer() {
       ),
     [graphQuery.data, selectedRef]
   );
-
   const refresh = async () => {
-    await Promise.all([
+    const requests: Array<Promise<unknown>> = [
       queryClient.invalidateQueries({ queryKey: ['admin', 'catalog'] }),
-      view === 'applications'
-        ? queryClient.invalidateQueries({ queryKey: ['admin', 'app-governance'] })
-        : Promise.resolve(),
-    ]);
+    ];
+    if (view === 'applications') {
+      requests.push(
+        ...APPLICATION_LIFECYCLE_OWNER_QUERY_KEYS.map((queryKey) =>
+          queryClient.invalidateQueries({ queryKey })
+        ),
+        surfaceAuthority.revalidate()
+      );
+    }
+    await Promise.all(requests);
   };
-
   const evaluateAssurance = async () => {
+    if (!canManage) return;
     setBusy(true);
     try {
       const result = await evaluateCatalogAssurance();
       queryClient.setQueryData(['admin', 'catalog', 'assurance'], result);
       toast.success(t('catalog.assurance.toasts.evaluated'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('catalog.assurance.toasts.error'));
+    } catch {
+      toast.error(t('catalog.assurance.toasts.error'));
     } finally {
       setBusy(false);
     }
   };
-
   const dispositionFinding = async (value: {
     decision: FindingDecision;
     reason: string;
     evidenceRef: string;
   }) => {
-    if (!dispositionTarget) return;
+    if (!canManage || !dispositionTarget) return;
     setBusy(true);
     try {
       await dispositionCatalogFinding(dispositionTarget.findingId, {
@@ -452,91 +484,45 @@ export function CatalogExplorer() {
       await assuranceQuery.refetch();
       setDispositionTarget(null);
       toast.success(t('catalog.assurance.toasts.dispositionSaved'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('catalog.assurance.toasts.error'));
+    } catch {
+      toast.error(t('catalog.assurance.toasts.error'));
     } finally {
       setBusy(false);
     }
   };
-
   const saveRelation = async (value: {
     targetRef: string;
     relationType: CatalogRelationType;
     criticality: CatalogCriticality;
     evidenceRef: string;
   }) => {
-    if (!selected) return;
+    if (!canManage || !selected) return;
     setBusy(true);
     try {
       await declareCatalogRelation({ sourceRef: selected.ref, ...value });
       await refresh();
       setRelationDialog(false);
       toast.success(t('catalog.toasts.saved'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('catalog.toasts.error'));
+    } catch {
+      toast.error(t('catalog.toasts.error'));
     } finally {
       setBusy(false);
     }
   };
 
   const retireRelation = async (relation: CatalogRelation) => {
-    if (!relation.relationId) return;
+    if (!canManage || !relation.relationId) return;
     setBusy(true);
     try {
       await retireCatalogRelation(relation.relationId, relation.version);
       await refresh();
       toast.success(t('catalog.toasts.retired'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('catalog.toasts.error'));
+    } catch {
+      toast.error(t('catalog.toasts.error'));
     } finally {
       setBusy(false);
     }
   };
-
-  const columns = useMemo<GridColDef<CatalogEntity>[]>(
-    () => [
-      {
-        field: 'name',
-        headerName: t('catalog.columns.asset'),
-        minWidth: 240,
-        flex: 1,
-        renderCell: ({ row }) => (
-          <Box sx={{ minWidth: 0, py: 0.75 }}>
-            <Typography variant="body2" fontWeight={700} noWrap>
-              {row.name}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" noWrap display="block">
-              {row.ref}
-            </Typography>
-          </Box>
-        ),
-      },
-      {
-        field: 'kind',
-        headerName: t('catalog.columns.kind'),
-        width: 156,
-        renderCell: ({ row }) => (
-          <Chip size="small" variant="outlined" label={t(`catalog.kinds.${row.kind}`)} />
-        ),
-      },
-      { field: 'ownerRef', headerName: t('catalog.columns.owner'), minWidth: 170, flex: 0.7 },
-      {
-        field: 'scope',
-        headerName: t('catalog.columns.scope'),
-        width: 130,
-        renderCell: ({ row }) => t(`catalog.scopes.${row.scope}`),
-      },
-      {
-        field: 'lifecycleState',
-        headerName: t('catalog.columns.state'),
-        width: 110,
-        renderCell: ({ row }) => (
-          <Chip size="small" label={display('states', row.lifecycleState)} />
-        ),
-      },
-    ],
-    [display, t]
-  );
 
   if (
     (view !== 'applications' && overviewQuery.isError) ||
@@ -640,70 +626,37 @@ export function CatalogExplorer() {
       {view === 'applications' && (
         <ApplicationLifecycleCatalog
           items={applicationItems}
+          provenance={applicationProvenance}
+          loading={
+            overviewQuery.isLoading ||
+            appGovernanceQuery.isLoading ||
+            appAdoptionQuery.isLoading ||
+            appWorkforceAssignmentsQuery.isLoading ||
+            surfaceAuthority.status === 'loading'
+          }
           partialFailure={
             overviewQuery.isError ||
             appGovernanceQuery.isError ||
+            appAdoptionQuery.isError ||
+            appWorkforceAssignmentsQuery.isError ||
             surfaceAuthority.status === 'authority-unavailable'
           }
         />
       )}
 
       {view === 'inventory' && (
-        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'minmax(260px, 1fr) 210px' },
-              gap: 1.5,
-              p: 2,
-              borderBottom: 1,
-              borderColor: 'divider',
-            }}
-          >
-            <FormField
-              size="small"
-              label={t('catalog.search')}
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search size={17} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-            <FormField
-              select
-              size="small"
-              label={t('catalog.columns.kind')}
-              value={kind}
-              onChange={(event) => setKind(event.target.value as CatalogEntityKind | 'ALL')}
-            >
-              {KINDS.map((value) => (
-                <MenuItem key={value} value={value}>
-                  {value === 'ALL' ? t('catalog.allKinds') : t(`catalog.kinds.${value}`)}
-                </MenuItem>
-              ))}
-            </FormField>
-          </Box>
-          <EnterpriseDataGrid
-            ariaLabel={t('catalog.views.inventory')}
-            rows={filteredEntities}
-            columns={columns}
-            getRowId={(row) => row.ref}
-            loading={overviewQuery.isLoading}
-            hideFooter={filteredEntities.length <= 25}
-            initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
-            onRowClick={({ row }) => {
-              setSelectedRef(row.ref);
-              setView('graph');
-            }}
-            sx={{ border: 0, borderRadius: 0 }}
-          />
-        </Box>
+        <CatalogInventoryPanel
+          query={query}
+          kind={kind}
+          rows={filteredEntities}
+          loading={overviewQuery.isLoading}
+          onQueryChange={setQuery}
+          onKindChange={setKind}
+          onOpen={(row) => {
+            setSelectedRef(row.ref);
+            setView('graph');
+          }}
+        />
       )}
 
       {view === 'graph' && (
@@ -783,7 +736,7 @@ export function CatalogExplorer() {
                     <Chip
                       size="small"
                       variant="outlined"
-                      label={t(`catalog.kinds.${selected.kind}`)}
+                      label={t(catalogKindLabelKey(selected.kind))}
                     />
                     <Typography
                       component="h2"
@@ -804,6 +757,7 @@ export function CatalogExplorer() {
                   </Box>
                   <ActionIconButton
                     label={t('catalog.actions.addRelation')}
+                    disabled={!canManage}
                     onClick={() => setRelationDialog(true)}
                   >
                     <Plus size={18} />
@@ -826,7 +780,7 @@ export function CatalogExplorer() {
                 >
                   {[
                     [t('catalog.columns.owner'), selected.ownerRef || '-'],
-                    [t('catalog.columns.scope'), t(`catalog.scopes.${selected.scope}`)],
+                    [t('catalog.columns.scope'), t(catalogScopeLabelKey(selected.scope))],
                     [t('catalog.columns.state'), display('states', selected.lifecycleState)],
                     [t('catalog.inspector.revision'), selected.revision],
                   ].map(([label, value]) => (
@@ -853,6 +807,14 @@ export function CatalogExplorer() {
                   <Chip size="small" label={connectedRelations.length} />
                 </Stack>
                 <Stack sx={{ mt: 0.75 }} divider={<Divider />}>
+                  {connectedRelations.length > 8 && (
+                    <Typography variant="caption" color="text.secondary" sx={{ py: 1 }}>
+                      {t('catalog.relation.previewCoverage', {
+                        shown: 8,
+                        total: connectedRelations.length,
+                      })}
+                    </Typography>
+                  )}
                   {connectedRelations.length === 0 ? (
                     <Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>
                       {t('catalog.relation.none')}
@@ -872,7 +834,7 @@ export function CatalogExplorer() {
                         <Link2 size={14} aria-hidden="true" />
                         <Box sx={{ minWidth: 0, flex: 1 }}>
                           <Typography variant="body2" fontWeight={650} noWrap>
-                            {t(`catalog.relation.types.${relation.relationType}`)}
+                            {t(catalogRelationTypeLabelKey(relation.relationType))}
                           </Typography>
                           <Typography
                             variant="caption"
@@ -889,7 +851,7 @@ export function CatalogExplorer() {
                           <ActionIconButton
                             size="small"
                             label={t('catalog.actions.retireRelation')}
-                            disabled={busy}
+                            disabled={busy || !canManage}
                             onClick={() => void retireRelation(relation)}
                           >
                             <Unlink size={15} />
@@ -954,6 +916,7 @@ export function CatalogExplorer() {
             summary={assuranceQuery.data}
             loading={assuranceQuery.isLoading}
             evaluating={busy}
+            canManage={canManage}
             selectedFindingId={selectedFindingId}
             onEvaluate={() => void evaluateAssurance()}
             onSelect={selectFinding}
@@ -962,7 +925,7 @@ export function CatalogExplorer() {
         </>
       )}
 
-      {relationDialog && selected && (
+      {canManage && relationDialog && selected && (
         <RelationDialog
           source={selected}
           entities={entities}
@@ -971,7 +934,7 @@ export function CatalogExplorer() {
           onSubmit={(value) => void saveRelation(value)}
         />
       )}
-      {dispositionTarget && (
+      {canManage && dispositionTarget && (
         <FindingDispositionDialog
           finding={dispositionTarget}
           busy={busy}

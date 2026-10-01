@@ -36,19 +36,19 @@ import type {
   WidgetPlacementContext,
   WidgetPublicReasonCode,
 } from '@dwp-frontend/shared-utils';
+import {
+  widgetEffectiveStateLabelKey,
+  widgetEffectiveStatePriority,
+  widgetPlacementLabelKey,
+  widgetPolicyStateLabelKey,
+  widgetPublicReasonLabelKey,
+} from './tenant-widget-presentation';
 
 type TenantCatalogRow = EffectiveWidgetCatalogItem &
   Readonly<{
     placementContexts: readonly WidgetPlacementContext[];
     reasonCodes: readonly WidgetPublicReasonCode[];
   }>;
-
-const STATE_PRIORITY: Record<EffectiveWidgetCatalogItem['effectiveState'], number> = {
-  DENY: 4,
-  DEPRECATED: 3,
-  ALREADY_ADDED: 2,
-  AVAILABLE: 1,
-};
 
 const CATALOG_ROW_HEIGHT = 76;
 const CATALOG_VIEWPORT_HEIGHT = CATALOG_ROW_HEIGHT * 8;
@@ -64,7 +64,8 @@ export function tenantCatalogRows(catalog: EffectiveWidgetCatalog | undefined): 
         return;
       }
       const selected =
-        STATE_PRIORITY[item.effectiveState] > STATE_PRIORITY[current.effectiveState]
+        widgetEffectiveStatePriority(item.effectiveState) >
+        widgetEffectiveStatePriority(current.effectiveState)
           ? item
           : current;
       rows.set(item.definitionId, {
@@ -248,7 +249,7 @@ export function TenantWidgetRegistryPanel({ onOpenPolicy }: { onOpenPolicy: () =
             <Chip
               size="small"
               variant="outlined"
-              label={t(`homeWidgets.controlPlane.effective.${item.effectiveState}`)}
+              label={t(widgetEffectiveStateLabelKey(item.effectiveState))}
             />
           </ListItemButton>
         </ListItem>
@@ -402,9 +403,7 @@ function TenantWidgetRegistryDetail({
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {item.reasonCodes.length > 0
-            ? item.reasonCodes
-                .map((reason) => t(`homeWidgets.controlPlane.publicReasons.${reason}`))
-                .join(', ')
+            ? item.reasonCodes.map((reason) => t(widgetPublicReasonLabelKey(reason))).join(', ')
             : t('homeWidgets.controlPlane.noPublicReason')}
         </Typography>
       </Box>
@@ -414,7 +413,12 @@ function TenantWidgetRegistryDetail({
           label={item.semanticVersion || t('homeWidgets.controlPlane.unresolved')}
         />
         {item.placementContexts.map((context) => (
-          <Chip key={context} size="small" variant="outlined" label={context} />
+          <Chip
+            key={context}
+            size="small"
+            variant="outlined"
+            label={t(widgetPlacementLabelKey(context))}
+          />
         ))}
         {policy?.current.required && (
           <Chip size="small" color="info" label={t('homeWidgets.controlPlane.required')} />
@@ -428,7 +432,7 @@ function TenantWidgetRegistryDetail({
             ? t('homeWidgets.controlPlane.policyLoading')
             : policy
               ? t('homeWidgets.controlPlane.policySummary', {
-                  state: policy.current.policyState,
+                  state: t(widgetPolicyStateLabelKey(policy.current.policyState)),
                   revision: policy.current.revisionNumber,
                 })
               : t('homeWidgets.controlPlane.policyMissing')}
@@ -474,7 +478,7 @@ function TenantWidgetRegistryDetail({
                 <ListItemText
                   primary={t('homeWidgets.controlPlane.auditRevision', {
                     revision: revision.revisionNumber,
-                    state: revision.policyState,
+                    state: t(widgetPolicyStateLabelKey(revision.policyState)),
                   })}
                   secondary={revision.createdAt}
                 />

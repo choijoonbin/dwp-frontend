@@ -72,6 +72,18 @@ import type {
   SaveProductivityConnectorRequest,
 } from '@dwp-frontend/shared-utils';
 
+import {
+  productivityConsentLabelKey,
+  productivityHealthLabelKey,
+  productivityLifecycleLabelKey,
+  productivityPolicyLabelKey,
+  productivityResourceLabelKey,
+  productivityRunStateLabelKey,
+  productivityScopeLabelKey,
+  productivitySyncModeLabelKey,
+} from './productivity-connector-presentation';
+import { ProductivityEvidenceState } from './productivity-evidence-state';
+
 const REQUIRED_SCOPES = [
   'openid',
   'profile',
@@ -83,8 +95,8 @@ const REQUIRED_SCOPES = [
 
 type ViewMode = 'connections' | 'consent' | 'runs' | 'policy';
 
-function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+function errorMessage(_error: unknown, fallback: string): string {
+  return fallback;
 }
 
 function healthTone(health: ProductivityConnectorHealth) {
@@ -276,7 +288,12 @@ function ConnectorDialog({
           </Typography>
           <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 0.75 }}>
             {REQUIRED_SCOPES.map((scope) => (
-              <Chip key={scope} size="small" label={scope} variant="outlined" />
+              <Chip
+                key={scope}
+                size="small"
+                label={t(productivityScopeLabelKey(scope))}
+                variant="outlined"
+              />
             ))}
           </Stack>
         </Box>
@@ -327,6 +344,8 @@ export function ProductivityConnectorManager() {
     }
   }, [connectors, selectedId]);
   const selected = connectors.find((item) => item.connectorId === selectedId) ?? null;
+  const subjects = subjectsQuery.data?.items ?? [];
+  const runs = runsQuery.data?.items ?? [];
 
   const invalidate = async () => {
     await Promise.all([
@@ -511,7 +530,7 @@ export function ProductivityConnectorManager() {
                     </Box>
                     <Box
                       role="img"
-                      aria-label={t(`productivity.health.${connector.healthState}`)}
+                      aria-label={t(productivityHealthLabelKey(connector.healthState))}
                       sx={{
                         width: 8,
                         height: 8,
@@ -540,12 +559,12 @@ export function ProductivityConnectorManager() {
                     <Chip
                       size="small"
                       color={healthTone(selected.healthState)}
-                      label={t(`productivity.health.${selected.healthState}`)}
+                      label={t(productivityHealthLabelKey(selected.healthState))}
                     />
                     <Chip
                       size="small"
                       variant="outlined"
-                      label={t(`productivity.lifecycle.${selected.lifecycleState}`)}
+                      label={t(productivityLifecycleLabelKey(selected.lifecycleState))}
                     />
                   </Stack>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -707,7 +726,7 @@ export function ProductivityConnectorManager() {
                           key={scope}
                           size="small"
                           icon={scope.startsWith('Mail') ? <Mail size={14} /> : undefined}
-                          label={scope}
+                          label={t(productivityScopeLabelKey(scope))}
                           variant="outlined"
                         />
                       ))}
@@ -720,7 +739,7 @@ export function ProductivityConnectorManager() {
                   {[
                     [
                       t('productivity.signals.policy'),
-                      t(`productivity.policyStates.${selected.policyState}`),
+                      t(productivityPolicyLabelKey(selected.policyState)),
                     ],
                     [t('productivity.signals.auth'), t('productivity.auth.DELEGATED')],
                     [t('productivity.signals.lastCheck'), selected.lastConfigurationCheckAt],
@@ -756,124 +775,154 @@ export function ProductivityConnectorManager() {
       )}
 
       {view === 'consent' && (
-        <TableContainer sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-          <Table size="small" aria-label={t('productivity.consent.title')}>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('productivity.consent.user')}</TableCell>
-                <TableCell>{t('productivity.consent.state')}</TableCell>
-                <TableCell>{t('productivity.consent.scopes')}</TableCell>
-                <TableCell>{t('productivity.consent.tokenExpiry')}</TableCell>
-                <TableCell>{t('productivity.consent.lastSync')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {(subjectsQuery.data ?? []).map((subject) => (
-                <TableRow key={subject.subjectId} hover>
-                  <TableCell>{t('productivity.consent.userId', { id: subject.userId })}</TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      color={subject.consentState === 'CONNECTED' ? 'success' : 'warning'}
-                      label={t(`productivity.consentStates.${subject.consentState}`)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {subject.grantedScopes.join(', ') || t('productivity.notAvailable')}
-                  </TableCell>
-                  <TableCell>
-                    {subject.tokenExpiresAt
-                      ? formatDate(subject.tokenExpiresAt, {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })
-                      : t('productivity.notAvailable')}
-                  </TableCell>
-                  <TableCell>
-                    {subject.lastSuccessfulSyncAt
-                      ? formatDate(subject.lastSuccessfulSyncAt, {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })
-                      : t('productivity.notAvailable')}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {!subjectsQuery.isLoading && !(subjectsQuery.data ?? []).length && (
-                <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 8, color: 'text.secondary' }}>
-                    {t('productivity.consent.empty')}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Stack gap={1.5}>
+          <ProductivityEvidenceState
+            scope="consent"
+            pending={subjectsQuery.isPending}
+            error={subjectsQuery.isError}
+            hasMore={subjectsQuery.data?.hasMore === true}
+            limit={subjectsQuery.data?.limit}
+            onRetry={() => void subjectsQuery.refetch()}
+          />
+          {!subjectsQuery.isPending && !subjectsQuery.isError && (
+            <TableContainer sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
+              <Table size="small" aria-label={t('productivity.consent.title')}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t('productivity.consent.user')}</TableCell>
+                    <TableCell>{t('productivity.consent.state')}</TableCell>
+                    <TableCell>{t('productivity.consent.scopes')}</TableCell>
+                    <TableCell>{t('productivity.consent.tokenExpiry')}</TableCell>
+                    <TableCell>{t('productivity.consent.lastSync')}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {subjects.map((subject) => (
+                    <TableRow key={subject.subjectId} hover>
+                      <TableCell>
+                        {t('productivity.consent.userId', { id: subject.userId })}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          size="small"
+                          color={subject.consentState === 'CONNECTED' ? 'success' : 'warning'}
+                          label={t(productivityConsentLabelKey(subject.consentState))}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {subject.grantedScopes.length
+                          ? subject.grantedScopes
+                              .map((scope) => t(productivityScopeLabelKey(scope)))
+                              .join(', ')
+                          : t('productivity.notAvailable')}
+                      </TableCell>
+                      <TableCell>
+                        {subject.tokenExpiresAt
+                          ? formatDate(subject.tokenExpiresAt, {
+                              dateStyle: 'short',
+                              timeStyle: 'short',
+                            })
+                          : t('productivity.notAvailable')}
+                      </TableCell>
+                      <TableCell>
+                        {subject.lastSuccessfulSyncAt
+                          ? formatDate(subject.lastSuccessfulSyncAt, {
+                              dateStyle: 'short',
+                              timeStyle: 'short',
+                            })
+                          : t('productivity.notAvailable')}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {subjects.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 8, color: 'text.secondary' }}>
+                        {t('productivity.consent.empty')}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Stack>
       )}
 
       {view === 'runs' && (
-        <Stack sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
-          {(runsQuery.data ?? []).map((run) => (
-            <Box
-              key={run.runId}
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: '180px 140px minmax(0, 1fr) 180px' },
-                alignItems: 'center',
-                gap: 2,
-                px: 2,
-                py: 1.5,
-                borderBottom: 1,
-                borderColor: 'divider',
-              }}
-            >
-              <Stack direction="row" alignItems="center" gap={1}>
-                {run.resourceKind === 'MAIL' ? <Mail size={17} /> : <CalendarDays size={17} />}
-                <Box>
-                  <Typography variant="subtitle2">
-                    {t(`productivity.resources.${run.resourceKind}`)}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {run.syncMode}
+        <Stack gap={1.5}>
+          <ProductivityEvidenceState
+            scope="runs"
+            pending={runsQuery.isPending}
+            error={runsQuery.isError}
+            hasMore={runsQuery.data?.hasMore === true}
+            limit={runsQuery.data?.limit}
+            onRetry={() => void runsQuery.refetch()}
+          />
+          {!runsQuery.isPending && !runsQuery.isError && (
+            <Stack sx={{ borderTop: 1, borderBottom: 1, borderColor: 'divider' }}>
+              {runs.map((run) => (
+                <Box
+                  key={run.runId}
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', md: '180px 140px minmax(0, 1fr) 180px' },
+                    alignItems: 'center',
+                    gap: 2,
+                    px: 2,
+                    py: 1.5,
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Stack direction="row" alignItems="center" gap={1}>
+                    {run.resourceKind === 'MAIL' ? <Mail size={17} /> : <CalendarDays size={17} />}
+                    <Box>
+                      <Typography variant="subtitle2">
+                        {t(productivityResourceLabelKey(run.resourceKind))}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t(productivitySyncModeLabelKey(run.syncMode))}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  <Chip
+                    size="small"
+                    color={
+                      run.runState === 'SUCCEEDED'
+                        ? 'success'
+                        : run.runState === 'FAILED'
+                          ? 'error'
+                          : 'warning'
+                    }
+                    label={t(productivityRunStateLabelKey(run.runState))}
+                    sx={{ justifySelf: 'start' }}
+                  />
+                  <Stack direction="row" gap={2} flexWrap="wrap">
+                    <Typography variant="caption">+{run.upsertCount}</Typography>
+                    <Typography variant="caption">−{run.deleteCount}</Typography>
+                    <Typography
+                      variant="caption"
+                      color={run.errorCount ? 'error.main' : 'text.secondary'}
+                    >
+                      {t('productivity.runs.errors', { count: run.errorCount })}
+                    </Typography>
+                    {run.safeErrorCode && (
+                      <Typography variant="caption" color="warning.main">
+                        {run.safeErrorCode}
+                      </Typography>
+                    )}
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" textAlign={{ md: 'right' }}>
+                    {formatDate(run.startedAt, { dateStyle: 'short', timeStyle: 'medium' })}
                   </Typography>
                 </Box>
-              </Stack>
-              <Chip
-                size="small"
-                color={
-                  run.runState === 'SUCCEEDED'
-                    ? 'success'
-                    : run.runState === 'FAILED'
-                      ? 'error'
-                      : 'warning'
-                }
-                label={t(`productivity.runStates.${run.runState}`)}
-                sx={{ justifySelf: 'start' }}
-              />
-              <Stack direction="row" gap={2} flexWrap="wrap">
-                <Typography variant="caption">+{run.upsertCount}</Typography>
-                <Typography variant="caption">−{run.deleteCount}</Typography>
-                <Typography
-                  variant="caption"
-                  color={run.errorCount ? 'error.main' : 'text.secondary'}
-                >
-                  {t('productivity.runs.errors', { count: run.errorCount })}
-                </Typography>
-                {run.safeErrorCode && (
-                  <Typography variant="caption" color="warning.main">
-                    {run.safeErrorCode}
-                  </Typography>
-                )}
-              </Stack>
-              <Typography variant="caption" color="text.secondary" textAlign={{ md: 'right' }}>
-                {formatDate(run.startedAt, { dateStyle: 'short', timeStyle: 'medium' })}
-              </Typography>
-            </Box>
-          ))}
-          {!runsQuery.isLoading && !(runsQuery.data ?? []).length && (
-            <Box sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>
-              {t('productivity.runs.empty')}
-            </Box>
+              ))}
+              {runs.length === 0 && (
+                <Box sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>
+                  {t('productivity.runs.empty')}
+                </Box>
+              )}
+            </Stack>
           )}
         </Stack>
       )}

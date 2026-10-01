@@ -23,6 +23,7 @@ import {
   apiMonitoringDuration,
   apiMonitoringErrorMessage,
   apiMonitoringEventTimestamp,
+  apiMonitoringObservationLabelKey,
   apiMonitoringOutcomeColor,
 } from './api-monitoring-model';
 
@@ -117,7 +118,11 @@ export function ApiMonitoringTraceDrawer({
                 variant="outlined"
               />
               <Chip label={detail.selected.httpMethod} size="small" variant="outlined" />
-              <Chip label={detail.selected.observationPoint} size="small" variant="outlined" />
+              <Chip
+                label={t(apiMonitoringObservationLabelKey(detail.selected.observationPoint))}
+                size="small"
+                variant="outlined"
+              />
             </Stack>
             <Typography
               component="p"
@@ -240,8 +245,8 @@ export function ApiMonitoringTraceDrawer({
                     color="text.secondary"
                     sx={{ mt: 0.25, overflowWrap: 'anywhere' }}
                   >
-                    {hop.observationPoint} / {hop.httpMethod} / {hop.statusCode} /{' '}
-                    {hop.routeTemplate}
+                    {t(apiMonitoringObservationLabelKey(hop.observationPoint))} / {hop.httpMethod} /{' '}
+                    {hop.statusCode} / {hop.routeTemplate}
                   </Typography>
                 </Box>
               ))}

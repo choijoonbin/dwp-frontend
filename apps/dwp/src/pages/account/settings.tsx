@@ -67,6 +67,8 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
+import type { TFunction } from 'i18next';
+
 import { isSettingsSection } from '../../features/account/settings-navigation';
 import { usePreferredLanguage } from '../../components/use-preferred-language';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
@@ -79,12 +81,25 @@ import {
   PreferenceRow,
   RegionalPreview,
 } from './settings-components';
+import { ManagedEffectiveSettings } from './managed-effective-settings';
+import {
+  managedExceptionState,
+  managedPreferencePathLabelKey,
+} from './account-settings-state-presentation';
 
 const EXCEPTION_STATE_COLOR = {
   APPROVED: 'success',
   REJECTED: 'error',
   PENDING: 'warning',
 } as const;
+
+function managedRequestedValue(value: unknown, t: TFunction<'account'>): string {
+  if (typeof value === 'string' || typeof value === 'number') return String(value);
+  if (typeof value === 'boolean') {
+    return t(value ? 'managed.valueLabels.yes' : 'managed.valueLabels.no');
+  }
+  return t('managed.exceptions.valueUnavailable');
+}
 
 export default function SettingsPage() {
   const { t } = useTranslation('account');
@@ -206,8 +221,8 @@ export default function SettingsPage() {
       setRequestedValue('');
       setBusinessJustification('');
       setBusinessImpact('');
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('managed.exceptions.toasts.failed'));
+    } catch {
+      toast.error(t('managed.exceptions.toasts.failed'));
     } finally {
       setExceptionBusy(false);
     }
@@ -221,8 +236,8 @@ export default function SettingsPage() {
         queryKey: ['personal-preferences', 'managed-exceptions'],
       });
       toast.success(t('managed.exceptions.toasts.cancelled'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('managed.exceptions.toasts.failed'));
+    } catch {
+      toast.error(t('managed.exceptions.toasts.failed'));
     } finally {
       setExceptionBusy(false);
     }
@@ -729,12 +744,11 @@ export default function SettingsPage() {
         </PreferenceRow>
       </PreferenceGroup>
       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>
-        {t('managed.paths', {
-          paths:
-            managedPolicy?.managedPaths.join(', ') ??
-            'appearance.fontFamily, appearance.accentColor, navigation.pattern',
+        {t('managed.pathCount', {
+          count: managedPolicy?.managedPaths.length ?? managedRules.length,
         })}
       </Typography>
+      <ManagedEffectiveSettings />
       <Box component="section" sx={{ mt: 4 }}>
         <Typography component="h2" variant="h6">
           {t('managed.exceptions.title')}
@@ -742,7 +756,13 @@ export default function SettingsPage() {
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
           {t('managed.exceptions.description')}
         </Typography>
-        {managedExceptionsQuery.isError ? (
+        {managedExceptionsQuery.isLoading ? (
+          <Box sx={{ minHeight: 120, display: 'grid', placeItems: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              {t('managed.exceptions.loading')}
+            </Typography>
+          </Box>
+        ) : managedExceptionsQuery.isError ? (
           <Alert severity="warning" sx={{ mt: 1.5 }}>
             {t('managed.exceptions.loadError')}
           </Alert>
@@ -760,64 +780,64 @@ export default function SettingsPage() {
             divider={<Divider flexItem />}
             sx={{ mt: 1.5, border: 1, borderColor: 'divider', borderRadius: 1 }}
           >
-            {managedExceptions.map((request) => (
-              <Box
-                key={request.requestId}
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
-                  gap: 1.5,
-                  alignItems: 'center',
-                  px: 2.5,
-                  py: 2,
-                }}
-              >
-                <Box sx={{ minWidth: 0 }}>
-                  <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                    <Typography variant="subtitle2">
-                      {t(`managed.pathLabels.${request.preferencePath}`)}
-                    </Typography>
-                    <Chip
-                      size="small"
-                      color={
-                        EXCEPTION_STATE_COLOR[
-                          request.requestState as keyof typeof EXCEPTION_STATE_COLOR
-                        ] ?? 'default'
-                      }
-                      variant={request.requestState === 'PENDING' ? 'filled' : 'outlined'}
-                      label={t(`managed.exceptions.states.${request.requestState}`)}
-                    />
-                  </Stack>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    {t('managed.exceptions.requestedValue', {
-                      value:
-                        typeof request.requestedValue === 'string'
-                          ? request.requestedValue
-                          : JSON.stringify(request.requestedValue),
-                      date: formatDate(request.createdAt, { dateStyle: 'medium' }),
-                    })}
-                  </Typography>
-                  {request.decisionReason && (
-                    <Typography variant="body2" sx={{ mt: 0.5 }}>
-                      {t('managed.exceptions.decisionReason', {
-                        reason: request.decisionReason,
+            {managedExceptions.map((request) => {
+              const presentedState = managedExceptionState(request.requestState);
+              return (
+                <Box
+                  key={request.requestId}
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
+                    gap: 1.5,
+                    alignItems: 'center',
+                    px: 2.5,
+                    py: 2,
+                  }}
+                >
+                  <Box sx={{ minWidth: 0 }}>
+                    <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+                      <Typography variant="subtitle2">
+                        {t(managedPreferencePathLabelKey(request.preferencePath))}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        color={
+                          EXCEPTION_STATE_COLOR[
+                            presentedState as keyof typeof EXCEPTION_STATE_COLOR
+                          ] ?? 'default'
+                        }
+                        variant={request.requestState === 'PENDING' ? 'filled' : 'outlined'}
+                        label={t(`managed.exceptions.states.${presentedState}`)}
+                      />
+                    </Stack>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                      {t('managed.exceptions.requestedValue', {
+                        value: managedRequestedValue(request.requestedValue, t),
+                        date: formatDate(request.createdAt, { dateStyle: 'medium' }),
                       })}
                     </Typography>
+                    {request.decisionReason && (
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
+                        {t('managed.exceptions.decisionReason', {
+                          reason: request.decisionReason,
+                        })}
+                      </Typography>
+                    )}
+                  </Box>
+                  {request.requestState === 'PENDING' && (
+                    <ActionButton
+                      intent="secondary"
+                      size="small"
+                      startIcon={<X size={15} />}
+                      disabled={exceptionBusy}
+                      onClick={() => void cancelException(request)}
+                    >
+                      {t('managed.exceptions.cancel')}
+                    </ActionButton>
                   )}
                 </Box>
-                {request.requestState === 'PENDING' && (
-                  <ActionButton
-                    intent="secondary"
-                    size="small"
-                    startIcon={<X size={15} />}
-                    disabled={exceptionBusy}
-                    onClick={() => void cancelException(request)}
-                  >
-                    {t('managed.exceptions.cancel')}
-                  </ActionButton>
-                )}
-              </Box>
-            ))}
+              );
+            })}
           </Stack>
         )}
       </Box>

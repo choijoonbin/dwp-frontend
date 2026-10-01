@@ -29,7 +29,7 @@ describe('APR-16B official Gateway route availability', () => {
           .filter((method) => ['get', 'post', 'put', 'patch', 'delete'].includes(method))
           .map((method) => bindingKey(method.toUpperCase(), routePath))
       )
-      .filter((binding) => binding.includes('signature'))
+      .filter((binding) => binding.includes(' /api/approvals/') && binding.includes('signature'))
       .sort();
     const declaredAvailable = APPROVAL_SIGNATURE_OFFICIAL_GATEWAY_ROUTES.filter(
       (route) => route.available

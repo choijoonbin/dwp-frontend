@@ -37,6 +37,7 @@ export const PRODUCT_NAMESPACES = [
   'composer',
   'workforce',
   'provider',
+  'tenantOwner',
   'display',
 ] as const;
 

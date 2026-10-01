@@ -1,12 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import type { ProviderSupportAccessRequest } from '@dwp-frontend/shared-utils';
 
 import { formatProviderDate } from './provider-ui';
+import {
+  hasUnknownProviderSupportScope,
+  providerSupportModeLabel,
+  providerSupportScopeLabel,
+} from './provider-support-presentation';
 
 export function ProviderSupportRequestEvidence({
   request,
@@ -28,9 +34,7 @@ export function ProviderSupportRequestEvidence({
     },
     {
       label: t('support.columns.scopes'),
-      value: request.scopes
-        .map((scope) => t(`support.scopes.${scope}`, { defaultValue: scope }))
-        .join(', '),
+      value: request.scopes.map((scope) => providerSupportScopeLabel(t, scope)).join(', '),
     },
     {
       label: t('support.columns.duration'),
@@ -38,7 +42,7 @@ export function ProviderSupportRequestEvidence({
     },
     {
       label: t('support.columns.mode'),
-      value: t(`support.modes.${request.accessMode}`),
+      value: providerSupportModeLabel(t, request.accessMode),
     },
     {
       label: t('support.columns.risk'),
@@ -93,6 +97,11 @@ export function ProviderSupportRequestEvidence({
           </Box>
         ))}
       </Box>
+      {hasUnknownProviderSupportScope(request.scopes) && (
+        <Alert severity="warning" sx={{ mt: 1 }}>
+          {t('support.scopes.unknownEvidence')}
+        </Alert>
+      )}
     </Box>
   );
 }

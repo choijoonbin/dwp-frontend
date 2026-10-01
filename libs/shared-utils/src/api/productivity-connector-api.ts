@@ -91,6 +91,18 @@ export type ProductivitySubject = {
   lastErrorCode?: string | null;
 };
 
+export type ProductivitySubjectPage = {
+  items: ProductivitySubject[];
+  hasMore: boolean;
+  limit: number;
+};
+
+export type ProductivitySyncRunPage = {
+  items: ProductivitySyncRun[];
+  hasMore: boolean;
+  limit: number;
+};
+
 export type ProductivityOverview = {
   connectors: number;
   activeConnectors: number;
@@ -252,15 +264,15 @@ export async function suspendProductivityConnector(
   return response.data.data;
 }
 
-export async function listProductivitySubjects(limit = 200): Promise<ProductivitySubject[]> {
-  const response = await axiosInstance.get<ApiResponse<ProductivitySubject[]>>(
+export async function listProductivitySubjects(limit = 200): Promise<ProductivitySubjectPage> {
+  const response = await axiosInstance.get<ApiResponse<ProductivitySubjectPage>>(
     `${BASE}/subjects?limit=${limit}`
   );
   return response.data.data;
 }
 
-export async function listProductivityRuns(limit = 200): Promise<ProductivitySyncRun[]> {
-  const response = await axiosInstance.get<ApiResponse<ProductivitySyncRun[]>>(
+export async function listProductivityRuns(limit = 200): Promise<ProductivitySyncRunPage> {
+  const response = await axiosInstance.get<ApiResponse<ProductivitySyncRunPage>>(
     `${BASE}/runs?limit=${limit}`
   );
   return response.data.data;

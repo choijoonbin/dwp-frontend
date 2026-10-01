@@ -31,7 +31,7 @@ export const SETTINGS_INVENTORY_EXPECTATIONS = {
   accountLeaves: 8,
   tenantVisibleLeaves: 22,
   tenantLeaves: 24,
-  providerLeaves: 10,
+  providerLeaves: 12,
   appManagementAreas: 12,
 } as const;
 
@@ -99,7 +99,7 @@ export const SETTINGS_JOURNEY_CATALOG: readonly SettingsJourney[] = [
   {
     id: 'S10',
     plane: 'provider',
-    routes: ['/provider/tenants', '/provider/commercial'],
+    routes: ['/provider/tenants', '/provider/commercial', '/provider/resource-governance'],
   },
   {
     id: 'S11',
@@ -134,7 +134,11 @@ export const SETTINGS_JOURNEY_CATALOG: readonly SettingsJourney[] = [
   {
     id: 'S15',
     plane: 'cross-plane',
-    routes: ['/provider/feature-rollouts', '/provider/code-contracts'],
+    routes: [
+      '/provider/feature-rollouts',
+      '/provider/code-contracts',
+      '/provider/artifact-governance',
+    ],
   },
   {
     id: 'S16',

@@ -103,6 +103,7 @@ type ReferenceDataManagerViewProps = {
   filteredItems: ReferenceItem[];
   activityQuery: QueryStatus;
   activities: PlatformAuditEvent[];
+  canManage: boolean;
   setSetDialogMode: Dispatch<SetStateAction<SetDialogMode>>;
   setItemDialog: Dispatch<SetStateAction<ItemDialogState>>;
   setPendingAction: Dispatch<SetStateAction<PendingAction>>;
@@ -127,6 +128,7 @@ export function ReferenceDataManagerView({
   filteredItems,
   activityQuery,
   activities,
+  canManage,
   setSetDialogMode,
   setItemDialog,
   setPendingAction,
@@ -262,7 +264,9 @@ export function ReferenceDataManagerView({
                   size="small"
                   aria-label={t('referenceData.actions.editNamed', { code: row.code })}
                   disabled={
-                    detail?.lifecycleState === 'RETIRED' || row.lifecycleState === 'RETIRED'
+                    !canManage ||
+                    detail?.lifecycleState === 'RETIRED' ||
+                    row.lifecycleState === 'RETIRED'
                   }
                   onClick={() => setItemDialog({ mode: 'edit', item: row })}
                 >
@@ -277,7 +281,7 @@ export function ReferenceDataManagerView({
                     size="small"
                     color="success"
                     aria-label={t('referenceData.actions.activateNamed', { code: row.code })}
-                    disabled={detail?.lifecycleState !== 'ACTIVE'}
+                    disabled={!canManage || detail?.lifecycleState !== 'ACTIVE'}
                     onClick={() => setPendingAction({ kind: 'activate-item', item: row })}
                   >
                     <CheckCircle2 size={17} strokeWidth={1.8} />
@@ -291,7 +295,9 @@ export function ReferenceDataManagerView({
                     size="small"
                     aria-label={t('referenceData.actions.retireNamed', { code: row.code })}
                     disabled={
-                      row.lifecycleState === 'RETIRED' || detail?.lifecycleState === 'RETIRED'
+                      !canManage ||
+                      row.lifecycleState === 'RETIRED' ||
+                      detail?.lifecycleState === 'RETIRED'
                     }
                     onClick={() => setPendingAction({ kind: 'retire-item', item: row })}
                   >
@@ -304,7 +310,7 @@ export function ReferenceDataManagerView({
         ),
       },
     ],
-    [detail?.lifecycleState, formatValidity, locale, setItemDialog, setPendingAction, t]
+    [canManage, detail?.lifecycleState, formatValidity, locale, setItemDialog, setPendingAction, t]
   );
 
   return (
@@ -344,6 +350,7 @@ export function ReferenceDataManagerView({
               <IconButton
                 size="small"
                 aria-label={t('referenceData.actions.newSet')}
+                disabled={!canManage}
                 onClick={() => setSetDialogMode('create')}
               >
                 <Plus size={18} strokeWidth={1.8} />
@@ -433,6 +440,7 @@ export function ReferenceDataManagerView({
                   intent="quiet"
                   size="small"
                   startIcon={<Plus size={16} />}
+                  disabled={!canManage}
                   onClick={() => setSetDialogMode('create')}
                   sx={{ mt: 2 }}
                 >
@@ -514,7 +522,7 @@ export function ReferenceDataManagerView({
                     <span>
                       <IconButton
                         aria-label={t('referenceData.actions.editSet')}
-                        disabled={detail.lifecycleState === 'RETIRED'}
+                        disabled={!canManage || detail.lifecycleState === 'RETIRED'}
                         onClick={() => setSetDialogMode('edit')}
                       >
                         <Pencil size={18} strokeWidth={1.8} />
@@ -525,7 +533,7 @@ export function ReferenceDataManagerView({
                     intent="secondary"
                     size="small"
                     startIcon={<Plus size={17} />}
-                    disabled={detail.lifecycleState === 'RETIRED'}
+                    disabled={!canManage || detail.lifecycleState === 'RETIRED'}
                     onClick={() => setItemDialog({ mode: 'create' })}
                   >
                     {t('referenceData.actions.newItem')}
@@ -535,7 +543,7 @@ export function ReferenceDataManagerView({
                       intent="secondary"
                       size="small"
                       startIcon={<CheckCircle2 size={17} />}
-                      disabled={detail.items.length === 0}
+                      disabled={!canManage || detail.items.length === 0}
                       onClick={() => setPendingAction({ kind: 'activate-set' })}
                     >
                       {t('referenceData.actions.activate')}
@@ -545,7 +553,7 @@ export function ReferenceDataManagerView({
                       <span>
                         <IconButton
                           aria-label={t('referenceData.actions.retireSet')}
-                          disabled={detail.lifecycleState === 'RETIRED'}
+                          disabled={!canManage || detail.lifecycleState === 'RETIRED'}
                           onClick={() => setPendingAction({ kind: 'retire-set' })}
                         >
                           <Archive size={18} strokeWidth={1.8} />
@@ -698,6 +706,7 @@ export function ReferenceDataManagerView({
                                   intent="quiet"
                                   size="small"
                                   startIcon={<Plus size={16} />}
+                                  disabled={!canManage}
                                   onClick={() => setItemDialog({ mode: 'create' })}
                                   sx={{ mt: 1 }}
                                 >
@@ -764,6 +773,7 @@ export function ReferenceDataManagerView({
                                       code: item.code,
                                     })}
                                     disabled={
+                                      !canManage ||
                                       detail.lifecycleState === 'RETIRED' ||
                                       item.lifecycleState === 'RETIRED'
                                     }
@@ -782,7 +792,7 @@ export function ReferenceDataManagerView({
                                       aria-label={t('referenceData.actions.activateNamed', {
                                         code: item.code,
                                       })}
-                                      disabled={detail.lifecycleState !== 'ACTIVE'}
+                                      disabled={!canManage || detail.lifecycleState !== 'ACTIVE'}
                                       onClick={() =>
                                         setPendingAction({ kind: 'activate-item', item })
                                       }
@@ -800,6 +810,7 @@ export function ReferenceDataManagerView({
                                         code: item.code,
                                       })}
                                       disabled={
+                                        !canManage ||
                                         item.lifecycleState === 'RETIRED' ||
                                         detail.lifecycleState === 'RETIRED'
                                       }

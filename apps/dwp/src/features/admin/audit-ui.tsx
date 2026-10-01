@@ -7,38 +7,41 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
-import type { AuditEvent, AuditFinding, AuditSeverity } from '@dwp-frontend/shared-utils';
+import type { AuditEvent } from '@dwp-frontend/shared-utils';
 import type { ChipProps } from '@mui/material/Chip';
+import {
+  auditActorLabel,
+  auditOutcomeLabelKey,
+  auditSeverityLabelKey,
+} from './audit-runtime-presentation';
 
-export function severityColor(
-  severity: Exclude<AuditSeverity, 'ALL'> | AuditFinding['severity']
-): ChipProps['color'] {
+export function severityColor(severity: string): ChipProps['color'] {
   if (severity === 'CRITICAL' || severity === 'HIGH') return 'error';
   if (severity === 'MEDIUM') return 'warning';
   if (severity === 'LOW') return 'info';
   return 'default';
 }
 
-export function SeverityChip({ severity }: { severity: Exclude<AuditSeverity, 'ALL'> }) {
+export function SeverityChip({ severity }: { severity: string }) {
   const { t } = useTranslation('admin');
   return (
     <Chip
       size="small"
       color={severityColor(severity)}
       variant="outlined"
-      label={t(`auditControl.severity.${severity}`)}
+      label={t(auditSeverityLabelKey(severity))}
     />
   );
 }
 
-export function OutcomeChip({ outcome }: { outcome: AuditEvent['outcome'] }) {
+export function OutcomeChip({ outcome }: { outcome: string }) {
   const { t } = useTranslation('admin');
   return (
     <Chip
       size="small"
       variant="outlined"
       color={outcome === 'SUCCESS' ? 'success' : outcome === 'DENIED' ? 'warning' : 'error'}
-      label={t(`auditControl.outcome.${outcome}`)}
+      label={t(auditOutcomeLabelKey(outcome))}
     />
   );
 }
@@ -72,8 +75,8 @@ export function RiskScore({ value }: { value: number }) {
   );
 }
 
-export function actorLabel(event: AuditEvent): string {
-  return event.actorDisplayName || event.actorPrincipal || event.actorId || event.actorType;
+export function actorLabel(event: AuditEvent, unavailableLabel: string): string {
+  return auditActorLabel(event, unavailableLabel);
 }
 
 export function targetLabel(event: AuditEvent): string {

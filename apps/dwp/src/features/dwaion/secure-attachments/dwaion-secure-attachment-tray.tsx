@@ -382,7 +382,7 @@ function AttachmentUploadingRow({ name, label }: { name: string; label: string }
           </Typography>
         </Box>
       </Stack>
-      <LinearProgress sx={{ mt: 0.75 }} />
+      <LinearProgress aria-label={label} sx={{ mt: 0.75 }} />
     </Box>
   );
 }

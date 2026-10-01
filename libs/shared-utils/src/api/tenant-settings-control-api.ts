@@ -26,13 +26,7 @@ export type TenantSettingChangeSet = {
   changeSetId: string;
   ownerType: 'AUTH_POLICY';
   ownerRef: string;
-  lifecycleState:
-    | 'DRAFT'
-    | 'IN_REVIEW'
-    | 'APPROVED'
-    | 'REJECTED'
-    | 'PUBLISHED'
-    | 'SUPERSEDED';
+  lifecycleState: 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'PUBLISHED' | 'SUPERSEDED';
   beforeState: TenantAuthPolicyDraft;
   proposedState: TenantAuthPolicyDraft;
   beforeHash: string;
@@ -50,13 +44,22 @@ export type TenantSettingChangeSet = {
   version: number;
   createdAt: string;
   updatedAt: string;
+  allowedActions: Array<'SUBMIT' | 'APPROVE' | 'REJECT' | 'PUBLISH'>;
 };
 
 export type TenantAccessGrant = {
-  entitlementType: 'ROLE' | 'APP_PRESET';
+  entitlementType: 'ROLE' | 'APP_PRESET' | 'APP_WORKFORCE' | 'CAPABILITY';
   entitlementKey: string;
   displayName: string;
-  sourceType: 'DIRECT' | 'GROUP' | 'PRIVILEGED' | 'APP_PRESET' | 'APP_PRESET_GROUP';
+  sourceType:
+    | 'DIRECT'
+    | 'GROUP'
+    | 'PRIVILEGED'
+    | 'APP_PRESET'
+    | 'APP_PRESET_GROUP'
+    | 'TENANT_APP_ASSIGNMENT'
+    | 'PRODUCT_AUTHORIZATION'
+    | 'TENANT_CAPABILITY_SUPPRESSION';
   sourceId: string;
   sourceName?: string | null;
   scopeType: string;
@@ -65,6 +68,12 @@ export type TenantAccessGrant = {
   validFrom?: string | null;
   validTo?: string | null;
   privileged: boolean;
+  requestedBy?: number | null;
+  approvedBy?: number | null;
+  approvedAt?: string | null;
+  activatedBy?: number | null;
+  activatedAt?: string | null;
+  approvalLineageState: string;
 };
 
 export type TenantAccessProjection = {
@@ -75,6 +84,15 @@ export type TenantAccessProjection = {
     includedOwners: string[];
     exclusions: string[];
     freshestSourceUpdatedAt?: string | null;
+    owners: Array<{
+      ownerKey: string;
+      state: 'OBSERVED' | 'NO_DATA';
+      freshnessState: 'FRESH' | 'STALE' | 'NO_DATA';
+      observedAt: string;
+      sourceUpdatedAt?: string | null;
+      allowedActions: Array<'VIEW_DETAIL' | 'OPEN_OWNER' | 'REQUEST_RESTRICTIVE_OVERRIDE'>;
+      exclusions: string[];
+    }>;
   };
   principals: Array<{
     userId: number;
@@ -90,6 +108,80 @@ export type TenantAccessProjection = {
   size: number;
   totalElements: number;
   totalPages: number;
+};
+
+export type CompleteTenantAccessProjection = TenantAccessProjection & {
+  collectedPages: number;
+};
+
+export type TenantEffectiveSettingSource = {
+  level: 'PROVIDER' | 'TENANT' | 'USER' | string;
+  ownerKey: string;
+  value: unknown;
+  evaluation: 'WINNER' | 'OVERRIDDEN' | 'INHERITED' | string;
+  reason: string;
+};
+
+export type TenantEffectiveSetting = {
+  settingKey: string;
+  effectiveValue: unknown;
+  resolutionStrategy: string;
+  effectiveSource: string;
+  locked: boolean;
+  overrideAllowed: boolean;
+  overrideState: string;
+  sources: TenantEffectiveSettingSource[];
+  evaluatedAt: string;
+  evidenceState: string;
+};
+
+export type TenantGovernanceSnapshot = {
+  observedAt: string;
+  tenantDirectory: {
+    state: string;
+    tenantId: number;
+    tenantCode: string;
+    tenantName: string;
+    defaultLocale: string;
+    sourceUpdatedAt: string;
+  };
+  providerDomain: {
+    ownerKey: string;
+    state: string;
+    observedAt: string;
+    exclusions: string[];
+  };
+  loginVerification: {
+    internalPrerequisiteState: string;
+    configuredProviderKey?: string | null;
+    externalProbeState: string;
+    lastExternalProbeAt?: string | null;
+    blockingReasons: string[];
+  };
+  recoveryVerification: {
+    state: string;
+    total: number;
+    verified: number;
+    overdue: number;
+    notVerified: number;
+    freshestVerificationAt?: string | null;
+    exclusions: string[];
+  };
+  policyOwners: Array<{
+    ownerKey: string;
+    state: string;
+    observedAt: string;
+    exclusions: string[];
+  }>;
+  effectiveSettings: TenantEffectiveSetting[];
+};
+
+export type TenantUserPreferenceState = {
+  userId: number;
+  preferredLocale?: string | null;
+  tenantDefaultLocale: string;
+  version: number;
+  updatedAt: string;
 };
 
 export async function listTenantAuthPolicyChanges(): Promise<TenantSettingChangeSet[]> {
@@ -157,6 +249,168 @@ export async function getTenantAccessProjection(
   const response = await axiosInstance.get<ApiResponse<TenantAccessProjection>>(
     `${BASE}/access-projection?${search.toString()}`,
     signal ? { signal } : undefined
+  );
+  return response.data.data;
+}
+
+const ACCESS_PROJECTION_PAGE_SIZE = 100;
+const MAX_ACCESS_PROJECTION_PAGES = 10_000;
+
+function sortedProjectionValues(values: string[]): string[] {
+  return [...values].sort((left, right) => left.localeCompare(right));
+}
+
+function sameProjectionValues(left: string[], right: string[]): boolean {
+  const normalizedLeft = sortedProjectionValues(left);
+  const normalizedRight = sortedProjectionValues(right);
+  return (
+    normalizedLeft.length === normalizedRight.length &&
+    normalizedLeft.every((value, index) => value === normalizedRight[index])
+  );
+}
+
+function assertAccessProjectionPage(
+  page: TenantAccessProjection,
+  expectedPage: number,
+  first: TenantAccessProjection
+): void {
+  if (
+    page.snapshotId !== first.snapshotId ||
+    page.page !== expectedPage ||
+    page.size !== first.size ||
+    page.totalElements !== first.totalElements ||
+    page.totalPages !== first.totalPages ||
+    page.coverage.state !== first.coverage.state ||
+    !sameProjectionValues(page.coverage.includedOwners, first.coverage.includedOwners) ||
+    !sameProjectionValues(page.coverage.exclusions, first.coverage.exclusions) ||
+    page.principals.length > page.size
+  ) {
+    throw new Error('TENANT_ACCESS_PROJECTION_PAGINATION_CHANGED');
+  }
+}
+
+function latestIso(values: Array<string | null | undefined>): string | null {
+  return (
+    values
+      .filter((value): value is string => Boolean(value))
+      .sort()
+      .at(-1) ?? null
+  );
+}
+
+function mergeProjectionCoverage(
+  pages: TenantAccessProjection[]
+): TenantAccessProjection['coverage'] {
+  const first = pages[0].coverage;
+  const owners = first.includedOwners.map((ownerKey) => {
+    const observations = pages.flatMap((page) =>
+      page.coverage.owners.filter((owner) => owner.ownerKey === ownerKey)
+    );
+    if (observations.length !== pages.length) {
+      throw new Error('TENANT_ACCESS_PROJECTION_OWNER_COVERAGE_INCOMPLETE');
+    }
+    const allowedActions = observations
+      .map((owner) => owner.allowedActions)
+      .reduce((allowed, current) => allowed.filter((action) => current.includes(action)));
+    const freshnessState = observations.some((owner) => owner.freshnessState === 'STALE')
+      ? ('STALE' as const)
+      : observations.some((owner) => owner.freshnessState === 'FRESH')
+        ? ('FRESH' as const)
+        : ('NO_DATA' as const);
+    return {
+      ...observations[0],
+      state: observations.some((owner) => owner.state === 'OBSERVED')
+        ? ('OBSERVED' as const)
+        : ('NO_DATA' as const),
+      freshnessState,
+      observedAt: latestIso(observations.map((owner) => owner.observedAt)) ?? pages[0].observedAt,
+      sourceUpdatedAt: latestIso(observations.map((owner) => owner.sourceUpdatedAt)),
+      allowedActions,
+      exclusions: [...new Set(observations.flatMap((owner) => owner.exclusions))],
+    };
+  });
+  return {
+    ...first,
+    freshestSourceUpdatedAt: latestIso(pages.map((page) => page.coverage.freshestSourceUpdatedAt)),
+    owners,
+  };
+}
+
+export async function getCompleteTenantAccessProjection(
+  query = '',
+  signal?: AbortSignal
+): Promise<CompleteTenantAccessProjection> {
+  const first = await getTenantAccessProjection(query, 0, ACCESS_PROJECTION_PAGE_SIZE, signal);
+  if (
+    first.page !== 0 ||
+    first.size < 1 ||
+    first.totalElements < 0 ||
+    first.totalPages < 0 ||
+    first.totalPages > MAX_ACCESS_PROJECTION_PAGES ||
+    first.principals.length > first.size
+  ) {
+    throw new Error('TENANT_ACCESS_PROJECTION_PAGINATION_INVALID');
+  }
+
+  const pages = [first];
+  for (let pageNumber = 1; pageNumber < first.totalPages; pageNumber += 1) {
+    const page = await getTenantAccessProjection(
+      query,
+      pageNumber,
+      ACCESS_PROJECTION_PAGE_SIZE,
+      signal
+    );
+    assertAccessProjectionPage(page, pageNumber, first);
+    pages.push(page);
+  }
+
+  const principals = pages.flatMap((page) => page.principals);
+  if (principals.length !== first.totalElements) {
+    throw new Error('TENANT_ACCESS_PROJECTION_COVERAGE_INCOMPLETE');
+  }
+  if (new Set(principals.map((principal) => principal.userId)).size !== principals.length) {
+    throw new Error('TENANT_ACCESS_PROJECTION_DUPLICATE_PRINCIPAL');
+  }
+
+  return {
+    ...first,
+    observedAt: latestIso(pages.map((page) => page.observedAt)) ?? first.observedAt,
+    coverage: mergeProjectionCoverage(pages),
+    principals,
+    collectedPages: Math.max(1, first.totalPages),
+  };
+}
+
+export async function getTenantGovernanceSnapshot(): Promise<TenantGovernanceSnapshot> {
+  const response = await axiosInstance.get<ApiResponse<TenantGovernanceSnapshot>>(
+    `${BASE}/governance-snapshot`
+  );
+  return response.data.data;
+}
+
+const SELF_EFFECTIVE_SETTINGS_BASE = '/api/auth/tenant-settings/effective-settings/me';
+
+export async function getMyTenantEffectiveSettings(): Promise<TenantEffectiveSetting[]> {
+  const response = await axiosInstance.get<ApiResponse<TenantEffectiveSetting[]>>(
+    SELF_EFFECTIVE_SETTINGS_BASE
+  );
+  return response.data.data;
+}
+
+export async function getMyTenantPreferredLocale(): Promise<TenantUserPreferenceState> {
+  const response = await axiosInstance.get<ApiResponse<TenantUserPreferenceState>>(
+    `${SELF_EFFECTIVE_SETTINGS_BASE}/preferred-locale`
+  );
+  return response.data.data;
+}
+
+export async function restoreMyTenantPreferredLocale(
+  preference: TenantUserPreferenceState
+): Promise<TenantUserPreferenceState> {
+  const body = { version: preference.version };
+  const response = await axiosInstance.post<ApiResponse<TenantUserPreferenceState>, typeof body>(
+    `${SELF_EFFECTIVE_SETTINGS_BASE}/preferred-locale/restore`,
+    body
   );
   return response.data.data;
 }

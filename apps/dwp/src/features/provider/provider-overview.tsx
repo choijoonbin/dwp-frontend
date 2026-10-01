@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import type { ProviderActionItem, ProviderMetric } from '@dwp-frontend/shared-utils';
 
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,13 +10,12 @@ import {
   Clock3,
   Globe2,
   Layers3,
-  Radio,
   ServerCog,
   ShieldCheck,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { formatNumber, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
+import { formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   getProviderCommandCenter,
   getProviderReliabilityControl,
@@ -52,10 +50,23 @@ import {
   ProviderStatusChip,
 } from './provider-ui';
 import {
+  providerActionPresentation,
+  providerActionCategoryPresentation,
+  providerServiceObservationState,
+  providerServiceObservationWatermark,
+} from './provider-command-center-observation';
+import {
   providerCommandCenterPresentationState,
   providerCustomerImpactTone,
 } from './provider-command-center-presentation';
+import { providerOwnerCountLabel } from './provider-bounded-list-coverage';
 import { providerOperationalSnapshotState } from './provider-operational-freshness';
+import { providerServiceTierLabel } from './provider-operation-presentation';
+import {
+  ProviderOverviewDistributionList,
+  ProviderOverviewSeverityChip,
+} from './provider-overview-presenters';
+import { ProviderRecentActivitySection } from './provider-recent-activity';
 
 type QueueFilter = 'ALL' | 'CRITICAL' | 'REVIEW';
 
@@ -78,14 +89,6 @@ function SectionSurface({
   );
 }
 
-function SeverityChip({ severity }: { severity: ProviderActionItem['severity'] }) {
-  const { t } = useTranslation('provider');
-  const color = severity === 'CRITICAL' ? 'error' : severity === 'HIGH' ? 'warning' : 'default';
-  return (
-    <Chip size="small" variant="outlined" color={color} label={t(`command.severity.${severity}`)} />
-  );
-}
-
 function LegendItem({ color, label }: { color: string; label: string }) {
   return (
     <Stack direction="row" alignItems="center" gap={0.6}>
@@ -97,51 +100,8 @@ function LegendItem({ color, label }: { color: string; label: string }) {
   );
 }
 
-function DistributionList({ items, color }: { items: ProviderMetric[]; color: string }) {
-  const max = Math.max(1, ...items.map((item) => item.count));
-  return (
-    <Stack gap={1.15}>
-      {items.map((item) => (
-        <Box key={item.key}>
-          <Stack direction="row" justifyContent="space-between" gap={2}>
-            <Typography variant="body2" fontWeight={650} noWrap>
-              {item.key}
-            </Typography>
-            <Typography
-              variant="body2"
-              fontWeight={750}
-              sx={{ fontVariantNumeric: 'tabular-nums' }}
-            >
-              {formatNumber(item.count)}
-            </Typography>
-          </Stack>
-          <Box
-            sx={{
-              mt: 0.6,
-              height: 5,
-              overflow: 'hidden',
-              bgcolor: 'action.hover',
-              borderRadius: 0.5,
-            }}
-          >
-            <Box
-              sx={{
-                width: `${(item.count / max) * 100}%`,
-                height: 1,
-                bgcolor: color,
-                transition: (theme) => theme.transitions.create('width'),
-              }}
-            />
-          </Box>
-        </Box>
-      ))}
-    </Stack>
-  );
-}
-
 export function ProviderOverview() {
   const { t } = useTranslation('provider');
-  const display = useDisplayDictionary();
   const navigate = useNavigate();
   const [queueFilter, setQueueFilter] = useState<QueueFilter>('ALL');
   const command = useQuery({
@@ -186,17 +146,21 @@ export function ProviderOverview() {
     ? (data.estate.activeTenants / data.estate.tenants) * 100
     : 0;
   const criticalActions = data.actionQueue.filter((item) => item.severity === 'CRITICAL').length;
+  const actionQueueHasMore = data.actionQueueHasMore === true;
+  const actionCount = providerOwnerCountLabel(data.actionQueue.length, actionQueueHasMore);
+  const criticalCount = actionQueueHasMore ? t('notAvailable') : criticalActions;
   const operatingState = providerCommandCenterPresentationState(data);
   const primaryAction = data.actionQueue[0];
   const reliabilityAvailable = Boolean(reliability.data && !reliability.isError);
   const objectiveRisk = reliabilityAvailable
     ? (reliability.data?.atRiskObjectives ?? 0) + (reliability.data?.exhaustedObjectives ?? 0)
     : null;
+  const serviceObservationWatermark = providerServiceObservationWatermark(data.services);
   const liveState = providerOperationalSnapshotState({
     fetching: command.isFetching || reliability.isFetching,
     partial: reliability.isError || !reliability.data,
     sourceObservedAt: Math.min(
-      Date.parse(data.generatedAt),
+      serviceObservationWatermark,
       reliability.data?.generatedAt
         ? Date.parse(reliability.data.generatedAt)
         : Number.POSITIVE_INFINITY
@@ -207,7 +171,9 @@ export function ProviderOverview() {
       ? 'error'
       : operatingState === 'ATTENTION'
         ? 'warning'
-        : 'success';
+        : operatingState === 'HEALTHY'
+          ? 'success'
+          : 'warning';
 
   const refresh = async () => {
     await Promise.all([command.refetch(), reliability.refetch()]);
@@ -241,7 +207,11 @@ export function ProviderOverview() {
           <LiveStatus
             state={liveState}
             label={t(`command.live.${liveState}`)}
-            detail={t('command.lastEvaluated', { value: formatProviderDate(data.generatedAt) })}
+            detail={
+              data.generatedAt
+                ? t('command.lastEvaluated', { value: formatProviderDate(data.generatedAt) })
+                : t('command.noEvaluation')
+            }
             refreshLabel={t('actions.refresh')}
             refreshing={command.isFetching || reliability.isFetching}
             onRefresh={() => void refresh()}
@@ -303,8 +273,8 @@ export function ProviderOverview() {
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
                 {t(`command.pulse.${operatingState}`, {
-                  actions: data.actionQueue.length,
-                  critical: criticalActions,
+                  actions: actionCount,
+                  critical: criticalCount,
                   incidents: data.activeIncidents,
                 })}
               </Typography>
@@ -318,8 +288,12 @@ export function ProviderOverview() {
                 <Chip
                   size="small"
                   variant="outlined"
-                  color={data.actionQueue.length ? 'warning' : 'success'}
-                  label={t('command.pulse.actions', { count: data.actionQueue.length })}
+                  color={data.actionQueue.length || actionQueueHasMore ? 'warning' : 'success'}
+                  label={
+                    actionQueueHasMore
+                      ? t('command.pulse.actionsLimited', { count: data.actionQueue.length })
+                      : t('command.pulse.actions', { count: data.actionQueue.length })
+                  }
                 />
                 {data.expiringSubscriptions > 0 && (
                   <Chip
@@ -453,63 +427,81 @@ export function ProviderOverview() {
             </Stack>
           }
         >
+          {actionQueueHasMore && (
+            <Typography variant="body2" color="warning.main" sx={{ mb: 1.25 }} role="status">
+              {t('command.pulse.coverageLimited', { count: data.actionQueue.length })}
+            </Typography>
+          )}
           {filteredActions.length === 0 ? (
             <Stack direction="row" alignItems="center" gap={1} sx={{ py: 2 }}>
               <ShieldCheck size={18} color="currentColor" />
               <Box>
                 <Typography variant="body2" fontWeight={700}>
-                  {t('command.queue.emptyTitle')}
+                  {t(
+                    actionQueueHasMore
+                      ? 'command.queue.coverageLimitedTitle'
+                      : 'command.queue.emptyTitle'
+                  )}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {t('command.queue.empty')}
+                  {actionQueueHasMore
+                    ? t('command.queue.coverageLimited', { count: data.actionQueue.length })
+                    : t('command.queue.empty')}
                 </Typography>
               </Box>
             </Stack>
           ) : (
             <Stack divider={<Divider flexItem />}>
-              {filteredActions.slice(0, 6).map((item) => (
-                <ButtonBase
-                  key={item.itemId}
-                  onClick={() => navigate(item.route)}
-                  sx={{ width: 1, py: 1.25, textAlign: 'left', justifyContent: 'flex-start' }}
-                >
-                  <Box
-                    aria-hidden="true"
-                    sx={{
-                      width: 4,
-                      height: 42,
-                      flex: '0 0 4px',
-                      borderRadius: 0.5,
-                      bgcolor:
-                        item.severity === 'CRITICAL'
-                          ? 'error.main'
-                          : item.severity === 'HIGH'
-                            ? 'warning.main'
-                            : 'info.main',
-                    }}
-                  />
-                  <Box sx={{ ml: 1.25, minWidth: 0, flex: 1 }}>
-                    <Stack direction="row" alignItems="center" flexWrap="wrap" gap={0.75}>
-                      <Typography variant="body2" fontWeight={750}>
-                        {item.title}
+              {filteredActions.slice(0, 6).map((item) => {
+                const presentation = providerActionPresentation(item, (key, values) =>
+                  t(key, values)
+                );
+                return (
+                  <ButtonBase
+                    key={item.itemId}
+                    onClick={() => navigate(item.route)}
+                    sx={{ width: 1, py: 1.25, textAlign: 'left', justifyContent: 'flex-start' }}
+                  >
+                    <Box
+                      aria-hidden="true"
+                      sx={{
+                        width: 4,
+                        height: 42,
+                        flex: '0 0 4px',
+                        borderRadius: 0.5,
+                        bgcolor:
+                          item.severity === 'CRITICAL'
+                            ? 'error.main'
+                            : item.severity === 'HIGH'
+                              ? 'warning.main'
+                              : 'info.main',
+                      }}
+                    />
+                    <Box sx={{ ml: 1.25, minWidth: 0, flex: 1 }}>
+                      <Stack direction="row" alignItems="center" flexWrap="wrap" gap={0.75}>
+                        <Typography variant="body2" fontWeight={750}>
+                          {presentation.title}
+                        </Typography>
+                        <ProviderOverviewSeverityChip severity={item.severity} />
+                        <Typography variant="caption" color="text.secondary">
+                          {t(
+                            `command.categories.${providerActionCategoryPresentation(item.category)}`
+                          )}
+                        </Typography>
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary" noWrap display="block">
+                        {presentation.detail}
                       </Typography>
-                      <SeverityChip severity={item.severity} />
+                    </Box>
+                    <Stack alignItems="flex-end" gap={0.5} sx={{ ml: 1, flexShrink: 0 }}>
                       <Typography variant="caption" color="text.secondary">
-                        {t(`command.categories.${item.category}`, { defaultValue: item.category })}
+                        {formatProviderDate(item.createdAt)}
                       </Typography>
+                      <ArrowRight size={15} aria-hidden="true" />
                     </Stack>
-                    <Typography variant="caption" color="text.secondary" noWrap display="block">
-                      {item.detail}
-                    </Typography>
-                  </Box>
-                  <Stack alignItems="flex-end" gap={0.5} sx={{ ml: 1, flexShrink: 0 }}>
-                    <Typography variant="caption" color="text.secondary">
-                      {formatProviderDate(item.createdAt)}
-                    </Typography>
-                    <ArrowRight size={15} aria-hidden="true" />
-                  </Stack>
-                </ButtonBase>
-              ))}
+                  </ButtonBase>
+                );
+              })}
             </Stack>
           )}
         </SectionSurface>
@@ -528,7 +520,7 @@ export function ProviderOverview() {
             </ActionButton>
           }
         >
-          {serviceTotals.total > 0 && serviceExceptions === 0 ? (
+          {serviceTotals.total > 0 && serviceExceptions === 0 && (
             <ButtonBase
               onClick={() => navigate('/provider/health')}
               sx={{ width: 1, py: 1, textAlign: 'left', justifyContent: 'flex-start' }}
@@ -561,106 +553,129 @@ export function ProviderOverview() {
               </Box>
               <ArrowRight size={16} aria-hidden="true" />
             </ButtonBase>
+          )}
+          {data.services.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ py: 1.5 }}>
+              {t('command.services.empty')}
+            </Typography>
           ) : (
-            <>
-              <Stack direction="row" flexWrap="wrap" gap={1.25} sx={{ mb: 1.5 }}>
-                <LegendItem
-                  color={foundationTokens.color.data.teal}
-                  label={t('command.services.healthy')}
-                />
-                <LegendItem
-                  color={foundationTokens.color.data.cyan}
-                  label={t('command.services.pending')}
-                />
-                <LegendItem
-                  color={foundationTokens.color.data.saffron}
-                  label={t('command.services.degraded')}
-                />
-                <LegendItem
-                  color={foundationTokens.color.data.coral}
-                  label={t('command.services.failed')}
-                />
-              </Stack>
+            <Box sx={{ mt: serviceTotals.total > 0 && serviceExceptions === 0 ? 1 : 0 }}>
+              {serviceExceptions > 0 && (
+                <Stack direction="row" flexWrap="wrap" gap={1.25} sx={{ mb: 1.5 }}>
+                  <LegendItem
+                    color={foundationTokens.color.data.teal}
+                    label={t('command.services.healthy')}
+                  />
+                  <LegendItem
+                    color={foundationTokens.color.data.cyan}
+                    label={t('command.services.pending')}
+                  />
+                  <LegendItem
+                    color={foundationTokens.color.data.saffron}
+                    label={t('command.services.degraded')}
+                  />
+                  <LegendItem
+                    color={foundationTokens.color.data.coral}
+                    label={t('command.services.failed')}
+                  />
+                </Stack>
+              )}
               <Stack divider={<Divider flexItem />}>
-                {data.services.map((service) => (
-                  <ButtonBase
-                    key={service.serviceKey}
-                    onClick={() => navigate('/provider/health')}
-                    sx={{ width: 1, py: 1.15, textAlign: 'left', display: 'block' }}
-                  >
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      gap={1.5}
+                {data.services.map((service) => {
+                  const observationState = providerServiceObservationState(service);
+                  return (
+                    <ButtonBase
+                      key={service.serviceKey}
+                      onClick={() => navigate('/provider/health')}
+                      sx={{ width: 1, py: 1.15, textAlign: 'left', display: 'block' }}
                     >
-                      <Box minWidth={0}>
-                        <Typography variant="body2" fontWeight={750} noWrap>
-                          {service.displayName}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {t('command.services.instances', {
-                            healthy: service.healthyInstances,
-                            total: service.totalInstances,
-                          })}
-                        </Typography>
-                      </Box>
-                      <Stack direction="row" alignItems="center" gap={1} flexShrink={0}>
-                        {service.impactedTenants > 0 && (
-                          <Typography variant="caption" color="error.main" fontWeight={700}>
-                            {t('command.services.impacted', { count: service.impactedTenants })}
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        gap={1.5}
+                      >
+                        <Box minWidth={0}>
+                          <Typography variant="body2" fontWeight={750} noWrap>
+                            {service.displayName}
                           </Typography>
-                        )}
-                        <ProviderStatusChip
-                          state={
-                            service.failedInstances
-                              ? 'FAILED'
-                              : service.degradedInstances
-                                ? 'DEGRADED'
-                                : service.pendingInstances
-                                  ? 'PROVISIONING'
-                                  : 'READY'
-                          }
-                        />
+                          <Typography variant="caption" color="text.secondary">
+                            {t('command.services.instances', {
+                              healthy: service.healthyInstances,
+                              total: service.totalInstances,
+                            })}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color={
+                              observationState === 'CURRENT' ? 'text.secondary' : 'warning.main'
+                            }
+                            display="block"
+                          >
+                            {observationState === 'UNOBSERVED'
+                              ? t('command.services.observation.UNOBSERVED')
+                              : t(`command.services.observation.${observationState}`, {
+                                  value: formatProviderDate(service.lastReconciledAt),
+                                })}
+                          </Typography>
+                        </Box>
+                        <Stack direction="row" alignItems="center" gap={1} flexShrink={0}>
+                          {service.impactedTenants > 0 && (
+                            <Typography variant="caption" color="error.main" fontWeight={700}>
+                              {t('command.services.impacted', { count: service.impactedTenants })}
+                            </Typography>
+                          )}
+                          <ProviderStatusChip
+                            state={
+                              service.failedInstances
+                                ? 'FAILED'
+                                : service.degradedInstances
+                                  ? 'DEGRADED'
+                                  : service.pendingInstances
+                                    ? 'PROVISIONING'
+                                    : 'READY'
+                            }
+                          />
+                        </Stack>
                       </Stack>
-                    </Stack>
-                    <Box sx={{ mt: 0.75 }}>
-                      <DistributionBar
-                        label={t('command.services.breakdown', {
-                          name: service.displayName,
-                          healthy: service.healthyInstances,
-                          pending: service.pendingInstances,
-                          degraded: service.degradedInstances,
-                          failed: service.failedInstances,
-                        })}
-                        segments={[
-                          {
-                            key: 'healthy',
-                            value: service.healthyInstances,
-                            color: foundationTokens.color.data.teal,
-                          },
-                          {
-                            key: 'pending',
-                            value: service.pendingInstances,
-                            color: foundationTokens.color.data.cyan,
-                          },
-                          {
-                            key: 'degraded',
-                            value: service.degradedInstances,
-                            color: foundationTokens.color.data.saffron,
-                          },
-                          {
-                            key: 'failed',
-                            value: service.failedInstances,
-                            color: foundationTokens.color.data.coral,
-                          },
-                        ]}
-                      />
-                    </Box>
-                  </ButtonBase>
-                ))}
+                      <Box sx={{ mt: 0.75 }}>
+                        <DistributionBar
+                          label={t('command.services.breakdown', {
+                            name: service.displayName,
+                            healthy: service.healthyInstances,
+                            pending: service.pendingInstances,
+                            degraded: service.degradedInstances,
+                            failed: service.failedInstances,
+                          })}
+                          segments={[
+                            {
+                              key: 'healthy',
+                              value: service.healthyInstances,
+                              color: foundationTokens.color.data.teal,
+                            },
+                            {
+                              key: 'pending',
+                              value: service.pendingInstances,
+                              color: foundationTokens.color.data.cyan,
+                            },
+                            {
+                              key: 'degraded',
+                              value: service.degradedInstances,
+                              color: foundationTokens.color.data.saffron,
+                            },
+                            {
+                              key: 'failed',
+                              value: service.failedInstances,
+                              color: foundationTokens.color.data.coral,
+                            },
+                          ]}
+                        />
+                      </Box>
+                    </ButtonBase>
+                  );
+                })}
               </Stack>
-            </>
+            </Box>
           )}
         </SectionSurface>
       </Box>
@@ -901,7 +916,7 @@ export function ProviderOverview() {
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
                 {t('command.estateMix.regions')}
               </Typography>
-              <DistributionList
+              <ProviderOverviewDistributionList
                 items={data.estate.regions}
                 color={foundationTokens.color.data.cyan}
               />
@@ -910,82 +925,16 @@ export function ProviderOverview() {
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
                 {t('command.estateMix.tiers')}
               </Typography>
-              <DistributionList
+              <ProviderOverviewDistributionList
                 items={data.estate.serviceTiers}
                 color={foundationTokens.color.data.violet}
+                labelForKey={(key) => providerServiceTierLabel(t, key)}
               />
             </Box>
           </Box>
         </SectionSurface>
 
-        <SectionSurface
-          title={t('command.activity.title')}
-          description={t('command.activity.description')}
-          action={
-            <ActionButton
-              intent="quiet"
-              size="small"
-              endIcon={<ArrowRight size={16} />}
-              onClick={() => navigate('/provider/audit')}
-            >
-              {t('actions.viewAll')}
-            </ActionButton>
-          }
-        >
-          <Stack divider={<Divider flexItem />}>
-            {data.recentActivity.slice(0, 6).map((event) => (
-              <ButtonBase
-                key={event.auditEventId}
-                onClick={() => navigate('/provider/audit')}
-                sx={{ width: 1, py: 1.05, textAlign: 'left', justifyContent: 'flex-start' }}
-              >
-                <Box
-                  aria-hidden="true"
-                  sx={{
-                    width: 30,
-                    height: 30,
-                    flex: '0 0 30px',
-                    display: 'grid',
-                    placeItems: 'center',
-                    borderRadius: 1,
-                    color: 'info.main',
-                    bgcolor: 'action.hover',
-                  }}
-                >
-                  <Radio size={15} />
-                </Box>
-                <Box sx={{ ml: 1, minWidth: 0, flex: 1 }}>
-                  <Stack direction="row" alignItems="center" gap={0.75}>
-                    <Typography variant="body2" fontWeight={700} noWrap>
-                      {t(`audit.categories.${event.category}`, { defaultValue: event.category })}
-                    </Typography>
-                    <ProviderStatusChip state={event.outcome} />
-                  </Stack>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    noWrap
-                    display="block"
-                    sx={{ fontFamily: foundationTokens.font.mono }}
-                  >
-                    {display('auditActions', event.action)}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" noWrap display="block">
-                    {event.operatorName ?? t('audit.global')} ·{' '}
-                    {event.tenantKey ?? t('audit.global')}
-                  </Typography>
-                </Box>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ ml: 1, whiteSpace: 'nowrap' }}
-                >
-                  {formatProviderDate(event.occurredAt)}
-                </Typography>
-              </ButtonBase>
-            ))}
-          </Stack>
-        </SectionSurface>
+        <ProviderRecentActivitySection activity={data.recentActivity} />
       </Box>
     </Stack>
   );

@@ -60,4 +60,26 @@ describe('ProviderSupportBanner', () => {
     expect(markup).toContain('role="status"');
     expect(markup).toContain('aria-live="polite"');
   });
+
+  it('fails closed when the active context contains an unknown scope or access mode', () => {
+    const context = {
+      supportSessionId: 'support-session-12345678',
+      tenantId: 'tenant-skax',
+      tenantKey: 'skax-production',
+      environmentKey: 'production',
+      dataRegion: 'ap-northeast-2',
+      tenantName: 'SKAX Production',
+      scopes: ['INTERNAL_SCOPE_V2'],
+      accessMode: 'INTERNAL_MODE',
+      expiresAt: '2026-08-26T03:00:00.000Z',
+      version: 1,
+    } as unknown as ProviderSupportSessionContext;
+
+    const markup = renderToStaticMarkup(createElement(ProviderSupportBanner, { context }));
+
+    expect(markup).toContain('support.scopes.unknown');
+    expect(markup).toContain('support.modes.unknown');
+    expect(markup).not.toContain('INTERNAL_SCOPE_V2');
+    expect(markup).not.toContain('INTERNAL_MODE');
+  });
 });

@@ -15,31 +15,52 @@ export type AuditPolicyDiffRow = Readonly<{
   after: unknown;
 }>;
 
+const POLICY_FIELD_TYPES = {
+  standardRetentionDays: 'number',
+  extendedRetentionDays: 'number',
+  exportLimitRows: 'number',
+  requireExportReason: 'boolean',
+  integrityEnabled: 'boolean',
+  highRiskThreshold: 'number',
+} as const;
+
+function isKnownPolicyField(field: string): field is keyof typeof POLICY_FIELD_TYPES {
+  return Object.prototype.hasOwnProperty.call(POLICY_FIELD_TYPES, field);
+}
+
+export function policyRevisionFieldLabelKey(field: string): string {
+  return isKnownPolicyField(field)
+    ? `auditControl.governance.revisions.fields.${field}`
+    : 'auditControl.governance.revisions.fields.UNKNOWN';
+}
+
+function safePolicyValue(field: string, value: unknown): number | boolean | null {
+  const expected = POLICY_FIELD_TYPES[field as keyof typeof POLICY_FIELD_TYPES];
+  if (expected === 'number' && typeof value === 'number' && Number.isFinite(value)) return value;
+  if (expected === 'boolean' && typeof value === 'boolean') return value;
+  return null;
+}
+
 export function policyRevisionEvidenceRows(
   revision: Pick<AuditPolicyRevision, 'diff'>
 ): AuditPolicyDiffRow[] {
   return Object.entries(revision.diff).map(([field, value]) => ({
-    field,
-    before: value.before,
-    after: value.after,
+    field: isKnownPolicyField(field) ? field : 'UNKNOWN',
+    before: safePolicyValue(field, value.before),
+    after: safePolicyValue(field, value.after),
   }));
-}
-
-function displayValue(value: unknown): string {
-  if (value === null || value === undefined || value === '') return '—';
-  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-    return String(value);
-  }
-  try {
-    return JSON.stringify(value);
-  } catch {
-    return '—';
-  }
 }
 
 export function AuditPolicyRevisionEvidence({ revision }: { revision: AuditPolicyRevision }) {
   const { t } = useTranslation('admin');
   const rows = policyRevisionEvidenceRows(revision);
+  const displayValue = (value: unknown): string => {
+    if (typeof value === 'number') return String(value);
+    if (typeof value === 'boolean') {
+      return t(`auditControl.governance.revisions.values.${value ? 'enabled' : 'disabled'}`);
+    }
+    return t('auditControl.governance.revisions.values.unavailable');
+  };
 
   if (!rows.length && !revision.approval) return null;
 
@@ -74,10 +95,10 @@ export function AuditPolicyRevisionEvidence({ revision }: { revision: AuditPolic
               {t('auditControl.governance.revisions.diffAfter')}
             </Typography>
           </Box>
-          {rows.map((row) => (
+          {rows.map((row, index) => (
             <Box
               role="row"
-              key={row.field}
+              key={`${row.field}:${index}`}
               sx={{
                 display: 'grid',
                 gridTemplateColumns: {
@@ -93,9 +114,7 @@ export function AuditPolicyRevisionEvidence({ revision }: { revision: AuditPolic
               }}
             >
               <Typography role="cell" variant="caption" fontWeight={750}>
-                {t(`auditControl.governance.revisions.fields.${row.field}`, {
-                  defaultValue: row.field,
-                })}
+                {t(policyRevisionFieldLabelKey(row.field))}
               </Typography>
               <Stack role="cell" direction="row" gap={0.75} alignItems="baseline" minWidth={0}>
                 <Typography

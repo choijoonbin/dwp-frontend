@@ -70,11 +70,16 @@ test('change control connects approval, execution ledger, and auditable evidence
   ).toBeVisible();
   await expect(page.getByRole('region', { name: 'Change control key signals' })).toContainText('1');
   await expect(page.getByText('Apply the reviewed platform schema release.')).toBeVisible();
+  await expect(page.getByText('Governed review', { exact: true })).toBeVisible();
+  await expect(page.getByText('CHANGE_APPROVAL', { exact: true })).toHaveCount(0);
 
   await page.getByRole('row', { name: /operation-1/ }).click();
   const review = page.getByRole('dialog', { name: 'Review change plan' });
   await expect(review).toBeVisible();
   await expect(review.getByText('Approval gates')).toBeVisible();
+  await expect(review.getByText('Provider administrator', { exact: true })).toBeVisible();
+  await expect(review.getByText('Governed service owner', { exact: true })).toBeVisible();
+  await expect(review.getByText('platform-service', { exact: true })).toHaveCount(0);
   await expect(review.getByText('Execution evidence')).toBeVisible();
   await expect(review.getByText('Execution steps')).toBeVisible();
   await review.getByRole('button', { name: 'Close' }).click();

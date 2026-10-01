@@ -130,6 +130,12 @@ export type SavedViewOwnershipTransferSummary = Omit<
   'idempotencyKey' | 'ownershipFingerprint' | 'requestFingerprint'
 >;
 
+export type SavedViewOwnershipTransferPage = {
+  items: SavedViewOwnershipTransferSummary[];
+  limit: number;
+  hasMore: boolean;
+};
+
 export type OrphanedSavedView = {
   savedViewId: string;
   surfaceKey: string;
@@ -175,6 +181,12 @@ export type OrphanLifecycleResult = {
   resultingVersion: number;
   createdAt: string;
   createdBy: number;
+};
+
+export type OrphanLifecyclePage = {
+  items: OrphanLifecycleResult[];
+  limit: number;
+  hasMore: boolean;
 };
 
 export async function getSavedViews(surfaceKey: string): Promise<GovernedSavedView[]> {
@@ -282,8 +294,8 @@ export async function transferSavedViewOwnership(
 
 export async function listSavedViewOwnershipTransfers(
   limit = 50
-): Promise<SavedViewOwnershipTransferSummary[]> {
-  const response = await axiosInstance.get<ApiResponse<SavedViewOwnershipTransferSummary[]>>(
+): Promise<SavedViewOwnershipTransferPage> {
+  const response = await axiosInstance.get<ApiResponse<SavedViewOwnershipTransferPage>>(
     `${OWNERSHIP_BASE}/transfers?limit=${Math.max(1, Math.min(limit, 100))}`
   );
   return response.data.data;
@@ -296,8 +308,8 @@ export async function listOrphanedSavedViews(): Promise<OrphanedSavedView[]> {
   return response.data.data;
 }
 
-export async function listOrphanLifecycleActions(limit = 50): Promise<OrphanLifecycleResult[]> {
-  const response = await axiosInstance.get<ApiResponse<OrphanLifecycleResult[]>>(
+export async function listOrphanLifecycleActions(limit = 50): Promise<OrphanLifecyclePage> {
+  const response = await axiosInstance.get<ApiResponse<OrphanLifecyclePage>>(
     `${OWNERSHIP_BASE}/orphaned/actions?limit=${Math.max(1, Math.min(limit, 100))}`
   );
   return response.data.data;

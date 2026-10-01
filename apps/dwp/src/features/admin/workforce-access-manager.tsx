@@ -38,6 +38,15 @@ import {
   filterWorkforceAccessPolicies,
 } from './workforce-access-model';
 import { WorkforceAccessOverview } from './workforce-access-overview';
+import {
+  workforceActionLabelKey,
+  workforceFieldGroupLabelKey,
+  workforcePopulationLabelKey,
+  workforceRoleDescriptionKey,
+  workforceRoleLabelKey,
+  workforceStateLabelKey,
+  workforceSubjectTypeLabelKey,
+} from './workforce-access-presentation';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { WorkforceAccessPolicy } from '@dwp-frontend/shared-utils';
@@ -45,9 +54,6 @@ import type { EffectiveWorkforceAccessState } from './workforce-access-model';
 import type { TFunction } from 'i18next';
 
 const POLICY_QUERY_KEY = ['admin', 'workforce-access', 'policies'] as const;
-const WORKFORCE_ROLES = ['HR_ADMIN', 'PEOPLE_ADMIN'] as const;
-const DISPLAY_WORKFORCE_ROLES = ['ADMIN', ...WORKFORCE_ROLES] as const;
-
 type PolicyStateFilter = EffectiveWorkforceAccessState | 'ALL';
 type PolicyActionFilter = WorkforceAccessPolicy['actionCodes'][number] | 'ALL';
 
@@ -56,23 +62,16 @@ function displayDate(value?: string | null) {
 }
 
 function populationLabel(value: string, t: TFunction<'admin'>) {
-  if (value === 'ORG_UNIT') return t('workforceAccess.populations.ORG_UNIT');
-  if (value === 'ORG_TREE') return t('workforceAccess.populations.ORG_TREE');
-  return t('workforceAccess.populations.TENANT');
+  return t(workforcePopulationLabelKey(value));
 }
 
 function roleLabel(subjectRef: string, t: TFunction<'admin'>) {
-  return DISPLAY_WORKFORCE_ROLES.includes(subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number])
-    ? t(`workforceAccess.roles.${subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number]}`)
-    : subjectRef;
+  return t(workforceRoleLabelKey(subjectRef));
 }
 
 function roleDescription(subjectRef: string, t: TFunction<'admin'>) {
-  return DISPLAY_WORKFORCE_ROLES.includes(subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number])
-    ? t(
-        `workforceAccess.roleDescriptions.${subjectRef as (typeof DISPLAY_WORKFORCE_ROLES)[number]}`
-      )
-    : null;
+  const key = workforceRoleDescriptionKey(subjectRef);
+  return key ? t(key) : null;
 }
 
 type WorkforcePolicySubject = { displayName: string; email?: string | null };
@@ -189,9 +188,9 @@ function WorkforceAccessManagerContent() {
           [
             policySubjectLabel(policy, usersById, t),
             populationLabel(policy.populationType, t),
-            ...policy.fieldGroups.map((field) => t(`workforceAccess.fieldGroups.${field}`)),
-            ...policy.actionCodes.map((action) => t(`workforceAccess.actions.${action}`)),
-            t(`workforceAccess.states.${effectiveWorkforcePolicyState(policy)}`),
+            ...policy.fieldGroups.map((field) => t(workforceFieldGroupLabelKey(field))),
+            ...policy.actionCodes.map((action) => t(workforceActionLabelKey(action))),
+            t(workforceStateLabelKey(effectiveWorkforcePolicyState(policy))),
           ],
         ])
       ),
@@ -228,11 +227,11 @@ function WorkforceAccessManagerContent() {
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {row.subjectType === 'ROLE' && roleDescription(row.subjectRef, t)
-                ? `${t(`workforceAccess.subjectTypes.${row.subjectType}`)} · ${roleDescription(
+                ? `${t(workforceSubjectTypeLabelKey(row.subjectType))} · ${roleDescription(
                     row.subjectRef,
                     t
                   )}`
-                : t(`workforceAccess.subjectTypes.${row.subjectType}`)}
+                : t(workforceSubjectTypeLabelKey(row.subjectType))}
             </Typography>
           </Stack>
         ),
@@ -263,7 +262,7 @@ function WorkforceAccessManagerContent() {
         renderCell: ({ row }) => (
           <Stack direction="row" alignItems="center" flexWrap="wrap" gap={0.5} sx={{ py: 0.75 }}>
             {row.fieldGroups.map((field) => (
-              <Chip key={field} size="small" label={t(`workforceAccess.fieldGroups.${field}`)} />
+              <Chip key={field} size="small" label={t(workforceFieldGroupLabelKey(field))} />
             ))}
           </Stack>
         ),
@@ -281,7 +280,7 @@ function WorkforceAccessManagerContent() {
                 size="small"
                 variant="outlined"
                 color={action === 'EXPORT' ? 'warning' : 'info'}
-                label={t(`workforceAccess.actions.${action}`)}
+                label={t(workforceActionLabelKey(action))}
               />
             ))}
           </Stack>
@@ -315,7 +314,7 @@ function WorkforceAccessManagerContent() {
               size="small"
               variant="outlined"
               color={state === 'ACTIVE' ? 'success' : state === 'SCHEDULED' ? 'info' : 'default'}
-              label={t(`workforceAccess.states.${state}`)}
+              label={t(workforceStateLabelKey(state))}
             />
           );
         },
@@ -441,7 +440,7 @@ function WorkforceAccessManagerContent() {
                         label:
                           value === 'ALL'
                             ? t('workforceAccess.filters.allStates')
-                            : t(`workforceAccess.states.${value}`),
+                            : t(workforceStateLabelKey(value)),
                       })
                     )}
                     onValueChange={(value) => setStateFilter((value ?? 'ALL') as PolicyStateFilter)}
@@ -456,7 +455,7 @@ function WorkforceAccessManagerContent() {
                       label:
                         value === 'ALL'
                           ? t('workforceAccess.filters.allActions')
-                          : t(`workforceAccess.actions.${value}`),
+                          : t(workforceActionLabelKey(value)),
                     }))}
                     onValueChange={(value) =>
                       setActionFilter((value ?? 'ALL') as PolicyActionFilter)

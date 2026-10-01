@@ -27,11 +27,10 @@ export default function AdminPage() {
   if (!page) return <Navigate to="/404" replace />;
   if (
     !canAccessAdminNavigationItem(page, {
-      roles: auth.user?.roles ?? [],
+      identity: auth.user,
       permissionsLoaded,
       hasPermission,
       supportScopes: supportContext.data?.scopes,
-      resourceRoles: auth.user?.resourceRoles,
     })
   ) {
     return <Navigate to="/403" replace />;

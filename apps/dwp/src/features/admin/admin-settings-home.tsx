@@ -52,14 +52,13 @@ export function AdminSettingsHome() {
         ...group,
         items: group.items.filter((item) =>
           canAccessAdminNavigationItem(item, {
-            roles: auth.user?.roles ?? [],
+            identity: auth.user,
             permissionsLoaded: isLoaded,
             hasPermission,
-            resourceRoles: auth.user?.resourceRoles,
           })
         ),
       })).filter((group) => group.items.length > 0),
-    [auth.user?.resourceRoles, auth.user?.roles, hasPermission, isLoaded]
+    [auth.user, hasPermission, isLoaded]
   );
 
   const visiblePaths = useMemo(() => {

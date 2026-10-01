@@ -26,7 +26,7 @@ import {
   type AppGovernanceDashboard,
   type AppResourceMember,
 } from '@dwp-frontend/shared-utils';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { formatDate, useDisplayDictionary } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   ActionIconButton,
@@ -64,6 +64,11 @@ import { GOVERNED_PRODUCT_ENTRY_CATALOG } from '../../components/product-entry-p
 import { useShellAuxiliaryAvoidance } from '../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
 import { AppAdminPresetManager } from './app-admin-preset-manager';
 import {
+  appAssignmentStateLabelKey,
+  appResponsibilityLabelKey,
+} from './app-governance-presentation';
+import { TenantAppAdoptionPanel } from './tenant-app-adoption-panel';
+import {
   canRequestGovernedAssignment,
   governedRequestScopes,
   resolveAssignmentActions,
@@ -73,7 +78,7 @@ import {
 
 export { resolveAssignmentActions } from './app-governance-authority';
 
-type View = 'assignments' | 'presets' | 'boundaries';
+type View = 'adoption' | 'assignments' | 'presets' | 'boundaries';
 type Decision = 'APPROVED' | 'DENIED' | 'REVOKED';
 
 const queryKey = ['admin', 'app-governance'] as const;
@@ -150,6 +155,7 @@ export function resolveManagementWorkbenchEntries(resources: readonly AppResourc
 }
 
 export function AppGovernanceManager() {
+  const display = useDisplayDictionary();
   const { t } = useTranslation('admin');
   const theme = useTheme();
   const compactViewControls = useMediaQuery(theme.breakpoints.down('sm'));
@@ -294,6 +300,7 @@ export function AppGovernanceManager() {
           <ToggleButton value="boundaries">
             {t('appGovernance.views.boundaries')} ({data.resourceSets.length})
           </ToggleButton>
+          <ToggleButton value="adoption">{t('appGovernance.views.adoption')}</ToggleButton>
         </ToggleButtonGroup>
         <Stack direction="row" gap={1} flexWrap="wrap">
           <ActionIconButton label={t('common.actions.refresh')} onClick={() => void refresh()}>
@@ -316,7 +323,9 @@ export function AppGovernanceManager() {
         </Stack>
       </Stack>
 
-      {view === 'presets' ? (
+      {view === 'adoption' ? (
+        <TenantAppAdoptionPanel governance={data} actorId={auth.user?.userId} />
+      ) : view === 'presets' ? (
         <AppAdminPresetManager data={data} />
       ) : view === 'assignments' ? (
         <Stack gap={1.5}>
@@ -357,13 +366,13 @@ export function AppGovernanceManager() {
                         <TableCell>
                           <Typography variant="subtitle2">{assignment.principalName}</Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {assignment.principalType} · {assignment.principalRef}
+                            {display('entityKinds', assignment.principalType)}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Stack gap={0.5} alignItems="flex-start">
                             <Typography variant="body2">
-                              {t(`appGovernance.responsibilities.${assignment.responsibilityCode}`)}
+                              {t(appResponsibilityLabelKey(assignment.responsibilityCode))}
                             </Typography>
                             {approvalMode === 'FIRST_APPROVER_BOOTSTRAP' && (
                               <Chip
@@ -377,9 +386,6 @@ export function AppGovernanceManager() {
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">{assignment.resourceSetName}</Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {assignment.resourceSetKey}
-                          </Typography>
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">
@@ -398,7 +404,7 @@ export function AppGovernanceManager() {
                             size="small"
                             variant="outlined"
                             color={statusColor(assignment.lifecycleState)}
-                            label={t(`appGovernance.states.${assignment.lifecycleState}`)}
+                            label={t(appAssignmentStateLabelKey(assignment.lifecycleState))}
                           />
                         </TableCell>
                         <TableCell align="right" data-shell-auxiliary-avoidance="inline-end">
@@ -505,9 +511,6 @@ export function AppGovernanceManager() {
                   <Box sx={{ minWidth: 0 }}>
                     <Typography id={headingId} component="h3" variant="subtitle1">
                       {resourceSet.name}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {resourceSet.key}
                     </Typography>
                   </Box>
                   <Chip
@@ -667,6 +670,7 @@ function AssignmentDialog({
   }) => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const display = useDisplayDictionary();
   const [principal, setPrincipal] = useState('');
   const [responsibility, setResponsibility] = useState('');
   const [resourceSetId, setResourceSetId] = useState('');
@@ -715,7 +719,7 @@ function AssignmentDialog({
           onValueChange={setPrincipal}
           options={data.principals.map((item) => ({
             value: `${item.type}:${item.ref}`,
-            label: `${item.displayName} · ${item.detail || item.type}`,
+            label: `${item.displayName} · ${item.detail || display('entityKinds', item.type)}`,
           }))}
         />
         <SelectField
@@ -725,7 +729,10 @@ function AssignmentDialog({
           onValueChange={setResponsibility}
           options={responsibilities.map((item) => ({
             value: item.code,
-            label: `${t(`appGovernance.responsibilities.${item.code}`)} · ${item.riskTier}`,
+            label: `${t(appResponsibilityLabelKey(item.code))} · ${display(
+              'riskTiers',
+              item.riskTier
+            )}`,
           }))}
         />
         <SelectField

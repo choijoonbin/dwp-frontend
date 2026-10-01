@@ -27,7 +27,7 @@ import type {
   PrivilegedAccessRequest,
   PrivilegedRoleEligibility,
 } from '@dwp-frontend/shared-utils';
-import type { TFunction } from 'i18next';
+import { privilegedScopeLabelKey, privilegedStateLabelKey } from './privileged-access-presentation';
 
 function dateTime(value?: string | null) {
   return value ? formatDate(value, { dateStyle: 'medium', timeStyle: 'short' }) : '-';
@@ -38,24 +38,6 @@ function stateColor(state: PrivilegedAccessRequest['lifecycleState']) {
   if (state === 'PENDING_APPROVAL') return 'warning' as const;
   if (state === 'DENIED' || state === 'REVOKED') return 'error' as const;
   return 'default' as const;
-}
-
-function scopeLabel(value: PrivilegedRoleEligibility['scopeType'], t: TFunction<'account'>) {
-  if (value === 'ORG_UNIT') return t('security.privileged.scope.ORG_UNIT');
-  if (value === 'RESOURCE') return t('security.privileged.scope.RESOURCE');
-  return t('security.privileged.scope.TENANT');
-}
-
-function requestStateLabel(
-  value: PrivilegedAccessRequest['lifecycleState'],
-  t: TFunction<'account'>
-) {
-  if (value === 'PENDING_APPROVAL') return t('security.privileged.state.PENDING_APPROVAL');
-  if (value === 'DENIED') return t('security.privileged.state.DENIED');
-  if (value === 'CANCELLED') return t('security.privileged.state.CANCELLED');
-  if (value === 'REVOKED') return t('security.privileged.state.REVOKED');
-  if (value === 'EXPIRED') return t('security.privileged.state.EXPIRED');
-  return t('security.privileged.state.ACTIVE');
 }
 
 function ActivationDialog({
@@ -226,8 +208,8 @@ export function MyPrivilegedAccess() {
       }
       toast.success(t('security.privileged.requested'));
       await refresh();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('security.privileged.requestError'));
+    } catch {
+      toast.error(t('security.privileged.requestError'));
     } finally {
       setBusy(false);
     }
@@ -247,8 +229,8 @@ export function MyPrivilegedAccess() {
       }
       toast.success(t('security.privileged.cancelled'));
       await refresh();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('security.privileged.revokeError'));
+    } catch {
+      toast.error(t('security.privileged.revokeError'));
     } finally {
       setBusy(false);
     }
@@ -319,12 +301,9 @@ export function MyPrivilegedAccess() {
                     <Chip
                       size="small"
                       variant="outlined"
-                      label={scopeLabel(eligibility.scopeType, t)}
+                      label={t(privilegedScopeLabelKey(eligibility.scopeType))}
                     />
                   </Stack>
-                  <Typography variant="caption" color="text.secondary">
-                    {eligibility.roleCode}
-                  </Typography>
                 </Box>
                 <Box>
                   <Stack direction="row" alignItems="center" gap={0.75}>
@@ -342,7 +321,7 @@ export function MyPrivilegedAccess() {
                       size="small"
                       color={stateColor(request.lifecycleState)}
                       variant="outlined"
-                      label={requestStateLabel(request.lifecycleState, t)}
+                      label={t(privilegedStateLabelKey(request.lifecycleState))}
                       sx={{ mt: 0.75 }}
                     />
                   )}

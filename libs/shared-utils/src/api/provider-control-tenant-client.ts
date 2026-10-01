@@ -13,6 +13,42 @@ import type {
 } from './provider-control-contracts';
 
 const BASE = '/api/provider/v1/admin';
+const COMPLETE_PAGE_SIZE = 100;
+
+async function collectCompletePage<T>(
+  firstPage: PageResult<T>,
+  fetchPage: (page: number) => Promise<PageResult<T>>,
+  identity: (item: T) => string
+): Promise<PageResult<T>> {
+  const remaining = await Promise.all(
+    Array.from({ length: Math.max(0, firstPage.totalPages - 1) }, (_, index) =>
+      fetchPage(index + 1)
+    )
+  );
+  const pages = [firstPage, ...remaining];
+  const metadataConsistent = pages.every(
+    (page, index) =>
+      page.page === index &&
+      page.totalPages === firstPage.totalPages &&
+      page.totalElements === firstPage.totalElements
+  );
+  const content = pages.flatMap((page) => page.content);
+  const identities = new Set(content.map(identity));
+  if (
+    !metadataConsistent ||
+    content.length !== firstPage.totalElements ||
+    identities.size !== content.length
+  ) {
+    throw new Error('PROVIDER_COMPLETE_LEDGER_COVERAGE_INCONSISTENT');
+  }
+  return {
+    content,
+    page: 0,
+    size: content.length,
+    totalElements: firstPage.totalElements,
+    totalPages: firstPage.totalPages,
+  };
+}
 
 export async function listProviderTenants(
   params: {
@@ -38,6 +74,12 @@ export async function listProviderTenants(
     `${BASE}/tenants?${search.toString()}`
   );
   return response.data.data;
+}
+
+export async function listAllProviderTenants(): Promise<PageResult<ProviderTenant>> {
+  const fetchPage = (page: number) => listProviderTenants({ page, size: COMPLETE_PAGE_SIZE });
+  const firstPage = await fetchPage(0);
+  return collectCompletePage(firstPage, fetchPage, (tenant) => tenant.tenantId);
 }
 
 export async function getProviderTenant(tenantId: string): Promise<ProviderTenant> {
@@ -93,10 +135,14 @@ export async function retryProviderOperation(
 }
 
 export async function listProviderOperations(): Promise<PageResult<ProviderOperation>> {
-  const response = await axiosInstance.get<ApiResponse<PageResult<ProviderOperation>>>(
-    `${BASE}/operations?page=0&size=100`
-  );
-  return response.data.data;
+  const fetchPage = async (page: number) => {
+    const response = await axiosInstance.get<ApiResponse<PageResult<ProviderOperation>>>(
+      `${BASE}/operations?page=${page}&size=${COMPLETE_PAGE_SIZE}`
+    );
+    return response.data.data;
+  };
+  const firstPage = await fetchPage(0);
+  return collectCompletePage(firstPage, fetchPage, (operation) => operation.operationId);
 }
 
 export async function listProviderOperationApprovals(

@@ -28,6 +28,7 @@ import {
   revokePrivilegedRoleEligibility,
   updatePrivilegedAccessPolicy,
   verifyEmergencyAccessPrincipal,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import { useRoleDisplay } from '@dwp-frontend/shared-i18n';
@@ -54,7 +55,9 @@ import {
   emergencyModeLabel,
   privilegedAccessError as message,
   privilegedScopeLabel as scopeLabel,
+  privilegedStateLabelKey,
   privilegedStatusColor as statusColor,
+  privilegedVerificationLabelKey,
 } from './privileged-access-display';
 import {
   BoundaryDialog,
@@ -75,6 +78,16 @@ import type {
 import type { PrivilegedAccessDecision as Decision } from './privileged-access-dialogs';
 
 type View = 'requests' | 'eligibilities' | 'policies' | 'boundaries';
+
+export function resolvePrivilegedAccessCapabilities(
+  permissionsLoaded: boolean,
+  hasPermission: (resourceKey: string, permissionCode: string) => boolean
+) {
+  return {
+    canManage: permissionsLoaded && hasPermission('ADMIN.PRIVILEGED_ACCESS', 'MANAGE'),
+    canApprove: permissionsLoaded && hasPermission('ADMIN.PRIVILEGED_ACCESS', 'APPROVE'),
+  };
+}
 
 function Metric({
   icon: Icon,
@@ -110,6 +123,11 @@ export function PrivilegedAccessManager() {
   const displayRole = useRoleDisplay();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const { canManage, canApprove } = resolvePrivilegedAccessCapabilities(
+    permissionsLoaded,
+    hasPermission
+  );
   const [view, setView] = useState<View>('requests');
   const [busy, setBusy] = useState(false);
   const [policy, setPolicy] = useState<PrivilegedAccessPolicy | null>(null);
@@ -119,8 +137,9 @@ export function PrivilegedAccessManager() {
     decision: Decision;
   } | null>(null);
   const [boundaryDialog, setBoundaryDialog] = useState<'emergency' | 'delegation' | null>(null);
-  const [recoveryVerification, setRecoveryVerification] =
-    useState<EmergencyAccessPrincipal | null>(null);
+  const [recoveryVerification, setRecoveryVerification] = useState<EmergencyAccessPrincipal | null>(
+    null
+  );
 
   const policies = useQuery({
     queryKey: ['admin', 'privileged-access', 'policies'],
@@ -171,6 +190,22 @@ export function PrivilegedAccessManager() {
     [queryClient, t, toast]
   );
 
+  const runManaged = useCallback(
+    async (action: () => Promise<unknown>, success: string): Promise<boolean> => {
+      if (!canManage) return false;
+      return run(action, success);
+    },
+    [canManage, run]
+  );
+
+  const runApproved = useCallback(
+    async (action: () => Promise<unknown>, success: string): Promise<boolean> => {
+      if (!canApprove) return false;
+      return run(action, success);
+    },
+    [canApprove, run]
+  );
+
   const requestColumns = useMemo<GridColDef<PrivilegedAccessRequest>[]>(
     () => [
       {
@@ -195,7 +230,7 @@ export function PrivilegedAccessManager() {
             size="small"
             color={statusColor(row.lifecycleState)}
             variant="outlined"
-            label={t(`privilegedAccess.states.${row.lifecycleState}`)}
+            label={t(privilegedStateLabelKey(row.lifecycleState))}
           />
         ),
       },
@@ -211,7 +246,7 @@ export function PrivilegedAccessManager() {
         headerName: t('privilegedAccess.columns.nextAction'),
         width: 250,
         getActions: ({ row }) => {
-          if (row.lifecycleState === 'PENDING_APPROVAL') {
+          if (row.lifecycleState === 'PENDING_APPROVAL' && canApprove) {
             return [
               <ActionButton
                 key="approve"
@@ -233,7 +268,7 @@ export function PrivilegedAccessManager() {
               </ActionButton>,
             ];
           }
-          return row.lifecycleState === 'ACTIVE'
+          return row.lifecycleState === 'ACTIVE' && canManage
             ? [
                 <ActionButton
                   key="revoke"
@@ -248,7 +283,7 @@ export function PrivilegedAccessManager() {
         },
       },
     ],
-    [displayRole, t]
+    [canApprove, canManage, displayRole, t]
   );
 
   const eligibilityColumns = useMemo<GridColDef<PrivilegedRoleEligibility>[]>(
@@ -281,7 +316,7 @@ export function PrivilegedAccessManager() {
             size="small"
             variant="outlined"
             color={statusColor(row.lifecycleState)}
-            label={t(`privilegedAccess.states.${row.lifecycleState}`)}
+            label={t(privilegedStateLabelKey(row.lifecycleState))}
           />
         ),
       },
@@ -290,14 +325,14 @@ export function PrivilegedAccessManager() {
         type: 'actions',
         width: 120,
         getActions: ({ row }) =>
-          row.lifecycleState === 'ACTIVE'
+          row.lifecycleState === 'ACTIVE' && canManage
             ? [
                 <ActionButton
                   key="revoke"
                   size="small"
                   intent="quiet"
                   onClick={() =>
-                    void run(
+                    void runManaged(
                       () => revokePrivilegedRoleEligibility(row),
                       t('privilegedAccess.toasts.eligibilityRevoked')
                     )
@@ -309,7 +344,7 @@ export function PrivilegedAccessManager() {
             : [],
       },
     ],
-    [displayRole, run, t]
+    [canManage, displayRole, runManaged, t]
   );
 
   const policyColumns = useMemo<GridColDef<PrivilegedAccessPolicy>[]>(
@@ -343,14 +378,17 @@ export function PrivilegedAccessManager() {
         field: 'actions',
         type: 'actions',
         width: 110,
-        getActions: ({ row }) => [
-          <ActionButton key="edit" size="small" intent="quiet" onClick={() => setPolicy(row)}>
-            {t('common.actions.edit')}
-          </ActionButton>,
-        ],
+        getActions: ({ row }) =>
+          canManage
+            ? [
+                <ActionButton key="edit" size="small" intent="quiet" onClick={() => setPolicy(row)}>
+                  {t('common.actions.edit')}
+                </ActionButton>,
+              ]
+            : [],
       },
     ],
-    [displayRole, t]
+    [canManage, displayRole, t]
   );
 
   if (policies.isLoading || eligibilities.isLoading || requests.isLoading) {
@@ -433,7 +471,7 @@ export function PrivilegedAccessManager() {
           <Tab value="policies" label={t('privilegedAccess.views.policies')} />
           <Tab value="boundaries" label={t('privilegedAccess.views.boundaries')} />
         </Tabs>
-        {view === 'eligibilities' && (
+        {view === 'eligibilities' && canManage && (
           <ActionButton
             intent="primary"
             size="small"
@@ -443,7 +481,7 @@ export function PrivilegedAccessManager() {
             {t('privilegedAccess.actions.createEligibility')}
           </ActionButton>
         )}
-        {view === 'boundaries' && (
+        {view === 'boundaries' && canManage && (
           <Stack direction="row" gap={1}>
             <ActionButton
               size="small"
@@ -549,14 +587,14 @@ export function PrivilegedAccessManager() {
                     type: 'actions',
                     width: 110,
                     getActions: ({ row }) =>
-                      row.lifecycleState === 'ACTIVE'
+                      row.lifecycleState === 'ACTIVE' && canManage
                         ? [
                             <ActionButton
                               key="revoke"
                               size="small"
                               intent="quiet"
                               onClick={() =>
-                                void run(
+                                void runManaged(
                                   () => revokeDelegatedAdminScope(row),
                                   t('privilegedAccess.toasts.delegationRevoked')
                                 )
@@ -622,9 +660,7 @@ export function PrivilegedAccessManager() {
                         size="small"
                         color={row.verificationStatus === 'VERIFIED' ? 'success' : 'warning'}
                         variant="outlined"
-                        label={t(
-                          `privilegedAccess.verification.states.${row.verificationStatus}`
-                        )}
+                        label={t(privilegedVerificationLabelKey(row.verificationStatus))}
                       />
                     ),
                   },
@@ -637,7 +673,7 @@ export function PrivilegedAccessManager() {
                         size="small"
                         color={statusColor(row.lifecycleState)}
                         variant="outlined"
-                        label={t(`privilegedAccess.states.${row.lifecycleState}`)}
+                        label={t(privilegedStateLabelKey(row.lifecycleState))}
                       />
                     ),
                   },
@@ -646,7 +682,7 @@ export function PrivilegedAccessManager() {
                     type: 'actions',
                     width: 130,
                     getActions: ({ row }) =>
-                      row.lifecycleState === 'ACTIVE'
+                      row.lifecycleState === 'ACTIVE' && canManage
                         ? [
                             <ActionButton
                               key="verify"
@@ -673,12 +709,12 @@ export function PrivilegedAccessManager() {
 
       <PolicyDialog
         key={`policy-${policy?.policyId ?? 'closed'}`}
-        policy={policy}
+        policy={canManage ? policy : null}
         busy={busy}
         onClose={() => setPolicy(null)}
         onSave={async (changes) => {
-          if (!policy) return;
-          const saved = await run(
+          if (!canManage || !policy) return;
+          const saved = await runManaged(
             () => updatePrivilegedAccessPolicy(policy, changes),
             t('privilegedAccess.toasts.policyUpdated')
           );
@@ -687,14 +723,15 @@ export function PrivilegedAccessManager() {
       />
       <EligibilityDialog
         key={`eligibility-${eligibilityOpen ? 'open' : 'closed'}`}
-        open={eligibilityOpen}
+        open={canManage && eligibilityOpen}
         busy={busy}
         policies={policyRows}
         users={users.data?.content ?? []}
         groups={groups.data?.content ?? []}
         onClose={() => setEligibilityOpen(false)}
         onCreate={async (request) => {
-          const saved = await run(
+          if (!canManage) return;
+          const saved = await runManaged(
             () => createPrivilegedRoleEligibility(request),
             t('privilegedAccess.toasts.eligibilityCreated')
           );
@@ -703,31 +740,41 @@ export function PrivilegedAccessManager() {
       />
       <DecisionDialog
         key={`decision-${decision ? `${decision.request.requestId}:${decision.decision}` : 'closed'}`}
-        operation={decision}
+        operation={
+          decision && (decision.decision === 'REVOKE' ? canManage : canApprove) ? decision : null
+        }
         busy={busy}
         onClose={() => setDecision(null)}
         onSubmit={async (reason) => {
           if (!decision) return;
-          const saved = await run(
-            () =>
-              decision.decision === 'REVOKE'
-                ? revokePrivilegedAccessRequest(decision.request, reason)
-                : decidePrivilegedAccessRequest(decision.request, decision.decision, reason),
-            t(`privilegedAccess.toasts.${decision.decision.toLowerCase()}`)
-          );
+          const success = t(`privilegedAccess.toasts.${decision.decision.toLowerCase()}`);
+          let saved: boolean;
+          if (decision.decision === 'REVOKE') {
+            saved = await runManaged(
+              () => revokePrivilegedAccessRequest(decision.request, reason),
+              success
+            );
+          } else {
+            const decisionType = decision.decision;
+            saved = await runApproved(
+              () => decidePrivilegedAccessRequest(decision.request, decisionType, reason),
+              success
+            );
+          }
           if (saved) setDecision(null);
         }}
       />
       <BoundaryDialog
         key={`boundary-${boundaryDialog ?? 'closed'}`}
-        kind={boundaryDialog}
+        kind={canManage ? boundaryDialog : null}
         busy={busy}
         users={users.data?.content ?? []}
         onClose={() => setBoundaryDialog(null)}
         onSubmit={async (request) => {
+          if (!canManage || !boundaryDialog) return;
           let saved: boolean;
           if (boundaryDialog === 'emergency') {
-            saved = await run(
+            saved = await runManaged(
               () =>
                 registerEmergencyAccessPrincipal(
                   request as { userId: number; justification: string; reviewDueAt: string }
@@ -735,7 +782,7 @@ export function PrivilegedAccessManager() {
               t('privilegedAccess.toasts.emergencyRegistered')
             );
           } else {
-            saved = await run(
+            saved = await runManaged(
               () =>
                 createDelegatedAdminScope(
                   request as {
@@ -754,12 +801,12 @@ export function PrivilegedAccessManager() {
       />
       <RecoveryAccountVerificationDialog
         key={`recovery-verification-${recoveryVerification?.emergencyPrincipalId ?? 'closed'}`}
-        principal={recoveryVerification}
+        principal={canManage ? recoveryVerification : null}
         busy={busy}
         onClose={() => setRecoveryVerification(null)}
         onSubmit={async (request) => {
-          if (!recoveryVerification) return;
-          const saved = await run(
+          if (!canManage || !recoveryVerification) return;
+          const saved = await runManaged(
             () => verifyEmergencyAccessPrincipal(recoveryVerification, request),
             t('privilegedAccess.verification.saved')
           );

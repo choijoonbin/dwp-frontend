@@ -52,6 +52,7 @@ import {
   ProviderGovernanceMetric,
 } from './provider-data-governance-inspectors';
 import { ProviderDataPolicyStudio } from './provider-data-policy-studio';
+import { providerSafeEnumPresentation } from './provider-safe-enum-presentation';
 import { ProviderError, ProviderLoading, formatProviderDate } from './provider-ui';
 
 import type { ProviderDataAsset } from '@dwp-frontend/shared-utils';
@@ -794,20 +795,35 @@ export function ProviderDataGovernance() {
                   />
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography variant="subtitle2" fontWeight={700}>
-                      {t(`dataGovernance.categories.${finding.category}`)} ·{' '}
-                      {finding.assetKey?.split('.').at(-1) ?? finding.databaseKey}
+                      {t(
+                        `dataGovernance.categories.${providerSafeEnumPresentation(
+                          'dataFindingCategory',
+                          finding.category
+                        )}`
+                      )}{' '}
+                      · {finding.assetKey?.split('.').at(-1) ?? finding.databaseKey}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" display="block" noWrap>
                       {finding.assetKey || finding.databaseKey}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" display="block" noWrap>
-                      {t(`dataGovernance.categories.${finding.category}`)}
+                      {t(
+                        `dataGovernance.categories.${providerSafeEnumPresentation(
+                          'dataFindingCategory',
+                          finding.category
+                        )}`
+                      )}
                     </Typography>
                   </Box>
                   <Chip
                     size="small"
                     variant="outlined"
-                    label={t(`dataGovernance.severity.${finding.severity}`)}
+                    label={t(
+                      `dataGovernance.severity.${providerSafeEnumPresentation(
+                        'dataFindingSeverity',
+                        finding.severity
+                      )}`
+                    )}
                   />
                 </Stack>
               </ListItemButton>

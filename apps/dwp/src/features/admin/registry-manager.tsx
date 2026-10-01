@@ -1,4 +1,4 @@
-import { useCallback, useDeferredValue, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Archive,
@@ -19,6 +19,7 @@ import {
   updateRegistryRevision,
   retireRegistryRevision,
   activateRegistryRevision,
+  usePermissions,
 } from '@dwp-frontend/shared-utils';
 import { EnterpriseDataGrid } from '@dwp-frontend/design-system';
 
@@ -33,6 +34,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import Pagination from '@mui/material/Pagination';
 
 import {
   ManagementPanelError,
@@ -41,6 +43,12 @@ import {
 import { LifecycleChip } from './lifecycle-chip';
 import { ConfirmActionDialog } from './reference-dialogs';
 import { RegistryDialog } from './registry-dialog';
+import {
+  registryRiskColor,
+  registryRiskLabelKey,
+  registryTypeColor,
+  registryTypeLabelKey,
+} from './registry-presentation';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { RegistryEntry, RegistryType, ReferenceLifecycle } from '@dwp-frontend/shared-utils';
@@ -65,33 +73,16 @@ const registryTypes: Array<RegistryType | 'ALL'> = [
 ];
 const lifecycleStates: Array<ReferenceLifecycle | 'ALL'> = ['ALL', 'DRAFT', 'ACTIVE', 'RETIRED'];
 
-const typeColor = {
-  APP: 'info',
-  CONNECTOR: 'secondary',
-  AGENT: 'primary',
-  TOOL: 'warning',
-  POLICY: 'default',
-  API: 'primary',
-  DATA_PRODUCT: 'success',
-} as const;
-
-const riskColor = {
-  LOW: 'success',
-  MEDIUM: 'info',
-  HIGH: 'warning',
-  CRITICAL: 'error',
-} as const;
-
-function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+function errorMessage(_error: unknown, fallback: string): string {
+  return fallback;
 }
 
 function RegistryTypeChip({ type }: { type: RegistryType }) {
   const { t } = useTranslation('admin');
   return (
     <Chip
-      label={t(`registry.types.${type}`)}
-      color={typeColor[type]}
+      label={t(registryTypeLabelKey(type))}
+      color={registryTypeColor(type)}
       variant="outlined"
       size="small"
     />
@@ -102,8 +93,8 @@ function RiskChip({ entry }: { entry: RegistryEntry }) {
   const { t } = useTranslation('admin');
   return (
     <Chip
-      label={t(`registry.risk.${entry.riskTier}`)}
-      color={riskColor[entry.riskTier]}
+      label={t(registryRiskLabelKey(entry.riskTier))}
+      color={registryRiskColor(entry.riskTier)}
       variant="outlined"
       size="small"
     />
@@ -114,21 +105,44 @@ export function RegistryManager() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canManage = permissionsLoaded && hasPermission('ADMIN.PLATFORM_REGISTRY', 'MANAGE');
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('sm'));
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const [registryType, setRegistryType] = useState<RegistryType | 'ALL'>('ALL');
   const [lifecycle, setLifecycle] = useState<ReferenceLifecycle | 'ALL'>('ALL');
+  const [pagination, setPagination] = useState({ page: 0, pageSize: 25 });
   const [dialog, setDialog] = useState<RegistryDialogState>(null);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
 
   const registryQuery = useQuery({
-    queryKey: ['admin', 'registry-entries', deferredQuery, registryType, lifecycle],
-    queryFn: () => listRegistryEntries({ query: deferredQuery, registryType, lifecycle }),
+    queryKey: [
+      'admin',
+      'registry-entries',
+      deferredQuery,
+      registryType,
+      lifecycle,
+      pagination.page,
+      pagination.pageSize,
+    ],
+    queryFn: () =>
+      listRegistryEntries({
+        query: deferredQuery,
+        registryType,
+        lifecycle,
+        page: pagination.page,
+        size: pagination.pageSize,
+      }),
   });
   const entries = useMemo(() => registryQuery.data?.content ?? [], [registryQuery.data]);
+
+  useEffect(
+    () => setPagination((current) => ({ ...current, page: 0 })),
+    [deferredQuery, lifecycle, registryType]
+  );
 
   const refresh = async () => {
     await Promise.all([
@@ -138,6 +152,7 @@ export function RegistryManager() {
   };
 
   const run = async (operation: () => Promise<RegistryEntry>, message: string) => {
+    if (!canManage) return false;
     setBusy(true);
     try {
       await operation();
@@ -153,7 +168,7 @@ export function RegistryManager() {
   };
 
   const saveDialog = async (value: RegistryDialogValue) => {
-    if (!dialog) return;
+    if (!canManage || !dialog) return;
     const definition = {
       name: value.name,
       description: value.description,
@@ -188,7 +203,7 @@ export function RegistryManager() {
   };
 
   const confirmAction = async () => {
-    if (!pendingAction) return;
+    if (!canManage || !pendingAction) return;
     const completed =
       pendingAction.kind === 'activate'
         ? await run(
@@ -213,6 +228,7 @@ export function RegistryManager() {
               <IconButton
                 size="small"
                 aria-label={t('registry.actions.editNamed', { key: entry.entryKey })}
+                disabled={!canManage}
                 onClick={() => setDialog({ mode: 'edit', entry })}
               >
                 <Pencil size={17} strokeWidth={1.8} />
@@ -223,6 +239,7 @@ export function RegistryManager() {
                 size="small"
                 color="success"
                 aria-label={t('registry.actions.activateNamed', { key: entry.entryKey })}
+                disabled={!canManage}
                 onClick={() => setPendingAction({ kind: 'activate', entry })}
               >
                 <CheckCircle2 size={17} strokeWidth={1.8} />
@@ -234,6 +251,7 @@ export function RegistryManager() {
             <IconButton
               size="small"
               aria-label={t('registry.actions.createRevisionFor', { key: entry.entryKey })}
+              disabled={!canManage}
               onClick={() => setDialog({ mode: 'revision', entry })}
             >
               <CopyPlus size={17} strokeWidth={1.8} />
@@ -251,7 +269,7 @@ export function RegistryManager() {
             <IconButton
               size="small"
               aria-label={t('registry.actions.retireNamed', { key: entry.entryKey })}
-              disabled={entry.lifecycleState === 'RETIRED'}
+              disabled={!canManage || entry.lifecycleState === 'RETIRED'}
               onClick={() => setPendingAction({ kind: 'retire', entry })}
             >
               <Archive size={17} strokeWidth={1.8} />
@@ -260,7 +278,7 @@ export function RegistryManager() {
         </Tooltip>
       </Stack>
     ),
-    [t]
+    [canManage, t]
   );
 
   const columns = useMemo<GridColDef<RegistryEntry>[]>(
@@ -372,7 +390,7 @@ export function RegistryManager() {
             <Typography component="h2" variant="subtitle1">
               {t('registry.title')}
             </Typography>
-            <Chip label={entries.length} size="small" variant="outlined" />
+            <Chip label={registryQuery.data?.totalElements ?? 0} size="small" variant="outlined" />
           </Box>
           <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.5}>
             <Tooltip title={t('registry.actions.refresh')}>
@@ -386,6 +404,7 @@ export function RegistryManager() {
             <Tooltip title={t('registry.actions.newEntry')}>
               <IconButton
                 aria-label={t('registry.actions.newEntry')}
+                disabled={!canManage}
                 onClick={() => setDialog({ mode: 'create' })}
               >
                 <Plus size={19} strokeWidth={1.8} />
@@ -452,8 +471,12 @@ export function RegistryManager() {
               rows={entries}
               columns={columns}
               getRowId={(row) => `${row.registryType}/${row.entryKey}/${row.revision}`}
-              hideFooter={entries.length <= 25}
-              initialState={{ pagination: { paginationModel: { pageSize: 25, page: 0 } } }}
+              paginationMode="server"
+              rowCount={registryQuery.data?.totalElements ?? 0}
+              paginationModel={pagination}
+              onPaginationModelChange={setPagination}
+              pageSizeOptions={[25, 50, 100]}
+              hideFooter={(registryQuery.data?.totalElements ?? 0) <= pagination.pageSize}
               slots={{
                 noRowsOverlay: () => (
                   <Box sx={{ height: 1, display: 'grid', placeItems: 'center' }}>
@@ -469,73 +492,86 @@ export function RegistryManager() {
         )}
 
         {!desktop && (
-          <Box
-            component="ol"
-            aria-label={t('registry.entries')}
-            sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
-          >
-            {entries.length ? (
-              entries.map((entry) => (
-                <Box
-                  component="li"
-                  key={`${entry.registryType}/${entry.entryKey}/${entry.revision}`}
-                  sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}
-                >
-                  <Stack
-                    direction="row"
-                    alignItems="flex-start"
-                    justifyContent="space-between"
-                    gap={2}
+          <Box>
+            <Box
+              component="ol"
+              aria-label={t('registry.entries')}
+              sx={{ display: 'grid', listStyle: 'none', p: 0, m: 0 }}
+            >
+              {entries.length ? (
+                entries.map((entry) => (
+                  <Box
+                    component="li"
+                    key={`${entry.registryType}/${entry.entryKey}/${entry.revision}`}
+                    sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}
                   >
-                    <Box sx={{ minWidth: 0 }}>
-                      <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-                        <RegistryTypeChip type={entry.registryType} />
-                        <LifecycleChip state={entry.lifecycleState} />
-                      </Stack>
-                      <Typography component="h3" variant="subtitle2" sx={{ mt: 1 }}>
-                        {entry.name}
+                    <Stack
+                      direction="row"
+                      alignItems="flex-start"
+                      justifyContent="space-between"
+                      gap={2}
+                    >
+                      <Box sx={{ minWidth: 0 }}>
+                        <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                          <RegistryTypeChip type={entry.registryType} />
+                          <LifecycleChip state={entry.lifecycleState} />
+                        </Stack>
+                        <Typography component="h3" variant="subtitle2" sx={{ mt: 1 }}>
+                          {entry.name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ overflowWrap: 'anywhere' }}
+                        >
+                          {entry.entryKey}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ minWidth: 108 }}>{renderActions(entry)}</Box>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      gap={1}
+                      flexWrap="wrap"
+                      sx={{ mt: 1.5 }}
+                    >
+                      <RiskChip entry={entry} />
+                      <Typography variant="caption" color="text.secondary">
+                        {t('registry.versionSummary', {
+                          version: entry.artifactVersion,
+                          revision: entry.revision,
+                          owner: entry.ownerRef,
+                        })}
                       </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ overflowWrap: 'anywhere' }}
-                      >
-                        {entry.entryKey}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ minWidth: 108 }}>{renderActions(entry)}</Box>
-                  </Stack>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    gap={1}
-                    flexWrap="wrap"
-                    sx={{ mt: 1.5 }}
-                  >
-                    <RiskChip entry={entry} />
-                    <Typography variant="caption" color="text.secondary">
-                      {t('registry.versionSummary', {
-                        version: entry.artifactVersion,
-                        revision: entry.revision,
-                        owner: entry.ownerRef,
-                      })}
-                    </Typography>
-                  </Stack>
+                    </Stack>
+                  </Box>
+                ))
+              ) : (
+                <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('registry.noEntries')}
+                  </Typography>
                 </Box>
-              ))
-            ) : (
-              <Box component="li" sx={{ py: 6, textAlign: 'center' }}>
-                <Typography variant="body2" color="text.secondary">
-                  {t('registry.noEntries')}
-                </Typography>
-              </Box>
+              )}
+            </Box>
+            {(registryQuery.data?.totalPages ?? 0) > 1 && (
+              <Pagination
+                count={registryQuery.data?.totalPages ?? 0}
+                page={pagination.page + 1}
+                onChange={(_event, page) =>
+                  setPagination((current) => ({ ...current, page: page - 1 }))
+                }
+                aria-label={t('registry.paginationLabel')}
+                sx={{ display: 'flex', justifyContent: 'center', p: 2 }}
+              />
             )}
           </Box>
         )}
       </Box>
 
       <RegistryDialog
-        open={Boolean(dialog)}
+        open={canManage && Boolean(dialog)}
         mode={dialog?.mode ?? 'create'}
         value={dialog?.entry}
         busy={busy}
@@ -543,7 +579,7 @@ export function RegistryManager() {
         onSubmit={saveDialog}
       />
 
-      {confirmCopy && (
+      {canManage && confirmCopy && (
         <ConfirmActionDialog
           open
           title={confirmCopy.title}

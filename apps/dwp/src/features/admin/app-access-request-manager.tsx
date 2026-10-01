@@ -20,6 +20,7 @@ import {
   GuidedEmptyState,
 } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -33,6 +34,11 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { hasFullTenantAdminRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
+import {
+  appAccessFulfillmentDescriptionKey,
+  appAccessFulfillmentStateLabelKey,
+  appAccessRequestStateLabelKey,
+} from './app-access-request-presentation';
 
 import type { AppAccessRequest, IdentityUserAccess } from '@dwp-frontend/shared-utils';
 
@@ -163,7 +169,8 @@ export function AppAccessRequestManager() {
     queryFn: () => listIdentityUsers(),
     enabled: hasFullTenantAdminRole(auth.user?.roles ?? []),
   });
-  const allRequests = requestsQuery.data ?? [];
+  const requestPage = requestsQuery.data;
+  const allRequests = requestPage?.items ?? [];
   const requests =
     state === 'ALL' ? allRequests : allRequests.filter((request) => request.state === state);
   const selected =
@@ -185,8 +192,8 @@ export function AppAccessRequestManager() {
       await refresh();
       setDecision(null);
       toast.success(t(`appAccess.toasts.${decision === 'APPROVED' ? 'approved' : 'rejected'}`));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('common.operationError'));
+    } catch {
+      toast.error(t('common.operationError'));
     } finally {
       setBusy(false);
     }
@@ -209,8 +216,8 @@ export function AppAccessRequestManager() {
           t(`appAccess.toasts.${fulfillmentOperation === 'FULFILL' ? 'fulfilled' : 'revoked'}`)
         );
       }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('common.operationError'));
+    } catch {
+      toast.error(t('common.operationError'));
     } finally {
       setBusy(false);
     }
@@ -220,12 +227,7 @@ export function AppAccessRequestManager() {
     return <ManagementPanelLoading label={t('appAccess.loading')} />;
   }
   if (requestsQuery.isError || (usersQuery.isError && usersQuery.fetchStatus !== 'idle')) {
-    const error = requestsQuery.error ?? usersQuery.error;
-    return (
-      <ManagementPanelError
-        message={error instanceof Error ? error.message : t('common.operationError')}
-      />
-    );
+    return <ManagementPanelError message={t('common.operationError')} />;
   }
 
   const selectedUser: IdentityUserAccess | null = selected
@@ -292,11 +294,17 @@ export function AppAccessRequestManager() {
                 {t(`appAccess.states.${candidate}`)}
               </Typography>
               <Typography variant="h6" sx={{ mt: 0.25 }}>
-                {count}
+                {requestPage?.hasMore ? `${count}+` : count}
               </Typography>
             </Box>
           ))}
         </Box>
+
+        {requestPage?.hasMore && (
+          <Alert severity="warning">
+            {t('appAccess.partialCoverage', { count: requestPage.limit })}
+          </Alert>
+        )}
 
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
@@ -394,7 +402,7 @@ export function AppAccessRequestManager() {
                                 ? 'success'
                                 : 'default'
                           }
-                          label={t(`appAccess.states.${request.state}`)}
+                          label={t(appAccessRequestStateLabelKey(request.state))}
                         />
                       </Stack>
                       <Typography
@@ -428,7 +436,7 @@ export function AppAccessRequestManager() {
                     </Typography>
                   </Box>
                   <Chip
-                    label={t(`appAccess.states.${selected.state}`)}
+                    label={t(appAccessRequestStateLabelKey(selected.state))}
                     color={
                       selected.state === 'PENDING'
                         ? 'warning'
@@ -462,7 +470,7 @@ export function AppAccessRequestManager() {
                     ],
                     [
                       t('appAccess.fields.fulfillment'),
-                      t(`appAccess.fulfillmentStates.${selected.fulfillmentState}`),
+                      t(appAccessFulfillmentStateLabelKey(selected.fulfillmentState)),
                     ],
                     [t('appAccess.fields.attempts'), String(selected.fulfillmentAttempts)],
                   ].map(([label, value]) => (
@@ -535,7 +543,7 @@ export function AppAccessRequestManager() {
                           {t('appAccess.fulfillment.title')}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                          {t(`appAccess.fulfillmentDescriptions.${selected.fulfillmentState}`)}
+                          {t(appAccessFulfillmentDescriptionKey(selected.fulfillmentState))}
                         </Typography>
                       </Box>
                       {canFulfillSelected ? (
@@ -565,9 +573,16 @@ export function AppAccessRequestManager() {
           </Box>
         ) : (
           <GuidedEmptyState
-            kind="empty"
-            title={t('appAccess.empty.title')}
-            description={t('appAccess.empty.description')}
+            kind={requestPage?.hasMore ? 'no-results' : 'empty'}
+            title={t(
+              requestPage?.hasMore ? 'appAccess.empty.partialTitle' : 'appAccess.empty.title'
+            )}
+            description={t(
+              requestPage?.hasMore
+                ? 'appAccess.empty.partialDescription'
+                : 'appAccess.empty.description',
+              { count: requestPage?.limit ?? 0 }
+            )}
             size="standard"
           />
         )}

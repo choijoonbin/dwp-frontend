@@ -38,6 +38,11 @@ import {
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
 import { RiskScore, severityColor } from './audit-ui';
+import {
+  auditCategoryLabelKey,
+  auditSeverityLabelKey,
+  auditSourceServiceLabelKey,
+} from './audit-runtime-presentation';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
 
 import type { AuditOverview as AuditOverviewData, AuditWindow } from '@dwp-frontend/shared-utils';
@@ -497,7 +502,7 @@ export function AuditOverview() {
                       size="small"
                       variant="outlined"
                       color={severityColor(finding.severity)}
-                      label={t(`auditControl.severity.${finding.severity}`)}
+                      label={t(auditSeverityLabelKey(finding.severity))}
                     />
                     <Typography component="p" variant="subtitle2" noWrap>
                       {finding.title}
@@ -541,7 +546,7 @@ export function AuditOverview() {
           icon={Layers3}
           title={t('auditControl.overview.riskDomains')}
           data={data.categories}
-          translate={(key) => t(`auditControl.category.${key}`)}
+          translate={(key) => t(auditCategoryLabelKey(key))}
         />
         <DimensionBars
           icon={UserRound}
@@ -567,7 +572,7 @@ export function AuditOverview() {
                   }}
                 />
                 <Typography variant="body2" noWrap flex={1}>
-                  {source.sourceService}
+                  {t(auditSourceServiceLabelKey(source.sourceService))}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   {formatNumber(source.eventCount24h)}

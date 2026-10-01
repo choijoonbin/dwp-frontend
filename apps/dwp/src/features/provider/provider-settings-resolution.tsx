@@ -26,9 +26,12 @@ import type { ProviderTenant } from '@dwp-frontend/shared-utils';
 
 import { formatProviderDate, providerError, ProviderSectionHeading } from './provider-ui';
 import {
-  displayProviderSettingValue,
+  providerSettingMetadataPresentation,
   providerSettingManagementPath,
   providerSettingStateTone,
+  providerSettingValuePresentation,
+  providerSettingWorkflowStatePresentation,
+  type ProviderSettingMetadataKind,
   resolveProviderSettingTenantTarget,
 } from './provider-settings-resolution-model';
 import { ProviderTenantPicker } from './provider-tenant-picker';
@@ -137,6 +140,25 @@ export function ProviderSettingsResolution({
     ? providerSettingManagementPath(definition.owner.managementPath)
     : null;
   const catalogDenied = errorStatus(catalog.error) === 403;
+  const metadataLabel = (kind: ProviderSettingMetadataKind, value: string) => {
+    const safeValue = providerSettingMetadataPresentation(kind, value);
+    return safeValue === 'UNAVAILABLE_VALUE'
+      ? t('settingsResolution.metadata.unavailable')
+      : t(`settingsResolution.metadata.${kind}.${safeValue}`);
+  };
+  const effectiveValue = providerSettingValuePresentation(resolution.data?.effectiveValue);
+  const safeResolutionState = providerSettingWorkflowStatePresentation(
+    'resolution',
+    resolution.data?.resolutionState ?? 'UNAVAILABLE_STATE'
+  );
+  const safeDesiredState = providerSettingWorkflowStatePresentation(
+    'desired',
+    applicationStatus?.desiredState ?? 'NONE'
+  );
+  const safeApplicationState = providerSettingWorkflowStatePresentation(
+    'application',
+    applicationStatus?.state ?? 'NOT_CONFIGURED'
+  );
 
   return (
     <Paper component="section" variant="outlined" sx={{ p: 2, minWidth: 0 }}>
@@ -275,13 +297,25 @@ export function ProviderSettingsResolution({
                 <Typography component="h3" variant="subtitle1" fontWeight="fontWeightBold">
                   {definition.displayName}
                 </Typography>
-                <Chip size="small" variant="outlined" label={definition.owner.service} />
-                <Chip size="small" variant="outlined" label={definition.validation.valueType} />
-                <Chip size="small" variant="outlined" label={definition.change.riskTier} />
                 <Chip
                   size="small"
                   variant="outlined"
-                  label={t(`settingsResolution.lifecycle.${definition.lifecycleState}`)}
+                  label={t('settingsResolution.metadata.registeredOwner')}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={metadataLabel('valueType', definition.validation.valueType)}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={metadataLabel('riskTier', definition.change.riskTier)}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={metadataLabel('lifecycle', definition.lifecycleState)}
                 />
               </Stack>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
@@ -295,7 +329,7 @@ export function ProviderSettingsResolution({
                 {t('settingsResolution.definitionMeta', {
                   id: definition.settingId,
                   version: definition.definitionVersion,
-                  workflow: definition.change.workflow,
+                  workflow: metadataLabel('workflow', definition.change.workflow),
                 })}
               </Typography>
             </Box>
@@ -344,8 +378,8 @@ export function ProviderSettingsResolution({
                     ) : undefined
                   }
                 >
-                  {t(`settingsResolution.resolution.${resolution.data.resolutionState}`, {
-                    reason: resolution.data.reasonCode,
+                  {t(`settingsResolution.resolution.${safeResolutionState}`, {
+                    reason: metadataLabel('resolutionReason', resolution.data.reasonCode),
                   })}
                 </InlineFeedback>
               )}
@@ -374,9 +408,7 @@ export function ProviderSettingsResolution({
                     <Chip
                       size="small"
                       variant="outlined"
-                      label={t(
-                        `settingsResolution.desiredStates.${applicationStatus?.desiredState ?? 'NONE'}`
-                      )}
+                      label={t(`settingsResolution.desiredStates.${safeDesiredState}`)}
                     />
                   }
                   version={t('settingsResolution.version', {
@@ -402,9 +434,7 @@ export function ProviderSettingsResolution({
                       size="small"
                       variant="outlined"
                       color={resolution.data.resolutionState === 'RESOLVED' ? 'success' : 'warning'}
-                      label={t(
-                        `settingsResolution.resolutionStates.${resolution.data.resolutionState}`
-                      )}
+                      label={t(`settingsResolution.resolutionStates.${safeResolutionState}`)}
                     />
                   }
                   version={t('settingsResolution.version', {
@@ -412,12 +442,15 @@ export function ProviderSettingsResolution({
                   })}
                 >
                   {resolution.data.resolutionState === 'RESOLVED' && (
-                    <Typography
-                      component="pre"
-                      variant="body2"
-                      sx={{ m: 0, mt: 1, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
-                    >
-                      {displayProviderSettingValue(resolution.data.effectiveValue)}
+                    <Typography variant="body2" sx={{ mt: 1, overflowWrap: 'anywhere' }}>
+                      {effectiveValue.kind === 'scalar'
+                        ? effectiveValue.value
+                        : effectiveValue.kind === 'collection'
+                          ? t('settingsResolution.effective.collectionSummary', {
+                              type: metadataLabel('valueType', effectiveValue.collection),
+                              count: effectiveValue.count,
+                            })
+                          : t('settingsResolution.effective.valueUnavailable')}
                     </Typography>
                   )}
                 </DetailBlock>
@@ -429,7 +462,7 @@ export function ProviderSettingsResolution({
                         size="small"
                         variant="outlined"
                         color={providerSettingStateTone(applicationStatus.state)}
-                        label={t(`settingsResolution.applicationStates.${applicationStatus.state}`)}
+                        label={t(`settingsResolution.applicationStates.${safeApplicationState}`)}
                       />
                     ) : (
                       <Chip
@@ -509,14 +542,14 @@ export function ProviderSettingsResolution({
                           size="small"
                           variant="outlined"
                           icon={<Braces size={13} aria-hidden="true" />}
-                          label={`${entry.precedence} · ${entry.sourceType}`}
+                          label={`${entry.precedence} · ${metadataLabel('sourceType', entry.sourceType)}`}
                         />
                         <Box sx={{ minWidth: 0 }}>
                           <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
                             {entry.sourceId}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {entry.decisionCode}
+                            {metadataLabel('decisionCode', entry.decisionCode)}
                           </Typography>
                         </Box>
                         <Typography variant="caption" color="text.secondary">

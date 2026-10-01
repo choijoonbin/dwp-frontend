@@ -6,6 +6,10 @@ import Typography from '@mui/material/Typography';
 
 import { ProviderStatusChip } from './provider-ui';
 import { providerTenantServiceHealth } from './provider-tenant-estate-model';
+import {
+  providerIsolationLabel,
+  providerServiceTierLabel,
+} from './provider-operation-presentation';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { ProviderTenant } from '@dwp-frontend/shared-utils';
@@ -41,14 +45,14 @@ export function useProviderTenantColumns(): GridColDef<ProviderTenant>[] {
         field: 'serviceTier',
         headerName: t('tenants.columns.tier'),
         width: 130,
-        valueFormatter: (value: string) => t(`tiers.${value}`, { defaultValue: value }),
+        valueFormatter: (value: string) => providerServiceTierLabel(t, value),
       },
       { field: 'dataRegion', headerName: t('tenants.columns.region'), width: 145 },
       {
         field: 'isolationModel',
         headerName: t('tenants.columns.isolation'),
         width: 120,
-        valueFormatter: (value: string) => t(`isolation.${value}`, { defaultValue: value }),
+        valueFormatter: (value: string) => providerIsolationLabel(t, value),
       },
       {
         field: 'serviceHealth',

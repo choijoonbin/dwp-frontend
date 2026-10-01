@@ -361,6 +361,13 @@ export type AuditIntegrityCheckpoint = {
   verifiedAt?: string | null;
 };
 
+export type AuditIntegrityCheckpointPage = {
+  items: AuditIntegrityCheckpoint[];
+  limit: number;
+  hasMore: boolean;
+  coverageState: 'COMPLETE_WITHIN_FILTER' | 'TRUNCATED_AT_LIMIT';
+};
+
 export type AuditFilters = {
   window: AuditWindow;
   category?: AuditCategory;
@@ -696,15 +703,15 @@ export async function rollbackAuditPolicyRevision(
   return response.data.data;
 }
 
-export async function listAuditIntegrity(): Promise<AuditIntegrityCheckpoint[]> {
-  const response = await axiosInstance.get<ApiResponse<AuditIntegrityCheckpoint[]>>(
+export async function listAuditIntegrity(): Promise<AuditIntegrityCheckpointPage> {
+  const response = await axiosInstance.get<ApiResponse<AuditIntegrityCheckpointPage>>(
     '/api/platform/v1/admin/audit-control/integrity'
   );
   return response.data.data;
 }
 
-export async function createAuditCheckpoint(): Promise<AuditIntegrityCheckpoint[]> {
-  const response = await axiosInstance.post<ApiResponse<AuditIntegrityCheckpoint[]>, undefined>(
+export async function createAuditCheckpoint(): Promise<AuditIntegrityCheckpointPage> {
+  const response = await axiosInstance.post<ApiResponse<AuditIntegrityCheckpointPage>, undefined>(
     '/api/platform/v1/admin/audit-control/integrity/checkpoint',
     undefined
   );

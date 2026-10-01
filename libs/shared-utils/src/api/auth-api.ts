@@ -45,6 +45,10 @@ export type MeResponse = {
   personPublicId?: string | null;
   displayName: string;
   jobTitle?: string | null;
+  department?: string | null;
+  workerNumber?: string | null;
+  identitySourceType?: string | null;
+  mfaEnabled?: boolean;
   preferredLocale?: string | null;
   tenantDefaultLocale?: string | null;
   email?: string | null;

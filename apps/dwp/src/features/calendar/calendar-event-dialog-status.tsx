@@ -4,7 +4,7 @@ import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 
 import Stack from '@mui/material/Stack';
 
-export type CalendarEventSaveFailureKind = 'AUTHORITY_REVOKED' | 'VERSION_CONFLICT' | 'OTHER';
+type CalendarEventSaveFailureKind = 'AUTHORITY_REVOKED' | 'VERSION_CONFLICT' | 'OTHER';
 
 export function calendarEventSaveFailureKind(error: unknown): CalendarEventSaveFailureKind {
   if (!(error instanceof HttpError)) return 'OTHER';

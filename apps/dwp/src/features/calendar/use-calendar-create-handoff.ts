@@ -28,7 +28,7 @@ import {
   type CalendarWorkHandoffReturnTarget,
 } from './calendar-work-handoff';
 
-export type CalendarCreateState = Readonly<{
+type CalendarCreateState = Readonly<{
   start: string;
   end?: string;
   type: CalendarEventType;

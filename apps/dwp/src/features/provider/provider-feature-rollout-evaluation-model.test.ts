@@ -1,12 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  providerFeatureEvaluationReason,
   providerFeatureEvaluationResultMatches,
   providerFeatureEvaluationSelectionMatches,
+  providerFeatureValuePresentation,
   resolveProviderFeatureEvaluationOption,
 } from './provider-feature-rollout-evaluation-model';
 
 describe('provider feature rollout evaluation model', () => {
+  it('summarizes structured values without exposing raw JSON and fails closed on reasons', () => {
+    expect(providerFeatureValuePresentation(true)).toEqual({ kind: 'scalar', value: 'true' });
+    expect(providerFeatureValuePresentation({ enabled: true })).toEqual({
+      kind: 'collection',
+      collection: 'OBJECT',
+      count: 1,
+    });
+    expect(providerFeatureEvaluationReason('ROLLOUT_MATCH')).toBe('ROLLOUT_MATCH');
+    expect(providerFeatureEvaluationReason('INTERNAL_NEW_REASON')).toBe('UNAVAILABLE');
+  });
+
   it('adopts the first async option and replaces a removed selection', () => {
     expect(resolveProviderFeatureEvaluationOption('', [])).toBe('');
     expect(resolveProviderFeatureEvaluationOption('', ['flag-a', 'flag-b'])).toBe('flag-a');

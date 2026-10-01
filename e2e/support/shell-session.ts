@@ -26,14 +26,19 @@ import {
 } from './product-area-fixtures';
 import { resolveMenuRouteProductFixture } from './menu-route-product-fixtures';
 import { resolveApprovalShellFixture } from './approval-shell-fixtures';
-import { fulfillSuccess } from './shell-session-contracts';
-
+import {
+  PRODUCTIVITY_RUNS,
+  PRODUCTIVITY_SUBJECTS,
+  PROVIDER_GOV,
+  fulfillSuccess,
+  identity,
+  integrityPage,
+  scimPage,
+} from './shell-session-contracts';
 export { fulfillSuccess } from './shell-session-contracts';
-
 import type { Page } from '@playwright/test';
 import type { LocalizationRevision, PreferenceExceptionRequest } from '@dwp-frontend/shared-utils';
 import type { MockHomeSurface, ShellSessionOptions } from './shell-session-contracts';
-
 export const FULL_PRODUCT_PERMISSIONS = [
   ...DEFAULT_APP_PERMISSIONS,
   ...['APP.MEETINGS', 'APP.MESSAGING', 'APP.NOTIFICATIONS'].map((resourceKey) => ({
@@ -1221,6 +1226,7 @@ export async function mockShellSession(
         displayName: options.displayName ?? (provider ? 'Provider Admin' : 'Tenant Admin'),
         jobTitle:
           options.jobTitle ?? (provider ? 'Platform operations lead' : 'Tenant administrator'),
+        ...identity(provider, options),
         email: options.email ?? (provider ? 'provider.admin@dwp.local' : 'tenant.admin@dwp.local'),
         tenantId: 1,
         tenantCode: 'default',
@@ -2501,7 +2507,7 @@ export async function mockShellSession(
       ]);
     }
     if (path === '/api/platform/v1/admin/saved-view-ownership/orphaned/actions') {
-      return fulfillSuccess(route, []);
+      return fulfillSuccess(route, { items: [], limit: 50, hasMore: false });
     }
     if (path === '/api/platform/v1/admin/saved-view-ownership/orphaned') {
       return fulfillSuccess(route, [
@@ -2517,20 +2523,24 @@ export async function mockShellSession(
       ]);
     }
     if (path === '/api/platform/v1/admin/saved-view-ownership/transfers') {
-      return fulfillSuccess(route, [
-        {
-          transferBatchId: '58000000-0000-0000-0000-000000000001',
-          sourceOwnerUserId: 42,
-          targetOwnerUserId: 1,
-          disposition: 'TRANSFER',
-          reasonCode: 'OFFBOARDING',
-          sourceReference: 'HR-OFFBOARDING-2026-0810',
-          retentionUntil: null,
-          transferredCount: 4,
-          createdAt: '2026-08-10T03:10:00Z',
-          createdBy: 1,
-        },
-      ]);
+      return fulfillSuccess(route, {
+        items: [
+          {
+            transferBatchId: '58000000-0000-0000-0000-000000000001',
+            sourceOwnerUserId: 42,
+            targetOwnerUserId: 1,
+            disposition: 'TRANSFER',
+            reasonCode: 'OFFBOARDING',
+            sourceReference: 'HR-OFFBOARDING-2026-0810',
+            retentionUntil: null,
+            transferredCount: 4,
+            createdAt: '2026-08-10T03:10:00Z',
+            createdBy: 1,
+          },
+        ],
+        limit: 50,
+        hasMore: false,
+      });
     }
     if (path === '/api/auth/admin/identity/roles') {
       return fulfillSuccess(route, []);
@@ -2559,7 +2569,7 @@ export async function mockShellSession(
       return fulfillSuccess(route, []);
     }
     if (path === '/api/auth/admin/provisioning/scim/connectors/events') {
-      return fulfillSuccess(route, []);
+      return fulfillSuccess(route, scimPage([]));
     }
     if (path === '/api/platform/v1/admin/announcements') {
       return fulfillSuccess(route, []);
@@ -2712,37 +2722,10 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/platform/v1/admin/integrations/productivity/subjects') {
-      return fulfillSuccess(route, [
-        {
-          subjectId: 'subject-1',
-          connectorId: 'connector-microsoft-graph',
-          userId: 1,
-          consentState: 'CONNECTED',
-          grantedScopes: ['Mail.Read', 'Calendars.Read'],
-          tokenExpiresAt: '2026-08-11T01:00:00Z',
-          lastSuccessfulSyncAt: '2026-08-10T23:58:00Z',
-        },
-      ]);
+      return fulfillSuccess(route, PRODUCTIVITY_SUBJECTS);
     }
     if (path === '/api/platform/v1/admin/integrations/productivity/runs') {
-      return fulfillSuccess(route, [
-        {
-          runId: 'productivity-run-1',
-          connectorId: 'connector-microsoft-graph',
-          userId: 1,
-          resourceKind: 'CALENDAR',
-          syncMode: 'DELTA',
-          runState: 'SUCCEEDED',
-          startedAt: '2026-08-10T23:57:00Z',
-          completedAt: '2026-08-10T23:58:00Z',
-          upsertCount: 18,
-          deleteCount: 1,
-          skipCount: 4,
-          errorCount: 0,
-          partialResult: false,
-          correlationId: 'corr-productivity-1',
-        },
-      ]);
+      return fulfillSuccess(route, PRODUCTIVITY_RUNS);
     }
     if (path === '/api/platform/v1/admin/api-history/overview') {
       return fulfillSuccess(route, {
@@ -3036,10 +3019,12 @@ export async function mockShellSession(
     if (
       path === '/api/platform/v1/admin/audit-control/saved-searches' ||
       path === '/api/platform/v1/admin/audit-control/findings' ||
-      path === '/api/platform/v1/admin/audit-control/cases' ||
-      path === '/api/platform/v1/admin/audit-control/integrity'
+      path === '/api/platform/v1/admin/audit-control/cases'
     ) {
       return fulfillSuccess(route, []);
+    }
+    if (path === '/api/platform/v1/admin/audit-control/integrity') {
+      return fulfillSuccess(route, integrityPage([]));
     }
     if (path === '/api/platform/v1/admin/audit-control/overview') {
       return fulfillSuccess(route, {
@@ -3163,6 +3148,7 @@ export async function mockShellSession(
           'FEATURE_ROLLOUT_WRITE',
           'FEATURE_ROLLOUT_APPROVE',
           'AUDIT_READ',
+          ...PROVIDER_GOV,
         ],
       });
     }
@@ -4152,6 +4138,5 @@ export async function mockShellSession(
       body: JSON.stringify({ status: 'ERROR', message: 'Not required by shell contract test' }),
     });
   });
-  // Register this last so the broad shell API fallback cannot shadow the authority fixture.
-  await mockLegacyProductSurfaceAuthority(page);
+  await mockLegacyProductSurfaceAuthority(page); // Registered last so the broad fallback cannot shadow it.
 }

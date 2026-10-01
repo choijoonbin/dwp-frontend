@@ -3,7 +3,7 @@ import type { CalendarEvent, CalendarResponseStatus } from '@dwp-frontend/shared
 export type CalendarInvitationFilter =
   'ALL' | 'NEEDS_ACTION' | 'ACCEPTED' | 'TENTATIVE' | 'DECLINED';
 
-export type CalendarPlanningEvents = Readonly<{
+type CalendarPlanningEvents = Readonly<{
   focus: readonly CalendarEvent[];
   tasks: readonly CalendarEvent[];
 }>;

@@ -127,15 +127,16 @@ export function hasProviderControlPlaneRole(roles: readonly string[]): boolean {
 }
 
 export function canEnterTenantControlPlane(
-  roles: readonly string[],
-  administrationAppEntitled: boolean,
-  _hasActiveSupportSession = false,
-  resourceRoles: readonly ResourceRoleDTO[] = []
+  identity:
+    | Pick<MeResponse, 'identityPlane' | 'roles' | 'resourceRoles'>
+    | null
+    | undefined,
+  hasAuthorizedAdministrationEntry: boolean
 ): boolean {
-  if (hasProviderControlPlaneRole(roles)) return false;
+  if (!isTenantIdentity(identity)) return false;
   return (
-    (hasTenantControlPlaneRole(roles) && administrationAppEntitled) ||
-    resourceRoles.some((role) =>
+    hasAuthorizedAdministrationEntry ||
+    (identity.resourceRoles ?? []).some((role) =>
       COMPANY_APP_GOVERNANCE_RESPONSIBILITIES.includes(
         role.responsibilityCode as (typeof COMPANY_APP_GOVERNANCE_RESPONSIBILITIES)[number]
       )

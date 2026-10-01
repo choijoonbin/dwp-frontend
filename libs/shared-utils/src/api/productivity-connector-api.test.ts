@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   beginWorkspaceProductivityAuthorization,
   disconnectWorkspaceProductivityConnection,
+  listProductivityRuns,
+  listProductivitySubjects,
   listWorkspaceProductivityConnections,
   syncWorkspaceProductivityConnection,
   syncWorkspaceProductivityResources,
@@ -32,6 +34,25 @@ beforeEach(() => {
 });
 
 describe('workspace productivity connection API', () => {
+  it('preserves bounded admin subject and run coverage metadata', async () => {
+    const subjects = { items: [], hasMore: true, limit: 200 };
+    const runs = { items: [], hasMore: false, limit: 200 };
+    http.get
+      .mockResolvedValueOnce({ data: { data: subjects } })
+      .mockResolvedValueOnce({ data: { data: runs } });
+
+    await expect(listProductivitySubjects(200)).resolves.toEqual(subjects);
+    await expect(listProductivityRuns(200)).resolves.toEqual(runs);
+    expect(http.get).toHaveBeenNthCalledWith(
+      1,
+      '/api/platform/v1/admin/integrations/productivity/subjects?limit=200'
+    );
+    expect(http.get).toHaveBeenNthCalledWith(
+      2,
+      '/api/platform/v1/admin/integrations/productivity/runs?limit=200'
+    );
+  });
+
   it('reads the current user connection DTO from the workspace owner route', async () => {
     http.get.mockResolvedValue({ data: { data: [connection] } });
 

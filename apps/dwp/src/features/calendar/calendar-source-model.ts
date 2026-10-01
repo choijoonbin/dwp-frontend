@@ -2,7 +2,7 @@ import type { CalendarEvent, CalendarSummary } from '@dwp-frontend/shared-utils'
 
 export type CalendarSourceGroupKey = 'favorites' | 'company' | 'mine' | 'shared' | 'team';
 
-export type CalendarSourceGroup = Readonly<{
+type CalendarSourceGroup = Readonly<{
   key: CalendarSourceGroupKey;
   calendars: readonly CalendarSummary[];
 }>;
@@ -77,8 +77,7 @@ export function calendarCanManageSharing(calendar: CalendarSummary): boolean {
 
 export function eventCapability(
   event: CalendarEvent,
-  capability: keyof NonNullable<CalendarEvent['capabilities']>,
-  legacyFallback = false
+  capability: keyof NonNullable<CalendarEvent['capabilities']>
 ): boolean {
-  return event.capabilities ? event.capabilities[capability] : legacyFallback;
+  return event.capabilities?.[capability] === true;
 }

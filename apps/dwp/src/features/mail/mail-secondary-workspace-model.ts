@@ -1,4 +1,4 @@
-import type { MailAccount, MailDeliveryState, MailThread } from '@dwp-frontend/shared-utils';
+import type { MailDeliveryState } from '@dwp-frontend/shared-utils';
 
 export type MailSecondaryView =
   | 'search'
@@ -131,13 +131,6 @@ export function getMailSecondaryView(view: MailSecondaryView): MailSecondaryView
   return MAIL_SECONDARY_VIEWS.find((item) => item.view === view)!;
 }
 
-export function resolveMailSecondaryView(pathname: string): MailSecondaryView | null {
-  const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
-  if (normalized === '/mail/organization') return 'folders';
-  const descriptor = MAIL_SECONDARY_VIEWS.find((item) => item.path.split('?')[0] === normalized);
-  return descriptor?.view ?? null;
-}
-
 export type MailDeliveryPresentation = {
   severity: 'default' | 'info' | 'success' | 'warning' | 'error';
   labelKey: string;
@@ -200,20 +193,4 @@ const DELIVERY_PRESENTATIONS: Record<MailDeliveryState, MailDeliveryPresentation
 
 export function mailDeliveryPresentation(state: MailDeliveryState): MailDeliveryPresentation {
   return DELIVERY_PRESENTATIONS[state];
-}
-
-export function mailAccountReadiness(account: MailAccount): MailSecondaryCapabilityState {
-  return account.connectionState === 'ACTIVE' && account.synchronizationState === 'READY'
-    ? 'AVAILABLE'
-    : 'READ_ONLY';
-}
-
-export function mailThreadAccessibleName(thread: MailThread) {
-  const sender = thread.participants[0]?.name ?? thread.accountName;
-  const states = [
-    thread.unread ? 'unread' : 'read',
-    thread.attachments ? 'has attachment' : null,
-    thread.assignedName ? `assigned to ${thread.assignedName}` : null,
-  ].filter(Boolean);
-  return `${sender}, ${thread.subject}, ${states.join(', ')}`;
 }

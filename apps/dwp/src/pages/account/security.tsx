@@ -47,10 +47,19 @@ import type { AuthSessionData, SessionDevice } from '@dwp-frontend/shared-utils'
 import type { LucideIcon } from 'lucide-react';
 
 import { MyPrivilegedAccess } from '../../features/account/my-privileged-access';
+import { identityProviderProtocol } from './account-settings-state-presentation';
 
 type PendingAction = { kind: 'session'; session: AuthSessionData } | { kind: 'others' } | null;
 
 const iconProps = { size: 20, strokeWidth: 1.8, 'aria-hidden': true } as const;
+const LOGIN_METHOD_LABEL_KEYS: Record<string, string> = {
+  LOCAL: 'security.posture.methods.LOCAL',
+  SSO: 'security.posture.methods.SSO',
+};
+
+function loginMethodLabelKey(method: string): string {
+  return LOGIN_METHOD_LABEL_KEYS[method] ?? 'security.posture.methods.UNAVAILABLE';
+}
 
 function DeviceIcon({ kind }: { kind: SessionDevice['kind'] }) {
   if (kind === 'mobile') return <Smartphone {...iconProps} />;
@@ -153,6 +162,8 @@ export default function SecurityPage() {
     () => sessions.filter((session) => !session.current).length,
     [sessions]
   );
+  const initialSessionLoad = isLoading && sessions.length === 0;
+  const hasCachedSessions = hasError && sessions.length > 0;
 
   const loadSessions = useCallback(async () => {
     setIsLoading(true);
@@ -284,10 +295,10 @@ export default function SecurityPage() {
               icon={KeyRound}
               title={t('security.posture.signInMethods')}
               value={policyQuery.data.allowedLoginTypes
-                .map((method) => t(`security.posture.methods.${method}`))
+                .map((method) => t(loginMethodLabelKey(method)))
                 .join(' + ')}
               detail={t('security.posture.signInMethodsDetail', {
-                defaultMethod: t(`security.posture.methods.${policyQuery.data.defaultLoginType}`),
+                defaultMethod: t(loginMethodLabelKey(policyQuery.data.defaultLoginType)),
               })}
               state="healthy"
             />
@@ -306,7 +317,9 @@ export default function SecurityPage() {
                     ? t('security.posture.idpLoading')
                     : idpQuery.data
                       ? t('security.posture.ssoDetail', {
-                          protocol: idpQuery.data.providerType,
+                          protocol: t(
+                            `security.posture.protocols.${identityProviderProtocol(idpQuery.data.providerType)}`
+                          ),
                         })
                       : ssoConfigured
                         ? t('security.posture.idpNotObserved')
@@ -325,6 +338,19 @@ export default function SecurityPage() {
               detail={t('security.posture.mfaDetail')}
               state="managed"
             />
+            <SecurityPostureRow
+              icon={Smartphone}
+              title={t('security.posture.mfaEnrollment')}
+              value={
+                typeof auth.user?.mfaEnabled === 'boolean'
+                  ? auth.user.mfaEnabled
+                    ? t('security.posture.mfaEnrolled')
+                    : t('security.posture.mfaNotEnrolled')
+                  : t('security.posture.mfaEnrollmentUnavailable')
+              }
+              detail={t('security.posture.mfaEnrollmentDetail')}
+              state={auth.user?.mfaEnabled ? 'healthy' : 'attention'}
+            />
           </Stack>
         ) : null}
       </Box>
@@ -342,7 +368,7 @@ export default function SecurityPage() {
 
       {hasError && (
         <Alert
-          severity="error"
+          severity={hasCachedSessions ? 'warning' : 'error'}
           sx={{ mt: 3 }}
           action={
             <Button
@@ -355,15 +381,15 @@ export default function SecurityPage() {
             </Button>
           }
         >
-          {t('security.errors.load')}
+          {t(hasCachedSessions ? 'security.errors.stale' : 'security.errors.load')}
         </Alert>
       )}
 
-      {isLoading ? (
+      {initialSessionLoad ? (
         <Box sx={{ minHeight: 180, display: 'grid', placeItems: 'center' }}>
           <CircularProgress size={28} aria-label={t('security.loading')} />
         </Box>
-      ) : (
+      ) : sessions.length > 0 ? (
         <Box
           component="ul"
           aria-label={t('security.activeSessions')}
@@ -472,7 +498,16 @@ export default function SecurityPage() {
             );
           })}
         </Box>
-      )}
+      ) : !hasError ? (
+        <Box sx={{ py: 4, borderBottom: 1, borderColor: 'divider' }}>
+          <Typography component="h3" variant="subtitle2">
+            {t('security.emptyTitle')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            {t('security.emptyDescription')}
+          </Typography>
+        </Box>
+      ) : null}
 
       <Dialog
         open={Boolean(pendingAction)}

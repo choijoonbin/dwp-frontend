@@ -145,12 +145,19 @@
     "title": "검증된 업무 템플릿",
     "description": "게시된 템플릿은 개인 사본으로 적용되며 원본과 이후 변경이 분리됩니다.",
     "empty": "현재 사용할 수 있는 템플릿이 없습니다.",
+    "partial": "템플릿이 {{limit}}개보다 많아 첫 페이지만 표시합니다.",
     "apply": "내 홈에 적용",
     "draftFromCurrent": "현재 홈으로 초안 만들기",
     "publish": "게시",
     "revoke": "회수",
     "audience": "대상 {{audience}}",
     "applied": "템플릿을 새 버전으로 적용했습니다.",
+    "lifecycle": {
+      "DRAFT": "초안",
+      "PUBLISHED": "게시됨",
+      "REVOKED": "회수됨",
+      "UNAVAILABLE": "확인 불가"
+    },
     "confirm": {
       "apply": {
         "title": "이 템플릿을 적용할까요?",
@@ -173,6 +180,7 @@
     "title": "버전 기록",
     "description": "복원은 과거 데이터를 덮어쓰지 않고 새 버전을 만듭니다.",
     "empty": "아직 저장된 버전 기록이 없습니다.",
+    "partial": "버전이 {{limit}}개보다 많아 최신 첫 페이지만 표시합니다.",
     "revision": "버전 {{number}}",
     "restore": "이 버전 복원",
     "restored": "선택한 버전을 새 버전으로 복원했습니다.",
@@ -183,7 +191,8 @@
       "AI": "AI 제안",
       "RESTORE": "버전 복원",
       "UNDO": "되돌리기",
-      "UNKNOWN": "홈 변경"
+      "UNKNOWN": "홈 변경",
+      "UNAVAILABLE": "확인 불가"
     },
     "summaries": {
       "created": "홈을 만들었습니다.",

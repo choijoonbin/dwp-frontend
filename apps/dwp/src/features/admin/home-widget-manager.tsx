@@ -30,6 +30,7 @@ import Typography from '@mui/material/Typography';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { TenantWidgetRegistryPanel } from './tenant-widget-registry-panel';
 import { TenantHomeTemplateHistory } from './tenant-home-template-history';
+import { homeTemplateLifecycleKey } from './home-revision-presentation';
 
 import type { HomeTemplate } from '@dwp-frontend/shared-utils';
 
@@ -90,7 +91,7 @@ export function TenantHomeBlueprintPanel() {
   if (templatesQuery.isLoading) {
     return <LoadingState label={t('homeWidgets.blueprints.loading')} variant="skeleton" />;
   }
-  if (templatesQuery.isError) {
+  if (templatesQuery.isError || !templatesQuery.data) {
     const disabled =
       templatesQuery.error instanceof HttpError && templatesQuery.error.status === 403;
     return (
@@ -110,7 +111,8 @@ export function TenantHomeBlueprintPanel() {
     );
   }
 
-  const templates = templatesQuery.data ?? [];
+  const templatePage = templatesQuery.data;
+  const templates = templatePage.items;
   const pendingAudience = pending
     ? pending.template.audience.type === 'ALL'
       ? t('homeWidgets.blueprints.allMembers')
@@ -122,6 +124,11 @@ export function TenantHomeBlueprintPanel() {
         <Typography variant="subtitle2">{t('homeWidgets.blueprints.namingTitle')}</Typography>
         <Typography variant="body2">{t('homeWidgets.blueprints.namingDescription')}</Typography>
       </Alert>
+      {templatePage.hasMore && (
+        <Alert severity="warning">
+          {t('homeWidgets.blueprints.partial', { limit: templatePage.limit })}
+        </Alert>
+      )}
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
@@ -134,7 +141,12 @@ export function TenantHomeBlueprintPanel() {
             {t('homeWidgets.blueprints.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {t('homeWidgets.blueprints.count', { count: templates.length })}
+            {t(
+              templatePage.hasMore
+                ? 'homeWidgets.blueprints.countPartial'
+                : 'homeWidgets.blueprints.count',
+              { count: templates.length, limit: templatePage.limit }
+            )}
           </Typography>
         </Box>
         <ActionButton
@@ -146,7 +158,7 @@ export function TenantHomeBlueprintPanel() {
         </ActionButton>
       </Stack>
 
-      {templates.length === 0 ? (
+      {templates.length === 0 && !templatePage.hasMore ? (
         <EmptyState
           icon={<FileStack size={28} />}
           title={t('homeWidgets.blueprints.empty')}
@@ -177,7 +189,7 @@ export function TenantHomeBlueprintPanel() {
                     <Chip
                       size="small"
                       color={lifecycleColor(template.lifecycle)}
-                      label={t(`homeWidgets.blueprints.lifecycle.${template.lifecycle}`)}
+                      label={t(homeTemplateLifecycleKey(template.lifecycle))}
                     />
                   </Stack>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>

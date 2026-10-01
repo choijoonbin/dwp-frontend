@@ -18,6 +18,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { CatalogMetric } from './catalog-metric';
+import {
+  catalogAssuranceEvidencePresentation,
+  catalogAssuranceFindingLabelKey,
+  catalogAssuranceStateLabelKey,
+} from './catalog-presentation';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -110,6 +115,7 @@ export function AssuranceWorkspace({
   summary,
   loading,
   evaluating,
+  canManage,
   selectedFindingId,
   onEvaluate,
   onSelect,
@@ -118,6 +124,7 @@ export function AssuranceWorkspace({
   summary?: CatalogAssuranceSummary;
   loading: boolean;
   evaluating: boolean;
+  canManage: boolean;
   selectedFindingId: string | null;
   onEvaluate: () => void;
   onSelect: (findingId: string) => void;
@@ -127,6 +134,9 @@ export function AssuranceWorkspace({
   const display = useDisplayDictionary();
   const findings = summary?.findings ?? [];
   const selected = findings.find((finding) => finding.findingId === selectedFindingId) ?? null;
+  const selectedEvidence = selected
+    ? catalogAssuranceEvidencePresentation(selected.evidence)
+    : null;
   const columns = useMemo<GridColDef<CatalogAssuranceFinding>[]>(
     () => [
       {
@@ -140,7 +150,7 @@ export function AssuranceWorkspace({
               {row.entityRef}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {t(`catalog.assurance.findings.${row.findingCode}`)}
+              {t(catalogAssuranceFindingLabelKey(row.findingCode))}
             </Typography>
           </Box>
         ),
@@ -163,12 +173,7 @@ export function AssuranceWorkspace({
         headerName: t('catalog.assurance.columns.state'),
         width: 140,
         renderCell: ({ value }) => (
-          <Chip
-            size="small"
-            label={t(`catalog.assurance.states.${String(value)}`, {
-              defaultValue: display('states', String(value)),
-            })}
-          />
+          <Chip size="small" label={t(catalogAssuranceStateLabelKey(String(value)))} />
         ),
       },
       {
@@ -188,7 +193,7 @@ export function AssuranceWorkspace({
           <ActionButton
             intent="quiet"
             size="small"
-            disabled={!['OPEN', 'ACKNOWLEDGED'].includes(row.lifecycleState)}
+            disabled={!canManage || !['OPEN', 'ACKNOWLEDGED'].includes(row.lifecycleState)}
             onClick={(event) => {
               event.stopPropagation();
               onReview(row);
@@ -199,7 +204,7 @@ export function AssuranceWorkspace({
         ),
       },
     ],
-    [display, onReview, t]
+    [canManage, display, onReview, t]
   );
 
   return (
@@ -242,6 +247,7 @@ export function AssuranceWorkspace({
             startIcon={<ScanSearch size={17} />}
             loading={evaluating}
             loadingLabel={t('catalog.assurance.actions.evaluating')}
+            disabled={!canManage}
             onClick={onEvaluate}
           >
             {t('catalog.assurance.actions.evaluate')}
@@ -296,6 +302,11 @@ export function AssuranceWorkspace({
           hideFooter={findings.length <= 20}
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 20 } } }}
           onRowClick={({ row }) => onSelect(row.findingId)}
+          onCellKeyDown={({ row }, event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            onSelect(row.findingId);
+          }}
         />
         <Box
           component="aside"
@@ -321,11 +332,11 @@ export function AssuranceWorkspace({
                   />
                   <Chip
                     size="small"
-                    label={t(`catalog.assurance.states.${selected.lifecycleState}`)}
+                    label={t(catalogAssuranceStateLabelKey(selected.lifecycleState))}
                   />
                 </Stack>
                 <Typography component="h3" variant="subtitle1" sx={{ mt: 1.25 }}>
-                  {t(`catalog.assurance.findings.${selected.findingCode}`)}
+                  {t(catalogAssuranceFindingLabelKey(selected.findingCode))}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -336,22 +347,32 @@ export function AssuranceWorkspace({
                 </Typography>
               </Box>
               <Divider />
-              <Box component="dl" sx={{ m: 0, display: 'grid', gap: 1 }}>
-                {Object.entries(selected.evidence).map(([key, value]) => (
-                  <Box key={key} sx={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 1 }}>
-                    <Typography component="dt" variant="caption" color="text.secondary">
-                      {key}
-                    </Typography>
-                    <Typography
-                      component="dd"
-                      variant="body2"
-                      sx={{ m: 0, overflowWrap: 'anywhere' }}
+              <Alert severity="info">
+                {t('catalog.assurance.inspector.evidenceRetained', {
+                  count: selectedEvidence?.retainedFieldCount ?? 0,
+                })}
+              </Alert>
+              {selectedEvidence && selectedEvidence.items.length > 0 && (
+                <Box component="dl" sx={{ m: 0, display: 'grid', gap: 1 }}>
+                  {selectedEvidence.items.map((item) => (
+                    <Box
+                      key={item.labelKey}
+                      sx={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: 1 }}
                     >
-                      {value === null ? '-' : String(value)}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
+                      <Typography component="dt" variant="caption" color="text.secondary">
+                        {t(item.labelKey)}
+                      </Typography>
+                      <Typography
+                        component="dd"
+                        variant="body2"
+                        sx={{ m: 0, overflowWrap: 'anywhere' }}
+                      >
+                        {item.value}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              )}
               <Divider />
               <Typography
                 variant="caption"
@@ -370,7 +391,11 @@ export function AssuranceWorkspace({
                 </Alert>
               )}
               {['OPEN', 'ACKNOWLEDGED'].includes(selected.lifecycleState) && (
-                <ActionButton intent="secondary" onClick={() => onReview(selected)}>
+                <ActionButton
+                  intent="secondary"
+                  disabled={!canManage}
+                  onClick={() => onReview(selected)}
+                >
                   {t('catalog.assurance.actions.recordDisposition')}
                 </ActionButton>
               )}

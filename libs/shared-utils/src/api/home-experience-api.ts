@@ -1,8 +1,10 @@
 import { axiosInstance } from '../axios-instance';
+import { parseBoundedList } from './bounded-list';
 import { resolveBrowserMediaUrl } from './browser-media-url';
 import { HOME_EXPERIENCE_VARIANTS } from './home-shared-contract';
 
 import type { ApiResponse } from '../types';
+import type { BoundedList } from './bounded-list';
 import type { HomeExperienceVariant, HomeWidgetHeight } from './home-shared-contract';
 
 export { HOME_EXPERIENCE_VARIANTS } from './home-shared-contract';
@@ -209,6 +211,8 @@ export type HomeExperienceRevision = {
   createdBy?: number | null;
 };
 
+export type HomeExperienceRevisionPage = BoundedList<HomeExperienceRevision>;
+
 export type UpdateHomeExperienceRequest = Pick<
   HomeExperience,
   | 'headline'
@@ -336,11 +340,15 @@ export async function resetHomeBackground(version: number): Promise<HomeExperien
   return response.data.data;
 }
 
-export async function getHomeExperienceRevisions(limit = 20): Promise<HomeExperienceRevision[]> {
-  const response = await axiosInstance.get<ApiResponse<HomeExperienceRevision[]>>(
+export async function getHomeExperienceRevisions(limit = 20): Promise<HomeExperienceRevisionPage> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
     `/api/platform/v1/admin/home-experience/revisions?limit=${limit}`
   );
-  return response.data.data;
+  return parseBoundedList<HomeExperienceRevision>(
+    response.data.data,
+    50,
+    'Home experience revision history'
+  );
 }
 
 export async function rollbackHomeExperience(

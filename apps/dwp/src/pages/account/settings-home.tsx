@@ -3,14 +3,16 @@ import {
   Clock3,
   MonitorCheck,
   Palette,
+  RefreshCw,
   Search,
   Settings2,
   ShieldAlert,
   ShieldCheck,
   SlidersHorizontal,
   Star,
+  WifiOff,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -18,12 +20,13 @@ import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   getAuthSessions,
   getPersonalSettingsWorkspace,
+  reconfirmPersonalSettingsWorkspace,
   updatePersonalSettingFavorite,
   type PersonalSettingKey,
 } from '@dwp-frontend/shared-utils';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
-import { FormField, InlineFeedback, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton, FormField, InlineFeedback, PageCanvas } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -38,6 +41,14 @@ import Typography from '@mui/material/Typography';
 import { getAccountNavigationGroups } from '../../features/account/settings-navigation';
 import { filterSettingsDocuments } from '../../components/settings-search';
 import { usePersonalPreference } from '../../providers/personal-preference-provider';
+import {
+  personalActivityType,
+  personalSettingLabelKey,
+} from './account-settings-state-presentation';
+import {
+  personalSettingsFreshnessState,
+  resolvePersonalSettingsWorkspaceRuntime,
+} from './personal-settings-workspace-status';
 
 type StatusCardProps = {
   icon: typeof ShieldCheck;
@@ -101,6 +112,7 @@ export default function SettingsHomePage() {
     retry: false,
   });
   const [query, setQuery] = useState('');
+  const [online, setOnline] = useState(() => window.navigator.onLine);
   const ownerQueryKey = ['personal-settings', 'workspace'] as const;
   const ownerQuery = useQuery({
     queryKey: ownerQueryKey,
@@ -120,6 +132,27 @@ export default function SettingsHomePage() {
     }) => updatePersonalSettingFavorite(settingKey, favorite, version),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ownerQueryKey }),
   });
+  const reconfirmMutation = useMutation({
+    mutationFn: (version: number) => reconfirmPersonalSettingsWorkspace(version),
+    onSuccess: (workspace) => queryClient.setQueryData(ownerQueryKey, workspace),
+  });
+  useEffect(() => {
+    const markOnline = () => setOnline(true);
+    const markOffline = () => setOnline(false);
+    window.addEventListener('online', markOnline);
+    window.addEventListener('offline', markOffline);
+    return () => {
+      window.removeEventListener('online', markOnline);
+      window.removeEventListener('offline', markOffline);
+    };
+  }, []);
+  const workspaceRuntime = resolvePersonalSettingsWorkspaceRuntime({
+    online,
+    hasSnapshot: Boolean(ownerQuery.data),
+    queryError: ownerQuery.isError,
+    freshnessState: ownerQuery.data?.observation.freshnessState,
+  });
+  const workspaceReadOnly = ownerQuery.isPending || workspaceRuntime.readOnly;
   const groups = getAccountNavigationGroups(providerAccount);
   const preference = personalPreference.preference;
   const managedRuleCount = preference?.managedPolicy?.rules.length;
@@ -196,6 +229,117 @@ export default function SettingsHomePage() {
 
         {providerAccount && (
           <InlineFeedback severity="info">{t('settingsHome.providerBoundary')}</InlineFeedback>
+        )}
+
+        {!providerAccount && (
+          <Paper
+            component="section"
+            data-testid="personal-settings-workspace-freshness"
+            variant="outlined"
+            sx={{ p: 2 }}
+          >
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              justifyContent="space-between"
+              gap={1.5}
+            >
+              <Stack direction="row" alignItems="flex-start" gap={1.25}>
+                {workspaceRuntime.state.startsWith('OFFLINE') ? (
+                  <WifiOff size={20} aria-hidden="true" />
+                ) : (
+                  <RefreshCw size={20} aria-hidden="true" />
+                )}
+                <Box sx={{ minWidth: 0 }}>
+                  <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                    <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
+                      {t('settingsHome.workspace.title')}
+                    </Typography>
+                    <Chip
+                      size="small"
+                      color={
+                        workspaceRuntime.state === 'CURRENT'
+                          ? 'success'
+                          : workspaceRuntime.readOnly
+                            ? 'warning'
+                            : 'default'
+                      }
+                      label={
+                        ownerQuery.isPending
+                          ? t('settingsHome.status.loading')
+                          : t(`settingsHome.workspace.runtime.${workspaceRuntime.state}`)
+                      }
+                    />
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {t(
+                      `settingsHome.workspace.freshness.${personalSettingsFreshnessState(
+                        ownerQuery.data?.observation.freshnessState
+                      )}`
+                    )}
+                  </Typography>
+                  {ownerQuery.data?.observation.observedAt && (
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: 'block', mt: 0.75 }}
+                    >
+                      {t('settingsHome.workspace.observedAt', {
+                        date: formatDate(ownerQuery.data.observation.observedAt, {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        }),
+                      })}
+                      {' · '}
+                      {ownerQuery.data.observation.lastConfirmedAt
+                        ? t('settingsHome.workspace.confirmedAt', {
+                            date: formatDate(ownerQuery.data.observation.lastConfirmedAt, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            }),
+                          })
+                        : t('settingsHome.workspace.neverConfirmed')}
+                    </Typography>
+                  )}
+                  {workspaceRuntime.readOnly && ownerQuery.data && (
+                    <Typography
+                      variant="caption"
+                      color="warning.main"
+                      sx={{ display: 'block', mt: 0.5 }}
+                    >
+                      {t('settingsHome.workspace.memoryOnly')}
+                    </Typography>
+                  )}
+                </Box>
+              </Stack>
+              <Stack direction="row" gap={1} flexWrap="wrap">
+                <ActionButton
+                  intent="quiet"
+                  size="small"
+                  startIcon={<RefreshCw size={16} />}
+                  disabled={!online || ownerQuery.isFetching}
+                  onClick={() => void ownerQuery.refetch()}
+                >
+                  {t('settingsHome.workspace.refresh')}
+                </ActionButton>
+                <ActionButton
+                  intent="secondary"
+                  size="small"
+                  disabled={workspaceReadOnly || !ownerQuery.data || reconfirmMutation.isPending}
+                  onClick={() =>
+                    ownerQuery.data && reconfirmMutation.mutate(ownerQuery.data.observation.version)
+                  }
+                >
+                  {t('settingsHome.workspace.reconfirm')}
+                </ActionButton>
+              </Stack>
+            </Stack>
+            {reconfirmMutation.isError && (
+              <InlineFeedback severity="error" sx={{ mt: 1.5 }}>
+                {t('settingsHome.workspace.reconfirmError')}
+              </InlineFeedback>
+            )}
+          </Paper>
         )}
 
         <Box component="section" aria-labelledby="settings-current-state">
@@ -358,7 +502,11 @@ export default function SettingsHomePage() {
                 {t('settingsHome.observations.recent.title')}
               </Typography>
             </Stack>
-            {ownerQuery.isPending ? (
+            {providerAccount ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                {t('settingsHome.observations.recent.providerBoundary')}
+              </Typography>
+            ) : ownerQuery.isPending ? (
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                 {t('settingsHome.observations.recent.loading')}
               </Typography>
@@ -375,8 +523,10 @@ export default function SettingsHomePage() {
                 {ownerQuery.data.recentActivity.slice(0, 4).map((activity) => (
                   <Box component="li" key={activity.activityId}>
                     <Typography variant="body2" fontWeight={650}>
-                      {t(`navigation.${activity.settingKey}`)} ·{' '}
-                      {t(`settingsHome.observations.recent.types.${activity.activityType}`)}
+                      {t(personalSettingLabelKey(activity.settingKey))} ·{' '}
+                      {t(
+                        `settingsHome.observations.recent.types.${personalActivityType(activity.activityType)}`
+                      )}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {formatDate(activity.occurredAt, {
@@ -520,7 +670,7 @@ export default function SettingsHomePage() {
                                     : 'settingsHome.favorites.addNamed',
                                   { name: t(`navigation.${item.key}`) }
                                 )}
-                                disabled={ownerQuery.isError || favoriteMutation.isPending}
+                                disabled={workspaceReadOnly || favoriteMutation.isPending}
                                 onClick={() =>
                                   favoriteMutation.mutate({
                                     settingKey: item.key as PersonalSettingKey,
@@ -529,6 +679,7 @@ export default function SettingsHomePage() {
                                   })
                                 }
                                 color={isFavorite ? 'primary' : 'default'}
+                                sx={{ minWidth: 44, minHeight: 44 }}
                               >
                                 <Star
                                   size={17}

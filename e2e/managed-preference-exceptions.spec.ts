@@ -33,6 +33,17 @@ test('member requests a managed setting exception and an administrator records a
     page.getByRole(queueRole, { name: 'Managed setting exception review queue' })
   ).toBeVisible();
   await expect(page.getByText(/Tenant Admin/).last()).toBeVisible();
+  if (queueRole === 'grid') {
+    const requestCell = page
+      .getByRole('grid', { name: 'Managed setting exception review queue' })
+      .getByRole('row')
+      .filter({ hasText: 'Tenant Admin' })
+      .getByRole('gridcell')
+      .first();
+    await requestCell.focus();
+    await expect(requestCell).toBeFocused();
+    await page.keyboard.press('Enter');
+  }
   await page.getByRole('button', { name: 'Approve', exact: true }).click();
 
   const decisionDialog = page.getByRole('dialog', { name: 'Approve exception request' });

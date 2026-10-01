@@ -867,6 +867,11 @@ export function ApiMonitoring() {
             hideFooter
             loading={eventsQuery.isLoading}
             onRowClick={({ row }) => setSelectedHistoryId(row.historyId)}
+            onCellKeyDown={({ row }, event) => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              event.preventDefault();
+              setSelectedHistoryId(row.historyId);
+            }}
             getRowClassName={({ row }) => (row.statusCode >= 500 ? 'api-history-error' : '')}
             sx={{
               border: 0,

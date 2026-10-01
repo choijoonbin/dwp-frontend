@@ -18,10 +18,8 @@ import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { getAuthSessions } from '@dwp-frontend/shared-utils';
 import { redirectToSignIn } from '@dwp-frontend/shared-utils/auth/auth-redirect';
-import { isAppResourceEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import {
-  canEnterTenantControlPlane,
   hasProviderControlPlaneRole,
   isProviderIdentity,
   resolvePrimaryAuthorityRole,
@@ -43,6 +41,7 @@ import {
   isProviderSupportSessionActive,
   useProviderSupportContext,
 } from '@dwp-frontend/shared-utils/auth/provider-support-context';
+import { canEnterCompanyAdministration } from '../features/admin/admin-access-policy';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
 
@@ -85,7 +84,7 @@ export function AccountMenu({
   const { t } = useTranslation('shell');
   const auth = useAuth();
   const { effectiveReduceMotion } = useAppearance();
-  const { permissions } = usePermissions();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
   const navigate = useNavigate();
   const location = useLocation();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -113,14 +112,11 @@ export function AccountMenu({
       : t('account.roles.providerPending')
     : t(`account.roles.${authorityTranslationKeys[authorityRole] ?? 'member'}`);
   const identitySubtitle = auth.user?.jobTitle?.trim() || positionTitle;
-  const isAdmin =
-    !providerControlPlaneRole &&
-    canEnterTenantControlPlane(
-      roles,
-      isAppResourceEntitled('APP.ADMINISTRATION', permissions),
-      Boolean(activeSupportContext),
-      auth.user?.resourceRoles
-    );
+  const isAdmin = canEnterCompanyAdministration({
+    identity: auth.user,
+    permissionsLoaded,
+    hasPermission,
+  });
   const isProviderAdmin = providerRole;
   const workspaceName =
     activeSupportContext?.tenantName ||
@@ -341,8 +337,8 @@ export function AccountMenu({
                 disabled={isLoggingOut}
                 onClick={() => void logout()}
                 sx={{
-                  width: 32,
-                  height: 32,
+                  width: 44,
+                  height: 44,
                   flex: '0 0 auto',
                   color: 'error.main',
                   bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),

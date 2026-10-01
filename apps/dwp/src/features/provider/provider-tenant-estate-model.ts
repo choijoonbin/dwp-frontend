@@ -33,19 +33,46 @@ export function providerTenantPagination(
   };
 }
 
-export function providerTenantServiceHealth(tenant: ProviderTenant): string {
+export type ProviderTenantServiceHealth =
+  'FAILED' | 'DEGRADED' | 'PROVISIONING' | 'SUSPENDED' | 'RETIRED' | 'READY' | 'UNAVAILABLE';
+
+export function providerTenantServiceHealth(tenant: ProviderTenant): ProviderTenantServiceHealth {
   if (tenant.services.some((service) => service.lifecycleState === 'FAILED')) return 'FAILED';
   if (tenant.services.some((service) => service.lifecycleState === 'DEGRADED')) return 'DEGRADED';
   if (tenant.services.some((service) => service.lifecycleState === 'PROVISIONING')) {
     return 'PROVISIONING';
   }
-  return 'READY';
+  if (tenant.services.some((service) => service.lifecycleState === 'SUSPENDED')) return 'SUSPENDED';
+  if (tenant.services.some((service) => service.lifecycleState === 'RETIRED')) return 'RETIRED';
+  return tenant.services.length > 0 &&
+    tenant.services.every((service) => service.lifecycleState === 'READY')
+    ? 'READY'
+    : 'UNAVAILABLE';
 }
 
 export function providerEstateState(
   estate: ProviderEstateOverview | null | undefined
-): 'CRITICAL' | 'ATTENTION' | 'HEALTHY' {
-  if (estate?.failedTenants) return 'CRITICAL';
-  if (estate?.provisioningTenants || estate?.suspendedTenants) return 'ATTENTION';
+): 'CRITICAL' | 'ATTENTION' | 'HEALTHY' | 'UNAVAILABLE' {
+  if (!estate) return 'UNAVAILABLE';
+  const counts = [
+    estate.organizations,
+    estate.tenants,
+    estate.activeTenants,
+    estate.provisioningTenants,
+    estate.suspendedTenants,
+    estate.failedTenants,
+    estate.openOperations,
+    estate.activeSupportSessions,
+  ];
+  const lifecycleCoverage =
+    estate.activeTenants + estate.provisioningTenants + estate.suspendedTenants;
+  if (
+    counts.some((count) => !Number.isSafeInteger(count) || count < 0) ||
+    lifecycleCoverage !== estate.tenants
+  ) {
+    return 'UNAVAILABLE';
+  }
+  if (estate.failedTenants) return 'CRITICAL';
+  if (estate.provisioningTenants || estate.suspendedTenants) return 'ATTENTION';
   return 'HEALTHY';
 }
