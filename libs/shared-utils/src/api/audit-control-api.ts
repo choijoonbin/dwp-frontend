@@ -1,6 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 
+import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApiResponse } from '../types';
+
+type PlatformSchemas = GatewayComponents['schemas'];
 
 export type AuditWindow = 'H24' | 'D7' | 'D30' | 'D90';
 export type AuditCategory =
@@ -321,6 +324,8 @@ export type AuditPolicyApproval = {
   version: number;
 };
 
+export type AuditPolicyImpactSnapshot = Required<PlatformSchemas['platform_PolicyImpactSnapshot']>;
+
 export type AuditPolicyRevision = {
   revisionId: string;
   revisionNumber: number;
@@ -337,6 +342,8 @@ export type AuditPolicyRevision = {
   changeReason: string;
   diff: Record<string, { before: unknown; after: unknown }>;
   contentSha256: string;
+  impactSnapshot: AuditPolicyImpactSnapshot;
+  impactSha256: string;
   createdBy: string;
   createdAt: string;
   submittedBy?: string | null;
@@ -345,6 +352,12 @@ export type AuditPolicyRevision = {
   publishedAt?: string | null;
   version: number;
   approval?: AuditPolicyApproval | null;
+};
+
+type GeneratedAuditPolicyRevisionPage = Required<PlatformSchemas['platform_PolicyRevisionPage']>;
+
+export type AuditPolicyRevisionPage = Omit<GeneratedAuditPolicyRevisionPage, 'items'> & {
+  items: AuditPolicyRevision[];
 };
 
 export type AuditIntegrityCheckpoint = {
@@ -621,9 +634,10 @@ export async function updateAuditPolicy(
 
 const AUDIT_POLICY_REVISIONS = '/api/platform/v1/admin/audit-control/policy/revisions';
 
-export async function listAuditPolicyRevisions(): Promise<AuditPolicyRevision[]> {
-  const response =
-    await axiosInstance.get<ApiResponse<AuditPolicyRevision[]>>(AUDIT_POLICY_REVISIONS);
+export async function listAuditPolicyRevisions(limit = 100): Promise<AuditPolicyRevisionPage> {
+  const response = await axiosInstance.get<ApiResponse<AuditPolicyRevisionPage>>(
+    `${AUDIT_POLICY_REVISIONS}?limit=${limit}`
+  );
   return response.data.data;
 }
 

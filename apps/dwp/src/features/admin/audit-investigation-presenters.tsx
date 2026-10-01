@@ -451,11 +451,15 @@ export function AuditFindingDossier({ context }: { context: AuditFindingContext 
       >
         <Stack direction="row" gap={1.5} alignItems="flex-start">
           <Sparkles size={18} color="currentColor" />
-          <Box>
+          <Box minWidth={0}>
             <Typography component="h3" variant="subtitle2">
               {t('auditControl.investigations.whyItMatters')}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.25, overflowWrap: 'anywhere' }}
+            >
               {t('auditControl.investigations.riskNarrative', {
                 score: finding.riskScore,
                 actor:
@@ -475,7 +479,7 @@ export function AuditFindingDossier({ context }: { context: AuditFindingContext 
           detail={t('auditControl.investigations.entityPathHint')}
         />
         <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'center' }} gap={1}>
-          <Box sx={{ flex: 1, p: 1.5, border: 1, borderColor: 'divider' }}>
+          <Box sx={{ flex: 1, minWidth: 0, p: 1.5, border: 1, borderColor: 'divider' }}>
             <Typography variant="overline" color="text.secondary">
               {t('auditControl.investigations.actor')}
             </Typography>
@@ -484,7 +488,7 @@ export function AuditFindingDossier({ context }: { context: AuditFindingContext 
             </Typography>
           </Box>
           <ArrowRight size={18} />
-          <Box sx={{ flex: 1, p: 1.5, border: 1, borderColor: 'divider' }}>
+          <Box sx={{ flex: 1, minWidth: 0, p: 1.5, border: 1, borderColor: 'divider' }}>
             <Typography variant="overline" color="text.secondary">
               {t('auditControl.investigations.activity')}
             </Typography>
@@ -493,7 +497,7 @@ export function AuditFindingDossier({ context }: { context: AuditFindingContext 
             </Typography>
           </Box>
           <ArrowRight size={18} />
-          <Box sx={{ flex: 1, p: 1.5, border: 1, borderColor: 'divider' }}>
+          <Box sx={{ flex: 1, minWidth: 0, p: 1.5, border: 1, borderColor: 'divider' }}>
             <Typography variant="overline" color="text.secondary">
               {t('auditControl.investigations.target')}
             </Typography>

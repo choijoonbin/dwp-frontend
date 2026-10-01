@@ -1,8 +1,10 @@
 import { axiosInstance } from '../axios-instance';
 
+import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApiResponse } from '../types';
 
 const BASE = '/api/auth/admin/tenant-settings';
+type AuthSchemas = GatewayComponents['schemas'];
 
 export type TenantAuthPolicyDraft = {
   defaultLoginType: 'LOCAL' | 'SSO';
@@ -45,6 +47,12 @@ export type TenantSettingChangeSet = {
   createdAt: string;
   updatedAt: string;
   allowedActions: Array<'SUBMIT' | 'APPROVE' | 'REJECT' | 'PUBLISH'>;
+};
+
+type GeneratedAuthPolicyChangePage = Required<AuthSchemas['auth_AuthPolicyChangePage']>;
+
+export type TenantAuthPolicyChangePage = Omit<GeneratedAuthPolicyChangePage, 'items'> & {
+  items: TenantSettingChangeSet[];
 };
 
 export type TenantAccessGrant = {
@@ -135,6 +143,24 @@ export type TenantEffectiveSetting = {
   evidenceState: string;
 };
 
+type GeneratedSsoTestLoginCommand = Required<AuthSchemas['auth_SsoTestLoginCommand']>;
+type GeneratedSsoTestLoginReceipt = Required<AuthSchemas['auth_SsoTestLoginReceipt']>;
+type GeneratedSsoTestLoginReceiptPage = Required<AuthSchemas['auth_SsoTestLoginReceiptPage']>;
+
+export type TenantSsoTestLoginCommand = GeneratedSsoTestLoginCommand;
+
+export type TenantSsoTestLoginReceipt = Omit<
+  GeneratedSsoTestLoginReceipt,
+  'providerKey' | 'blockingReasons'
+> & {
+  providerKey: string | null;
+  blockingReasons: string[];
+};
+
+export type TenantSsoTestLoginReceiptPage = Omit<GeneratedSsoTestLoginReceiptPage, 'items'> & {
+  items: TenantSsoTestLoginReceipt[];
+};
+
 export type TenantGovernanceSnapshot = {
   observedAt: string;
   tenantDirectory: {
@@ -156,6 +182,7 @@ export type TenantGovernanceSnapshot = {
     configuredProviderKey?: string | null;
     externalProbeState: string;
     lastExternalProbeAt?: string | null;
+    latestReceipt?: TenantSsoTestLoginReceipt | null;
     blockingReasons: string[];
   };
   recoveryVerification: {
@@ -184,9 +211,11 @@ export type TenantUserPreferenceState = {
   updatedAt: string;
 };
 
-export async function listTenantAuthPolicyChanges(): Promise<TenantSettingChangeSet[]> {
-  const response = await axiosInstance.get<ApiResponse<TenantSettingChangeSet[]>>(
-    `${BASE}/auth-policy/changes`
+export async function listTenantAuthPolicyChanges(
+  limit = 100
+): Promise<TenantAuthPolicyChangePage> {
+  const response = await axiosInstance.get<ApiResponse<TenantAuthPolicyChangePage>>(
+    `${BASE}/auth-policy/changes?limit=${limit}`
   );
   return response.data.data;
 }
@@ -384,6 +413,34 @@ export async function getCompleteTenantAccessProjection(
 export async function getTenantGovernanceSnapshot(): Promise<TenantGovernanceSnapshot> {
   const response = await axiosInstance.get<ApiResponse<TenantGovernanceSnapshot>>(
     `${BASE}/governance-snapshot`
+  );
+  return response.data.data;
+}
+
+export async function requestTenantSsoTestLogin(
+  command: TenantSsoTestLoginCommand
+): Promise<TenantSsoTestLoginReceipt> {
+  const response = await axiosInstance.post<
+    ApiResponse<TenantSsoTestLoginReceipt>,
+    TenantSsoTestLoginCommand
+  >(`${BASE}/sso-test-login-jobs`, command);
+  return response.data.data;
+}
+
+export async function listTenantSsoTestLoginReceipts(
+  limit = 20
+): Promise<TenantSsoTestLoginReceiptPage> {
+  const response = await axiosInstance.get<ApiResponse<TenantSsoTestLoginReceiptPage>>(
+    `${BASE}/sso-test-login-jobs?limit=${limit}`
+  );
+  return response.data.data;
+}
+
+export async function getTenantSsoTestLoginReceipt(
+  jobId: string
+): Promise<TenantSsoTestLoginReceipt> {
+  const response = await axiosInstance.get<ApiResponse<TenantSsoTestLoginReceipt>>(
+    `${BASE}/sso-test-login-jobs/${encodeURIComponent(jobId)}`
   );
   return response.data.data;
 }

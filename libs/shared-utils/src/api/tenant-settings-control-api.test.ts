@@ -5,6 +5,10 @@ import {
   getMyTenantPreferredLocale,
   getCompleteTenantAccessProjection,
   getTenantGovernanceSnapshot,
+  getTenantSsoTestLoginReceipt,
+  listTenantAuthPolicyChanges,
+  listTenantSsoTestLoginReceipts,
+  requestTenantSsoTestLogin,
   restoreMyTenantPreferredLocale,
 } from './tenant-settings-control-api';
 
@@ -14,6 +18,20 @@ vi.mock('../axios-instance', () => ({ axiosInstance: http }));
 beforeEach(() => vi.resetAllMocks());
 
 describe('tenant settings governance API', () => {
+  it('reads authentication policy changes through the generated bounded page contract', async () => {
+    const page = {
+      items: [{ changeSetId: 'change-1', lifecycleState: 'PUBLISHED' }],
+      limit: 100,
+      hasMore: true,
+    };
+    http.get.mockResolvedValueOnce({ data: { data: page } });
+
+    await expect(listTenantAuthPolicyChanges()).resolves.toEqual(page);
+    expect(http.get).toHaveBeenCalledWith(
+      '/api/auth/admin/tenant-settings/auth-policy/changes?limit=100'
+    );
+  });
+
   it('reads source evidence and uses the observed preference version for inheritance restore', async () => {
     const snapshot = { observedAt: '2026-09-29T01:00:00Z', effectiveSettings: [] };
     const settings = [{ settingKey: 'identity.preferredLocale', effectiveValue: 'en-US' }];
@@ -46,6 +64,47 @@ describe('tenant settings governance API', () => {
       '/api/auth/tenant-settings/effective-settings/me/preferred-locale/restore',
       { version: 5 }
     );
+  });
+
+  it('creates and reads bounded immutable SSO test-login receipts', async () => {
+    const receipt = {
+      testLoginJobId: '10000000-0000-4000-8000-000000000001',
+      tenantId: 1,
+      providerKey: 'entra-primary',
+      lifecycleState: 'UNAVAILABLE',
+      internalPrerequisiteState: 'READY_FOR_EXTERNAL_PROBE',
+      externalProbeState: 'UNAVAILABLE',
+      blockingReasons: ['EXTERNAL_IDP_LOGIN_EXECUTOR_NOT_CONNECTED'],
+      executionBoundary: 'UNCONNECTED_EXTERNAL_IDP_EXECUTOR',
+      requestedBy: 42,
+      idempotencyKey: '20000000-0000-4000-8000-000000000002',
+      requestedAt: '2026-09-30T01:00:00Z',
+      completedAt: '2026-09-30T01:00:01Z',
+      receiptPayloadCanonical: '{"externalProbeState":"UNAVAILABLE"}',
+      receiptSha256: 'a'.repeat(64),
+    };
+    const page = { items: [receipt], limit: 20, hasMore: true };
+    const command = {
+      idempotencyKey: receipt.idempotencyKey,
+      justification: 'Verify the configured enterprise sign-in before rollout.',
+    };
+    http.post.mockResolvedValueOnce({ data: { data: receipt } });
+    http.get
+      .mockResolvedValueOnce({ data: { data: page } })
+      .mockResolvedValueOnce({ data: { data: receipt } });
+
+    await expect(requestTenantSsoTestLogin(command)).resolves.toEqual(receipt);
+    await expect(listTenantSsoTestLoginReceipts()).resolves.toEqual(page);
+    await expect(getTenantSsoTestLoginReceipt(receipt.testLoginJobId)).resolves.toEqual(receipt);
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/api/auth/admin/tenant-settings/sso-test-login-jobs',
+      command
+    );
+    expect(http.get.mock.calls.map(([url]) => url)).toEqual([
+      '/api/auth/admin/tenant-settings/sso-test-login-jobs?limit=20',
+      `/api/auth/admin/tenant-settings/sso-test-login-jobs/${receipt.testLoginJobId}`,
+    ]);
   });
 
   it('collects every access projection page and preserves complete owner evidence', async () => {

@@ -4,13 +4,16 @@ import { CheckCircle2, Edit3, ShieldCheck } from 'lucide-react';
 import { DateTimePickerField, FormDialog, FormField } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
-import { useSystemCodeOptions } from '../../components/use-system-code-options';
+import { useSystemCodeOptionsState } from '../../components/use-system-code-options';
+
+import type { ProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 import type {
   Announcement,
@@ -147,25 +150,43 @@ export function AnnouncementDialog({
   open,
   announcement,
   busy,
+  requestScope,
   onClose,
   onSubmit,
 }: {
   open: boolean;
   announcement: Announcement | null;
   busy: boolean;
+  requestScope: ProductSurfaceRequestScope;
   onClose: () => void;
   onSubmit: (form: AnnouncementForm) => void;
 }) {
   const { t } = useTranslation('admin');
   const [form, setForm] = useState<AnnouncementForm>(emptyForm);
-  const registeredContentTypes = useSystemCodeOptions(
+  const contentTypes = useSystemCodeOptionsState(
     'PLATFORM.COMMUNICATION.CONTENT_TYPE',
-    contentTypeValues
+    contentTypeValues,
+    {
+      enabled: open && requestScope.ready,
+      contextScopeKey: requestScope.contextScopeKey,
+      cacheKey: requestScope.cacheKey,
+      queryMeta: requestScope.queryMeta,
+    }
   );
-  const registeredCategories = useSystemCodeOptions(
-    'PLATFORM.COMMUNICATION.CATEGORY',
-    categoryValues
-  );
+  const categories = useSystemCodeOptionsState('PLATFORM.COMMUNICATION.CATEGORY', categoryValues, {
+    enabled: open && requestScope.ready,
+    contextScopeKey: requestScope.contextScopeKey,
+    cacheKey: requestScope.cacheKey,
+    queryMeta: requestScope.queryMeta,
+  });
+  const registeredContentTypes = contentTypes.options;
+  const registeredCategories = categories.options;
+  const codeCatalogFallback =
+    open &&
+    (contentTypes.isError ||
+      categories.isError ||
+      (contentTypes.usingFallback && !contentTypes.isPending) ||
+      (categories.usingFallback && !categories.isPending));
   const invalidWindow = Boolean(
     form.startsAt && form.endsAt && Date.parse(form.startsAt) > Date.parse(form.endsAt)
   );
@@ -204,6 +225,9 @@ export function AnnouncementDialog({
       maxWidth="lg"
     >
       <Stack gap={3}>
+        {codeCatalogFallback && (
+          <Alert severity="warning">{t('announcements.dialog.codeCatalogFallback')}</Alert>
+        )}
         <Box component="section" aria-labelledby="announcement-editorial-fields">
           <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.75 }}>
             <Edit3 size={17} aria-hidden="true" />

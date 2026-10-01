@@ -956,7 +956,8 @@
         "positionToClose": "폐쇄할 공석 포지션",
         "addClose": "폐쇄 계획 추가",
         "closeGuard": "재직자나 하위 포지션이 없는 자리만 폐쇄할 수 있습니다. 인력 및 보고 관계를 먼저 정리해야 합니다.",
-        "noClosablePositions": "현재 안전하게 폐쇄할 수 있는 공석 포지션이 없습니다."
+        "noClosablePositions": "현재 안전하게 폐쇄할 수 있는 공석 포지션이 없습니다.",
+        "catalogFallback": "통제된 포지션 카탈로그를 불러오지 못했습니다. 임시로 내장 값을 표시하며 포지션 변경에는 승인된 제품 접근 권한이 계속 필요합니다."
       },
       "submit": {
         "title": "승인 요청",
@@ -1289,7 +1290,8 @@
         "authMode": "인증 방식",
         "credentialReference": "비밀 참조",
         "credentialReferencePlaceholder": "vault://tenant/hris/workday",
-        "schedule": "스케줄 표현식"
+        "schedule": "스케줄 표현식",
+        "catalogFallback": "통제된 HRIS 기준정보 카탈로그를 불러오지 못했습니다. 임시로 내장 값을 표시하므로 저장 전에 접근 권한을 확인하세요."
       },
       "mapping": {
         "policy": "매핑은 초안 작성과 검토 후 활성화하며, 원천별 활성 버전은 하나만 유지됩니다.",

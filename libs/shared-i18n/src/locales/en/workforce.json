@@ -956,7 +956,8 @@
         "positionToClose": "Vacant position to close",
         "addClose": "Add closure plan",
         "closeGuard": "Only positions without incumbents or subordinate positions can be closed. Resolve workforce and reporting relationships first.",
-        "noClosablePositions": "No vacant position can be closed safely right now."
+        "noClosablePositions": "No vacant position can be closed safely right now.",
+        "catalogFallback": "The governed position catalog could not be loaded. Built-in values are shown temporarily; position changes still require authorized product access."
       },
       "submit": {
         "title": "Request approval",
@@ -1289,7 +1290,8 @@
         "authMode": "Authentication mode",
         "credentialReference": "Secret reference",
         "credentialReferencePlaceholder": "vault://tenant/hris/workday",
-        "schedule": "Schedule expression"
+        "schedule": "Schedule expression",
+        "catalogFallback": "The governed HRIS reference catalog could not be loaded. Built-in values are shown temporarily; verify access before saving."
       },
       "mapping": {
         "policy": "Mappings are drafted and reviewed before activation; only one active version is retained per source.",

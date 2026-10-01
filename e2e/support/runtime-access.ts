@@ -498,6 +498,8 @@ export async function mockAuthenticatedRuntime(page: Page): Promise<void> {
         entitiesByKind: {},
         entitiesByLifecycle: {},
         entities: [],
+        entitiesLimit: 100,
+        entitiesHasMore: false,
         generatedAt: '2026-08-11T00:10:00Z',
       }),
     })

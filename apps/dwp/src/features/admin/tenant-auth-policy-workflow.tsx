@@ -37,6 +37,7 @@ import {
   authPolicyImpactConfidenceLabelKey,
   authPolicyStateLabelKey,
   resolveTenantAuthPolicyDraft,
+  tenantAuthPolicyChangePageState,
 } from './tenant-auth-policy-workflow-model';
 
 type Decision = 'APPROVE' | 'REJECT';
@@ -78,7 +79,7 @@ export function TenantAuthPolicyWorkflow() {
   });
   const changes = useQuery({
     queryKey: ['admin', 'tenant-settings', 'auth-policy', 'changes'],
-    queryFn: listTenantAuthPolicyChanges,
+    queryFn: () => listTenantAuthPolicyChanges(),
     enabled: canView,
     retry: false,
   });
@@ -96,7 +97,10 @@ export function TenantAuthPolicyWorkflow() {
     },
     onError: () => toast.error(t('settingsHome.authPolicyWorkflow.error')),
   });
-  const latest = changes.data ?? [];
+  const changePageState = tenantAuthPolicyChangePageState(
+    changes.data ?? { items: [], hasMore: false }
+  );
+  const latest = changePageState.items;
   if (!permissionsLoaded) {
     return <Skeleton variant="rounded" height={128} />;
   }
@@ -131,12 +135,10 @@ export function TenantAuthPolicyWorkflow() {
             disabled={
               createSourcesLoading ||
               createSourcesError ||
+              changes.isLoading ||
+              changes.isError ||
               !current.data ||
-              Boolean(
-                latest.find((change) =>
-                  ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(change.lifecycleState)
-                )
-              )
+              changePageState.createBlocked
             }
             onClick={() => setDraftOpen(true)}
           >
@@ -148,6 +150,14 @@ export function TenantAuthPolicyWorkflow() {
       <InlineFeedback severity="info" sx={{ mt: 1.25 }}>
         {t('settingsHome.authPolicyWorkflow.boundary')}
       </InlineFeedback>
+      {changes.data && changePageState.partial && (
+        <InlineFeedback severity="warning" sx={{ mt: 1.25 }}>
+          {t('settingsHome.authPolicyWorkflow.partial', {
+            count: latest.length,
+            limit: changes.data.limit,
+          })}
+        </InlineFeedback>
+      )}
       {(changes.isLoading || createSourcesLoading) && (
         <Skeleton variant="rounded" height={128} sx={{ mt: 1.25 }} />
       )}
@@ -173,13 +183,13 @@ export function TenantAuthPolicyWorkflow() {
         !changes.isError &&
         !createSourcesLoading &&
         !createSourcesError &&
-        latest.length === 0 && (
+        changePageState.showEmpty && (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
             {t('settingsHome.authPolicyWorkflow.empty')}
           </Typography>
         )}
       <Stack gap={1} sx={{ mt: 1.25 }}>
-        {latest.slice(0, 5).map((change) => {
+        {latest.map((change) => {
           const canReview =
             change.allowedActions.includes('APPROVE') || change.allowedActions.includes('REJECT');
           return (

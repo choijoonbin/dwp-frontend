@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  canCancelTenantLifecycle,
   canDecideResourceChange,
   canDecideTenantLifecycle,
   tenantExecutionPresentationState,
@@ -44,6 +45,43 @@ describe('provider governance action authority', () => {
         submittedBy: 11,
       })
     ).toBe(true);
+  });
+
+  it('allows only the request owner to cancel current pre-decision lifecycle states', () => {
+    for (const lifecycleState of ['DRAFT', 'BLOCKED_BY_HOLD', 'PENDING_APPROVAL']) {
+      expect(
+        canCancelTenantLifecycle({
+          canWrite: true,
+          operatorId: 10,
+          requestedBy: 10,
+          lifecycleState,
+        })
+      ).toBe(true);
+    }
+    expect(
+      canCancelTenantLifecycle({
+        canWrite: true,
+        operatorId: 11,
+        requestedBy: 10,
+        lifecycleState: 'DRAFT',
+      })
+    ).toBe(false);
+    expect(
+      canCancelTenantLifecycle({
+        canWrite: false,
+        operatorId: 10,
+        requestedBy: 10,
+        lifecycleState: 'DRAFT',
+      })
+    ).toBe(false);
+    expect(
+      canCancelTenantLifecycle({
+        canWrite: true,
+        operatorId: 10,
+        requestedBy: 10,
+        lifecycleState: 'APPROVED_FOR_HANDOFF',
+      })
+    ).toBe(false);
   });
 
   it('fails closed when an execution state is unknown', () => {

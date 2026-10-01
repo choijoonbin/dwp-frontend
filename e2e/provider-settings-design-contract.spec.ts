@@ -96,6 +96,28 @@ const resourceCommitment = {
   updatedAt: '2026-08-10T23:56:00Z',
 };
 
+const lifecycleRequest = {
+  lifecycleRequestId: '66000000-0000-0000-0000-000000000001',
+  providerTenantId: 'tenant-skax',
+  tenantKey: 'skax-prod',
+  tenantDisplayName: 'SKAX Production',
+  requestedAction: 'PURGE',
+  lifecycleState: 'PENDING_APPROVAL',
+  holdEvaluationState: 'OWNER_VERIFICATION_REQUIRED',
+  holdEvidenceRefs: [],
+  executionState: 'OWNER_HANDOFF_REQUIRED',
+  justification: 'Customer contract and recovery window ended',
+  requestedBy: 1,
+  submittedBy: 1,
+  approvedBy: null,
+  submittedAt: '2026-08-10T23:30:00Z',
+  approvedAt: null,
+  decisionReason: null as string | null,
+  version: 2,
+  createdAt: '2026-08-10T23:00:00Z',
+  updatedAt: '2026-08-10T23:30:00Z',
+};
+
 const artifactCompatibility = {
   schema: {
     state: 'PASSED',
@@ -157,15 +179,38 @@ function artifactManifest(
     updatedAt: '2026-08-10T23:00:00Z',
     version: 2,
     reviews: [],
+    reviewsLimit: 50,
+    reviewsHasMore: false,
   };
 }
 
 async function mockProviderGovernance(page: Page) {
+  let currentLifecycleRequest = lifecycleRequest;
   await page.route('**/api/provider/v1/admin/resource-governance/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
-    if (path.endsWith('/commitments')) return success(route, [resourceCommitment]);
-    if (path.endsWith('/commitment-changes') || path.endsWith('/lifecycle-requests')) {
-      return success(route, []);
+    if (path.endsWith('/commitments')) {
+      return success(route, { items: [resourceCommitment], limit: 100, hasMore: false });
+    }
+    if (path.endsWith('/commitment-changes')) {
+      return success(route, { items: [], limit: 100, hasMore: false });
+    }
+    if (path.endsWith('/lifecycle-requests')) {
+      return success(route, { items: [currentLifecycleRequest], limit: 100, hasMore: false });
+    }
+    if (path.endsWith(`/lifecycle-requests/${lifecycleRequest.lifecycleRequestId}/cancel`)) {
+      expect(route.request().postDataJSON()).toEqual({
+        version: currentLifecycleRequest.version,
+        reason: 'Customer retained the tenant',
+      });
+      currentLifecycleRequest = {
+        ...currentLifecycleRequest,
+        lifecycleState: 'CANCELLED',
+        executionState: 'NOT_REQUIRED',
+        decisionReason: 'Customer retained the tenant',
+        version: currentLifecycleRequest.version + 1,
+        updatedAt: '2026-08-11T00:00:00Z',
+      };
+      return success(route, currentLifecycleRequest);
     }
     if (path.endsWith('/ledger')) {
       return success(route, {
@@ -198,60 +243,78 @@ async function mockProviderGovernance(page: Page) {
   await page.route('**/api/provider/v1/admin/artifact-governance/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/manifests')) {
-      return success(route, [
-        artifactManifest('64000000-0000-0000-0000-000000000001', 'WORKSPACE_CORE', '2.5.0', 1),
-        artifactManifest('64000000-0000-0000-0000-000000000002', 'WORKSPACE_AGENT', '2.6.0', 2),
-      ]);
+      return success(route, {
+        items: [
+          artifactManifest('64000000-0000-0000-0000-000000000001', 'WORKSPACE_CORE', '2.5.0', 1),
+          {
+            ...artifactManifest(
+              '64000000-0000-0000-0000-000000000002',
+              'WORKSPACE_AGENT',
+              '2.6.0',
+              2
+            ),
+            reviewsHasMore: true,
+          },
+        ],
+        limit: 100,
+        hasMore: false,
+      });
     }
     if (path.endsWith('/rollout-plans')) {
-      return success(route, [
-        {
-          rolloutPlanId: '65000000-0000-0000-0000-000000000001',
-          artifactId: '64000000-0000-0000-0000-000000000001',
-          productKey: 'WORKSPACE_CORE',
-          artifactVersion: '2.5.0',
-          name: 'Workspace core pilot',
-          targetScope: {
-            environmentKey: 'production',
-            tenantKeys: ['skax-prod'],
-            cohortKeys: ['pilot'],
-            targetPercentage: 10,
-          },
-          stages: [
-            {
-              stageKey: 'pilot',
+      return success(route, {
+        items: [
+          {
+            rolloutPlanId: '65000000-0000-0000-0000-000000000001',
+            artifactId: '64000000-0000-0000-0000-000000000001',
+            productKey: 'WORKSPACE_CORE',
+            artifactVersion: '2.5.0',
+            name: 'Workspace core pilot',
+            targetScope: {
+              environmentKey: 'production',
+              tenantKeys: ['skax-prod'],
+              cohortKeys: ['pilot'],
               targetPercentage: 10,
-              minimumObservationMinutes: 60,
-              approvalGate: true,
             },
-          ],
-          rollbackPlan: {
-            strategy: 'TRAFFIC_REVERT',
-            targetVersion: '2.4.2',
-            dataHandling: 'PRESERVE_CURRENT_SCHEMA',
-            validationChecks: ['service-health'],
-            manualSteps: [],
+            stages: [
+              {
+                stageKey: 'pilot',
+                targetPercentage: 10,
+                minimumObservationMinutes: 60,
+                approvalGate: true,
+              },
+            ],
+            rollbackPlan: {
+              strategy: 'TRAFFIC_REVERT',
+              targetVersion: '2.4.2',
+              dataHandling: 'PRESERVE_CURRENT_SCHEMA',
+              validationChecks: ['service-health'],
+              manualSteps: [],
+            },
+            rollbackFeasibility: 'DECLARED',
+            rollbackReadiness: {
+              state: 'READY',
+              reasons: [],
+              executionBoundary: 'INTERNAL_PLAN_ONLY',
+            },
+            executorState: 'EXTERNAL_EXECUTOR_UNAVAILABLE',
+            lifecycleState: 'PENDING_APPROVAL',
+            reason: 'Controlled pilot',
+            requestedBy: 1,
+            approvedBy: null,
+            decisionReason: null,
+            submittedAt: '2026-08-10T23:00:00Z',
+            approvedAt: null,
+            createdAt: '2026-08-10T22:30:00Z',
+            updatedAt: '2026-08-10T23:00:00Z',
+            version: 2,
+            evidence: [],
+            evidenceLimit: 50,
+            evidenceHasMore: true,
           },
-          rollbackFeasibility: 'DECLARED',
-          rollbackReadiness: {
-            state: 'READY',
-            reasons: [],
-            executionBoundary: 'INTERNAL_PLAN_ONLY',
-          },
-          executorState: 'EXTERNAL_EXECUTOR_UNAVAILABLE',
-          lifecycleState: 'PENDING_APPROVAL',
-          reason: 'Controlled pilot',
-          requestedBy: 1,
-          approvedBy: null,
-          decisionReason: null,
-          submittedAt: '2026-08-10T23:00:00Z',
-          approvedAt: null,
-          createdAt: '2026-08-10T22:30:00Z',
-          updatedAt: '2026-08-10T23:00:00Z',
-          version: 2,
-          evidence: [],
-        },
-      ]);
+        ],
+        limit: 100,
+        hasMore: false,
+      });
     }
     return route.fulfill({ status: 404 });
   });
@@ -581,6 +644,30 @@ test('S10 labels a bounded resource ledger as partial evidence', async ({ page }
   await expect(page.getByText(/Showing the newest 1 ledger entries/)).toBeVisible();
 });
 
+test('S10 request owner cancels a current tenant lifecycle request with audit reason', async ({
+  page,
+}, testInfo) => {
+  await page.goto('/provider/resource-governance');
+
+  const lifecycleSection = page.getByRole('heading', {
+    name: 'Tenant retirement and purge governance',
+  });
+  await expect(lifecycleSection).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel request', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Cancel tenant lifecycle request' })
+  ).toBeVisible();
+  await page.getByRole('textbox', { name: 'Reason' }).fill('Customer retained the tenant');
+  await page.getByRole('button', { name: 'Cancel request', exact: true }).click();
+
+  await expect(page.getByText('Cancelled', { exact: true })).toBeVisible();
+  await expect(page.getByText(/No owner execution required/)).toBeVisible();
+  await expect(page.getByText(/Recorded reason: Customer retained the tenant/)).toBeVisible();
+  await expectNoSeriousAxeViolations(page);
+  await expectNoHorizontalOverflow(page, 'S10 lifecycle cancellation');
+  await capture(page, testInfo, 'S10-lifecycle-cancellation');
+});
+
 test('S11 exposes effective value, provenance, and unsupported observation honestly', async ({
   page,
 }, testInfo) => {
@@ -684,12 +771,16 @@ test('S15 stages configuration while keeping software distribution unavailable',
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Approve artifact' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Approve rollout plan' })).toHaveCount(0);
+  await expect(
+    page.getByText(/Showing 0 evidence records from the owner limit of 50/)
+  ).toBeVisible();
   const artifactButton = page.getByRole('button', { name: /WORKSPACE_AGENT · 2\.6\.0/ });
   await artifactButton.focus();
   await artifactButton.press('Space');
   await expect(
     page.getByRole('heading', { name: 'WORKSPACE_AGENT · 2.6.0', exact: true })
   ).toBeVisible();
+  await expect(page.getByText(/Showing 0 reviews from the owner limit of 50/)).toBeVisible();
   await expectNoSeriousAxeViolations(page);
   await expectNoHorizontalOverflow(page, 'S15 artifact governance');
 });

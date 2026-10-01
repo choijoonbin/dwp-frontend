@@ -4,6 +4,8 @@ import type {
   AppGovernanceDashboard,
   CatalogEntity,
   ProductSurfaceContextListData,
+  TenantAppAdoptionProjection,
+  TenantAppAssignment,
 } from '@dwp-frontend/shared-utils';
 
 import {
@@ -91,6 +93,53 @@ const authority = {
   ],
 } as unknown as ProductSurfaceContextListData;
 
+const adoption = {
+  observedAt: '2026-09-29T00:00:00Z',
+  coverageState: 'COMPLETE_INTERNAL_OWNERS',
+  includedOwners: ['AUTH_TENANT_APP_INSTALLATION'],
+  exclusions: ['EXTERNAL_SAAS_PROVISIONING'],
+  requestableAppResourceKeys: ['APP.MAIL'],
+  installations: [
+    {
+      installationId: 'installation-mail',
+      productKey: 'mail',
+      appResourceKey: 'APP.MAIL',
+      installationKind: 'INTERNAL_AUTH_CONTROLLED',
+      lifecycleState: 'ENABLED',
+      externalExecutorState: 'NOT_REQUIRED',
+      seatCapacity: 50,
+      reservedSeats: 2,
+      activeSeats: 1,
+      justification: 'Adopt Mail for the tenant workforce.',
+      requestedBy: 10,
+      version: 3,
+      createdAt: '2026-09-29T00:00:00Z',
+      updatedAt: '2026-09-29T00:00:00Z',
+      allowedActions: ['REQUEST_ASSIGNMENT'],
+    },
+  ],
+  installationsLimit: 100,
+  installationsHasMore: false,
+} as TenantAppAdoptionProjection;
+
+const workforceAssignment = {
+  assignmentId: 'assignment-mail',
+  installationId: 'installation-mail',
+  productKey: 'mail',
+  userId: 40,
+  userDisplayName: 'Mail administrator',
+  lifecycleState: 'ACTIVE',
+  seatQuantity: 1,
+  sourceType: 'TENANT_DIRECT',
+  externalSettlementState: 'NOT_REQUIRED',
+  justification: 'Assign Mail for tenant administration.',
+  requestedBy: 10,
+  version: 3,
+  createdAt: '2026-09-29T00:00:00Z',
+  updatedAt: '2026-09-29T00:00:00Z',
+  allowedActions: [],
+} as TenantAppAssignment;
+
 describe('application lifecycle catalog', () => {
   it('joins tenant installation and workforce assignment owners without inferring runnability', () => {
     const [item] = buildAppLifecycleCatalog({
@@ -101,52 +150,9 @@ describe('application lifecycle catalog', () => {
       governanceStatus: 'ready',
       authority,
       authorityStatus: 'ready',
-      adoption: {
-        observedAt: '2026-09-29T00:00:00Z',
-        coverageState: 'COMPLETE_INTERNAL_OWNERS',
-        includedOwners: ['AUTH_TENANT_APP_INSTALLATION'],
-        exclusions: ['EXTERNAL_SAAS_PROVISIONING'],
-        requestableAppResourceKeys: ['APP.MAIL'],
-        installations: [
-          {
-            installationId: 'installation-mail',
-            productKey: 'mail',
-            appResourceKey: 'APP.MAIL',
-            installationKind: 'INTERNAL_AUTH_CONTROLLED',
-            lifecycleState: 'ENABLED',
-            externalExecutorState: 'NOT_REQUIRED',
-            seatCapacity: 50,
-            reservedSeats: 2,
-            activeSeats: 1,
-            justification: 'Adopt Mail for the tenant workforce.',
-            requestedBy: 10,
-            version: 3,
-            createdAt: '2026-09-29T00:00:00Z',
-            updatedAt: '2026-09-29T00:00:00Z',
-            allowedActions: ['REQUEST_ASSIGNMENT'],
-          },
-        ],
-      },
+      adoption,
       adoptionStatus: 'ready',
-      workforceAssignments: [
-        {
-          assignmentId: 'assignment-mail',
-          installationId: 'installation-mail',
-          productKey: 'mail',
-          userId: 40,
-          userDisplayName: 'Mail administrator',
-          lifecycleState: 'ACTIVE',
-          seatQuantity: 1,
-          sourceType: 'TENANT_DIRECT',
-          externalSettlementState: 'NOT_REQUIRED',
-          justification: 'Assign Mail for tenant administration.',
-          requestedBy: 10,
-          version: 3,
-          createdAt: '2026-09-29T00:00:00Z',
-          updatedAt: '2026-09-29T00:00:00Z',
-          allowedActions: [],
-        },
-      ],
+      workforceAssignments: [workforceAssignment],
       workforceAssignmentsStatus: 'ready',
     });
 
@@ -166,6 +172,36 @@ describe('application lifecycle catalog', () => {
       adminAssignments: { state: 'OBSERVED', active: 1, pending: 0 },
       managementPath: '/mail/admin/overview',
       managementAccess: 'NOT_OBSERVED',
+    });
+  });
+
+  it('keeps first-page positive evidence while partial owners block negative inference', () => {
+    const items = buildAppLifecycleCatalog({
+      catalogEntities: [registry],
+      catalogStatus: 'partial',
+      manifests: [manifest, { ...manifest, id: 'calendar', appKey: 'APP.CALENDAR' }],
+      governance,
+      governanceStatus: 'ready',
+      authority,
+      authorityStatus: 'ready',
+      adoption: { ...adoption, installationsHasMore: true },
+      adoptionStatus: 'partial',
+      workforceAssignments: [workforceAssignment],
+      workforceAssignmentsStatus: 'partial',
+    });
+
+    const mail = items.find((item) => item.appKey === 'APP.MAIL');
+    expect(mail).toMatchObject({
+      registry: { state: 'OBSERVED' },
+      installation: { state: 'OBSERVED', lifecycleState: 'ENABLED' },
+      workforceAssignment: { state: 'OBSERVED', active: 1, pending: 0 },
+    });
+
+    const calendar = items.find((item) => item.appKey === 'APP.CALENDAR');
+    expect(calendar).toMatchObject({
+      registry: { state: 'UNAVAILABLE' },
+      installation: { state: 'UNAVAILABLE' },
+      workforceAssignment: { state: 'UNAVAILABLE' },
     });
   });
 
@@ -259,6 +295,8 @@ describe('application lifecycle catalog', () => {
         exclusions: ['EXTERNAL_SAAS_PROVISIONING'],
         requestableAppResourceKeys: [],
         installations: [],
+        installationsLimit: 100,
+        installationsHasMore: false,
       },
       adoptionStatus: 'ready',
     });

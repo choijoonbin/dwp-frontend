@@ -1,12 +1,83 @@
 import { describe, expect, it } from 'vitest';
 
+import type { TenantProviderDomainProjection } from '@dwp-frontend/shared-utils';
+
 import {
   resolveTenantAuthenticationPosture,
+  resolveTenantDomainOverview,
   resolveTenantPrioritySummaryState,
   resolveTenantSettingsTasks,
 } from './tenant-settings-overview-model';
 
 describe('tenant settings overview model', () => {
+  it('summarizes Provider domain loading, failure, empty, and observed states without inventing evidence', () => {
+    const projection: TenantProviderDomainProjection = {
+      ownerService: 'provider-control-plane',
+      observationState: 'LIVE_OWNER_READ',
+      observedAt: '2026-10-01T00:00:00Z',
+      coverageState: 'CURRENT_TENANT_NON_REVOKED_DOMAINS',
+      exclusions: [],
+      domains: [
+        {
+          domainId: 'verified-domain',
+          domainName: 'verified.example',
+          domainType: 'LOGIN',
+          verificationMethod: 'DNS_TXT',
+          verificationState: 'VERIFIED',
+          primaryDomain: true,
+          sourceChangedAt: '2026-10-01T00:00:00Z',
+          evidenceFreshnessState: 'OWNER_ATTESTED',
+          version: 1,
+        },
+        {
+          domainId: 'pending-domain',
+          domainName: 'pending.example',
+          domainType: 'EMAIL',
+          verificationMethod: 'HTTP',
+          verificationState: 'PENDING',
+          primaryDomain: false,
+          sourceChangedAt: '2026-10-01T00:00:00Z',
+          evidenceFreshnessState: 'RECORDED_AT',
+          version: 1,
+        },
+      ],
+    };
+
+    expect(
+      resolveTenantDomainOverview({
+        permitted: false,
+        loading: false,
+        failed: false,
+      })
+    ).toEqual({ state: 'NO_ACCESS', total: null, verified: null });
+    expect(resolveTenantDomainOverview({ permitted: true, loading: true, failed: false })).toEqual({
+      state: 'LOADING',
+      total: null,
+      verified: null,
+    });
+    expect(resolveTenantDomainOverview({ permitted: true, loading: false, failed: true })).toEqual({
+      state: 'ERROR',
+      total: null,
+      verified: null,
+    });
+    expect(
+      resolveTenantDomainOverview({
+        permitted: true,
+        loading: false,
+        failed: false,
+        projection: { ...projection, domains: [] },
+      })
+    ).toEqual({ state: 'EMPTY', total: 0, verified: 0 });
+    expect(
+      resolveTenantDomainOverview({
+        permitted: true,
+        loading: false,
+        failed: false,
+        projection,
+      })
+    ).toEqual({ state: 'OBSERVED', total: 2, verified: 1 });
+  });
+
   it('does not present zero tasks as clear when an owner read failed', () => {
     expect(
       resolveTenantPrioritySummaryState({ loading: false, partialFailure: true, taskCount: 0 })
@@ -108,25 +179,49 @@ describe('tenant settings overview model', () => {
         resourceSets: [],
         assignments: [],
       },
-      policyRevisions: [
-        {
-          revisionId: 'revision-4',
-          revisionNumber: 4,
-          lifecycleState: 'IN_REVIEW',
-          standardRetentionDays: 365,
-          extendedRetentionDays: 730,
-          exportLimitRows: 1000,
-          requireExportReason: true,
-          integrityEnabled: true,
-          highRiskThreshold: 80,
-          changeReason: 'Extend retention',
-          diff: {},
-          contentSha256: 'abc',
-          createdBy: 'admin',
-          createdAt: '2026-09-17T00:00:00Z',
-          version: 1,
-        },
-      ],
+      policyRevisions: {
+        items: [
+          {
+            revisionId: 'revision-4',
+            revisionNumber: 4,
+            lifecycleState: 'IN_REVIEW',
+            standardRetentionDays: 365,
+            extendedRetentionDays: 730,
+            exportLimitRows: 1000,
+            requireExportReason: true,
+            integrityEnabled: true,
+            highRiskThreshold: 80,
+            changeReason: 'Extend retention',
+            diff: {},
+            contentSha256: 'abc',
+            impactSnapshot: {
+              observedAt: '2026-09-17T00:00:00Z',
+              coverageState: 'UNAVAILABLE_LEGACY_REVISION',
+              includedOwners: [],
+              exclusions: ['LEGACY_REVISION_NOT_SNAPSHOTTED'],
+              auditEventCount: 0,
+              affectedAuditEventCount: 0,
+              affectedActorCount: 0,
+              affectedTargetCount: 0,
+              standardRetentionEventCount: 0,
+              extendedRetentionEventCount: 0,
+              legalHoldEventCount: 0,
+              standardRetentionAffectedEventCount: 0,
+              extendedRetentionAffectedEventCount: 0,
+              highRiskClassificationAffectedEventCount: 0,
+              exportableEventCountBefore: 0,
+              exportableEventCountAfter: 0,
+              integrityProtectedEventCountBefore: 0,
+              integrityProtectedEventCountAfter: 0,
+            },
+            impactSha256: 'b'.repeat(64),
+            createdBy: 'admin',
+            createdAt: '2026-09-17T00:00:00Z',
+            version: 1,
+          },
+        ],
+        hasMore: true,
+      },
     });
 
     expect(tasks.map(({ kind, count }) => [kind, count])).toEqual([
@@ -135,5 +230,6 @@ describe('tenant settings overview model', () => {
       ['APP_APPROVAL', 3],
       ['POLICY_REVIEW', 1],
     ]);
+    expect(tasks.find(({ kind }) => kind === 'POLICY_REVIEW')?.countIsLowerBound).toBe(true);
   });
 });

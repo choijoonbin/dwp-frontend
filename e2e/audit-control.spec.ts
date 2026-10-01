@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import type { AuditPolicyRevision } from '@dwp-frontend/shared-utils';
 
+import { AUDIT_POLICY_IMPACT_SNAPSHOT } from './support/audit-control-fixtures';
 import { mockAuthenticatedRuntime } from './support/runtime-access';
 
 function envelope(data: unknown) {
@@ -265,6 +266,8 @@ const baselinePolicyRevision: AuditPolicyRevision = {
   changeReason: 'Initial governed baseline',
   diff: {},
   contentSha256: 'a'.repeat(64),
+  impactSnapshot: AUDIT_POLICY_IMPACT_SNAPSHOT,
+  impactSha256: 'f'.repeat(64),
   createdBy: 'audit-admin',
   createdAt: '2026-08-10T12:00:00Z',
   submittedBy: null,
@@ -664,7 +667,7 @@ async function mockAuditControl(page: Page) {
     }
     if (path.endsWith('/policy') && method === 'GET') return fulfillJson(route, currentPolicy);
     if (path.endsWith('/policy/revisions') && method === 'GET') {
-      return fulfillJson(route, policyRevisions);
+      return fulfillJson(route, { items: policyRevisions, limit: 100, hasMore: false });
     }
     if (path.endsWith('/policy/revisions') && method === 'POST') {
       const body = request.postDataJSON();
@@ -678,6 +681,15 @@ async function mockAuditControl(page: Page) {
         changeReason: body.reason,
         diff: { standardRetentionDays: { before: 365, after: body.standardRetentionDays } },
         contentSha256: 'b'.repeat(64),
+        impactSnapshot: {
+          ...AUDIT_POLICY_IMPACT_SNAPSHOT,
+          observedAt: '2026-08-10T12:20:00Z',
+          affectedAuditEventCount: 120,
+          affectedActorCount: 24,
+          affectedTargetCount: 38,
+          standardRetentionAffectedEventCount: 120,
+        },
+        impactSha256: 'e'.repeat(64),
         createdBy: '1',
         createdAt: '2026-08-10T12:20:00Z',
         publishedBy: null,

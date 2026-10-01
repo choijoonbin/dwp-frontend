@@ -36,6 +36,7 @@ const PRESENTATION_KEYS = {
     'ACTIVE',
     'DENIED',
     'REVOKED',
+    'EXPIRED',
   ]),
   installationKinds: new Set(['INTERNAL_AUTH_CONTROLLED', 'EXTERNAL_SERVICE']),
   executorStates: new Set(['NOT_REQUIRED', 'UNAVAILABLE']),

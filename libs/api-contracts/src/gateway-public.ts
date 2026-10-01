@@ -8397,6 +8397,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/admin/tenant-settings/sso-test-login-jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_ssoTestLoginReceipts"];
+        put?: never;
+        post: operations["auth_requestSsoTestLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/admin/tenant-settings/sso-test-login-jobs/{jobId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_ssoTestLoginReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/csrf": {
         parameters: {
             query?: never;
@@ -24959,6 +24991,22 @@ export interface paths {
         get: operations["provider_lifecycleRequests"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/provider/v1/admin/resource-governance/lifecycle-requests/{requestId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["provider_cancelLifecycleRequest"];
         delete?: never;
         options?: never;
         head?: never;
@@ -41760,6 +41808,9 @@ export interface components {
             exclusions?: string[];
             includedOwners?: string[];
             installations?: components["schemas"]["auth_Installation"][];
+            installationsHasMore?: boolean;
+            /** Format: int32 */
+            installationsLimit?: number;
             /** Format: date-time */
             observedAt?: string;
             requestableAppResourceKeys?: string[];
@@ -41834,6 +41885,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseAssignmentPage: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AssignmentPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseAuthPolicyChangePage: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_AuthPolicyChangePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseAuthPolicyResponse: {
             correlationId?: string;
             data?: components["schemas"]["auth_AuthPolicyResponse"];
@@ -41867,6 +41938,16 @@ export interface components {
         auth_ApiResponseChange: {
             correlationId?: string;
             data?: components["schemas"]["auth_Change"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseChangePage: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_ChangePage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -42044,16 +42125,6 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        auth_ApiResponseListAssignment: {
-            correlationId?: string;
-            data?: components["schemas"]["auth_Assignment"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         auth_ApiResponseListAuthSessionResponse: {
             correlationId?: string;
             data?: components["schemas"]["auth_AuthSessionResponse"][];
@@ -42067,26 +42138,6 @@ export interface components {
         auth_ApiResponseListCampaignSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_CampaignSummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        auth_ApiResponseListChange: {
-            correlationId?: string;
-            data?: components["schemas"]["auth_Change"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        auth_ApiResponseListChangeSet: {
-            correlationId?: string;
-            data?: components["schemas"]["auth_ChangeSet"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -42404,6 +42455,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseSsoTestLoginReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_SsoTestLoginReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseSsoTestLoginReceiptPage: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_SsoTestLoginReceiptPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseTenantGovernanceSnapshot: {
             correlationId?: string;
             data?: components["schemas"]["auth_TenantGovernanceSnapshot"];
@@ -42657,6 +42728,18 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        auth_AssignmentPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["auth_Assignment"][];
+            /** Format: int32 */
+            limit?: number;
+        };
+        auth_AuthPolicyChangePage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["auth_ChangeSet"][];
+            /** Format: int32 */
+            limit?: number;
+        };
         auth_AuthPolicyDraft: {
             allowedLoginTypes: string[];
             defaultLoginType: string;
@@ -42771,6 +42854,12 @@ export interface components {
             updatedAt?: string;
             /** Format: int64 */
             version?: number;
+        };
+        auth_ChangePage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["auth_Change"][];
+            /** Format: int32 */
+            limit?: number;
         };
         auth_ChangeSet: {
             allowedActions?: string[];
@@ -43432,6 +43521,7 @@ export interface components {
             internalPrerequisiteState?: string;
             /** Format: date-time */
             lastExternalProbeAt?: string;
+            latestReceipt?: components["schemas"]["auth_SsoTestLoginReceipt"];
         };
         auth_MeResponse: {
             department?: string;
@@ -44147,6 +44237,39 @@ export interface components {
             /** Format: date-time */
             idleExpiresAt?: string;
             rotated?: boolean;
+        };
+        auth_SsoTestLoginCommand: {
+            /** Format: uuid */
+            idempotencyKey: string;
+            justification: string;
+        };
+        auth_SsoTestLoginReceipt: {
+            blockingReasons?: string[];
+            /** Format: date-time */
+            completedAt?: string;
+            executionBoundary?: string;
+            externalProbeState?: string;
+            /** Format: uuid */
+            idempotencyKey?: string;
+            internalPrerequisiteState?: string;
+            lifecycleState?: string;
+            providerKey?: string;
+            receiptPayloadCanonical?: string;
+            receiptSha256?: string;
+            /** Format: date-time */
+            requestedAt?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            /** Format: int64 */
+            tenantId?: number;
+            /** Format: uuid */
+            testLoginJobId?: string;
+        };
+        auth_SsoTestLoginReceiptPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["auth_SsoTestLoginReceipt"][];
+            /** Format: int32 */
+            limit?: number;
         };
         auth_TaglibDescriptor: {
             taglibLocation?: string;
@@ -52172,6 +52295,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseCatalogOverview: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_CatalogOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseCatalogResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_CatalogResponse"];
@@ -53702,29 +53835,9 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        platform_ApiResponseListPolicyRevision: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_PolicyRevision"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         platform_ApiResponseListPreferenceExceptionRequest: {
             correlationId?: string;
             data?: components["schemas"]["platform_PreferenceExceptionRequest"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        platform_ApiResponseListPrivacyRequest: {
-            correlationId?: string;
-            data?: components["schemas"]["platform_PrivacyRequest"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -54322,6 +54435,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponsePolicyRevisionPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PolicyRevisionPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponsePostIncidentReport: {
             correlationId?: string;
             data?: components["schemas"]["platform_PostIncidentReport"];
@@ -54365,6 +54488,16 @@ export interface components {
         platform_ApiResponsePrivacyRequest: {
             correlationId?: string;
             data?: components["schemas"]["platform_PrivacyRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponsePrivacyRequestPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PrivacyRequestPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -56117,6 +56250,9 @@ export interface components {
             /** Format: int64 */
             deprecationImpactCount?: number;
             findings?: components["schemas"]["platform_AssuranceFinding"][];
+            findingsHasMore?: boolean;
+            /** Format: int32 */
+            findingsLimit?: number;
             /** Format: date-time */
             generatedAt?: string;
             /** Format: int64 */
@@ -56974,6 +57110,30 @@ export interface components {
             tags?: string[];
             /** Format: int64 */
             version?: number;
+        };
+        platform_CatalogOverview: {
+            /** Format: int64 */
+            criticalRelationCount?: number;
+            /** Format: int64 */
+            declaredRelationCount?: number;
+            entities?: components["schemas"]["platform_Entity"][];
+            entitiesByKind?: {
+                [key: string]: number;
+            };
+            entitiesByLifecycle?: {
+                [key: string]: number;
+            };
+            entitiesHasMore?: boolean;
+            /** Format: int32 */
+            entitiesLimit?: number;
+            /** Format: int64 */
+            entityCount?: number;
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int64 */
+            orphanCount?: number;
+            /** Format: int64 */
+            relationCount?: number;
         };
         platform_CatalogResponse: {
             /** Format: int64 */
@@ -61826,6 +61986,41 @@ export interface components {
             policyId?: string;
             warnings?: string[];
         };
+        platform_PolicyImpactSnapshot: {
+            /** Format: int64 */
+            affectedActorCount?: number;
+            /** Format: int64 */
+            affectedAuditEventCount?: number;
+            /** Format: int64 */
+            affectedTargetCount?: number;
+            /** Format: int64 */
+            auditEventCount?: number;
+            coverageState?: string;
+            exclusions?: string[];
+            /** Format: int64 */
+            exportableEventCountAfter?: number;
+            /** Format: int64 */
+            exportableEventCountBefore?: number;
+            /** Format: int64 */
+            extendedRetentionAffectedEventCount?: number;
+            /** Format: int64 */
+            extendedRetentionEventCount?: number;
+            /** Format: int64 */
+            highRiskClassificationAffectedEventCount?: number;
+            includedOwners?: string[];
+            /** Format: int64 */
+            integrityProtectedEventCountAfter?: number;
+            /** Format: int64 */
+            integrityProtectedEventCountBefore?: number;
+            /** Format: int64 */
+            legalHoldEventCount?: number;
+            /** Format: date-time */
+            observedAt?: string;
+            /** Format: int64 */
+            standardRetentionAffectedEventCount?: number;
+            /** Format: int64 */
+            standardRetentionEventCount?: number;
+        };
         platform_PolicyOverrideChangeRequest: {
             confirmed?: boolean;
             proposed: components["schemas"]["platform_PolicyOverrideRequest"];
@@ -61897,6 +62092,8 @@ export interface components {
             extendedRetentionDays?: number;
             /** Format: int32 */
             highRiskThreshold?: number;
+            impactSha256?: string;
+            impactSnapshot?: components["schemas"]["platform_PolicyImpactSnapshot"];
             /** Format: uuid */
             incidentCaseId?: string;
             integrityEnabled?: boolean;
@@ -61939,6 +62136,12 @@ export interface components {
             reason?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_PolicyRevisionPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_PolicyRevision"][];
+            /** Format: int32 */
+            limit?: number;
         };
         platform_PolicyRevisionTransition: {
             reason?: string;
@@ -62103,6 +62306,9 @@ export interface components {
             fulfillmentAvailable?: boolean;
             fulfillmentBoundary?: string;
             lifecycle?: components["schemas"]["platform_PrivacyRequestEvent"][];
+            lifecycleHasMore?: boolean;
+            /** Format: int32 */
+            lifecycleLimit?: number;
             reason?: string;
             receipt?: components["schemas"]["platform_PrivacyRequestReceipt"];
             /** Format: uuid */
@@ -62123,6 +62329,12 @@ export interface components {
             /** Format: date-time */
             occurredAt?: string;
             requestState?: string;
+        };
+        platform_PrivacyRequestPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_PrivacyRequest"][];
+            /** Format: int32 */
+            limit?: number;
         };
         platform_PrivacyRequestReceipt: {
             evidenceState?: string;
@@ -67755,6 +67967,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponseArtifactManifestPage: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ArtifactManifestPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponseArtifactRolloutEvidence: {
             correlationId?: string;
             data?: components["schemas"]["provider_ArtifactRolloutEvidence"];
@@ -67768,6 +67990,16 @@ export interface components {
         provider_ApiResponseArtifactRolloutPlan: {
             correlationId?: string;
             data?: components["schemas"]["provider_ArtifactRolloutPlan"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseArtifactRolloutPlanPage: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ArtifactRolloutPlanPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -67808,6 +68040,16 @@ export interface components {
         provider_ApiResponseCommercialOverview: {
             correlationId?: string;
             data?: components["schemas"]["provider_CommercialOverview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseCommitmentPage: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_CommitmentPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -67925,39 +68167,9 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        provider_ApiResponseListArtifactManifest: {
-            correlationId?: string;
-            data?: components["schemas"]["provider_ArtifactManifest"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        provider_ApiResponseListArtifactRolloutPlan: {
-            correlationId?: string;
-            data?: components["schemas"]["provider_ArtifactRolloutPlan"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         provider_ApiResponseListAuditEventSummary: {
             correlationId?: string;
             data?: components["schemas"]["provider_AuditEventSummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        provider_ApiResponseListCommitment: {
-            correlationId?: string;
-            data?: components["schemas"]["provider_Commitment"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -68005,29 +68217,9 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
-        provider_ApiResponseListPolicy: {
-            correlationId?: string;
-            data?: components["schemas"]["provider_Policy"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
         provider_ApiResponseListRegionSummary: {
             correlationId?: string;
             data?: components["schemas"]["provider_RegionSummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        provider_ApiResponseListResourceCommitmentChange: {
-            correlationId?: string;
-            data?: components["schemas"]["provider_ResourceCommitmentChange"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -68068,16 +68260,6 @@ export interface components {
         provider_ApiResponseListSupportScopeSummary: {
             correlationId?: string;
             data?: components["schemas"]["provider_SupportScopeSummary"][];
-            errorCode?: string;
-            message?: string;
-            status?: string;
-            success?: boolean;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        provider_ApiResponseListTenantLifecycleRequest: {
-            correlationId?: string;
-            data?: components["schemas"]["provider_TenantLifecycleRequest"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -68165,6 +68347,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        provider_ApiResponsePolicyPage: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_PolicyPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         provider_ApiResponseReliabilityControlOverview: {
             correlationId?: string;
             data?: components["schemas"]["provider_ReliabilityControlOverview"];
@@ -68188,6 +68380,16 @@ export interface components {
         provider_ApiResponseResourceCommitmentChange: {
             correlationId?: string;
             data?: components["schemas"]["provider_ResourceCommitmentChange"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseResourceCommitmentChangePage: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_ResourceCommitmentChangePage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -68288,6 +68490,16 @@ export interface components {
         provider_ApiResponseTenantLifecycleRequest: {
             correlationId?: string;
             data?: components["schemas"]["provider_TenantLifecycleRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        provider_ApiResponseTenantLifecycleRequestPage: {
+            correlationId?: string;
+            data?: components["schemas"]["provider_TenantLifecycleRequestPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -68419,6 +68631,9 @@ export interface components {
             manifestSchemaVersion?: number;
             productKey?: string;
             reviews?: components["schemas"]["provider_ArtifactReview"][];
+            reviewsHasMore?: boolean;
+            /** Format: int32 */
+            reviewsLimit?: number;
             signatureState?: string;
             /** Format: date-time */
             updatedAt?: string;
@@ -68426,6 +68641,12 @@ export interface components {
             updatedBy?: number;
             /** Format: int64 */
             version?: number;
+        };
+        provider_ArtifactManifestPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["provider_ArtifactManifest"][];
+            /** Format: int32 */
+            limit?: number;
         };
         provider_ArtifactReview: {
             /** Format: uuid */
@@ -68479,6 +68700,9 @@ export interface components {
             createdAt?: string;
             decisionReason?: string;
             evidence?: components["schemas"]["provider_ArtifactRolloutEvidence"][];
+            evidenceHasMore?: boolean;
+            /** Format: int32 */
+            evidenceLimit?: number;
             executorState?: string;
             lifecycleState?: string;
             name?: string;
@@ -68499,6 +68723,12 @@ export interface components {
             updatedAt?: string;
             /** Format: int64 */
             version?: number;
+        };
+        provider_ArtifactRolloutPlanPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["provider_ArtifactRolloutPlan"][];
+            /** Format: int32 */
+            limit?: number;
         };
         provider_ArtifactSchemaCompatibility: {
             currentVersion?: string;
@@ -68669,6 +68899,12 @@ export interface components {
             lifecycleState?: string;
             quotaLimit?: number;
             unit?: string;
+        };
+        provider_CommitmentPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["provider_Commitment"][];
+            /** Format: int32 */
+            limit?: number;
         };
         provider_ControlPeriod: {
             /** Format: date-time */
@@ -69438,6 +69674,9 @@ export interface components {
             policyKey?: string;
             policyType?: string;
             revisions?: components["schemas"]["provider_Revision"][];
+            revisionsHasMore?: boolean;
+            /** Format: int32 */
+            revisionsLimit?: number;
             scopeRef?: string;
             scopeType?: string;
             /** Format: int64 */
@@ -69466,6 +69705,12 @@ export interface components {
             sourceChangedAt?: string;
             /** Format: int64 */
             sourceVersion?: number;
+        };
+        provider_PolicyPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["provider_Policy"][];
+            /** Format: int32 */
+            limit?: number;
         };
         provider_ProductEligibilityObservation: {
             appResourceKey?: string;
@@ -69608,6 +69853,12 @@ export interface components {
             reason: string;
             /** Format: int64 */
             version?: number;
+        };
+        provider_ResourceCommitmentChangePage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["provider_ResourceCommitmentChange"][];
+            /** Format: int32 */
+            limit?: number;
         };
         provider_RetryOperationRequest: {
             justification: string;
@@ -70169,6 +70420,12 @@ export interface components {
             updatedAt?: string;
             /** Format: int64 */
             version?: number;
+        };
+        provider_TenantLifecycleRequestPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["provider_TenantLifecycleRequest"][];
+            /** Format: int32 */
+            limit?: number;
         };
         provider_TenantSummary: {
             administratorPosture?: components["schemas"]["provider_TenantAdministratorPosture"];
@@ -88913,7 +89170,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListAssignment"];
+                    "*/*": components["schemas"]["auth_ApiResponseAssignmentPage"];
                 };
             };
         };
@@ -89328,7 +89585,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListChange"];
+                    "*/*": components["schemas"]["auth_ApiResponseChangePage"];
                 };
             };
         };
@@ -89497,7 +89754,9 @@ export interface operations {
     };
     auth_authPolicyChanges: {
         parameters: {
-            query?: never;
+            query?: {
+                limit?: number;
+            };
             header?: {
                 "X-Tenant-ID"?: string;
             };
@@ -89512,7 +89771,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListChangeSet"];
+                    "*/*": components["schemas"]["auth_ApiResponseAuthPolicyChangePage"];
                 };
             };
         };
@@ -89651,6 +89910,81 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_ApiResponseTenantGovernanceSnapshot"];
+                };
+            };
+        };
+    };
+    auth_ssoTestLoginReceipts: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseSsoTestLoginReceiptPage"];
+                };
+            };
+        };
+    };
+    auth_requestSsoTestLogin: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["auth_SsoTestLoginCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseSsoTestLoginReceipt"];
+                };
+            };
+        };
+    };
+    auth_ssoTestLoginReceipt: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Tenant-ID"?: string;
+            };
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["auth_ApiResponseSsoTestLoginReceipt"];
                 };
             };
         };
@@ -99116,7 +99450,9 @@ export interface operations {
     };
     platform_policyRevisions: {
         parameters: {
-            query?: never;
+            query?: {
+                limit?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -99129,7 +99465,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListPolicyRevision"];
+                    "*/*": components["schemas"]["platform_ApiResponsePolicyRevisionPage"];
                 };
             };
         };
@@ -99764,7 +100100,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseOverview"];
+                    "*/*": components["schemas"]["platform_ApiResponseCatalogOverview"];
                 };
             };
         };
@@ -116478,7 +116814,9 @@ export interface operations {
     };
     platform_privacyRequests: {
         parameters: {
-            query?: never;
+            query?: {
+                limit?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -116491,7 +116829,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["platform_ApiResponseListPrivacyRequest"];
+                    "*/*": components["schemas"]["platform_ApiResponsePrivacyRequestPage"];
                 };
             };
         };
@@ -121881,7 +122219,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["provider_ApiResponseListArtifactManifest"];
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactManifestPage"];
                 };
             };
         };
@@ -122011,7 +122349,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["provider_ApiResponseListArtifactRolloutPlan"];
+                    "*/*": components["schemas"]["provider_ApiResponseArtifactRolloutPlanPage"];
                 };
             };
         };
@@ -122316,7 +122654,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["provider_ApiResponseListPolicy"];
+                    "*/*": components["schemas"]["provider_ApiResponsePolicyPage"];
                 };
             };
         };
@@ -123228,7 +123566,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["provider_ApiResponseListResourceCommitmentChange"];
+                    "*/*": components["schemas"]["provider_ApiResponseResourceCommitmentChangePage"];
                 };
             };
         };
@@ -123306,7 +123644,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["provider_ApiResponseListCommitment"];
+                    "*/*": components["schemas"]["provider_ApiResponseCommitmentPage"];
                 };
             };
         };
@@ -123328,7 +123666,35 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["provider_ApiResponseListTenantLifecycleRequest"];
+                    "*/*": components["schemas"]["provider_ApiResponseTenantLifecycleRequestPage"];
+                };
+            };
+        };
+    };
+    provider_cancelLifecycleRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                requestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["provider_VersionedReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["provider_ApiResponseTenantLifecycleRequest"];
                 };
             };
         };

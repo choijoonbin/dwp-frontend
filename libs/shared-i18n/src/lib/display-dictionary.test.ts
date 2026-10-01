@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import english from '../locales/en/display.json';
+import korean from '../locales/ko/display.json';
 import {
   displayDictionaryKey,
   humanizeDisplayCode,
@@ -41,5 +43,35 @@ describe('display dictionary', () => {
     expect(humanizeDisplayCode('provider.support-session.revoked')).toBe(
       'Provider support session revoked'
     );
+  });
+
+  it('maps emitted authentication audit actions to exact labels in both supported locales', () => {
+    expect(displayDictionaryKey('authentication.login.succeeded')).toBe(
+      'AUTHENTICATION_LOGIN_SUCCEEDED'
+    );
+    expect(displayDictionaryKey('authentication.session.created')).toBe(
+      'AUTHENTICATION_SESSION_CREATED'
+    );
+    expect(english.auditActions.AUTHENTICATION_LOGIN_SUCCEEDED).toBe('Login succeeded');
+    expect(english.auditActions.AUTHENTICATION_SESSION_CREATED).toBe(
+      'Authentication session created'
+    );
+    expect(korean.auditActions.AUTHENTICATION_LOGIN_SUCCEEDED).toBe('로그인 성공');
+    expect(korean.auditActions.AUTHENTICATION_SESSION_CREATED).toBe('인증 세션 생성');
+  });
+
+  it('covers Provider support control migration evidence in both supported locales', () => {
+    expect(english.auditActions.PROVIDER_SUPPORT_ACTIVATION_ENABLED_BY_DB_CONTROL).toBeTruthy();
+    expect(
+      english.auditActions.PROVIDER_SUPPORT_CONTAINMENT_V51_ADMIN_AUTHORITY_RETIRED
+    ).toBeTruthy();
+    expect(english.targetTypes.SUPPORT_CONTROL).toBeTruthy();
+    expect(english.targetTypes.SYSTEM_PRINCIPAL).toBeTruthy();
+    expect(korean.auditActions.PROVIDER_SUPPORT_ACTIVATION_ENABLED_BY_DB_CONTROL).toBeTruthy();
+    expect(
+      korean.auditActions.PROVIDER_SUPPORT_CONTAINMENT_V51_ADMIN_AUTHORITY_RETIRED
+    ).toBeTruthy();
+    expect(korean.targetTypes.SUPPORT_CONTROL).toBeTruthy();
+    expect(korean.targetTypes.SYSTEM_PRINCIPAL).toBeTruthy();
   });
 });

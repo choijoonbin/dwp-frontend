@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 31,
-  checksum: 'be4e1b6db3d3f0b5100182a3c80066a39c64479f9ba88d908fee661efd3335b8',
-  indexChecksum: '1eaba46a2b6f61c8b6d0f0d174d0ff5551c8bd85b2e05e0ea4b7449de2325907',
+  version: 32,
+  checksum: 'b620ea86a8310cf23796e3e380b74c39764bdca28f41033496d21887a89da9cc',
+  indexChecksum: 'b0a8f275e07e34d4dddcf9de8c535ee6de05d883d4983ce12a0554c29e54603e',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -4505,6 +4505,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/platform/v1/calendar/events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.communications.management.code-sets.data',
+    routeKind: 'DATA',
+    navigationContextId: 'communications.management',
+    subjectType: 'PRODUCT',
+    productId: 'communications',
+    surfaceId: 'communications.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/catalog/code-sets/{codeSetKey}',
       },
     ],
   },

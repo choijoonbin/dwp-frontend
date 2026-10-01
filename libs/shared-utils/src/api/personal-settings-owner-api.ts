@@ -1,6 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 
+import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApiResponse } from '../types';
+
+type PlatformSchemas = GatewayComponents['schemas'];
 
 export type PersonalSettingKey =
   | 'profile'
@@ -61,39 +64,53 @@ export type PersonalPrivacyConsentLedger = {
   coverageBoundary: 'CROSS_PRODUCT_CONSENT_SOURCES_NOT_CONNECTED';
 };
 
-export type PersonalPrivacyRequestReceipt = {
-  receiptId: string;
+type GeneratedPrivacyRequestReceipt = Required<PlatformSchemas['platform_PrivacyRequestReceipt']>;
+type GeneratedPrivacyRequestEvent = Required<PlatformSchemas['platform_PrivacyRequestEvent']>;
+type GeneratedPrivacyRequest = Required<PlatformSchemas['platform_PrivacyRequest']>;
+type GeneratedPrivacyRequestPage = Required<PlatformSchemas['platform_PrivacyRequestPage']>;
+
+export type PersonalPrivacyRequestReceipt = Omit<
+  GeneratedPrivacyRequestReceipt,
+  'receiptType' | 'evidenceState' | 'fulfillmentBoundary'
+> & {
   receiptType: 'INTAKE';
   evidenceState: 'INTAKE_ONLY';
   fulfillmentBoundary: 'PRIVACY_OWNER_EXECUTION_NOT_CONNECTED';
-  requestFingerprint: string;
-  issuedAt: string;
 };
 
-export type PersonalPrivacyRequestEvent = {
-  eventId: string;
+export type PersonalPrivacyRequestEvent = Omit<
+  GeneratedPrivacyRequestEvent,
+  'eventType' | 'requestState' | 'detailKey'
+> & {
   eventType: 'REQUEST_RECEIVED' | 'FULFILLMENT_BOUNDARY_RECORDED' | 'REQUEST_CANCELLED';
   requestState: 'RECEIVED' | 'CANCELLED';
   detailKey:
     | 'PRIVACY_REQUEST_INTAKE_RECORDED'
     | 'PRIVACY_OWNER_EXECUTION_NOT_CONNECTED'
     | 'CANCELLED_BY_REQUEST_OWNER';
-  occurredAt: string;
 };
 
-export type PersonalPrivacyRequest = {
-  requestId: string;
+export type PersonalPrivacyRequest = Omit<
+  GeneratedPrivacyRequest,
+  | 'requestType'
+  | 'requestState'
+  | 'reason'
+  | 'fulfillmentAvailable'
+  | 'fulfillmentBoundary'
+  | 'receipt'
+  | 'lifecycle'
+> & {
   requestType: 'DATA_EXPORT' | 'ACCOUNT_DELETION';
   requestState: 'RECEIVED' | 'CANCELLED';
-  requestedScope: string;
-  reason?: string | null;
+  reason: string | null;
   fulfillmentAvailable: false;
   fulfillmentBoundary: 'PRIVACY_OWNER_EXECUTION_NOT_CONNECTED';
-  version: number;
-  createdAt: string;
-  updatedAt: string;
-  receipt?: PersonalPrivacyRequestReceipt | null;
+  receipt: PersonalPrivacyRequestReceipt | null;
   lifecycle: PersonalPrivacyRequestEvent[];
+};
+
+export type PersonalPrivacyRequestPage = Omit<GeneratedPrivacyRequestPage, 'items'> & {
+  items: PersonalPrivacyRequest[];
 };
 
 export async function getPersonalSettingsWorkspace(): Promise<PersonalSettingsWorkspace> {
@@ -156,9 +173,9 @@ export async function updateProductAnalyticsConsent(
   return response.data.data;
 }
 
-export async function listPersonalPrivacyRequests(): Promise<PersonalPrivacyRequest[]> {
-  const response = await axiosInstance.get<ApiResponse<PersonalPrivacyRequest[]>>(
-    '/api/platform/v1/personal-settings/privacy/requests'
+export async function listPersonalPrivacyRequests(limit = 50): Promise<PersonalPrivacyRequestPage> {
+  const response = await axiosInstance.get<ApiResponse<PersonalPrivacyRequestPage>>(
+    `/api/platform/v1/personal-settings/privacy/requests?limit=${limit}`
   );
   return response.data.data;
 }

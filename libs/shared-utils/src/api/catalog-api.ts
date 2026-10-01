@@ -1,6 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 
+import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApiResponse } from '../types';
+
+type PlatformSchemas = GatewayComponents['schemas'];
 
 export type CatalogEntityKind =
   | 'REFERENCE_SET'
@@ -66,7 +69,9 @@ export type CatalogOverview = {
   entitiesByLifecycle: Record<string, number>;
   entities: CatalogEntity[];
   generatedAt: string;
-};
+} & Required<
+  Pick<PlatformSchemas['platform_CatalogOverview'], 'entitiesLimit' | 'entitiesHasMore'>
+>;
 
 export type CatalogGraphNode = {
   entity: CatalogEntity;
@@ -142,7 +147,9 @@ export type CatalogAssuranceSummary = {
   activeRule: CatalogCompatibilityRule;
   findings: CatalogAssuranceFinding[];
   generatedAt: string;
-};
+} & Required<
+  Pick<PlatformSchemas['platform_AssuranceSummary'], 'findingsLimit' | 'findingsHasMore'>
+>;
 
 export type CatalogFindingDispositionRequest = {
   decision: Exclude<CatalogAssuranceFindingState, 'OPEN'>;

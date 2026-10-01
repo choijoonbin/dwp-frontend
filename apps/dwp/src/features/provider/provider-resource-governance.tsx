@@ -52,6 +52,7 @@ import {
   ProviderStatusChip,
 } from './provider-ui';
 import { canManageProviderResourceGovernance } from './provider-resource-governance-access';
+import { providerOwnerCountLabel } from './provider-bounded-list-coverage';
 import { ProviderResourceChangeGovernance } from './provider-resource-change-governance';
 import { ProviderResourceLedgerDialog } from './provider-resource-ledger-dialog';
 import {
@@ -417,7 +418,7 @@ export function ProviderResourceGovernance() {
     queryFn: listAllProviderTenants,
     enabled: canReadEstate,
   });
-  const selected = (commitments.data ?? []).find((item) => keyOf(item) === selectedKey) ?? null;
+  const selected = commitments.data?.items.find((item) => keyOf(item) === selectedKey) ?? null;
   const ledger = useQuery({
     queryKey: [
       'provider',
@@ -531,7 +532,8 @@ export function ProviderResourceGovernance() {
       />
     );
   }
-  const rows = commitments.data ?? [];
+  const rows = commitments.data?.items ?? [];
+  const commitmentsPartial = commitments.data?.hasMore ?? false;
   const active = rows.filter((item) => item.lifecycleState === 'ACTIVE').length;
   const activePeriods = rows.filter((item) => item.controlPeriod.state === 'ACTIVE').length;
   const internalBudget = rows.filter((item) => item.budgetLimit != null).length;
@@ -554,7 +556,7 @@ export function ProviderResourceGovernance() {
           },
           {
             label: t('resourceGovernance.context.activePeriods'),
-            value: String(activePeriods),
+            value: commitmentsPartial ? t('notAvailable') : String(activePeriods),
             icon: <CalendarClock size={16} />,
           },
           {
@@ -596,6 +598,14 @@ export function ProviderResourceGovernance() {
         }
       />
       <Alert severity="info">{t('resourceGovernance.boundary')}</Alert>
+      {commitmentsPartial && (
+        <Alert severity="warning">
+          {t('resourceGovernance.listPartial', {
+            count: rows.length,
+            limit: commitments.data?.limit ?? rows.length,
+          })}
+        </Alert>
+      )}
       {operator.isError && (
         <Alert
           severity="warning"
@@ -647,21 +657,29 @@ export function ProviderResourceGovernance() {
       >
         <SignalMetric
           label={t('resourceGovernance.metrics.commitments')}
-          value={String(rows.length)}
+          value={providerOwnerCountLabel(rows.length, commitmentsPartial)}
           detail={t('resourceGovernance.metrics.commitmentsDetail')}
           icon={<BookOpenCheck size={18} />}
         />
         <SignalMetric
           label={t('resourceGovernance.metrics.active')}
-          value={String(active)}
-          detail={t('resourceGovernance.metrics.activeDetail')}
+          value={commitmentsPartial ? t('notAvailable') : String(active)}
+          detail={
+            commitmentsPartial
+              ? t('resourceGovernance.metrics.partialDetail')
+              : t('resourceGovernance.metrics.activeDetail')
+          }
           icon={<DatabaseZap size={18} />}
           tone={active ? 'success' : 'neutral'}
         />
         <SignalMetric
           label={t('resourceGovernance.metrics.budgets')}
-          value={String(internalBudget)}
-          detail={t('resourceGovernance.metrics.budgetsDetail')}
+          value={commitmentsPartial ? t('notAvailable') : String(internalBudget)}
+          detail={
+            commitmentsPartial
+              ? t('resourceGovernance.metrics.partialDetail')
+              : t('resourceGovernance.metrics.budgetsDetail')
+          }
           icon={<WalletCards size={18} />}
           tone={internalBudget ? 'info' : 'neutral'}
         />
@@ -690,7 +708,7 @@ export function ProviderResourceGovernance() {
               }}
               getRowClassName={({ row }) => (keyOf(row) === selectedKey ? 'Mui-selected' : '')}
             />
-          ) : (
+          ) : !commitmentsPartial ? (
             <EmptyState
               title={t('resourceGovernance.empty.title')}
               description={t('resourceGovernance.empty.description')}
@@ -710,7 +728,7 @@ export function ProviderResourceGovernance() {
                 ) : undefined
               }
             />
-          )}
+          ) : null}
         </Box>
       </Paper>
       {selected && (

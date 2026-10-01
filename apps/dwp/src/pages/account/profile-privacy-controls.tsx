@@ -57,7 +57,7 @@ export function ProfilePrivacyControls({ enabled = true }: { enabled?: boolean }
   });
   const requestsQuery = useQuery({
     queryKey: REQUEST_QUERY_KEY,
-    queryFn: listPersonalPrivacyRequests,
+    queryFn: () => listPersonalPrivacyRequests(),
     enabled,
     retry: false,
   });
@@ -100,7 +100,8 @@ export function ProfilePrivacyControls({ enabled = true }: { enabled?: boolean }
     setTelemetryConsent(granted);
   }, [consentQuery.data, consentQuery.isSuccess]);
 
-  const latestRequests = requestsQuery.data ?? [];
+  const requestPage = requestsQuery.data;
+  const latestRequests = requestPage?.items ?? [];
 
   return (
     <Box component="section" data-testid="profile-privacy-controls" sx={{ mt: 3 }}>
@@ -295,6 +296,13 @@ export function ProfilePrivacyControls({ enabled = true }: { enabled?: boolean }
                         ))}
                       </Stack>
                     )}
+                    {latest.lifecycleHasMore && (
+                      <Typography variant="caption" color="warning.main">
+                        {t('profile.privacy.requests.lifecycleMoreAvailable', {
+                          limit: latest.lifecycleLimit,
+                        })}
+                      </Typography>
+                    )}
                   </Stack>
                 )}
               </Box>
@@ -322,6 +330,45 @@ export function ProfilePrivacyControls({ enabled = true }: { enabled?: boolean }
             </Box>
           );
         })}
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '36px minmax(0, 1fr)',
+            gap: 1.5,
+            p: 2,
+          }}
+        >
+          <History size={20} aria-hidden="true" />
+          <Box aria-live="polite">
+            <Typography component="h3" variant="subtitle2">
+              {t('profile.privacy.requests.historyTitle')}
+            </Typography>
+            {enabled && requestsQuery.isPending ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                {t('profile.privacy.loading')}
+              </Typography>
+            ) : requestPage && requestPage.items.length > 0 ? (
+              <>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  {t('profile.privacy.requests.recentSummary', {
+                    loaded: requestPage.items.length,
+                    limit: requestPage.limit,
+                  })}
+                </Typography>
+                {requestPage.hasMore && (
+                  <Alert severity="warning" sx={{ mt: 1 }}>
+                    {t('profile.privacy.requests.moreAvailable')}
+                  </Alert>
+                )}
+              </>
+            ) : requestPage ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                {t('profile.privacy.requests.historyEmpty')}
+              </Typography>
+            ) : null}
+          </Box>
+        </Box>
 
         <Box
           sx={{

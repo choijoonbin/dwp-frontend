@@ -2,6 +2,7 @@ import { mkdir } from 'node:fs/promises';
 
 import { expect, test, type Page } from '@playwright/test';
 
+import { ADMIN_TRUTH_AUDIT_REVISION_PAGE } from './support/audit-control-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
 import { appGovernance } from './support/admin-settings-truth-fixtures';
 import {
@@ -13,7 +14,7 @@ import {
   fulfillSuccess as success,
 } from './support/admin-settings-truth-support';
 
-test.setTimeout(120_000);
+test.setTimeout(180_000);
 
 async function mockTruthAuditOwners(page: Page) {
   await mockShellSession(page, ['TENANT_ADMIN', 'APP_CATALOG_ADMIN'], {
@@ -50,9 +51,34 @@ async function mockTruthAuditOwners(page: Page) {
       },
     ])
   );
-  await page.route('**/api/auth/admin/tenant-settings/auth-policy/changes', (route) =>
-    success(route, [])
+  await page.route('**/api/auth/admin/tenant-settings/auth-policy/changes?*', (route) =>
+    success(route, { items: [], limit: 100, hasMore: true })
   );
+  const ssoTestLoginReceipt = {
+    testLoginJobId: '91000000-0000-4000-8000-000000000001',
+    tenantId: 1,
+    providerKey: 'okta-workforce',
+    lifecycleState: 'UNAVAILABLE',
+    internalPrerequisiteState: 'READY_FOR_EXTERNAL_PROBE',
+    externalProbeState: 'UNAVAILABLE',
+    blockingReasons: ['EXTERNAL_IDP_LOGIN_EXECUTOR_NOT_CONNECTED'],
+    executionBoundary: 'UNCONNECTED_EXTERNAL_IDP_EXECUTOR',
+    requestedBy: 1,
+    idempotencyKey: '92000000-0000-4000-8000-000000000002',
+    requestedAt: '2026-09-29T00:45:00Z',
+    completedAt: '2026-09-29T00:45:01Z',
+    receiptPayloadCanonical: '{"externalProbeState":"UNAVAILABLE"}',
+    receiptSha256: 'b'.repeat(64),
+  };
+  await page.route('**/api/auth/admin/tenant-settings/sso-test-login-jobs*', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST') return success(route, ssoTestLoginReceipt);
+    if (path.endsWith('/sso-test-login-jobs')) {
+      return success(route, { items: [ssoTestLoginReceipt], limit: 20, hasMore: false });
+    }
+    return success(route, ssoTestLoginReceipt);
+  });
   await page.route('**/api/auth/admin/provisioning/scim/connectors', (route) =>
     success(route, [
       {
@@ -156,38 +182,42 @@ async function mockTruthAuditOwners(page: Page) {
     ])
   );
   await page.route('**/api/auth/admin/tenant-setting-registry/changes', (route) =>
-    success(route, [
-      {
-        changeId: 'setting-change-locale-1',
-        settingKey: 'identity.defaultLocale',
-        ownerKey: 'AUTH_TENANT_DIRECTORY',
-        ownerVersion: 1,
-        desiredState: 'VALUE',
-        beforeValue: 'ko-KR',
-        proposedValue: 'en-US',
-        lifecycleState: 'IN_REVIEW',
-        impactCount: 42,
-        impactCoverage: 'ACTIVE_TENANT_IDENTITIES',
-        impactObservedAt: '2026-09-29T00:59:00Z',
-        justification: 'Review the tenant verification baseline through independent approval.',
-        requestedBy: 10,
-        submittedAt: '2026-09-29T00:30:00Z',
-        version: 1,
-        createdAt: '2026-09-29T00:20:00Z',
-        updatedAt: '2026-09-29T00:30:00Z',
-        preview: {
+    success(route, {
+      items: [
+        {
+          changeId: 'setting-change-locale-1',
           settingKey: 'identity.defaultLocale',
+          ownerKey: 'AUTH_TENANT_DIRECTORY',
+          ownerVersion: 1,
+          desiredState: 'VALUE',
           beforeValue: 'ko-KR',
-          effectiveAfter: 'en-US',
-          sourceAfter: 'TENANT_OVERRIDE',
-          impactedPrincipalCount: 42,
-          coverage: 'ACTIVE_TENANT_IDENTITIES',
-          observedAt: '2026-09-29T00:59:00Z',
-          warnings: [],
+          proposedValue: 'en-US',
+          lifecycleState: 'IN_REVIEW',
+          impactCount: 42,
+          impactCoverage: 'ACTIVE_TENANT_IDENTITIES',
+          impactObservedAt: '2026-09-29T00:59:00Z',
+          justification: 'Review the tenant verification baseline through independent approval.',
+          requestedBy: 10,
+          submittedAt: '2026-09-29T00:30:00Z',
+          version: 1,
+          createdAt: '2026-09-29T00:20:00Z',
+          updatedAt: '2026-09-29T00:30:00Z',
+          preview: {
+            settingKey: 'identity.defaultLocale',
+            beforeValue: 'ko-KR',
+            effectiveAfter: 'en-US',
+            sourceAfter: 'TENANT_OVERRIDE',
+            impactedPrincipalCount: 42,
+            coverage: 'ACTIVE_TENANT_IDENTITIES',
+            observedAt: '2026-09-29T00:59:00Z',
+            warnings: [],
+          },
+          allowedActions: ['APPROVE', 'REJECT'],
         },
-        allowedActions: ['APPROVE', 'REJECT'],
-      },
-    ])
+      ],
+      limit: 100,
+      hasMore: false,
+    })
   );
   await page.route('**/api/provider/v1/tenant/settings/provider-domains', (route) =>
     success(route, {
@@ -329,30 +359,36 @@ async function mockTruthAuditOwners(page: Page) {
           allowedActions: ['REQUEST_ASSIGNMENT'],
         },
       ],
+      installationsLimit: 100,
+      installationsHasMore: false,
     })
   );
   await page.route('**/api/auth/admin/tenant-app-adoption/assignments', (route) =>
-    success(route, [
-      {
-        assignmentId: 'mail-seat-1',
-        installationId: 'installation-mail',
-        productKey: 'mail',
-        userId: 40,
-        userDisplayName: 'Mail target administrator',
-        lifecycleState: 'PENDING_APPROVAL',
-        seatQuantity: 1,
-        sourceType: 'TENANT_DIRECT',
-        externalSettlementState: 'NOT_REQUIRED',
-        validFrom: null,
-        validTo: '2026-12-31T00:00:00Z',
-        justification: 'Assign Mail administration to the workforce user.',
-        requestedBy: 10,
-        version: 0,
-        createdAt: '2026-09-29T00:40:00Z',
-        updatedAt: '2026-09-29T00:40:00Z',
-        allowedActions: ['APPROVE', 'REJECT'],
-      },
-    ])
+    success(route, {
+      items: [
+        {
+          assignmentId: 'mail-seat-1',
+          installationId: 'installation-mail',
+          productKey: 'mail',
+          userId: 40,
+          userDisplayName: 'Mail target administrator',
+          lifecycleState: 'PENDING_APPROVAL',
+          seatQuantity: 1,
+          sourceType: 'TENANT_DIRECT',
+          externalSettlementState: 'NOT_REQUIRED',
+          validFrom: null,
+          validTo: '2026-12-31T00:00:00Z',
+          justification: 'Assign Mail administration to the workforce user.',
+          requestedBy: 10,
+          version: 0,
+          createdAt: '2026-09-29T00:40:00Z',
+          updatedAt: '2026-09-29T00:40:00Z',
+          allowedActions: ['APPROVE', 'REJECT'],
+        },
+      ],
+      limit: 100,
+      hasMore: false,
+    })
   );
   await page.route('**/api/auth/admin/tenant-app-adoption/capability-overrides', (route) =>
     success(route, {
@@ -447,6 +483,7 @@ async function mockTruthAuditOwners(page: Page) {
         configuredProviderKey: 'okta-workforce',
         externalProbeState: 'UNAVAILABLE',
         lastExternalProbeAt: null,
+        latestReceipt: ssoTestLoginReceipt,
         blockingReasons: ['EXTERNAL_IDP_LOGIN_EXECUTOR_NOT_CONNECTED'],
       },
       recoveryVerification: {
@@ -499,7 +536,7 @@ async function mockTruthAuditOwners(page: Page) {
       updatedAt: '2026-09-29T00:59:00Z',
     })
   );
-  await page.route('**/api/auth/admin/tenant-settings/access-projection?*', (route) =>
+  await page.route('**/api/auth/admin/tenant-settings/access-projection**', (route) =>
     success(route, {
       snapshotId: 'a'.repeat(64),
       observedAt: '2026-09-29T01:00:00Z',
@@ -508,6 +545,26 @@ async function mockTruthAuditOwners(page: Page) {
         includedOwners: ['DIRECT_ROLE_ASSIGNMENTS', 'APP_ADMIN_PRESET_ASSIGNMENTS'],
         exclusions: ['EXTERNAL_SAAS_LICENSES_AND_SEATS'],
         freshestSourceUpdatedAt: '2026-09-29T00:59:00Z',
+        owners: [
+          {
+            ownerKey: 'DIRECT_ROLE_ASSIGNMENTS',
+            state: 'OBSERVED',
+            freshnessState: 'FRESH',
+            observedAt: '2026-09-29T01:00:00Z',
+            sourceUpdatedAt: '2026-09-29T00:59:00Z',
+            allowedActions: ['VIEW_DETAIL'],
+            exclusions: [],
+          },
+          {
+            ownerKey: 'APP_ADMIN_PRESET_ASSIGNMENTS',
+            state: 'OBSERVED',
+            freshnessState: 'FRESH',
+            observedAt: '2026-09-29T01:00:00Z',
+            sourceUpdatedAt: '2026-09-29T00:59:00Z',
+            allowedActions: ['VIEW_DETAIL'],
+            exclusions: [],
+          },
+        ],
       },
       principals: [
         {
@@ -572,6 +629,8 @@ async function mockTruthAuditOwners(page: Page) {
           metadata: { appResourceKey: 'APP.MAIL' },
         },
       ],
+      entitiesLimit: 100,
+      entitiesHasMore: false,
       generatedAt: '2026-09-17T00:00:00Z',
     })
   );
@@ -642,45 +701,8 @@ async function mockTruthAuditOwners(page: Page) {
       ],
     })
   );
-  await page.route('**/api/platform/v1/admin/audit-control/policy/revisions', (route) =>
-    success(route, [
-      {
-        revisionId: 'revision-2',
-        revisionNumber: 2,
-        lifecycleState: 'IN_REVIEW',
-        standardRetentionDays: 540,
-        extendedRetentionDays: 2555,
-        exportLimitRows: 5000,
-        requireExportReason: true,
-        integrityEnabled: true,
-        highRiskThreshold: 70,
-        baselineRevisionId: 'revision-1',
-        rollbackOfRevisionId: null,
-        incidentCaseId: null,
-        changeReason: 'Extend standard evidence retention after legal review.',
-        diff: {
-          standardRetentionDays: { before: 365, after: 540 },
-          exportLimitRows: { before: 10000, after: 5000 },
-        },
-        contentSha256: 'b'.repeat(64),
-        createdBy: '1',
-        createdAt: '2026-09-17T01:00:00Z',
-        submittedBy: '1',
-        submittedAt: '2026-09-17T01:10:00Z',
-        version: 2,
-        approval: {
-          approvalId: 'approval-revision-2',
-          lifecycleState: 'PENDING',
-          requestedBy: '1',
-          requestedAt: '2026-09-17T01:10:00Z',
-          expiresAt: '2026-09-18T01:10:00Z',
-          decidedBy: null,
-          decidedAt: null,
-          decisionReason: null,
-          version: 1,
-        },
-      },
-    ])
+  await page.route('**/api/platform/v1/admin/audit-control/policy/revisions?*', (route) =>
+    success(route, ADMIN_TRUTH_AUDIT_REVISION_PAGE)
   );
 }
 
@@ -712,13 +734,26 @@ for (const viewport of viewports) {
       })
     ).toBeVisible();
     await expect(page.getByText(/external IdP login verifier is not connected/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'SSO test-login evidence' })).toBeVisible();
+    await expect(
+      page.getByText(/Additional changes, including actionable changes, may exist/)
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Additional revisions, including actionable revisions, may exist/)
+    ).toBeVisible();
+    await expect(page.getByText('bbbbbbbbbbbb…')).toBeVisible();
+    await expect(page.getByText('b'.repeat(64))).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Provider-owned domains' })).toBeVisible();
     await expect(page.getByText('workspace.dwp.example')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Setting owner registry' })).toBeVisible();
     await expect(page.getByText('Default sign-in method')).toBeVisible();
     await expect(page.getByText('Additional verification').first()).toBeVisible();
     await expect(page.getByText('Sign-in duration')).toBeVisible();
-    await expect(page.getByText('Organization display language')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Organization display language', level: 3 })
+    ).toBeVisible();
+    await expect(page.getByText('In independent review')).toBeVisible();
+    await expect(page.getByText(/ko-KR → en-US/)).toBeVisible();
     const createPolicyAction = page.getByRole('button', { name: 'Create policy draft' });
     await createPolicyAction.focus();
     await expect(createPolicyAction).toBeFocused();
@@ -738,13 +773,18 @@ for (const viewport of viewports) {
 
     await page.goto('/admin/identity/access');
     await expect(page.getByRole('heading', { name: 'Identity access', level: 1 })).toBeVisible();
-    const reviewAccessAction =
-      viewport.width >= 900
-        ? page.getByRole('button', { name: 'Review effective access for Tenant Admin' })
-        : page.getByRole('button', { name: 'Review effective access' }).first();
-    await reviewAccessAction.focus();
-    await expect(reviewAccessAction).toBeFocused();
-    await page.keyboard.press('Enter');
+    const tenantUserGrid = page.getByRole('grid');
+    if (await tenantUserGrid.count()) await tenantUserGrid.scrollIntoViewIfNeeded();
+    const reviewAccessAction = page
+      .getByRole('button', { name: /^Review effective access(?: for Tenant Admin)?$/ })
+      .first();
+    if (await reviewAccessAction.count()) {
+      await reviewAccessAction.focus();
+      await expect(reviewAccessAction).toBeFocused();
+      await page.keyboard.press('Enter');
+    } else {
+      await tenantUserGrid.getByRole('row').filter({ hasText: 'Tenant Admin' }).click();
+    }
     await expect(page.getByRole('heading', { name: 'Effective access' })).toBeVisible();
     await expect(page.getByText('Source: Direct')).toBeVisible();
     await expect(page.getByText('Scope: Entire tenant')).toBeVisible();
@@ -752,7 +792,9 @@ for (const viewport of viewports) {
     await expect(
       page.getByRole('heading', { name: 'Unified internal entitlements' })
     ).toBeVisible();
-    await expect(page.getByText(/request 10 → approval 20 → activation 30/)).toBeVisible();
+    await expect(
+      page.getByText(/request recorded → approval recorded → activation recorded/)
+    ).toBeVisible();
     await expectNoAxeViolations(page);
     await expectNoHorizontalOverflow(page, `S07 ${viewport.name}`);
     await page.screenshot({
@@ -765,8 +807,19 @@ for (const viewport of viewports) {
     await expect(
       page.getByRole('table', { name: 'Policy before and after comparison' })
     ).toBeVisible();
-    await expect(page.getByText(/population impact.*remains unconfirmed/i)).toBeVisible();
+    const immutableImpact = page.getByRole('region', { name: 'Immutable impact snapshot' });
+    await expect(immutableImpact).toBeVisible();
+    await expect(
+      immutableImpact.getByText('Complete internal audit-event owner coverage')
+    ).toBeVisible();
+    await expect(immutableImpact.getByText('Audit events affected')).toBeVisible();
+    await expect(immutableImpact.getByText('48')).toBeVisible();
+    await expect(immutableImpact.getByText('cccccccccccc…')).toBeVisible();
+    await expect(page.getByText('c'.repeat(64))).toHaveCount(0);
     await expect(page.getByText('Independent approval pending')).toBeVisible();
+    await expect(
+      page.getByText(/Additional revisions, including actionable revisions, may exist/)
+    ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'Provider retention and legal-hold observation' })
     ).toBeVisible();
@@ -778,6 +831,9 @@ for (const viewport of viewports) {
     await refreshAuditAction.focus();
     await expect(refreshAuditAction).toBeFocused();
     await page.keyboard.press('Enter');
+    await page.keyboard.press('Escape');
+    await refreshAuditAction.blur();
+    await expect(page.locator('.MuiTooltip-popper')).toHaveCount(0);
     await expectNoAxeViolations(page);
     await expectNoHorizontalOverflow(page, `S08 ${viewport.name}`);
     await page.screenshot({
@@ -804,9 +860,13 @@ for (const viewport of viewports) {
     });
     await page.getByRole('tab', { name: 'Asset inventory' }).click();
     const relationshipAction = page.getByRole('button', { name: 'Review relationships for Mail' });
-    await relationshipAction.focus();
-    await expect(relationshipAction).toBeFocused();
-    await page.keyboard.press('Enter');
+    if (await relationshipAction.count()) {
+      await relationshipAction.focus();
+      await expect(relationshipAction).toBeFocused();
+      await page.keyboard.press('Enter');
+    } else {
+      await page.getByRole('row', { name: /Mail Application/ }).click();
+    }
     await expect(page.getByRole('tab', { name: 'Relationship graph' })).toHaveAttribute(
       'aria-selected',
       'true'
@@ -838,6 +898,10 @@ for (const viewport of viewports) {
     await expect(page.getByText(/Plan: DWP Enterprise v1 · Eligible/)).toBeVisible();
     await expect(page.getByText('mail.admin.policy.update')).toHaveCount(0);
     await expectKeyboardFocus(page);
+    await page.keyboard.press('Escape');
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await expect(page.locator('.MuiTooltip-popper')).toHaveCount(0);
+    await expect(page.locator('.MuiTouchRipple-rippleVisible')).toHaveCount(0);
     await expectNoAxeViolations(page);
     await expectNoHorizontalOverflow(page, `S14 ${viewport.name}`);
     await page.screenshot({

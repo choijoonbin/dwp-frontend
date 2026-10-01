@@ -6,6 +6,11 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {
+  operationalContextItemSx,
+  operationalContextValueSx,
+} from './operational-context-bar.styles';
+
 export type OperationalContextItem = {
   label: string;
   value: string;
@@ -55,17 +60,18 @@ export function OperationalContextBar({
               direction="row"
               alignItems="center"
               gap={0.75}
+              sx={operationalContextItemSx}
             >
               {item.icon && (
                 <Box aria-hidden="true" sx={{ display: 'grid', color: 'text.secondary' }}>
                   {item.icon}
                 </Box>
               )}
-              <Box>
+              <Box sx={operationalContextItemSx}>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
                   {item.label}
                 </Typography>
-                <Typography variant="body2" fontWeight={700} sx={{ whiteSpace: 'nowrap' }}>
+                <Typography variant="body2" fontWeight={700} sx={operationalContextValueSx}>
                   {item.value}
                 </Typography>
               </Box>

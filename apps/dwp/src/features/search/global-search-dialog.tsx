@@ -332,6 +332,7 @@ export function GlobalSearchDialog({
     providerAuditQuery.isError && t('search.sources.providerAudit'),
     providerCatalogQuery.isError && t('search.sources.providerCatalog'),
   ].filter((value): value is string => Boolean(value));
+  const tenantCatalogPartial = tenantCatalogQuery.data?.entitiesHasMore ?? false;
 
   useEffect(() => {
     if (!open || normalizedQuery.length < 2) return;
@@ -520,6 +521,20 @@ export function GlobalSearchDialog({
             {t('search.partialResults', { sources: sourceFailures.join(', ') })}
           </Typography>
         )}
+        {tenantCatalogPartial && (
+          <Typography
+            role="status"
+            variant="caption"
+            color="warning.main"
+            sx={{ display: 'block', px: 1.25, pb: 0.5 }}
+          >
+            {t('search.partialCoverage', {
+              source: t('search.sources.tenantCatalog'),
+              count: tenantCatalogQuery.data?.entities.length ?? 0,
+              limit: tenantCatalogQuery.data?.entitiesLimit ?? 0,
+            })}
+          </Typography>
+        )}
         {auditUnavailable && (
           <Typography
             role="status"
@@ -624,7 +639,9 @@ export function GlobalSearchDialog({
           </Box>
         ) : (
           <Box sx={{ minHeight: 96, display: 'grid', placeItems: 'center' }}>
-            <Typography color="text.secondary">{t('search.noResults')}</Typography>
+            <Typography color="text.secondary">
+              {t(tenantCatalogPartial ? 'search.noResultsPartial' : 'search.noResults')}
+            </Typography>
           </Box>
         )}
       </Box>

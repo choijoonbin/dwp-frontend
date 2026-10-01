@@ -77,6 +77,7 @@ export function OrganizationScenarioPositionEditor({ chart, scenario, busy, exec
     meta: requestScope.queryMeta,
     staleTime: 5 * 60 * 1000,
   });
+  const catalogUnavailable = positionTypeCatalog.isError || criticalityCatalog.isError;
   const positionTypeOptions = useMemo(
     () =>
       positionTypeCatalog.data?.values.filter((value) => isPositionType(value.code)) ??
@@ -198,6 +199,9 @@ export function OrganizationScenarioPositionEditor({ chart, scenario, busy, exec
 
   return (
     <Stack gap={1.25}>
+      {catalogUnavailable && (
+        <Alert severity="warning">{t('orgChart.scenarios.positionPlan.catalogFallback')}</Alert>
+      )}
       <ToggleButtonGroup
         exclusive
         size="small"

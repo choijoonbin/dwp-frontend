@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getSystemCodeSet } from '@dwp-frontend/shared-utils';
 import { FormDialog, FormField, SelectField } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
@@ -78,6 +79,8 @@ export function ConnectorDialog({
     meta: requestScope.queryMeta,
     staleTime: 300_000,
   });
+  const catalogUnavailable =
+    sourceCatalog.isError || connectorCatalog.isError || authCatalog.isError;
   const [sourceKey, setSourceKey] = useState('');
   const [sourceType, setSourceType] = useState<CreateHrisConnectorRequest['sourceType']>('WORKDAY');
   const [sourceName, setSourceName] = useState('');
@@ -129,6 +132,9 @@ export function ConnectorDialog({
       }
     >
       <Stack gap={2}>
+        {catalogUnavailable && (
+          <Alert severity="warning">{t('provisioning.hris.create.catalogFallback')}</Alert>
+        )}
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
           <FormField
             required

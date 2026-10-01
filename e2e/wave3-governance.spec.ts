@@ -400,6 +400,8 @@ test('catalog graph exposes change impact and records an explicit relationship',
         entitiesByKind: { APP: 1, SERVICE: 1 },
         entitiesByLifecycle: { ACTIVE: 2 },
         entities,
+        entitiesLimit: 100,
+        entitiesHasMore: false,
         generatedAt: '2026-08-12T00:20:00Z',
       });
     }

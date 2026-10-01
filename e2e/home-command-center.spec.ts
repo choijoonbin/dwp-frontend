@@ -8,6 +8,13 @@ import {
   fulfillSuccess,
   mockShellSession,
 } from './support/shell-session';
+import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
+import {
+  routeHomeWave2HealthyFlowContributions,
+  routeHomeWave2NewsOverview,
+  routeHomeWave2WidgetCatalog,
+} from './support/home-wave2-acceptance-fixtures';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 import { mockUnreadAppBadge } from './support/ui-contracts';
 
 test.beforeEach(async ({ page }) => {
@@ -585,27 +592,36 @@ test('pressing and holding a work tool enters personal editing without launching
   await expect(page).toHaveURL((url) => url.pathname === '/' && url.search === '');
 });
 
-test('home app hover frames the icon evenly without enclosing its label', async ({ page }) => {
+test('home app hover lifts the icon without adding a surface over its label', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await routeHomeWave2NewsOverview(page);
+  await routeCanonicalHomeWorkspaceApps(page);
+  await routeHomeWave2HealthyFlowContributions(page);
+  await routeHomeWave2WidgetCatalog(page);
+  await routeHomeWave4ShadowRuntime(page);
   await page.goto('/');
 
   const workButton = page.getByRole('button', { name: 'Open Work' });
   await workButton.hover();
   const hoverGeometry = await workButton.evaluate((button) => {
     const frame = button.querySelector<HTMLElement>('[data-launchpad-edit-frame]');
-    if (!frame) return null;
-    const frameStyle = window.getComputedStyle(frame, '::after');
+    const glyph = button.querySelector<HTMLElement>('[data-launchpad-glyph]');
+    const label = button.querySelector<HTMLElement>('[data-launchpad-item-label]');
+    if (!frame || !glyph || !label) return null;
     const buttonStyle = window.getComputedStyle(button);
-    const left = Number.parseFloat(frameStyle.left);
-    const right = Number.parseFloat(frameStyle.right);
-    const top = Number.parseFloat(frameStyle.top);
-    const bottom = Number.parseFloat(frameStyle.bottom);
+    const framePseudoStyle = window.getComputedStyle(frame, '::after');
+    const glyphStyle = window.getComputedStyle(glyph);
+    const labelStyle = window.getComputedStyle(label);
+    const glyphBounds = glyph.getBoundingClientRect();
+    const labelBounds = label.getBoundingClientRect();
     return {
       frame: [frame.offsetWidth, frame.offsetHeight],
-      frameInsets: [top, right, bottom, left],
-      interactionSurface: [frame.offsetWidth - left - right, frame.offsetHeight - top - bottom],
-      frameBorderColor: frameStyle.borderTopColor,
-      frameBorderWidth: frameStyle.borderTopWidth,
+      framePseudoContent: framePseudoStyle.content,
+      glyphTransform: glyphStyle.transform,
+      glyphBoxShadow: glyphStyle.boxShadow,
+      labelZIndex: labelStyle.zIndex,
+      labelClearance: Math.round(labelBounds.top - glyphBounds.bottom),
       tileBackground: buttonStyle.backgroundColor,
       tileBoxShadow: buttonStyle.boxShadow,
     };
@@ -613,13 +629,15 @@ test('home app hover frames the icon evenly without enclosing its label', async 
 
   expect(hoverGeometry).toEqual({
     frame: [52, 52],
-    frameInsets: [-4, -4, -4, -4],
-    interactionSurface: [60, 60],
-    frameBorderColor: 'rgba(255, 255, 255, 0.88)',
-    frameBorderWidth: '1px',
+    framePseudoContent: 'none',
+    glyphTransform: expect.not.stringMatching(/^none$/u),
+    glyphBoxShadow: expect.not.stringMatching(/^none$/u),
+    labelZIndex: '2',
+    labelClearance: expect.any(Number),
     tileBackground: 'rgba(0, 0, 0, 0)',
     tileBoxShadow: 'none',
   });
+  expect(hoverGeometry?.labelClearance ?? -1).toBeGreaterThanOrEqual(0);
 });
 
 test('legacy governed policy cannot hide member-owned workspace tools', async ({ page }) => {

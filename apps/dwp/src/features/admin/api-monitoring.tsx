@@ -20,6 +20,7 @@ import {
   getApiHistoryOverview,
   listAuditEvents,
   listApiHistoryEvents,
+  usePermissions,
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -87,6 +88,7 @@ const METHOD_FALLBACK = ['ALL', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 const OUTCOME_FALLBACK: Array<ApiHistoryOutcome | 'ALL'> = [
   'ALL',
   'SUCCESS',
+  'REDIRECTION',
   'CLIENT_ERROR',
   'SERVER_ERROR',
   'CANCELLED',
@@ -107,6 +109,8 @@ export function ApiMonitoring() {
   const navigate = useNavigate();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canViewAuditChanges = permissionsLoaded && hasPermission('ADMIN.AUDIT_VIEW', 'VIEW');
   const [window, setWindow] = useState<ApiHistoryWindow>('H24');
   const [observationPoint, setObservationPoint] = useState<ApiHistoryObservationPoint>('GATEWAY');
   const [serviceName, setServiceName] = useState('ALL');
@@ -152,6 +156,7 @@ export function ApiMonitoring() {
         page: 0,
         size: 20,
       }),
+    enabled: canViewAuditChanges,
     retry: false,
     refetchInterval: autoRefresh ? 30_000 : false,
   });
@@ -203,7 +208,7 @@ export function ApiMonitoring() {
   const refresh = () => {
     void overviewQuery.refetch();
     void eventsQuery.refetch();
-    void changesQuery.refetch();
+    if (canViewAuditChanges) void changesQuery.refetch();
   };
   const applySearch = () => setQuery(queryInput.trim());
 
@@ -357,14 +362,16 @@ export function ApiMonitoring() {
               </Stack>
             </Box>
           </Stack>
-          <ActionButton
-            intent="secondary"
-            startIcon={<FileSearch size={17} />}
-            onClick={() => navigate('/admin/governance/audit-events')}
-            sx={{ alignSelf: { xs: 'flex-start', md: 'center' }, flexShrink: 0 }}
-          >
-            {t('apiMonitoring.pulse.openEvidence')}
-          </ActionButton>
+          {canViewAuditChanges && (
+            <ActionButton
+              intent="secondary"
+              startIcon={<FileSearch size={17} />}
+              onClick={() => navigate('/admin/governance/audit-events')}
+              sx={{ alignSelf: { xs: 'flex-start', md: 'center' }, flexShrink: 0 }}
+            >
+              {t('apiMonitoring.pulse.openEvidence')}
+            </ActionButton>
+          )}
         </Stack>
       </Paper>
 
@@ -687,7 +694,11 @@ export function ApiMonitoring() {
               label={t('apiMonitoring.changes.count', { count: changeEvents.length })}
             />
           </Stack>
-          {changesQuery.isError ? (
+          {!canViewAuditChanges ? (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+              {t('apiMonitoring.changes.restricted')}
+            </Typography>
+          ) : changesQuery.isError ? (
             <Typography variant="body2" color="warning.main" sx={{ mt: 1.5 }}>
               {t('apiMonitoring.changes.unavailable')}
             </Typography>

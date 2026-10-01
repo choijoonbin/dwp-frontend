@@ -858,7 +858,15 @@ export type ProviderDataPolicy = {
   ownerService: string;
   lifecycleState: 'ACTIVE' | 'RETIRED';
   version: number;
+  revisionsLimit: number;
+  revisionsHasMore: boolean;
   revisions: ProviderDataPolicyRevision[];
+};
+
+export type ProviderDataPolicyPage = {
+  items: ProviderDataPolicy[];
+  limit: number;
+  hasMore: boolean;
 };
 
 export type ProviderDomainChallenge = {

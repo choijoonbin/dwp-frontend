@@ -236,7 +236,10 @@ export function AppGovernanceManager() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(4, 1fr)' },
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(0, 1fr))',
+            lg: 'repeat(4, minmax(0, 1fr))',
+          },
           border: 1,
           borderColor: 'divider',
           bgcolor: 'background.paper',
@@ -255,6 +258,7 @@ export function AppGovernanceManager() {
           <Box
             key={key}
             sx={{
+              minWidth: 0,
               minHeight: 96,
               p: 2,
               borderRight: { lg: index < 3 ? 1 : 0 },
@@ -275,7 +279,12 @@ export function AppGovernanceManager() {
         ))}
       </Box>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} justifyContent="space-between">
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        flexWrap={{ sm: 'wrap' }}
+        gap={1.5}
+        justifyContent="space-between"
+      >
         <ToggleButtonGroup
           exclusive
           orientation={compactViewControls ? 'vertical' : 'horizontal'}
@@ -285,7 +294,11 @@ export function AppGovernanceManager() {
           aria-label={t('appGovernance.viewLabel')}
           sx={{
             width: { xs: 1, sm: 'auto' },
+            maxWidth: '100%',
+            flexWrap: 'wrap',
             '& .MuiToggleButton-root': {
+              minWidth: 0,
+              flex: { sm: '1 1 auto' },
               justifyContent: { xs: 'flex-start', sm: 'center' },
               whiteSpace: 'normal',
             },
@@ -302,7 +315,7 @@ export function AppGovernanceManager() {
           </ToggleButton>
           <ToggleButton value="adoption">{t('appGovernance.views.adoption')}</ToggleButton>
         </ToggleButtonGroup>
-        <Stack direction="row" gap={1} flexWrap="wrap">
+        <Stack direction="row" gap={1} flexWrap="wrap" maxWidth="100%">
           <ActionIconButton label={t('common.actions.refresh')} onClick={() => void refresh()}>
             <RefreshCw size={17} />
           </ActionIconButton>

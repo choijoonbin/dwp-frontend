@@ -18,6 +18,7 @@ import {
 describe('tenant app presentation', () => {
   it('maps owner-defined lifecycle values through closed sets', () => {
     expect(tenantAppStatePresentationKey('ACTIVE')).toContain('.ACTIVE');
+    expect(tenantAppStatePresentationKey('EXPIRED')).toBe('appGovernance.adoption.states.EXPIRED');
     expect(tenantAppKindPresentationKey('EXTERNAL_SERVICE')).toContain('.EXTERNAL_SERVICE');
     expect(tenantAppExecutorStatePresentationKey('UNAVAILABLE')).toContain('.UNAVAILABLE');
   });

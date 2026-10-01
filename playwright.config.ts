@@ -5,6 +5,7 @@ const REUSE_EXISTING_SERVER = process.env.E2E_REUSE_EXISTING_SERVER === 'true';
 const HTML_REPORT_OUTPUT = process.env.PLAYWRIGHT_HTML_OUTPUT_DIR || 'playwright-report';
 const TEST_OUTPUT = process.env.PLAYWRIGHT_OUTPUT_DIR || 'test-results';
 const TIMEZONE_ID = process.env.E2E_TIMEZONE_ID;
+const CHROMIUM_CHANNEL = process.env.E2E_CHROMIUM_CHANNEL;
 
 export default defineConfig({
   testDir: './e2e',
@@ -26,8 +27,20 @@ export default defineConfig({
   },
 
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['iPhone 13'] } },
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        ...(CHROMIUM_CHANNEL ? { channel: CHROMIUM_CHANNEL } : {}),
+      },
+    },
+    {
+      name: 'mobile',
+      use: {
+        ...devices['iPhone 13'],
+        ...(CHROMIUM_CHANNEL ? { browserName: 'chromium', channel: CHROMIUM_CHANNEL } : {}),
+      },
+    },
   ],
 
   webServer: {

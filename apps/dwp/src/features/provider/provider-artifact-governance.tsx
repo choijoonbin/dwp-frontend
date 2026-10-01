@@ -75,6 +75,7 @@ import {
   canReviewArtifact,
   type ArtifactEnumKind,
 } from './provider-artifact-governance-model';
+import { providerOwnerCountLabel } from './provider-bounded-list-coverage';
 
 type DialogState =
   | { kind: 'manifest' }
@@ -123,8 +124,10 @@ export function ProviderArtifactGovernance() {
     },
     onError: () => toast.error(t('errors.operation')),
   });
-  const artifactRows = artifacts.data ?? [];
-  const planRows = plans.data ?? [];
+  const artifactRows = artifacts.data?.items ?? [];
+  const planRows = plans.data?.items ?? [];
+  const artifactsPartial = artifacts.data?.hasMore ?? false;
+  const plansPartial = plans.data?.hasMore ?? false;
   const selectedArtifact =
     artifactRows.find((item) => item.artifactId === selectedArtifactId) ?? artifactRows[0];
   const selectedPlan =
@@ -171,7 +174,7 @@ export function ProviderArtifactGovernance() {
         items={[
           {
             label: t('artifactGovernance.context.manifests'),
-            value: String(artifactRows.length),
+            value: providerOwnerCountLabel(artifactRows.length, artifactsPartial),
             icon: <FileCode2 size={16} />,
           },
           {
@@ -241,6 +244,22 @@ export function ProviderArtifactGovernance() {
           {t('artifactGovernance.ownerFailures.plans')}
         </Alert>
       )}
+      {artifactsPartial && (
+        <Alert severity="warning">
+          {t('artifactGovernance.manifestListPartial', {
+            count: artifactRows.length,
+            limit: artifacts.data?.limit ?? artifactRows.length,
+          })}
+        </Alert>
+      )}
+      {plansPartial && (
+        <Alert severity="warning">
+          {t('artifactGovernance.planListPartial', {
+            count: planRows.length,
+            limit: plans.data?.limit ?? planRows.length,
+          })}
+        </Alert>
+      )}
       <Box
         sx={{
           display: 'grid',
@@ -250,21 +269,35 @@ export function ProviderArtifactGovernance() {
       >
         <SignalMetric
           label={t('artifactGovernance.metrics.manifests')}
-          value={artifacts.isSuccess ? String(artifactRows.length) : t('notAvailable')}
+          value={
+            artifacts.isSuccess
+              ? providerOwnerCountLabel(artifactRows.length, artifactsPartial)
+              : t('notAvailable')
+          }
           detail={t('artifactGovernance.metrics.manifestsDetail')}
           icon={<PackageCheck size={18} />}
         />
         <SignalMetric
           label={t('artifactGovernance.metrics.approved')}
-          value={artifacts.isSuccess ? String(approvedCount) : t('notAvailable')}
-          detail={t('artifactGovernance.metrics.approvedDetail')}
+          value={
+            artifacts.isSuccess && !artifactsPartial ? String(approvedCount) : t('notAvailable')
+          }
+          detail={
+            artifactsPartial
+              ? t('artifactGovernance.metrics.partialDetail')
+              : t('artifactGovernance.metrics.approvedDetail')
+          }
           icon={<BadgeCheck size={18} />}
           tone={approvedCount ? 'success' : 'neutral'}
         />
         <SignalMetric
           label={t('artifactGovernance.metrics.ready')}
-          value={plans.isSuccess ? String(readyCount) : t('notAvailable')}
-          detail={t('artifactGovernance.metrics.readyDetail')}
+          value={plans.isSuccess && !plansPartial ? String(readyCount) : t('notAvailable')}
+          detail={
+            plansPartial
+              ? t('artifactGovernance.metrics.partialDetail')
+              : t('artifactGovernance.metrics.readyDetail')
+          }
           icon={<ClipboardCheck size={18} />}
           tone={readyCount ? 'info' : 'neutral'}
         />
@@ -320,7 +353,7 @@ export function ProviderArtifactGovernance() {
                 </ButtonBase>
               </Paper>
             ))}
-            {artifacts.isSuccess && !artifactRows.length && (
+            {artifacts.isSuccess && !artifactRows.length && !artifactsPartial && (
               <EmptyState
                 title={t('artifactGovernance.emptyArtifacts.title')}
                 description={t('artifactGovernance.emptyArtifacts.description')}
@@ -393,7 +426,7 @@ export function ProviderArtifactGovernance() {
                 </ButtonBase>
               </Paper>
             ))}
-            {plans.isSuccess && !planRows.length && (
+            {plans.isSuccess && !planRows.length && !plansPartial && (
               <EmptyState
                 title={t('artifactGovernance.emptyPlans.title')}
                 description={t('artifactGovernance.emptyPlans.description')}
@@ -516,6 +549,14 @@ export function ProviderArtifactGovernance() {
               </Stack>
             </>
           )}
+          {selectedArtifact.reviewsHasMore && (
+            <Alert severity="warning" sx={{ mt: 1.5 }}>
+              {t('artifactGovernance.reviewHistoryPartial', {
+                count: selectedArtifact.reviews.length,
+                limit: selectedArtifact.reviewsLimit,
+              })}
+            </Alert>
+          )}
         </Paper>
       )}
       {selectedPlan && (
@@ -597,6 +638,14 @@ export function ProviderArtifactGovernance() {
                 ))}
               </Stack>
             </>
+          )}
+          {selectedPlan.evidenceHasMore && (
+            <Alert severity="warning" sx={{ mt: 1.5 }}>
+              {t('artifactGovernance.evidenceHistoryPartial', {
+                count: selectedPlan.evidence.length,
+                limit: selectedPlan.evidenceLimit,
+              })}
+            </Alert>
           )}
         </Paper>
       )}

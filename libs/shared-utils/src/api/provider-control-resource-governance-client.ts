@@ -32,6 +32,10 @@ export type ProviderResourceCommitment = Omit<
   };
   totals: ProviderResourceLedgerTotals;
 };
+export type ProviderResourceCommitmentPage = Omit<
+  RequiredSchema<ProviderSchemas['provider_CommitmentPage']>,
+  'items'
+> & { items: ProviderResourceCommitment[] };
 export type ProviderResourceLedgerEntry = RequiredSchema<ProviderSchemas['provider_LedgerEntry']>;
 export type ProviderResourceLedgerPage = {
   items: ProviderResourceLedgerEntry[];
@@ -70,10 +74,18 @@ export type ProviderResourceCommitmentChange = Omit<
   publishedAt: string | null;
   publishedBy: number | null;
 };
+export type ProviderResourceCommitmentChangePage = Omit<
+  RequiredSchema<ProviderSchemas['provider_ResourceCommitmentChangePage']>,
+  'items'
+> & { items: ProviderResourceCommitmentChange[] };
 export type ProviderTenantLifecycleRequest = Omit<
   RequiredSchema<ProviderSchemas['provider_TenantLifecycleRequest']>,
   'holdEvidenceRefs'
 > & { holdEvidenceRefs: string[] };
+export type ProviderTenantLifecycleRequestPage = Omit<
+  RequiredSchema<ProviderSchemas['provider_TenantLifecycleRequestPage']>,
+  'items'
+> & { items: ProviderTenantLifecycleRequest[] };
 export type ProviderArtifactReview = RequiredSchema<ProviderSchemas['provider_ArtifactReview']>;
 export type ProviderArtifactCompatibilitySummary = Omit<
   RequiredSchema<ProviderSchemas['provider_ArtifactCompatibilitySummary']>,
@@ -89,6 +101,10 @@ export type ProviderArtifactManifest = Omit<
   RequiredSchema<ProviderSchemas['provider_ArtifactManifest']>,
   'compatibility' | 'reviews'
 > & { compatibility: ProviderArtifactCompatibilitySummary; reviews: ProviderArtifactReview[] };
+export type ProviderArtifactManifestPage = Omit<
+  RequiredSchema<ProviderSchemas['provider_ArtifactManifestPage']>,
+  'items'
+> & { items: ProviderArtifactManifest[] };
 export type ProviderArtifactRolloutEvidence = RequiredSchema<
   ProviderSchemas['provider_ArtifactRolloutEvidence']
 >;
@@ -99,6 +115,10 @@ export type ProviderArtifactRolloutPlan = Omit<
   evidence: ProviderArtifactRolloutEvidence[];
   rollbackReadiness: RequiredSchema<ProviderSchemas['provider_RollbackReadiness']>;
 };
+export type ProviderArtifactRolloutPlanPage = Omit<
+  RequiredSchema<ProviderSchemas['provider_ArtifactRolloutPlanPage']>,
+  'items'
+> & { items: ProviderArtifactRolloutPlan[] };
 
 type CreateResourceCommitmentChangeRequest =
   ProviderSchemas['provider_CreateResourceCommitmentChangeRequest'];
@@ -137,9 +157,9 @@ const BASE = '/api/provider/v1/admin';
 
 export async function listProviderResourceCommitments(
   tenantId?: string
-): Promise<ProviderResourceCommitment[]> {
+): Promise<ProviderResourceCommitmentPage> {
   const search = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
-  const response = await axiosInstance.get<ApiResponse<ProviderResourceCommitment[]>>(
+  const response = await axiosInstance.get<ApiResponse<ProviderResourceCommitmentPage>>(
     `${BASE}/resource-governance/commitments${search}`
   );
   return response.data.data;
@@ -173,9 +193,9 @@ export async function appendProviderResourceLedger(
 
 export async function listProviderResourceCommitmentChanges(
   tenantId?: string
-): Promise<ProviderResourceCommitmentChange[]> {
+): Promise<ProviderResourceCommitmentChangePage> {
   const search = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
-  const response = await axiosInstance.get<ApiResponse<ProviderResourceCommitmentChange[]>>(
+  const response = await axiosInstance.get<ApiResponse<ProviderResourceCommitmentChangePage>>(
     `${BASE}/resource-governance/commitment-changes${search}`
   );
   return response.data.data;
@@ -226,9 +246,9 @@ export async function publishProviderResourceCommitmentChange(
 
 export async function listProviderTenantLifecycleRequests(
   tenantId?: string
-): Promise<ProviderTenantLifecycleRequest[]> {
+): Promise<ProviderTenantLifecycleRequestPage> {
   const search = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
-  const response = await axiosInstance.get<ApiResponse<ProviderTenantLifecycleRequest[]>>(
+  const response = await axiosInstance.get<ApiResponse<ProviderTenantLifecycleRequestPage>>(
     `${BASE}/resource-governance/lifecycle-requests${search}`
   );
   return response.data.data;
@@ -250,7 +270,7 @@ export async function createProviderTenantLifecycleRequest(
 
 async function transitionProviderTenantLifecycleRequest(
   request: ProviderTenantLifecycleRequest,
-  action: 'refresh-hold' | 'submit',
+  action: 'cancel' | 'refresh-hold' | 'submit',
   reason: string
 ): Promise<ProviderTenantLifecycleRequest> {
   const response = await axiosInstance.post<
@@ -273,6 +293,11 @@ export const submitProviderTenantLifecycleRequest = (
   reason: string
 ) => transitionProviderTenantLifecycleRequest(request, 'submit', reason);
 
+export const cancelProviderTenantLifecycleRequest = (
+  request: ProviderTenantLifecycleRequest,
+  reason: string
+) => transitionProviderTenantLifecycleRequest(request, 'cancel', reason);
+
 export async function decideProviderTenantLifecycleRequest(
   request: ProviderTenantLifecycleRequest,
   decision: Omit<TenantLifecycleDecisionRequest, 'version'>
@@ -287,8 +312,8 @@ export async function decideProviderTenantLifecycleRequest(
   return response.data.data;
 }
 
-export async function listProviderArtifactManifests(): Promise<ProviderArtifactManifest[]> {
-  const response = await axiosInstance.get<ApiResponse<ProviderArtifactManifest[]>>(
+export async function listProviderArtifactManifests(): Promise<ProviderArtifactManifestPage> {
+  const response = await axiosInstance.get<ApiResponse<ProviderArtifactManifestPage>>(
     `${BASE}/artifact-governance/manifests`
   );
   return response.data.data;
@@ -346,8 +371,8 @@ export async function decideProviderArtifactManifest(
   return response.data.data;
 }
 
-export async function listProviderArtifactRolloutPlans(): Promise<ProviderArtifactRolloutPlan[]> {
-  const response = await axiosInstance.get<ApiResponse<ProviderArtifactRolloutPlan[]>>(
+export async function listProviderArtifactRolloutPlans(): Promise<ProviderArtifactRolloutPlanPage> {
+  const response = await axiosInstance.get<ApiResponse<ProviderArtifactRolloutPlanPage>>(
     `${BASE}/artifact-governance/rollout-plans`
   );
   return response.data.data;

@@ -353,7 +353,9 @@ export function CatalogExplorer() {
         catalogStatus: overviewQuery.isError
           ? 'unavailable'
           : overviewQuery.data
-            ? 'ready'
+            ? overviewQuery.data.entitiesHasMore
+              ? 'partial'
+              : 'ready'
             : 'loading',
         manifests: GOVERNED_PRODUCT_ENTRY_CATALOG,
         governance: appGovernanceQuery.data,
@@ -373,13 +375,17 @@ export function CatalogExplorer() {
         adoptionStatus: appAdoptionQuery.isError
           ? 'unavailable'
           : appAdoptionQuery.data
-            ? 'ready'
+            ? appAdoptionQuery.data.installationsHasMore
+              ? 'partial'
+              : 'ready'
             : 'loading',
-        workforceAssignments: appWorkforceAssignmentsQuery.data,
+        workforceAssignments: appWorkforceAssignmentsQuery.data?.items,
         workforceAssignmentsStatus: appWorkforceAssignmentsQuery.isError
           ? 'unavailable'
           : appWorkforceAssignmentsQuery.data
-            ? 'ready'
+            ? appWorkforceAssignmentsQuery.data.hasMore
+              ? 'partial'
+              : 'ready'
             : 'loading',
       }),
     [
@@ -410,7 +416,9 @@ export function CatalogExplorer() {
         adoptionStatus: appAdoptionQuery.isError
           ? 'unavailable'
           : appAdoptionQuery.data
-            ? 'ready'
+            ? appAdoptionQuery.data.installationsHasMore
+              ? 'partial'
+              : 'ready'
             : 'loading',
       }),
     [
@@ -623,6 +631,15 @@ export function CatalogExplorer() {
         </Stack>
       </Stack>
 
+      {(view === 'inventory' || view === 'graph') && overview?.entitiesHasMore && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          {t('catalog.inventory.partial', {
+            count: overview.entities.length,
+            limit: overview.entitiesLimit,
+          })}
+        </Alert>
+      )}
+
       {view === 'applications' && (
         <ApplicationLifecycleCatalog
           items={applicationItems}
@@ -638,7 +655,10 @@ export function CatalogExplorer() {
             overviewQuery.isError ||
             appGovernanceQuery.isError ||
             appAdoptionQuery.isError ||
+            Boolean(appAdoptionQuery.data?.installationsHasMore) ||
             appWorkforceAssignmentsQuery.isError ||
+            Boolean(appWorkforceAssignmentsQuery.data?.hasMore) ||
+            Boolean(overviewQuery.data?.entitiesHasMore) ||
             surfaceAuthority.status === 'authority-unavailable'
           }
         />

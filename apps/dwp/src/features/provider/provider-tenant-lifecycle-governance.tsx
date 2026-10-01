@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArchiveRestore, Plus, RefreshCw, Send, ShieldCheck, ShieldX } from 'lucide-react';
+import { ArchiveRestore, Plus, RefreshCw, Send, ShieldCheck, ShieldX, XCircle } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  cancelProviderTenantLifecycleRequest,
   createProviderTenantLifecycleRequest,
   decideProviderTenantLifecycleRequest,
   getProviderOperatorProfile,
@@ -37,6 +38,7 @@ import {
   providerError,
 } from './provider-ui';
 import {
+  canCancelTenantLifecycle,
   canDecideTenantLifecycle,
   tenantExecutionPresentationState,
 } from './provider-governance-action-model';
@@ -49,6 +51,7 @@ type DialogState =
   | { kind: 'create' }
   | { kind: 'refresh'; request: ProviderTenantLifecycleRequest }
   | { kind: 'submit'; request: ProviderTenantLifecycleRequest }
+  | { kind: 'cancel'; request: ProviderTenantLifecycleRequest }
   | {
       kind: 'decision';
       request: ProviderTenantLifecycleRequest;
@@ -150,7 +153,12 @@ function LifecycleReasonDialog({
       open
       title={title}
       cancelLabel={t('actions.cancel')}
-      submitLabel={t('resourceGovernance.lifecycle.confirmAction')}
+      submitLabel={t(
+        dialog.kind === 'cancel'
+          ? 'resourceGovernance.lifecycle.cancelAction'
+          : 'resourceGovernance.lifecycle.confirmAction'
+      )}
+      submitIntent={dialog.kind === 'cancel' ? 'danger' : 'primary'}
       busy={busy}
       submitDisabled={!reason.trim()}
       onClose={onClose}
@@ -165,10 +173,17 @@ function LifecycleReasonDialog({
       <Stack gap={2}>
         <Alert
           severity={
-            dialog.kind === 'decision' && dialog.decision === 'REJECTED' ? 'warning' : 'info'
+            dialog.kind === 'cancel' ||
+            (dialog.kind === 'decision' && dialog.decision === 'REJECTED')
+              ? 'warning'
+              : 'info'
           }
         >
-          {t('resourceGovernance.lifecycle.transitionGuidance')}
+          {t(
+            dialog.kind === 'cancel'
+              ? 'resourceGovernance.lifecycle.cancelGuidance'
+              : 'resourceGovernance.lifecycle.transitionGuidance'
+          )}
         </Alert>
         {error && <Alert severity="error">{error}</Alert>}
         <FormField
@@ -216,7 +231,8 @@ export function ProviderTenantLifecycleGovernance() {
     },
     onError: () => toast.error(t('errors.operation')),
   });
-  const rows = lifecycle.data ?? [];
+  const rows = lifecycle.data?.items ?? [];
+  const lifecyclePartial = lifecycle.data?.hasMore ?? false;
   const tenantOptions = (tenants.data?.content ?? []).map((tenant) => ({
     tenantId: tenant.tenantId,
     tenantKey: tenant.tenantKey,
@@ -245,6 +261,14 @@ export function ProviderTenantLifecycleGovernance() {
       <Alert severity="warning" sx={{ mt: 1.5 }}>
         {t('resourceGovernance.lifecycle.executionBoundary')}
       </Alert>
+      {lifecyclePartial && (
+        <Alert severity="warning" sx={{ mt: 1.5 }}>
+          {t('resourceGovernance.lifecycle.listPartial', {
+            count: rows.length,
+            limit: lifecycle.data?.limit ?? rows.length,
+          })}
+        </Alert>
+      )}
       {operator.isError && (
         <Alert
           severity="error"
@@ -307,6 +331,12 @@ export function ProviderTenantLifecycleGovernance() {
               requestedBy: request.requestedBy,
               submittedBy: request.submittedBy,
             });
+            const cancellationAllowed = canCancelTenantLifecycle({
+              canWrite,
+              operatorId: operator.data?.operatorId,
+              requestedBy: request.requestedBy,
+              lifecycleState: request.lifecycleState,
+            });
             return (
               <Box key={request.lifecycleRequestId} sx={{ py: 1.5 }}>
                 <Stack
@@ -346,6 +376,11 @@ export function ProviderTenantLifecycleGovernance() {
                         `resourceGovernance.lifecycle.executionStates.${tenantExecutionPresentationState(request.executionState)}`
                       )}
                     </Typography>
+                    {request.decisionReason && (
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        {t('resourceGovernance.lifecycle.recordedReason')}: {request.decisionReason}
+                      </Typography>
+                    )}
                     {!!request.holdEvidenceRefs.length && (
                       <Typography
                         variant="caption"
@@ -383,6 +418,15 @@ export function ProviderTenantLifecycleGovernance() {
                         {t('resourceGovernance.lifecycle.submitAction')}
                       </ActionButton>
                     )}
+                    {cancellationAllowed && (
+                      <ActionButton
+                        intent="danger"
+                        startIcon={<XCircle size={16} />}
+                        onClick={() => setDialog({ kind: 'cancel', request })}
+                      >
+                        {t('resourceGovernance.lifecycle.cancelAction')}
+                      </ActionButton>
+                    )}
                     {decisionAllowed && request.lifecycleState === 'PENDING_APPROVAL' && (
                       <ActionButton
                         intent="primary"
@@ -411,13 +455,13 @@ export function ProviderTenantLifecycleGovernance() {
             );
           })}
         </Stack>
-      ) : (
+      ) : !lifecyclePartial ? (
         <EmptyState
           icon={<ArchiveRestore size={22} />}
           title={t('resourceGovernance.lifecycle.emptyTitle')}
           description={t('resourceGovernance.lifecycle.emptyDescription')}
         />
-      )}
+      ) : null}
       {dialog?.kind === 'create' && tenantCatalogReady && (
         <LifecycleCreateDialog
           tenants={tenantOptions}
@@ -447,6 +491,11 @@ export function ProviderTenantLifecycleGovernance() {
             if (dialog.kind === 'submit') {
               return mutation.mutateAsync(() =>
                 submitProviderTenantLifecycleRequest(dialog.request, reason)
+              );
+            }
+            if (dialog.kind === 'cancel') {
+              return mutation.mutateAsync(() =>
+                cancelProviderTenantLifecycleRequest(dialog.request, reason)
               );
             }
             return mutation.mutateAsync(() =>

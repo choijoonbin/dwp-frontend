@@ -1,3 +1,5 @@
+import { alpha } from '@mui/material/styles';
+
 import type { SxProps, Theme } from '@mui/material/styles';
 
 import {
@@ -35,23 +37,6 @@ export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
       theme.transitions.create(['background-color', 'border-color', 'box-shadow'], {
         duration: theme.transitions.duration.shorter,
       }),
-    '&::after': editing
-      ? undefined
-      : {
-          content: '""',
-          position: 'absolute',
-          inset: -4,
-          zIndex: 0,
-          boxSizing: 'border-box',
-          border: '1px solid transparent',
-          borderRadius: 1,
-          bgcolor: 'transparent',
-          pointerEvents: 'none',
-          transition: (theme) =>
-            theme.transitions.create(['background-color', 'border-color', 'box-shadow'], {
-              duration: theme.transitions.duration.shorter,
-            }),
-        },
     '& > [data-launchpad-glyph]': {
       position: 'relative',
       zIndex: 1,
@@ -92,8 +77,11 @@ export function launchpadTileSx(
       }),
     '& [data-launchpad-glyph]': {
       transition: (theme) =>
-        theme.transitions.create('transform', { duration: theme.transitions.duration.shorter }),
+        theme.transitions.create(['transform', 'box-shadow', 'filter'], {
+          duration: theme.transitions.duration.shorter,
+        }),
       transformOrigin: 'center',
+      borderRadius: 1,
       animation: editing
         ? `${workspaceWidgetSettle} ${WORKSPACE_WIDGET_SETTLE_DURATION_MS}ms ${WORKSPACE_WIDGET_SETTLE_FALLBACK_EASING} ${Math.abs(motionDelayMs)}ms 1 backwards`
         : 'none',
@@ -118,13 +106,17 @@ export function launchpadTileSx(
           boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 8px 18px rgba(0,7,24,0.20)',
         }
       : undefined,
-    '&:hover [data-launchpad-edit-frame]::after': editing
-      ? undefined
-      : {
-          bgcolor: 'rgba(255,255,255,0.08)',
-          borderColor: 'rgba(255,255,255,0.88)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 8px 18px rgba(0,7,24,0.20)',
-        },
+    '&:hover [data-launchpad-glyph]':
+      !editing && !disabled
+        ? {
+            transform: 'translateY(-2px) scale(1.02)',
+            filter: 'saturate(1.06)',
+            boxShadow: (theme) => {
+              const accent = theme.palette.primary.main;
+              return `0 0 0 1px ${alpha(accent, theme.palette.mode === 'dark' ? 0.5 : 0.3)}, 0 7px 16px ${alpha(accent, theme.palette.mode === 'dark' ? 0.24 : 0.16)}`;
+            },
+          }
+        : undefined,
     '&:focus-visible': {
       outline: 'none',
       borderColor: 'transparent',
@@ -137,42 +129,55 @@ export function launchpadTileSx(
           boxShadow: '0 0 0 2px rgba(141,184,255,0.30), 0 8px 18px rgba(0,7,24,0.22)',
         }
       : undefined,
-    '&:focus-visible [data-launchpad-edit-frame]::after': editing
-      ? undefined
-      : {
-          bgcolor: 'rgba(255,255,255,0.10)',
-          borderColor: '#8DB8FF',
-          boxShadow: '0 0 0 2px rgba(141,184,255,0.30), 0 8px 18px rgba(0,7,24,0.22)',
-        },
-    '&:active [data-launchpad-edit-frame]::after': editing
-      ? undefined
-      : {
-          bgcolor: 'rgba(255,255,255,0.12)',
-          borderColor: '#FFFFFF',
-        },
+    '&:focus-visible [data-launchpad-glyph]':
+      !editing && !disabled
+        ? {
+            boxShadow: (theme) => {
+              const accent = theme.palette.primary.main;
+              return `0 0 0 2px var(--dwp-focus-ring, ${accent}), 0 7px 16px ${alpha(accent, theme.palette.mode === 'dark' ? 0.24 : 0.16)}`;
+            },
+          }
+        : undefined,
+    '&:active [data-launchpad-glyph]':
+      !editing && !disabled
+        ? {
+            transform: 'translateY(0) scale(0.97)',
+            filter: 'saturate(1.03)',
+            boxShadow: (theme) =>
+              `0 0 0 1px ${alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.58 : 0.38)}`,
+          }
+        : undefined,
     '@supports (animation-timing-function: linear(0, 1))': {
       '& [data-launchpad-glyph]': {
         animationTimingFunction: WORKSPACE_WIDGET_SETTLE_SPRING_EASING,
       },
     },
     '@media (prefers-reduced-transparency: reduce)': {
-      '& [data-launchpad-edit-frame], & [data-launchpad-edit-frame]::after': {
+      '& [data-launchpad-edit-frame]': {
         bgcolor: editing ? 'background.paper' : 'transparent',
         boxShadow: 'none',
         backdropFilter: 'none',
       },
     },
     '@media (forced-colors: active)': {
-      '& [data-launchpad-edit-frame], & [data-launchpad-edit-frame]::after': {
+      '& [data-launchpad-edit-frame]': {
         bgcolor: editing ? 'Canvas' : 'transparent',
         borderColor: editing ? 'CanvasText' : 'transparent',
         boxShadow: 'none',
       },
-      '&:focus-visible [data-launchpad-edit-frame], &:focus-visible [data-launchpad-edit-frame]::after':
-        {
-          outline: '2px solid Highlight',
-          outlineOffset: 2,
-        },
+      '&:focus-visible [data-launchpad-edit-frame]': {
+        outline: editing ? '2px solid Highlight' : 'none',
+        outlineOffset: 2,
+      },
+      ...(!editing && !disabled
+        ? {
+            '&:hover [data-launchpad-glyph], &:focus-visible [data-launchpad-glyph]': {
+              outline: '2px solid Highlight',
+              outlineOffset: 2,
+              boxShadow: 'none',
+            },
+          }
+        : {}),
     },
     'html[data-motion="reduced"] &': {
       transition: 'none',
@@ -183,7 +188,7 @@ export function launchpadTileSx(
         transform: 'none',
         willChange: 'auto',
       },
-      '& [data-launchpad-edit-frame], & [data-launchpad-edit-frame]::after': {
+      '& [data-launchpad-edit-frame]': {
         transition: 'none',
       },
     },
@@ -196,7 +201,7 @@ export function launchpadTileSx(
         transform: 'none',
         willChange: 'auto',
       },
-      '& [data-launchpad-edit-frame], & [data-launchpad-edit-frame]::after': {
+      '& [data-launchpad-edit-frame]': {
         transition: 'none',
       },
     },

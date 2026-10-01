@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { AuditPolicyRevision } from '@dwp-frontend/shared-utils';
 
 import {
+  auditPolicyRevisionPageState,
   auditPolicyRevisionActions,
   integrityVerificationPresentation,
 } from './audit-governance-actions';
@@ -20,6 +21,27 @@ const revision = (overrides: Partial<AuditPolicyRevision>): AuditPolicyRevision 
   changeReason: 'Review retention',
   diff: {},
   contentSha256: 'a'.repeat(64),
+  impactSnapshot: {
+    observedAt: '2026-09-29T00:00:00Z',
+    coverageState: 'UNAVAILABLE_LEGACY_REVISION',
+    includedOwners: [],
+    exclusions: ['LEGACY_REVISION_NOT_SNAPSHOTTED'],
+    auditEventCount: 0,
+    affectedAuditEventCount: 0,
+    affectedActorCount: 0,
+    affectedTargetCount: 0,
+    standardRetentionEventCount: 0,
+    extendedRetentionEventCount: 0,
+    legalHoldEventCount: 0,
+    standardRetentionAffectedEventCount: 0,
+    extendedRetentionAffectedEventCount: 0,
+    highRiskClassificationAffectedEventCount: 0,
+    exportableEventCountBefore: 0,
+    exportableEventCountAfter: 0,
+    integrityProtectedEventCountBefore: 0,
+    integrityProtectedEventCountAfter: 0,
+  },
+  impactSha256: 'b'.repeat(64),
   createdBy: '41',
   createdAt: '2026-09-29T00:00:00Z',
   version: 1,
@@ -35,6 +57,29 @@ const revision = (overrides: Partial<AuditPolicyRevision>): AuditPolicyRevision 
 });
 
 describe('auditPolicyRevisionActions', () => {
+  it('keeps creation available with partial terminal history or a stale approved revision', () => {
+    const observed = revision({ lifecycleState: 'PUBLISHED' });
+    const terminalHistory = Array.from({ length: 100 }, () => observed);
+
+    expect(auditPolicyRevisionPageState({ items: terminalHistory, hasMore: true })).toEqual({
+      items: terminalHistory,
+      partial: true,
+      showEmpty: false,
+      createBlocked: false,
+    });
+    expect(auditPolicyRevisionPageState({ items: [], hasMore: true })).toMatchObject({
+      partial: true,
+      showEmpty: false,
+      createBlocked: false,
+    });
+    expect(
+      auditPolicyRevisionPageState({
+        items: [revision({ lifecycleState: 'APPROVED' })],
+        hasMore: true,
+      }).createBlocked
+    ).toBe(false);
+  });
+
   it('fails closed for an unknown integrity verification status', () => {
     expect(integrityVerificationPresentation('FUTURE')).toEqual({
       labelKey: 'auditControl.integrityStatus.UNKNOWN',

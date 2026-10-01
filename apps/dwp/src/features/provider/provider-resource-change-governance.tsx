@@ -216,7 +216,8 @@ export function ProviderResourceChangeGovernance() {
   });
   const canWrite = operator.data?.permissions.includes('RESOURCE_GOVERNANCE_WRITE') ?? false;
   const canApprove = operator.data?.permissions.includes('RESOURCE_GOVERNANCE_APPROVE') ?? false;
-  const rows = changes.data ?? [];
+  const rows = changes.data?.items ?? [];
+  const changesPartial = changes.data?.hasMore ?? false;
 
   return (
     <Paper component="section" variant="outlined" sx={{ p: 2 }}>
@@ -243,6 +244,14 @@ export function ProviderResourceChangeGovernance() {
           }
         >
           {t('resourceGovernance.operatorUnavailable')}
+        </Alert>
+      )}
+      {changesPartial && (
+        <Alert severity="warning" sx={{ mt: 1.5 }}>
+          {t('resourceGovernance.changes.listPartial', {
+            count: rows.length,
+            limit: changes.data?.limit ?? rows.length,
+          })}
         </Alert>
       )}
       {changes.isLoading ? (
@@ -359,7 +368,7 @@ export function ProviderResourceChangeGovernance() {
             );
           })}
         </Stack>
-      ) : (
+      ) : !changesPartial ? (
         <Box sx={{ mt: 1.5 }}>
           <EmptyState
             icon={<FileCheck2 size={22} />}
@@ -367,7 +376,7 @@ export function ProviderResourceChangeGovernance() {
             description={t('resourceGovernance.changes.emptyDescription')}
           />
         </Box>
-      )}
+      ) : null}
       {dialog && (
         <ChangeReasonDialog
           dialog={dialog}

@@ -50,11 +50,10 @@ import {
   ManagementPanelError,
   ManagementPanelLoading,
 } from '../../components/management-panel-state';
+import { AuditPolicyRevisionEvidence } from './audit-policy-revision-evidence';
+import { policyRevisionFieldLabelKey } from './audit-policy-revision-evidence-model';
 import {
-  AuditPolicyRevisionEvidence,
-  policyRevisionFieldLabelKey,
-} from './audit-policy-revision-evidence';
-import {
+  auditPolicyRevisionPageState,
   auditPolicyRevisionActions,
   integrityVerificationPresentation,
   type AuditPolicyRevisionAction,
@@ -284,6 +283,7 @@ function PolicyRevisionLedger({
   busy,
   actorId,
   canConfigure,
+  partial,
   onAction,
 }: {
   items: AuditPolicyRevision[];
@@ -292,10 +292,12 @@ function PolicyRevisionLedger({
   busy: boolean;
   actorId?: string | null;
   canConfigure: boolean;
+  partial: boolean;
   onAction: (revision: AuditPolicyRevision, action: AuditPolicyRevisionAction) => void;
 }) {
   const { t } = useTranslation('admin');
   const display = useDisplayDictionary();
+  if (!items.length && partial) return null;
   if (!items.length) {
     return (
       <Typography variant="body2" color="text.secondary" sx={{ px: 2.5, py: 4 }}>
@@ -459,7 +461,7 @@ export function AuditGovernance() {
   const policyQuery = useQuery({ queryKey: ['audit-control', 'policy'], queryFn: getAuditPolicy });
   const revisionsQuery = useQuery({
     queryKey: ['audit-control', 'policy-revisions'],
-    queryFn: listAuditPolicyRevisions,
+    queryFn: () => listAuditPolicyRevisions(),
   });
   const integrityQuery = useQuery({
     queryKey: ['audit-control', 'integrity'],
@@ -542,6 +544,9 @@ export function AuditGovernance() {
   });
 
   const latestCheckpoint = useMemo(() => integrityQuery.data?.items[0], [integrityQuery.data]);
+  const revisionPageState = auditPolicyRevisionPageState(
+    revisionsQuery.data ?? { items: [], hasMore: false }
+  );
 
   if (policyQuery.isLoading || revisionsQuery.isLoading || integrityQuery.isLoading || !policy) {
     return <ManagementPanelLoading label={t('auditControl.loading')} />;
@@ -701,13 +706,22 @@ export function AuditGovernance() {
             {t('auditControl.governance.revisions.reasonShared')}
           </Typography>
         </Stack>
+        {revisionsQuery.data && revisionPageState.partial && (
+          <Alert severity="warning" sx={{ mx: 2.5, mb: 2 }}>
+            {t('auditControl.governance.revisions.partial', {
+              count: revisionPageState.items.length,
+              limit: revisionsQuery.data.limit,
+            })}
+          </Alert>
+        )}
         <PolicyRevisionLedger
-          items={revisionsQuery.data ?? []}
+          items={revisionPageState.items}
           activeRevisionId={policyQuery.data?.activeRevisionId}
           reason={reason}
           busy={revisionActionMutation.isPending}
           actorId={auth.user ? String(auth.user.userId) : null}
           canConfigure={canConfigure}
+          partial={revisionPageState.partial}
           onAction={(revision, action) => revisionActionMutation.mutate({ revision, action })}
         />
       </Box>
@@ -745,7 +759,12 @@ export function AuditGovernance() {
             <ActionButton
               intent="primary"
               startIcon={<Save size={17} />}
-              disabled={createRevisionMutation.isPending || !policyChanged || !reason.trim()}
+              disabled={
+                createRevisionMutation.isPending ||
+                revisionPageState.createBlocked ||
+                !policyChanged ||
+                !reason.trim()
+              }
               onClick={() => createRevisionMutation.mutate()}
             >
               {t('auditControl.governance.revisions.create')}
@@ -877,6 +896,7 @@ export function AuditGovernance() {
             <Stack direction="row" gap={0.5}>
               <ActionIconButton
                 label={t('common.actions.refresh')}
+                tooltipDisablePortal
                 onClick={() => void integrityQuery.refetch()}
               >
                 <RefreshCw size={18} />

@@ -18,6 +18,7 @@ import {
   getAppGovernanceDashboard,
   getAuthPolicy,
   getIdentityProviders,
+  getTenantProviderDomains,
   listAuditPolicyRevisions,
   listIdentityUsers,
   listScimConnectors,
@@ -35,6 +36,7 @@ import Typography from '@mui/material/Typography';
 
 import {
   resolveTenantAuthenticationPosture,
+  resolveTenantDomainOverview,
   resolveTenantPrioritySummaryState,
   resolveTenantSettingsTasks,
   type TenantSettingsTask,
@@ -98,6 +100,13 @@ export function TenantSettingsOverview({
     enabled: canReadProvisioning,
     retry: false,
   });
+  const providerDomains = useQuery({
+    queryKey: ['admin', 'tenant-owner', 'provider-domains'],
+    queryFn: ({ signal }) => getTenantProviderDomains(signal),
+    enabled: canReadProvisioning,
+    retry: false,
+    staleTime: 30_000,
+  });
   const appGovernance = useQuery({
     queryKey: ['admin', 'app-governance'],
     queryFn: getAppGovernanceDashboard,
@@ -106,7 +115,7 @@ export function TenantSettingsOverview({
   });
   const policyRevisions = useQuery({
     queryKey: ['audit-control', 'policy-revisions'],
-    queryFn: listAuditPolicyRevisions,
+    queryFn: () => listAuditPolicyRevisions(),
     enabled: canReadAuditGovernance,
     retry: false,
   });
@@ -129,6 +138,12 @@ export function TenantSettingsOverview({
       }),
     [appGovernance.data, authentication, policyRevisions.data]
   );
+  const domainOverview = resolveTenantDomainOverview({
+    permitted: canReadProvisioning,
+    loading: canReadProvisioning && providerDomains.isLoading,
+    failed: canReadProvisioning && providerDomains.isError,
+    projection: providerDomains.data,
+  });
   const loading =
     branding.isLoading ||
     authPolicy.isLoading ||
@@ -143,6 +158,7 @@ export function TenantSettingsOverview({
     identityProviders,
     canReadIdentity ? identities : null,
     canReadProvisioning ? scim : null,
+    canReadProvisioning ? providerDomains : null,
     canReadAppGovernance ? appGovernance : null,
     canReadAuditGovernance ? policyRevisions : null,
   ].some((query) => query?.isError);
@@ -151,7 +167,7 @@ export function TenantSettingsOverview({
     partialFailure,
     taskCount: tasks.length,
   });
-  const currentRevisions = (policyRevisions.data ?? []).slice(0, 3);
+  const currentRevisions = (policyRevisions.data?.items ?? []).slice(0, 3);
 
   return (
     <Stack gap={2.5} data-testid="tenant-settings-operational-overview">
@@ -232,7 +248,9 @@ export function TenantSettingsOverview({
                         <Chip
                           size="small"
                           color={taskColor(task.tone)}
-                          label={t('settingsHome.overview.tasks.count', { count: task.count })}
+                          label={t('settingsHome.overview.tasks.count', {
+                            count: task.countIsLowerBound ? `${task.count}+` : task.count,
+                          })}
                         />
                       </Stack>
                       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -346,7 +364,10 @@ export function TenantSettingsOverview({
               ],
               [
                 t('settingsHome.overview.organization.domainVerification'),
-                t('settingsHome.overview.organization.notObserved'),
+                t(`settingsHome.overview.organization.domainSummary.${domainOverview.state}`, {
+                  count: domainOverview.total ?? 0,
+                  verified: domainOverview.verified ?? 0,
+                }),
               ],
             ]}
             route="/admin/identity/access"
@@ -380,6 +401,14 @@ export function TenantSettingsOverview({
               {t('settingsHome.overview.recent.open')}
             </ActionButton>
           </Stack>
+          {policyRevisions.data?.hasMore && (
+            <Alert severity="warning" sx={{ mt: 1.25 }}>
+              {t('settingsHome.overview.recent.partial', {
+                count: policyRevisions.data.items.length,
+                limit: policyRevisions.data.limit,
+              })}
+            </Alert>
+          )}
           <Stack sx={{ mt: 1.25, border: 1, borderColor: 'divider', borderRadius: 1 }}>
             {currentRevisions.length ? (
               currentRevisions.map((revision, index) => (
@@ -410,11 +439,11 @@ export function TenantSettingsOverview({
                   </Stack>
                 </Box>
               ))
-            ) : (
+            ) : !policyRevisions.data?.hasMore ? (
               <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
                 {t('settingsHome.overview.recent.empty')}
               </Typography>
-            )}
+            ) : null}
           </Stack>
         </Box>
       )}

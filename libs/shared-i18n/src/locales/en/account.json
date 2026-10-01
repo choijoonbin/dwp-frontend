@@ -398,6 +398,11 @@
         "createdAt": "Received {{date}}",
         "receipt": "Intake receipt {{receiptId}} · issued {{date}} · registration evidence only",
         "lifecycle": "Privacy request lifecycle",
+        "lifecycleMoreAvailable": "Earlier lifecycle evidence exists beyond the latest {{limit}} events returned for this request.",
+        "historyTitle": "Privacy-request intake history",
+        "historyEmpty": "No privacy requests have been registered.",
+        "recentSummary": "Showing the {{loaded}} most recent requests returned in this response (limit {{limit}}).",
+        "moreAvailable": "Earlier privacy requests exist beyond this bounded response.",
         "events": {
           "REQUEST_RECEIVED": "Request registered",
           "FULFILLMENT_BOUNDARY_RECORDED": "External owner connection required",

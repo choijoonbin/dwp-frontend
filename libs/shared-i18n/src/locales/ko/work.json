@@ -1253,6 +1253,10 @@
       "loading": "AI 실행 정책과 사용량을 불러오는 중입니다.",
       "loadError": "AI 실행 통제를 불러오지 못했습니다",
       "loadErrorDescription": "요청 실패를 정상 정책이나 집행 완료로 표시하지 않습니다. 연결과 권한을 확인한 뒤 다시 시도하세요.",
+      "rolloutUnavailable": {
+        "title": "DWAI·ON 롤아웃 미활성 · 사용 불가",
+        "description": "회사 롤아웃이 활성화되지 않아 S19 AI 실행 통제를 사용할 수 없습니다. Provider 운영자가 maker-checker 승인으로 롤아웃을 활성화한 뒤 Agent 권한 v21 준비 상태를 켜고 회사 AI 실행 정책을 초기화해야 합니다."
+      },
       "commandError": "AI 실행 정책 변경을 완료하지 못했습니다.",
       "unavailable": "확인할 수 없음",
       "summaryLabel": "AI 실행 통제 요약",

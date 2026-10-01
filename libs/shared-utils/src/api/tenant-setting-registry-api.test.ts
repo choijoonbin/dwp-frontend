@@ -19,11 +19,15 @@ beforeEach(() => vi.resetAllMocks());
 describe('tenant setting registry API', () => {
   it('keeps draft, independent decision, and publish commands versioned', async () => {
     const change = { changeId: 'change-1', version: 4 } as TenantSettingRegistryChange;
-    http.get.mockResolvedValue({ data: { data: [] } });
+    const changePage = { items: [change], limit: 100, hasMore: true };
+    http.get
+      .mockResolvedValueOnce({ data: { data: [] } })
+      .mockResolvedValueOnce({ data: { data: changePage } })
+      .mockResolvedValueOnce({ data: { data: [] } });
     http.post.mockResolvedValue({ data: { data: change } });
 
     await listTenantSettingOwners();
-    await listTenantSettingRegistryChanges();
+    await expect(listTenantSettingRegistryChanges()).resolves.toEqual(changePage);
     await createTenantSettingRegistryChange({
       settingKey: 'authentication.requireMfa',
       desiredState: 'VALUE',

@@ -1253,6 +1253,10 @@
       "loading": "Loading the AI execution policy and usage.",
       "loadError": "AI runtime control could not be loaded",
       "loadErrorDescription": "A failed request is not shown as a healthy policy or completed enforcement. Check connectivity and authority, then try again.",
+      "rolloutUnavailable": {
+        "title": "DWAI·ON rollout inactive · Unavailable",
+        "description": "S19 AI runtime control is unavailable because the tenant rollout is not active. A Provider operator must activate it through maker-checker approval, then enable Agent authorization v21 readiness and initialize the tenant AI execution policy."
+      },
       "commandError": "The AI runtime policy command could not be completed.",
       "unavailable": "Unavailable",
       "summaryLabel": "AI runtime control summary",

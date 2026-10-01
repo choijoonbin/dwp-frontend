@@ -758,6 +758,7 @@ export function AnnouncementManager() {
         open={dialogOpen && (selected ? canUpdate : canCreate)}
         announcement={selected}
         busy={busy}
+        requestScope={requestScope}
         onClose={() => setDialogOpen(false)}
         onSubmit={(form) =>
           void run(

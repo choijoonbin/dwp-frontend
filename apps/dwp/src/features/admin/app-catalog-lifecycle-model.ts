@@ -52,7 +52,7 @@ export type AppLifecycleCatalogItem = {
   managementAccess: AppLifecycleObservationState;
 };
 
-export type OwnerStatus = 'ready' | 'loading' | 'unavailable';
+export type OwnerStatus = 'ready' | 'partial' | 'loading' | 'unavailable';
 
 export type AppLifecycleProvenance = {
   authority: {
@@ -73,6 +73,7 @@ export type AppLifecycleProvenance = {
 function observationState(status: OwnerStatus, observed: boolean): AppLifecycleObservationState {
   if (status === 'loading') return 'LOADING';
   if (status === 'unavailable') return 'UNAVAILABLE';
+  if (status === 'partial') return observed ? 'OBSERVED' : 'UNAVAILABLE';
   return observed ? 'OBSERVED' : 'NOT_OBSERVED';
 }
 

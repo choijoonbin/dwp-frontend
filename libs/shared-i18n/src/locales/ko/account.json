@@ -398,6 +398,11 @@
         "createdAt": "접수 시각: {{date}}",
         "receipt": "접수 영수증 {{receiptId}} · 발급 {{date}} · 접수 증거 전용",
         "lifecycle": "개인정보 요청 처리 이력",
+        "lifecycleMoreAvailable": "이 요청에 대해 반환된 최근 {{limit}}건보다 이전의 처리 증거가 더 있습니다.",
+        "historyTitle": "개인정보 요청 접수 이력",
+        "historyEmpty": "접수된 개인정보 요청이 없습니다.",
+        "recentSummary": "이번 응답으로 반환된 최근 요청 {{loaded}}건을 표시합니다(상한 {{limit}}건).",
+        "moreAvailable": "이 제한된 응답보다 이전의 개인정보 요청이 더 있습니다.",
         "events": {
           "REQUEST_RECEIVED": "요청 접수 기록",
           "FULFILLMENT_BOUNDARY_RECORDED": "외부 소유 서비스 연결 필요",

@@ -38,6 +38,10 @@ import {
   createAIRuntimePolicyEditor,
   type AIRuntimePolicyEditor,
 } from './dwaion-ai-runtime-control-model';
+import {
+  resolveAIRuntimeControlLoadFailure,
+  shouldRetryAIRuntimeControlLoad,
+} from './dwaion-ai-runtime-control-state';
 import { DwaionAIRuntimePolicyDialog } from './dwaion-ai-runtime-policy-dialog';
 
 type EmergencyEditor = { disabled: boolean; reason: string; confirmed: boolean };
@@ -63,6 +67,7 @@ export function DwaionAIRuntimeControl() {
     queryKey: ['dwaion', 'admin', 'ai-runtime-control'],
     queryFn: getAIControlOverview,
     staleTime: 15_000,
+    retry: shouldRetryAIRuntimeControlLoad,
   });
   const [editor, setEditor] = useState<AIRuntimePolicyEditor | null>(null);
   const [emergency, setEmergency] = useState<EmergencyEditor | null>(null);
@@ -123,6 +128,7 @@ export function DwaionAIRuntimeControl() {
   });
 
   const overview = query.data;
+  const loadFailure = query.isError ? resolveAIRuntimeControlLoadFailure(query.error) : null;
   const policy = overview?.policy;
   const bootstrap = Boolean(editor && !policy);
   const commandBusy = bootstrapMutation.isPending || updateMutation.isPending;
@@ -204,10 +210,18 @@ export function DwaionAIRuntimeControl() {
           />
         </Box>
       ) : query.isError || !overview ? (
-        <Box sx={{ mt: 2 }}>
+        <Box data-ai-runtime-control-state={loadFailure ?? 'load-error'} sx={{ mt: 2 }}>
           <ErrorState
-            title={t(`${copy}.loadError`)}
-            description={t(`${copy}.loadErrorDescription`)}
+            title={t(
+              loadFailure === 'rollout-unavailable'
+                ? `${copy}.rolloutUnavailable.title`
+                : `${copy}.loadError`
+            )}
+            description={t(
+              loadFailure === 'rollout-unavailable'
+                ? `${copy}.rolloutUnavailable.description`
+                : `${copy}.loadErrorDescription`
+            )}
             retryLabel={t('dwaionAdmin.shared.retry')}
             retrying={query.isFetching}
             onRetry={() => void query.refetch()}

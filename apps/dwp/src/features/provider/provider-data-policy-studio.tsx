@@ -64,6 +64,7 @@ import {
   providerPolicyTypePresentation,
 } from './provider-data-policy-presentation';
 import { ProviderDataPolicyRuleSummary } from './provider-data-policy-rule-summary';
+import { ProviderDataPolicyPartialWarnings } from './provider-data-policy-partial-warnings';
 
 type PolicyAction = 'preview' | 'submit' | 'approve' | 'reject' | 'publish' | 'rollback';
 
@@ -756,9 +757,9 @@ export function ProviderDataPolicyStudio({
     queryKey: ['provider', 'operator'],
     queryFn: getProviderOperatorProfile,
   });
+  const policyItems = policies.data?.items ?? [];
   const selectedPolicy =
-    (policies.data ?? []).find((policy) => policy.policyId === selectedPolicyId) ??
-    policies.data?.[0];
+    policyItems.find((policy) => policy.policyId === selectedPolicyId) ?? policyItems[0];
   const selectedRevision =
     selectedPolicy?.revisions.find((revision) => revision.revisionId === selectedRevisionId) ??
     selectedPolicy?.revisions[0];
@@ -806,6 +807,9 @@ export function ProviderDataPolicyStudio({
       <Alert severity="info" icon={<ShieldCheck size={20} />}>
         {t('dataGovernance.policy.guidance')}
       </Alert>
+      {policies.data && (
+        <ProviderDataPolicyPartialWarnings page={policies.data} selectedPolicy={selectedPolicy} />
+      )}
       <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
         <Box>
           <Typography variant="h6">{t('dataGovernance.policy.title')}</Typography>
@@ -823,7 +827,7 @@ export function ProviderDataPolicyStudio({
           </ActionButton>
         )}
       </Stack>
-      {(policies.data ?? []).length ? (
+      {policyItems.length ? (
         <Box
           sx={{
             display: 'grid',
@@ -842,7 +846,7 @@ export function ProviderDataPolicyStudio({
               overflowY: 'auto',
             }}
           >
-            {(policies.data ?? []).map((policy) => {
+            {policyItems.map((policy) => {
               const latest = policy.revisions[0];
               return (
                 <ListItemButton

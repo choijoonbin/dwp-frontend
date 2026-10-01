@@ -39,6 +39,8 @@ import Typography from '@mui/material/Typography';
 import { GOVERNED_PRODUCT_ENTRY_CATALOG } from '../../components/product-entry-point-catalog';
 import {
   tenantAppAssignmentActions,
+  tenantAppAssignmentActivationUnavailable,
+  tenantAppInstallationCandidates,
   tenantAppInstallationActions,
   tenantAppSeatState,
   type TenantAppAssignmentAction,
@@ -101,26 +103,36 @@ export function TenantAppAdoptionPanel({
     () => projection.data?.installations ?? [],
     [projection.data?.installations]
   );
-  const workforceAssignments = useMemo(() => assignments.data ?? [], [assignments.data]);
+  const workforceAssignments = useMemo(
+    () => assignments.data?.items ?? [],
+    [assignments.data?.items]
+  );
+  const installationsPartial = projection.data?.installationsHasMore ?? false;
+  const assignmentsPartial = assignments.data?.hasMore ?? false;
   const productOptions = useMemo(() => {
     const resources = new Map(
       governance.resourceSets.flatMap((set) =>
         set.resources.map((resource) => [resource.resourceKey, resource.resourceName] as const)
       )
     );
-    const installed = new Set(installations.map((item) => item.productKey));
-    const requestable = new Set(projection.data?.requestableAppResourceKeys ?? []);
-    return GOVERNED_PRODUCT_ENTRY_CATALOG.filter(
-      (product) =>
-        resources.has(product.appKey) &&
-        requestable.has(product.appKey) &&
-        !installed.has(product.id)
-    ).map((product) => ({
+    return tenantAppInstallationCandidates({
+      products: GOVERNED_PRODUCT_ENTRY_CATALOG,
+      availableAppResourceKeys: [...resources.keys()],
+      requestableAppResourceKeys: projection.data?.requestableAppResourceKeys ?? [],
+      installations,
+      installationsHasMore: installationsPartial,
+    }).map((product) => ({
       productKey: product.id,
       appResourceKey: product.appKey,
       label: resources.get(product.appKey) ?? t(productPresentationKey(product.id)),
     }));
-  }, [governance.resourceSets, installations, projection.data?.requestableAppResourceKeys, t]);
+  }, [
+    governance.resourceSets,
+    installations,
+    installationsPartial,
+    projection.data?.requestableAppResourceKeys,
+    t,
+  ]);
   const userOptions = useMemo(
     () =>
       governance.principals
@@ -271,6 +283,15 @@ export function TenantAppAdoptionPanel({
         </Stack>
       </Stack>
 
+      {installationsPartial && (
+        <Alert severity="warning">
+          {t('appGovernance.adoption.installations.partial', {
+            count: installations.length,
+            limit: projection.data.installationsLimit,
+          })}
+        </Alert>
+      )}
+
       {installations.length > 0 ? (
         <Box
           sx={{
@@ -379,13 +400,13 @@ export function TenantAppAdoptionPanel({
             );
           })}
         </Box>
-      ) : (
+      ) : !installationsPartial ? (
         <GuidedEmptyState
           kind="first-use"
           title={t('appGovernance.adoption.installations.emptyTitle')}
           description={t('appGovernance.adoption.installations.emptyDescription')}
         />
-      )}
+      ) : null}
 
       <Divider />
       <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={1}>
@@ -406,10 +427,20 @@ export function TenantAppAdoptionPanel({
         </ActionButton>
       </Stack>
 
+      {assignmentsPartial && (
+        <Alert severity="warning">
+          {t('appGovernance.adoption.assignments.partial', {
+            count: workforceAssignments.length,
+            limit: assignments.data?.limit ?? workforceAssignments.length,
+          })}
+        </Alert>
+      )}
+
       {workforceAssignments.length > 0 ? (
         <Stack gap={1}>
           {workforceAssignments.map((assignment) => {
             const actions = tenantAppAssignmentActions(assignment, actorId);
+            const activationUnavailable = tenantAppAssignmentActivationUnavailable(assignment);
             return (
               <Box
                 component="article"
@@ -432,6 +463,14 @@ export function TenantAppAdoptionPanel({
                         color={stateColor(assignment.lifecycleState)}
                         label={t(tenantAppStatePresentationKey(assignment.lifecycleState))}
                       />
+                      {activationUnavailable && (
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          color="warning"
+                          label={t('appGovernance.adoption.assignments.outsideValidityWindow')}
+                        />
+                      )}
                     </Stack>
                     <Typography variant="body2" color="text.secondary">
                       {productLabel(assignment.productKey)} ·{' '}
@@ -476,13 +515,13 @@ export function TenantAppAdoptionPanel({
             );
           })}
         </Stack>
-      ) : (
+      ) : !assignmentsPartial ? (
         <GuidedEmptyState
           kind="empty"
           title={t('appGovernance.adoption.assignments.emptyTitle')}
           description={t('appGovernance.adoption.assignments.emptyDescription')}
         />
-      )}
+      ) : null}
 
       <InstallationDialog
         open={installOpen}

@@ -288,6 +288,7 @@ export function AppTile({
                       textAlign: 'center',
                       fontVariantNumeric: 'tabular-nums',
                       boxShadow: '0 3px 8px rgba(15,23,42,0.16)',
+                      zIndex: 2,
                     }}
                   >
                     {app.badge}
@@ -340,6 +341,8 @@ export function AppTile({
               sx={{
                 width: 1,
                 height: editing ? 'var(--launchpad-label-height, 24px)' : 28,
+                position: 'relative',
+                zIndex: 2,
                 fontSize: launchpadLabelFontSize(app.shortName),
                 display: '-webkit-box',
                 overflow: 'hidden',

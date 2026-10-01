@@ -9,51 +9,25 @@ import Typography from '@mui/material/Typography';
 
 import type { AuditPolicyRevision } from '@dwp-frontend/shared-utils';
 
-export type AuditPolicyDiffRow = Readonly<{
-  field: string;
-  before: unknown;
-  after: unknown;
-}>;
-
-const POLICY_FIELD_TYPES = {
-  standardRetentionDays: 'number',
-  extendedRetentionDays: 'number',
-  exportLimitRows: 'number',
-  requireExportReason: 'boolean',
-  integrityEnabled: 'boolean',
-  highRiskThreshold: 'number',
-} as const;
-
-function isKnownPolicyField(field: string): field is keyof typeof POLICY_FIELD_TYPES {
-  return Object.prototype.hasOwnProperty.call(POLICY_FIELD_TYPES, field);
-}
-
-export function policyRevisionFieldLabelKey(field: string): string {
-  return isKnownPolicyField(field)
-    ? `auditControl.governance.revisions.fields.${field}`
-    : 'auditControl.governance.revisions.fields.UNKNOWN';
-}
-
-function safePolicyValue(field: string, value: unknown): number | boolean | null {
-  const expected = POLICY_FIELD_TYPES[field as keyof typeof POLICY_FIELD_TYPES];
-  if (expected === 'number' && typeof value === 'number' && Number.isFinite(value)) return value;
-  if (expected === 'boolean' && typeof value === 'boolean') return value;
-  return null;
-}
-
-export function policyRevisionEvidenceRows(
-  revision: Pick<AuditPolicyRevision, 'diff'>
-): AuditPolicyDiffRow[] {
-  return Object.entries(revision.diff).map(([field, value]) => ({
-    field: isKnownPolicyField(field) ? field : 'UNKNOWN',
-    before: safePolicyValue(field, value.before),
-    after: safePolicyValue(field, value.after),
-  }));
-}
+import {
+  policyImpactCount,
+  policyImpactCounts,
+  policyImpactCoverageLabelKey,
+  policyImpactEvidenceAvailable,
+  policyImpactExclusionLabelKey,
+  policyImpactHashLabel,
+  policyImpactOwnerLabelKey,
+  policyRevisionEvidenceRows,
+  policyRevisionFieldLabelKey,
+} from './audit-policy-revision-evidence-model';
 
 export function AuditPolicyRevisionEvidence({ revision }: { revision: AuditPolicyRevision }) {
   const { t } = useTranslation('admin');
   const rows = policyRevisionEvidenceRows(revision);
+  const impact = revision.impactSnapshot;
+  const impactCounts = policyImpactCounts(impact);
+  const impactHash = policyImpactHashLabel(revision.impactSha256);
+  const completeCoverage = policyImpactEvidenceAvailable(impact);
   const displayValue = (value: unknown): string => {
     if (typeof value === 'number') return String(value);
     if (typeof value === 'boolean') {
@@ -61,8 +35,6 @@ export function AuditPolicyRevisionEvidence({ revision }: { revision: AuditPolic
     }
     return t('auditControl.governance.revisions.values.unavailable');
   };
-
-  if (!rows.length && !revision.approval) return null;
 
   return (
     <Stack gap={1.25} sx={{ mt: 1.5 }}>
@@ -150,9 +122,112 @@ export function AuditPolicyRevisionEvidence({ revision }: { revision: AuditPolic
         </Box>
       )}
 
-      <Alert severity="info">
-        {t('auditControl.governance.revisions.impactUnavailable', { count: rows.length })}
-      </Alert>
+      <Box
+        component="section"
+        aria-labelledby={`policy-impact-${revision.revisionId}`}
+        sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 1.5 }}
+      >
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          gap={1}
+        >
+          <Box minWidth={0}>
+            <Typography
+              id={`policy-impact-${revision.revisionId}`}
+              component="h4"
+              variant="subtitle2"
+            >
+              {t('auditControl.governance.revisions.impact.title')}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {t('auditControl.governance.revisions.impact.observedAt', {
+                date: formatDate(impact.observedAt, {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }),
+              })}
+            </Typography>
+          </Box>
+          <Chip
+            size="small"
+            variant="outlined"
+            color={completeCoverage ? 'success' : 'warning'}
+            label={t(policyImpactCoverageLabelKey(impact.coverageState))}
+          />
+        </Stack>
+
+        {!completeCoverage && (
+          <Alert severity="warning" sx={{ mt: 1.25 }}>
+            {t('auditControl.governance.revisions.impact.incomplete')}
+          </Alert>
+        )}
+
+        <Box
+          component="dl"
+          sx={{
+            m: 0,
+            mt: 1.5,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+            gap: 1,
+          }}
+        >
+          {impactCounts.map(({ field, value }) => (
+            <Box key={field} sx={{ minWidth: 0, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+              <Typography component="dt" variant="caption" color="text.secondary">
+                {t(`auditControl.governance.revisions.impact.metrics.${field}`)}
+              </Typography>
+              <Typography component="dd" variant="body2" fontWeight={750} sx={{ m: 0 }}>
+                {value ?? t('auditControl.governance.revisions.values.unavailable')}
+              </Typography>
+            </Box>
+          ))}
+          <ImpactTransition
+            label={t('auditControl.governance.revisions.impact.metrics.exportableEvents')}
+            before={impact.exportableEventCountBefore}
+            after={impact.exportableEventCountAfter}
+            evidenceAvailable={completeCoverage}
+          />
+          <ImpactTransition
+            label={t('auditControl.governance.revisions.impact.metrics.integrityProtectedEvents')}
+            before={impact.integrityProtectedEventCountBefore}
+            after={impact.integrityProtectedEventCountAfter}
+            evidenceAvailable={completeCoverage}
+          />
+        </Box>
+
+        <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1.5 }}>
+          {impact.includedOwners.map((owner, index) => (
+            <Chip
+              key={`${owner}:${index}`}
+              size="small"
+              variant="outlined"
+              color="info"
+              label={t(policyImpactOwnerLabelKey(owner))}
+            />
+          ))}
+          {impact.exclusions.map((exclusion, index) => (
+            <Chip
+              key={`${exclusion}:${index}`}
+              size="small"
+              variant="outlined"
+              color="warning"
+              label={t(policyImpactExclusionLabelKey(exclusion))}
+            />
+          ))}
+        </Stack>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mt: 1.25, display: 'block', overflowWrap: 'anywhere' }}
+        >
+          {t('auditControl.governance.revisions.impact.hash', {
+            hash: impactHash ?? t('auditControl.governance.revisions.values.unavailable'),
+          })}
+        </Typography>
+      </Box>
 
       {revision.approval && (
         <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center">
@@ -188,5 +263,35 @@ export function AuditPolicyRevisionEvidence({ revision }: { revision: AuditPolic
         </Stack>
       )}
     </Stack>
+  );
+}
+
+function ImpactTransition({
+  label,
+  before,
+  after,
+  evidenceAvailable,
+}: {
+  label: string;
+  before: unknown;
+  after: unknown;
+  evidenceAvailable: boolean;
+}) {
+  const { t } = useTranslation('admin');
+  const beforeCount = evidenceAvailable ? policyImpactCount(before) : null;
+  const afterCount = evidenceAvailable ? policyImpactCount(after) : null;
+  const unavailable = t('auditControl.governance.revisions.values.unavailable');
+  return (
+    <Box sx={{ minWidth: 0, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+      <Typography component="dt" variant="caption" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography component="dd" variant="body2" fontWeight={750} sx={{ m: 0 }}>
+        {t('auditControl.governance.revisions.impact.transition', {
+          before: beforeCount ?? unavailable,
+          after: afterCount ?? unavailable,
+        })}
+      </Typography>
+    </Box>
   );
 }

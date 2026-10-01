@@ -1,4 +1,4 @@
-import type { TenantAuthPolicyDraft } from '@dwp-frontend/shared-utils';
+import type { TenantAuthPolicyDraft, TenantSettingChangeSet } from '@dwp-frontend/shared-utils';
 
 const POLICY_STATES = new Set([
   'DRAFT',
@@ -38,4 +38,19 @@ export function resolveTenantAuthPolicyDraft(
       tokenTtlSec: null,
     }
   );
+}
+
+export function tenantAuthPolicyChangePageState(page: {
+  items: TenantSettingChangeSet[];
+  hasMore: boolean;
+}) {
+  const hasOpenChange = page.items.some((change) =>
+    ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(change.lifecycleState)
+  );
+  return {
+    items: page.items,
+    partial: page.hasMore,
+    showEmpty: page.items.length === 0 && !page.hasMore,
+    createBlocked: hasOpenChange,
+  };
 }

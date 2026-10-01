@@ -13,6 +13,7 @@ const EXACT_PERMISSION_LEAVES = {
   'reference-data': 'ADMIN.REFERENCE_DATA',
   registry: 'ADMIN.PLATFORM_REGISTRY',
   navigation: 'ADMIN.NAVIGATION',
+  'api-monitoring': 'ADMIN.API_MONITORING',
 } as const;
 
 function navigationItem(view: keyof typeof EXACT_PERMISSION_LEAVES) {

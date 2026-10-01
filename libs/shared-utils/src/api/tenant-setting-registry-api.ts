@@ -1,6 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 
+import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApiResponse } from '../types';
+
+type AuthSchemas = GatewayComponents['schemas'];
 
 const ADMIN = '/api/auth/admin/tenant-setting-registry';
 const READER = '/api/auth/tenant-settings/managed-effective/me';
@@ -64,6 +67,11 @@ export type TenantSettingRegistryChange = {
   allowedActions: Array<'SUBMIT' | 'APPROVE' | 'REJECT' | 'PUBLISH'>;
 };
 
+export type TenantSettingRegistryChangePage = Omit<
+  Required<AuthSchemas['auth_ChangePage']>,
+  'items'
+> & { items: TenantSettingRegistryChange[] };
+
 export type ManagedTenantEffectiveSetting = {
   settingKey: string;
   localizedLabelKey: string;
@@ -89,8 +97,8 @@ export async function listTenantSettingOwners(): Promise<TenantSettingOwnerDescr
   return response.data.data;
 }
 
-export async function listTenantSettingRegistryChanges(): Promise<TenantSettingRegistryChange[]> {
-  const response = await axiosInstance.get<ApiResponse<TenantSettingRegistryChange[]>>(
+export async function listTenantSettingRegistryChanges(): Promise<TenantSettingRegistryChangePage> {
+  const response = await axiosInstance.get<ApiResponse<TenantSettingRegistryChangePage>>(
     `${ADMIN}/changes`
   );
   return response.data.data;

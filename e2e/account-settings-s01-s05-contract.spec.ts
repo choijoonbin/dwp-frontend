@@ -175,7 +175,11 @@ async function routePersonalSettingsOwners(page: Page) {
       return fulfillSuccess(route, consent);
     }
     if (request.method() === 'GET' && path.endsWith('/privacy/requests')) {
-      return fulfillSuccess(route, privacyRequests);
+      return fulfillSuccess(route, {
+        items: privacyRequests,
+        hasMore: false,
+        limit: 50,
+      });
     }
     if (request.method() === 'POST' && path.endsWith('/privacy/requests')) {
       requestWrites += 1;
@@ -185,6 +189,7 @@ async function routePersonalSettingsOwners(page: Page) {
         requestType: payload.requestType,
         requestState: 'RECEIVED',
         requestedScope: payload.requestedScope,
+        reason: payload.reason ?? null,
         fulfillmentAvailable: false,
         fulfillmentBoundary: 'PRIVACY_OWNER_EXECUTION_NOT_CONNECTED',
         version: 0,
@@ -214,6 +219,8 @@ async function routePersonalSettingsOwners(page: Page) {
             occurredAt: '2026-09-17T09:00:01Z',
           },
         ],
+        lifecycleHasMore: false,
+        lifecycleLimit: 50,
       };
       privacyRequests.unshift(privacyRequest);
       return fulfillSuccess(route, privacyRequest);

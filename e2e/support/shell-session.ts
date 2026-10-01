@@ -35,6 +35,7 @@ import {
   integrityPage,
   scimPage,
 } from './shell-session-contracts';
+import { AUDIT_POLICY_REVISION_PAGE } from './audit-control-fixtures';
 export { fulfillSuccess } from './shell-session-contracts';
 import type { Page } from '@playwright/test';
 import type { LocalizationRevision, PreferenceExceptionRequest } from '@dwp-frontend/shared-utils';
@@ -171,6 +172,8 @@ export const FULL_PRODUCT_PERMISSIONS = [
     ['ADMIN.APP_ACCESS_REQUESTS', 'MANAGE'],
     ['ADMIN.IDENTITY_PROVISIONING', 'VIEW'],
     ['ADMIN.IDENTITY_PROVISIONING', 'MANAGE'],
+    ['ADMIN.PLATFORM_CATALOG', 'VIEW'],
+    ['ADMIN.PLATFORM_CATALOG', 'MANAGE'],
     ['ADMIN.API_MONITORING', 'VIEW'],
     ['ADMIN.AUDIT_VIEW', 'VIEW'],
     ['ADMIN.AUDIT_INVESTIGATE', 'UPDATE'],
@@ -236,7 +239,6 @@ export const FULL_PRODUCT_PERMISSIONS = [
     effect: 'ALLOW' as const,
   })),
 ];
-
 export const NAVIGATION_TREE_FIXTURE = [
   {
     navigationItemId: 1,
@@ -286,7 +288,6 @@ export const NAVIGATION_VALIDATION_FIXTURE = {
   issues: [],
   checkedAt: '2026-08-11T00:15:00Z',
 };
-
 export const NAVIGATION_REVISION_FIXTURE = {
   navigationRevisionId: '61000000-0000-0000-0000-000000000001',
   revisionNumber: 1,
@@ -304,7 +305,6 @@ export const NAVIGATION_REVISION_FIXTURE = {
   publishedAt: '2026-08-11T00:15:00Z',
   publishedBy: 1,
 };
-
 export const CATALOG_ENTITIES_FIXTURE = [
   {
     ref: 'APP:DWP_WORK',
@@ -333,7 +333,6 @@ export const CATALOG_ENTITIES_FIXTURE = [
     metadata: {},
   },
 ] as const;
-
 export const CATALOG_RELATION_FIXTURE = {
   relationId: null,
   sourceRef: 'SERVICE:dwp-platform-server',
@@ -374,7 +373,6 @@ export const CATALOG_ASSURANCE_FINDING_FIXTURE = {
   disposedAt: null,
   version: 0,
 } as const;
-
 export const CATALOG_ASSURANCE_FIXTURE = {
   openCount: 1,
   criticalCount: 0,
@@ -392,9 +390,10 @@ export const CATALOG_ASSURANCE_FIXTURE = {
     contentSha256: 'b'.repeat(64),
   },
   findings: [CATALOG_ASSURANCE_FINDING_FIXTURE],
+  findingsLimit: 100,
+  findingsHasMore: false,
   generatedAt: '2026-08-12T00:20:00Z',
 } as const;
-
 const PROVIDER_TENANT_FIXTURE = {
   tenantId: 'tenant-skax',
   organizationId: 'organization-skax',
@@ -2652,6 +2651,8 @@ export async function mockShellSession(
         entitiesByKind: { APP: 1, SERVICE: 1 },
         entitiesByLifecycle: { ACTIVE: 2 },
         entities: CATALOG_ENTITIES_FIXTURE,
+        entitiesLimit: 100,
+        entitiesHasMore: false,
         generatedAt: '2026-08-11T00:20:00Z',
       });
     }
@@ -3065,28 +3066,7 @@ export async function mockShellSession(
       });
     }
     if (path === '/api/platform/v1/admin/audit-control/policy/revisions') {
-      return fulfillSuccess(route, [
-        {
-          revisionId: '51000000-0000-0000-0000-000000000001',
-          revisionNumber: 1,
-          lifecycleState: 'PUBLISHED',
-          standardRetentionDays: 365,
-          extendedRetentionDays: 2555,
-          exportLimitRows: 10000,
-          requireExportReason: true,
-          integrityEnabled: true,
-          highRiskThreshold: 70,
-          changeReason: 'Initial governed baseline',
-          diff: {},
-          contentSha256: 'a'.repeat(64),
-          createdBy: 'system',
-          createdAt: '2026-08-11T00:00:00Z',
-          publishedBy: 'system',
-          publishedAt: '2026-08-11T00:00:00Z',
-          version: 0,
-          approval: null,
-        },
-      ]);
+      return fulfillSuccess(route, AUDIT_POLICY_REVISION_PAGE);
     }
     if (path === '/api/platform/v1/navigation') {
       const korean = (url.searchParams.get('locale') ?? locale).toLowerCase().startsWith('ko');

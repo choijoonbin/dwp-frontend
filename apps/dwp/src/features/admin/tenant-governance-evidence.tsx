@@ -6,6 +6,7 @@ import {
   getMyTenantPreferredLocale,
   getTenantGovernanceSnapshot,
   restoreMyTenantPreferredLocale,
+  usePermissions,
   useToast,
   type TenantEffectiveSetting,
 } from '@dwp-frontend/shared-utils';
@@ -20,6 +21,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { TenantProviderDomainEvidence } from './tenant-owner-projection-evidence';
+import { TenantSsoTestLogin } from './tenant-sso-test-login';
 import {
   effectiveSettingLineageLabelKey,
   effectiveSettingSourceLabelKey,
@@ -41,19 +43,24 @@ export function TenantGovernanceEvidence() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { hasPermission, isLoaded: permissionsLoaded } = usePermissions();
+  const canView = permissionsLoaded && hasPermission('ADMIN.IDENTITY_PROVISIONING', 'VIEW');
   const [restoreOpen, setRestoreOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const snapshot = useQuery({
     queryKey: snapshotKey,
     queryFn: getTenantGovernanceSnapshot,
+    enabled: canView,
     retry: false,
   });
   const preference = useQuery({
     queryKey: preferenceKey,
     queryFn: getMyTenantPreferredLocale,
+    enabled: canView,
     retry: false,
   });
 
+  if (!permissionsLoaded || !canView) return null;
   if (snapshot.isLoading) {
     return (
       <Typography color="text.secondary">
@@ -189,6 +196,8 @@ export function TenantGovernanceEvidence() {
           {t('settingsHome.overview.governance.externalBoundary')}
         </Alert>
       )}
+
+      <TenantSsoTestLogin />
 
       <Typography component="h3" variant="subtitle1" sx={{ mt: 2 }}>
         {t('settingsHome.overview.governance.effective.title')}

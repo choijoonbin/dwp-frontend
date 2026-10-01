@@ -4,6 +4,7 @@ import type { ApiResponse } from '../types';
 import type {
   ProviderDataGovernanceSnapshot,
   ProviderDataPolicy,
+  ProviderDataPolicyPage,
   ProviderDataPolicyRevision,
 } from './provider-control-contracts';
 
@@ -24,8 +25,8 @@ export async function refreshProviderDataGovernance(): Promise<ProviderDataGover
   return response.data.data;
 }
 
-export async function listProviderDataPolicies(): Promise<ProviderDataPolicy[]> {
-  const response = await axiosInstance.get<ApiResponse<ProviderDataPolicy[]>>(
+export async function listProviderDataPolicies(): Promise<ProviderDataPolicyPage> {
+  const response = await axiosInstance.get<ApiResponse<ProviderDataPolicyPage>>(
     `${BASE}/data-governance/policies`
   );
   return response.data.data;

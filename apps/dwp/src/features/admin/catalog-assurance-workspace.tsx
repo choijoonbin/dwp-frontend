@@ -209,6 +209,14 @@ export function AssuranceWorkspace({
 
   return (
     <Stack gap={2}>
+      {summary?.findingsHasMore && (
+        <Alert severity="warning">
+          {t('catalog.assurance.findingsPartial', {
+            count: findings.length,
+            limit: summary.findingsLimit,
+          })}
+        </Alert>
+      )}
       <Box
         component="section"
         aria-label={t('catalog.assurance.contextLabel')}

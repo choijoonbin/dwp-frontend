@@ -1,6 +1,9 @@
 import { axiosInstance } from '../axios-instance';
 
+import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 import type { ApiResponse } from '../types';
+
+type AuthSchemas = GatewayComponents['schemas'];
 
 const BASE = '/api/auth/admin/tenant-app-adoption';
 
@@ -35,7 +38,7 @@ export type TenantAppAssignment = {
   productKey: string;
   userId: number;
   userDisplayName: string;
-  lifecycleState: 'PENDING_APPROVAL' | 'APPROVED' | 'ACTIVE' | 'DENIED' | 'REVOKED';
+  lifecycleState: 'PENDING_APPROVAL' | 'APPROVED' | 'ACTIVE' | 'DENIED' | 'REVOKED' | 'EXPIRED';
   seatQuantity: number;
   sourceType: string;
   externalSettlementState: 'NOT_REQUIRED' | 'UNAVAILABLE';
@@ -65,7 +68,14 @@ export type TenantAppAdoptionProjection = {
   exclusions: string[];
   requestableAppResourceKeys: string[];
   installations: TenantAppInstallation[];
+  installationsLimit: number;
+  installationsHasMore: boolean;
 };
+
+export type TenantAppAssignmentPage = Omit<
+  Required<AuthSchemas['auth_AssignmentPage']>,
+  'items'
+> & { items: TenantAppAssignment[] };
 
 export type TenantCapabilityOverridePolicy = {
   contractKey: string;
@@ -225,9 +235,9 @@ export async function revokeTenantCapabilityOverride(
 
 export async function listTenantAppAssignments(
   installationId?: string
-): Promise<TenantAppAssignment[]> {
+): Promise<TenantAppAssignmentPage> {
   const query = installationId ? `?${new URLSearchParams({ installationId }).toString()}` : '';
-  const response = await axiosInstance.get<ApiResponse<TenantAppAssignment[]>>(
+  const response = await axiosInstance.get<ApiResponse<TenantAppAssignmentPage>>(
     `${BASE}/assignments${query}`
   );
   return response.data.data;

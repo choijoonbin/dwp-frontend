@@ -2,6 +2,18 @@ import type { AuditPolicyRevision } from '@dwp-frontend/shared-utils';
 
 export type AuditPolicyRevisionAction = 'submit' | 'approve' | 'reject' | 'publish' | 'rollback';
 
+export function auditPolicyRevisionPageState(page: {
+  items: AuditPolicyRevision[];
+  hasMore: boolean;
+}) {
+  return {
+    items: page.items,
+    partial: page.hasMore,
+    showEmpty: page.items.length === 0 && !page.hasMore,
+    createBlocked: false,
+  };
+}
+
 export function integrityVerificationPresentation(value: string): {
   labelKey: string;
   color: 'success' | 'error' | 'warning';

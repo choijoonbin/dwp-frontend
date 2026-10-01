@@ -5,6 +5,7 @@ import {
   authPolicyImpactConfidenceLabelKey,
   authPolicyStateLabelKey,
   resolveTenantAuthPolicyDraft,
+  tenantAuthPolicyChangePageState,
 } from './tenant-auth-policy-workflow-model';
 
 describe('tenant authentication-policy draft model', () => {
@@ -49,5 +50,38 @@ describe('tenant authentication-policy draft model', () => {
       expect(key).toMatch(/\.UNKNOWN$/);
       expect(key).not.toContain('FUTURE_');
     }
+  });
+});
+
+describe('tenantAuthPolicyChangePageState', () => {
+  it('preserves observed terminal rows and permits creation when only older terminal history remains', () => {
+    const observed = {
+      lifecycleState: 'PUBLISHED',
+    } as Parameters<typeof tenantAuthPolicyChangePageState>[0]['items'][number];
+    const terminalHistory = Array.from({ length: 100 }, () => observed);
+
+    expect(tenantAuthPolicyChangePageState({ items: terminalHistory, hasMore: true })).toEqual({
+      items: terminalHistory,
+      partial: true,
+      showEmpty: false,
+      createBlocked: false,
+    });
+  });
+
+  it('does not claim an empty history from an empty bounded page', () => {
+    expect(tenantAuthPolicyChangePageState({ items: [], hasMore: true })).toMatchObject({
+      partial: true,
+      showEmpty: false,
+      createBlocked: false,
+    });
+  });
+
+  it('blocks creation when the actionability-first page contains an open change', () => {
+    const open = {
+      lifecycleState: 'IN_REVIEW',
+    } as Parameters<typeof tenantAuthPolicyChangePageState>[0]['items'][number];
+    expect(tenantAuthPolicyChangePageState({ items: [open], hasMore: true }).createBlocked).toBe(
+      true
+    );
   });
 });

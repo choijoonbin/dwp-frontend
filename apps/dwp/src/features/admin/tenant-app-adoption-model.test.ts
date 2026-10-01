@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   tenantAppAssignmentActions,
+  tenantAppAssignmentActivationUnavailable,
+  tenantAppInstallationCandidates,
   tenantAppInstallationActions,
   tenantAppSeatState,
 } from './tenant-app-adoption-model';
@@ -113,6 +115,40 @@ describe('tenant app adoption authority', () => {
     ).toEqual(['REVOKE']);
   });
 
+  it('fails closed outside an assignment validity window while preserving revoke', () => {
+    const now = Date.parse('2026-10-01T00:00:00Z');
+    const expired = assignment({
+      lifecycleState: 'APPROVED',
+      validTo: '2026-09-30T23:59:59Z',
+      allowedActions: ['ACTIVATE', 'REVOKE'],
+    });
+    expect(tenantAppAssignmentActivationUnavailable(expired, now)).toBe(true);
+    expect(tenantAppAssignmentActions(expired, 13, now)).toEqual(['REVOKE']);
+
+    const notStarted = assignment({
+      lifecycleState: 'APPROVED',
+      validFrom: '2026-10-02T00:00:00Z',
+      validTo: '2026-10-03T00:00:00Z',
+      allowedActions: ['ACTIVATE', 'REVOKE'],
+    });
+    expect(tenantAppAssignmentActivationUnavailable(notStarted, now)).toBe(true);
+    expect(tenantAppAssignmentActions(notStarted, 13, now)).toEqual(['REVOKE']);
+
+    const malformed = assignment({
+      lifecycleState: 'APPROVED',
+      validTo: 'not-a-timestamp',
+      allowedActions: ['ACTIVATE', 'REVOKE'],
+    });
+    expect(tenantAppAssignmentActions(malformed, 13, now)).toEqual(['REVOKE']);
+
+    const serverExpired = assignment({
+      lifecycleState: 'EXPIRED',
+      validTo: '2026-09-30T23:59:59Z',
+      allowedActions: ['REVOKE'],
+    });
+    expect(tenantAppAssignmentActions(serverExpired, 13, now)).toEqual(['REVOKE']);
+  });
+
   it('drops unknown server actions instead of routing them to a default command', () => {
     expect(
       tenantAppInstallationActions(installation({ allowedActions: ['FUTURE_ACTION' as 'SUBMIT'] }))
@@ -126,5 +162,23 @@ describe('tenant app adoption authority', () => {
     expect(tenantAppSeatState(installation({ reservedSeats: 10 }))).toBe('FULL');
     expect(tenantAppSeatState(installation({ reservedSeats: 9 }))).toBe('AVAILABLE');
     expect(tenantAppSeatState(installation({ seatCapacity: null }))).toBe('UNBOUNDED');
+  });
+
+  it('fails closed for installation creation when an existing product may be in the hidden tail', () => {
+    const products = [
+      { id: 'mail', appKey: 'APP.MAIL' },
+      { id: 'calendar', appKey: 'APP.CALENDAR' },
+    ] as const;
+    const input = {
+      products,
+      availableAppResourceKeys: ['APP.MAIL', 'APP.CALENDAR'],
+      requestableAppResourceKeys: ['APP.MAIL', 'APP.CALENDAR'],
+      installations: [installation({ productKey: 'mail' })],
+    };
+
+    expect(tenantAppInstallationCandidates({ ...input, installationsHasMore: true })).toEqual([]);
+    expect(tenantAppInstallationCandidates({ ...input, installationsHasMore: false })).toEqual([
+      products[1],
+    ]);
   });
 });

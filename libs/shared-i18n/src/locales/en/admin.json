@@ -35,6 +35,54 @@
         "title": "Organization source, login readiness, and setting provenance",
         "description": "Separates state observed directly by Auth at {{observedAt}} from external owner boundaries.",
         "externalBoundary": "The external IdP login verifier is not connected. Ready internal prerequisites are not reported as a successful external login.",
+        "ssoTest": {
+          "title": "SSO test-login evidence",
+          "description": "Run the internal readiness command and review its immutable receipt without implying an external IdP login succeeded.",
+          "action": "Run login readiness test",
+          "executionBoundary": "This command verifies DWP-owned prerequisites only. The external IdP login executor is not connected, so an unavailable result is not a successful login.",
+          "retry": "Retry",
+          "loadError": "SSO test-login receipts could not be loaded. No healthy state is inferred.",
+          "empty": "No SSO test-login command has been recorded.",
+          "historySummary": "Showing {{loaded}} receipts returned in this bounded response (limit {{limit}}).",
+          "moreAvailable": "Earlier SSO test-login receipts exist beyond this bounded response.",
+          "commandCompleted": "The SSO test-login command completed and its receipt was recorded.",
+          "commandError": "The SSO test-login command result could not be confirmed. Retry from the open dialog to reuse the same command key.",
+          "providerUnavailable": "Identity provider unavailable",
+          "requestedMeta": "Requested by user {{actor}} · {{date}}",
+          "internalState": "Internal prerequisites",
+          "externalState": "External probe",
+          "completedAt": "Receipt completed",
+          "receipt": "Receipt digest",
+          "receiptUnavailable": "Digest unavailable",
+          "states": {
+            "BLOCKED": "Blocked",
+            "NOT_REQUIRED": "Not required",
+            "READY_FOR_EXTERNAL_PROBE": "Ready for external verification",
+            "UNAVAILABLE": "Unavailable",
+            "UNKNOWN": "State unavailable"
+          },
+          "reasons": {
+            "SSO_LOGIN_NOT_ENABLED": "SSO login is not enabled",
+            "ENABLED_IDENTITY_PROVIDER_NOT_OBSERVED": "No enabled identity provider was observed",
+            "IDENTITY_PROVIDER_CONFIGURATION_INCOMPLETE": "The identity provider configuration is incomplete",
+            "OIDC_CLIENT_SECRET_UNAVAILABLE": "The OIDC client credential is unavailable to Auth",
+            "OIDC_ENDPOINT_POLICY_INVALID": "One or more OIDC endpoints do not satisfy the configured HTTPS host policy",
+            "OIDC_CALLBACK_POLICY_INVALID": "The OIDC callback does not satisfy the configured HTTPS callback policy",
+            "EXTERNAL_IDP_LOGIN_EXECUTOR_NOT_CONNECTED": "The external IdP login executor is not connected",
+            "UNKNOWN": "Detailed blocking evidence is unavailable"
+          },
+          "boundaries": {
+            "UNCONNECTED_EXTERNAL_IDP_EXECUTOR": "Execution boundary: external IdP login is not connected or claimed.",
+            "UNKNOWN": "Execution boundary unavailable"
+          },
+          "dialog": {
+            "title": "Run an SSO login readiness test?",
+            "description": "Record a bounded, idempotent readiness command and immutable receipt for the configured provider.",
+            "warning": "This does not sign in to the external identity provider. Review the receipt state and blocking evidence before rollout.",
+            "justification": "Operational justification",
+            "confirm": "Run readiness test"
+          }
+        },
         "states": {
           "OBSERVED": "Observed",
           "READY": "Ready",
@@ -206,11 +254,18 @@
         "identities": "Identities in scope",
         "identityCount": "{{count}} people",
         "domainVerification": "Domain ownership",
-        "notObserved": "Tenant read contract unavailable"
+        "domainSummary": {
+          "NO_ACCESS": "Requires identity provisioning view access",
+          "LOADING": "Loading Provider domain evidence",
+          "ERROR": "Provider domain evidence unavailable",
+          "EMPTY": "No active domains",
+          "OBSERVED": "{{verified}} of {{count}} domains verified"
+        }
       },
       "recent": {
         "title": "Recent governance changes",
         "description": "Author, timestamp, and lifecycle come from real audit policy revisions.",
+        "partial": "Showing {{count}} revisions from the bounded owner response (limit {{limit}}). Additional revisions, including actionable revisions, may exist outside this page; observed items remain visible and counts are not treated as complete.",
         "open": "Open policy history",
         "actor": "{{actor}} · {{date}}",
         "empty": "No audit policy revisions are recorded."
@@ -220,6 +275,7 @@
       "title": "Authentication policy change control",
       "description": "Draft, independently review, approve, and publish the tenant authentication policy with version and impact evidence.",
       "boundary": "Impact is estimated from active identities in the internal Auth directory. External IdP population and login connectivity are excluded until their owners provide evidence.",
+      "partial": "Showing {{count}} changes from the bounded owner response (limit {{limit}}). Additional changes, including actionable changes, may exist outside this page, so an empty or complete history is not asserted.",
       "create": "Create policy draft",
       "empty": "No authentication policy changes are recorded.",
       "error": "Authentication policy changes could not be loaded.",
@@ -1918,7 +1974,8 @@
     "dialog": {
       "editTitle": "Edit newsroom content",
       "newTitle": "New newsroom content",
-      "close": "Close newsroom editor"
+      "close": "Close newsroom editor",
+      "codeCatalogFallback": "The governed content catalog is temporarily unavailable. Validated built-in content types and categories are shown until it recovers."
     },
     "actions": {
       "new": "New content",
@@ -2371,6 +2428,7 @@
       "title": "Change correlation",
       "description": "Deployments and administrative changes in the same window.",
       "count": "{{count}} events",
+      "restricted": "Change correlation is shown only to users with audit-view permission.",
       "unavailable": "The change audit ledger is unavailable. API metrics remain usable.",
       "empty": "There are no change events to correlate in this window."
     },
@@ -2948,6 +3006,7 @@
         "author": "{{actor}} · {{time}}",
         "hashLabel": "SHA-256",
         "empty": "No policy revision evidence is available.",
+        "partial": "Showing {{count}} revisions from the bounded owner response (limit {{limit}}). Additional revisions, including actionable revisions, may exist outside this page, so an empty or complete history is not asserted.",
         "reasonShared": "The reason below is used for the next lifecycle decision.",
         "create": "Create revision",
         "created": "Audit policy revision created.",
@@ -2967,6 +3026,44 @@
         "diffBefore": "Current value",
         "diffAfter": "Proposed value",
         "impactUnavailable": "{{count}} policy fields are affected. Exact or estimated user and data population impact is not supplied by the owner and remains unconfirmed.",
+        "impact": {
+          "title": "Immutable impact snapshot",
+          "observedAt": "Observed {{date}}",
+          "incomplete": "This revision does not carry complete current-owner coverage. Counts and transitions are unavailable and must not be treated as observed zeroes or a current all-clear result.",
+          "hash": "Impact SHA-256 · {{hash}}",
+          "transition": "{{before}} → {{after}}",
+          "coverage": {
+            "COMPLETE_INTERNAL_AUDIT_EVENT_OWNER": "Complete internal audit-event owner coverage",
+            "UNAVAILABLE_LEGACY_REVISION": "Legacy revision · impact unavailable",
+            "UNKNOWN": "Impact coverage unavailable"
+          },
+          "owners": {
+            "PLATFORM_SYS_AUDIT_EVENTS": "Platform audit-event owner included",
+            "UNKNOWN": "Unrecognized owner coverage"
+          },
+          "exclusions": {
+            "EXTERNAL_PRODUCT_DATA_RETENTION": "External product data retention excluded",
+            "EXTERNAL_SHARING_POPULATIONS": "External sharing populations excluded",
+            "EXTERNAL_LEGAL_HOLD_POPULATIONS": "External legal-hold populations excluded",
+            "FILTER_SPECIFIC_EXPORT_POPULATIONS": "Filter-specific export populations excluded",
+            "LEGACY_REVISION_NOT_SNAPSHOTTED": "Legacy revision was not impact-snapshotted",
+            "UNKNOWN": "Unrecognized impact boundary"
+          },
+          "metrics": {
+            "auditEventCount": "Audit events observed",
+            "affectedAuditEventCount": "Audit events affected",
+            "affectedActorCount": "Distinct affected actors",
+            "affectedTargetCount": "Distinct affected targets",
+            "standardRetentionEventCount": "Events in standard retention",
+            "extendedRetentionEventCount": "Events in extended retention",
+            "legalHoldEventCount": "Events under legal hold",
+            "standardRetentionAffectedEventCount": "Standard-retention events affected",
+            "extendedRetentionAffectedEventCount": "Extended-retention events affected",
+            "highRiskClassificationAffectedEventCount": "Risk classification events affected",
+            "exportableEvents": "Exportable aggregate rows",
+            "integrityProtectedEvents": "Integrity-protected events"
+          }
+        },
         "approvalRequested": "Review requested by {{actor}} · {{date}}",
         "approvalPending": "Independent approval pending",
         "approvalDecided": "Decision by {{actor}} · {{date}}",
@@ -3817,6 +3914,9 @@
     "ownerManaged": "Governed owner assigned",
     "ownerUnavailable": "Owner unavailable",
     "openGraphFor": "Review relationships for {{name}}",
+    "inventory": {
+      "partial": "Showing {{count}} assets from the owner limit of {{limit}}. Additional catalog assets exist, so absence from this inventory is not authoritative."
+    },
     "applications": {
       "title": "Application lifecycle catalog",
       "unknownName": "Unnamed governed application",
@@ -3833,7 +3933,7 @@
           "unavailable": "owner coverage unavailable"
         }
       },
-      "partialFailure": "One or more owner records are unavailable. Unavailable evidence is kept separate from a confirmed negative state.",
+      "partialFailure": "One or more owner reads are partial or unavailable. Observed rows remain visible, but absence outside the bounded response is not treated as a confirmed negative.",
       "search": "Search applications or resource keys",
       "emptyTitle": "No applications match this view",
       "emptyDescription": "Change the search or verify that the registry owner has published application records.",
@@ -4020,6 +4120,7 @@
       "ruleVersion": "{{key}} v{{version}}",
       "queueLabel": "Catalog assurance findings",
       "partialFailure": "Assurance findings are temporarily unavailable. The relationship graph and inventory remain usable.",
+      "findingsPartial": "Showing {{count}} findings from the owner limit of {{limit}}. Aggregate signals remain authoritative, but older finding rows may exist.",
       "actions": {
         "evaluate": "Evaluate catalog",
         "evaluating": "Evaluating catalog",
@@ -4433,6 +4534,7 @@
       "installations": {
         "title": "Tenant app adoption",
         "description": "Separate draft, independent review, approval, and activation while tracking real seat reservations.",
+        "partial": "Showing {{count}} installations from the owner limit of {{limit}}. Additional records may already contain another product, so new installation requests stay disabled until the complete owner list is available.",
         "emptyTitle": "No adoption requests",
         "emptyDescription": "Choose an internal catalog app to create a reviewable adoption draft.",
         "kind": "Execution owner",
@@ -4445,11 +4547,13 @@
       "assignments": {
         "title": "Workforce app assignments and seat reservations",
         "description": "Separate requester, approver, and activator, reserving a seat from approval.",
+        "partial": "Showing {{count}} assignments from the owner limit of {{limit}}. Additional workforce assignments may exist, so empty and complete-list conclusions are withheld.",
         "emptyTitle": "No workforce assignments",
         "emptyDescription": "Request a governed user assignment for an enabled internal app.",
         "userId": "User {{id}}",
         "validTo": "Until {{date}}",
-        "noExpiry": "No expiry"
+        "noExpiry": "No expiry",
+        "outsideValidityWindow": "Outside activation window"
       },
       "actions": {
         "requestInstallation": "Request app adoption",
@@ -4498,6 +4602,7 @@
         "ACTIVE": "Assignment active",
         "DENIED": "Denied",
         "REVOKED": "Revoked",
+        "EXPIRED": "Assignment expired",
         "UNKNOWN": "Lifecycle state unavailable"
       },
       "dialogs": {
@@ -6085,6 +6190,7 @@
       "title": "Versioned change workflow",
       "loading": "Loading versioned setting changes",
       "loadError": "Setting changes could not be loaded.",
+      "partial": "Showing {{count}} changes from the owner limit of {{limit}}. Older active changes may exist, so an empty or complete queue is not asserted.",
       "emptyTitle": "No active setting change",
       "emptyDescription": "Create a draft from a connected owner to preview and review a tenant override.",
       "preview": "{{before}} → {{after}} · {{count}} internal identities in measured scope",

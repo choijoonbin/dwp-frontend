@@ -34,11 +34,22 @@ describe('tenant app adoption API', () => {
       version: 3,
     } as TenantAppInstallation;
     const assignment = { assignmentId: 'assignment-1', version: 7 } as TenantAppAssignment;
-    http.get.mockResolvedValue({ data: { data: { installations: [] } } });
+    const assignmentPage = { items: [assignment], limit: 100, hasMore: true };
+    http.get
+      .mockResolvedValueOnce({
+        data: {
+          data: {
+            installations: [],
+            installationsLimit: 100,
+            installationsHasMore: false,
+          },
+        },
+      })
+      .mockResolvedValueOnce({ data: { data: assignmentPage } });
     http.post.mockResolvedValue({ data: { data: installation } });
 
     await getTenantAppAdoptionProjection();
-    await listTenantAppAssignments('installation-1');
+    await expect(listTenantAppAssignments('installation-1')).resolves.toEqual(assignmentPage);
     await createTenantAppInstallation({
       productKey: 'approvals',
       appResourceKey: 'APP.APPROVALS',

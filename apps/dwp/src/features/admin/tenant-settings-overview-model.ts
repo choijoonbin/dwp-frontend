@@ -1,7 +1,8 @@
 import type {
   AppGovernanceDashboard,
-  AuditPolicyRevision,
+  AuditPolicyRevisionPage,
   ScimConnector,
+  TenantProviderDomainProjection,
 } from '@dwp-frontend/shared-utils';
 import type {
   AuthPolicyResponse,
@@ -14,11 +15,37 @@ export type TenantSettingsTaskKind =
 export type TenantSettingsTask = Readonly<{
   kind: TenantSettingsTaskKind;
   count: number;
+  countIsLowerBound?: boolean;
   route: string;
   tone: 'info' | 'warning' | 'critical';
 }>;
 
 export type TenantPrioritySummaryState = 'LOADING' | 'ACTION_REQUIRED' | 'CLEAR' | 'UNAVAILABLE';
+
+export type TenantDomainOverview = Readonly<{
+  state: 'NO_ACCESS' | 'LOADING' | 'ERROR' | 'EMPTY' | 'OBSERVED';
+  total: number | null;
+  verified: number | null;
+}>;
+
+export function resolveTenantDomainOverview(input: {
+  permitted: boolean;
+  loading: boolean;
+  failed: boolean;
+  projection?: TenantProviderDomainProjection;
+}): TenantDomainOverview {
+  if (!input.permitted) return { state: 'NO_ACCESS', total: null, verified: null };
+  if (input.loading) return { state: 'LOADING', total: null, verified: null };
+  if (input.failed || !input.projection) {
+    return { state: 'ERROR', total: null, verified: null };
+  }
+
+  const total = input.projection.domains.length;
+  const verified = input.projection.domains.filter(
+    (domain) => domain.verificationState === 'VERIFIED'
+  ).length;
+  return { state: total === 0 ? 'EMPTY' : 'OBSERVED', total, verified };
+}
 
 export function resolveTenantPrioritySummaryState(input: {
   loading: boolean;
@@ -91,7 +118,7 @@ export function resolveTenantAuthenticationPosture(input: {
 export function resolveTenantSettingsTasks(input: {
   authentication: TenantAuthenticationPosture;
   appGovernance?: AppGovernanceDashboard;
-  policyRevisions?: readonly AuditPolicyRevision[];
+  policyRevisions?: Pick<AuditPolicyRevisionPage, 'items' | 'hasMore'>;
 }): TenantSettingsTask[] {
   const tasks: TenantSettingsTask[] = [];
 
@@ -129,14 +156,17 @@ export function resolveTenantSettingsTasks(input: {
     });
   }
 
-  const pendingPolicyRevisions =
-    input.policyRevisions?.filter((revision) =>
-      ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(revision.lifecycleState)
-    ).length ?? 0;
+  const policyRevisionItems = input.policyRevisions?.items ?? [];
+  const pendingPolicyRevisions = policyRevisionItems.filter((revision) =>
+    ['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(revision.lifecycleState)
+  ).length;
   if (pendingPolicyRevisions > 0) {
     tasks.push({
       kind: 'POLICY_REVIEW',
       count: pendingPolicyRevisions,
+      countIsLowerBound:
+        Boolean(input.policyRevisions?.hasMore) &&
+        pendingPolicyRevisions === policyRevisionItems.length,
       route: '/admin/governance/audit-governance',
       tone: 'warning',
     });

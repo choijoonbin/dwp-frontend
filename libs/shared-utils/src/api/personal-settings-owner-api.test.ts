@@ -5,6 +5,7 @@ import {
   createPersonalPrivacyRequest,
   getPersonalPrivacyConsentLedger,
   getPersonalSettingsWorkspace,
+  listPersonalPrivacyRequests,
   reconfirmPersonalSettingsWorkspace,
   recordPersonalSettingView,
   updatePersonalSettingFavorite,
@@ -101,8 +102,13 @@ describe('personal settings owner API', () => {
         issuedAt: '2026-09-17T10:00:00',
       },
       lifecycle: [],
+      lifecycleHasMore: true,
+      lifecycleLimit: 50,
     };
-    http.get.mockResolvedValue({ data: { data: ledger } });
+    const requestPage = { items: [request], hasMore: true, limit: 50 };
+    http.get
+      .mockResolvedValueOnce({ data: { data: ledger } })
+      .mockResolvedValueOnce({ data: { data: requestPage } });
     http.put.mockResolvedValue({ data: { data: consent } });
     http.post.mockResolvedValue({ data: { data: request } });
     http.patch.mockResolvedValue({
@@ -110,6 +116,7 @@ describe('personal settings owner API', () => {
     });
 
     await expect(getPersonalPrivacyConsentLedger()).resolves.toEqual(ledger);
+    await expect(listPersonalPrivacyRequests()).resolves.toEqual(requestPage);
     await expect(updateProductAnalyticsConsent(true, 'notice-1')).resolves.toEqual(consent);
     await expect(createPersonalPrivacyRequest('ACCOUNT_DELETION', true)).resolves.toEqual(request);
     await cancelPersonalPrivacyRequest('r1', 0);
@@ -120,6 +127,9 @@ describe('personal settings owner API', () => {
       accountDeletionAcknowledged: true,
     });
     expect(request.fulfillmentAvailable).toBe(false);
+    expect(http.get).toHaveBeenCalledWith(
+      '/api/platform/v1/personal-settings/privacy/requests?limit=50'
+    );
     expect(http.patch).toHaveBeenCalledWith(
       '/api/platform/v1/personal-settings/privacy/requests/r1/cancel',
       { version: 0 }

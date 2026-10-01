@@ -127,11 +127,12 @@ export function TenantSettingOwnerRegistryPanel() {
 
   const active = useMemo(
     () =>
-      changes.data?.filter(
+      changes.data?.items.filter(
         (change) => !['REJECTED', 'SUPERSEDED'].includes(change.lifecycleState)
       ) ?? [],
     [changes.data]
   );
+  const changesPartial = changes.data?.hasMore ?? false;
   const ownersBySetting = useMemo(
     () => new Map((owners.data ?? []).map((owner) => [owner.settingKey, owner])),
     [owners.data]
@@ -257,6 +258,14 @@ export function TenantSettingOwnerRegistryPanel() {
       <Typography component="h3" variant="subtitle1" sx={{ mt: 2.5 }}>
         {t('settingRegistry.changes.title')}
       </Typography>
+      {changesPartial && (
+        <Alert severity="warning" sx={{ mt: 1 }}>
+          {t('settingRegistry.changes.partial', {
+            count: changes.data?.items.length ?? 0,
+            limit: changes.data?.limit ?? 0,
+          })}
+        </Alert>
+      )}
       {changes.isLoading ? (
         <Stack gap={1} sx={{ mt: 1 }} aria-label={t('settingRegistry.changes.loading')}>
           <Skeleton variant="rounded" height={96} />
@@ -266,7 +275,7 @@ export function TenantSettingOwnerRegistryPanel() {
         <Alert severity="warning" sx={{ mt: 1 }}>
           {t('settingRegistry.changes.loadError')}
         </Alert>
-      ) : active.length === 0 ? (
+      ) : active.length === 0 && !changesPartial ? (
         <Box sx={{ mt: 1 }}>
           <GuidedEmptyState
             kind="empty"
@@ -274,7 +283,7 @@ export function TenantSettingOwnerRegistryPanel() {
             description={t('settingRegistry.changes.emptyDescription')}
           />
         </Box>
-      ) : (
+      ) : active.length > 0 ? (
         <Stack gap={1} sx={{ mt: 1 }}>
           {active.map((change) => {
             const owner = ownersBySetting.get(change.settingKey);
@@ -341,7 +350,7 @@ export function TenantSettingOwnerRegistryPanel() {
             );
           })}
         </Stack>
-      )}
+      ) : null}
 
       <FormDialog
         open={Boolean(createOwner)}
