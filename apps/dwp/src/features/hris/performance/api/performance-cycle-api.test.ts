@@ -50,6 +50,23 @@ const authority = {
   idempotencyKey: 'authority-level-key-must-not-replace-the-command-id',
 } as const satisfies ProductSurfaceGovernedMutationAuthority;
 
+function publicationAuthority(
+  commandId: string,
+  objectVersion: number
+): ProductSurfaceGovernedMutationAuthority {
+  return {
+    ...authority,
+    idempotencyKey: commandId,
+    objectVersion,
+    stepUp: {
+      challenge: 'signed-performance-publication-challenge',
+      challengeId: 'performance-publication-challenge-id',
+      decisionRevision: authority.expectedDecisionRevision,
+      expiresAt: '2099-01-01T00:00:00Z',
+    },
+  };
+}
+
 const stage = Object.freeze({
   stageKey: 'SELF_REVIEW',
   stageType: 'SELF_REVIEW',
@@ -213,18 +230,54 @@ describe('performance cycle API', () => {
     const cycleId = 'cycle/publish target';
     const expectedPath = '/api/people/v1/hris/performance/cycles/cycle%2Fpublish%20target/publish';
 
-    await expect(publishPerformanceCycle(cycleId, publishRequest, authority)).resolves.toBe(result);
-    await expect(publishPerformanceCycle(cycleId, publishRequest, authority)).resolves.toBe(result);
+    const publishAuthority = publicationAuthority(COMMAND_PUBLISH, publishRequest.expectedRevision);
+    await expect(publishPerformanceCycle(cycleId, publishRequest, publishAuthority)).resolves.toBe(
+      result
+    );
+    await expect(publishPerformanceCycle(cycleId, publishRequest, publishAuthority)).resolves.toBe(
+      result
+    );
 
     expect(runtime.post).toHaveBeenCalledTimes(2);
     for (const call of runtime.post.mock.calls) {
-      expect(call).toEqual([expectedPath, publishRequest, governedConfig(COMMAND_PUBLISH)]);
+      expect(call).toEqual([
+        expectedPath,
+        publishRequest,
+        {
+          ...governedConfig(COMMAND_PUBLISH),
+          headers: {
+            ...governedConfig(COMMAND_PUBLISH).headers,
+            'X-DWP-Expected-Object-Version': String(publishRequest.expectedRevision),
+            'X-DWP-Step-Up-Challenge': 'signed-performance-publication-challenge',
+          },
+        },
+      ]);
       expect(call[1]).toHaveProperty(
         'publicationApprovalRef',
         '60000000-0000-4000-8000-000000000001'
       );
       expect(call[2].headers['Idempotency-Key']).toBe(COMMAND_PUBLISH);
-      expect(call[2].headers['Idempotency-Key']).not.toBe(authority.idempotencyKey);
     }
+  });
+
+  it('rejects publication when signed command identity or version is substituted', async () => {
+    await expect(
+      publishPerformanceCycle(
+        'cycle-id',
+        publishRequest,
+        publicationAuthority(
+          '70000000-0000-4000-8000-000000000001',
+          publishRequest.expectedRevision
+        )
+      )
+    ).rejects.toThrow('Performance publication authority does not match the command.');
+    await expect(
+      publishPerformanceCycle(
+        'cycle-id',
+        publishRequest,
+        publicationAuthority(COMMAND_PUBLISH, publishRequest.expectedRevision + 1)
+      )
+    ).rejects.toThrow('Performance publication authority does not match the command.');
+    expect(runtime.post).not.toHaveBeenCalled();
   });
 });

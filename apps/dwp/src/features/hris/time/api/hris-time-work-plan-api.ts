@@ -1,5 +1,9 @@
 import { Temporal } from 'temporal-polyfill';
-import { axiosInstance, productSurfaceGovernedMutationConfig } from '@dwp-frontend/shared-utils';
+import {
+  axiosInstance,
+  productSurfaceGovernedMutationConfig,
+  productSurfaceHighRiskMutationConfig,
+} from '@dwp-frontend/shared-utils';
 import { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/product-surface-read-scope';
 
 import type {
@@ -9,7 +13,132 @@ import type {
 import type {
   WorkPlanReceipt,
   WorkPlanSimulationRequest,
+  WorkArrangementKind,
 } from '../model/hris-time-work-plan-model';
+
+const WORK_PLAN_BASE = '/api/time/v1/hris/work-plans' as const;
+
+export const HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createHrisTimeWorkPlanDraft',
+    routeContractKey: 'route.hcm.operations.work-plan-create.action',
+    method: 'POST',
+    path: `${WORK_PLAN_BASE}/drafts`,
+  },
+  {
+    apiFunction: 'simulateHrisTimeWorkPlan',
+    routeContractKey: 'route.hcm.operations.work-plan-simulate.action',
+    method: 'POST',
+    path: `${WORK_PLAN_BASE}/{workPlanId}/simulations`,
+  },
+  {
+    apiFunction: 'validateHrisTimeWorkPlan',
+    routeContractKey: 'route.hcm.operations.work-plan-validate.action',
+    method: 'POST',
+    path: `${WORK_PLAN_BASE}/{workPlanId}/actions/{action}`,
+  },
+  {
+    apiFunction: 'submitHrisTimeWorkPlanReview',
+    routeContractKey: 'route.hcm.operations.work-plan-submit-review.action',
+    method: 'POST',
+    path: `${WORK_PLAN_BASE}/{workPlanId}/actions/{action}`,
+  },
+  {
+    apiFunction: 'applyHrisTimeWorkPlanApproval',
+    routeContractKey: 'route.hcm.operations.work-plan-apply-approval.action',
+    method: 'POST',
+    path: `${WORK_PLAN_BASE}/{workPlanId}/actions/{action}`,
+  },
+  {
+    apiFunction: 'publishHrisTimeWorkPlan',
+    routeContractKey: 'route.hcm.operations.work-plan-publish.action',
+    method: 'POST',
+    path: `${WORK_PLAN_BASE}/{workPlanId}/actions/{action}`,
+  },
+] as const;
+
+export type HrisTimeTenantExtensionField = Readonly<{
+  fieldName: string;
+  valueType: 'STRING' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN' | 'DATE';
+  stringValue?: string | null;
+  integerValue?: number | null;
+  decimalValue?: number | string | null;
+  booleanValue?: boolean | null;
+  dateValue?: string | null;
+}>;
+
+export type HrisTimeCreateDraftRequest = Readonly<{
+  regimeKey: string;
+  displayName: string;
+  arrangementKind: WorkArrangementKind;
+  tenantExtension?: Readonly<{
+    schemaRef: string;
+    schemaVersion: number;
+    fields: readonly HrisTimeTenantExtensionField[];
+  }> | null;
+  scopeType:
+    | 'GLOBAL'
+    | 'COUNTRY'
+    | 'SUBDIVISION'
+    | 'TENANT'
+    | 'LEGAL_ENTITY'
+    | 'BUSINESS_UNIT'
+    | 'WORKPLACE'
+    | 'POPULATION'
+    | 'PERSON'
+    | 'ASSIGNMENT';
+  scopeRef: string;
+  priority: number;
+  effectiveStart: string;
+  effectiveEnd?: string | null;
+  timeZone: string;
+  rulePackPublicId: string;
+  jurisdiction: string;
+  jurisdictionSubdivision?: string | null;
+  policyRevision: number;
+  templateSchemaVersion: number;
+  workerPublicId: string;
+  peopleAssignmentPublicId: string;
+  assignmentSnapshotRevision: number;
+  terms: readonly Readonly<{
+    extensionKind:
+      | 'FLEXIBLE'
+      | 'ELASTIC'
+      | 'AVERAGED'
+      | 'SELECTIVE'
+      | 'DISCRETIONARY'
+      | 'DEEMED'
+      | 'REDUCED'
+      | 'SHIFT'
+      | 'SPLIT_SHIFT'
+      | 'ON_CALL'
+      | 'OVERTIME'
+      | 'BREAK'
+      | 'WEEKLY_LIMIT';
+    parameterName: string;
+    valueType: 'STRING' | 'INTEGER' | 'DURATION_MINUTES' | 'DECIMAL' | 'BOOLEAN' | 'DATE';
+    stringValue?: string | null;
+    integerValue?: number | null;
+    decimalValue?: number | string | null;
+    booleanValue?: boolean | null;
+    dateValue?: string | null;
+  }>[];
+  segments: readonly Readonly<{
+    key: string;
+    dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
+    kind: 'WORK' | 'BREAK' | 'ON_CALL' | 'TRAINING';
+    start: string;
+    end: string;
+    endDayOffset: number;
+    overlapPolicy: 'REJECT' | 'EARLIER' | 'LATER';
+  }>[];
+}>;
+
+export type HrisTimeLifecycleRequest = Readonly<{ expectedVersion: number }>;
+export type HrisTimeCommandScope = Readonly<{
+  contextScopeKey?: string;
+  signal?: AbortSignal;
+}>;
 
 export type WorkPlanStudioScope = Readonly<{
   ready: boolean;
@@ -250,6 +379,141 @@ function governedConfig(
     throw new Error('Governed work plan simulation authority is invalid.');
   }
   return trusted.config;
+}
+
+function timeCommandConfig(
+  scope: HrisTimeCommandScope,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  highRisk = false,
+  expectedVersion?: number
+) {
+  if (!validUuid(commandId)) throw new Error('Invalid work plan command idempotency key.');
+  if (authority.mode === 'SECURE' && authority.idempotencyKey !== commandId) {
+    throw new Error('Work plan command authority does not match the idempotency key.');
+  }
+  if (highRisk && authority.mode === 'SECURE' && authority.objectVersion !== expectedVersion) {
+    throw new Error('Work plan publication authority does not match the object version.');
+  }
+  const governed = highRisk
+    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: false })
+    : productSurfaceGovernedMutationConfig(authority);
+  return {
+    ...(scope.contextScopeKey ? { contextScopeKey: scope.contextScopeKey } : {}),
+    ...(scope.signal ? { signal: scope.signal } : {}),
+    ...governed,
+    headers: { ...governed.headers, 'Idempotency-Key': commandId },
+    csrfReplay: 'NEVER' as const,
+  };
+}
+
+export async function createHrisTimeWorkPlanDraft(
+  request: HrisTimeCreateDraftRequest,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  scope: HrisTimeCommandScope = {}
+): Promise<unknown> {
+  const response = await axiosInstance.post<ApiResponse<unknown>, HrisTimeCreateDraftRequest>(
+    `${WORK_PLAN_BASE}/drafts`,
+    request,
+    timeCommandConfig(scope, commandId, authority)
+  );
+  return response.data.data;
+}
+
+export async function simulateHrisTimeWorkPlan(
+  request: WorkPlanSimulationRequest,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  scope: HrisTimeCommandScope = {}
+): Promise<unknown> {
+  assertSimulationRequest(request);
+  const { workPlanId, ...body } = request;
+  const response = await axiosInstance.post<ApiResponse<unknown>, typeof body>(
+    `${WORK_PLAN_BASE}/${encodeURIComponent(workPlanId)}/simulations`,
+    body,
+    timeCommandConfig(scope, commandId, authority)
+  );
+  return response.data.data;
+}
+
+async function transitionHrisTimeWorkPlan(
+  workPlanId: string,
+  action: 'validate' | 'submit-review' | 'apply-approval' | 'publish',
+  request: HrisTimeLifecycleRequest,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  scope: HrisTimeCommandScope,
+  highRisk = false
+): Promise<unknown> {
+  const response = await axiosInstance.post<ApiResponse<unknown>, HrisTimeLifecycleRequest>(
+    `${WORK_PLAN_BASE}/${encodeURIComponent(workPlanId)}/actions/${action}`,
+    request,
+    timeCommandConfig(scope, commandId, authority, highRisk, request.expectedVersion)
+  );
+  return response.data.data;
+}
+
+export function validateHrisTimeWorkPlan(
+  workPlanId: string,
+  request: HrisTimeLifecycleRequest,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  scope: HrisTimeCommandScope = {}
+) {
+  return transitionHrisTimeWorkPlan(workPlanId, 'validate', request, commandId, authority, scope);
+}
+
+export function submitHrisTimeWorkPlanReview(
+  workPlanId: string,
+  request: HrisTimeLifecycleRequest,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  scope: HrisTimeCommandScope = {}
+) {
+  return transitionHrisTimeWorkPlan(
+    workPlanId,
+    'submit-review',
+    request,
+    commandId,
+    authority,
+    scope
+  );
+}
+
+export function applyHrisTimeWorkPlanApproval(
+  workPlanId: string,
+  request: HrisTimeLifecycleRequest,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  scope: HrisTimeCommandScope = {}
+) {
+  return transitionHrisTimeWorkPlan(
+    workPlanId,
+    'apply-approval',
+    request,
+    commandId,
+    authority,
+    scope
+  );
+}
+
+export function publishHrisTimeWorkPlan(
+  workPlanId: string,
+  request: HrisTimeLifecycleRequest,
+  commandId: string,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  scope: HrisTimeCommandScope = {}
+) {
+  return transitionHrisTimeWorkPlan(
+    workPlanId,
+    'publish',
+    request,
+    commandId,
+    authority,
+    scope,
+    true
+  );
 }
 
 export function createHrisTimeWorkPlanDataSource(

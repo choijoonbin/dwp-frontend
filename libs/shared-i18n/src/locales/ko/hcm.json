@@ -392,6 +392,7 @@
         "pay-operations": { "label": "급여 운영" },
         "talent-operations": { "label": "인재 운영" },
         "organization-design": { "label": "조직 설계" },
+        "system-access": { "label": "시스템 접근 및 구성" },
         "reference-data": { "label": "인력 기준정보" },
         "data-operations": { "label": "연계 및 정합성" },
         "exports": { "label": "통제형 반출" }
@@ -508,6 +509,11 @@
         "eyebrow": "HRIS / 조직 설계",
         "title": "조직 설계",
         "description": "검토와 승인이 가능한 시나리오로 조직과 포지션을 설계합니다."
+      },
+      "system-access": {
+        "eyebrow": "HRIS / 설정",
+        "title": "시스템 접근 및 구성",
+        "description": "현재 세션에 적용된 HRIS 권한그룹, 메뉴·위젯 투영과 구성 근거를 확인합니다."
       },
       "reference-data": {
         "eyebrow": "HRIS / 설정",

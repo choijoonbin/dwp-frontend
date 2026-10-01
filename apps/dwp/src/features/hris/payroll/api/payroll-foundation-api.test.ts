@@ -35,6 +35,27 @@ function csrfResponse() {
 }
 
 const scope = { contextScopeKey: 'scope:payroll-foundation' } as const;
+const authority = {
+  mode: 'SECURE',
+  rolloutState: '111',
+  expectedDecisionRevision: 'decision-1',
+  contextKey: 'context:hcm.operations',
+  contextScopeKey: 'scope:payroll-foundation',
+} as const;
+
+function highAuthority(commandId: string, objectVersion: number) {
+  return {
+    ...authority,
+    idempotencyKey: commandId,
+    objectVersion,
+    stepUp: {
+      challenge: `signed-payroll-command-${commandId}`,
+      challengeId: `challenge-${commandId}`,
+      decisionRevision: authority.expectedDecisionRevision,
+      expiresAt: '2099-01-01T00:00:00Z',
+    },
+  } as const;
+}
 
 describe('payroll foundation owner API', () => {
   afterEach(() => {
@@ -84,21 +105,30 @@ describe('payroll foundation owner API', () => {
       .mockResolvedValueOnce(response(mutationWire()));
     vi.stubGlobal('fetch', fetchMock);
 
-    await createPayrollFoundation({ definition }, createKey, scope);
+    await createPayrollFoundation(
+      { definition },
+      createKey,
+      { contextScopeKey: 'scope:untrusted-caller-value' },
+      authority
+    );
     await updatePayrollFoundation(
       FIXTURE_IDS.configuration,
       { expectedVersion: 3, definition },
       updateKey,
-      scope
+      scope,
+      authority
     );
 
     const calls = fetchMock.mock.calls.filter(([url]) => !String(url).includes('/api/auth/csrf'));
     expect(calls).toHaveLength(2);
     expect(calls[0]?.[0]).toContain(`${PAYROLL_FOUNDATION_API_BASE}/configurations`);
+    expect(calls[0]?.[0]).toContain('contextScopeKey=scope%3Apayroll-foundation');
+    expect(calls[0]?.[0]).not.toContain('untrusted-caller-value');
     expect(new Headers((calls[0]?.[1] as RequestInit).headers).get('Idempotency-Key')).toBe(
       createKey
     );
     const browserHeaders = new Headers((calls[0]?.[1] as RequestInit).headers);
+    expect(browserHeaders.get('X-DWP-Expected-Decision-Revision')).toBe('decision-1');
     for (const gatewayOwnedHeader of [
       'X-DWP-Tenant-ID',
       'X-DWP-User-ID',
@@ -138,19 +168,22 @@ describe('payroll foundation owner API', () => {
       FIXTURE_IDS.configuration,
       { expectedVersion: 3 },
       keys[0]!,
-      scope
+      scope,
+      authority
     );
     await publishPayrollFoundation(
       FIXTURE_IDS.configuration,
       { expectedVersion: 3 },
       keys[1]!,
-      scope
+      scope,
+      highAuthority(keys[1]!, 3)
     );
     await reversePayrollFoundation(
       FIXTURE_IDS.configuration,
       { expectedVersion: 3, publishCommandId: FIXTURE_IDS.command },
       keys[2]!,
-      scope
+      scope,
+      highAuthority(keys[2]!, 3)
     );
 
     const commands = fetchMock.mock.calls.filter(
@@ -164,10 +197,39 @@ describe('payroll foundation owner API', () => {
     expect(
       commands.map(([, init]) => new Headers((init as RequestInit).headers).get('Idempotency-Key'))
     ).toEqual(keys);
+    expect(
+      commands
+        .slice(1)
+        .map(([, init]) =>
+          new Headers((init as RequestInit).headers).get('X-DWP-Step-Up-Challenge')
+        )
+    ).toEqual([`signed-payroll-command-${keys[1]}`, `signed-payroll-command-${keys[2]}`]);
     expect(JSON.parse(String((commands[2]?.[1] as RequestInit).body))).toEqual({
       expectedVersion: 3,
       publishCommandId: FIXTURE_IDS.command,
     });
+  });
+
+  it('rejects payroll HIGH commands when signed identity or version is substituted', async () => {
+    const commandId = '20000000-0000-4000-8000-000000000099';
+    await expect(
+      publishPayrollFoundation(
+        FIXTURE_IDS.configuration,
+        { expectedVersion: 3 },
+        commandId,
+        scope,
+        highAuthority('20000000-0000-4000-8000-000000000098', 3)
+      )
+    ).rejects.toThrow('Payroll command authority does not match the command.');
+    await expect(
+      reversePayrollFoundation(
+        FIXTURE_IDS.configuration,
+        { expectedVersion: 3, publishCommandId: FIXTURE_IDS.command },
+        commandId,
+        scope,
+        highAuthority(commandId, 4)
+      )
+    ).rejects.toThrow('Payroll command authority does not match the command.');
   });
 
   it('pins lookup and reconciliation to the same durable MutationResult receipt', async () => {
@@ -189,9 +251,9 @@ describe('payroll foundation owner API', () => {
     await expect(getPayrollFoundationReceipt(FIXTURE_IDS.command, scope)).resolves.toEqual(
       resultUnknown
     );
-    await expect(reconcilePayrollFoundationReceipt(FIXTURE_IDS.command, scope)).resolves.toEqual(
-      reconciled
-    );
+    await expect(
+      reconcilePayrollFoundationReceipt(FIXTURE_IDS.command, scope, authority)
+    ).resolves.toEqual(reconciled);
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       `${PAYROLL_FOUNDATION_API_BASE}/receipts/${FIXTURE_IDS.command}?contextScopeKey=scope%3Apayroll-foundation`
@@ -203,5 +265,10 @@ describe('payroll foundation owner API', () => {
     expect(
       new Headers((reconciliationCall[1] as RequestInit).headers).get('Idempotency-Key')
     ).toBeNull();
+    expect(
+      new Headers((reconciliationCall[1] as RequestInit).headers).get(
+        'X-DWP-Expected-Decision-Revision'
+      )
+    ).toBe('decision-1');
   });
 });

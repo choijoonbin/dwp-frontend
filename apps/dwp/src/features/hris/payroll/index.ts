@@ -29,6 +29,15 @@ export {
   type HrisPayrollFoundationStudioProps,
 } from './pages/hris-payroll-foundation-studio';
 export {
+  HrisPayrollFoundationOperationsWorkspace,
+  type HrisPayrollFoundationOperationsWorkspaceProps,
+} from './pages/hris-payroll-foundation-operations-workspace';
+export { usePayrollFoundationCommandExecutors } from './hooks/use-payroll-foundation-command-executors';
+export type {
+  PayrollFoundationCommandExecutor,
+  PayrollFoundationCommandExecutors,
+} from './hooks/use-payroll-foundation-studio';
+export {
   PAYROLL_FOUNDATION_API_BASE,
   payrollFoundationDataSource,
   listPayrollFoundations,

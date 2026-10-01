@@ -90067,6 +90067,7 @@ export interface operations {
     auth_hrisProductAccessSnapshot: {
         parameters: {
             query?: {
+                view?: "system";
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -96644,6 +96645,7 @@ export interface operations {
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge": string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
             };
@@ -96676,6 +96678,7 @@ export interface operations {
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge": string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
             };
@@ -114957,6 +114960,7 @@ export interface operations {
         parameters: {
             query?: {
                 locale?: string;
+                view?: "system";
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };

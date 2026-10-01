@@ -188,22 +188,22 @@ describe('HCM W1b product manifest', () => {
       'hcm.personal': 10,
       'hcm.team': 3,
       'hcm.operations': 8,
-      'hcm.management': 4,
+      'hcm.management': 5,
     });
     expect(HCM_PRODUCT_MANIFEST.surfaces.map((surface) => surface.supportedScopeKinds)).toEqual([
       ['SELF'],
       ['TEAM', 'ORG_UNIT', 'TARGET_POPULATION'],
       ['ORG_UNIT', 'LEGAL_ENTITY', 'TARGET_POPULATION', 'SUPPORT_SESSION'],
-      ['RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
+      ['TENANT', 'RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
     ]);
   });
 
-  it('binds all 25 menu items to official PAGE records and exact latest access profiles', () => {
+  it('binds all 26 menu items to official PAGE records and exact latest access profiles', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );
     const registryRecords = registryRoutes().filter((route) => route.subject?.productKey === 'hcm');
-    expect(routerRecords).toHaveLength(25);
+    expect(routerRecords).toHaveLength(26);
 
     for (const surface of HCM_PRODUCT_MANIFEST.surfaces) {
       for (const item of surface.navigation.flatMap((group) => group.items)) {
@@ -242,7 +242,7 @@ describe('HCM W1b product manifest', () => {
       'hcm.personal': { PAGE: 10, DATA: 5, ACTION: 6 },
       'hcm.team': { PAGE: 3, DATA: 1, ACTION: 2 },
       'hcm.operations': { PAGE: 8, DATA: 12, ACTION: 19 },
-      'hcm.management': { PAGE: 4, DATA: 3, ACTION: 12 },
+      'hcm.management': { PAGE: 5, DATA: 3, ACTION: 12 },
     });
     expect(
       records

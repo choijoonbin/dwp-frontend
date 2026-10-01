@@ -13,6 +13,7 @@ export {
 export {
   HrisTimeOperationsWorkspace,
   HrisTimeOperationsWorkspaceRuntime,
+  HRIS_TIME_WORK_PLAN_SIMULATE_ACTION_CONTRACT,
   useHrisTimeOperationsRequestScope,
   type HrisTimeOperationsWorkspaceProps,
   type HrisTimeOperationsWorkspaceRuntimeProps,

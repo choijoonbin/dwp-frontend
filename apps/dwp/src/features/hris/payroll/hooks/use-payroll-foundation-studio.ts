@@ -19,6 +19,13 @@ import {
 
 import type { PayrollFoundationDataSource } from '../api/payroll-foundation-api';
 import type {
+  PayrollFoundationReversalCommand,
+  PayrollFoundationVersionCommand,
+} from '../api/payroll-foundation-api';
+import type { ProductSurfaceHighRiskCommandDescriptor } from '../../../../components/product-surface-high-risk-command';
+import type { ProductSurfaceHighRiskCommandExecutor } from '../../../../components/use-product-surface-high-risk-command-executor';
+import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
+import type {
   FoundationCommandFailure,
   FoundationCommandKind,
   FoundationCommandReceipt,
@@ -28,6 +35,32 @@ import type {
 import type { ProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 
 type Visit = Readonly<{ identity: string; generation: number }>;
+
+export type PayrollFoundationCommandExecutor = <T>(
+  execute: (authority: ProductSurfaceGovernedMutationAuthority) => Promise<T>
+) => Promise<T>;
+
+export type PayrollFoundationPublishCommandBinding = Readonly<{
+  configurationId: string;
+  commandId: string;
+  request: PayrollFoundationVersionCommand;
+}>;
+
+export type PayrollFoundationReverseCommandBinding = Readonly<{
+  configurationId: string;
+  commandId: string;
+  request: PayrollFoundationReversalCommand;
+}>;
+
+export type PayrollFoundationCommandExecutors = Readonly<{
+  create: PayrollFoundationCommandExecutor;
+  update: PayrollFoundationCommandExecutor;
+  simulate: PayrollFoundationCommandExecutor;
+  publish: ProductSurfaceHighRiskCommandExecutor<PayrollFoundationPublishCommandBinding>;
+  reverse: ProductSurfaceHighRiskCommandExecutor<PayrollFoundationReverseCommandBinding>;
+  reconcile: PayrollFoundationCommandExecutor;
+}>;
+
 type CommandInput = Readonly<{
   visit: Visit;
   commandId: string;
@@ -146,9 +179,11 @@ function queryKeys(scope: ProductSurfaceRequestScope) {
 export function usePayrollFoundationStudio({
   requestScope,
   dataSource = payrollFoundationDataSource,
+  commandExecutors,
 }: {
   requestScope: ProductSurfaceRequestScope;
   dataSource?: PayrollFoundationDataSource;
+  commandExecutors?: PayrollFoundationCommandExecutors;
 }) {
   const queryClient = useQueryClient();
   const keys = queryKeys(requestScope);
@@ -157,6 +192,7 @@ export function usePayrollFoundationStudio({
   const mountedRef = useRef(true);
   const commandGateRef = useRef(false);
   const receiptExpectationRef = useRef<CommandExpectation | null>(null);
+  const activeCommandInputRef = useRef<CommandInput | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<PayrollFoundationDraft | null>(null);
   const [failure, setFailure] = useState<FoundationCommandFailure | null>(null);
@@ -183,6 +219,7 @@ export function usePayrollFoundationStudio({
     setReverseReviewOpen(false);
     commandGateRef.current = false;
     receiptExpectationRef.current = null;
+    activeCommandInputRef.current = null;
   }, [scopeIdentity]);
 
   const requestScopeOptions = (signal?: AbortSignal, visit?: Visit) => ({
@@ -312,63 +349,114 @@ export function usePayrollFoundationStudio({
 
   const commandMutation = useMutation({
     mutationFn: async (input: CommandInput) => {
+      activeCommandInputRef.current = input;
+      let effectiveInput = input;
       const scope = requestScopeOptions(undefined, input.visit);
       let result: unknown;
       if (input.kind === 'CREATE') {
-        result = await dataSource.create(
-          { definition: foundationDefinitionFromDraft(input.draft!) },
-          input.commandId,
-          scope
+        if (!commandExecutors?.create) throw new Error('Create authority is unavailable.');
+        result = await commandExecutors.create((authority) =>
+          dataSource.create(
+            { definition: foundationDefinitionFromDraft(input.draft!) },
+            input.commandId,
+            scope,
+            authority
+          )
         );
       } else if (input.kind === 'UPDATE') {
-        result = await dataSource.update(
-          input.configuration!.id,
-          {
-            expectedVersion: input.draft!.baseVersion!,
-            definition: foundationDefinitionFromDraft(input.draft!),
-          },
-          input.commandId,
-          scope
+        if (!commandExecutors?.update) throw new Error('Update authority is unavailable.');
+        result = await commandExecutors.update((authority) =>
+          dataSource.update(
+            input.configuration!.id,
+            {
+              expectedVersion: input.draft!.baseVersion!,
+              definition: foundationDefinitionFromDraft(input.draft!),
+            },
+            input.commandId,
+            scope,
+            authority
+          )
         );
       } else if (input.kind === 'SIMULATE') {
-        result = await dataSource.simulate(
-          input.configuration!.id,
-          { expectedVersion: input.configuration!.version },
-          input.commandId,
-          scope
+        if (!commandExecutors?.simulate) throw new Error('Simulation authority is unavailable.');
+        result = await commandExecutors.simulate((authority) =>
+          dataSource.simulate(
+            input.configuration!.id,
+            { expectedVersion: input.configuration!.version },
+            input.commandId,
+            scope,
+            authority
+          )
         );
       } else if (input.kind === 'PUBLISH') {
-        result = await dataSource.publish(
-          input.configuration!.id,
-          { expectedVersion: input.configuration!.version },
-          input.commandId,
-          scope
+        if (!commandExecutors?.publish) throw new Error('Publish authority is unavailable.');
+        const request = { expectedVersion: input.configuration!.version } as const;
+        result = await commandExecutors.publish(
+          (authority, command?: ProductSurfaceHighRiskCommandDescriptor) => {
+            const commandId = command?.idempotencyKey ?? input.commandId;
+            effectiveInput = commandId === input.commandId ? input : { ...input, commandId };
+            activeCommandInputRef.current = effectiveInput;
+            receiptExpectationRef.current = commandExpectation(effectiveInput);
+            return dataSource.publish(
+              command?.targetId ?? input.configuration!.id,
+              (command?.payload as PayrollFoundationVersionCommand | undefined) ?? request,
+              commandId,
+              scope,
+              authority
+            );
+          },
+          {
+            configurationId: input.configuration!.id,
+            commandId: input.commandId,
+            request,
+          }
         );
       } else {
-        result = await dataSource.reverse(
-          input.configuration!.id,
-          {
-            expectedVersion: input.configuration!.version,
-            publishCommandId: input.configuration!.lastCommandId!,
+        if (!commandExecutors?.reverse) throw new Error('Reversal authority is unavailable.');
+        const request = {
+          expectedVersion: input.configuration!.version,
+          publishCommandId: input.configuration!.lastCommandId!,
+        } as const;
+        result = await commandExecutors.reverse(
+          (authority, command?: ProductSurfaceHighRiskCommandDescriptor) => {
+            const commandId = command?.idempotencyKey ?? input.commandId;
+            effectiveInput = commandId === input.commandId ? input : { ...input, commandId };
+            activeCommandInputRef.current = effectiveInput;
+            receiptExpectationRef.current = commandExpectation(effectiveInput);
+            return dataSource.reverse(
+              command?.targetId ?? input.configuration!.id,
+              (command?.payload as PayrollFoundationReversalCommand | undefined) ?? request,
+              commandId,
+              scope,
+              authority
+            );
           },
-          input.commandId,
-          scope
+          {
+            configurationId: input.configuration!.id,
+            commandId: input.commandId,
+            request,
+          }
         );
       }
       try {
         const selected = selectFoundationCommandResult(result);
-        if (!resultMatchesExpectation(selected, commandExpectation(input))) {
+        if (!resultMatchesExpectation(selected, commandExpectation(effectiveInput))) {
           throw new CommandOutcomeUnknownError();
         }
-        return selected;
+        return { selected, input: effectiveInput };
       } catch (error) {
         if (error instanceof CommandOutcomeUnknownError) throw error;
         throw new CommandOutcomeUnknownError();
       }
     },
-    onSuccess: (result, input) => void settleCommand(result, input),
+    onSuccess: ({ selected, input }) => {
+      activeCommandInputRef.current = null;
+      void settleCommand(selected, input);
+    },
     onError: (error, input) => {
-      if (!mountedRef.current || visitRef.current !== input.visit) return;
+      const effectiveInput = activeCommandInputRef.current ?? input;
+      activeCommandInputRef.current = null;
+      if (!mountedRef.current || visitRef.current !== effectiveInput.visit) return;
       const classified = classifyFoundationCommandFailure(error);
       const outcomeUnknown =
         classified.kind === 'RESULT_UNKNOWN' ||
@@ -377,7 +465,7 @@ export function usePayrollFoundationStudio({
       commandGateRef.current = outcomeUnknown;
       setFailure(outcomeUnknown ? { kind: 'RESULT_UNKNOWN', preserveDraft: true } : classified);
       if (outcomeUnknown) {
-        setReceipt(resultUnknownReceipt(input));
+        setReceipt(resultUnknownReceipt(effectiveInput));
       } else {
         receiptExpectationRef.current = null;
       }
@@ -389,10 +477,17 @@ export function usePayrollFoundationStudio({
   const receiptMutation = useMutation({
     mutationFn: async (input: ReceiptInput) => {
       const scope = requestScopeOptions(undefined, input.visit);
-      const result =
-        input.mode === 'LOOKUP'
-          ? await dataSource.receipt(input.receipt.commandId, scope)
-          : await dataSource.reconcile(input.receipt.commandId, scope);
+      let result: unknown;
+      if (input.mode === 'LOOKUP') {
+        result = await dataSource.receipt(input.receipt.commandId, scope);
+      } else {
+        if (!commandExecutors?.reconcile) {
+          throw new Error('Reconciliation authority is unavailable.');
+        }
+        result = await commandExecutors.reconcile((authority) =>
+          dataSource.reconcile(input.receipt.commandId, scope, authority)
+        );
+      }
       let selectedResult: ReturnType<typeof selectFoundationCommandResult>;
       try {
         selectedResult = selectFoundationCommandResult(result);
@@ -464,22 +559,35 @@ export function usePayrollFoundationStudio({
   };
 
   const beginCreate = () => {
-    if (!access?.canCreate || mutationBlocked) return;
+    if (!access?.canCreate || !commandExecutors?.create || mutationBlocked) return;
     setDraft(emptyFoundationDraft());
     setFailure(null);
   };
   const beginEdit = () => {
-    if (!selected || !access?.canEdit || selected.status === 'PUBLISHED' || mutationBlocked) return;
+    if (
+      !selected ||
+      !access?.canEdit ||
+      !commandExecutors?.update ||
+      selected.status === 'PUBLISHED' ||
+      mutationBlocked
+    )
+      return;
     setDraft(foundationDraftFromConfiguration(selected));
     setFailure(null);
   };
   const saveDraft = () => {
     if (!draft || !validation?.valid || mutationBlocked) return;
     if (draft.configurationId) {
-      if (!selected || selected.id !== draft.configurationId || !access?.canEdit) return;
+      if (
+        !selected ||
+        selected.id !== draft.configurationId ||
+        !access?.canEdit ||
+        !commandExecutors?.update
+      )
+        return;
       run('UPDATE', selected, draft);
     } else {
-      if (!access?.canCreate) return;
+      if (!access?.canCreate || !commandExecutors?.create) return;
       run('CREATE', null, draft);
     }
   };
@@ -487,13 +595,17 @@ export function usePayrollFoundationStudio({
   const canSimulate = Boolean(
     selected &&
     access?.canSimulate &&
+    commandExecutors?.simulate &&
     !mutationBlocked &&
     ['DRAFT', 'SIMULATED'].includes(selected.status)
   );
-  const canPublish = Boolean(selected && !mutationBlocked && publishBlockers.length === 0);
+  const canPublish = Boolean(
+    selected && commandExecutors?.publish && !mutationBlocked && publishBlockers.length === 0
+  );
   const canReverse = Boolean(
     selected &&
     access?.canReverse &&
+    commandExecutors?.reverse &&
     !mutationBlocked &&
     selected.status === 'PUBLISHED' &&
     selected.lastCommandId
@@ -517,6 +629,15 @@ export function usePayrollFoundationStudio({
     versions: versionsQuery.data ?? [],
     versionsError: versionsQuery.error,
     access,
+    canCreate: Boolean(access?.canCreate && commandExecutors?.create && !mutationBlocked),
+    canEdit: Boolean(
+      selected &&
+      access?.canEdit &&
+      commandExecutors?.update &&
+      selected.status !== 'PUBLISHED' &&
+      !mutationBlocked
+    ),
+    canReconcile: Boolean(access?.canReconcile && commandExecutors?.reconcile),
     publishBlockers,
     draft,
     setDraft,
@@ -547,7 +668,14 @@ export function usePayrollFoundationStudio({
     },
     reconcileReceipt: () => {
       const expectation = receiptExpectationRef.current;
-      if (!receipt || !expectation || !access?.canReconcile || receiptMutation.isPending) return;
+      if (
+        !receipt ||
+        !expectation ||
+        !access?.canReconcile ||
+        !commandExecutors?.reconcile ||
+        receiptMutation.isPending
+      )
+        return;
       receiptMutation.mutate({
         visit: visitRef.current,
         receipt,

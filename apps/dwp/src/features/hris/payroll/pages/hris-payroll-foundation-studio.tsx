@@ -2,6 +2,7 @@ import { useProductSurfaceRequestScope } from '../../../../components/use-produc
 import { PayrollFoundationStudio } from './payroll-foundation-studio';
 
 import type { PayrollFoundationDataSource } from '../api/payroll-foundation-api';
+import type { PayrollFoundationCommandExecutors } from '../hooks/use-payroll-foundation-studio';
 
 /**
  * Route-bound adapter for the payroll operations workbench.
@@ -13,15 +14,25 @@ import type { PayrollFoundationDataSource } from '../api/payroll-foundation-api'
  */
 export type HrisPayrollFoundationStudioProps = Readonly<{
   dataSource?: PayrollFoundationDataSource;
+  commandExecutors?: PayrollFoundationCommandExecutors;
 }>;
 
-export function HrisPayrollFoundationStudio({ dataSource }: HrisPayrollFoundationStudioProps) {
+export function HrisPayrollFoundationStudio({
+  dataSource,
+  commandExecutors,
+}: HrisPayrollFoundationStudioProps) {
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'hcm',
     surfaceKey: 'hcm.operations',
   });
 
-  return <PayrollFoundationStudio requestScope={requestScope} dataSource={dataSource} />;
+  return (
+    <PayrollFoundationStudio
+      requestScope={requestScope}
+      dataSource={dataSource}
+      commandExecutors={commandExecutors}
+    />
+  );
 }
 
 export default HrisPayrollFoundationStudio;

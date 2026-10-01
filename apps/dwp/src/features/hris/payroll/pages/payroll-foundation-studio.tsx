@@ -36,11 +36,13 @@ import { usePayrollFoundationStudio } from '../hooks/use-payroll-foundation-stud
 import { foundationCopyValue, getPayrollFoundationCopy } from '../model/payroll-foundation-copy';
 
 import type { PayrollFoundationDataSource } from '../api/payroll-foundation-api';
+import type { PayrollFoundationCommandExecutors } from '../hooks/use-payroll-foundation-studio';
 import type { ProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 
 export type PayrollFoundationStudioProps = Readonly<{
   requestScope: ProductSurfaceRequestScope;
   dataSource?: PayrollFoundationDataSource;
+  commandExecutors?: PayrollFoundationCommandExecutors;
 }>;
 
 function FreshnessNotice({
@@ -66,11 +68,12 @@ function FreshnessNotice({
 export function PayrollFoundationStudioRuntime({
   requestScope,
   dataSource,
+  commandExecutors,
 }: Required<Pick<PayrollFoundationStudioProps, 'requestScope'>> &
-  Pick<PayrollFoundationStudioProps, 'dataSource'>) {
+  Pick<PayrollFoundationStudioProps, 'dataSource' | 'commandExecutors'>) {
   const { i18n } = useTranslation('hcm');
   const copy = getPayrollFoundationCopy(i18n.resolvedLanguage, i18n.language);
-  const studio = usePayrollFoundationStudio({ requestScope, dataSource });
+  const studio = usePayrollFoundationStudio({ requestScope, dataSource, commandExecutors });
 
   if (studio.loading || studio.blockingError) {
     return (
@@ -122,7 +125,7 @@ export function PayrollFoundationStudioRuntime({
               intent="primary"
               size="small"
               startIcon={<Plus size={15} aria-hidden="true" />}
-              disabled={!studio.access?.canCreate || actionBusy}
+              disabled={!studio.canCreate || actionBusy}
               onClick={studio.beginCreate}
             >
               {copy.create}
@@ -156,7 +159,7 @@ export function PayrollFoundationStudioRuntime({
         failure={studio.failure}
         copy={copy}
         busy={studio.receiptBusy || studio.fetching}
-        canReconcile={Boolean(studio.access?.canReconcile)}
+        canReconcile={studio.canReconcile}
         onRefresh={() => void studio.refresh()}
         onCheck={studio.checkReceipt}
         onReconcile={studio.reconcileReceipt}
@@ -271,11 +274,7 @@ export function PayrollFoundationStudioRuntime({
                       intent="quiet"
                       size="small"
                       startIcon={<Edit3 size={14} aria-hidden="true" />}
-                      disabled={
-                        !studio.access?.canEdit ||
-                        studio.selected.status === 'PUBLISHED' ||
-                        actionBusy
-                      }
+                      disabled={!studio.canEdit || actionBusy}
                       onClick={studio.beginEdit}
                     >
                       {copy.edit}
@@ -433,8 +432,15 @@ export function PayrollFoundationStudioRuntime({
 export function PayrollFoundationStudio({
   requestScope,
   dataSource,
+  commandExecutors,
 }: PayrollFoundationStudioProps) {
-  return <PayrollFoundationStudioRuntime requestScope={requestScope} dataSource={dataSource} />;
+  return (
+    <PayrollFoundationStudioRuntime
+      requestScope={requestScope}
+      dataSource={dataSource}
+      commandExecutors={commandExecutors}
+    />
+  );
 }
 
 export default PayrollFoundationStudio;

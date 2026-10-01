@@ -150,7 +150,7 @@ export const GOVERNED_PRODUCT_ENTRY_CATALOG: readonly ProductEntryManifest[] = [
         labelKey: 'navigation.groups.hcm.foundation',
         taskKinds: ['operations', 'administration'],
         indexPath: '/hr/manage',
-        supportedScopeKinds: ['RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
+        supportedScopeKinds: ['TENANT', 'RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
         returnSurfaceId: 'hcm.personal',
       },
     ],

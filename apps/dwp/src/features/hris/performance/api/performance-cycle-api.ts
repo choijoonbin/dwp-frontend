@@ -1,4 +1,8 @@
-import { axiosInstance, productSurfaceGovernedMutationConfig } from '@dwp-frontend/shared-utils';
+import {
+  axiosInstance,
+  productSurfaceGovernedMutationConfig,
+  productSurfaceHighRiskMutationConfig,
+} from '@dwp-frontend/shared-utils';
 import { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/product-surface-read-scope';
 
 import type {
@@ -14,6 +18,39 @@ import type {
 } from '../model/performance-cycle-command';
 
 const PERFORMANCE_CYCLE_BASE = '/api/people/v1/hris/performance';
+
+export const PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createPerformanceCycle',
+    routeContractKey: 'route.hcm.operations.performance-cycle-create.action',
+    method: 'POST',
+    path: `${PERFORMANCE_CYCLE_BASE}/cycles`,
+  },
+  {
+    apiFunction: 'updatePerformanceCycle',
+    routeContractKey: 'route.hcm.operations.performance-cycle-update.action',
+    method: 'PATCH',
+    path: `${PERFORMANCE_CYCLE_BASE}/cycles/{cycleId}`,
+  },
+  {
+    apiFunction: 'validatePerformanceCycle',
+    routeContractKey: 'route.hcm.operations.performance-cycle-validate.action',
+    method: 'POST',
+    path: `${PERFORMANCE_CYCLE_BASE}/cycles/{cycleId}/validate`,
+  },
+  {
+    apiFunction: 'previewPerformancePopulation',
+    routeContractKey: 'route.hcm.operations.performance-cycle-population-preview.action',
+    method: 'POST',
+    path: `${PERFORMANCE_CYCLE_BASE}/cycles/{cycleId}/population-previews`,
+  },
+  {
+    apiFunction: 'publishPerformanceCycle',
+    routeContractKey: 'route.hcm.operations.performance-cycle-publish.action',
+    method: 'POST',
+    path: `${PERFORMANCE_CYCLE_BASE}/cycles/{cycleId}/publish`,
+  },
+] as const;
 
 export type PerformanceCycleDataSource = Readonly<{
   readCollection: (contextScopeKey?: string, signal?: AbortSignal) => Promise<unknown>;
@@ -49,8 +86,22 @@ export type PerformanceCycleDataSource = Readonly<{
   ) => Promise<unknown>;
 }>;
 
-function commandConfig(authority: ProductSurfaceGovernedMutationAuthority, commandId: string) {
-  const governed = productSurfaceGovernedMutationConfig(authority);
+function commandConfig(
+  authority: ProductSurfaceGovernedMutationAuthority,
+  commandId: string,
+  highRisk = false,
+  expectedVersion?: number
+) {
+  if (
+    highRisk &&
+    authority.mode === 'SECURE' &&
+    (authority.idempotencyKey !== commandId || authority.objectVersion !== expectedVersion)
+  ) {
+    throw new Error('Performance publication authority does not match the command.');
+  }
+  const governed = highRisk
+    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true })
+    : productSurfaceGovernedMutationConfig(authority);
   return {
     ...governed,
     headers: {
@@ -157,7 +208,7 @@ export async function publishPerformanceCycle(
   const response = await axiosInstance.post<ApiResponse<unknown>, PublishPerformanceCycleRequest>(
     `${PERFORMANCE_CYCLE_BASE}/cycles/${encodeURIComponent(cycleId)}/publish`,
     request,
-    commandConfig(authority, request.commandId)
+    commandConfig(authority, request.commandId, true, request.expectedRevision)
   );
   return response.data.data;
 }

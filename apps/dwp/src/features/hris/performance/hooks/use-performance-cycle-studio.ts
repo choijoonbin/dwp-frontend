@@ -29,6 +29,8 @@ import {
 } from '../model/performance-cycle-contract';
 
 import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
+import type { ProductSurfaceHighRiskCommandDescriptor } from '../../../../components/product-surface-high-risk-command';
+import type { ProductSurfaceHighRiskCommandExecutor } from '../../../../components/use-product-surface-high-risk-command-executor';
 import type { PerformanceCycleDataSource } from '../api/performance-cycle-api';
 import type {
   CreatePerformanceCycleRequest,
@@ -51,11 +53,26 @@ export type PerformanceCommandExecutor = <T>(
   execute: (authority: ProductSurfaceGovernedMutationAuthority) => Promise<T>
 ) => Promise<T>;
 
+export type PerformancePublishCommandBinding = Readonly<{
+  cycleId: string;
+  request: PublishPerformanceCycleRequest;
+}>;
+
+export type PerformancePublishCommandExecutor =
+  ProductSurfaceHighRiskCommandExecutor<PerformancePublishCommandBinding>;
+
+export type PerformanceCommandExecutors = Readonly<{
+  create: PerformanceCommandExecutor;
+  update: PerformanceCommandExecutor;
+  validate: PerformanceCommandExecutor;
+  preview: PerformanceCommandExecutor;
+  publish: PerformancePublishCommandExecutor;
+}>;
+
 export type HrisPerformanceCycleRuntimeOptions = Readonly<{
   requestScope: ProductSurfaceRequestScope;
   dataSource?: PerformanceCycleDataSource;
-  authorExecutor?: PerformanceCommandExecutor;
-  publisherExecutor?: PerformanceCommandExecutor;
+  commandExecutors?: PerformanceCommandExecutors;
 }>;
 
 type ScopeVisit = Readonly<{ identity: string; generation: number }>;
@@ -166,8 +183,7 @@ export function useHrisPerformanceCycleRequestScope() {
 export function useHrisPerformanceCycleRuntime({
   requestScope,
   dataSource = performanceCycleDataSource,
-  authorExecutor,
-  publisherExecutor,
+  commandExecutors,
 }: HrisPerformanceCycleRuntimeOptions) {
   const queryClient = useQueryClient();
   const scopeIdentity = JSON.stringify(requestScope.cacheKey);
@@ -176,6 +192,7 @@ export function useHrisPerformanceCycleRuntime({
   const settlementRef = useRef(0);
   const mountedRef = useRef(true);
   const commandActiveRef = useRef(false);
+  const activeCommandInputRef = useRef<CommandInput | null>(null);
   const activeReceiptKeyRef = useRef<ReturnType<typeof performanceReceiptQueryKey> | null>(null);
   const previousScopeRef = useRef(scopeIdentity);
   const [selectedCycleId, setSelectedCycleId] = useState<string | null>(null);
@@ -211,6 +228,7 @@ export function useHrisPerformanceCycleRuntime({
     setRecovery(null);
     setFeedback(null);
     commandActiveRef.current = false;
+    activeCommandInputRef.current = null;
   }, [scopeIdentity]);
 
   const collectionKey = useMemo(
@@ -309,48 +327,66 @@ export function useHrisPerformanceCycleRuntime({
 
   const mutation = useMutation({
     mutationFn: async (input: CommandInput): Promise<CommandOutput> => {
+      activeCommandInputRef.current = input;
       if (!matchesBoundary(input, visitRef.current, settlementRef.current)) {
         throw new Error('Performance cycle request scope changed.');
       }
+      let effectiveInput = input;
       let cycle: PerformanceCycleDetail | null = null;
       let previewResult: PerformancePopulationPreview | null = null;
       let receipt: PerformanceCommandReceipt;
       if (input.kind === 'PUBLISH') {
-        if (!publisherExecutor) throw new Error('Publisher authority is unavailable.');
+        if (!commandExecutors?.publish) throw new Error('Publisher authority is unavailable.');
         const result = selectPerformanceCycleCommandResult(
-          await publisherExecutor((authority) =>
-            dataSource.publishCycle(input.cycleId, input.request, authority)
+          await commandExecutors.publish(
+            (authority, command?: ProductSurfaceHighRiskCommandDescriptor) => {
+              const request =
+                (command?.payload as PublishPerformanceCycleRequest | undefined) ?? input.request;
+              effectiveInput = { ...input, request };
+              activeCommandInputRef.current = effectiveInput;
+              return dataSource.publishCycle(
+                command?.targetId ?? input.cycleId,
+                request,
+                authority
+              );
+            },
+            { cycleId: input.cycleId, request: input.request }
           )
         );
         cycle = result.cycle;
         receipt = result.receipt;
       } else {
-        if (!authorExecutor) throw new Error('Author authority is unavailable.');
         if (input.kind === 'CREATE') {
+          if (!commandExecutors?.create) throw new Error('Create authority is unavailable.');
           const result = selectPerformanceCycleCommandResult(
-            await authorExecutor((authority) => dataSource.createCycle(input.request, authority))
+            await commandExecutors.create((authority) =>
+              dataSource.createCycle(input.request, authority)
+            )
           );
           cycle = result.cycle;
           receipt = result.receipt;
         } else if (input.kind === 'UPDATE') {
+          if (!commandExecutors?.update) throw new Error('Update authority is unavailable.');
           const result = selectPerformanceCycleCommandResult(
-            await authorExecutor((authority) =>
+            await commandExecutors.update((authority) =>
               dataSource.updateCycle(input.cycleId, input.request, authority)
             )
           );
           cycle = result.cycle;
           receipt = result.receipt;
         } else if (input.kind === 'VALIDATE') {
+          if (!commandExecutors?.validate) throw new Error('Validate authority is unavailable.');
           const result = selectPerformanceCycleCommandResult(
-            await authorExecutor((authority) =>
+            await commandExecutors.validate((authority) =>
               dataSource.validateCycle(input.cycleId, input.request, authority)
             )
           );
           cycle = result.cycle;
           receipt = result.receipt;
         } else {
+          if (!commandExecutors?.preview) throw new Error('Preview authority is unavailable.');
           const result = selectPerformancePreviewCommandResult(
-            await authorExecutor((authority) =>
+            await commandExecutors.preview((authority) =>
               dataSource.previewPopulation(input.cycleId, input.request, authority)
             )
           );
@@ -358,14 +394,14 @@ export function useHrisPerformanceCycleRuntime({
           receipt = result.receipt;
         }
       }
-      assertReceiptMatchesCommand(input, receipt);
+      assertReceiptMatchesCommand(effectiveInput, receipt);
       let freshCycle: PerformanceCycleDetail | null = null;
       if (
         performanceReceiptDisposition(receipt) === 'REFRESH_REQUIRED' &&
         input.kind !== 'PREVIEW'
       ) {
         try {
-          const expectedCycleId = commandCycleId(input, receipt);
+          const expectedCycleId = commandCycleId(effectiveInput, receipt);
           const selected = selectPerformanceCycleDetail(
             await dataSource.readCycle(expectedCycleId, requestScope.contextScopeKey)
           );
@@ -375,9 +411,10 @@ export function useHrisPerformanceCycleRuntime({
           freshCycle = null;
         }
       }
-      return { input, receipt, cycle, preview: previewResult, freshCycle };
+      return { input: effectiveInput, receipt, cycle, preview: previewResult, freshCycle };
     },
     onSuccess: (output) => {
+      activeCommandInputRef.current = null;
       if (
         !mountedRef.current ||
         !matchesBoundary(output.input, visitRef.current, settlementRef.current)
@@ -434,7 +471,12 @@ export function useHrisPerformanceCycleRuntime({
       }
     },
     onError: (error, input) => {
-      if (!mountedRef.current || !matchesBoundary(input, visitRef.current, settlementRef.current)) {
+      const effectiveInput = activeCommandInputRef.current ?? input;
+      activeCommandInputRef.current = null;
+      if (
+        !mountedRef.current ||
+        !matchesBoundary(effectiveInput, visitRef.current, settlementRef.current)
+      ) {
         return;
       }
       commandActiveRef.current = false;
@@ -443,9 +485,9 @@ export function useHrisPerformanceCycleRuntime({
       setFeedback(null);
       if (classified.kind === 'RESULT_UNKNOWN') {
         setRecovery({
-          input,
+          input: effectiveInput,
           receiptId: classified.receiptId,
-          aggregateId: input.kind === 'CREATE' ? null : input.cycleId,
+          aggregateId: effectiveInput.kind === 'CREATE' ? null : effectiveInput.cycleId,
         });
       }
       if (classified.kind === 'FORBIDDEN' || classified.kind === 'UNAUTHENTICATED') {
@@ -499,6 +541,7 @@ export function useHrisPerformanceCycleRuntime({
     setPreview(null);
     setRecovery(null);
     setFeedback(null);
+    activeCommandInputRef.current = null;
     setFailure({
       kind: readAuthorityFailure,
       preserveDraft: false,
@@ -562,7 +605,7 @@ export function useHrisPerformanceCycleRuntime({
   const saveDraft = () => {
     if (
       !draft ||
-      !authorExecutor ||
+      !(draft.cycleId ? commandExecutors?.update : commandExecutors?.create) ||
       mutation.isPending ||
       recovery ||
       (draft.cycleId !== null && detailBlocked)
@@ -586,7 +629,7 @@ export function useHrisPerformanceCycleRuntime({
   const validateSelected = () => {
     if (
       !detail ||
-      !authorExecutor ||
+      !commandExecutors?.validate ||
       recovery ||
       detailBlocked ||
       detail.lifecycleState !== 'DRAFT' ||
@@ -604,7 +647,7 @@ export function useHrisPerformanceCycleRuntime({
   const previewSelected = (asOf: string) => {
     if (
       !detail ||
-      !authorExecutor ||
+      !commandExecutors?.preview ||
       recovery ||
       detailBlocked ||
       detail.lifecycleState !== 'VALIDATED' ||
@@ -629,7 +672,7 @@ export function useHrisPerformanceCycleRuntime({
   };
 
   const publishSelected = (publicationApprovalRef: string, reason: string) => {
-    if (!detail || !preview || !publisherExecutor || recovery || detailBlocked) return;
+    if (!detail || !preview || !commandExecutors?.publish || recovery || detailBlocked) return;
     const request = buildPublishPerformanceCycleRequest(
       detail,
       preview,
@@ -680,7 +723,11 @@ export function useHrisPerformanceCycleRuntime({
     setDraft,
     validation: detailBlocked ? null : validation,
     openCreate: () => {
-      if (!recovery && collection?.allowedActions.includes('CREATE_DRAFT') && authorExecutor) {
+      if (
+        !recovery &&
+        collection?.allowedActions.includes('CREATE_DRAFT') &&
+        commandExecutors?.create
+      ) {
         setDraft(createPerformanceCycleDraft());
         setFailure(null);
       }
@@ -691,7 +738,7 @@ export function useHrisPerformanceCycleRuntime({
         !detailBlocked &&
         detail.lifecycleState !== 'RETIRED' &&
         detail.allowedActions.includes('UPDATE_DRAFT') &&
-        authorExecutor &&
+        commandExecutors?.update &&
         !recovery
       ) {
         setDraft(createPerformanceCycleDraft(detail));
@@ -716,13 +763,13 @@ export function useHrisPerformanceCycleRuntime({
     clearFeedback: () => setFeedback(null),
     busy: mutation.isPending,
     canCreate: Boolean(
-      authorExecutor &&
+      commandExecutors?.create &&
       !recovery &&
       collection?.allowedActions.includes('CREATE_DRAFT') &&
       !authorityRevoked
     ),
     canEdit: Boolean(
-      authorExecutor &&
+      commandExecutors?.update &&
       !recovery &&
       detail &&
       !blocksCachedDetail &&
@@ -731,7 +778,7 @@ export function useHrisPerformanceCycleRuntime({
       !authorityRevoked
     ),
     canValidate: Boolean(
-      authorExecutor &&
+      commandExecutors?.validate &&
       !recovery &&
       detail?.lifecycleState === 'DRAFT' &&
       !blocksCachedDetail &&
@@ -739,7 +786,7 @@ export function useHrisPerformanceCycleRuntime({
       !authorityRevoked
     ),
     canPreview: Boolean(
-      authorExecutor &&
+      commandExecutors?.preview &&
       !recovery &&
       detail?.lifecycleState === 'VALIDATED' &&
       !blocksCachedDetail &&
@@ -747,7 +794,7 @@ export function useHrisPerformanceCycleRuntime({
       !authorityRevoked
     ),
     canPublish: Boolean(
-      publisherExecutor &&
+      commandExecutors?.publish &&
       !recovery &&
       detail?.lifecycleState === 'VALIDATED' &&
       !blocksCachedDetail &&
@@ -756,8 +803,8 @@ export function useHrisPerformanceCycleRuntime({
       previewState === 'READY' &&
       !authorityRevoked
     ),
-    authorConnected: Boolean(authorExecutor),
-    publisherConnected: Boolean(publisherExecutor),
+    authorConnected: Boolean(commandExecutors),
+    publisherConnected: Boolean(commandExecutors?.publish),
   };
 }
 

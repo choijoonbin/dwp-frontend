@@ -392,6 +392,7 @@
         "pay-operations": { "label": "Pay operations" },
         "talent-operations": { "label": "Talent operations" },
         "organization-design": { "label": "Organization design" },
+        "system-access": { "label": "System access & configuration" },
         "reference-data": { "label": "Workforce reference data" },
         "data-operations": { "label": "Integrations & reconciliation" },
         "exports": { "label": "Governed exports" }
@@ -508,6 +509,11 @@
         "eyebrow": "HRIS / Organization design",
         "title": "Organization design",
         "description": "Model organizations and positions through governed, reviewable scenarios."
+      },
+      "system-access": {
+        "eyebrow": "HRIS / Settings",
+        "title": "System access and configuration",
+        "description": "Review the effective HRIS role groups, menu projection, widgets, and configuration evidence for this session."
       },
       "reference-data": {
         "eyebrow": "HRIS / Settings",

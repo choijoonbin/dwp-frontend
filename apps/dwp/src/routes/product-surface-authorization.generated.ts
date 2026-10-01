@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 32,
-  checksum: '9e4e274bf457d1a5947c8b54e83299d28fb9fe128d9f1100991bc30634b54344',
-  indexChecksum: 'd595ecdc054b271cdae32df43aa5842c16f04ea328a1d76b1464b5ab38f87578',
+  version: 33,
+  checksum: '254ead674e1126d50e8dcf1011486ea1127fb2479f7a82d832cdf0466995bc49',
+  indexChecksum: '69bbb0993ca5ffb4aacaae09584c09489844ec45e2f81beaae9d0b4d51f24d1c',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -7929,6 +7929,26 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/workforce/reference-data',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.management.system.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: 'hcm.management.system',
+    pattern: '/hr/manage/system',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/auth/hris/product-access/snapshot',
+      },
+      {
+        method: 'GET',
+        path: '/api/platform/v1/hris/configuration/projection',
       },
     ],
   },

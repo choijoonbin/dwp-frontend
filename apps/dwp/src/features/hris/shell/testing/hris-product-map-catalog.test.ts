@@ -14,7 +14,7 @@ describe('HRIS target product map catalog', () => {
     const semanticJson = JSON.stringify(HRIS_PRODUCT_MAP_CATALOG);
 
     expect(createHash('sha256').update(semanticJson).digest('hex')).toBe(
-      'a78a3c893c3f8a2ce33b5dbf7544c98940a4a2ad30b5927a9a303026f907a7c2'
+      '7a2990177d00873d9f4dfddc675b006eda538bf5a524f7a00d566feebb4e3098'
     );
     expect(Object.isFrozen(HRIS_PRODUCT_MAP_CATALOG)).toBe(true);
     expect(HRIS_PRODUCT_MAP_CATALOG.every((item) => Object.isFrozen(item))).toBe(true);

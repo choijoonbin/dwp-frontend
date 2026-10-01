@@ -7,12 +7,21 @@ import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 
 import { HrisPayrollWorkspace, PAYROLL_SELF_SERVICE_CONTRACT, PayrollFoundationStudio } from '..';
 import {
+  payrollFoundationPublishCommand,
+  payrollFoundationReverseCommand,
+} from '../hooks/use-payroll-foundation-command-executors';
+import {
   foundationWire,
   mutationWire,
   workspaceWire,
 } from './payroll-foundation-fixtures.test-support';
 
 import type { PayrollFoundationDataSource } from '../api/payroll-foundation-api';
+import type {
+  PayrollFoundationCommandExecutor,
+  PayrollFoundationCommandExecutors,
+} from '../hooks/use-payroll-foundation-studio';
+import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
 import type { ProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 
 vi.mock('react-i18next', () => ({
@@ -45,6 +54,42 @@ const requestScope: ProductSurfaceRequestScope = {
     decisionRevision: 'decision-1',
   },
 };
+
+function commandExecutor(spy: () => void = () => undefined): PayrollFoundationCommandExecutor {
+  return async <T,>(
+    execute: (authority: ProductSurfaceGovernedMutationAuthority) => Promise<T>
+  ) => {
+    spy();
+    return execute({ mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' });
+  };
+}
+
+function commandExecutors(): PayrollFoundationCommandExecutors {
+  return {
+    create: commandExecutor(),
+    update: commandExecutor(),
+    simulate: commandExecutor(),
+    publish: commandExecutor(),
+    reverse: commandExecutor(),
+    reconcile: commandExecutor(),
+  };
+}
+
+const legacyAuthority = { mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' } as const;
+
+function rotatedPublishExecutor(commandId: string): PayrollFoundationCommandExecutors['publish'] {
+  return async (execute, binding) => {
+    const descriptor = payrollFoundationPublishCommand(binding);
+    return execute(legacyAuthority, { ...descriptor, idempotencyKey: commandId });
+  };
+}
+
+function rotatedReverseExecutor(commandId: string): PayrollFoundationCommandExecutors['reverse'] {
+  return async (execute, binding) => {
+    const descriptor = payrollFoundationReverseCommand(binding);
+    return execute(legacyAuthority, { ...descriptor, idempotencyKey: commandId });
+  };
+}
 
 function dataSource(overrides: Partial<PayrollFoundationDataSource> = {}) {
   const result = (
@@ -144,12 +189,17 @@ async function settle() {
 
 async function renderStudio(
   source: PayrollFoundationDataSource,
-  scope: ProductSurfaceRequestScope = requestScope
+  scope: ProductSurfaceRequestScope = requestScope,
+  executors: PayrollFoundationCommandExecutors | null = commandExecutors()
 ) {
   await act(async () => {
     root.render(
       <QueryClientProvider client={queryClient}>
-        <PayrollFoundationStudio requestScope={scope} dataSource={source} />
+        <PayrollFoundationStudio
+          requestScope={scope}
+          dataSource={source}
+          commandExecutors={executors ?? undefined}
+        />
       </QueryClientProvider>
     );
   });
@@ -181,6 +231,103 @@ describe('PayrollFoundationStudio runtime', () => {
       calculatesPayroll: false,
       initiatesPayment: false,
     });
+  });
+
+  it('fails closed when exact mutation executors are not injected', async () => {
+    const source = dataSource();
+    await renderStudio(source, requestScope, null);
+
+    expect(button(host, 'New foundation')?.disabled).toBe(true);
+    expect(button(host, 'Edit draft')?.disabled).toBe(true);
+    expect(button(host, 'Run simulation')?.disabled).toBe(true);
+    expect(button(host, 'Publish version')?.disabled).toBe(true);
+
+    await act(async () => {
+      button(host, 'New foundation')?.click();
+      button(host, 'Run simulation')?.click();
+    });
+    expect(source.create).not.toHaveBeenCalled();
+    expect(source.simulate).not.toHaveBeenCalled();
+  });
+
+  it('dispatches SIMULATE only through the exact simulation executor', async () => {
+    const calls = {
+      create: vi.fn(),
+      update: vi.fn(),
+      simulate: vi.fn(),
+      publish: vi.fn(),
+      reverse: vi.fn(),
+      reconcile: vi.fn(),
+    };
+    const source = dataSource();
+    await renderStudio(source, requestScope, {
+      create: commandExecutor(calls.create),
+      update: commandExecutor(calls.update),
+      simulate: commandExecutor(calls.simulate),
+      publish: commandExecutor(calls.publish),
+      reverse: commandExecutor(calls.reverse),
+      reconcile: commandExecutor(calls.reconcile),
+    });
+
+    await act(async () => button(host, 'Run simulation')?.click());
+    await settle();
+
+    expect(calls.simulate).toHaveBeenCalledOnce();
+    expect(calls.create).not.toHaveBeenCalled();
+    expect(calls.update).not.toHaveBeenCalled();
+    expect(calls.publish).not.toHaveBeenCalled();
+    expect(calls.reverse).not.toHaveBeenCalled();
+    expect(calls.reconcile).not.toHaveBeenCalled();
+    expect(source.simulate).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Object),
+      expect.any(String),
+      expect.objectContaining({ contextScopeKey: 'scope-payroll-foundation' }),
+      { mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' }
+    );
+  });
+
+  it('accepts a PAY publish receipt bound to the proof-reissued idempotency key', async () => {
+    const rotatedCommandId = '20000000-0000-4000-8000-000000000001';
+    const source = dataSource();
+    await renderStudio(source, requestScope, {
+      ...commandExecutors(),
+      publish: rotatedPublishExecutor(rotatedCommandId),
+    });
+
+    await act(async () => button(host, 'Publish version')?.click());
+    await act(async () => button(document.body, 'Publish simulated version')?.click());
+    await settle();
+
+    expect(source.publish).toHaveBeenCalledOnce();
+    expect((source.publish as ReturnType<typeof vi.fn>).mock.calls[0]?.[2]).toBe(rotatedCommandId);
+    expect(host.textContent).toContain('Owner receipt confirms the command succeeded.');
+    expect(host.textContent).not.toContain('Command result is unknown');
+  });
+
+  it('accepts a PAY reversal receipt bound to the proof-reissued idempotency key', async () => {
+    const rotatedCommandId = '20000000-0000-4000-8000-000000000002';
+    const published = foundationWire({
+      status: 'PUBLISHED',
+      access: { ...foundationWire().access, canReverse: true },
+    });
+    const source = dataSource({
+      list: vi.fn().mockResolvedValue(workspaceWire({ configurations: [published] })),
+      get: vi.fn().mockResolvedValue(published),
+    });
+    await renderStudio(source, requestScope, {
+      ...commandExecutors(),
+      reverse: rotatedReverseExecutor(rotatedCommandId),
+    });
+
+    await act(async () => button(host, 'Reverse publication')?.click());
+    await act(async () => button(document.body, 'Submit reversal')?.click());
+    await settle();
+
+    expect(source.reverse).toHaveBeenCalledOnce();
+    expect((source.reverse as ReturnType<typeof vi.fn>).mock.calls[0]?.[2]).toBe(rotatedCommandId);
+    expect(host.textContent).toContain('Owner receipt confirms the command succeeded.');
+    expect(host.textContent).not.toContain('Command result is unknown');
   });
 
   it('renders a complete loading boundary before owner data arrives', async () => {
@@ -358,6 +505,7 @@ describe('PayrollFoundationStudio runtime', () => {
   });
 
   it('recovers a network-uncertain reversal with its original publication lineage', async () => {
+    const rotatedCommandId = '20000000-0000-4000-8000-000000000003';
     const published = foundationWire({
       status: 'PUBLISHED',
       access: { ...foundationWire().access, canReverse: true },
@@ -385,18 +533,21 @@ describe('PayrollFoundationStudio runtime', () => {
         get: vi.fn().mockResolvedValue(published),
         reverse,
         receipt,
-      })
+      }),
+      requestScope,
+      { ...commandExecutors(), reverse: rotatedReverseExecutor(rotatedCommandId) }
     );
 
     await act(async () => button(host, 'Reverse publication')?.click());
     await act(async () => button(document.body, 'Submit reversal')?.click());
     await settle();
     const dispatchedCommandId = reverse.mock.calls[0]?.[2];
+    expect(dispatchedCommandId).toBe(rotatedCommandId);
     expect(host.textContent).toContain('Command result is unknown');
 
     await act(async () => button(host, 'Check receipt')?.click());
     await settle();
-    expect(receipt).toHaveBeenCalledWith(dispatchedCommandId, expect.any(Object));
+    expect(receipt).toHaveBeenCalledWith(rotatedCommandId, expect.any(Object));
     expect(host.textContent).toContain('Publication reversal failed');
     expect(host.textContent).not.toContain('Command result is unknown');
   });

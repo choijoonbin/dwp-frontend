@@ -64,13 +64,17 @@ describe('owner self-service receipt transport', () => {
 
     await getHrisSystemSnapshot('scope:hcm/settings-west', signal);
 
-    expect(runtime.get).toHaveBeenNthCalledWith(1, '/api/auth/hris/product-access/snapshot', {
-      contextScopeKey: 'scope:hcm/settings-west',
-      signal,
-    });
+    expect(runtime.get).toHaveBeenNthCalledWith(
+      1,
+      '/api/auth/hris/product-access/snapshot?view=system',
+      {
+        contextScopeKey: 'scope:hcm/settings-west',
+        signal,
+      }
+    );
     expect(runtime.get).toHaveBeenNthCalledWith(
       2,
-      '/api/platform/v1/hris/configuration/projection',
+      '/api/platform/v1/hris/configuration/projection?view=system',
       { contextScopeKey: 'scope:hcm/settings-west', signal }
     );
   });

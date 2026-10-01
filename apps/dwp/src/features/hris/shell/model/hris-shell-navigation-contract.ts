@@ -92,7 +92,12 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   {
     view: 'workbench-settings',
     groupId: 'workbenches',
-    candidates: ['/hr/data/reference', '/hr/data/integrations', '/hr/data/exports'],
+    candidates: [
+      '/hr/manage/system',
+      '/hr/data/reference',
+      '/hr/data/integrations',
+      '/hr/data/exports',
+    ],
     icon: Settings2,
   },
 ] as const;

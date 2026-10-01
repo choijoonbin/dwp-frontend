@@ -149,6 +149,7 @@ export const HRIS_SETTINGS_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '운영',
     'Operations',
     '작업 실행, 예외, 설정 이력, 상태와 사용량',
-    'Job runs, exceptions, configuration history, health, and usage'
+    'Job runs, exceptions, configuration history, health, and usage',
+    ['/hr/manage/system']
   ),
 ]);

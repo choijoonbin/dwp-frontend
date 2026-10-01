@@ -1,22 +1,22 @@
 # R1 제품 Surface 전체 메뉴 분류표
 
-- 상태: Governed ledger v1.16
-- 기준일: 2026-09-17
+- 상태: Governed ledger v1.17
+- 기준일: 2026-10-01
 - 기준 Frontend Commit: `7e87ba2174b8f4de6ef69ff91f183191df61359b` + 본 공통 변경 단위
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
-- Ledger SHA-256: `7622ee334e11301bdf34580bc78f556f2c61962c2e4fbf6e09f7df2697c29ae5`
+- Ledger SHA-256: `851da7b3aab5653482dcc5e5902e7b4db3b4c5f5316a0eeca691c77bff6d9885`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
 ## 1. 범위와 판정
 
-이 표는 현재 Runtime의 정적 Menu Route **229개 전부**를 분류한다. Detail Route, Query View,
+이 표는 현재 Runtime의 정적 Menu Route **230개 전부**를 분류한다. Detail Route, Query View,
 Context Menu와 아직 Navigation Source에 없는 예정 메뉴는 수량에 포함하지 않는다. 각 행의
 `목표 Plane/Task`와 `목표 Surface`는 구현 시 Product Manifest와 자동 Test의 Golden Source가
 된다.
 
-전체 229개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
-Surface`는 12개 업무 앱 177개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
+전체 230개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
+Surface`는 12개 업무 앱 178개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
 52개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
 `work.work`, `activity.work`, `tenant.admin`, `provider.control`, `account.settings`다.
 모든 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간 문법을 사용한다. 비제품 Governed
@@ -55,16 +55,23 @@ Workplace와 Calendar의 권위·상세·변경 명령은 분리한 채 하나�
 `/admin/experience/home` 스튜디오로 통합하여 중복 Sidebar 두 개를 제거했다. 기존 세부 경로는
 호환 Redirect로 유지하므로 기능은 통합 스튜디오에서 계속 접근할 수 있다.
 
+2026-09-29에는 HCM 관리 Surface에 `/hr/manage/system`을 정식 PAGE와 메뉴로 등록했다. 이
+읽기 전용 화면은 `hcm.management-system-access.v1` 정책으로 현재 세션의 권한그룹, 메뉴·위젯
+투영, 구성 근거를 제공하며 Provider Support에는 열지 않는다.
+
+2026-09-30에는 Provider Control에 리소스 거버넌스와 아티팩트 거버넌스 메뉴를 등록했다. 두
+메뉴는 Provider 전용 관리 문맥을 유지하며 HCM 관리 Surface와 권한을 공유하지 않는다.
+
 | 목표 Plane          |    수량 | 의미                                     |
 | ------------------- | ------: | ---------------------------------------- |
 | `work`              |     104 | 개인·참여 업무 101 + 관계 기반 팀 업무 3 |
-| `management`        |      83 | 제품 운영 41 + 제품 설정 42              |
+| `management`        |      84 | 제품 운영 41 + 제품 설정 43              |
 | `tenant-governance` |      22 | 회사 공통 운영 8 + 회사 공통 설정 14     |
 | `provider-control`  |      12 | Provider 운영 6 + Provider 설정·통제 6   |
 | `account`           |       8 | 개인 계정·선호                           |
-| **합계**            | **229** |                                          |
+| **합계**            | **230** |                                          |
 
-Task 기준 합계는 `work 109`, `team 3`, `operations 55`, `administration 62`이다. Account의
+Task 기준 합계는 `work 109`, `team 3`, `operations 55`, `administration 63`이다. Account의
 개인 설정 8개는 Plane은 `account`, Task 집계에서는 `work`로 센다.
 
 ### 표기
@@ -85,11 +92,11 @@ Task 기준 합계는 `work 109`, `team 3`, `operations 55`, `administration 62`
 | `W0`     |              0 | 공통 Manifest·Resolver·Guard·Shell·Context API·Telemetry           |
 | `W0.5`   |             12 | Communications·Services Technical Canary                           |
 | `W1a`    |             20 | Approvals 대표 Pilot                                               |
-| `W1b`    |             25 | HCM 대표 Pilot                                                     |
+| `W1b`    |             26 | HCM 대표 Pilot                                                     |
 | `W2`     |             36 | DWAI·ON, Notifications, Spaces                                     |
 | `W3`     |             84 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
 | `Keep`   |             52 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
-| **합계** |        **229** |                                                                    |
+| **합계** |        **230** |                                                                    |
 
 ## 2. Workspace, Work와 Activity — 10
 
@@ -354,7 +361,7 @@ Parent는 `APP.SPACES`다.
 | `spaces.admin-lifecycle`       | Space 운영 › 수명주기 검토  | `/spaces/admin/lifecycle`       | M/O        | `spaces.management` | I: `ADMIN.SPACE_ACCESS_REVIEW:VIEW+` | Management Nav; Guard 정합화 |
 | `spaces.admin-operations`      | Space 운영 › 복구 및 운영   | `/spaces/admin/operations`      | M/O        | `spaces.management` | I: `ADMIN.SPACE_GOVERNANCE:VIEW+`    | Management Nav; Guard 정합화 |
 
-## 14. HCM — 25 (`W1b` Pilot)
+## 14. HCM — 26 (`W1b` Pilot)
 
 현재 HCM Guard는 여러 App, 역할, Reporting Relation과 Support Scope를 결합하고 허용 Audience를
 한 Sidebar에 합친다. Pilot Surface는 `hcm.personal`, `hcm.team`, `hcm.operations`,
@@ -384,6 +391,7 @@ Parent는 `APP.SPACES`다.
 | `hcm.people`              | HR 운영 › 인력 정보             | `/hr/operations/people`      | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
 | `hcm.assignments`         | HR 운영 › 발령 현황             | `/hr/operations/assignments` | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
 | `hcm.organization-design` | 조직 설계 › 조직 설계           | `/hr/design/organization`    | M/A        | `hcm.management` | 현재 operator audience, Support `WORKFORCE_READ` 포함  | Management Nav; Support 차단+전용 capability                                    |
+| `hcm.system-access`       | HRIS 설정 › 시스템 접근 및 구성 | `/hr/manage/system`          | M/A        | `hcm.management` | I: `hcm.management-system-access.v1`; `view=system`    | Management Nav; Canonical read-only PAGE                                        |
 | `hcm.reference-data`      | 데이터 및 연계 › 인력 기준정보  | `/hr/data/reference`         | M/A        | `hcm.management` | 현재 `canOperate` + `ACTION.WORKFORCE_REFERENCE`       | Management Nav; Exact Action 정합화                                             |
 | `hcm.data-operations`     | 데이터 및 연계 › 연계 및 정합성 | `/hr/data/integrations`      | M/O        | `hcm.management` | 현재 `canOperate` + `ACTION.WORKFORCE_DATA_OPERATIONS` | Management Nav; Exact Action 정합화                                             |
 | `hcm.exports`             | 데이터 및 연계 › 통제형 반출    | `/hr/data/exports`           | M/O        | `hcm.management` | 현재 `canOperate` + `DATA.WORKFORCE:MANAGE`            | Management Nav; 신규 `ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW/EXPORT` + Step-up |
@@ -469,7 +477,7 @@ Preset 승인이 회사 센터에 제품별 생성·수정·게시·운영 Actio
 
 ## 18. 동적 Route와 호환 목록
 
-다음은 정적 198개에 추가하지 않지만 Surface Resolver와 회귀 Test에 포함한다. W0에서는 수기
+다음은 정적 228개에 추가하지 않지만 Surface Resolver와 회귀 Test에 포함한다. W0에서는 수기
 목록을 `Alias/Index/Dynamic Matcher Registry`로 이전하고 문서 Snapshot과 Test를 같은 Registry에서
 생성한다.
 
@@ -502,12 +510,12 @@ Query·Hash를 보존해 한 번 Redirect하며 대상이 없으면 Workplace Su
 
 ## 19. 검증 불변식
 
-1. 정적 Menu ID와 Path는 각각 229개이고 중복이 없다.
-2. Plane 합계는 `104 + 83 + 22 + 12 + 8 = 229`이다.
-3. Task 합계는 `109 + 3 + 55 + 62 = 229`이다.
-4. `management` 83개가 Work Sidebar에 나타나지 않는다.
+1. 정적 Menu ID와 Path는 각각 230개이고 중복이 없다.
+2. Plane 합계는 `104 + 84 + 22 + 12 + 8 = 230`이다.
+3. Task 합계는 `109 + 3 + 55 + 63 = 230`이다.
+4. `management` 84개가 Work Sidebar에 나타나지 않는다.
 5. 12개 주요 업무 앱의 Work·Team 104개가 Product Management Sidebar에 나타나지 않는다.
-6. 전체 229개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 177개는 정확히 한
+6. 전체 230개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 178개는 정확히 한
    `productSurfaceId`도 가진다.
 7. Legacy Alias는 정적 Menu를 추가하지 않고 대상 Canonical Route와 같은 Surface를 해석한다.
 8. 동적 Detail Route는 Parent Menu의 Surface를 상속하되 Object 권한을 서버에서 다시 검사한다.

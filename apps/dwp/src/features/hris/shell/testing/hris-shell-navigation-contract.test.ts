@@ -45,6 +45,16 @@ describe('canonical HRIS shell navigation projection', () => {
     ]);
   });
 
+  it('uses the governed system page as the settings workbench landing when it is authorized', () => {
+    const projected = projectHrisShellNavigation(
+      new Set(['/hr/manage/system', '/hr/data/reference'])
+    ).flatMap((group) => group.items);
+
+    expect(projected).toEqual([
+      expect.objectContaining({ view: 'workbench-settings', path: '/hr/manage/system' }),
+    ]);
+  });
+
   it('assigns every compatibility PAGE to at most one shell entry', () => {
     const candidates = HRIS_SHELL_ENTRIES.flatMap((entry) => entry.candidates);
     expect(new Set(candidates).size).toBe(candidates.length);

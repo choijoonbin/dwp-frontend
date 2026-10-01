@@ -388,6 +388,13 @@
       "surfaceId": "hcm.management"
     },
     {
+      "routeContractKey": "route.hcm.management.system.page",
+      "routeId": "hcm.management.system",
+      "pattern": "/hr/manage/system",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.operations.absence.page",
       "routeId": "hcm.operations.absence",
       "pattern": "/hr/operations/absence",

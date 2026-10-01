@@ -36,9 +36,12 @@ export async function getHrisSystemSnapshot(
 ): Promise<HrisSystemSnapshot> {
   const scopedRequest = productSurfaceReadScopeConfig(contextScopeKey, signal);
   const [access, projection] = await Promise.all([
-    axiosInstance.get<ApiResponse<HrisAccessSnapshot>>(HRIS_ACCESS_SNAPSHOT_PATH, scopedRequest),
+    axiosInstance.get<ApiResponse<HrisAccessSnapshot>>(
+      `${HRIS_ACCESS_SNAPSHOT_PATH}?view=system`,
+      scopedRequest
+    ),
     axiosInstance.get<ApiResponse<HrisConfigurationProjection>>(
-      HRIS_CONFIGURATION_PROJECTION_PATH,
+      `${HRIS_CONFIGURATION_PROJECTION_PATH}?view=system`,
       scopedRequest
     ),
   ]);

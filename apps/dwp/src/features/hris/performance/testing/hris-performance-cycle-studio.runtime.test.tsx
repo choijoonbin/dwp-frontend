@@ -6,6 +6,11 @@ import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useHrisPerformanceCycleRuntime } from '../hooks/use-performance-cycle-studio';
+import { performanceCyclePublishCommand } from '../hooks/use-performance-cycle-command-executors';
+import {
+  createApprovalHighRiskAttempt,
+  restartApprovalHighRiskAttempt,
+} from '../../../../components/product-surface-high-risk-command-model';
 import {
   performanceCycleDetailQueryKey,
   performanceReceiptQueryKey,
@@ -16,6 +21,8 @@ import type { PerformanceCycleDataSource } from '../api/performance-cycle-api';
 import type {
   HrisPerformanceCycleRuntime,
   PerformanceCommandExecutor,
+  PerformanceCommandExecutors,
+  PerformancePublishCommandExecutor,
 } from '../hooks/use-performance-cycle-studio';
 import type { ProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 
@@ -33,7 +40,7 @@ const ID = {
 const HASH = 'a'.repeat(64);
 
 function cycleDetail(
-  lifecycleState: 'DRAFT' | 'PUBLISHED' = 'DRAFT',
+  lifecycleState: 'DRAFT' | 'VALIDATED' | 'PUBLISHED' = 'DRAFT',
   aggregateVersion = 1,
   allowedActions: string[] = ['VIEW', 'UPDATE_DRAFT']
 ) {
@@ -149,6 +156,36 @@ function executor(spy = vi.fn()): PerformanceCommandExecutor {
   };
 }
 
+function commandExecutors(
+  author: PerformanceCommandExecutor = executor(),
+  publish: PerformancePublishCommandExecutor = executor()
+): PerformanceCommandExecutors {
+  return {
+    create: author,
+    update: author,
+    validate: author,
+    preview: author,
+    publish,
+  };
+}
+
+function rotatedPublishExecutor(commandId: string): PerformancePublishCommandExecutor {
+  return async (execute, binding) => {
+    const authority = {
+      rolloutState: '111',
+      expectedDecisionRevision: 'decision-2',
+      contextKey: 'hcm-operations',
+      contextScopeKey: 'scope:talent',
+    } as const;
+    const restarted = restartApprovalHighRiskAttempt(
+      createApprovalHighRiskAttempt(performanceCyclePublishCommand(binding), authority),
+      authority,
+      commandId
+    );
+    return execute({ mode: 'LEGACY_COMPATIBILITY', rolloutState: '000' }, restarted.descriptor);
+  };
+}
+
 let root: Root;
 let mount: HTMLDivElement;
 let queryClient: QueryClient;
@@ -156,8 +193,7 @@ let latest: HrisPerformanceCycleRuntime;
 
 function Harness(props: {
   dataSource: PerformanceCycleDataSource;
-  authorExecutor?: PerformanceCommandExecutor;
-  publisherExecutor?: PerformanceCommandExecutor;
+  commandExecutors?: PerformanceCommandExecutors;
 }) {
   latest = useHrisPerformanceCycleRuntime({ requestScope: scope, ...props });
   return null;
@@ -239,7 +275,7 @@ describe('HRIS performance cycle studio runtime', () => {
 
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: author,
+      commandExecutors: commandExecutors(author),
     });
     await waitForCycleDetail();
     await act(async () => {
@@ -255,12 +291,150 @@ describe('HRIS performance cycle studio runtime', () => {
     queryClient.clear();
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: author,
+      commandExecutors: commandExecutors(author),
     });
     await act(async () => {
       await vi.waitFor(() => expect(latest.detail?.allowedActions).toEqual(['VIEW']));
     });
     expect(latest.canEdit).toBe(false);
+  });
+
+  it('dispatches UPDATE only through the exact update executor', async () => {
+    const before = cycleDetail('DRAFT', 1, ['VIEW', 'UPDATE_DRAFT']);
+    const after = cycleDetail('DRAFT', 2, ['VIEW', 'UPDATE_DRAFT']);
+    const source = dataSource(before);
+    (source.updateCycle as ReturnType<typeof vi.fn>).mockResolvedValue(succeededUpdate(after));
+    vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValue(ID.command);
+    const calls = {
+      create: vi.fn(),
+      update: vi.fn(),
+      validate: vi.fn(),
+      preview: vi.fn(),
+      publish: vi.fn(),
+    };
+
+    await renderHarness({
+      dataSource: source as unknown as PerformanceCycleDataSource,
+      commandExecutors: {
+        create: executor(calls.create),
+        update: executor(calls.update),
+        validate: executor(calls.validate),
+        preview: executor(calls.preview),
+        publish: executor(calls.publish),
+      },
+    });
+    await waitForCycleDetail();
+    act(() => latest.openEdit());
+    await act(async () => latest.saveDraft());
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.feedback).toBe('SAVED'));
+    });
+
+    expect(calls.update).toHaveBeenCalledOnce();
+    expect(calls.create).not.toHaveBeenCalled();
+    expect(calls.validate).not.toHaveBeenCalled();
+    expect(calls.preview).not.toHaveBeenCalled();
+    expect(calls.publish).not.toHaveBeenCalled();
+    expect(source.updateCycle).toHaveBeenCalledWith(ID.cycle, expect.any(Object), {
+      mode: 'LEGACY_COMPATIBILITY',
+      rolloutState: '000',
+    });
+  });
+
+  it('accepts a PER publish receipt bound to the proof-reissued command id', async () => {
+    const previewCommandId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1';
+    const originalPublishCommandId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2';
+    const rotatedPublishCommandId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3';
+    const validated = cycleDetail('VALIDATED', 7, ['VIEW', 'PREVIEW_PARTICIPANTS', 'PUBLISH']);
+    const published = cycleDetail('PUBLISHED', 8, ['VIEW']);
+    const preview = {
+      populationPreviewId: ID.otherReceipt,
+      cycleVersionId: ID.version,
+      workforceSnapshotId: ID.retention,
+      workforceSnapshotRevision: 31,
+      populationRuleVersionId: ID.rule,
+      state: 'READY',
+      participantCount: 0,
+      reviewerAssignmentCount: 0,
+      contentHash: HASH,
+      aggregateVersion: 1,
+      sourceCycleAggregateVersion: 7,
+      createdAt: '2026-09-01T00:00:00Z',
+      expiresAt: '2099-09-01T00:00:00Z',
+      members: [],
+    } as const;
+    const source = dataSource(validated);
+    (source.readCycle as ReturnType<typeof vi.fn>)
+      .mockResolvedValueOnce(validated)
+      .mockResolvedValueOnce(published);
+    (source.previewPopulation as ReturnType<typeof vi.fn>).mockImplementation(
+      (_cycleId: string, request: { commandId: string; expectedRevision: number }) =>
+        Promise.resolve({
+          preview,
+          receipt: {
+            receiptId: request.commandId,
+            commandType: 'PREVIEW_PARTICIPANTS',
+            originatingAction: 'performance.cycle.preview',
+            aggregateId: ID.cycle,
+            expectedAggregateVersion: request.expectedRevision,
+            appliedAggregateVersion: preview.aggregateVersion,
+            state: 'SUCCEEDED',
+            resultRef: preview.populationPreviewId,
+            errorCode: null,
+            acceptedAt: '2026-09-01T00:00:00Z',
+            completedAt: '2026-09-01T00:00:01Z',
+          },
+        })
+    );
+    (source.publishCycle as ReturnType<typeof vi.fn>).mockImplementation(
+      (_cycleId: string, request: { commandId: string; expectedRevision: number }) =>
+        Promise.resolve({
+          cycle: published,
+          receipt: {
+            receiptId: request.commandId,
+            commandType: 'PUBLISH',
+            originatingAction: 'performance.cycle.publish',
+            aggregateId: ID.cycle,
+            expectedAggregateVersion: request.expectedRevision,
+            appliedAggregateVersion: published.aggregateVersion,
+            state: 'SUCCEEDED',
+            resultRef: ID.cycle,
+            errorCode: null,
+            acceptedAt: '2026-09-01T00:00:02Z',
+            completedAt: '2026-09-01T00:00:03Z',
+          },
+        })
+    );
+    vi.spyOn(globalThis.crypto, 'randomUUID')
+      .mockReturnValueOnce(previewCommandId)
+      .mockReturnValueOnce(originalPublishCommandId);
+
+    await renderHarness({
+      dataSource: source as unknown as PerformanceCycleDataSource,
+      commandExecutors: commandExecutors(
+        executor(),
+        rotatedPublishExecutor(rotatedPublishCommandId)
+      ),
+    });
+    await waitForCycleDetail();
+    await act(async () => latest.previewSelected('2026-09-01T00:00:00Z'));
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.canPublish).toBe(true));
+    });
+    await act(async () =>
+      latest.publishSelected(ID.policy, 'Approved publication evidence for the frozen population.')
+    );
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.feedback).toBe('PUBLISHED'));
+    });
+
+    expect(source.publishCycle).toHaveBeenCalledOnce();
+    expect((source.publishCycle as ReturnType<typeof vi.fn>).mock.calls[0]?.[1]).toMatchObject({
+      commandId: rotatedPublishCommandId,
+      expectedRevision: 7,
+    });
+    expect(latest.failure).toBeNull();
+    expect(latest.detail?.aggregateVersion).toBe(8);
   });
 
   it.each([
@@ -281,7 +455,7 @@ describe('HRIS performance cycle studio runtime', () => {
 
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: executor(),
+      commandExecutors: commandExecutors(),
     });
     await waitForCycleDetail();
     await act(async () => {
@@ -322,7 +496,7 @@ describe('HRIS performance cycle studio runtime', () => {
 
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: executor(),
+      commandExecutors: commandExecutors(),
     });
     await waitForCycleDetail();
     act(() => latest.openEdit());
@@ -356,7 +530,7 @@ describe('HRIS performance cycle studio runtime', () => {
 
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: executor(),
+      commandExecutors: commandExecutors(),
     });
     await waitForCycleDetail();
     act(() => latest.openEdit());
@@ -381,7 +555,7 @@ describe('HRIS performance cycle studio runtime', () => {
 
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: executor(),
+      commandExecutors: commandExecutors(),
     });
     await waitForCycleDetail();
     act(() => latest.openEdit());
@@ -418,7 +592,7 @@ describe('HRIS performance cycle studio runtime', () => {
 
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: executor(),
+      commandExecutors: commandExecutors(),
     });
     await waitForCycleDetail();
     act(() => latest.openEdit());
@@ -452,7 +626,7 @@ describe('HRIS performance cycle studio runtime', () => {
 
     await renderHarness({
       dataSource: source as unknown as PerformanceCycleDataSource,
-      authorExecutor: executor(),
+      commandExecutors: commandExecutors(),
     });
     await waitForCycleDetail();
     expect(latest.canCreate).toBe(true);

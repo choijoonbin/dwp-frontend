@@ -34,13 +34,19 @@ export type {
   HrisPerformanceCycleStudioRuntimeProps,
 } from './pages/hris-performance-cycle-studio';
 export {
+  HrisPerformanceCycleOperationsWorkspace,
+  type HrisPerformanceCycleOperationsWorkspaceProps,
+} from './pages/hris-performance-cycle-operations-workspace';
+export {
   useHrisPerformanceCycleRequestScope,
   useHrisPerformanceCycleRuntime,
 } from './hooks/use-performance-cycle-studio';
+export { usePerformanceCycleCommandExecutors } from './hooks/use-performance-cycle-command-executors';
 export type {
   HrisPerformanceCycleRuntime,
   HrisPerformanceCycleRuntimeOptions,
   PerformanceCommandExecutor,
+  PerformanceCommandExecutors,
 } from './hooks/use-performance-cycle-studio';
 export {
   buildCreatePerformanceCycleRequest,

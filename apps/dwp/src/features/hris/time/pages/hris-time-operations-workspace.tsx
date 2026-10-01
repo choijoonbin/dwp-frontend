@@ -5,7 +5,12 @@ import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
+import { useProductActionMutation } from '../../../../components/use-product-action-mutation';
 import { useProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
+import {
+  createHrisTimeWorkPlanDataSource,
+  hrisTimeWorkPlanHttpClient,
+} from '../api/hris-time-work-plan-api';
 import { HrisTimeWorkPlanStudioRuntime } from './hris-time-work-plan-studio';
 import {
   resolveHrisTimeWorkPlanOperationsScope,
@@ -14,8 +19,12 @@ import {
 } from '../model/hris-time-work-plan-operations-scope';
 
 import type { ProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
+import type { ProductActionRouteContractKey } from '../../../../components/use-product-action-mutation';
 import type { WorkPlanStudioDataSource } from '../api/hris-time-work-plan-api';
 import type { HrisTimeWorkPlanSimulationExecutor } from './hris-time-work-plan-studio';
+
+export const HRIS_TIME_WORK_PLAN_SIMULATE_ACTION_CONTRACT =
+  'route.hcm.operations.work-plan-simulate.action' as const satisfies ProductActionRouteContractKey;
 
 /**
  * This binding is intentionally injected only after the owner API's exact DATA and ACTION
@@ -95,11 +104,23 @@ export function HrisTimeOperationsWorkspaceRuntime({
 }
 
 /**
- * Canonical mount candidate for `/hr/operations/time`. It is closed by default until the owner
- * gateway binding and its matching generated route contracts are present.
+ * Canonical production mount for `/hr/operations/time`. The default owner binding is assembled
+ * only from the generated simulation ACTION and the scoped owner HTTP adapter. Tests and host
+ * applications may inject an equivalent binding, but the route must never mount an unbound
+ * workspace now that the owner contracts are registered.
  */
 export function HrisTimeOperationsWorkspace({ ownerBinding }: HrisTimeOperationsWorkspaceProps) {
   const requestScope = useHrisTimeOperationsRequestScope();
+  const simulationExecutor = useProductActionMutation(
+    HRIS_TIME_WORK_PLAN_SIMULATE_ACTION_CONTRACT
+  );
+  const defaultOwnerBinding = useMemo<HrisTimeWorkPlanOperationsOwnerBinding>(
+    () => ({
+      dataSource: createHrisTimeWorkPlanDataSource(hrisTimeWorkPlanHttpClient),
+      simulationExecutor,
+    }),
+    [simulationExecutor]
+  );
   const [searchParams] = useSearchParams();
   const currentDate = useMemo(() => workPlanOperationsToday(effectiveTimeZone()), []);
   const effectiveOn = resolveWorkPlanOperationsEffectiveOn(
@@ -110,7 +131,7 @@ export function HrisTimeOperationsWorkspace({ ownerBinding }: HrisTimeOperations
     <HrisTimeOperationsWorkspaceRuntime
       requestScope={requestScope}
       effectiveOn={effectiveOn}
-      ownerBinding={ownerBinding}
+      ownerBinding={ownerBinding ?? defaultOwnerBinding}
     />
   );
 }

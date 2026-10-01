@@ -315,6 +315,7 @@ function hcmSurfaceRoutes(): RouteObject[] {
             />
           ),
         },
+        ...managementByPrefix('/hr/manage'),
         { path: '*', element: <ProductCanaryUnknownRoute productId="hcm" legacy={hcmPage} /> },
       ],
     },

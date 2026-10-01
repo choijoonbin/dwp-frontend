@@ -37,14 +37,13 @@ import { getPerformanceCycleCopy } from '../model/performance-cycle-copy';
 import type { PerformanceCycleDataSource } from '../api/performance-cycle-api';
 import type {
   HrisPerformanceCycleRuntimeOptions,
-  PerformanceCommandExecutor,
+  PerformanceCommandExecutors,
 } from '../hooks/use-performance-cycle-studio';
 import type { ProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 
 export type HrisPerformanceCycleStudioProps = Readonly<{
   dataSource?: PerformanceCycleDataSource;
-  authorExecutor?: PerformanceCommandExecutor;
-  publisherExecutor?: PerformanceCommandExecutor;
+  commandExecutors?: PerformanceCommandExecutors;
 }>;
 
 export type HrisPerformanceCycleStudioRuntimeProps = HrisPerformanceCycleStudioProps &
@@ -84,8 +83,7 @@ function CycleStudioHeader({
 export function HrisPerformanceCycleStudioRuntime({
   requestScope,
   dataSource,
-  authorExecutor,
-  publisherExecutor,
+  commandExecutors,
 }: HrisPerformanceCycleStudioRuntimeProps) {
   const { i18n } = useTranslation('hcm');
   const copy = getPerformanceCycleCopy(i18n.resolvedLanguage, i18n.language);
@@ -93,8 +91,7 @@ export function HrisPerformanceCycleStudioRuntime({
   const runtime = useHrisPerformanceCycleRuntime({
     requestScope,
     dataSource,
-    authorExecutor,
-    publisherExecutor,
+    commandExecutors,
   });
   const [previewOpen, setPreviewOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);

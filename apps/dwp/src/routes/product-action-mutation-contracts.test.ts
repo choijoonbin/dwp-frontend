@@ -15,6 +15,9 @@ import {
   HCM_WORKFORCE_REFERENCE_MUTATION_API_CONTRACT,
   SERVICES_MUTATION_API_CONTRACTS,
 } from '@dwp-frontend/shared-utils';
+import { PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS } from '../features/hris/payroll/api/payroll-foundation-api';
+import { PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS } from '../features/hris/performance/api/performance-cycle-api';
+import { HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS } from '../features/hris/time/api/hris-time-work-plan-api';
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from './product-surface-authorization.generated';
 
@@ -36,6 +39,9 @@ const IMPLEMENTED_ACTION_CONTRACTS = [
   ...HCM_WORKFORCE_EXPORT_MUTATION_API_CONTRACTS,
   HCM_WORKFORCE_REFERENCE_MUTATION_API_CONTRACT,
   HCM_HOME_PREFERENCE_MUTATION_API_CONTRACT,
+  ...PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS,
+  ...PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS,
+  ...HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS,
 ] as const;
 
 function comparable(values: readonly ComparableContract[]) {
@@ -126,6 +132,65 @@ const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   recordApprovalRoutingGroupUsage: ['approvalAdminV2CanonicalMutation'],
   cloneApprovalTemplateDraft: ['approvalAdminV2CanonicalMutation'],
 };
+
+const HRIS_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
+  createPerformanceCycle: ['commandConfig'],
+  updatePerformanceCycle: ['commandConfig'],
+  validatePerformanceCycle: ['commandConfig'],
+  previewPerformancePopulation: ['commandConfig'],
+  publishPerformanceCycle: ['commandConfig'],
+  createPayrollFoundation: ['commandScope'],
+  updatePayrollFoundation: ['commandScope'],
+  simulatePayrollFoundation: ['postVersionCommand', 'commandScope'],
+  publishPayrollFoundation: ['postVersionCommand', 'commandScope'],
+  reversePayrollFoundation: ['commandScope'],
+  createHrisTimeWorkPlanDraft: ['timeCommandConfig'],
+  simulateHrisTimeWorkPlan: ['timeCommandConfig'],
+  validateHrisTimeWorkPlan: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
+  submitHrisTimeWorkPlanReview: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
+  applyHrisTimeWorkPlanApproval: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
+  publishHrisTimeWorkPlan: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
+};
+
+function hrisExecutionBody(source: ts.SourceFile, apiFunction: string) {
+  const declarations = new Map(
+    source.statements
+      .filter(ts.isFunctionDeclaration)
+      .filter((node) => node.name && node.body)
+      .map((node) => [node.name!.text, node])
+  );
+  const chain = HRIS_EXECUTION_CHAINS[apiFunction];
+  if (!chain) throw new Error(`Unregistered HRIS execution chain: ${apiFunction}`);
+  const bodies: string[] = [];
+  let current = declarations.get(apiFunction);
+  for (const calleeName of chain) {
+    if (!current?.body) throw new Error(`Missing HRIS wrapper: ${apiFunction}`);
+    bodies.push(current.body.getText(source));
+    const calls: ts.CallExpression[] = [];
+    const visit = (node: ts.Node) => {
+      if (
+        ts.isCallExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        node.expression.text === calleeName
+      ) {
+        calls.push(node);
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(current.body);
+    expect(calls, `${current.name?.text} -> ${calleeName}`).toHaveLength(1);
+    const callee = declarations.get(calleeName);
+    const authorityIndex = callee?.parameters.findIndex(
+      (parameter) => parameter.name.getText(source) === 'authority'
+    );
+    expect(authorityIndex, `${calleeName} authority parameter`).toBeGreaterThanOrEqual(0);
+    expect(calls[0]?.arguments[authorityIndex!]?.getText(source)).toBe('authority');
+    current = callee;
+  }
+  if (!current?.body) throw new Error('Missing HRIS authority configuration');
+  bodies.push(current.body.getText(source));
+  return bodies.join('\n');
+}
 
 // Shared transports must forward the same authority at every AST call edge.
 function approvalExecutionBody(source: ts.SourceFile, apiFunction: string) {
@@ -295,10 +360,20 @@ describe('Generated product ACTION mutation closure', () => {
       'workforce-export-api.ts',
       'workforce-api.ts',
       'home-preference-api.ts',
-    ];
+    ].map((filename) => path.join(apiRoot, filename));
+    files.push(
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/performance/api/performance-cycle-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/payroll/api/payroll-foundation-api.ts'
+      ),
+      path.resolve(process.cwd(), 'apps/dwp/src/features/hris/time/api/hris-time-work-plan-api.ts')
+    );
 
-    for (const filename of files) {
-      const absolute = path.join(apiRoot, filename);
+    for (const absolute of files) {
       const source = ts.createSourceFile(
         absolute,
         fs.readFileSync(absolute, 'utf8'),
@@ -317,7 +392,9 @@ describe('Generated product ACTION mutation closure', () => {
             parameters: node.parameters.map((parameter) => parameter.name.getText(source)),
             body: Object.hasOwn(APPROVAL_EXECUTION_CHAINS, node.name.text)
               ? approvalExecutionBody(source, node.name.text)
-              : node.body.getText(source),
+              : Object.hasOwn(HRIS_EXECUTION_CHAINS, node.name.text)
+                ? hrisExecutionBody(source, node.name.text)
+                : node.body.getText(source),
           });
         }
         ts.forEachChild(node, visit);
