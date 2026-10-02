@@ -71,4 +71,32 @@ describe('HRIS visible product identity', () => {
     expect(home.apps.items['ref-app-people']).toMatchObject({ name: 'HRIS', shortName: 'HRIS' });
     expect(home.apps.items['ref-app-people'].description).not.toContain('DWP HCM');
   });
+
+  it.each(['ko', 'en'])('keeps every direct HCM product label on HRIS in %s', (language) => {
+    const home = locale(`libs/shared-i18n/src/locales/${language}/home.json`) as {
+      flow: {
+        apps: { 'APP.HCM': string };
+        context: { domains: { people: string } };
+        contributions: { notification: { apps: { hcm: string } } };
+        sources: { people: string };
+      };
+    };
+    const work = locale(`libs/shared-i18n/src/locales/${language}/work.json`) as {
+      reference: { apps: { 'ref-app-people': { name: string } } };
+    };
+    const admin = locale(`libs/shared-i18n/src/locales/${language}/admin.json`) as {
+      appGovernance: { adoption: { products: { hcm: string } } };
+    };
+    const notifications = locale(`libs/shared-i18n/src/locales/${language}/notifications.json`) as {
+      sources: { hcm: string };
+    };
+
+    expect(home.flow.apps['APP.HCM']).toBe('HRIS');
+    expect(home.flow.context.domains.people).toBe('HRIS');
+    expect(home.flow.contributions.notification.apps.hcm).toBe('HRIS');
+    expect(home.flow.sources.people).toBe('HRIS');
+    expect(work.reference.apps['ref-app-people'].name).toBe('HRIS');
+    expect(admin.appGovernance.adoption.products.hcm).toBe('HRIS');
+    expect(notifications.sources.hcm).toBe('HRIS');
+  });
 });
