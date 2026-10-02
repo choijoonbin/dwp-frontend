@@ -208,7 +208,7 @@ export const WORKSPACE_APPS_FIXTURE = [
   },
   {
     id: 'ref-app-people',
-    name: 'HR',
+    name: 'HRIS',
     description: 'Personal HR, people, organization, and role-aware workforce operations.',
     owner: 'People Platform',
     category: 'PEOPLE',
