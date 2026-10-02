@@ -177,6 +177,7 @@ export type HrisW1LiveEnvironment = Readonly<{
   gatewayURL: string;
   artifactRoot: string;
   assertionTimeoutMs: number;
+  expectedPayrollConfigurationId: string;
   tenants: readonly [HrisW1Tenant, HrisW1Tenant];
 }>;
 
@@ -684,6 +685,16 @@ export function loadHrisW1LiveEnvironment(): HrisW1LiveEnvironment {
   ) {
     fail('HRIS_W1_LIVE_ASSERTION_TIMEOUT_MS must be an integer between 10000 and 120000');
   }
+  const expectedPayrollConfigurationId = required(
+    'HRIS_W1_EXPECTED_PAYROLL_CONFIGURATION_ID'
+  ).toLowerCase();
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u.test(
+      expectedPayrollConfigurationId
+    )
+  ) {
+    fail('HRIS_W1_EXPECTED_PAYROLL_CONFIGURATION_ID must be a canonical UUID');
+  }
   const tenantA = tenant('tenant-a', 'HRIS_W1_TENANT_A');
   const tenantB = tenant('tenant-b', 'HRIS_W1_TENANT_B');
   if (tenantA.tenantId === tenantB.tenantId) fail('tenant A and tenant B ids must be distinct');
@@ -693,6 +704,7 @@ export function loadHrisW1LiveEnvironment(): HrisW1LiveEnvironment {
     gatewayURL: gateway.origin,
     artifactRoot,
     assertionTimeoutMs,
+    expectedPayrollConfigurationId,
     tenants: [tenantA, tenantB],
   };
 }

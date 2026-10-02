@@ -77,6 +77,7 @@ export default defineConfig({
       HRIS_W1_LIVE_BASE_URL: '',
       HRIS_W1_LIVE_GATEWAY_URL: '',
       HRIS_W1_LIVE_RUN_ID: '',
+      HRIS_W1_EXPECTED_PAYROLL_CONFIGURATION_ID: '',
       HRIS_W1_TENANT_A_EMAIL: '',
       HRIS_W1_TENANT_A_ID: '',
       HRIS_W1_TENANT_A_PASSWORD: '',

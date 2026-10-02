@@ -1,4 +1,5 @@
-import { chmod, readFile, rm, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { chmod, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { expect, test } from '@playwright/test';
@@ -10,6 +11,7 @@ import {
   type HrisW1RouteCase,
   type HrisW1Tenant,
 } from './support/hris-w1-live-environment';
+import { sanitizeHrisW1Har } from './support/hris-w1-live-artifact-sanitizer';
 
 const runtime = loadHrisW1LiveEnvironment();
 const baseOrigin = new URL(runtime.baseURL).origin;
@@ -17,27 +19,6 @@ const SAFE_READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 const ACCESS_STATE_SELECTOR = '[data-testid="product-surface-access-state"]';
 const REQUIRED_HIGH_ASSURANCE = 'urn:dwp:assurance:high';
 const baseURL = new URL(runtime.baseURL);
-const SAFE_REQUEST_HEADERS = new Set([
-  'accept',
-  'accept-language',
-  'content-length',
-  'content-type',
-  'origin',
-  'user-agent',
-  'x-correlation-id',
-  'x-request-id',
-]);
-const SAFE_RESPONSE_HEADERS = new Set([
-  'cache-control',
-  'content-length',
-  'content-type',
-  'date',
-  'server',
-  'x-correlation-id',
-  'x-request-id',
-]);
-const CREDENTIAL_HEADER =
-  /^(?:authorization|cookie|set-cookie|proxy-authorization|(?:x-)?(?:csrf|xsrf)-token)$/iu;
 
 type JsonRecord = Record<string, unknown>;
 
@@ -47,6 +28,8 @@ type NetworkRecord = Readonly<{
   contextScopeKey: string | null;
   status?: number;
   bodyByteLength?: number;
+  responseBodySha256?: string;
+  payrollConfigurationIds?: readonly string[];
   fromServiceWorker?: boolean;
 }>;
 
@@ -144,18 +127,6 @@ async function responseJson(response: PW.APIResponse, location: string): Promise
   const contentType = response.headers()['content-type'] ?? '';
   expect(contentType, `${location} must return JSON`).toContain('application/json');
   return jsonRecord(await response.json(), location);
-}
-
-function redactURL(value: string): string {
-  try {
-    const url = new URL(value);
-    for (const key of Array.from(url.searchParams.keys())) {
-      url.searchParams.set(key, '[REDACTED]');
-    }
-    return url.toString();
-  } catch {
-    return '[INVALID_URL_REDACTED]';
-  }
 }
 
 function newFirewallObservation(): FirewallObservation {
@@ -371,80 +342,6 @@ async function validateStepUpResponse(
     ...(validUntil ? { validUntil } : {}),
     revalidateAt,
   };
-}
-
-async function sanitizeHar(rawPath: string, safePath: string, forbiddenValues: readonly string[]) {
-  try {
-    const secretValues = new Set(forbiddenValues);
-    const har = jsonRecord(JSON.parse(await readFile(rawPath, 'utf8')), 'HAR');
-    const log = jsonRecord(har.log, 'HAR.log');
-    const entries = Array.isArray(log.entries) ? log.entries : [];
-    for (const entryValue of entries) {
-      const entry = jsonRecord(entryValue, 'HAR entry');
-      for (const sideName of ['request', 'response'] as const) {
-        const side = jsonRecord(entry[sideName], `HAR entry.${sideName}`);
-        if (typeof side.url === 'string') side.url = redactURL(side.url);
-        if (sideName === 'request' && Array.isArray(side.queryString)) {
-          side.queryString = side.queryString.map((queryValue) => ({
-            ...jsonRecord(queryValue, 'HAR query'),
-            value: '[REDACTED]',
-          }));
-        }
-        if (sideName === 'response' && typeof side.redirectURL === 'string') {
-          side.redirectURL = side.redirectURL ? '[REDACTED]' : '';
-        }
-        const safeHeaders = sideName === 'request' ? SAFE_REQUEST_HEADERS : SAFE_RESPONSE_HEADERS;
-        if (Array.isArray(side.headers)) {
-          for (const headerValue of side.headers) {
-            const header = jsonRecord(headerValue, 'HAR header');
-            if (
-              typeof header.name === 'string' &&
-              CREDENTIAL_HEADER.test(header.name) &&
-              typeof header.value === 'string' &&
-              header.value.length >= 8
-            ) {
-              secretValues.add(header.value);
-            }
-          }
-          side.headers = side.headers.filter((headerValue) => {
-            const header = jsonRecord(headerValue, 'HAR header');
-            return typeof header.name === 'string' && safeHeaders.has(header.name.toLowerCase());
-          });
-        }
-        if (Array.isArray(side.cookies)) {
-          for (const cookieValue of side.cookies) {
-            const cookie = jsonRecord(cookieValue, 'HAR cookie');
-            if (typeof cookie.value === 'string' && cookie.value.length >= 8) {
-              secretValues.add(cookie.value);
-            }
-          }
-        }
-        side.cookies = [];
-        if (sideName === 'request') delete side.postData;
-        else {
-          const content = side.content;
-          if (content && typeof content === 'object' && !Array.isArray(content)) {
-            delete (content as JsonRecord).text;
-          }
-        }
-      }
-    }
-    const serialized = `${JSON.stringify(har, null, 2)}\n`;
-    if (Array.from(secretValues).some((value) => value.length > 0 && serialized.includes(value))) {
-      throw new Error('Sanitized HAR still contains a synthetic credential value.');
-    }
-    if (
-      /"name"\s*:\s*"(?:authorization|cookie|set-cookie|proxy-authorization|(?:x-)?(?:csrf|xsrf)-token)"/iu.test(
-        serialized
-      )
-    ) {
-      throw new Error('Sanitized HAR still contains a credential-bearing header.');
-    }
-    await writeFile(safePath, serialized, { mode: 0o600 });
-    await chmod(safePath, 0o600);
-  } finally {
-    await rm(rawPath, { force: true });
-  }
 }
 
 function browserPath(value: string): string {
@@ -770,7 +667,7 @@ async function runTenant(
   runtimeObservations: TenantRuntimeObservation[]
 ): Promise<TenantEvidence> {
   const rawHar = info.outputPath(`${tenant.label}-raw.har`);
-  const har = info.outputPath(`${tenant.label}.sanitized.har`);
+  const har = info.outputPath(`${tenant.label}.sanitized.har.json`);
   const firewall = newFirewallObservation();
   const records: NetworkRecord[] = [];
   const pageErrors: string[] = [];
@@ -806,18 +703,43 @@ async function runTenant(
     tenantPage.on('response', async (response) => {
       const url = new URL(response.url());
       if (!url.pathname.startsWith('/api/')) return;
-      let bodyByteLength = 0;
+      let bytes = Buffer.alloc(0);
       try {
-        bodyByteLength = (await response.body()).byteLength;
+        bytes = await response.body();
       } catch {
-        bodyByteLength = 0;
+        bytes = Buffer.alloc(0);
+      }
+      let payrollConfigurationIds: string[] | undefined;
+      if (
+        response.status() === 200 &&
+        response.request().method() === 'GET' &&
+        url.pathname === '/api/payroll/v1/hris/payroll/foundation/configurations'
+      ) {
+        try {
+          const payload = jsonRecord(JSON.parse(bytes.toString('utf8')), 'PAY list response');
+          const data = jsonRecord(payload.data, 'PAY list response.data');
+          const configurations = Array.isArray(data.configurations) ? data.configurations : [];
+          payrollConfigurationIds = configurations.map((value, index) =>
+            String(jsonRecord(value, `PAY list configuration[${index}]`).configurationId)
+          );
+          expect(
+            payrollConfigurationIds.filter(
+              (configurationId) => configurationId === runtime.expectedPayrollConfigurationId
+            ),
+            'Browser PAY response must contain exactly one runner-attested configuration.'
+          ).toHaveLength(1);
+        } catch {
+          payrollConfigurationIds = [];
+        }
       }
       records.push({
         method: response.request().method(),
         path: url.pathname,
         contextScopeKey: exactQueryValue(url, 'contextScopeKey'),
         status: response.status(),
-        bodyByteLength,
+        bodyByteLength: bytes.byteLength,
+        responseBodySha256: createHash('sha256').update(bytes).digest('hex'),
+        ...(payrollConfigurationIds ? { payrollConfigurationIds } : {}),
         fromServiceWorker: response.fromServiceWorker(),
       });
     });
@@ -868,7 +790,7 @@ async function runTenant(
         try {
           await context.close();
         } finally {
-          await sanitizeHar(rawHar, har, [tenant.email, tenant.password]);
+          await sanitizeHrisW1Har(rawHar, har, [tenant.email, tenant.password]);
         }
         await info.attach(`${tenant.label}-sanitized-har`, {
           path: har,

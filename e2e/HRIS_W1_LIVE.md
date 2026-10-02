@@ -10,6 +10,129 @@ Current handoff status (2026-10-01): **HOLD — not live-executed**. Run only af
 Gateway, version-33 authorization activation, and two synthetic tenants are ready. Never use a
 production URL, customer tenant, or real account.
 
+## Repository checkpoint bridge
+
+`scripts/run-hris-w1-checkpoint.mjs` is the repository-owned executable for the backend W1
+runner's external live checkpoint. The runner must invoke its absolute, non-symlink path and pin
+the executable's SHA-256. The bridge accepts no command-line configuration and fails closed on
+unknown `DWP_W1_*` variables.
+
+The runner supplies one run id, its evidence directory and checkpoint-manifest path, active bundle
+version/revision, seven distinct loopback service origins (`AUTH`, `PLATFORM`, `PEOPLE`, `PROVIDER`,
+`PAYROLL`, `TIME`, and `GATEWAY`), and both synthetic tenant credentials. Each tenant binding
+contains provider tenant/tenant/user ids; actor person, worker, assignment, and legal-employer
+public ids; target person, worker, and assignment public ids; the exact target-population revision
+and count; tenant key; email; and password. The exact actor legal-employer variable is
+`DWP_W1_TENANT_<A|B>_ACTOR_LEGAL_EMPLOYER_PUBLIC_ID`; the bridge does not accept the deprecated
+unqualified name.
+
+Before the browser run, the bridge obtains the PAGE, browser DATA, and initial update ACTION
+decisions needed to build the route matrices. After browser acceptance it independently evaluates
+the update, simulate, receipt, and detail contracts while executing the owner chain. Every PAY
+evaluation must preserve both the identical `contextKey` and `contextScopeKey`; matching only the
+scope is insufficient. The People operations page, search, and detail contracts must likewise
+preserve both values. A registered PAGE contract must return a live fail-closed decision before it
+can become the browser denial case.
+
+The bridge owns a new loopback frontend port and a new browser artifact, runs this existing
+Playwright suite, and validates the complete `hris-w1-live-browser/v2` manifest before trusting it.
+The browser PAY response records its raw body SHA-256 and the one expected configuration id. The
+bridge then reuses the same authenticated Gateway session for PAY owner read, update, exact
+idempotency replay, simulate, receipt lookup/lineage, and the author=self separation-of-duties read
+model. The separation-of-duties assertion is explicitly read-model evidence: no publish command is
+claimed because the live authority correctly requires a HIGH step-up challenge. The population
+boundary requires an exact HTTP 200 for the runner's target person, binds the live response to the
+target worker number, assignment key, and derived `policyRevision`, and records the runner-attested
+target person/worker/assignment public ids. The real actor person supplies the contrasting 403/404;
+invented UUIDs cannot count.
+
+`runtime.json` is validated as a closed schema, including migration-control receipts, rollout and
+Gateway authority projections, negative projection ids, PAY/TIM projections, payroll fixture, and
+`payrollFoundationDatabaseObservation`. That preflight database observation is canonically
+digested and bound to the same tenant, configuration, version 2, legal entity, author, command,
+fixture receipt, definition, and dependency digests. The `path.browser-gateway-owner-db` assertion
+then joins that DB digest to the browser response digest/configuration id and the owner update and
+simulate command/result digests. After the bridge returns, the backend runner performs the
+postflight database check for final version 4, SIMULATED state, last simulate command, singleton
+UPDATE/SIMULATE receipts, and singleton version-3/version-4 command rows.
+
+Each runtime tenant also carries an exact `authBindingExecution` gap record. It proves that the
+official workforce-event contract was validated but honestly states that the already-provisioned
+LOCAL administrator was bound through the run-bound local synthetic activation boundary rather
+than claiming the official event itself executed.
+
+The three stale/expired/revoked assertions are never synthesized by the bridge. They must already
+exist in `runtime.json` at `projectionFeed.negativeObservations` with this closed schema:
+
+```json
+{
+  "schemaVersion": 1,
+  "observations": [
+    {
+      "assertionName": "negative.stale-evidence-denied",
+      "source": "LIVE_GATEWAY_OWNER_REQUEST",
+      "method": "GET",
+      "path": "/api/payroll/v1/hris/payroll/foundation/configurations/<run-bound UUIDv5>",
+      "tenantId": 1,
+      "actorId": 2,
+      "evidenceState": "STALE",
+      "projectionId": "<dwp:<run-id>:payroll:negative:stale UUIDv5>",
+      "projectionRevision": "<lowercase 64-hex revision>",
+      "contextScopeKey": "hcm-scope-<40 hex>",
+      "policyRevision": "rollout-<64 hex>",
+      "authorizationRevision": "psr-<64 hex>",
+      "databaseTransition": "BUILDING->ACTIVE->SUPERSEDED",
+      "databaseStatus": "SUPERSEDED",
+      "databaseValidity": "EXPIRED",
+      "databaseMemberCount": 1,
+      "projectionObservationSha256": "<canonical projection-record SHA-256>",
+      "status": 503,
+      "errorCode": "AUTHORITY_RESOLUTION_UNAVAILABLE",
+      "ownerErrorMessage": "No current Payroll-owned legal-entity membership matches the authority.",
+      "observedAt": "<UTC instant>",
+      "responseBodySha256": "<lowercase SHA-256>",
+      "observationSha256": "<SHA-256 of canonical JSON excluding this field>"
+    }
+  ],
+  "aggregateSha256": "<SHA-256 of the ordered three-record array>"
+}
+```
+
+There must be exactly three ordered observations, one for each assertion/evidence state. The bridge
+derives each API target again from URL-namespace UUIDv5 name
+`dwp:<run-id>:negative:<lowercase-state>` and independently derives each database projection id
+from `dwp:<run-id>:payroll:negative:<lowercase-state>`. Stale uses configuration detail, expired
+uses configuration versions, and revoked uses receipt detail. Each observation must be the exact
+HTTP 503 / `AUTHORITY_RESOLUTION_UNAVAILABLE` caused by its matching run-bound projection and live
+allowed Gateway authority. The bridge verifies the tenant-A actor, per-record canonical digest,
+ordered aggregate digest, and restored positive projection state. A missing, reordered, relabelled,
+or altered observation makes the checkpoint HOLD. The companion
+`negativeObservationProjections` object is also closed: it contains schema version 1, lifecycle
+flags, exact `STALE`/`EXPIRED`/`REVOKED` projection records, and their aggregate canonical digest.
+The HTTP and DB projection fields—including projection, policy, and authorization revisions—must
+be byte-for-byte equal. Expected database status/validity pairs are `SUPERSEDED/EXPIRED`,
+`ACTIVE/EXPIRED`, and `REVOKED/EXPIRED`, respectively.
+
+On success the bridge writes exactly 15 distinct assertion JSON files plus schema-version-1
+`checkpoint/manifest.json`, with a SHA-256 binding for every assertion file. Provenance includes the
+frontend Git HEAD and clean state, executable bytes, and closure hashes for every checkpoint helper,
+the Playwright config, live spec, support modules, package metadata, Vite config, Node version, and
+lockfile. The closure is read through `O_NOFOLLOW` single descriptors with metadata checked before
+and after each read, then rechecked immediately after module import and at completion. TERM, INT,
+normal exit, and post-suite cleanup terminate the detached Playwright process group and remove raw
+HAR files; only `*.sanitized.har.json` evidence may survive.
+
+Static verification commands for a frozen bridge change are:
+
+```sh
+node --check scripts/run-hris-w1-checkpoint.mjs
+node --test scripts/run-hris-w1-checkpoint.test.mjs
+yarn prettier --check scripts/run-hris-w1-checkpoint.mjs scripts/run-hris-w1-checkpoint.test.mjs e2e/HRIS_W1_LIVE.md
+```
+
+These checks do not produce live acceptance evidence. Only the backend runner's isolated full-mode
+execution can change the handoff status from HOLD.
+
 ## Preconditions
 
 - Use the repository's supported Node 24 runtime and an installed Chromium browser.
@@ -38,6 +161,7 @@ production URL, customer tenant, or real account.
 | `HRIS_W1_TENANT_A_PASSWORD`, `HRIS_W1_TENANT_B_PASSWORD`       | Secret-injected synthetic password; never commit or print it        |
 | `HRIS_W1_TENANT_A_ROUTES_JSON`, `HRIS_W1_TENANT_B_ROUTES_JSON` | Route matrices described below                                      |
 | `HRIS_W1_LIVE_ASSERTION_TIMEOUT_MS`                            | Optional integer from 10000 through 120000; default 45000           |
+| `HRIS_W1_EXPECTED_PAYROLL_CONFIGURATION_ID`                    | Runner-attested PAY fixture UUID required in the browser response   |
 
 After injecting every required variable without printing its value, run:
 
@@ -141,12 +265,15 @@ request must fail closed with 401 or 403. Login, me, and rollout requests use ze
 must return from the exact owned frontend origin/path. Login happens in a no-HAR context; its
 in-memory storage state is then passed to the recorded route context.
 
-Passing evidence includes route screenshots, the HIGH preview screenshot, a sanitized HAR, the
+Passing evidence includes route screenshots, the HIGH preview screenshot, a `.sanitized.har.json`, the
 Playwright reports, and `synthetic-acceptance-manifest.json`. On orderly teardown, raw HAR files are
 always sanitized and deleted; the exact raw path is also cleared before recording starts.
-The sanitizer removes request bodies, response bodies, cookies, credential-bearing headers, and
-all query values, then checks that the synthetic email/password and collected session values do
-not remain.
+The sanitizer reads the raw HAR through one `O_NOFOLLOW` descriptor, checks file metadata before
+and after the read, rejects hard links and files over 32 MiB, removes request bodies, response
+bodies, cookies, credential-bearing headers, and all query values, then checks that the synthetic
+email/password and collected session values do not remain. Every later browser-artifact read and
+secret scan uses the same attested-read pattern and fails closed above 32 MiB rather than skipping
+the file.
 
 The manifest can report `PASS` only after both browser contexts have closed and the global boundary
 shows zero owner/mismatched-authority mutation attempts, zero external HTTP/WebSocket attempts,
