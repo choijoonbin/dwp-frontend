@@ -11,7 +11,7 @@ import {
 } from './hris-w1-checkpoint-core.mjs';
 import {
   assertReceipt,
-  assertSameContextBinding,
+  assertSameScopeBinding,
   configurationById,
   dataFromSuccess,
   evaluateExact,
@@ -34,7 +34,7 @@ export async function runPayrollOwnerChain(
   payrollProjection,
   databaseObservation
 ) {
-  const initialBinding = assertSameContextBinding(
+  const initialBinding = assertSameScopeBinding(
     'PAY page/read/action',
     contracts.payrollPage,
     contracts.payrollRead,
@@ -86,7 +86,7 @@ export async function runPayrollOwnerChain(
     PAYROLL_ROUTES.update.routeContractKey,
     'ALLOWED'
   );
-  assertSameContextBinding('PAY update binding', contracts.payrollPage, updateAuthority);
+  assertSameScopeBinding('PAY update binding', contracts.payrollPage, updateAuthority);
   const updateCommandId = randomUUID();
   const updatePath = scoped(
     `${PAYROLL_ROUTES.list.path}/${encodeURIComponent(runtimeFixture.configurationId)}`
@@ -134,7 +134,7 @@ export async function runPayrollOwnerChain(
     PAYROLL_ROUTES.simulate.routeContractKey,
     'ALLOWED'
   );
-  assertSameContextBinding('PAY simulate binding', contracts.payrollPage, simulateAuthority);
+  assertSameScopeBinding('PAY simulate binding', contracts.payrollPage, simulateAuthority);
   const simulateCommandId = randomUUID();
   const simulatePath = scoped(
     `${PAYROLL_ROUTES.list.path}/${encodeURIComponent(runtimeFixture.configurationId)}/simulations`
@@ -172,7 +172,7 @@ export async function runPayrollOwnerChain(
     PAYROLL_ROUTES.receipt.routeContractKey,
     'ALLOWED'
   );
-  assertSameContextBinding('PAY receipt binding', contracts.payrollPage, receiptAuthority);
+  assertSameScopeBinding('PAY receipt binding', contracts.payrollPage, receiptAuthority);
   const receiptPath = scoped(
     `/api/payroll/v1/hris/payroll/foundation/receipts/${encodeURIComponent(simulateCommandId)}`
   );
@@ -198,7 +198,7 @@ export async function runPayrollOwnerChain(
     PAYROLL_ROUTES.detail.routeContractKey,
     'ALLOWED'
   );
-  const binding = assertSameContextBinding(
+  const binding = assertSameScopeBinding(
     'PAY page/read/action/receipt/detail',
     contracts.payrollPage,
     contracts.payrollRead,

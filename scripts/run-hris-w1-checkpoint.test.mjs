@@ -16,10 +16,11 @@ import {
   validateRuntimeManifest,
 } from './hris-w1-checkpoint-runtime.mjs';
 import {
-  assertSameContextBinding,
+  assertSameScopeBinding,
   buildRouteMatrices,
   createLiveSession,
   mutationJson,
+  runTimeOwnerRead,
 } from './hris-w1-checkpoint-live.mjs';
 import {
   selectBrowserPayrollResponse,
@@ -72,14 +73,50 @@ function validEnvironment() {
   };
 }
 
-function liveResponse(gatewayURL, requestPath, root) {
+function liveResponse(gatewayURL, requestPath, root, status = 200) {
   const bytes = Buffer.from(JSON.stringify(root), 'utf8');
   return {
     body: async () => bytes,
     headers: () => ({ 'content-type': 'application/json' }),
-    status: () => 200,
+    status: () => status,
     url: () => new URL(requestPath, gatewayURL).toString(),
   };
+}
+
+function timeOwnerFixture(studio, status = 200) {
+  const environment = parseCheckpointEnvironment(validEnvironment());
+  const manifest = validRuntime(environment);
+  const runtimeAuthority = manifest.projectionFeed.gatewayAuthorities.A.time;
+  const timeProjection = manifest.projectionFeed.time.A;
+  const calls = [];
+  const context = {
+    fetch: async (requestPath, options) => {
+      calls.push({ requestPath, options });
+      if (requestPath === '/api/auth/product-surface-access/evaluate') {
+        return liveResponse(environment.endpoints.gateway, requestPath, {
+          data: {
+            decision: runtimeAuthority.decision,
+            decisionRevision: runtimeAuthority.decisionRevision,
+            context: { contextKey: runtimeAuthority.contextKey },
+            scope: { key: runtimeAuthority.scopeKey },
+            revalidateAt: runtimeAuthority.revalidateAt,
+          },
+        });
+      }
+      if (requestPath.startsWith('/api/time/v1/hris/work-plans?')) {
+        return liveResponse(environment.endpoints.gateway, requestPath, { data: studio }, status);
+      }
+      throw new Error(`Unexpected TIME owner fixture request: ${requestPath}`);
+    },
+  };
+  const session = {
+    context,
+    gatewayURL: environment.endpoints.gateway,
+    tenant: environment.tenants[0],
+    label: 'tenant-a',
+    csrf: { headerName: 'X-XSRF-TOKEN', token: 'checkpoint-time-csrf-token' },
+  };
+  return { calls, runtimeAuthority, session, timeProjection };
 }
 
 test('live session obtains CSRF before posting credentials', async () => {
@@ -178,6 +215,107 @@ test('live session rejects a short authenticated CSRF token before reading the s
   assert.equal(subjectRequested, false);
 });
 
+test('TIME owner read re-evaluates authority before the exact scoped Gateway GET', async () => {
+  const studio = {
+    queryState: 'EMPTY',
+    freshness: 'CURRENT',
+    asOf: '2026-10-02T23:59:58.000Z',
+    partialFailures: [],
+    workPlans: [],
+  };
+  const fixture = timeOwnerFixture(studio);
+
+  const observed = await runTimeOwnerRead(
+    fixture.session,
+    fixture.runtimeAuthority,
+    fixture.timeProjection,
+    new Date('2026-10-02T00:00:00.000Z')
+  );
+
+  assert.equal(fixture.calls.length, 2);
+  assert.equal(fixture.calls[0].requestPath, '/api/auth/product-surface-access/evaluate');
+  assert.deepEqual(fixture.calls[0].options.data, {
+    subject: { type: 'PRODUCT', productKey: 'hcm', surfaceKey: 'hcm.operations' },
+    routeContractKey: 'route.hcm.operations.work-plans-list.data',
+  });
+  assert.equal(
+    fixture.calls[1].requestPath,
+    `/api/time/v1/hris/work-plans?effectiveOn=2026-10-02&contextScopeKey=${fixture.runtimeAuthority.scopeKey}`
+  );
+  assert.equal(fixture.calls[1].options.method, 'GET');
+  assert.deepEqual(observed.request, {
+    method: 'GET',
+    path: '/api/time/v1/hris/work-plans',
+    effectiveOn: '2026-10-02',
+    contextScopeKey: fixture.runtimeAuthority.scopeKey,
+  });
+  assert.deepEqual(observed.outcome, studio);
+  assert.equal(observed.authority.response.status, 200);
+  assert.equal(observed.response.status, 200);
+});
+
+test('TIME owner read fails closed on authority drift or any non-safe owner outcome', async () => {
+  const safeStudio = {
+    queryState: 'EMPTY',
+    freshness: 'CURRENT',
+    asOf: '2026-10-02T00:00:00.000Z',
+    partialFailures: [],
+    workPlans: [],
+  };
+  const drifted = timeOwnerFixture(safeStudio);
+  await assert.rejects(
+    () =>
+      runTimeOwnerRead(
+        drifted.session,
+        drifted.runtimeAuthority,
+        { ...drifted.timeProjection, scopeKey: `hcm-scope-${'9'.repeat(40)}` },
+        new Date('2026-10-02T00:00:00.000Z')
+      ),
+    /does not match the attested owner projection/u
+  );
+  const staleAuthority = timeOwnerFixture(safeStudio);
+  await assert.rejects(
+    () =>
+      runTimeOwnerRead(
+        staleAuthority.session,
+        staleAuthority.runtimeAuthority,
+        staleAuthority.timeProjection,
+        new Date('2026-10-02T01:00:00.000Z')
+      ),
+    /authority is already stale/u
+  );
+
+  const unsafeCases = [
+    [{ ...safeStudio, queryState: 'COMPLETE' }, 200, /exact safe EMPTY\/CURRENT/u],
+    [{ ...safeStudio, freshness: 'STALE' }, 200, /exact safe EMPTY\/CURRENT/u],
+    [
+      { ...safeStudio, partialFailures: ['TARGET_POPULATION_PLAN_UNAVAILABLE'] },
+      200,
+      /exact safe EMPTY\/CURRENT/u,
+    ],
+    [
+      { ...safeStudio, workPlans: [{ workPlanId: uuid('9', 1) }] },
+      200,
+      /exact safe EMPTY\/CURRENT/u,
+    ],
+    [{ ...safeStudio, extra: true }, 200, /unexpected field set/u],
+    [safeStudio, 503, /did not return HTTP 200/u],
+  ];
+  for (const [studio, status, expected] of unsafeCases) {
+    const fixture = timeOwnerFixture(studio, status);
+    await assert.rejects(
+      () =>
+        runTimeOwnerRead(
+          fixture.session,
+          fixture.runtimeAuthority,
+          fixture.timeProjection,
+          new Date('2026-10-02T00:00:00.000Z')
+        ),
+      expected
+    );
+  }
+});
+
 function sha256Canonical(value) {
   return createHash('sha256').update(canonicalJson(value), 'utf8').digest('hex');
 }
@@ -269,13 +407,20 @@ function rehash(feed, index) {
 }
 
 function authority(routeContractKey, decision = 'ALLOWED', suffix = '1') {
+  const challenge = decision === 'STEP_UP_REQUIRED';
   return {
     routeContractKey,
-    contextKey: `psc-${'1'.repeat(64)}`,
-    scopeKey: `hcm-scope-${suffix.repeat(40)}`,
+    contextKey: challenge ? null : `psc-${suffix.repeat(64)}`,
+    scopeKey: challenge ? null : `hcm-scope-${suffix.repeat(40)}`,
     decision,
     decisionRevision: `psr-${suffix.repeat(64)}`,
     revalidateAt: '2026-10-02T01:00:00.000Z',
+    ...(challenge
+      ? {
+          reasonCode: 'STEP_UP_REQUIRED',
+          requiredAssurance: 'urn:dwp:assurance:high',
+        }
+      : {}),
   };
 }
 
@@ -605,24 +750,27 @@ test('negative UUIDv5 contracts distinguish request targets from database projec
   assert.equal(stale.errorCode, 'AUTHORITY_RESOLUTION_UNAVAILABLE');
 });
 
-test('context binding requires both contextKey and contextScopeKey equality', () => {
+test('scope binding permits route-specific context keys but requires one owner scope', () => {
   const left = {
     contextKey: `psc-${'1'.repeat(64)}`,
     contextScopeKey: `hcm-scope-${'2'.repeat(40)}`,
   };
   const right = structuredClone(left);
-  assert.equal(assertSameContextBinding('PAY', left, right).equal, true);
-  assert.throws(
-    () => assertSameContextBinding('PAY', left, { ...right, contextKey: `psc-${'3'.repeat(64)}` }),
-    /contextKey and contextScopeKey/u
+  assert.equal(assertSameScopeBinding('PAY', left, right).equalScope, true);
+  assert.equal(
+    assertSameScopeBinding('PAY', left, {
+      ...right,
+      contextKey: `psc-${'3'.repeat(64)}`,
+    }).equalScope,
+    true
   );
   assert.throws(
     () =>
-      assertSameContextBinding('PAY', left, {
+      assertSameScopeBinding('PAY', left, {
         ...right,
         contextScopeKey: `hcm-scope-${'4'.repeat(40)}`,
       }),
-    /contextKey and contextScopeKey/u
+    /contextScopeKey/u
   );
 });
 

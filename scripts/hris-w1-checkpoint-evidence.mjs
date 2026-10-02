@@ -67,6 +67,7 @@ function assertionObservations(input) {
           readAuthority: input.contracts.payrollRead,
           actionAuthority: input.contracts.payrollUpdate,
         },
+        input.timeOwnerRead,
         input.ownerChain.initial,
         input.ownerChain.final,
       ],

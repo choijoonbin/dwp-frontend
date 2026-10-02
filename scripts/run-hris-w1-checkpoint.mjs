@@ -220,6 +220,12 @@ async function main() {
     });
     const secrets = environment.tenants.flatMap((tenant) => [tenant.email, tenant.password]);
     const browserArtifactClosure = browserEvidence.scanBrowserArtifact(artifactRoot, secrets);
+    console.log('[RUN] exercising TIM owner read through a fresh Gateway evaluation');
+    const timeOwnerRead = await live.runTimeOwnerRead(
+      sessionA,
+      validatedRuntime.gatewayAuthorities.A.time,
+      validatedRuntime.timeProjection
+    );
     console.log('[RUN] exercising PAY owner read, idempotent update, simulation, and receipt');
     const ownerChain = await payroll.runPayrollOwnerChain(
       sessionA,
@@ -272,6 +278,7 @@ async function main() {
       contracts,
       sessionA,
       browserSummary,
+      timeOwnerRead,
       ownerChain,
       crossTenant,
       populationBoundary,

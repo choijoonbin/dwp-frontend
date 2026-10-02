@@ -167,6 +167,15 @@ export const PAYROLL_ROUTES = Object.freeze({
   },
 });
 
+export const TIME_ROUTES = Object.freeze({
+  list: {
+    surfaceKey: 'hcm.operations',
+    routeContractKey: 'route.hcm.operations.work-plans-list.data',
+    method: 'GET',
+    path: '/api/time/v1/hris/work-plans',
+  },
+});
+
 export const PEOPLE_ROUTES = Object.freeze({
   search: {
     surfaceKey: 'hcm.operations',

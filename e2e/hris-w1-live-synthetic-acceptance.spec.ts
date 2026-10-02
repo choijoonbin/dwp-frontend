@@ -70,7 +70,28 @@ type StepUpEvidence = Readonly<{
   requestPolicyRef?: string;
   validUntil?: string;
   revalidateAt: string;
+  observedAt: string;
 }>;
+
+function exactKeys(value: JsonRecord | null, expected: readonly string[]): boolean {
+  return value !== null && Object.keys(value).sort().join('\n') === [...expected].sort().join('\n');
+}
+
+function exactEvaluationShape(
+  body: JsonRecord | null,
+  subject: JsonRecord | null,
+  contextScopeKey: string | null
+): boolean {
+  const bodyKeys =
+    contextScopeKey === null
+      ? ['routeContractKey', 'subject']
+      : ['contextScopeKey', 'routeContractKey', 'subject'];
+  return (
+    exactKeys(body, bodyKeys) &&
+    exactKeys(subject, ['productKey', 'surfaceKey', 'type']) &&
+    body?.contextKey === undefined
+  );
+}
 
 type RouteEvidence = Readonly<{
   id: string;
@@ -211,7 +232,7 @@ async function installBrowserFirewall(
         const subjectSurfaceKey =
           typeof subject?.surfaceKey === 'string' ? subject.surfaceKey : null;
         const expectedContract =
-          url.search === ''
+          url.search === '' && exactEvaluationShape(body, subject, contextScopeKey)
             ? expectedEvaluationContracts.find(
                 (expected) =>
                   expected.routeContractKey === routeContractKey &&
@@ -309,11 +330,14 @@ async function validateStepUpResponse(
   const contentType = (await response.headerValue('content-type')) ?? '';
   expect(contentType, `${location} must return JSON`).toContain('application/json');
   const data = envelopeData(await response.json(), location);
+  const observedAt = new Date().toISOString();
   expect(data.decision, `${location}.data.decision`).toBe('STEP_UP_REQUIRED');
   expect(data.reasonCode, `${location}.data.reasonCode`).toBe('STEP_UP_REQUIRED');
   expect(data.requiredAssurance, `${location}.data.requiredAssurance`).toBe(
     REQUIRED_HIGH_ASSURANCE
   );
+  expect(data.context, `${location}.data.context must stay redacted`).toBeUndefined();
+  expect(data.scope, `${location}.data.scope must stay redacted`).toBeUndefined();
   const decisionRevision = requiredResponseString(data, 'decisionRevision', `${location}.data`);
   const requestPolicyRef = optionalResponseString(data, 'requestPolicyRef', `${location}.data`);
   const validUntil = optionalResponseString(data, 'validUntil', `${location}.data`);
@@ -321,13 +345,13 @@ async function validateStepUpResponse(
   for (const [key, value] of [['validUntil', validUntil]] as const) {
     if (value !== undefined) {
       expect(
-        Number.isFinite(Date.parse(value)) && Date.parse(value) > Date.now(),
+        Number.isFinite(Date.parse(value)) && Date.parse(value) > Date.parse(observedAt),
         `${location}.data.${key} must be a future instant`
       ).toBe(true);
     }
   }
   expect(
-    Number.isFinite(Date.parse(revalidateAt)) && Date.parse(revalidateAt) > Date.now(),
+    Number.isFinite(Date.parse(revalidateAt)) && Date.parse(revalidateAt) > Date.parse(observedAt),
     `${location}.data.revalidateAt must be a future instant`
   ).toBe(true);
   return {
@@ -341,6 +365,7 @@ async function validateStepUpResponse(
     ...(requestPolicyRef ? { requestPolicyRef } : {}),
     ...(validUntil ? { validUntil } : {}),
     revalidateAt,
+    observedAt,
   };
 }
 
@@ -482,6 +507,7 @@ async function exerciseRoute(
             const body = valueRecord(response.request().postDataJSON());
             const subject = valueRecord(body?.subject);
             return (
+              exactEvaluationShape(body, subject, String(body?.contextScopeKey ?? '')) &&
               body?.routeContractKey === highRisk.expectedRouteContractKey &&
               body?.contextScopeKey === route.expectedScopeKey &&
               subject?.type === 'PRODUCT' &&

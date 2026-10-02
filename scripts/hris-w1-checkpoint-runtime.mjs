@@ -165,6 +165,7 @@ function validateGatewayAuthorities(value) {
   exactKeys(tenantA, Object.keys(GATEWAY_AUTHORITY_SPECS), 'projectionFeed.gatewayAuthorities.A');
   for (const [key, [routeContractKey, decision]] of Object.entries(GATEWAY_AUTHORITY_SPECS)) {
     const authority = record(tenantA[key], `gatewayAuthorities.A.${key}`);
+    const challenge = decision === 'STEP_UP_REQUIRED';
     exactKeys(
       authority,
       [
@@ -174,23 +175,26 @@ function validateGatewayAuthorities(value) {
         'decision',
         'decisionRevision',
         'revalidateAt',
+        ...(challenge ? ['reasonCode', 'requiredAssurance'] : []),
       ],
       `gatewayAuthorities.A.${key}`
     );
     if (
       authority.routeContractKey !== routeContractKey ||
       authority.decision !== decision ||
-      !CONTEXT_KEY.test(String(authority.contextKey ?? '')) ||
-      !SCOPE_KEY.test(String(authority.scopeKey ?? '')) ||
+      (challenge
+        ? authority.contextKey !== null ||
+          authority.scopeKey !== null ||
+          authority.reasonCode !== 'STEP_UP_REQUIRED' ||
+          authority.requiredAssurance !== 'urn:dwp:assurance:high'
+        : !CONTEXT_KEY.test(String(authority.contextKey ?? '')) ||
+          !SCOPE_KEY.test(String(authority.scopeKey ?? ''))) ||
       !DECISION_REVISION.test(String(authority.decisionRevision ?? ''))
     ) {
       hold(`gatewayAuthorities.A.${key} is not the exact backend authority.`);
     }
     instant(authority.revalidateAt, `gatewayAuthorities.A.${key}.revalidateAt`);
   }
-  const contextKeys = Object.values(tenantA).map((authority) => authority.contextKey);
-  if (new Set(contextKeys).size !== 1)
-    hold('Backend Gateway authorities must share one contextKey.');
   for (const key of ['payroll', 'page', 'payrollStale', 'payrollExpired', 'payrollRevoked']) {
     if (tenantA[key].scopeKey !== tenantA.payroll.scopeKey) {
       hold(`gatewayAuthorities.A.${key}.scopeKey drifted from payroll scope.`);
@@ -728,10 +732,12 @@ export function assertLiveRuntimeBindings(validatedRuntime, contracts) {
     contracts.payrollRead.decision !== payroll.decision ||
     contracts.payrollRead.decisionRevision !== payroll.decisionRevision ||
     contracts.publishPreview.routeContractKey !== publish.routeContractKey ||
-    contracts.publishPreview.contextKey !== publish.contextKey ||
-    contracts.publishPreview.contextScopeKey !== publish.scopeKey ||
+    contracts.publishPreview.contextKey !== null ||
+    contracts.publishPreview.contextScopeKey !== null ||
     contracts.publishPreview.decision !== publish.decision ||
     contracts.publishPreview.decisionRevision !== publish.decisionRevision ||
+    contracts.publishPreview.reasonCode !== publish.reasonCode ||
+    contracts.publishPreview.requiredAssurance !== publish.requiredAssurance ||
     contracts.featureOff.decision !== featureOff.decision ||
     contracts.featureOff.decisionRevision !== featureOff.decisionRevision ||
     contracts.featureOff.reasonCode !== featureOff.reasonCode

@@ -175,6 +175,7 @@ function validateBrowserRoute(routeEvidence, routeConfig, options, location) {
       'requiredAssurance',
       'decisionRevision',
       'revalidateAt',
+      'observedAt',
     ];
     if (high.requestPolicyRef !== undefined) highKeys.push('requestPolicyRef');
     if (high.validUntil !== undefined) highKeys.push('validUntil');
@@ -191,14 +192,18 @@ function validateBrowserRoute(routeEvidence, routeConfig, options, location) {
     ) {
       hold(`${location}.highRiskEvaluation is not exact STEP_UP_REQUIRED evidence.`);
     }
+    instant(high.observedAt, `${location}.highRiskEvaluation.observedAt`);
     instant(high.revalidateAt, `${location}.highRiskEvaluation.revalidateAt`);
-    if (Date.parse(high.revalidateAt) <= Date.now()) {
-      hold(`${location}.highRiskEvaluation.revalidateAt is not live.`);
+    if (
+      Date.parse(high.observedAt) > Date.parse(options.manifestGeneratedAt) ||
+      Date.parse(high.revalidateAt) <= Date.parse(high.observedAt)
+    ) {
+      hold(`${location}.highRiskEvaluation freshness lineage is invalid.`);
     }
     if (high.validUntil !== undefined) {
       instant(high.validUntil, `${location}.highRiskEvaluation.validUntil`);
-      if (Date.parse(high.validUntil) <= Date.now()) {
-        hold(`${location}.highRiskEvaluation.validUntil is not live.`);
+      if (Date.parse(high.validUntil) <= Date.parse(high.observedAt)) {
+        hold(`${location}.highRiskEvaluation.validUntil was stale when observed.`);
       }
     }
     const highScreenshot = relativeInside(
@@ -440,7 +445,7 @@ export function validateBrowserManifest(manifestValue, options) {
       validateBrowserRoute(
         tenant.routes[routeIndex],
         route,
-        options,
+        { ...options, manifestGeneratedAt: manifest.generatedAt },
         `${expectedTenant.label}.routes[${routeIndex}]`
       )
     );

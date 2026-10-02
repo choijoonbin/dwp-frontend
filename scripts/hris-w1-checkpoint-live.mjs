@@ -4,9 +4,12 @@ import {
   DENIED_PAGE_CANDIDATES,
   PAYROLL_ROUTES,
   PEOPLE_ROUTES,
+  TIME_ROUTES,
   UUID,
+  exactKeys,
   expectedPeopleEffectivePolicyRevision,
   hold,
+  instant,
   record,
   responseSummary,
   sha256Canonical,
@@ -188,13 +191,13 @@ function contextCandidates(contextData, surfaceKey) {
     );
 }
 
-function evaluationResult(surfaceKey, routeContractKey, expectedDecision, evaluated, selected) {
-  if (
-    evaluated.data.context?.contextKey !== selected.contextKey ||
-    evaluated.data.scope?.key !== selected.contextScopeKey
-  ) {
-    hold(`${routeContractKey} returned a different context or scope than selected.`);
-  }
+function evaluationResult(surfaceKey, routeContractKey, expectedDecision, evaluated) {
+  const contextKey = textValue(
+    evaluated.data.context?.contextKey,
+    `${routeContractKey}.contextKey`,
+    500
+  );
+  const contextScopeKey = textValue(evaluated.data.scope?.key, `${routeContractKey}.scope`, 200);
   return Object.freeze({
     surfaceKey,
     routeContractKey,
@@ -204,8 +207,30 @@ function evaluationResult(surfaceKey, routeContractKey, expectedDecision, evalua
       `${routeContractKey}.revision`,
       240
     ),
-    contextKey: textValue(selected.contextKey, `${routeContractKey}.contextKey`, 500),
-    contextScopeKey: textValue(selected.contextScopeKey, `${routeContractKey}.scope`, 200),
+    contextKey,
+    contextScopeKey,
+    reasonCode: evaluated.data.reasonCode ?? null,
+    requiredAssurance: evaluated.data.requiredAssurance ?? null,
+    revalidateAt: evaluated.data.revalidateAt ?? null,
+    response: responseSummary(evaluated.response),
+  });
+}
+
+function challengeResult(surfaceKey, routeContractKey, evaluated) {
+  if (evaluated.data.context != null || evaluated.data.scope != null) {
+    hold(`${routeContractKey} exposed protected context material for a HIGH challenge.`);
+  }
+  return Object.freeze({
+    surfaceKey,
+    routeContractKey,
+    decision: 'STEP_UP_REQUIRED',
+    decisionRevision: textValue(
+      evaluated.data.decisionRevision,
+      `${routeContractKey}.revision`,
+      240
+    ),
+    contextKey: null,
+    contextScopeKey: null,
     reasonCode: evaluated.data.reasonCode ?? null,
     requiredAssurance: evaluated.data.requiredAssurance ?? null,
     revalidateAt: evaluated.data.revalidateAt ?? null,
@@ -220,6 +245,21 @@ export async function evaluateExact(
   expectedDecision,
   requested
 ) {
+  if (expectedDecision === 'STEP_UP_REQUIRED') {
+    const challenged = await rawEvaluation(
+      session,
+      surfaceKey,
+      routeContractKey,
+      undefined,
+      requested?.contextScopeKey
+    );
+    if (challenged.data.decision !== expectedDecision) {
+      hold(
+        `${routeContractKey} returned ${challenged.data.decision}, expected ${expectedDecision}.`
+      );
+    }
+    return challengeResult(surfaceKey, routeContractKey, challenged);
+  }
   if (requested) {
     const evaluated = await rawEvaluation(
       session,
@@ -233,14 +273,11 @@ export async function evaluateExact(
         `${routeContractKey} returned ${evaluated.data.decision}, expected ${expectedDecision}.`
       );
     }
-    return evaluationResult(surfaceKey, routeContractKey, expectedDecision, evaluated, requested);
+    return evaluationResult(surfaceKey, routeContractKey, expectedDecision, evaluated);
   }
   const first = await rawEvaluation(session, surfaceKey, routeContractKey);
   if (first.data.decision === expectedDecision && first.data.context && first.data.scope) {
-    return evaluationResult(surfaceKey, routeContractKey, expectedDecision, first, {
-      contextKey: first.data.context.contextKey,
-      contextScopeKey: first.data.scope.key,
-    });
+    return evaluationResult(surfaceKey, routeContractKey, expectedDecision, first);
   }
   const candidates = contextCandidates((await contextsFor(session)).data, surfaceKey);
   if (!candidates.length) hold(`${routeContractKey} has no live Gateway scope candidates.`);
@@ -250,7 +287,7 @@ export async function evaluateExact(
       session,
       surfaceKey,
       routeContractKey,
-      candidate.contextKey,
+      undefined,
       candidate.scope.key
     );
     if (evaluated.data.decision === expectedDecision) matches.push({ candidate, evaluated });
@@ -258,29 +295,104 @@ export async function evaluateExact(
   const defaults = matches.filter((match) => match.candidate.scope.isDefault === true);
   const selected = matches.length === 1 ? matches[0] : defaults.length === 1 ? defaults[0] : null;
   if (!selected) hold(`${routeContractKey} did not resolve one unambiguous live Gateway scope.`);
-  return evaluationResult(surfaceKey, routeContractKey, expectedDecision, selected.evaluated, {
-    contextKey: selected.candidate.contextKey,
-    contextScopeKey: selected.candidate.scope.key,
-  });
+  return evaluationResult(surfaceKey, routeContractKey, expectedDecision, selected.evaluated);
 }
 
-export function assertSameContextBinding(label, ...authorities) {
+export function assertSameScopeBinding(label, ...authorities) {
   if (!authorities.length) hold(`${label} requires at least one authority.`);
   const expected = authorities[0];
   if (
     authorities.some(
-      (authority) =>
-        !authority ||
-        authority.contextKey !== expected.contextKey ||
-        authority.contextScopeKey !== expected.contextScopeKey
+      (authority) => !authority || authority.contextScopeKey !== expected.contextScopeKey
     )
   ) {
-    hold(`${label} contextKey and contextScopeKey values are not identical.`);
+    hold(`${label} contextScopeKey values are not identical.`);
   }
   return Object.freeze({
-    contextKey: expected.contextKey,
     contextScopeKey: expected.contextScopeKey,
-    equal: true,
+    routeContextKeys: authorities.map((authority) => authority.contextKey),
+    equalScope: true,
+  });
+}
+
+export async function runTimeOwnerRead(
+  sessionA,
+  runtimeAuthority,
+  timeProjection,
+  now = new Date()
+) {
+  if (!(now instanceof Date) || !Number.isFinite(now.valueOf())) {
+    hold('TIME owner read requires a valid checkpoint instant.');
+  }
+  const authority = await evaluateExact(
+    sessionA,
+    TIME_ROUTES.list.surfaceKey,
+    TIME_ROUTES.list.routeContractKey,
+    'ALLOWED'
+  );
+  if (
+    authority.routeContractKey !== runtimeAuthority.routeContractKey ||
+    authority.contextKey !== runtimeAuthority.contextKey ||
+    authority.contextScopeKey !== runtimeAuthority.scopeKey ||
+    authority.contextScopeKey !== timeProjection.scopeKey ||
+    authority.decision !== runtimeAuthority.decision ||
+    authority.decisionRevision !== runtimeAuthority.decisionRevision
+  ) {
+    hold('Fresh TIME Gateway authority does not match the attested owner projection.');
+  }
+  if (
+    Date.parse(instant(authority.revalidateAt, 'TIME owner authority.revalidateAt')) <=
+    now.valueOf()
+  ) {
+    hold('Fresh TIME Gateway authority is already stale.');
+  }
+  const effectiveOn = now.toISOString().slice(0, 10);
+  const query = new URLSearchParams({
+    effectiveOn,
+    contextScopeKey: authority.contextScopeKey,
+  });
+  const response = await requestJson(
+    sessionA,
+    TIME_ROUTES.list.method,
+    `${TIME_ROUTES.list.path}?${query.toString()}`
+  );
+  if (response.status !== 200) hold('TIME owner read did not return HTTP 200.');
+  const outcome = envelopeData(response.root, 'TIME owner read');
+  exactKeys(
+    outcome,
+    ['queryState', 'freshness', 'asOf', 'partialFailures', 'workPlans'],
+    'TIME owner read.data'
+  );
+  if (
+    outcome.queryState !== 'EMPTY' ||
+    outcome.freshness !== 'CURRENT' ||
+    !Array.isArray(outcome.partialFailures) ||
+    outcome.partialFailures.length !== 0 ||
+    !Array.isArray(outcome.workPlans) ||
+    outcome.workPlans.length !== 0
+  ) {
+    hold('TIME owner read is not the exact safe EMPTY/CURRENT outcome.');
+  }
+  instant(outcome.asOf, 'TIME owner read.data.asOf');
+  return Object.freeze({
+    source: 'LIVE_GATEWAY_TIME_OWNER',
+    tenantId: sessionA.tenant.tenantId,
+    authority,
+    projection: structuredClone(timeProjection),
+    request: {
+      method: TIME_ROUTES.list.method,
+      path: TIME_ROUTES.list.path,
+      effectiveOn,
+      contextScopeKey: authority.contextScopeKey,
+    },
+    response: responseSummary(response),
+    outcome: {
+      queryState: outcome.queryState,
+      freshness: outcome.freshness,
+      asOf: outcome.asOf,
+      partialFailures: [],
+      workPlans: [],
+    },
   });
 }
 
@@ -471,10 +583,10 @@ export async function deriveLiveContracts(sessionA, sessionB) {
     PAYROLL_ROUTES.publish.surfaceKey,
     PAYROLL_ROUTES.publish.routeContractKey,
     'STEP_UP_REQUIRED',
-    { contextKey: payrollPage.contextKey, contextScopeKey: payrollPage.contextScopeKey }
+    { contextScopeKey: payrollPage.contextScopeKey }
   );
-  assertSameContextBinding('PAY page/read/action', payrollPage, payrollRead, payrollUpdate);
-  assertSameContextBinding(
+  assertSameScopeBinding('PAY page/read/action', payrollPage, payrollRead, payrollUpdate);
+  assertSameScopeBinding(
     'People page/search/detail',
     canonicalEvaluations.HRM,
     peopleSearch,
@@ -548,7 +660,7 @@ function targetSnapshot(item, location, expectedPolicyRevision) {
 
 export async function populationBoundaryFence(sessionA, contracts, runtimeTenant) {
   const tenant = sessionA.tenant;
-  const binding = assertSameContextBinding(
+  const binding = assertSameScopeBinding(
     'People population',
     contracts.canonicalEvaluations.HRM,
     contracts.peopleSearch,
