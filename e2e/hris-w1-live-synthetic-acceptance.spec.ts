@@ -566,8 +566,32 @@ async function exerciseRoute(
 }
 
 async function authenticate(context: PW.BrowserContext, tenant: HrisW1Tenant) {
+  const initialCsrf = await context.request.get('/api/auth/csrf', {
+    headers: { 'X-Tenant-ID': tenant.tenantId },
+    maxRedirects: 0,
+  });
+  assertApiBoundary(initialCsrf, '/api/auth/csrf', `${tenant.label} pre-login CSRF`);
+  expect(initialCsrf.status(), `${tenant.label} pre-login CSRF must succeed`).toBe(200);
+  const initialCsrfData = envelopeData(
+    await responseJson(initialCsrf, `${tenant.label} pre-login CSRF`),
+    'pre-login CSRF'
+  );
+  expect(initialCsrfData.headerName, `${tenant.label} CSRF header name`).toBe('X-XSRF-TOKEN');
+  const initialCsrfToken = requiredResponseString(
+    initialCsrfData,
+    'token',
+    `${tenant.label} pre-login CSRF.data`
+  );
+  expect(
+    initialCsrfToken.length,
+    `${tenant.label} pre-login CSRF token length`
+  ).toBeGreaterThanOrEqual(16);
   const login = await context.request.post('/api/auth/login', {
-    headers: { 'Content-Type': 'application/json', 'X-Tenant-ID': tenant.tenantId },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Tenant-ID': tenant.tenantId,
+      'X-XSRF-TOKEN': initialCsrfToken,
+    },
     data: { email: tenant.email, password: tenant.password, tenantId: tenant.tenantId },
     maxRedirects: 0,
   });
@@ -577,6 +601,29 @@ async function authenticate(context: PW.BrowserContext, tenant: HrisW1Tenant) {
   if (loginData.tenantId !== undefined) {
     expect(String(loginData.tenantId)).toBe(tenant.tenantId);
   }
+
+  const refreshedCsrf = await context.request.get('/api/auth/csrf', {
+    headers: { 'X-Tenant-ID': tenant.tenantId },
+    maxRedirects: 0,
+  });
+  assertApiBoundary(refreshedCsrf, '/api/auth/csrf', `${tenant.label} authenticated CSRF`);
+  expect(refreshedCsrf.status(), `${tenant.label} authenticated CSRF must succeed`).toBe(200);
+  const refreshedCsrfData = envelopeData(
+    await responseJson(refreshedCsrf, `${tenant.label} authenticated CSRF`),
+    'authenticated CSRF'
+  );
+  expect(refreshedCsrfData.headerName, `${tenant.label} refreshed CSRF header name`).toBe(
+    'X-XSRF-TOKEN'
+  );
+  const refreshedCsrfToken = requiredResponseString(
+    refreshedCsrfData,
+    'token',
+    `${tenant.label} authenticated CSRF.data`
+  );
+  expect(
+    refreshedCsrfToken.length,
+    `${tenant.label} authenticated CSRF token length`
+  ).toBeGreaterThanOrEqual(16);
 
   const meResponse = await context.request.get('/api/auth/me', {
     headers: { 'X-Tenant-ID': tenant.tenantId },

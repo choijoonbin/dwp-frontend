@@ -5,7 +5,7 @@ import {
   PAYROLL_ROUTES,
   PEOPLE_ROUTES,
   UUID,
-  expectedPeoplePolicyRevision,
+  expectedPeopleEffectivePolicyRevision,
   hold,
   record,
   responseSummary,
@@ -13,6 +13,8 @@ import {
   sha256Bytes,
   textValue,
 } from './hris-w1-checkpoint-core.mjs';
+
+const PEOPLE_POLICY_REVISION = /^effective-policy-[0-9a-f]{64}$/u;
 
 export function envelopeData(root, location) {
   return record(record(root, location).data, `${location}.data`);
@@ -70,9 +72,11 @@ async function csrf(session) {
   if (response.status !== 200) hold(`${session.label} CSRF bootstrap failed.`);
   const data = envelopeData(response.root, `${session.label} CSRF`);
   if (data.headerName !== 'X-XSRF-TOKEN') hold(`${session.label} CSRF header is noncanonical.`);
+  const token = textValue(data.token, `${session.label} CSRF token`, 500);
+  if (token.length < 16) hold(`${session.label} CSRF token is too short.`);
   session.csrf = Object.freeze({
     headerName: data.headerName,
-    token: textValue(data.token, `${session.label} CSRF token`, 500),
+    token,
   });
   return session.csrf;
 }
@@ -101,11 +105,14 @@ export async function createLiveSession(requestApi, environment, tenant) {
     authentication: null,
   };
   try {
-    const login = await requestJson(session, 'POST', '/api/auth/login', {
-      data: { email: tenant.email, password: tenant.password, tenantId: String(tenant.tenantId) },
-      headers: { 'Content-Type': 'application/json' },
+    const login = await mutationJson(session, 'POST', '/api/auth/login', {
+      email: tenant.email,
+      password: tenant.password,
+      tenantId: String(tenant.tenantId),
     });
     if (login.status !== 200) hold(`${tenant.label} live Gateway login failed.`);
+    session.csrf = null;
+    await csrf(session);
     const me = await requestJson(session, 'GET', '/api/auth/me');
     if (me.status !== 200) hold(`${tenant.label} live Gateway /api/auth/me failed.`);
     const meData = envelopeData(me.root, `${tenant.label} me`);
@@ -510,24 +517,33 @@ export async function crossTenantFence(sessionA, tenantB) {
   });
 }
 
-function targetSnapshot(item, location, tenant, policyRevision) {
+function peoplePolicyRevision(snapshot, location, expectedRevision) {
+  const access = record(snapshot.access, `${location}.access`);
+  const revision = textValue(access.policyRevision, `${location}.access.policyRevision`, 128);
+  if (
+    !PEOPLE_POLICY_REVISION.test(revision) ||
+    revision !== expectedRevision ||
+    access.archetype !== 'HR_OPERATOR' ||
+    access.scope !== 'WORKFORCE_POLICY'
+  ) {
+    hold(`${location}.access is not bound to the exact effective People policy.`);
+  }
+  return revision;
+}
+
+function targetSnapshot(item, location, expectedPolicyRevision) {
   const snapshot = record(item, location);
   const person = record(snapshot.person, `${location}.person`);
   const personId = textValue(person.personId, `${location}.person.personId`);
   if (!UUID.test(personId)) hold(`${location} returned a noncanonical person id.`);
-  if (personId === tenant.targetPersonPublicId) {
-    if (
-      record(snapshot.employment, `${location}.employment`).workerNumber !== 'E100002' ||
-      record(snapshot.primaryAssignment, `${location}.primaryAssignment`).assignmentKey !==
-        'ASG-E100002-1' ||
-      record(snapshot.access, `${location}.access`).policyRevision !== policyRevision
-    ) {
-      hold(
-        'People search target is not bound to the target worker, assignment, and policy revision.'
-      );
-    }
+  const policyRevision = peoplePolicyRevision(snapshot, location, expectedPolicyRevision);
+  if (
+    snapshot.employment?.workerNumber !== undefined ||
+    snapshot.primaryAssignment?.assignmentKey !== undefined
+  ) {
+    hold('People LIST projection disclosed worker or assignment identifiers.');
   }
-  return personId;
+  return Object.freeze({ personId, policyRevision });
 }
 
 export async function populationBoundaryFence(sessionA, contracts, runtimeTenant) {
@@ -562,17 +578,26 @@ export async function populationBoundaryFence(sessionA, contracts, runtimeTenant
   ) {
     hold('People 360 search did not return the exact bounded target population.');
   }
-  const policyRevision = expectedPeoplePolicyRevision(tenant.targetPopulationRevision);
-  const listedPersonIds = page.items.map((item, index) =>
-    targetSnapshot(item, `People 360 page.items[${index}]`, tenant, policyRevision)
+  const expectedListPolicyRevision = expectedPeopleEffectivePolicyRevision(
+    tenant.targetPopulationRevision,
+    tenant.tenantId,
+    asOf,
+    'LIST'
   );
+  const listedSnapshots = page.items.map((item, index) =>
+    targetSnapshot(item, `People 360 page.items[${index}]`, expectedListPolicyRevision)
+  );
+  const listedPersonIds = listedSnapshots.map((item) => item.personId);
+  const listPolicyRevisions = new Set(listedSnapshots.map((item) => item.policyRevision));
   if (
     new Set(listedPersonIds).size !== listedPersonIds.length ||
+    listPolicyRevisions.size !== 1 ||
     !listedPersonIds.includes(tenant.targetPersonPublicId) ||
     listedPersonIds.includes(tenant.personPublicId)
   ) {
     hold('People 360 search did not prove target membership and actor exclusion.');
   }
+  const listPolicyRevision = [...listPolicyRevisions][0];
   const detailPath = (personId) =>
     `${PEOPLE_ROUTES.detail.path}/${encodeURIComponent(personId)}?${commonQuery.toString()}`;
   const targetResponse = await requestJson(
@@ -583,6 +608,17 @@ export async function populationBoundaryFence(sessionA, contracts, runtimeTenant
   if (targetResponse.status !== 200) hold('People 360 target detail did not return HTTP 200.');
   const target = dataFromSuccess(targetResponse, 'People 360 target member detail');
   const targetPerson = record(target.person, 'People target.person');
+  const expectedDetailPolicyRevision = expectedPeopleEffectivePolicyRevision(
+    tenant.targetPopulationRevision,
+    tenant.tenantId,
+    asOf,
+    'DETAIL'
+  );
+  const detailPolicyRevision = peoplePolicyRevision(
+    target,
+    'People target',
+    expectedDetailPolicyRevision
+  );
   if (
     target.schemaVersion !== 1 ||
     target.asOf !== asOf ||
@@ -590,7 +626,7 @@ export async function populationBoundaryFence(sessionA, contracts, runtimeTenant
     record(target.employment, 'People target.employment').workerNumber !== 'E100002' ||
     record(target.primaryAssignment, 'People target.primaryAssignment').assignmentKey !==
       'ASG-E100002-1' ||
-    record(target.access, 'People target.access').policyRevision !== policyRevision
+    detailPolicyRevision === listPolicyRevision
   ) {
     hold('People target detail is not bound to person, worker, assignment, and policy revision.');
   }
@@ -611,7 +647,10 @@ export async function populationBoundaryFence(sessionA, contracts, runtimeTenant
     contextBinding: binding,
     population: {
       revision: tenant.targetPopulationRevision,
-      policyRevision,
+      policyRevisions: {
+        list: listPolicyRevision,
+        detail: detailPolicyRevision,
+      },
       expectedCount: tenant.targetPopulationCount,
       observedCount: listedPersonIds.length,
       actorPersonPublicId: tenant.personPublicId,

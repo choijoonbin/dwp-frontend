@@ -6,6 +6,7 @@ import {
   CheckpointHold,
   canonicalJson,
   expectedNegativeContracts,
+  expectedPeopleEffectivePolicyRevision,
   expectedPeoplePolicyRevision,
   parseCheckpointEnvironment,
   uuidV5Url,
@@ -14,7 +15,12 @@ import {
   validateNegativeObservations,
   validateRuntimeManifest,
 } from './hris-w1-checkpoint-runtime.mjs';
-import { assertSameContextBinding, buildRouteMatrices } from './hris-w1-checkpoint-live.mjs';
+import {
+  assertSameContextBinding,
+  buildRouteMatrices,
+  createLiveSession,
+  mutationJson,
+} from './hris-w1-checkpoint-live.mjs';
 import {
   selectBrowserPayrollResponse,
   validateBrowserManifest,
@@ -39,7 +45,7 @@ function tenantEnvironment(lane, prefix, numericOffset) {
     [`DWP_W1_TENANT_${lane}_TARGET_PERSON_PUBLIC_ID`]: uuid(prefix, 6),
     [`DWP_W1_TENANT_${lane}_TARGET_WORKER_PUBLIC_ID`]: uuid(prefix, 7),
     [`DWP_W1_TENANT_${lane}_TARGET_ASSIGNMENT_PUBLIC_ID`]: uuid(prefix, 8),
-    [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_REVISION`]: prefix.repeat(32),
+    [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_REVISION`]: `${prefix.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS]|READ`,
     [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_COUNT`]: '1',
     [`DWP_W1_TENANT_${lane}_KEY`]: `synthetic-${lane.toLowerCase()}`,
     [`DWP_W1_TENANT_${lane}_EMAIL`]: `admin-${lane.toLowerCase()}@dwp.test`,
@@ -65,6 +71,112 @@ function validEnvironment() {
     ...tenantEnvironment('B', '2', 2),
   };
 }
+
+function liveResponse(gatewayURL, requestPath, root) {
+  const bytes = Buffer.from(JSON.stringify(root), 'utf8');
+  return {
+    body: async () => bytes,
+    headers: () => ({ 'content-type': 'application/json' }),
+    status: () => 200,
+    url: () => new URL(requestPath, gatewayURL).toString(),
+  };
+}
+
+test('live session obtains CSRF before posting credentials', async () => {
+  const environment = parseCheckpointEnvironment(validEnvironment());
+  const tenant = environment.tenants[0];
+  const calls = [];
+  let csrfRequests = 0;
+  const context = {
+    dispose: async () => {},
+    fetch: async (requestPath, options) => {
+      calls.push({ requestPath, options });
+      if (requestPath === '/api/auth/csrf') {
+        csrfRequests += 1;
+        return liveResponse(environment.endpoints.gateway, requestPath, {
+          data: {
+            headerName: 'X-XSRF-TOKEN',
+            token: csrfRequests === 1 ? 'csrf-token-for-login' : 'csrf-token-after-login',
+          },
+        });
+      }
+      if (requestPath === '/api/auth/login') {
+        assert.equal(options.headers['X-XSRF-TOKEN'], 'csrf-token-for-login');
+        return liveResponse(environment.endpoints.gateway, requestPath, {
+          data: { tenantId: String(tenant.tenantId), userId: String(tenant.userId) },
+        });
+      }
+      if (requestPath === '/api/auth/product-surface-access/evaluate') {
+        assert.equal(options.headers['X-XSRF-TOKEN'], 'csrf-token-after-login');
+        return liveResponse(environment.endpoints.gateway, requestPath, {
+          data: { decision: 'ALLOWED' },
+        });
+      }
+      return liveResponse(environment.endpoints.gateway, requestPath, {
+        data: {
+          tenantId: tenant.tenantId,
+          userId: tenant.userId,
+          identityPlane: 'TENANT',
+          personPublicId: tenant.personPublicId,
+        },
+      });
+    },
+  };
+  const requestApi = { newContext: async () => context };
+
+  const session = await createLiveSession(requestApi, environment, tenant);
+  await mutationJson(session, 'POST', '/api/auth/product-surface-access/evaluate', {
+    subject: { type: 'PRODUCT', productKey: 'hcm', surfaceKey: 'hcm.operations' },
+    routeContractKey: 'route.hcm.operations.overview.page',
+  });
+
+  assert.deepEqual(
+    calls.map(({ requestPath, options }) => [requestPath, options.method]),
+    [
+      ['/api/auth/csrf', 'GET'],
+      ['/api/auth/login', 'POST'],
+      ['/api/auth/csrf', 'GET'],
+      ['/api/auth/me', 'GET'],
+      ['/api/auth/product-surface-access/evaluate', 'POST'],
+    ]
+  );
+  assert.equal(session.csrf.token, 'csrf-token-after-login');
+  await session.context.dispose();
+});
+
+test('live session rejects a short authenticated CSRF token before reading the subject', async () => {
+  const environment = parseCheckpointEnvironment(validEnvironment());
+  const tenant = environment.tenants[0];
+  let csrfRequests = 0;
+  let subjectRequested = false;
+  const context = {
+    dispose: async () => {},
+    fetch: async (requestPath) => {
+      if (requestPath === '/api/auth/csrf') {
+        csrfRequests += 1;
+        return liveResponse(environment.endpoints.gateway, requestPath, {
+          data: {
+            headerName: 'X-XSRF-TOKEN',
+            token: csrfRequests === 1 ? 'csrf-token-for-login' : 'short',
+          },
+        });
+      }
+      if (requestPath === '/api/auth/login') {
+        return liveResponse(environment.endpoints.gateway, requestPath, {
+          data: { tenantId: String(tenant.tenantId), userId: String(tenant.userId) },
+        });
+      }
+      subjectRequested = true;
+      return liveResponse(environment.endpoints.gateway, requestPath, { data: {} });
+    },
+  };
+
+  await assert.rejects(
+    () => createLiveSession({ newContext: async () => context }, environment, tenant),
+    (error) => error instanceof CheckpointHold && /CSRF token is too short/u.test(error.message)
+  );
+  assert.equal(subjectRequested, false);
+});
 
 function sha256Canonical(value) {
   return createHash('sha256').update(canonicalJson(value), 'utf8').digest('hex');
@@ -515,7 +627,7 @@ test('context binding requires both contextKey and contextScopeKey equality', ()
 });
 
 test('People policy revision is derived from the exact target population revision', () => {
-  const revision = 'a'.repeat(32);
+  const revision = `${'a'.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS]|READ`;
   const expected = createHash('sha256')
     .update(Buffer.concat([Buffer.from('policy'), Buffer.from([0]), Buffer.from(revision)]))
     .digest('hex');
@@ -524,6 +636,28 @@ test('People policy revision is derived from the exact target population revisio
     expectedPeoplePolicyRevision(revision),
     expectedPeoplePolicyRevision('b'.repeat(32))
   );
+  const list = expectedPeopleEffectivePolicyRevision(revision, 41, '2026-10-02', 'LIST');
+  const detail = expectedPeopleEffectivePolicyRevision(revision, 41, '2026-10-02', 'DETAIL');
+  const expectedList = createHash('sha256')
+    .update(
+      Buffer.concat([
+        Buffer.from('effective-policy'),
+        Buffer.from([0]),
+        Buffer.from(`policy-${expected}`),
+        Buffer.from([0]),
+        Buffer.from('people360.compatibility-default.v1'),
+        Buffer.from([0]),
+        Buffer.from('41'),
+        Buffer.from([0]),
+        Buffer.from('2026-10-02'),
+        Buffer.from([0]),
+        Buffer.from('LIST'),
+      ])
+    )
+    .digest('hex');
+  assert.equal(list, `effective-policy-${expectedList}`);
+  assert.notEqual(list, detail);
+  assert.notEqual(list, expectedPeopleEffectivePolicyRevision(revision, 42, '2026-10-02', 'LIST'));
 });
 
 test('browser PAY selector requires one digest-bound exact configuration response', () => {

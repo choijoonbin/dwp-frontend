@@ -405,12 +405,13 @@ function tenantFromEnvironment(env, lane) {
   ]) {
     if (actor === target) hold(`${prefix}_${label} must differ from its target population member.`);
   }
-  const targetPopulationRevision = required(
-    env,
-    `${prefix}_TARGET_POPULATION_REVISION`
-  ).toLowerCase();
-  if (!/^[0-9a-f]{32}$/u.test(targetPopulationRevision)) {
-    hold(`${prefix}_TARGET_POPULATION_REVISION must be the exact lowercase owner revision.`);
+  const targetPopulationRevision = required(env, `${prefix}_TARGET_POPULATION_REVISION`);
+  if (
+    !/^[0-9a-f]{32}:true\|\[\]\|\[DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS\]\|READ$/u.test(
+      targetPopulationRevision
+    )
+  ) {
+    hold(`${prefix}_TARGET_POPULATION_REVISION must be the exact owner policy revision.`);
   }
   const key = required(env, `${prefix}_KEY`);
   if (!SAFE_KEY.test(key)) hold(`${prefix}_KEY must be a safe lowercase tenant key.`);
@@ -603,6 +604,33 @@ export function expectedPeoplePolicyRevision(targetPopulationRevision) {
       Buffer.from('policy', 'utf8'),
       Buffer.from([0]),
       Buffer.from(targetPopulationRevision, 'utf8'),
+    ])
+  )}`;
+}
+
+export function expectedPeopleEffectivePolicyRevision(
+  targetPopulationRevision,
+  tenantId,
+  asOf,
+  purpose
+) {
+  if (!['LIST', 'DETAIL'].includes(purpose)) {
+    hold(`Unsupported People projection purpose: ${purpose}`);
+  }
+  const authorityRevision = expectedPeoplePolicyRevision(targetPopulationRevision);
+  return `effective-policy-${sha256Bytes(
+    Buffer.concat([
+      Buffer.from('effective-policy', 'utf8'),
+      Buffer.from([0]),
+      Buffer.from(authorityRevision, 'utf8'),
+      Buffer.from([0]),
+      Buffer.from('people360.compatibility-default.v1', 'utf8'),
+      Buffer.from([0]),
+      Buffer.from(String(tenantId), 'utf8'),
+      Buffer.from([0]),
+      Buffer.from(asOf, 'utf8'),
+      Buffer.from([0]),
+      Buffer.from(purpose, 'utf8'),
     ])
   )}`;
 }
