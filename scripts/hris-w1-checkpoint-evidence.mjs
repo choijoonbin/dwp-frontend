@@ -47,6 +47,21 @@ function pathLineageObservation(input) {
   return Object.freeze({ ...observation, observationSha256: sha256Canonical(observation) });
 }
 
+export function generalOwnerApiObservations(input) {
+  return [
+    input.sessionA.authentication,
+    input.ownerChain.contextBinding,
+    {
+      pageAuthority: input.contracts.payrollPage,
+      readAuthority: input.contracts.payrollRead,
+      actionAuthority: input.contracts.payrollUpdate,
+    },
+    input.timeOwnerRead,
+    input.ownerChain.initial,
+    input.ownerChain.final,
+  ];
+}
+
 function assertionObservations(input) {
   const browserA = input.browserSummary.tenants.find((tenant) => tenant.label === 'tenant-a');
   const browserB = input.browserSummary.tenants.find((tenant) => tenant.label === 'tenant-b');
@@ -57,21 +72,7 @@ function assertionObservations(input) {
     input.negativeObservations.observations.map((item) => [item.assertionName, item])
   );
   return new Map([
-    [
-      'tenant-a.general-owner-api',
-      [
-        input.sessionA.authentication,
-        input.ownerChain.contextBinding,
-        {
-          pageAuthority: input.contracts.payrollPage,
-          readAuthority: input.contracts.payrollRead,
-          actionAuthority: input.contracts.payrollUpdate,
-        },
-        input.timeOwnerRead,
-        input.ownerChain.initial,
-        input.ownerChain.final,
-      ],
-    ],
+    ['tenant-a.general-owner-api', generalOwnerApiObservations(input)],
     ['tenant-a.high-assurance-step-up', [input.contracts.publishPreview, highRoute.highRisk]],
     [
       'tenant-a.receipt-lineage',

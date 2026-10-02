@@ -19,9 +19,11 @@ import {
   assertSameScopeBinding,
   buildRouteMatrices,
   createLiveSession,
+  evaluateExact,
   mutationJson,
   runTimeOwnerRead,
 } from './hris-w1-checkpoint-live.mjs';
+import { generalOwnerApiObservations } from './hris-w1-checkpoint-evidence.mjs';
 import {
   selectBrowserPayrollResponse,
   validateBrowserManifest,
@@ -117,6 +119,11 @@ function timeOwnerFixture(studio, status = 200) {
     csrf: { headerName: 'X-XSRF-TOKEN', token: 'checkpoint-time-csrf-token' },
   };
   return { calls, runtimeAuthority, session, timeProjection };
+}
+
+function checkpointClock(requestStartedAt, observedAt) {
+  const instants = [requestStartedAt, observedAt].map((value) => new Date(value));
+  return () => instants.shift();
 }
 
 test('live session obtains CSRF before posting credentials', async () => {
@@ -215,11 +222,72 @@ test('live session rejects a short authenticated CSRF token before reading the s
   assert.equal(subjectRequested, false);
 });
 
+test('exact evaluation fallback rejects a scope selection ignored by the Gateway', async () => {
+  const environment = parseCheckpointEnvironment(validEnvironment());
+  const selectedScopeKey = `hcm-scope-${'4'.repeat(40)}`;
+  const returnedScopeKey = `hcm-scope-${'5'.repeat(40)}`;
+  const calls = [];
+  const session = {
+    gatewayURL: environment.endpoints.gateway,
+    tenant: environment.tenants[0],
+    label: 'tenant-a',
+    csrf: { headerName: 'X-XSRF-TOKEN', token: 'checkpoint-evaluate-csrf-token' },
+    contexts: null,
+    context: {
+      fetch: async (requestPath, options) => {
+        calls.push({ requestPath, options });
+        if (requestPath === '/api/auth/product-surface-contexts') {
+          return liveResponse(environment.endpoints.gateway, requestPath, {
+            data: {
+              contexts: [
+                {
+                  productKey: 'hcm',
+                  surfaceKey: 'hcm.operations',
+                  contextKey: `psc-${'4'.repeat(64)}`,
+                  scopes: [{ key: selectedScopeKey, isDefault: true }],
+                },
+              ],
+              rollouts: [],
+            },
+          });
+        }
+        if (options.data.contextScopeKey === undefined) {
+          return liveResponse(environment.endpoints.gateway, requestPath, {
+            data: { decision: 'SURFACE_DENIED' },
+          });
+        }
+        return liveResponse(environment.endpoints.gateway, requestPath, {
+          data: {
+            decision: 'ALLOWED',
+            decisionRevision: `psr-${'4'.repeat(64)}`,
+            context: { contextKey: `psc-${'6'.repeat(64)}` },
+            scope: { key: returnedScopeKey },
+            revalidateAt: '2026-10-02T01:00:00.000Z',
+          },
+        });
+      },
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      evaluateExact(
+        session,
+        'hcm.operations',
+        'route.hcm.operations.work-plans-list.data',
+        'ALLOWED'
+      ),
+    /returned a different scope than selected/u
+  );
+  assert.equal(calls.at(-1).options.data.contextScopeKey, selectedScopeKey);
+  assert.equal(calls.at(-1).options.data.contextKey, undefined);
+});
+
 test('TIME owner read re-evaluates authority before the exact scoped Gateway GET', async () => {
   const studio = {
     queryState: 'EMPTY',
     freshness: 'CURRENT',
-    asOf: '2026-10-02T23:59:58.000Z',
+    asOf: '2026-10-02T00:00:00.050Z',
     partialFailures: [],
     workPlans: [],
   };
@@ -229,7 +297,7 @@ test('TIME owner read re-evaluates authority before the exact scoped Gateway GET
     fixture.session,
     fixture.runtimeAuthority,
     fixture.timeProjection,
-    new Date('2026-10-02T00:00:00.000Z')
+    checkpointClock('2026-10-02T00:00:00.000Z', '2026-10-02T00:00:00.100Z')
   );
 
   assert.equal(fixture.calls.length, 2);
@@ -250,6 +318,8 @@ test('TIME owner read re-evaluates authority before the exact scoped Gateway GET
     contextScopeKey: fixture.runtimeAuthority.scopeKey,
   });
   assert.deepEqual(observed.outcome, studio);
+  assert.equal(observed.requestStartedAt, '2026-10-02T00:00:00.000Z');
+  assert.equal(observed.observedAt, '2026-10-02T00:00:00.100Z');
   assert.equal(observed.authority.response.status, 200);
   assert.equal(observed.response.status, 200);
 });
@@ -258,7 +328,7 @@ test('TIME owner read fails closed on authority drift or any non-safe owner outc
   const safeStudio = {
     queryState: 'EMPTY',
     freshness: 'CURRENT',
-    asOf: '2026-10-02T00:00:00.000Z',
+    asOf: '2026-10-02T00:00:00.050Z',
     partialFailures: [],
     workPlans: [],
   };
@@ -269,7 +339,7 @@ test('TIME owner read fails closed on authority drift or any non-safe owner outc
         drifted.session,
         drifted.runtimeAuthority,
         { ...drifted.timeProjection, scopeKey: `hcm-scope-${'9'.repeat(40)}` },
-        new Date('2026-10-02T00:00:00.000Z')
+        checkpointClock('2026-10-02T00:00:00.000Z', '2026-10-02T00:00:00.100Z')
       ),
     /does not match the attested owner projection/u
   );
@@ -280,7 +350,7 @@ test('TIME owner read fails closed on authority drift or any non-safe owner outc
         staleAuthority.session,
         staleAuthority.runtimeAuthority,
         staleAuthority.timeProjection,
-        new Date('2026-10-02T01:00:00.000Z')
+        checkpointClock('2026-10-02T00:59:59.900Z', '2026-10-02T01:00:00.000Z')
       ),
     /authority is already stale/u
   );
@@ -299,6 +369,16 @@ test('TIME owner read fails closed on authority drift or any non-safe owner outc
       /exact safe EMPTY\/CURRENT/u,
     ],
     [{ ...safeStudio, extra: true }, 200, /unexpected field set/u],
+    [
+      { ...safeStudio, asOf: '2026-10-01T23:59:59.999Z' },
+      200,
+      /outside the observed request window/u,
+    ],
+    [
+      { ...safeStudio, asOf: '2026-10-02T00:00:00.101Z' },
+      200,
+      /outside the observed request window/u,
+    ],
     [safeStudio, 503, /did not return HTTP 200/u],
   ];
   for (const [studio, status, expected] of unsafeCases) {
@@ -309,11 +389,39 @@ test('TIME owner read fails closed on authority drift or any non-safe owner outc
           fixture.session,
           fixture.runtimeAuthority,
           fixture.timeProjection,
-          new Date('2026-10-02T00:00:00.000Z')
+          checkpointClock('2026-10-02T00:00:00.000Z', '2026-10-02T00:00:00.100Z')
         ),
       expected
     );
   }
+});
+
+test('general owner API evidence includes the exact TIME owner observation', () => {
+  const timeOwnerRead = {
+    source: 'LIVE_GATEWAY_TIME_OWNER',
+    request: {
+      method: 'GET',
+      path: '/api/time/v1/hris/work-plans',
+      effectiveOn: '2026-10-02',
+      contextScopeKey: `hcm-scope-${'2'.repeat(40)}`,
+    },
+    projection: {
+      scopeKey: `hcm-scope-${'2'.repeat(40)}`,
+      populationPublicId: uuid('2', 1),
+    },
+  };
+  const observations = generalOwnerApiObservations({
+    sessionA: { authentication: { source: 'LIVE_GATEWAY_AUTH' } },
+    contracts: { payrollPage: {}, payrollRead: {}, payrollUpdate: {} },
+    ownerChain: { contextBinding: {}, initial: {}, final: {} },
+    timeOwnerRead,
+  });
+
+  assert.strictEqual(observations[3], timeOwnerRead);
+  assert.deepEqual(
+    observations.filter((observation) => observation.source === 'LIVE_GATEWAY_TIME_OWNER'),
+    [timeOwnerRead]
+  );
 });
 
 function sha256Canonical(value) {

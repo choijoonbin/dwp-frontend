@@ -290,7 +290,12 @@ export async function evaluateExact(
       undefined,
       candidate.scope.key
     );
-    if (evaluated.data.decision === expectedDecision) matches.push({ candidate, evaluated });
+    if (evaluated.data.decision === expectedDecision) {
+      if (evaluated.data.scope?.key !== candidate.scope.key) {
+        hold(`${routeContractKey} returned a different scope than selected.`);
+      }
+      matches.push({ candidate, evaluated });
+    }
   }
   const defaults = matches.filter((match) => match.candidate.scope.isDefault === true);
   const selected = matches.length === 1 ? matches[0] : defaults.length === 1 ? defaults[0] : null;
@@ -319,10 +324,12 @@ export async function runTimeOwnerRead(
   sessionA,
   runtimeAuthority,
   timeProjection,
-  now = new Date()
+  clock = () => new Date()
 ) {
-  if (!(now instanceof Date) || !Number.isFinite(now.valueOf())) {
-    hold('TIME owner read requires a valid checkpoint instant.');
+  if (typeof clock !== 'function') hold('TIME owner read requires a valid checkpoint clock.');
+  const requestStartedAt = clock();
+  if (!(requestStartedAt instanceof Date) || !Number.isFinite(requestStartedAt.valueOf())) {
+    hold('TIME owner read requires a valid request start instant.');
   }
   const authority = await evaluateExact(
     sessionA,
@@ -340,13 +347,7 @@ export async function runTimeOwnerRead(
   ) {
     hold('Fresh TIME Gateway authority does not match the attested owner projection.');
   }
-  if (
-    Date.parse(instant(authority.revalidateAt, 'TIME owner authority.revalidateAt')) <=
-    now.valueOf()
-  ) {
-    hold('Fresh TIME Gateway authority is already stale.');
-  }
-  const effectiveOn = now.toISOString().slice(0, 10);
+  const effectiveOn = requestStartedAt.toISOString().slice(0, 10);
   const query = new URLSearchParams({
     effectiveOn,
     contextScopeKey: authority.contextScopeKey,
@@ -356,6 +357,19 @@ export async function runTimeOwnerRead(
     TIME_ROUTES.list.method,
     `${TIME_ROUTES.list.path}?${query.toString()}`
   );
+  const observedAt = clock();
+  if (!(observedAt instanceof Date) || !Number.isFinite(observedAt.valueOf())) {
+    hold('TIME owner read requires a valid observation instant.');
+  }
+  if (observedAt.valueOf() < requestStartedAt.valueOf()) {
+    hold('TIME owner read observation predates its request.');
+  }
+  if (
+    Date.parse(instant(authority.revalidateAt, 'TIME owner authority.revalidateAt')) <=
+    observedAt.valueOf()
+  ) {
+    hold('Fresh TIME Gateway authority is already stale.');
+  }
   if (response.status !== 200) hold('TIME owner read did not return HTTP 200.');
   const outcome = envelopeData(response.root, 'TIME owner read');
   exactKeys(
@@ -373,10 +387,15 @@ export async function runTimeOwnerRead(
   ) {
     hold('TIME owner read is not the exact safe EMPTY/CURRENT outcome.');
   }
-  instant(outcome.asOf, 'TIME owner read.data.asOf');
+  const outcomeAsOf = Date.parse(instant(outcome.asOf, 'TIME owner read.data.asOf'));
+  if (outcomeAsOf < requestStartedAt.valueOf() || outcomeAsOf > observedAt.valueOf()) {
+    hold('TIME owner read asOf is outside the observed request window.');
+  }
   return Object.freeze({
     source: 'LIVE_GATEWAY_TIME_OWNER',
     tenantId: sessionA.tenant.tenantId,
+    requestStartedAt: requestStartedAt.toISOString(),
+    observedAt: observedAt.toISOString(),
     authority,
     projection: structuredClone(timeProjection),
     request: {
