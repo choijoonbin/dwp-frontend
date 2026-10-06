@@ -22,6 +22,7 @@ import {
 } from '../../components/direct-decision-lease';
 import { productSurfaceOperationCoordinator } from '../../components/product-surface-operation-coordinator';
 import {
+  isAllowedCanaryDecisionTrusted,
   isProductSurfaceEnforced,
   ProductSurfaceCanaryProvider,
   resolveProductSurfaceRolloutMode,
@@ -824,19 +825,35 @@ export function ProductSurfaceAuthorityBridge({
   const surfaceDecisions = useMemo(
     () =>
       Object.fromEntries(
-        [...new Set(requests.map(({ route }) => route.surfaceId))].map((surfaceId) => [
-          surfaceId,
-          resolveSurfaceDecision(
-            requests
-              .filter(({ route }) => route.surfaceId === surfaceId)
-              .map(({ route }) => routeDecisions[route.routeContractKey]!),
+        [...new Set(requests.map(({ route }) => route.surfaceId))].map((surfaceId) => {
+          const surfaceRequests = requests.filter(({ route }) => route.surfaceId === surfaceId);
+          const aggregateDecisions = surfaceRequests.map(({ route }) => {
+            const decision = routeDecisions[route.routeContractKey]!;
+            return decision.state === 'allowed' &&
+              !isAllowedCanaryDecisionTrusted(
+                { envelope, serverNowMs: authority.serverNowMs },
+                decision,
+                { productId: route.productId, surfaceId }
+              )
+              ? ({ state: 'authority-unavailable' } as const)
+              : decision;
+          });
+          const activeDecisionIndex =
             activePageRoute?.surfaceId === surfaceId
-              ? routeDecisions[activePageRoute.routeContractKey]
-              : undefined
-          ),
-        ])
+              ? surfaceRequests.findIndex(
+                  ({ route }) => route.routeContractKey === activePageRoute.routeContractKey
+                )
+              : -1;
+          return [
+            surfaceId,
+            resolveSurfaceDecision(
+              aggregateDecisions,
+              activeDecisionIndex >= 0 ? aggregateDecisions[activeDecisionIndex] : undefined
+            ),
+          ];
+        })
       ),
-    [activePageRoute, requests, routeDecisions]
+    [activePageRoute, authority.serverNowMs, envelope, requests, routeDecisions]
   );
   const previousStorageRevision = useRef<string | undefined>(undefined);
   useEffect(() => {
