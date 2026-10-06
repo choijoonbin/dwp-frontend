@@ -219,6 +219,51 @@ function validateBrowserRoute(routeEvidence, routeConfig, options, location) {
   return result;
 }
 
+export function validateHomeLaunchpadIdentityEvidence(
+  value,
+  options,
+  location = 'tenant-a.homeLaunchpadIdentity'
+) {
+  const evidence = record(value, location);
+  exactKeys(
+    evidence,
+    [
+      'requestedPath',
+      'finalPath',
+      'appId',
+      'visibleLabel',
+      'shortLabel',
+      'fullLabel',
+      'screenshot',
+    ],
+    location
+  );
+  if (
+    evidence.requestedPath !== '/' ||
+    evidence.finalPath !== '/' ||
+    evidence.appId !== 'ref-app-people' ||
+    evidence.visibleLabel !== 'HRIS' ||
+    evidence.shortLabel !== 'HRIS' ||
+    evidence.fullLabel !== 'HRIS'
+  ) {
+    hold(`${location} is not exact Global Home HRIS product-identity evidence.`);
+  }
+  const screenshot = relativeInside(
+    options.artifactRoot,
+    evidence.screenshot,
+    `${location}.screenshot`
+  );
+  return Object.freeze({
+    requestedPath: '/',
+    finalPath: '/',
+    appId: 'ref-app-people',
+    visibleLabel: 'HRIS',
+    shortLabel: 'HRIS',
+    fullLabel: 'HRIS',
+    screenshot: Object.freeze({ path: screenshot.relative, sha256: screenshot.file.sha256 }),
+  });
+}
+
 function validateFirewall(value, label) {
   const firewall = record(value, `${label}.firewall`);
   exactKeys(
@@ -385,23 +430,22 @@ export function validateBrowserManifest(manifestValue, options) {
   for (let index = 0; index < 2; index += 1) {
     const expectedTenant = options.environment.tenants[index];
     const tenant = record(manifest.tenants[index], `browser tenants[${index}]`);
-    exactKeys(
-      tenant,
-      [
-        'label',
-        'tenantId',
-        'loginStatus',
-        'verifiedSubjectId',
-        'crossTenantMe',
-        'rolloutState',
-        'authorityStatus',
-        'rolloutFlags',
-        'routes',
-        'har',
-        'trace',
-      ],
-      `browser tenants[${index}]`
-    );
+    const enabled = index === 0;
+    const tenantFields = [
+      'label',
+      'tenantId',
+      'loginStatus',
+      'verifiedSubjectId',
+      'crossTenantMe',
+      'rolloutState',
+      'authorityStatus',
+      'rolloutFlags',
+      'routes',
+      'har',
+      'trace',
+    ];
+    if (enabled) tenantFields.push('homeLaunchpadIdentity');
+    exactKeys(tenant, tenantFields, `browser tenants[${index}]`);
     if (
       tenant.label !== expectedTenant.label ||
       tenant.tenantId !== String(expectedTenant.tenantId) ||
@@ -423,7 +467,6 @@ export function validateBrowserManifest(manifestValue, options) {
       ['contextShadow', 'capabilityEnforcement', 'surfaceUi'],
       `${expectedTenant.label}.rolloutFlags`
     );
-    const enabled = index === 0;
     if (
       crossTenantMe.requestedTenantId !== String(other.tenantId) ||
       ![401, 403].includes(crossTenantMe.status) ||
@@ -437,6 +480,13 @@ export function validateBrowserManifest(manifestValue, options) {
     ) {
       hold(`${expectedTenant.label} browser tenant/rollout binding is invalid.`);
     }
+    const homeLaunchpadIdentity = enabled
+      ? validateHomeLaunchpadIdentityEvidence(
+          tenant.homeLaunchpadIdentity,
+          options,
+          `${expectedTenant.label}.homeLaunchpadIdentity`
+        )
+      : undefined;
     const matrix = routeMatrices[index];
     if (!Array.isArray(tenant.routes) || tenant.routes.length !== matrix.length) {
       hold(`${expectedTenant.label} browser route evidence count is invalid.`);
@@ -457,6 +507,7 @@ export function validateBrowserManifest(manifestValue, options) {
       rolloutState: tenant.rolloutState,
       authorityStatus: tenant.authorityStatus,
       rolloutFlags: structuredClone(rolloutFlags),
+      ...(homeLaunchpadIdentity ? { homeLaunchpadIdentity } : {}),
       routes,
       har: { path: har.relative, sha256: har.file.sha256 },
     });

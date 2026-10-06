@@ -12,6 +12,7 @@ import {
   type HrisW1Tenant,
 } from './support/hris-w1-live-environment';
 import { sanitizeHrisW1Har } from './support/hris-w1-live-artifact-sanitizer';
+import { verifyHomeLaunchpadIdentity } from './support/hris-w1-live-home-identity';
 
 const runtime = loadHrisW1LiveEnvironment();
 const baseOrigin = new URL(runtime.baseURL).origin;
@@ -123,6 +124,7 @@ type TenantEvidence = Readonly<{
     capabilityEnforcement: boolean;
     surfaceUi: boolean;
   }>;
+  homeLaunchpadIdentity?: Awaited<ReturnType<typeof verifyHomeLaunchpadIdentity>>;
   routes: readonly RouteEvidence[];
   har: string;
   trace: 'NOT_CAPTURED_SECURITY_POLICY';
@@ -818,6 +820,10 @@ async function runTenant(
     });
     tenantPage.on('pageerror', (error) => pageErrors.push(error.message));
 
+    const homeLaunchpadIdentity =
+      tenant.label === 'tenant-a'
+        ? await verifyHomeLaunchpadIdentity(tenantPage, tenant, info, runtime)
+        : undefined;
     const routes: RouteEvidence[] = [];
     for (const route of tenant.routes) {
       routes.push(
@@ -846,6 +852,7 @@ async function runTenant(
       rolloutState: authenticated.rollout.rolloutState,
       authorityStatus: authenticated.rollout.authorityStatus,
       rolloutFlags: authenticated.rollout.rolloutFlags,
+      ...(homeLaunchpadIdentity ? { homeLaunchpadIdentity } : {}),
       routes,
     };
   } catch (caught) {
@@ -948,7 +955,7 @@ test('W1 uses live Gateway authority for isolated tenant A and keeps tenant B of
     manifestPath,
     `${JSON.stringify(
       {
-        schemaVersion: 'hris-w1-live-browser/v2',
+        schemaVersion: 'hris-w1-live-browser/v3',
         runId: runtime.runId,
         generatedAt: new Date().toISOString(),
         status: acceptancePassed ? 'PASS' : 'FAIL',

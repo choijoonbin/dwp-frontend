@@ -25,6 +25,7 @@ const CLOSURE_PATHS = Object.freeze([
   'playwright.hris-w1-live.config.ts',
   'e2e/hris-w1-live-synthetic-acceptance.spec.ts',
   'e2e/support/hris-w1-live-environment.ts',
+  'e2e/support/hris-w1-live-home-identity.ts',
   'e2e/support/hris-w1-live-artifact-sanitizer.ts',
   'package.json',
   'yarn.lock',

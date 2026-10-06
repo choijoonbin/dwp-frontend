@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import test from 'node:test';
 
 import {
+  BROWSER_SCHEMA,
   CheckpointHold,
   canonicalJson,
   expectedNegativeContracts,
@@ -18,9 +19,7 @@ import {
 import {
   assertSameScopeBinding,
   buildRouteMatrices,
-  createLiveSession,
   evaluateExact,
-  mutationJson,
   runTimeOwnerRead,
 } from './hris-w1-checkpoint-live.mjs';
 import { generalOwnerApiObservations } from './hris-w1-checkpoint-evidence.mjs';
@@ -28,62 +27,13 @@ import {
   selectBrowserPayrollResponse,
   validateBrowserManifest,
 } from './hris-w1-checkpoint-browser-evidence.mjs';
-
-const RUN_ID = 'w1-20261002t000000z-deadbeef';
-const EVIDENCE_DIR = '/tmp/hris-w1-checkpoint-unit';
-
-function uuid(prefix, suffix) {
-  return `${prefix}0000000-0000-4000-8000-${suffix.toString().padStart(12, '0')}`;
-}
-
-function tenantEnvironment(lane, prefix, numericOffset) {
-  return {
-    [`DWP_W1_TENANT_${lane}_PROVIDER_TENANT_ID`]: uuid(prefix, 1),
-    [`DWP_W1_TENANT_${lane}_ID`]: String(1000 + numericOffset),
-    [`DWP_W1_TENANT_${lane}_USER_ID`]: String(2000 + numericOffset),
-    [`DWP_W1_TENANT_${lane}_PERSON_PUBLIC_ID`]: uuid(prefix, 2),
-    [`DWP_W1_TENANT_${lane}_WORKER_PUBLIC_ID`]: uuid(prefix, 3),
-    [`DWP_W1_TENANT_${lane}_ASSIGNMENT_PUBLIC_ID`]: uuid(prefix, 4),
-    [`DWP_W1_TENANT_${lane}_ACTOR_LEGAL_EMPLOYER_PUBLIC_ID`]: uuid(prefix, 5),
-    [`DWP_W1_TENANT_${lane}_TARGET_PERSON_PUBLIC_ID`]: uuid(prefix, 6),
-    [`DWP_W1_TENANT_${lane}_TARGET_WORKER_PUBLIC_ID`]: uuid(prefix, 7),
-    [`DWP_W1_TENANT_${lane}_TARGET_ASSIGNMENT_PUBLIC_ID`]: uuid(prefix, 8),
-    [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_REVISION`]: `${prefix.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS]|READ`,
-    [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_COUNT`]: '1',
-    [`DWP_W1_TENANT_${lane}_KEY`]: `synthetic-${lane.toLowerCase()}`,
-    [`DWP_W1_TENANT_${lane}_EMAIL`]: `admin-${lane.toLowerCase()}@dwp.test`,
-    [`DWP_W1_TENANT_${lane}_PASSWORD`]: `synthetic-password-${lane}-only`,
-  };
-}
-
-function validEnvironment() {
-  return {
-    DWP_W1_RUN_ID: RUN_ID,
-    DWP_W1_EVIDENCE_DIR: EVIDENCE_DIR,
-    DWP_W1_CHECKPOINT_MANIFEST: `${EVIDENCE_DIR}/checkpoint/manifest.json`,
-    DWP_W1_ACTIVE_BUNDLE_VERSION: '33',
-    DWP_W1_ACTIVE_BUNDLE_REVISION: '2',
-    DWP_W1_AUTH_URL: 'http://127.0.0.1:21001',
-    DWP_W1_PLATFORM_URL: 'http://127.0.0.1:21002',
-    DWP_W1_PEOPLE_URL: 'http://127.0.0.1:21003',
-    DWP_W1_PROVIDER_URL: 'http://127.0.0.1:21004',
-    DWP_W1_PAYROLL_URL: 'http://127.0.0.1:21005',
-    DWP_W1_TIME_URL: 'http://127.0.0.1:21006',
-    DWP_W1_GATEWAY_URL: 'http://127.0.0.1:21007',
-    ...tenantEnvironment('A', '1', 1),
-    ...tenantEnvironment('B', '2', 2),
-  };
-}
-
-function liveResponse(gatewayURL, requestPath, root, status = 200) {
-  const bytes = Buffer.from(JSON.stringify(root), 'utf8');
-  return {
-    body: async () => bytes,
-    headers: () => ({ 'content-type': 'application/json' }),
-    status: () => status,
-    url: () => new URL(requestPath, gatewayURL).toString(),
-  };
-}
+import {
+  RUN_ID,
+  csrfStorageState,
+  liveResponse,
+  uuid,
+  validEnvironment,
+} from './hris-w1-checkpoint-test-fixtures.mjs';
 
 function timeOwnerFixture(studio, status = 200) {
   const environment = parseCheckpointEnvironment(validEnvironment());
@@ -92,6 +42,8 @@ function timeOwnerFixture(studio, status = 200) {
   const timeProjection = manifest.projectionFeed.time.A;
   const calls = [];
   const context = {
+    storageState: async () =>
+      csrfStorageState(environment.endpoints.gateway, 'checkpoint-time-csrf-token'),
     fetch: async (requestPath, options) => {
       calls.push({ requestPath, options });
       if (requestPath === '/api/auth/product-surface-access/evaluate') {
@@ -126,102 +78,6 @@ function checkpointClock(requestStartedAt, observedAt) {
   return () => instants.shift();
 }
 
-test('live session obtains CSRF before posting credentials', async () => {
-  const environment = parseCheckpointEnvironment(validEnvironment());
-  const tenant = environment.tenants[0];
-  const calls = [];
-  let csrfRequests = 0;
-  const context = {
-    dispose: async () => {},
-    fetch: async (requestPath, options) => {
-      calls.push({ requestPath, options });
-      if (requestPath === '/api/auth/csrf') {
-        csrfRequests += 1;
-        return liveResponse(environment.endpoints.gateway, requestPath, {
-          data: {
-            headerName: 'X-XSRF-TOKEN',
-            token: csrfRequests === 1 ? 'csrf-token-for-login' : 'csrf-token-after-login',
-          },
-        });
-      }
-      if (requestPath === '/api/auth/login') {
-        assert.equal(options.headers['X-XSRF-TOKEN'], 'csrf-token-for-login');
-        return liveResponse(environment.endpoints.gateway, requestPath, {
-          data: { tenantId: String(tenant.tenantId), userId: String(tenant.userId) },
-        });
-      }
-      if (requestPath === '/api/auth/product-surface-access/evaluate') {
-        assert.equal(options.headers['X-XSRF-TOKEN'], 'csrf-token-after-login');
-        return liveResponse(environment.endpoints.gateway, requestPath, {
-          data: { decision: 'ALLOWED' },
-        });
-      }
-      return liveResponse(environment.endpoints.gateway, requestPath, {
-        data: {
-          tenantId: tenant.tenantId,
-          userId: tenant.userId,
-          identityPlane: 'TENANT',
-          personPublicId: tenant.personPublicId,
-        },
-      });
-    },
-  };
-  const requestApi = { newContext: async () => context };
-
-  const session = await createLiveSession(requestApi, environment, tenant);
-  await mutationJson(session, 'POST', '/api/auth/product-surface-access/evaluate', {
-    subject: { type: 'PRODUCT', productKey: 'hcm', surfaceKey: 'hcm.operations' },
-    routeContractKey: 'route.hcm.operations.overview.page',
-  });
-
-  assert.deepEqual(
-    calls.map(({ requestPath, options }) => [requestPath, options.method]),
-    [
-      ['/api/auth/csrf', 'GET'],
-      ['/api/auth/login', 'POST'],
-      ['/api/auth/csrf', 'GET'],
-      ['/api/auth/me', 'GET'],
-      ['/api/auth/product-surface-access/evaluate', 'POST'],
-    ]
-  );
-  assert.equal(session.csrf.token, 'csrf-token-after-login');
-  await session.context.dispose();
-});
-
-test('live session rejects a short authenticated CSRF token before reading the subject', async () => {
-  const environment = parseCheckpointEnvironment(validEnvironment());
-  const tenant = environment.tenants[0];
-  let csrfRequests = 0;
-  let subjectRequested = false;
-  const context = {
-    dispose: async () => {},
-    fetch: async (requestPath) => {
-      if (requestPath === '/api/auth/csrf') {
-        csrfRequests += 1;
-        return liveResponse(environment.endpoints.gateway, requestPath, {
-          data: {
-            headerName: 'X-XSRF-TOKEN',
-            token: csrfRequests === 1 ? 'csrf-token-for-login' : 'short',
-          },
-        });
-      }
-      if (requestPath === '/api/auth/login') {
-        return liveResponse(environment.endpoints.gateway, requestPath, {
-          data: { tenantId: String(tenant.tenantId), userId: String(tenant.userId) },
-        });
-      }
-      subjectRequested = true;
-      return liveResponse(environment.endpoints.gateway, requestPath, { data: {} });
-    },
-  };
-
-  await assert.rejects(
-    () => createLiveSession({ newContext: async () => context }, environment, tenant),
-    (error) => error instanceof CheckpointHold && /CSRF token is too short/u.test(error.message)
-  );
-  assert.equal(subjectRequested, false);
-});
-
 test('exact evaluation fallback rejects a scope selection ignored by the Gateway', async () => {
   const environment = parseCheckpointEnvironment(validEnvironment());
   const selectedScopeKey = `hcm-scope-${'4'.repeat(40)}`;
@@ -234,6 +90,8 @@ test('exact evaluation fallback rejects a scope selection ignored by the Gateway
     csrf: { headerName: 'X-XSRF-TOKEN', token: 'checkpoint-evaluate-csrf-token' },
     contexts: null,
     context: {
+      storageState: async () =>
+        csrfStorageState(environment.endpoints.gateway, 'checkpoint-evaluate-csrf-token'),
       fetch: async (requestPath, options) => {
         calls.push({ requestPath, options });
         if (requestPath === '/api/auth/product-surface-contexts') {
@@ -974,9 +832,29 @@ test('browser PAY selector requires one digest-bound exact configuration respons
   );
 });
 
-test('browser v2 manifest validation rejects schema expansion before trusting evidence', () => {
+test('browser v3 manifest validation rejects schema expansion before trusting evidence', () => {
   assert.throws(
-    () => validateBrowserManifest({ schemaVersion: 'hris-w1-live-browser/v2', extra: true }, {}),
+    () => validateBrowserManifest({ schemaVersion: BROWSER_SCHEMA, extra: true }, {}),
     /unexpected field set/u
+  );
+});
+
+test('browser v3 manifest validation rejects the prior schema version', () => {
+  assert.throws(
+    () =>
+      validateBrowserManifest(
+        {
+          schemaVersion: 'hris-w1-live-browser/v2',
+          runId: RUN_ID,
+          generatedAt: '2026-10-02T00:00:00.000Z',
+          status: 'PASS',
+          boundary: {},
+          tenants: [],
+          runtimeObservations: [],
+          failures: [],
+        },
+        { environment: { runId: RUN_ID } }
+      ),
+    /schema\/run\/status is not an exact PASS binding/u
   );
 });

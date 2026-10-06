@@ -5,7 +5,7 @@ import path from 'node:path';
 export const REQUIRED_NODE_MAJOR = 24;
 export const REQUIRED_NODE_MINOR = 18;
 export const RUNTIME_MANIFEST_NAME = 'runtime.json';
-export const BROWSER_SCHEMA = 'hris-w1-live-browser/v2';
+export const BROWSER_SCHEMA = 'hris-w1-live-browser/v3';
 export const LOCAL_HOST = '127.0.0.1';
 export const SHA256 = /^[0-9a-f]{64}$/u;
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;

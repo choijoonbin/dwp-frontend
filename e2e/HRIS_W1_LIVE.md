@@ -35,9 +35,11 @@ preserve both values. A registered PAGE contract must return a live fail-closed 
 can become the browser denial case.
 
 The bridge owns a new loopback frontend port and a new browser artifact, runs this existing
-Playwright suite, and validates the complete `hris-w1-live-browser/v2` manifest before trusting it.
-The browser PAY response records its raw body SHA-256 and the one expected configuration id. The
-bridge then reuses the same authenticated Gateway session for PAY owner read, update, exact
+Playwright suite, and validates the complete `hris-w1-live-browser/v3` manifest before trusting it.
+The browser PAY response records its raw body SHA-256 and the one expected configuration id. For
+tenant A, the browser also opens the global Home `/`, requires exactly one `ref-app-people` tile,
+proves that its visible, short, and full labels are all exactly `HRIS`, and binds a screenshot to
+that closed manifest record. The bridge then reuses the same authenticated Gateway session for PAY owner read, update, exact
 idempotency replay, simulate, receipt lookup/lineage, and the author=self separation-of-duties read
 model. The separation-of-duties assertion is explicitly read-model evidence: no publish command is
 claimed because the live authority correctly requires a HIGH step-up challenge. The population
@@ -129,8 +131,8 @@ Static verification commands for a frozen bridge change are:
 
 ```sh
 node --check scripts/run-hris-w1-checkpoint.mjs
-node --test scripts/run-hris-w1-checkpoint.test.mjs
-yarn prettier --check scripts/run-hris-w1-checkpoint.mjs scripts/run-hris-w1-checkpoint.test.mjs e2e/HRIS_W1_LIVE.md
+node --test scripts/run-hris-w1-checkpoint.test.mjs scripts/hris-w1-checkpoint-csrf.test.mjs scripts/hris-w1-checkpoint-browser-evidence.test.mjs
+yarn prettier --check scripts/run-hris-w1-checkpoint.mjs scripts/run-hris-w1-checkpoint.test.mjs scripts/hris-w1-checkpoint-csrf.test.mjs scripts/hris-w1-checkpoint-test-fixtures.mjs scripts/hris-w1-checkpoint-browser-evidence.mjs scripts/hris-w1-checkpoint-browser-evidence.test.mjs e2e/hris-w1-live-synthetic-acceptance.spec.ts e2e/support/hris-w1-live-home-identity.ts e2e/HRIS_W1_LIVE.md
 ```
 
 These checks do not produce live acceptance evidence. Only the backend runner's isolated full-mode

@@ -49,8 +49,13 @@ export async function requestJson(session, method, requestPath, options = {}) {
     hold(`${method} ${expectedURL.pathname} escaped the exact live Gateway boundary.`);
   }
   const bytes = await response.body();
-  if (!(response.headers()['content-type'] ?? '').includes('application/json')) {
-    hold(`${method} ${expectedURL.pathname} did not return JSON (HTTP ${response.status()}).`);
+  const contentType = response.headers()['content-type'] ?? '';
+  if (!contentType.includes('application/json')) {
+    hold(
+      `${session.label} ${method} ${expectedURL.pathname} did not return JSON ` +
+        `(HTTP ${response.status()}, contentType=${JSON.stringify(contentType.slice(0, 120))}, ` +
+        `bodyByteCount=${bytes.byteLength}, bodySha256=${sha256Bytes(bytes)}).`
+    );
   }
   let root;
   try {
@@ -84,8 +89,60 @@ async function csrf(session) {
   return session.csrf;
 }
 
+function cookieApplies(cookie, target, nowMilliseconds) {
+  if (!cookie || cookie.name !== 'XSRF-TOKEN' || typeof cookie.value !== 'string') return false;
+  const domain = typeof cookie.domain === 'string' ? cookie.domain.toLowerCase() : '';
+  const host = target.hostname.toLowerCase();
+  const domainMatches = domain.startsWith('.')
+    ? host === domain.slice(1) || host.endsWith(domain)
+    : host === domain;
+  const cookiePath =
+    typeof cookie.path === 'string' && cookie.path.startsWith('/') ? cookie.path : '/';
+  const targetPath = target.pathname.endsWith('/') ? target.pathname : `${target.pathname}/`;
+  const normalizedCookiePath = cookiePath.endsWith('/') ? cookiePath : `${cookiePath}/`;
+  const pathMatches = target.pathname === cookiePath || targetPath.startsWith(normalizedCookiePath);
+  const unexpired =
+    cookie.expires === -1 ||
+    (typeof cookie.expires === 'number' && cookie.expires * 1000 >= nowMilliseconds);
+  return (
+    domainMatches && pathMatches && unexpired && (!cookie.secure || target.protocol === 'https:')
+  );
+}
+
+async function applicableCsrfCookies(session, requestPath) {
+  const state = await session.context.storageState();
+  if (!state || !Array.isArray(state.cookies)) {
+    hold(`${session.label} live request context did not expose an auditable cookie jar.`);
+  }
+  const target = new URL(requestPath, session.gatewayURL);
+  const nowMilliseconds = Date.now();
+  return state.cookies.filter((cookie) => cookieApplies(cookie, target, nowMilliseconds));
+}
+
+async function boundCsrf(session, requestPath) {
+  let token = await csrf(session);
+  let cookies = await applicableCsrfCookies(session, requestPath);
+  if (cookies.length > 1) {
+    hold(
+      `${session.label} CSRF cookie binding is ambiguous (applicableCookieCount=${cookies.length}).`
+    );
+  }
+  if (cookies.length === 1 && cookies[0].value === token.token) return token;
+
+  session.csrf = null;
+  token = await csrf(session);
+  cookies = await applicableCsrfCookies(session, requestPath);
+  if (cookies.length !== 1 || cookies[0].value !== token.token) {
+    hold(
+      `${session.label} CSRF cookie binding failed after one pre-dispatch refresh ` +
+        `(applicableCookieCount=${cookies.length}).`
+    );
+  }
+  return token;
+}
+
 export async function mutationJson(session, method, requestPath, data, headers = {}) {
-  const token = await csrf(session);
+  const token = await boundCsrf(session, requestPath);
   return requestJson(session, method, requestPath, {
     data,
     headers: { ...headers, [token.headerName]: token.token, 'Content-Type': 'application/json' },
@@ -115,7 +172,6 @@ export async function createLiveSession(requestApi, environment, tenant) {
     });
     if (login.status !== 200) hold(`${tenant.label} live Gateway login failed.`);
     session.csrf = null;
-    await csrf(session);
     const me = await requestJson(session, 'GET', '/api/auth/me');
     if (me.status !== 200) hold(`${tenant.label} live Gateway /api/auth/me failed.`);
     const meData = envelopeData(me.root, `${tenant.label} me`);
@@ -127,6 +183,7 @@ export async function createLiveSession(requestApi, environment, tenant) {
     ) {
       hold(`${tenant.label} authenticated subject does not match the synthetic credential.`);
     }
+    await csrf(session);
     session.authentication = Object.freeze({
       login: responseSummary(login),
       me: responseSummary(me),
