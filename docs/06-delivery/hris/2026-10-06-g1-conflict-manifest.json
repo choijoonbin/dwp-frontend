@@ -1,0 +1,869 @@
+{
+  "schema": "dwp.hris.g1-conflict-manifest.v1",
+  "packetId": "HRIS-G1-INTEGRATION-LOCK-20261006-R1",
+  "generatedForDate": "2026-10-06",
+  "method": "git merge-tree --write-tree; no checkout or index mutation",
+  "repositories": {
+    "frontend": {
+      "currentPin": "08a05f764a7c6dec38cce2627b81bcb8ef87ee6c",
+      "reconciledPin": "7f39d12cd10b8827c67355a7f445973d05373cc9",
+      "mergeBase": "a1c73c7926fd42c6e58c002e3dce91dc54c37df2",
+      "divergence": {
+        "currentOnlyCommits": 5,
+        "reconciledOnlyCommits": 37
+      },
+      "currentChangedPathCount": 992,
+      "currentChangeKinds": {
+        "added": 840,
+        "modified": 152
+      },
+      "reconciledChangedPathCount": 320,
+      "reconciledChangeKinds": {
+        "added": 192,
+        "deleted": 1,
+        "modified": 127
+      },
+      "integrationBranch": "codex/hris-g1-integration-frontend-20261006",
+      "mergeTreeObject": "374cb0f5e9d81c6d8247d2ae783f508b44b82316",
+      "textualConflictCount": 27,
+      "textualConflicts": [
+        {
+          "path": "apps/dwp/src/components/product-surface-high-risk-command-catalog.ts",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "apps/dwp/src/components/product-surface-high-risk-command-model.ts",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "apps/dwp/src/components/workspace-composer/app-launchpad-model.test.ts",
+          "cluster": "HOME_SHELL",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "apps/dwp/src/components/workspace-composer/app-launchpad-model.ts",
+          "cluster": "HOME_SHELL",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "apps/dwp/src/features/workforce/assignment-register-model.test.ts",
+          "cluster": "ASSIGNMENT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "apps/dwp/src/features/workforce/assignment-register-model.ts",
+          "cluster": "ASSIGNMENT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "apps/dwp/src/features/workforce/assignment-register.tsx",
+          "cluster": "ASSIGNMENT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "architecture/pilot-fixtures.v1.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "architecture/product-surface-authorization.v1.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/assignment-register-pagination.spec.ts",
+          "cluster": "ASSIGNMENT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/hcm-experience.spec.ts",
+          "cluster": "HOME_SHELL",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C01-D1440-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C02-D1280-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C03-M390-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C04-M320-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C06-TEXT-200-D1440-r04-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C07-LONG-EN-D1280-r02-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C08-DARK-D1440-r02-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C09-HIGH-CONTRAST-D1440-r04-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C18-KEYBOARD-REDUCED-MOTION-SPEC-r02-interaction-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "e2e/shell-contract.spec.ts",
+          "cluster": "HOME_SHELL",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/hcm.json",
+          "cluster": "I18N",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/hcm.json",
+          "cluster": "I18N",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "scripts/product-authorization-fixture-versions.mjs",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        }
+      ],
+      "clusterCounts": {
+        "ASSIGNMENT": 4,
+        "AUTHORIZATION_CONTRACT": 7,
+        "HOME_SHELL": 4,
+        "I18N": 2,
+        "VISUAL_SNAPSHOT": 10
+      },
+      "semanticReviewPathCount": 56,
+      "semanticReviewPaths": [
+        {
+          "path": "apps/dwp/e2e-fixtures/home-wave2-state-spec.tsx",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "apps/dwp/src/components/product-surface-high-risk-command-catalog.ts",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "apps/dwp/src/components/product-surface-high-risk-command-model.ts",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "apps/dwp/src/components/workspace-composer/app-launchpad-model.test.ts",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "apps/dwp/src/components/workspace-composer/app-launchpad-model.ts",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "apps/dwp/src/features/home/flow-home/home-contribution-providers.ts",
+          "cluster": "OTHER_FRONTEND"
+        },
+        {
+          "path": "apps/dwp/src/features/home/home-app-badge-policy.test.ts",
+          "cluster": "OTHER_FRONTEND"
+        },
+        {
+          "path": "apps/dwp/src/features/workforce/assignment-register-model.test.ts",
+          "cluster": "ASSIGNMENT"
+        },
+        {
+          "path": "apps/dwp/src/features/workforce/assignment-register-model.ts",
+          "cluster": "ASSIGNMENT"
+        },
+        {
+          "path": "apps/dwp/src/features/workforce/assignment-register.tsx",
+          "cluster": "ASSIGNMENT"
+        },
+        {
+          "path": "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "architecture/pilot-fixtures.v1.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "architecture/product-surface-authorization.v1.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "e2e/assignment-register-pagination.spec.ts",
+          "cluster": "ASSIGNMENT"
+        },
+        {
+          "path": "e2e/hcm-experience.spec.ts",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C01-D1440-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C02-D1280-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C03-M390-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C04-M320-BASE-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C05-BROWSER-ZOOM-200-CSS720-r01-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C06-TEXT-200-D1440-r04-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C07-LONG-EN-D1280-r02-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C08-DARK-D1440-r02-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-acceptance.spec.ts-snapshots/home-wave2-C09-HIGH-CONTRAST-D1440-r04-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-state-evidence.spec.ts",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C18-KEYBOARD-REDUCED-MOTION-SPEC-r02-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/home-wave2-state-evidence.spec.ts-snapshots/home-wave2-C18-KEYBOARD-REDUCED-MOTION-SPEC-r02-interaction-chromium-darwin.png",
+          "cluster": "VISUAL_SNAPSHOT"
+        },
+        {
+          "path": "e2e/product-surface-menu-separation.spec.ts",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "e2e/shell-contract.spec.ts",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "e2e/support/home-wave2-layout-assertions.ts",
+          "cluster": "HOME_SHELL"
+        },
+        {
+          "path": "e2e/support/product-surface-authority.ts",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "e2e/support/runtime-access.ts",
+          "cluster": "OTHER_FRONTEND"
+        },
+        {
+          "path": "libs/api-contracts/openapi/gateway-public.json",
+          "cluster": "OTHER_FRONTEND"
+        },
+        {
+          "path": "libs/api-contracts/src/gateway-public.ts",
+          "cluster": "OTHER_FRONTEND"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/admin.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/display.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/hcm.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/home.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/mail.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/notifications.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/shell.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/work.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/en/workforce.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/admin.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/display.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/hcm.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/home.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/mail.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/notifications.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/shell.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/work.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-i18n/src/locales/ko/workforce.json",
+          "cluster": "I18N"
+        },
+        {
+          "path": "libs/shared-utils/src/auth/control-plane-access.ts",
+          "cluster": "OTHER_FRONTEND"
+        },
+        {
+          "path": "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "scripts/product-authorization-fixture-versions.mjs",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        }
+      ],
+      "semanticReviewClusterCounts": {
+        "ASSIGNMENT": 4,
+        "AUTHORIZATION_CONTRACT": 9,
+        "HOME_SHELL": 8,
+        "I18N": 18,
+        "OTHER_FRONTEND": 6,
+        "VISUAL_SNAPSHOT": 11
+      }
+    },
+    "backend": {
+      "currentPin": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "reconciledPin": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+      "mergeBase": "ff98818ff64c8c5aeacc21e0a95016cd841ffd42",
+      "divergence": {
+        "currentOnlyCommits": 4,
+        "reconciledOnlyCommits": 46
+      },
+      "currentChangedPathCount": 204,
+      "currentChangeKinds": {
+        "added": 74,
+        "modified": 130
+      },
+      "reconciledChangedPathCount": 624,
+      "reconciledChangeKinds": {
+        "added": 519,
+        "modified": 105
+      },
+      "integrationBranch": "codex/hris-g1-integration-backend-20261006",
+      "mergeTreeObject": "c47ea40b27c8642ab70a5ff14e4e5ae7ca64562a",
+      "textualConflictCount": 39,
+      "textualConflicts": [
+        {
+          "path": "contracts/product-authorization/README.md",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "contracts/product-authorization/authorization-negative-matrix.v1.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.bundle-v32.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.bundle-v33.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v32.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v33.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/migration/HrisVisibleProductIdentityMigrationPostgresTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "cluster": "GATEWAY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+          "cluster": "GATEWAY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+          "cluster": "GATEWAY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/directory/PeopleDirectoryRepository.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/directory/PeopleDirectoryService.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmHighRiskCommandGuard.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/directory/PeopleDirectoryRepositoryTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/directory/PeopleDirectoryServiceTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmHighRiskCommandGuardTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/home/HomeWaveOneMigrationPostgresIntegrationTest.java",
+          "cluster": "PLATFORM_HOME_MIGRATION",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "scripts/export-openapi-contracts.py",
+          "cluster": "OPENAPI_GENERATION",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "scripts/generate-product-authorization-contracts.py",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "scripts/generate-product-authorization-fixtures.py",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "scripts/tests/test_product_authorization_v31.py",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "CONTENT"
+        },
+        {
+          "path": "scripts/tests/test_product_authorization_v32.py",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "ADD_ADD"
+        },
+        {
+          "path": "scripts/tests/test_product_authorization_v33.py",
+          "cluster": "AUTHORIZATION_CONTRACT",
+          "conflictType": "ADD_ADD"
+        }
+      ],
+      "clusterCounts": {
+        "AUTHORIZATION_CONTRACT": 26,
+        "GATEWAY": 3,
+        "OPENAPI_GENERATION": 1,
+        "PEOPLE_ASSIGNMENT_SECURITY": 8,
+        "PLATFORM_HOME_MIGRATION": 1
+      },
+      "semanticReviewPathCount": 54,
+      "semanticReviewPaths": [
+        {
+          "path": "contracts/openapi/auth.json",
+          "cluster": "OPENAPI_GENERATION"
+        },
+        {
+          "path": "contracts/openapi/gateway-public.json",
+          "cluster": "OPENAPI_GENERATION"
+        },
+        {
+          "path": "contracts/openapi/platform.json",
+          "cluster": "OPENAPI_GENERATION"
+        },
+        {
+          "path": "contracts/product-authorization/README.md",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/authorization-negative-matrix.v1.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.bundle-v32.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.bundle-v33.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v32.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v33.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/migration/HrisVisibleProductIdentityMigrationPostgresTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/AuthServiceTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+          "cluster": "GATEWAY"
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "cluster": "GATEWAY"
+        },
+        {
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+          "cluster": "GATEWAY"
+        },
+        {
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+          "cluster": "GATEWAY"
+        },
+        {
+          "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+          "cluster": "GATEWAY"
+        },
+        {
+          "path": "dwp-notification-server/src/main/java/com/dwp/services/notification/domain/NotificationQueryRepository.java",
+          "cluster": "OTHER_BACKEND"
+        },
+        {
+          "path": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationAdminRepositoryTest.java",
+          "cluster": "OTHER_BACKEND"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/directory/PeopleDirectoryRepository.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/directory/PeopleDirectoryService.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmHighRiskCommandGuard.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmPepBindingConstraints.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/directory/PeopleDirectoryRepositoryTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/directory/PeopleDirectoryServiceTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmHighRiskCommandGuardTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+          "cluster": "PEOPLE_ASSIGNMENT_SECURITY"
+        },
+        {
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/home/ApprovedHomeApplicationCatalog.java",
+          "cluster": "PLATFORM_HOME_MIGRATION"
+        },
+        {
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/provisioning/PlatformTenantProvisioningService.java",
+          "cluster": "OTHER_BACKEND"
+        },
+        {
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/home/ApprovedHomeApplicationCatalogTest.java",
+          "cluster": "PLATFORM_HOME_MIGRATION"
+        },
+        {
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/home/HomeWaveOneMigrationPostgresIntegrationTest.java",
+          "cluster": "PLATFORM_HOME_MIGRATION"
+        },
+        {
+          "path": "scripts/export-openapi-contracts.py",
+          "cluster": "OPENAPI_GENERATION"
+        },
+        {
+          "path": "scripts/generate-product-authorization-contracts.py",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "scripts/generate-product-authorization-fixtures.py",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "scripts/tests/test_product_authorization_fixture_schema.py",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "scripts/tests/test_product_authorization_v31.py",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "scripts/tests/test_product_authorization_v32.py",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        },
+        {
+          "path": "scripts/tests/test_product_authorization_v33.py",
+          "cluster": "AUTHORIZATION_CONTRACT"
+        }
+      ],
+      "semanticReviewClusterCounts": {
+        "AUTHORIZATION_CONTRACT": 29,
+        "GATEWAY": 5,
+        "OPENAPI_GENERATION": 4,
+        "OTHER_BACKEND": 3,
+        "PEOPLE_ASSIGNMENT_SECURITY": 10,
+        "PLATFORM_HOME_MIGRATION": 3
+      }
+    }
+  },
+  "policy": {
+    "textualConflictResolution": "CLUSTER_OWNER_REVIEW_REQUIRED",
+    "semanticReview": "ALL_DUAL_CHANGED_PATHS_REQUIRE_EXPLICIT_DISPOSITION",
+    "bulkOursTheirs": "PROHIBITED",
+    "generatedArtifacts": "REGENERATE_ONCE_AFTER_CANONICAL_SOURCE_DECISION"
+  }
+}

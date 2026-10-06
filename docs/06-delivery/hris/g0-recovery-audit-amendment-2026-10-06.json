@@ -1,0 +1,115 @@
+{
+  "schema": "dwp.hris.recovery-audit-amendment.v1",
+  "amendmentId": "HRIS-G0-RECOVERY-AUDIT-AMENDMENT-20261006-R1",
+  "observedAt": "2026-10-06T12:33:13Z",
+  "amends": {
+    "path": "g0-recovery-baseline-2026-10-06.json",
+    "sha256": "d51b802433259ef198e2cd59014bb4c258f2c2fdc27a0a20b99c5d2d5ea0f767",
+    "policy": "The original receipt remains immutable historical evidence; this amendment adds independently discovered facts."
+  },
+  "rawRecoveryAudit": {
+    "status": "PASS_WITH_CRITICAL_COMPLETENESS_FINDINGS",
+    "manifestArtifactCount": 757,
+    "pathSizeShaMatches": 757,
+    "rawTreeModified": false,
+    "manifestSha256": "3db0bae17ff7f50368e0dca051dee7de29f365d1b7149297fb66feb8e8a7341c"
+  },
+  "newFindings": [
+    {
+      "path": "hris-atomic-duty-matrix.csv",
+      "rawState": {
+        "classification": "RECOVERED_PARTIAL_EVENT_CHAIN",
+        "rows": 44,
+        "bytes": 18353,
+        "sha256": "cdb96241579a0c81320b3fc60b3032e0ba641d25dda304eaadbde6f61325b6fc"
+      },
+      "requiredState": {
+        "rows": 128,
+        "bytes": 59593,
+        "sha256": "bc6a387b648be7ead865691653f647bd67f694b2bf3868e5d5eaad5dfab16caa"
+      },
+      "severity": "CRITICAL",
+      "disposition": "RESOLVED_BY_PIN_EXACT_SUPPLEMENT"
+    },
+    {
+      "path": "coding-readiness/target-family-resolution-register.csv",
+      "rawState": {
+        "rows": 86,
+        "columns": 9,
+        "bytes": 31724,
+        "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189"
+      },
+      "requiredState": {
+        "rows": 86,
+        "columns": 11,
+        "bytes": 38399,
+        "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819"
+      },
+      "severity": "CRITICAL",
+      "disposition": "RESOLVED_BY_PIN_EXACT_SUPPLEMENT"
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-api-contract-register.csv",
+      "rawState": "MISSING",
+      "requiredState": {
+        "rows": 66,
+        "bytes": 99982,
+        "sha256": "cb8d5b5ff815ab5de960025c491d8ac0b565cfda644898dee019967a0fd85bbe"
+      },
+      "severity": "CRITICAL",
+      "disposition": "RESOLVED_BY_PIN_EXACT_SUPPLEMENT"
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "rawState": {
+        "classification": "INVALID_TRUNCATED_JSON",
+        "bytes": 400112,
+        "sha256": "48b5fbe05470c52de95a2f86fc098ba4c06cf3e6bceb7db2330e08483826b196"
+      },
+      "requiredState": {
+        "projectionCount": 66,
+        "bytes": 1523618,
+        "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048"
+      },
+      "severity": "CRITICAL",
+      "disposition": "RESOLVED_BY_PIN_EXACT_SUPPLEMENT"
+    }
+  ],
+  "supplement": {
+    "manifestPath": "recovery/exact-supplements/2026-10-06/manifest.json",
+    "authorityScope": "HISTORICAL_SYS_EXACT_BUSINESS_START_PIN_CHECKPOINT_NOT_CURRENT_AUTHORITY",
+    "pinExactCount": 4,
+    "pinEraDeterministicCompanionCount": 2,
+    "acceptedPostPinExactSuccessorCount": 2,
+    "acceptedPostPinDeterministicCompanionCount": 1,
+    "atomicDutyComposition": {
+      "base": 67,
+      "modern": 48,
+      "informationArchitecture": 13,
+      "total": 128,
+      "permissionPackageReferenceSetEqual": true
+    },
+    "iaBundle": {
+      "queries": 66,
+      "projections": 66,
+      "runtimeInvariantRows": 66,
+      "actionKeys": 202
+    },
+    "validator": "python3 docs/06-delivery/hris/tools/validate_recovery_resolution.py"
+  },
+  "remainingCriticalAuthorityGaps": [
+    "session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+    "coding-readiness/g3-contract-primary-ownership-register.csv",
+    "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+    "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+    "coding-readiness/modern-capability-public-identity-registry.v1.json",
+    "coding-readiness/modern-capability-semantic-bindings.v1.json",
+    "session-registers/hris-hrm-source-coverage.csv"
+  ],
+  "authority": {
+    "g1IntegrationWorkAuthorized": true,
+    "moduleDevelopmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "remainingCriticalAuthorityGapPolicy": "Issue a reviewed successor from current/reconciled canonical source; never claim historical exact recovery without exact evidence."
+  }
+}

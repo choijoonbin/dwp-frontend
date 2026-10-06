@@ -1,0 +1,660 @@
+{
+  "schema": "dwp.hris.g1-current-slice-overlay-evidence.v1",
+  "generatedAt": "2026-10-06T22:02:11+09:00",
+  "scope": "READ_ONLY_COMMIT_PIN_EVIDENCE;NO_REPOSITORY_SOURCE_WORKING_TREE_CONTENT_USED;VERSIONED_G1_SUPPLEMENT_INPUT_PINNED_BY_SHA",
+  "csvPath": "current-slice-integration-status.v1.csv",
+  "csvBytes": 126216,
+  "csvSha256": "603f81f13f5168825468c18d9f5a04e4ca389288a121fe1ad33c21b2ff6812de",
+  "sourceRegister": {
+    "path": "recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+    "bytes": 305301,
+    "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+    "recoveryStatus": "RECOVERED_HASH_VERIFIED_NUMBERED_EVIDENCE",
+    "expectedRecoveredSha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+    "digestMatchesRecoveryInventory": true
+  },
+  "supportingRecoveryIntegrity": {
+    "targetFamilyResolutionRegister": {
+      "path": "recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "status": "PIN_EXACT_SUPPLEMENT",
+      "classification": "PIN_EXACT_CHECKPOINT",
+      "authorityScope": "HISTORICAL_SYS_EXACT_BUSINESS_START_PIN_CHECKPOINT",
+      "bytes": 38399,
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "rowCount": 86,
+      "uniqueResolutionIds": 86,
+      "manifestPath": "recovery/exact-supplements/2026-10-06/manifest.json",
+      "manifestBytes": 9995,
+      "manifestSha256": "342488e9e5f2ec3ede83a0c99e83bd990892169fc913dc60afb3255ded037a6d",
+      "manifestBindingState": "FROZEN_PINNED"
+    },
+    "modernCapabilityDeliveryRegister": {
+      "status": "RECOVERED_EVENT_CHAIN_COMPLETE",
+      "bytes": "8151",
+      "sha256": "a15ecff207915aa046830c94a98ba60acb450f437b1fd110289a08e1888250ce",
+      "operation_count": "9",
+      "applied_operation_count": "9",
+      "failed_operation_count": "0",
+      "failed_after_last_seed": "0"
+    },
+    "modernCapabilityCodingContractRegister": {
+      "status": "RECOVERED_PARTIAL_EVENT_CHAIN",
+      "bytes": "11776",
+      "sha256": "5bce5bbc5946695c79f121964c80c76f8bec306fdf39d5fa974f511f7362c95c",
+      "operation_count": "13",
+      "applied_operation_count": "10",
+      "failed_operation_count": "3",
+      "failed_after_last_seed": "3"
+    },
+    "g3FileAllocationRegister": {
+      "status": "RECOVERED_EVENT_CHAIN_COMPLETE",
+      "bytes": "28987",
+      "sha256": "a9deb03deff95bc7fc8c3126666d71a552eb9503c82508f2483d8bf4e1561219",
+      "operation_count": "57",
+      "applied_operation_count": "54",
+      "failed_operation_count": "3",
+      "failed_after_last_seed": "0"
+    }
+  },
+  "sourcePins": {
+    "current_frontend": {
+      "repository": "repo://dwp-frontend",
+      "commit": "08a05f764a7c6dec38cce2627b81bcb8ef87ee6c",
+      "tree": "444fa3b11fd108affee1b7e413fe4898083d4cf8",
+      "objectType": "commit",
+      "upstreamRef": "origin/dwp-dev",
+      "upstreamCommit": "08a05f764a7c6dec38cce2627b81bcb8ef87ee6c",
+      "upstreamMatches": true
+    },
+    "current_backend": {
+      "repository": "repo://dwp-backend",
+      "commit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "tree": "202d1e104ea77d32a7e96c263f2f62f513cc8477",
+      "objectType": "commit",
+      "upstreamRef": "origin/dwp-dev",
+      "upstreamCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "upstreamMatches": true
+    },
+    "reconciled_frontend": {
+      "repository": "repo://dwp-frontend",
+      "commit": "7f39d12cd10b8827c67355a7f445973d05373cc9",
+      "tree": "fba34200e3fc818a7a734cc1cc0631a66f8beee7",
+      "objectType": "commit",
+      "upstreamRef": "origin/codex/hris-reconciled-frontend-20261001",
+      "upstreamCommit": "7f39d12cd10b8827c67355a7f445973d05373cc9",
+      "upstreamMatches": true
+    },
+    "reconciled_backend": {
+      "repository": "repo://dwp-backend",
+      "commit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+      "tree": "e5b6298589a86113292f3add1303f7506c7d81e0",
+      "objectType": "commit",
+      "upstreamRef": "origin/codex/hris-reconciled-backend-20261001",
+      "upstreamCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+      "upstreamMatches": true
+    },
+    "frontendLineage": {
+      "mergeBase": "a1c73c7926fd42c6e58c002e3dce91dc54c37df2",
+      "currentOnly_reconciledOnly": "5\t37"
+    },
+    "backendLineage": {
+      "mergeBase": "ff98818ff64c8c5aeacc21e0a95016cd841ffd42",
+      "currentOnly_reconciledOnly": "4\t46"
+    }
+  },
+  "packetAudit": {
+    "HRM": {
+      "packetPath": "recovery/hris-scoped-authoring-control-2026-09-16/packets/hrm.v1.json",
+      "packetFileSha256": "7a9e971b865e54cbdaa0463f1d2d14d24ca2e811b6c9b463578279518e4e5551",
+      "sealedPayloadSha256Valid": true,
+      "firstSliceId": "BASE-TFR-HRM-004",
+      "firstSliceRowSha256": "ff54531bbe7ab3781b87e19708a2fda7c9e6891f05d5cde93f2938bb46494331",
+      "firstSliceBindingValid": true,
+      "lifecycleState": "PACKET_ISSUED_HOLD",
+      "startToken": "WITHHELD",
+      "contractBindingCount": 10,
+      "contractBindingFailures": [
+        {
+          "path": "output/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+          "expectedBytes": 35196,
+          "expectedSha256": "5390eac887c06d33e744252ddf013183f2f1e55198f8a28d341197b6a6336e65",
+          "actualBytes": 25944,
+          "actualSha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb"
+        }
+      ]
+    },
+    "PER": {
+      "packetPath": "recovery/hris-scoped-authoring-control-2026-09-16/packets/per.v1.json",
+      "packetFileSha256": "146e76619d69ef9d8f5813550c36765bc75d11c8960ea91edba11a7266997362",
+      "sealedPayloadSha256Valid": true,
+      "firstSliceId": "BASE-TFR-PER-005",
+      "firstSliceRowSha256": "b143d312a1f5796debfd30c5f89a669f6d749d085e649f4fd26b5d19f062cd0a",
+      "firstSliceBindingValid": true,
+      "lifecycleState": "PACKET_ISSUED_HOLD",
+      "startToken": "WITHHELD",
+      "contractBindingCount": 10,
+      "contractBindingFailures": []
+    },
+    "PAY": {
+      "packetPath": "recovery/hris-scoped-authoring-control-2026-09-16/packets/pay.v1.json",
+      "packetFileSha256": "8bd514495d4c562d12f3f81602c346fbfe4c0706a5e12bfe32a21bc44692e28d",
+      "sealedPayloadSha256Valid": true,
+      "firstSliceId": "BASE-TFR-PAY-007",
+      "firstSliceRowSha256": "edb1cb0b105fb02e55a1da5c6093aaf71baac785f29dc8158e418c0fec10ae3c",
+      "firstSliceBindingValid": true,
+      "lifecycleState": "PACKET_ISSUED_HOLD",
+      "startToken": "WITHHELD",
+      "contractBindingCount": 10,
+      "contractBindingFailures": []
+    },
+    "TIM": {
+      "packetPath": "recovery/hris-scoped-authoring-control-2026-09-16/packets/tim.v1.json",
+      "packetFileSha256": "9f800295b2b2318989c3aaa32a4a40c66f171b009e3d9556279c60b4857fbd1e",
+      "sealedPayloadSha256Valid": true,
+      "firstSliceId": "BASE-TFR-TIM-016",
+      "firstSliceRowSha256": "78aef7f12b2d435ccc919243fba74ddf2b2cd2c96eeeb818b1f2214955759c3a",
+      "firstSliceBindingValid": true,
+      "lifecycleState": "PACKET_ISSUED_HOLD",
+      "startToken": "WITHHELD",
+      "contractBindingCount": 10,
+      "contractBindingFailures": []
+    },
+    "SYS": {
+      "packetPath": "recovery/hris-scoped-authoring-control-2026-09-16/packets/sys.v1.json",
+      "packetFileSha256": "34b387a717f76bdc578037d7237157648d1448093bead9d7b42c41942286f3fc",
+      "sealedPayloadSha256Valid": true,
+      "firstSliceId": "BASE-TFR-SYS-004",
+      "firstSliceRowSha256": "c68a92b32d1186c59ff997e80d5fb5ac90818e7e3ca3035ea475e35de909c043",
+      "firstSliceBindingValid": true,
+      "lifecycleState": "PACKET_ISSUED_HOLD",
+      "startToken": "WITHHELD",
+      "contractBindingCount": 10,
+      "contractBindingFailures": []
+    }
+  },
+  "packetContractBindingSummary": {
+    "total": 50,
+    "passed": 49,
+    "failed": 1
+  },
+  "classificationPolicy": {
+    "PRESENT_CURRENT": "Exact identity+paths/operations+acceptance at both current pins; no row met threshold.",
+    "PRESENT_RECONCILED_PENDING_INTEGRATION": "Five packet-bound first slices with pinned FE/BE objects and result commits.",
+    "PARTIAL_OVERLAP": "Narrow path/semantic evidence without complete sealed slice proof.",
+    "NOT_STARTED": "No exact identity/path evidence; broad domain similarity ignored.",
+    "RETIRED": "Explicit historical evidence-only retirement."
+  },
+  "counts": {
+    "rows": 102,
+    "uniqueSliceIds": 102,
+    "byModule": {
+      "HRM": 22,
+      "PAY": 21,
+      "PER": 22,
+      "SYS": 17,
+      "TIM": 20
+    },
+    "bySourceKind": {
+      "BASE_TARGET_FAMILY": 86,
+      "MODERN_CAPABILITY": 16
+    },
+    "byDisposition": {
+      "NOT_STARTED": 90,
+      "PARTIAL_OVERLAP": 5,
+      "PRESENT_RECONCILED_PENDING_INTEGRATION": 5,
+      "RETIRED": 2
+    },
+    "active": 100,
+    "retired": 2
+  },
+  "crossReferenceValidation": {
+    "missingSourceRefs": [],
+    "missingDependencyIds": [],
+    "missingFileAllocationIds": [],
+    "unresolvedHistoricalMigrationIds": [],
+    "recoveredHistoricalSuccessorMappingsNotCurrentLease": [
+      {
+        "sliceId": "BASE-TFR-SYS-001",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-002",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-003",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-005",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-006",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-007",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-008",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-009",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-010",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-011",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-012",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-015",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "MOD-SYS-ANALYTICS",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      },
+      {
+        "sliceId": "MOD-SYS-AI",
+        "historical": "MIG-SYS-PLATFORM-261-289",
+        "historicalSuccessor": "MIG-SYS-PLATFORM-262-290"
+      }
+    ]
+  },
+  "migrationLeasePolicy": {
+    "historicalAllocationMarker": "HISTORICAL_ALLOCATION_NOT_A_CURRENT_LEASE",
+    "currentOverlayValue": "CURRENT_JIT_LEASE_REQUIRED_IF_SCHEMA_TOUCH",
+    "historicalAllocationRowsPreserved": 100,
+    "currentJitLeaseRequiredRows": 100,
+    "noMigrationRows": 2,
+    "overlayGrantsMigrationAdmission": false,
+    "overlayAuthority": "CLASSIFICATION_AND_ORDER_ONLY_NOT_MIGRATION_ADMISSION",
+    "immutableAdmissionAuthority": {
+      "path": "2026-10-06-g1-migration-admission-and-lease.json",
+      "bytes": 12736,
+      "sha256": "3dc4b2cdd28d31c3bd2b04a28de1168b92b130420443f08b2caaf387edb83a83",
+      "schema": "dwp.hris.g1-migration-admission-and-lease.v1",
+      "packetId": "HRIS-G1-INTEGRATION-LOCK-20261006-R1",
+      "exactPathShaManifestRequired": true,
+      "sourceCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+      "streams": {
+        "PEOPLE": {
+          "status": "ADMITTED_IMMUTABLE_PENDING_ENVIRONMENT_HISTORY_CHECK",
+          "artifactCount": 4,
+          "streamDigest": "b9ac105c7676bc5a09c6109dea8342216ec6ca4bbe67f1131e7dfdf73b7ec4e9"
+        },
+        "PAYROLL": {
+          "status": "ADMITTED_IMMUTABLE",
+          "artifactCount": 5,
+          "streamDigest": "679e84e6138cabcf2db3f0904017d4e980ac27788319827962cb04e47f7d27f6"
+        },
+        "TIME": {
+          "status": "ADMITTED_IMMUTABLE",
+          "artifactCount": 7,
+          "streamDigest": "76db530fbaa8ddce1188fc1446bed5d1c23c28a4bddda292a5032d573a71aaf9"
+        }
+      }
+    }
+  },
+  "orderingPolicy": {
+    "modulePrefix": {
+      "HRM": [
+        "BASE-TFR-HRM-004",
+        "BASE-TFR-HRM-010",
+        "BASE-TFR-HRM-008"
+      ],
+      "PER": [
+        "BASE-TFR-PER-005",
+        "BASE-TFR-PER-006",
+        "BASE-TFR-PER-016",
+        "BASE-TFR-PER-013"
+      ],
+      "PAY": [
+        "BASE-TFR-PAY-007",
+        "BASE-TFR-PAY-016",
+        "BASE-TFR-PAY-011",
+        "BASE-TFR-PAY-006",
+        "BASE-TFR-PAY-013"
+      ],
+      "TIM": [
+        "BASE-TFR-TIM-016",
+        "BASE-TFR-TIM-006",
+        "BASE-TFR-TIM-010",
+        "BASE-TFR-TIM-017",
+        "BASE-TFR-TIM-007"
+      ],
+      "SYS": [
+        "BASE-TFR-SYS-004",
+        "BASE-TFR-SYS-007"
+      ]
+    },
+    "SYS-007": "EARLY_AFTER_SYS-004",
+    "SYS-012": "LATE_AFTER_OTHER_BASE_SYS_OWNED_SLICES_BEFORE_MODERN",
+    "PAY_CHAIN": [
+      "BASE-TFR-PAY-007",
+      "MOD-PER-COMPPLAN",
+      "BASE-TFR-PAY-016",
+      "BASE-TFR-PAY-011"
+    ],
+    "note": "DEP-019 sequence is foundation -> PER producer/handoff -> PAY typed consumer input -> calculation after producer and consumer result-commit pins. This is a dependency constraint, not module start authority."
+  },
+  "evidenceObjectChecks": [
+    {
+      "sliceId": "BASE-TFR-HRM-004",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/people/pages/people-360-workspace.tsx@129d0a5da5ee580900030f677c3b6ebc6990a646:blob",
+        "apps/dwp/src/features/hris/people/model/people-360-model.ts@465371fbf432c3540e95a0d19b5f8006aa688bab:blob"
+      ],
+      "backendObjects": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/workforce/People360Service.java@447bc97561032e3ec8c9d749abceb65d1cdebb11:blob",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/HrisWorkforceSnapshotProvider.java@cddc74cc2b8a5c35f8119f903579f9d42071a66b:blob"
+      ],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": "af0809d58298f0bff0bbcc075684101c6fc3262c",
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-PER-005",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/performance/pages/hris-performance-cycle-studio.tsx@39e50c6ba295c87c5d9d69b2f4fac2fa85363977:blob",
+        "apps/dwp/src/features/hris/performance/model/performance-cycle-contract.ts@ebbc081178836cffe4c94ead08cbc1d0c74f1e89:blob"
+      ],
+      "backendObjects": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleService.java@7e53b6fba29d0a16be12e10aba594a76846668fc:blob",
+        "dwp-people-server/src/main/resources/db/performance-migration/V1__per_create_evaluation_cycle_foundation.sql@3bfb2b6570863e31f1916abe8dae03be90f8d96f:blob"
+      ],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": "af0809d58298f0bff0bbcc075684101c6fc3262c",
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-007",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/payroll/pages/payroll-foundation-studio.tsx@a6836a4e379145fb784903d945491107271c028e:blob",
+        "apps/dwp/src/features/hris/payroll/model/payroll-foundation-model.ts@57d6c50cf4b18ec81df9b9f29f9ba364810f9fb8:blob"
+      ],
+      "backendObjects": [
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationService.java@0e8055d4a22dd23591eec1e73ccc13f647a6a58a:blob",
+        "dwp-payroll-server/src/main/resources/db/migration/V1__pay_create_payroll_foundation.sql@aefc10658015cbe4a1eb44cb47beef9a80189826:blob"
+      ],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": "af0809d58298f0bff0bbcc075684101c6fc3262c",
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-016",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-016.slice.test.tsx@1672d8e8848744eea0223f73f33311858c459cf3:blob",
+        "apps/dwp/src/features/hris/time/components/hris-time-work-plan-studio.tsx@567c50e17f22b286a54c03edb4e23900e5866c32:blob"
+      ],
+      "backendObjects": [
+        "dwp-time-server/src/main/java/com/dwp/services/time/workregime/WorkRegimeApplicationService.java@305186c9c632a5693cd7f95efbc30bf01ca8d3bd:blob",
+        "dwp-time-server/src/main/resources/db/migration/V1__tim_create_work_regime_foundation.sql@74adee01a6fbbad7e87e5b984caa36dfcde30386:blob",
+        "dwp-time-server/src/test/java/com/dwp/services/time/workregime/TimeG3SliceContractTest.java@e9b3ccc3ce93566f19d4108e2f331c5687043ddb:blob"
+      ],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": "af0809d58298f0bff0bbcc075684101c6fc3262c",
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-004",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/administration/system-access/pages/hris-system-workspace.tsx@d519e5316bd74a399984f940ab44e6fc59aeb634:blob",
+        "apps/dwp/src/features/hris/administration/system-access/model/hris-system-model.ts@2b7617b5569b1e52f8554c27a23fec9e06fcf260:blob"
+      ],
+      "backendObjects": [
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/productaccess/HrisProductAccessService.java@fde4efbe4f6b61875b74d039e6fbcda37152e718:blob",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/productaccess/HrisProductAccessPolicy.java@c386412cd60e79f538dbab8dfab11a2aacf970ba:blob"
+      ],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": "af0809d58298f0bff0bbcc075684101c6fc3262c",
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-HRM-008",
+      "side": "current",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/employment/assignment-proposal-model.ts@9bbbbe67ae56f2b9ee417187269e7e5279302b03:blob",
+        "apps/dwp/src/features/hris/employment/assignment-proposal-workspace.tsx@049be56ce6568c93e4a4954fc1b3528abfbf1146:blob"
+      ],
+      "backendObjects": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalService.java@9f9578e40fa5e7b7e0ea2d51fe310a9f9adc6b3b:blob",
+        "dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql@abbc787c8aa32dfb907a73f606da6b1fe5d180c2:blob"
+      ],
+      "frontendResultCommit": "930b8469eabce8e1878b82c390fe5732b82ac620",
+      "backendResultCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-009",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts@773052d930b67af04b0c3c8423da645cc580ce7b:blob",
+        "apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx@b5be448f3b75e2244941f4b11a462abce613233b:blob"
+      ],
+      "backendObjects": [],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": null,
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-PER-009",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/performance/model/performance-goal-model.ts@ddb372477b3deefad7ebba4cfefa9288544d4aa9:blob",
+        "apps/dwp/src/features/hris/performance/pages/hris-performance-workspace.tsx@abcaa7b437e30c4d91367f487c7994674fc2d127:blob"
+      ],
+      "backendObjects": [],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": null,
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-017",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/time/model/hris-time-model.ts@e7f97c8122afdbf62dd7e3ad69c8ef677ea938c0:blob",
+        "apps/dwp/src/features/hris/time/pages/hris-time-workspace.tsx@2d6b2890dc2c0afd3a4bda16dd5b0dc65d231a3d:blob"
+      ],
+      "backendObjects": [],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": null,
+      "resultCommitsAreAncestors": true
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-012",
+      "side": "reconciled",
+      "frontendObjects": [
+        "apps/dwp/src/features/hris/home/model/hris-home-provider-contract.ts@027e7df22c2a45ddd1a2afc82c0b051ce02b735c:blob",
+        "apps/dwp/src/features/hris/shell/model/hris-shell-navigation-contract.ts@b27708e3fe0a14feb1198ff0771575b0db86b74d:blob"
+      ],
+      "backendObjects": [],
+      "frontendResultCommit": "f3db8b1ed5265ef83caff1ae1b8374119d373d3b",
+      "backendResultCommit": null,
+      "resultCommitsAreAncestors": true
+    }
+  ],
+  "exactSliceIdHits": {
+    "BASE-TFR-PAY-007": {
+      "currentFrontend": [],
+      "currentBackend": [],
+      "reconciledFrontend": [
+        "apps/dwp/src/features/hris/payroll/model/payroll-foundation-model.test.ts",
+        "apps/dwp/src/features/hris/payroll/model/payroll-foundation-model.ts",
+        "apps/dwp/src/features/hris/payroll/pages/payroll-foundation-studio.tsx"
+      ],
+      "reconciledBackend": [
+        "dwp-payroll-server/src/main/resources/db/migration/V1__pay_create_payroll_foundation.sql"
+      ]
+    },
+    "BASE-TFR-HRM-004": {
+      "currentFrontend": [],
+      "currentBackend": [],
+      "reconciledFrontend": [
+        "apps/dwp/src/features/hris/people/pages/people-360-workspace.tsx"
+      ],
+      "reconciledBackend": []
+    },
+    "BASE-TFR-TIM-016": {
+      "currentFrontend": [],
+      "currentBackend": [],
+      "reconciledFrontend": [
+        "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-016.slice.test.tsx"
+      ],
+      "reconciledBackend": [
+        "dwp-time-server/src/main/java/com/dwp/services/time/workregime/WorkRegimeModels.java",
+        "dwp-time-server/src/main/resources/db/migration/V1__tim_create_work_regime_foundation.sql",
+        "dwp-time-server/src/test/java/com/dwp/services/time/workregime/TimeMigrationCleanUpgradeTest.java"
+      ]
+    },
+    "BASE-TFR-PER-005": {
+      "currentFrontend": [],
+      "currentBackend": [],
+      "reconciledFrontend": [],
+      "reconciledBackend": [
+        "dwp-people-server/src/main/resources/db/performance-migration/V1__per_create_evaluation_cycle_foundation.sql"
+      ]
+    }
+  },
+  "validation": {
+    "rowCount102": true,
+    "sliceIdsUnique": true,
+    "historicalOrderContiguous": true,
+    "sourceRefsResolve": true,
+    "dependencyIdsResolve": true,
+    "fileAllocationIdsResolve": true,
+    "historicalMigrationIdsPreserved": true,
+    "currentMigrationValuesRequireJitLease": true,
+    "authorityNoteMarksHistoricalAllocationNotCurrentLease": true,
+    "immutableAdmissionBoundOnlyToG1LeaseManifest": true,
+    "evidenceScopeDistinguishesVersionedSupplementInput": true,
+    "packetSealsAndFirstSliceBindings5of5": true,
+    "packetContractBindings49of50": true,
+    "sys007BeforeSys012": true,
+    "payChainPinned": true,
+    "evidencePathsExistAtPins": true,
+    "resultCommitsAncestorOfEvidencePins": true,
+    "allChecksPassed": false,
+    "overlayStructuralChecksPassed": true,
+    "knownHistoricalBindingDriftCount": 1,
+    "currentModuleAuthorizationReady": false,
+    "targetFamilyPinExactSupplementValidated": true,
+    "payTypedConsumerIsBaseTfrPay016": true,
+    "payCalculationProducerResultPinGate": true
+  },
+  "limitations": [
+    "Modern coding-contract recovery is partial-event-chain; modern rows stay not started absent narrow evidence.",
+    "Historical OPEN_G3_CODE is not current authority; start tokens remain absent/withheld.",
+    "Historical migration allocation ranges are evidence only, never a current lease; schema-touch admission requires the G1 lease JSON exact path/SHA manifest.",
+    "HRM packet has one known API-event contract byte-binding drift."
+  ],
+  "result": "OVERLAY_VALID_WITH_DECLARED_HISTORICAL_BLOCKERS_NOT_MODULE_AUTHORITY",
+  "supplementResolution": {
+    "targetFamilyResolutionRegister": {
+      "status": "PIN_EXACT_SUPPLEMENT",
+      "classification": "PIN_EXACT_CHECKPOINT",
+      "authorityScope": "HISTORICAL_SYS_EXACT_BUSINESS_START_PIN_CHECKPOINT",
+      "path": "recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "bytes": 38399,
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "manifestPath": "recovery/exact-supplements/2026-10-06/manifest.json",
+      "manifestBytes": 9995,
+      "manifestSha256": "342488e9e5f2ec3ede83a0c99e83bd990892169fc913dc60afb3255ded037a6d",
+      "manifestBindingState": "FROZEN_PINNED",
+      "authorityUse": "HISTORICAL_CHECKPOINT_ONLY_NOT_CURRENT_MODULE_AUTHORITY",
+      "baseRowsRebound": 86,
+      "sourceFamilyShaAndRowCountMatches": 86,
+      "partialBlockersRemoved": 86
+    }
+  },
+  "typedConsumerCorrection": {
+    "dependencyId": "DEP-019",
+    "producerSlice": "MOD-PER-COMPPLAN",
+    "consumerSlice": "BASE-TFR-PAY-016",
+    "consumerContractRefs": [
+      "XCON-020",
+      "XCON-021",
+      "SVC-PEP-PER-001"
+    ],
+    "calculationSlice": "BASE-TFR-PAY-011",
+    "calculationGate": "PRODUCER_AND_TYPED_CONSUMER_RESULT_COMMITS_PINNED_BEFORE_CALCULATION",
+    "sequence": [
+      "BASE-TFR-PAY-007",
+      "MOD-PER-COMPPLAN",
+      "BASE-TFR-PAY-016",
+      "BASE-TFR-PAY-011"
+    ]
+  },
+  "targetedRevalidation": {
+    "status": "PASS",
+    "scope": "FINAL_OVERLAY_REVALIDATION",
+    "pending": "NONE",
+    "checks": {
+      "rowCount102": true,
+      "sliceIdsUnique": true,
+      "historicalOrderContiguous": true,
+      "moduleCounts": true,
+      "sourceKindCounts": true,
+      "dispositionCounts": true,
+      "existingImplementedFiveExact": true,
+      "sourceRefsResolve": true,
+      "sourceHashesAndCountsMatch": true,
+      "targetFamilyPinExactSupplement": true,
+      "targetFamilyManifestDigestPinned": true,
+      "targetFamilyClassificationPinExactCheckpoint": true,
+      "targetFamilyAuthorityScopeHistoricalCheckpoint": true,
+      "dependencyIdsResolve": true,
+      "fileAllocationIdsResolve": true,
+      "historicalMigrationIdsPreserved": true,
+      "currentMigrationValuesRequireJitLease": true,
+      "historicalAllocationNotCurrentLeaseMarker": true,
+      "immutableAdmissionBoundOnlyToG1LeaseManifest": true,
+      "evidenceScopeDistinguishesVersionedSupplementInput": true,
+      "packetSealsAndFirstSliceBindings5of5": true,
+      "packetContractBindings49of50": true,
+      "pin_current_frontend": true,
+      "pin_current_backend": true,
+      "pin_reconciled_frontend": true,
+      "pin_reconciled_backend": true,
+      "evidencePathsExistAtPins": true,
+      "resultCommitsAncestorOfEvidencePins": true,
+      "sys007BeforeSys012": true,
+      "payChainPinned": true,
+      "payTypedConsumerDep019": true,
+      "payEffectiveModuleOrder": true,
+      "payCalculationResultPinGate": true,
+      "csvDigestBound": true
+    },
+    "checkCount": 34,
+    "failedCount": 0
+  }
+}

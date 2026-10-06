@@ -1,0 +1,28 @@
+{
+  "authorityScope": "ACCEPTED_POST_PIN_SUCCESSOR",
+  "changedFromHistoricalPin": [
+    "IAQ-033.test_allocation_id",
+    "IAQ-065.test_allocation_id"
+  ],
+  "generatorSha256": "11041a6c61fc8aacb5d101574604c12af464bd930525c247bf85d7da80733cf7",
+  "inputCount": 10,
+  "outputs": {
+    "ia-entry-query-action-key-register.csv": {
+      "bytes": 78170,
+      "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e"
+    },
+    "ia-entry-query-api-contract-register.csv": {
+      "bytes": 100020,
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988"
+    },
+    "ia-entry-query-projection-schemas.v1.json": {
+      "bytes": 1523618,
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048"
+    },
+    "ia-entry-query-runtime-invariant-register.csv": {
+      "bytes": 51783,
+      "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a"
+    }
+  },
+  "status": "PASS"
+}

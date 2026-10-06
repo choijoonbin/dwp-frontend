@@ -1,0 +1,194 @@
+{
+  "schema": "dwp.hris.g1-cluster-test-map.v1",
+  "packetId": "HRIS-G1-INTEGRATION-LOCK-20261006-R1",
+  "policy": {
+    "default": "Run the changed cluster's deterministic checks first and collect all failures before editing.",
+    "generatedArtifacts": "Generate and check once after all canonical semantic-source decisions are complete.",
+    "visual": "Run only the impacted journey and viewport matrix after the owning UI cluster is stable.",
+    "fullGate": "Defer full frontend/backend static, build and release gates to G5 immediately before head freeze.",
+    "w1": "Run exactly once in G6 against the frozen frontend/backend head pair.",
+    "agent": "Do not run the agent full gate unless agent source or an agent-consumed contract pin changes."
+  },
+  "clusters": [
+    {
+      "repository": "backend",
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "textualConflictCount": 26,
+      "semanticReviewPathCount": 29,
+      "firstChecks": [
+        "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.migration.CombinedHrisV33AuthorizationSeedMigrationTest --tests com.dwp.services.auth.migration.AssignmentProposalV34AuthorizationSeedMigrationTest",
+        "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.service.ProductAuthorizationContractValidatorTest --tests com.dwp.services.auth.service.ProductAuthorizationReleaseLineageTest"
+      ],
+      "escalateWhen": "Canonical authorization source, release lineage, migration seed effect, or generated contract changes.",
+      "nextChecks": [
+        "Run the complete :dwp-auth-server:test task once after all authorization dispositions and V242 are stable.",
+        "Regenerate authorization, seed and fixtures once in G3; then run their byte/checksum guards."
+      ]
+    },
+    {
+      "repository": "backend",
+      "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+      "textualConflictCount": 8,
+      "semanticReviewPathCount": 10,
+      "firstChecks": [
+        "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hr.assignment.*'",
+        "./gradlew :dwp-people-server:test --tests com.dwp.services.people.security.HcmWorkspaceOpenApiContractTest --tests com.dwp.services.people.security.PeopleSecurityFilterTest"
+      ],
+      "escalateWhen": "The Assignment API, authority boundary, schema, or People V49..V53 migration sequence changes.",
+      "nextChecks": [
+        "Run People clean-install/upgrade migration checks only after the immutable V49..V52 admission is placed.",
+        "Stop if an environment reports V53 without all V49..V52 predecessors."
+      ]
+    },
+    {
+      "repository": "backend",
+      "cluster": "GATEWAY",
+      "textualConflictCount": 3,
+      "semanticReviewPathCount": 5,
+      "firstChecks": [
+        "./gradlew :dwp-gateway:test --tests com.dwp.gateway.ProductSurfaceStepUpGatewayChainTest --tests com.dwp.gateway.productsurface.GatewayProductSurfaceOpenApiContractTest",
+        "./gradlew :dwp-gateway:test --tests com.dwp.gateway.PlatformServiceIdentityFilterTest"
+      ],
+      "escalateWhen": "Gateway route, step-up, trusted tenant context, or public projection changes.",
+      "nextChecks": [
+        "Run the complete :dwp-gateway:test task only after all gateway conflicts are disposed."
+      ]
+    },
+    {
+      "repository": "backend",
+      "cluster": "OPENAPI_GENERATION",
+      "textualConflictCount": 1,
+      "semanticReviewPathCount": 4,
+      "firstChecks": [
+        "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.controller.ProductAuthorizationContractControllerTest",
+        "./gradlew :dwp-platform-server:test --tests com.dwp.services.platform.config.PublicOpenApiConfigurationTest",
+        "./gradlew :dwp-gateway:test --tests com.dwp.gateway.productsurface.GatewayProductSurfaceOpenApiContractTest"
+      ],
+      "escalateWhen": "An owner controller or schema changes the public contract.",
+      "nextChecks": [
+        "After backend canonical semantics are stable, run `DWP_EXPORT_AUTH_OPENAPI=true ./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.config.AuthOpenApiSnapshotExportTest` exactly once.",
+        "In the same one-time generation batch, run `DWP_EXPORT_PLATFORM_OPENAPI=true ./gradlew :dwp-platform-server:test --tests com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest` exactly once.",
+        "Retain evidence that each selected export test executed and was not skipped.",
+        "Run frontend yarn openapi:check after the exported contract pins are fixed."
+      ]
+    },
+    {
+      "repository": "backend",
+      "cluster": "PLATFORM_HOME_MIGRATION",
+      "textualConflictCount": 1,
+      "semanticReviewPathCount": 3,
+      "firstChecks": [
+        "./gradlew :dwp-platform-server:test --tests com.dwp.services.platform.home.ApprovedHomeApplicationCatalogTest --tests com.dwp.services.platform.home.HomeLaunchpadPolicyTest",
+        "./gradlew :dwp-platform-server:test --tests com.dwp.services.platform.home.HomeExperiencePresentationMigrationTest"
+      ],
+      "escalateWhen": "Visible identity, Home application catalog, or Platform migration effect changes.",
+      "nextChecks": [
+        "Keep current V321; do not admit byte-identical reconciled V320."
+      ]
+    },
+    {
+      "repository": "backend",
+      "cluster": "OTHER_BACKEND",
+      "textualConflictCount": 0,
+      "semanticReviewPathCount": 3,
+      "firstChecks": [
+        "Review each dual-changed path and assign it to an owning cluster before executing a test."
+      ],
+      "escalateWhen": "A path affects a shared contract or runtime topology.",
+      "nextChecks": [
+        "Use the owning module's targeted test task; do not create a catch-all rerun."
+      ]
+    },
+    {
+      "repository": "frontend",
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "textualConflictCount": 7,
+      "semanticReviewPathCount": 9,
+      "firstChecks": [
+        "yarn vitest run apps/dwp/src/components/product-surface-capability-access.test.ts apps/dwp/src/components/product-surface-high-risk-command.test.ts apps/dwp/src/features/shell/product-surface-authority-bridge.test.ts",
+        "yarn authorization:check",
+        "yarn fixtures:check"
+      ],
+      "escalateWhen": "Backend canonical authorization output or frontend projection changes.",
+      "nextChecks": [
+        "Run the three projection checks once more only if their pinned backend inputs change."
+      ]
+    },
+    {
+      "repository": "frontend",
+      "cluster": "ASSIGNMENT",
+      "textualConflictCount": 4,
+      "semanticReviewPathCount": 4,
+      "firstChecks": [
+        "yarn vitest run apps/dwp/src/features/hris/employment/assignment-proposal-model.test.ts apps/dwp/src/features/workforce/assignment-register-model.test.ts"
+      ],
+      "escalateWhen": "Assignment API shape, proposal state machine, or authority decision changes.",
+      "nextChecks": [
+        "Run only the changed Assignment browser journey after the model tests pass."
+      ]
+    },
+    {
+      "repository": "frontend",
+      "cluster": "HOME_SHELL",
+      "textualConflictCount": 4,
+      "semanticReviewPathCount": 8,
+      "firstChecks": [
+        "yarn vitest run apps/dwp/src/components/workspace-composer/app-launchpad-model.test.ts apps/dwp/src/components/workspace-composer/app-launchpad-contract.test.ts apps/dwp/src/components/workspace-composer/hris-visible-product-identity.test.ts apps/dwp/src/features/shell/product-entry-point-catalog.test.ts"
+      ],
+      "escalateWhen": "Launchpad identity, route, Home contribution, or shell registry changes.",
+      "nextChecks": [
+        "Preserve the visible product identity HRIS.",
+        "Run the impacted Home/Shell Playwright journey only after unit/model tests pass."
+      ]
+    },
+    {
+      "repository": "frontend",
+      "cluster": "I18N",
+      "textualConflictCount": 2,
+      "semanticReviewPathCount": 18,
+      "firstChecks": [
+        "yarn i18n:check",
+        "yarn vitest run apps/dwp/src/components/workspace-composer/hris-visible-product-identity.test.ts apps/dwp/src/features/home/flow-home/home-contribution-provider-i18n.test.ts"
+      ],
+      "escalateWhen": "A locale key, visible identity, or route label changes.",
+      "nextChecks": [
+        "Check only changed locale files for key parity before running any browser journey."
+      ]
+    },
+    {
+      "repository": "frontend",
+      "cluster": "VISUAL_SNAPSHOT",
+      "textualConflictCount": 10,
+      "semanticReviewPathCount": 11,
+      "firstChecks": [
+        "Do not choose a snapshot side during G1/G2; resolve the owning UI semantics first.",
+        "In G4 run only the named impacted Playwright spec at 1440, 1280, 390 and 320 px plus 200% zoom and required accessibility modes."
+      ],
+      "escalateWhen": "The owning Home, Shell, Assignment, or Authorization UI result changes.",
+      "nextChecks": [
+        "Update binary snapshots once after the owning journey is approved; never use a blanket snapshot update."
+      ]
+    },
+    {
+      "repository": "frontend",
+      "cluster": "OTHER_FRONTEND",
+      "textualConflictCount": 0,
+      "semanticReviewPathCount": 6,
+      "firstChecks": [
+        "Review each dual-changed path and assign it to an owning feature before executing a test."
+      ],
+      "escalateWhen": "A path crosses a feature boundary or generated contract.",
+      "nextChecks": [
+        "Use the owning feature's named Vitest files; do not run the full Vitest suite for classification."
+      ]
+    }
+  ],
+  "promotionSequence": [
+    "G2 cluster-local backend checks",
+    "G3 one-time canonical generation and contract checks",
+    "G4 cluster-local frontend and impacted visual checks",
+    "G5 full deterministic frontend/backend static-build-release gates and head freeze",
+    "G6 one W1 runtime pass on the frozen head pair",
+    "G7 evidence-only promotion and module packet issuance"
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "schema": "dwp.hris.g1-integration-lock-receipt.v1",
+  "receiptId": "HRIS-G1-INTEGRATION-LOCK-RECEIPT-20261006-R1",
+  "packetId": "HRIS-G1-INTEGRATION-LOCK-20261006-R1",
+  "issuedAt": "2026-10-06T22:11:23+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_WITH_SUCCESSOR_OBLIGATIONS",
+  "decision": "G2_BACKEND_SEMANTIC_INTEGRATION_AUTHORIZED",
+  "completionMeaning": "G1 source pins, integration branches, conflict inventory and initial cluster/test policy, current-state overlay, recovery disposition, authorization comparison and migration admission are locked. Nine OTHER paths still require G2 owner assignment before their targeted tests. No reconciled code has been merged yet.",
+  "exclusions": [
+    "This receipt does not authorize module-parallel development before G7 packet issuance.",
+    "This receipt does not authorize customer activation or production release.",
+    "This receipt does not reuse the historical W1 PASS for a future integrated head.",
+    "This receipt does not claim exact historical recovery for the seven successor-required authorities."
+  ],
+  "sourcePins": {
+    "currentFrontend": "08a05f764a7c6dec38cce2627b81bcb8ef87ee6c",
+    "reconciledFrontend": "7f39d12cd10b8827c67355a7f445973d05373cc9",
+    "currentBackend": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackend": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "currentAgent": "1d46fc4ab49c604efb7464574c49d13ee453e059"
+  },
+  "integrationWorktrees": {
+    "frontend": {
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "workspaceRelativePath": ".codex-worktrees/hris/g1-integration-20261006/frontend",
+      "head": "08a05f764a7c6dec38cce2627b81bcb8ef87ee6c",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "upstreamHeadMatches": true,
+      "clean": true
+    },
+    "backend": {
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "workspaceRelativePath": ".codex-worktrees/hris/g1-integration-20261006/backend",
+      "head": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "upstreamHeadMatches": true,
+      "clean": true
+    }
+  },
+  "conflictLock": {
+    "frontend": {
+      "semanticReviewPaths": 56,
+      "textualConflicts": 27
+    },
+    "backend": {
+      "semanticReviewPaths": 54,
+      "textualConflicts": 39
+    },
+    "otherPathsRequiringG2OwnerAssignment": 9,
+    "allDualChangedPathsRequireDisposition": true,
+    "bulkOursTheirsProhibited": true
+  },
+  "recoveryDecision": {
+    "rawRecoveryArtifacts": 757,
+    "rawPathSizeShaMatches": 757,
+    "historicalCheckpointArtifacts": 6,
+    "acceptedSuccessorArtifacts": 3,
+    "checkpointAndAcceptedSuccessorScopesSeparated": true,
+    "successorRequiredCount": 7,
+    "successorRequired": [
+      "session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+      "coding-readiness/g3-contract-primary-ownership-register.csv",
+      "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+      "coding-readiness/modern-capability-public-identity-registry.v1.json",
+      "coding-readiness/modern-capability-semantic-bindings.v1.json",
+      "session-registers/hris-hrm-source-coverage.csv"
+    ]
+  },
+  "currentSliceOverlay": {
+    "rows": 102,
+    "uniqueSliceIds": 102,
+    "active": 100,
+    "retired": 2,
+    "moduleCounts": {
+      "HRM": 22,
+      "PER": 22,
+      "PAY": 21,
+      "TIM": 20,
+      "SYS": 17
+    },
+    "payDependencyOrder": [
+      "BASE-TFR-PAY-007",
+      "MOD-PER-COMPPLAN",
+      "BASE-TFR-PAY-016",
+      "BASE-TFR-PAY-011"
+    ],
+    "sys007BeforeSys012": true,
+    "historicalMigrationAllocationIsNotCurrentLease": true,
+    "knownHistoricalHrmBindingDriftCount": 1,
+    "moduleAuthorityGranted": false
+  },
+  "authorizationDecision": {
+    "currentVersion": 34,
+    "reconciledVersion": 33,
+    "reconciledOnlyIdentities": 0,
+    "decision": "KEEP_V34_UNLESS_G2_CANONICAL_SEMANTIC_DIFF_IS_NON_EMPTY",
+    "v35Issued": false
+  },
+  "migrationDecision": {
+    "leaseStatus": "ISSUED_WITH_PENDING_G2_G5_VALIDATION",
+    "authV242": "ISSUED_NOT_USED",
+    "authV243": "NOT_ISSUED_CONDITIONAL_ON_G2_SEMANTIC_DIFF",
+    "immutableAdmissionArtifactCount": 16,
+    "peopleEnvironmentHistoryCheckPending": true,
+    "cleanInstallAndUpgradeValidationGate": "G5"
+  },
+  "targetedChecks": [
+    {
+      "check": "raw recovery plus exact checkpoint and accepted-successor validation",
+      "command": "python3 docs/06-delivery/hris/tools/validate_recovery_resolution.py",
+      "status": "PASS"
+    },
+    {
+      "check": "historical IA checkpoint atomic replay",
+      "command": "python3 docs/06-delivery/hris/tools/replay_ia_pin_checkpoint.py",
+      "status": "PASS"
+    },
+    {
+      "check": "accepted IA successor atomic replay",
+      "command": "python3 docs/06-delivery/hris/tools/replay_ia_accepted_successor.py",
+      "status": "PASS"
+    },
+    {
+      "check": "reconciled v33 authorization is a semantic subset of current v34",
+      "command": "python3 docs/06-delivery/hris/tools/verify_authorization_superset.py --backend ../dwp-backend",
+      "status": "PASS"
+    },
+    {
+      "check": "conflict manifest deterministic check",
+      "command": "python3 docs/06-delivery/hris/tools/generate_g1_conflict_manifest.py --frontend . --backend ../dwp-backend --output docs/06-delivery/hris/2026-10-06-g1-conflict-manifest.json --check",
+      "status": "PASS"
+    },
+    {
+      "check": "G1 document, overlay, migration and worktree lock",
+      "command": "python3 docs/06-delivery/hris/tools/validate_g1_lock.py --require-receipt",
+      "status": "PASS"
+    },
+    {
+      "check": "visible product identity remains HRIS",
+      "command": "yarn vitest run apps/dwp/src/components/workspace-composer/hris-visible-product-identity.test.ts",
+      "status": "PASS",
+      "files": 1,
+      "tests": 2
+    }
+  ],
+  "artifactDigests": [
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-g1-conflict-manifest.json",
+      "bytes": 32946,
+      "sha256": "d8943d5aef5f0f58ff97561776a585fcf0e704a1ee8db4d1e067de7a6d1fe8e6"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-g1-cluster-test-map.json",
+      "bytes": 9876,
+      "sha256": "7c7aada3cab4204520fd00dc2f520b558d69cce56f96057aec86283dad7eb2d3"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-g1-migration-admission-and-lease.json",
+      "bytes": 12736,
+      "sha256": "3dc4b2cdd28d31c3bd2b04a28de1168b92b130420443f08b2caaf387edb83a83"
+    },
+    {
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.csv",
+      "bytes": 126216,
+      "sha256": "603f81f13f5168825468c18d9f5a04e4ca389288a121fe1ad33c21b2ff6812de"
+    },
+    {
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.evidence.json",
+      "bytes": 28108,
+      "sha256": "d17ed348749715c660fae624e05e1df7dbee6adf6c4679c73b7c9883eab25047"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-g1-integration-work-packet.md",
+      "bytes": 6250,
+      "sha256": "a907bf143f64ac4cfe297b61da740a56c5e34d403583be45bdb3a4b9db5dea6e"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-recovery-gap-disposition.json",
+      "bytes": 5154,
+      "sha256": "b9ff5853f2e3d02e97ddf592126743018e279bdd111f1803365a4357e9698054"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/manifest.json",
+      "bytes": 9995,
+      "sha256": "342488e9e5f2ec3ede83a0c99e83bd990892169fc913dc60afb3255ded037a6d"
+    },
+    {
+      "path": "docs/06-delivery/hris/g0-recovery-audit-amendment-2026-10-06.json",
+      "bytes": 4310,
+      "sha256": "0a8e979c59b7f06cbba4c19848ab2aa0c1889f938d530894520bcb2309643bc2"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-integration-roadmap.md",
+      "bytes": 11234,
+      "sha256": "ac1abe594d7fa509e0d299024c6d330ab377dd58885b58ab267449fd15c5344e"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-source-and-lineage-provenance.md",
+      "bytes": 10443,
+      "sha256": "feb8fe194095cddabcb2ab6bc90c6cc0f3580705b3777f47652a2a8704b143ca"
+    },
+    {
+      "path": "docs/03-architecture/hris/ADR-001-lineage-v35-successor-and-migration-lease.md",
+      "bytes": 9759,
+      "sha256": "82b5c23b68f85a9baa4f639364db6cdeaa1df44fdc328842d98fd95c1b70868f"
+    }
+  ],
+  "authority": {
+    "g2BackendSemanticIntegrationAuthorized": true,
+    "moduleParallelDevelopmentAuthorized": false,
+    "moduleAuthorizationGate": "G7_PACKET_ISSUANCE",
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": {
+    "id": "G2_BACKEND_SEMANTIC_INTEGRATION",
+    "order": [
+      "AUTHORIZATION_AND_MIGRATION",
+      "PEOPLE_AND_ASSIGNMENT",
+      "GATEWAY_AND_OPENAPI",
+      "PAYROLL_AND_TIME_OWNER_RUNTIME"
+    ],
+    "validationPolicy": "Run cluster-targeted checks, collect failures as a batch, and defer the full deterministic frontend/backend gate to G5 and W1 to G6."
+  }
+}

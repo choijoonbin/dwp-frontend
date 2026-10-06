@@ -1,0 +1,1200 @@
+{
+  "assurance": {
+    "addskIncluded": false,
+    "benskIncluded": false,
+    "canonicalDesignPublished": true,
+    "databaseObjectsCreated": false,
+    "externalIdentityAttestation": "NOT_CLAIMED",
+    "globalGateAuthorization": "NONE_FROM_THIS_CONTRACT",
+    "productionAuthorized": false,
+    "realIdentityAndProcessIsolation": "G6_ONLY_NOT_CLAIMED",
+    "runtimeImplemented": false,
+    "userJourneyCrud": "NOT_STARTED_G3_G4"
+  },
+  "authorityStreams": [
+    {
+      "applicationDdlAllowed": false,
+      "boundedContext": "DWP_PLATFORM_HRIS_CONFIGURATION",
+      "catalogBoundary": "PLATFORM_CATALOG_SUPPLEMENTAL_DATASOURCE",
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-CONFIGURATION-STREAM",
+      "crossSchemaForeignKeysAllowed": false,
+      "databaseSchema": "hris_configuration",
+      "firstReservedMigration": "V1__hris_listening_configuration_foundation.sql",
+      "foreignLocalIdsAllowed": false,
+      "foreignRepositoryImportsAllowed": false,
+      "historyTable": "flyway_hris_configuration_history",
+      "implementationState": "NOT_STARTED_G3",
+      "migrationAllocationId": "MIG-SYS-PLATFORM-HRIS-CONFIGURATION-1-40",
+      "migrationFileAllocationId": "G3-SYS-LISTEN-CONFIGURATION-BE-MIGRATION",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-configuration/migration",
+      "migrationOwnershipId": "OWN-SYS-BE-MIG-PLATFORM-HRIS-CONFIGURATION",
+      "migrationPrincipal": "dwp_hris_configuration_migrator",
+      "migrationRange": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "ownerService": "dwp-platform-server",
+      "runtimePrincipals": [
+        {
+          "objectPolicy": "EXACT_CONFIGURATION_ALLOWLIST_NO_PROTECTED_OR_INSIGHTS_OR_ISSUER",
+          "principal": "dwp_hris_configuration_runtime",
+          "purpose": "CONFIGURATION_COMMAND_QUERY",
+          "readOnly": false
+        }
+      ],
+      "sourceAllocationId": "G3-SYS-LISTEN-CONFIGURATION-BE-SOURCE",
+      "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/listening",
+      "streamKey": "platform-hris-configuration",
+      "testAllocationId": "G3-SYS-LISTEN-CONFIGURATION-BE-TEST",
+      "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/listening"
+    },
+    {
+      "applicationDdlAllowed": false,
+      "boundedContext": "DWP_PLATFORM_HRIS_LISTENING_PROTECTED",
+      "catalogBoundary": "PLATFORM_CATALOG_SUPPLEMENTAL_DATASOURCE",
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-PROTECTED-STREAM",
+      "crossSchemaForeignKeysAllowed": false,
+      "databaseSchema": "hris_listening_protected",
+      "firstReservedMigration": "V1__hris_listening_protected_foundation.sql",
+      "foreignLocalIdsAllowed": false,
+      "foreignRepositoryImportsAllowed": false,
+      "historyTable": "flyway_hris_listening_protected_history",
+      "implementationState": "NOT_STARTED_G3",
+      "migrationAllocationId": "MIG-SYS-PLATFORM-HRIS-LISTENING-PROTECTED-1-40",
+      "migrationFileAllocationId": "G3-SYS-LISTEN-PROTECTED-BE-MIGRATION",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-listening-protected/migration",
+      "migrationOwnershipId": "OWN-SYS-BE-MIG-PLATFORM-HRIS-LISTENING-PROTECTED",
+      "migrationPrincipal": "dwp_hris_listening_protected_migrator",
+      "migrationRange": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "ownerService": "dwp-platform-server",
+      "runtimePrincipals": [
+        {
+          "objectPolicy": "EXACT_PROTECTED_ALLOWLIST_NO_CONFIGURATION_OR_INSIGHTS_OR_ISSUER",
+          "principal": "dwp_hris_listening_protected_runtime",
+          "purpose": "PROTECTED_ADMISSION_COMMAND_QUERY",
+          "readOnly": false
+        }
+      ],
+      "sourceAllocationId": "G3-SYS-LISTEN-PROTECTED-BE-SOURCE",
+      "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrislisteningprotected",
+      "streamKey": "platform-hris-listening-protected",
+      "testAllocationId": "G3-SYS-LISTEN-PROTECTED-BE-TEST",
+      "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrislisteningprotected"
+    },
+    {
+      "applicationDdlAllowed": false,
+      "boundedContext": "DWP_PLATFORM_HRIS_INSIGHTS",
+      "catalogBoundary": "PLATFORM_CATALOG_SUPPLEMENTAL_DATASOURCE",
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-INSIGHTS-STREAM",
+      "crossSchemaForeignKeysAllowed": false,
+      "databaseSchema": "hris_insights",
+      "firstReservedMigration": "V1__hris_listening_insights_foundation.sql",
+      "foreignLocalIdsAllowed": false,
+      "foreignRepositoryImportsAllowed": false,
+      "historyTable": "flyway_hris_insights_history",
+      "implementationState": "NOT_STARTED_G3",
+      "migrationAllocationId": "MIG-SYS-PLATFORM-HRIS-INSIGHTS-1-40",
+      "migrationFileAllocationId": "G3-SYS-LISTEN-INSIGHTS-BE-MIGRATION",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-insights/migration",
+      "migrationOwnershipId": "OWN-SYS-BE-MIG-PLATFORM-HRIS-INSIGHTS",
+      "migrationPrincipal": "dwp_hris_insights_migrator",
+      "migrationRange": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "ownerService": "dwp-platform-server",
+      "runtimePrincipals": [
+        {
+          "objectPolicy": "SELECT_EXACT_INSIGHTS_PROJECTION_ALLOWLIST_ONLY",
+          "principal": "dwp_hris_insights_query_runtime",
+          "purpose": "INSIGHTS_QUERY",
+          "readOnly": true
+        },
+        {
+          "objectPolicy": "DML_EXACT_INSIGHTS_PROJECTION_ALLOWLIST_ONLY",
+          "principal": "dwp_hris_insights_projection_runtime",
+          "purpose": "INSIGHTS_PROJECTION_WRITE",
+          "readOnly": false
+        }
+      ],
+      "sourceAllocationId": "G3-SYS-LISTEN-INSIGHTS-BE-SOURCE",
+      "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisinsights/listening",
+      "streamKey": "platform-hris-insights",
+      "testAllocationId": "G3-SYS-LISTEN-INSIGHTS-BE-TEST",
+      "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisinsights/listening"
+    },
+    {
+      "applicationDdlAllowed": false,
+      "boundedContext": "DWP_AUTH_HRIS_PARTICIPATION_ISSUER",
+      "catalogBoundary": "AUTH_CATALOG_SUPPLEMENTAL_DATASOURCE",
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-ISSUER-STREAM",
+      "crossSchemaForeignKeysAllowed": false,
+      "databaseSchema": "hris_participation_issuer",
+      "firstReservedMigration": "V1__hris_listening_participation_issuer_foundation.sql",
+      "foreignLocalIdsAllowed": false,
+      "foreignRepositoryImportsAllowed": false,
+      "historyTable": "flyway_hris_participation_issuer_history",
+      "implementationState": "NOT_STARTED_G3",
+      "migrationAllocationId": "MIG-SYS-AUTH-HRIS-PARTICIPATION-ISSUER-1-40",
+      "migrationFileAllocationId": "G3-SYS-LISTEN-ISSUER-BE-MIGRATION",
+      "migrationLocation": "dwp-auth-server/src/main/resources/db/hris-participation-issuer/migration",
+      "migrationOwnershipId": "OWN-SYS-BE-MIG-AUTH-HRIS-PARTICIPATION-ISSUER",
+      "migrationPrincipal": "dwp_hris_participation_issuer_migrator",
+      "migrationRange": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "ownerService": "dwp-auth-server",
+      "runtimePrincipals": [
+        {
+          "objectPolicy": "EXACT_ISSUER_ALLOWLIST_NO_RESPONSE_OR_INSIGHTS",
+          "principal": "dwp_hris_participation_issuer_runtime",
+          "purpose": "PARTICIPATION_ELIGIBILITY_TOKEN_ISSUANCE",
+          "readOnly": false
+        }
+      ],
+      "sourceAllocationId": "G3-SYS-LISTEN-ISSUER-BE-SOURCE",
+      "sourceRoot": "dwp-auth-server/src/main/java/com/dwp/services/auth/productaccess/listeningissuer",
+      "streamKey": "auth-hris-participation-issuer",
+      "testAllocationId": "G3-SYS-LISTEN-ISSUER-BE-TEST",
+      "testRoot": "dwp-auth-server/src/test/java/com/dwp/services/auth/productaccess/listeningissuer"
+    }
+  ],
+  "canonicalPrecedence": {
+    "forbiddenLegacyMigration": "dwp-platform-server/src/main/resources/db/migration/V287__hris_platform_modern_employee_listening.sql",
+    "forbiddenLegacyPublicEvent": "EmployeeListeningResponseSubmitted.v2",
+    "legacyArtifactRole": "PREDECESSOR_TRACE_INPUT_ONLY",
+    "legacyDirectImplementation": "FORBIDDEN",
+    "mode": "SUCCESSOR_OVERLAY_REQUIRED",
+    "predecessorPins": [
+      {
+        "path": "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+        "sha256": "ad3a28d37850b29ccafad41dcf78b4934694a3df1116d816b372a7ed26a58eb3"
+      },
+      {
+        "path": "coding-readiness/modern-capability-semantic-bindings.v1.json",
+        "sha256": "79053fdc852542808b5b6e2d8e41f420a88ca7016259b3ba73b3864b1330d13b"
+      },
+      {
+        "path": "coding-readiness/modern-capability-public-identity-registry.v1.json",
+        "sha256": "ff166343a76874b283cd1164253cfb1d1aca9c7593bdcdb2572dc249ce5296e2"
+      },
+      {
+        "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+        "sha256": "2e139acac2a9250a86f21db466d4afd62e7342ba5bce40913bb46f5c0faa6486"
+      },
+      {
+        "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+        "sha256": "7a361f78d0f21862127be310ccd1bd9772353ed14adb971cda0b8a9b81543d98"
+      }
+    ],
+    "requiredConsumerBehavior": "RESOLVE_LISTENING_OPERATION_TABLE_EVENT_AND_IDENTITY_THROUGH_THIS_CONTRACT",
+    "supersededLegacyTableSet": [
+      "sys_hris_listening_surveys",
+      "sys_hris_listening_responses",
+      "sys_hris_listening_cohort_results",
+      "sys_hris_listening_actions"
+    ],
+    "supersedesCapability": "HRIS.MODERN.EMPLOYEE_LISTENING"
+  },
+  "capabilityDependencies": {
+    "HRIS.MODERN.EMPLOYEE_LISTENING": [
+      "platform-hris-configuration",
+      "platform-hris-listening-protected",
+      "platform-hris-insights",
+      "auth-hris-participation-issuer"
+    ],
+    "HRIS.MODERN.GOVERNED_AI": [
+      "platform-hris-configuration",
+      "platform-hris-insights"
+    ],
+    "HRIS.MODERN.PEOPLE_ANALYTICS": [
+      "platform-hris-configuration",
+      "platform-hris-insights"
+    ],
+    "disabledCapabilityOpensSupplementalDatasource": false,
+    "protectedIssuerPairRequired": true
+  },
+  "contractId": "dwp.hris.sys.listening.stream-authority-successor.v1",
+  "eventOwnership": {
+    "canonicalPublicEvents": [
+      {
+        "eventName": "EmployeeListeningSurveyCreated.v3",
+        "payloadClass": "CONFIGURATION_METADATA_ONLY",
+        "streamKey": "platform-hris-configuration"
+      },
+      {
+        "eventName": "EmployeeListeningSurveyPublished.v3",
+        "payloadClass": "CONFIGURATION_METADATA_AND_PROTECTED_RECEIPT_REF_ONLY",
+        "streamKey": "platform-hris-configuration"
+      },
+      {
+        "eventName": "EmployeeListeningSurveyClosed.v3",
+        "payloadClass": "CONFIGURATION_METADATA_AND_PROTECTED_RECEIPT_REF_ONLY",
+        "streamKey": "platform-hris-configuration"
+      },
+      {
+        "eventName": "EmployeeListeningActionCreated.v3",
+        "payloadClass": "ACTION_METADATA_ONLY",
+        "streamKey": "platform-hris-configuration"
+      },
+      {
+        "eventName": "EmployeeListeningActionCompleted.v3",
+        "payloadClass": "ACTION_METADATA_ONLY",
+        "streamKey": "platform-hris-configuration"
+      },
+      {
+        "eventName": "EmployeeListeningCohortProjectionPublished.v1",
+        "payloadClass": "PRIVACY_SAFE_AGGREGATE_LINEAGE_ONLY",
+        "streamKey": "platform-hris-insights"
+      }
+    ],
+    "forbiddenPublicFieldPatterns": [
+      "responseId",
+      "responseToken",
+      "token",
+      "tokenCommitment",
+      "answer",
+      "answers",
+      "principalId",
+      "workerId",
+      "employeeId",
+      "issuerTrace",
+      "ipAddress",
+      "userAgent"
+    ],
+    "internalPortMessages": [
+      {
+        "fieldAllowlist": [
+          "tenantPublicId",
+          "surveyPublicId",
+          "admissionPublicId",
+          "formRevision",
+          "privacyRevision",
+          "retentionRevision",
+          "contentSha256",
+          "opensAt",
+          "closesAt",
+          "idempotencyKey"
+        ],
+        "from": "platform-hris-configuration",
+        "messageName": "ListeningAdmissionInstallRequested.v1",
+        "to": "platform-hris-listening-protected"
+      },
+      {
+        "fieldAllowlist": [
+          "tenantPublicId",
+          "surveyPublicId",
+          "admissionPublicId",
+          "status",
+          "ownerVersion",
+          "receiptPublicId",
+          "occurredAt"
+        ],
+        "from": "platform-hris-listening-protected",
+        "messageName": "ListeningAdmissionInstallReceipt.v1",
+        "to": "platform-hris-configuration"
+      },
+      {
+        "fieldAllowlist": [
+          "tenantPublicId",
+          "surveyPublicId",
+          "admissionPublicId",
+          "expectedOwnerVersion",
+          "idempotencyKey"
+        ],
+        "from": "platform-hris-configuration",
+        "messageName": "ListeningAdmissionCloseRequested.v1",
+        "to": "platform-hris-listening-protected"
+      },
+      {
+        "fieldAllowlist": [
+          "tenantPublicId",
+          "surveyPublicId",
+          "admissionPublicId",
+          "status",
+          "ownerVersion",
+          "receiptPublicId",
+          "closedAt"
+        ],
+        "from": "platform-hris-listening-protected",
+        "messageName": "ListeningAdmissionCloseReceipt.v1",
+        "to": "platform-hris-configuration"
+      },
+      {
+        "fieldAllowlist": [
+          "tenantPublicId",
+          "surveyPublicId",
+          "cohortPackagePublicId",
+          "policyRevision",
+          "sourceEpoch",
+          "cutoffAt",
+          "measureSchemaVersion",
+          "packageSha256",
+          "adequacyCategory"
+        ],
+        "from": "platform-hris-listening-protected",
+        "messageName": "ListeningCohortPackageReady.v1",
+        "to": "platform-hris-insights"
+      },
+      {
+        "fieldAllowlist": [
+          "tenantPublicId",
+          "surveyPublicId",
+          "cohortPackagePublicId",
+          "projectionPublicId",
+          "projectionVersion",
+          "status",
+          "receiptPublicId"
+        ],
+        "from": "platform-hris-insights",
+        "messageName": "ListeningCohortProjectionReceipt.v1",
+        "to": "platform-hris-listening-protected"
+      }
+    ],
+    "privateReceiptOnly": [
+      "ProtectedListeningSubmissionReceipt.v1",
+      "ParticipationEnvelopeIssuanceReceipt.v1",
+      "ParticipationEnvelopeRevocationReceipt.v1"
+    ],
+    "publicBrokerForbidden": [
+      "EmployeeListeningResponseSubmitted.v2",
+      "RAW_RESPONSE_EVENT",
+      "RAW_ANSWER_EVENT",
+      "PARTICIPATION_TOKEN_EVENT",
+      "TOKEN_COMMITMENT_EVENT",
+      "ISSUER_TRACE_EVENT"
+    ]
+  },
+  "exactCounts": {
+    "canonicalPublicEvents": 6,
+    "internalPortMessages": 6,
+    "migrationReservations": 4,
+    "ownerPortOperations": 15,
+    "ownerServices": 2,
+    "plannedTables": 24,
+    "privateReceiptTypes": 3,
+    "publicOperations": 8,
+    "runtimePurposes": 5,
+    "streamFileAllocationTriples": 4,
+    "streams": 4,
+    "verificationProfiles": 5
+  },
+  "fileAllocations": [
+    {
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-CONFIGURATION-STREAM",
+      "migrationAllocationId": "G3-SYS-LISTEN-CONFIGURATION-BE-MIGRATION",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-configuration/migration",
+      "sourceAllocationId": "G3-SYS-LISTEN-CONFIGURATION-BE-SOURCE",
+      "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/listening",
+      "streamKey": "platform-hris-configuration",
+      "testAllocationId": "G3-SYS-LISTEN-CONFIGURATION-BE-TEST",
+      "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/listening"
+    },
+    {
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-PROTECTED-STREAM",
+      "migrationAllocationId": "G3-SYS-LISTEN-PROTECTED-BE-MIGRATION",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-listening-protected/migration",
+      "sourceAllocationId": "G3-SYS-LISTEN-PROTECTED-BE-SOURCE",
+      "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrislisteningprotected",
+      "streamKey": "platform-hris-listening-protected",
+      "testAllocationId": "G3-SYS-LISTEN-PROTECTED-BE-TEST",
+      "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrislisteningprotected"
+    },
+    {
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-INSIGHTS-STREAM",
+      "migrationAllocationId": "G3-SYS-LISTEN-INSIGHTS-BE-MIGRATION",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-insights/migration",
+      "sourceAllocationId": "G3-SYS-LISTEN-INSIGHTS-BE-SOURCE",
+      "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisinsights/listening",
+      "streamKey": "platform-hris-insights",
+      "testAllocationId": "G3-SYS-LISTEN-INSIGHTS-BE-TEST",
+      "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisinsights/listening"
+    },
+    {
+      "controlBootstrapAllocationId": "G3-CTL-SYS-LISTEN-ISSUER-STREAM",
+      "migrationAllocationId": "G3-SYS-LISTEN-ISSUER-BE-MIGRATION",
+      "migrationLocation": "dwp-auth-server/src/main/resources/db/hris-participation-issuer/migration",
+      "sourceAllocationId": "G3-SYS-LISTEN-ISSUER-BE-SOURCE",
+      "sourceRoot": "dwp-auth-server/src/main/java/com/dwp/services/auth/productaccess/listeningissuer",
+      "streamKey": "auth-hris-participation-issuer",
+      "testAllocationId": "G3-SYS-LISTEN-ISSUER-BE-TEST",
+      "testRoot": "dwp-auth-server/src/test/java/com/dwp/services/auth/productaccess/listeningissuer"
+    }
+  ],
+  "forbiddenPatterns": [
+    "CROSS_SCHEMA_FK",
+    "CROSS_STREAM_LOCAL_ID",
+    "FOREIGN_REPOSITORY_IMPORT",
+    "SHARED_RUNTIME_PRINCIPAL",
+    "SHARED_MIGRATION_HISTORY",
+    "PRIMARY_DATASOURCE_FALLBACK",
+    "RAW_RESPONSE_PUBLIC_EVENT",
+    "PARTICIPATION_TOKEN_PUBLIC_EVENT",
+    "CONFIGURATION_CLOSED_BEFORE_PROTECTED_CLOSE_FENCE",
+    "CROSS_DATABASE_ATOMIC_TRANSACTION_CLAIM",
+    "LEGACY_V287_LISTENING_MIGRATION"
+  ],
+  "migrationReservations": [
+    {
+      "allocationId": "MIG-SYS-PLATFORM-HRIS-CONFIGURATION-1-40",
+      "databaseSchema": "hris_configuration",
+      "firstReservedMigration": "V1__hris_listening_configuration_foundation.sql",
+      "historyTable": "flyway_hris_configuration_history",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-configuration/migration",
+      "ownershipId": "OWN-SYS-BE-MIG-PLATFORM-HRIS-CONFIGURATION",
+      "range": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "state": "RESERVED_G3_RANGE_NOT_CREATED",
+      "streamKey": "platform-hris-configuration"
+    },
+    {
+      "allocationId": "MIG-SYS-PLATFORM-HRIS-LISTENING-PROTECTED-1-40",
+      "databaseSchema": "hris_listening_protected",
+      "firstReservedMigration": "V1__hris_listening_protected_foundation.sql",
+      "historyTable": "flyway_hris_listening_protected_history",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-listening-protected/migration",
+      "ownershipId": "OWN-SYS-BE-MIG-PLATFORM-HRIS-LISTENING-PROTECTED",
+      "range": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "state": "RESERVED_G3_RANGE_NOT_CREATED",
+      "streamKey": "platform-hris-listening-protected"
+    },
+    {
+      "allocationId": "MIG-SYS-PLATFORM-HRIS-INSIGHTS-1-40",
+      "databaseSchema": "hris_insights",
+      "firstReservedMigration": "V1__hris_listening_insights_foundation.sql",
+      "historyTable": "flyway_hris_insights_history",
+      "migrationLocation": "dwp-platform-server/src/main/resources/db/hris-insights/migration",
+      "ownershipId": "OWN-SYS-BE-MIG-PLATFORM-HRIS-INSIGHTS",
+      "range": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "state": "RESERVED_G3_RANGE_NOT_CREATED",
+      "streamKey": "platform-hris-insights"
+    },
+    {
+      "allocationId": "MIG-SYS-AUTH-HRIS-PARTICIPATION-ISSUER-1-40",
+      "databaseSchema": "hris_participation_issuer",
+      "firstReservedMigration": "V1__hris_listening_participation_issuer_foundation.sql",
+      "historyTable": "flyway_hris_participation_issuer_history",
+      "migrationLocation": "dwp-auth-server/src/main/resources/db/hris-participation-issuer/migration",
+      "ownershipId": "OWN-SYS-BE-MIG-AUTH-HRIS-PARTICIPATION-ISSUER",
+      "range": {
+        "baselineHighWater": 0,
+        "end": 40,
+        "start": 1
+      },
+      "state": "RESERVED_G3_RANGE_NOT_CREATED",
+      "streamKey": "auth-hris-participation-issuer"
+    }
+  ],
+  "ownerPortOperations": [
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "COMMAND",
+      "ownerPortOperation": "configuration.createSurvey",
+      "streamKey": "platform-hris-configuration"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "ORCHESTRATION_COMMAND",
+      "ownerPortOperation": "configuration.publishSurveyOrchestrate",
+      "streamKey": "platform-hris-configuration"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "ORCHESTRATION_COMMAND",
+      "ownerPortOperation": "configuration.closeSurveyOrchestrate",
+      "streamKey": "platform-hris-configuration"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "COMMAND",
+      "ownerPortOperation": "configuration.createAction",
+      "streamKey": "platform-hris-configuration"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "COMMAND",
+      "ownerPortOperation": "configuration.completeAction",
+      "streamKey": "platform-hris-configuration"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "QUERY",
+      "ownerPortOperation": "protected.listActiveAdmissions",
+      "streamKey": "platform-hris-listening-protected"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "SIGNED_OWNER_COMMAND",
+      "ownerPortOperation": "protected.installAdmission",
+      "streamKey": "platform-hris-listening-protected"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "SIGNED_OWNER_COMMAND",
+      "ownerPortOperation": "protected.closeAdmission",
+      "streamKey": "platform-hris-listening-protected"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "ANONYMOUS_OWNER_COMMAND",
+      "ownerPortOperation": "protected.submitResponse",
+      "streamKey": "platform-hris-listening-protected"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "PRIVACY_OWNER_COMMAND",
+      "ownerPortOperation": "protected.buildCohortPackage",
+      "streamKey": "platform-hris-listening-protected"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "SIGNED_MINIMIZED_PROJECTION_COMMAND",
+      "ownerPortOperation": "insights.ingestCohortPackage",
+      "streamKey": "platform-hris-insights"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "QUERY",
+      "ownerPortOperation": "insights.queryCohortResults",
+      "streamKey": "platform-hris-insights"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "AUTHENTICATED_OWNER_COMMAND",
+      "ownerPortOperation": "issuer.issueParticipationEnvelope",
+      "streamKey": "auth-hris-participation-issuer"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "SIGNED_OWNER_QUERY",
+      "ownerPortOperation": "issuer.resolveParticipationStatus",
+      "streamKey": "auth-hris-participation-issuer"
+    },
+    {
+      "contractState": "G3_INTERFACE_REQUIRED_NOT_IMPLEMENTED",
+      "kind": "AUTHENTICATED_OWNER_COMMAND",
+      "ownerPortOperation": "issuer.revokeParticipationEnvelope",
+      "streamKey": "auth-hris-participation-issuer"
+    }
+  ],
+  "ownerSession": "HRIS-SYS",
+  "publicIdentityAndSemanticOverlay": {
+    "configurationSurveyReferenceInProtected": "surveyPublicId+formRevision+privacyRevision+retentionRevision+contentSha256 immutable snapshot only",
+    "externalIdentity": "UUID_PUBLIC_ID_ONLY",
+    "insightsInput": "PRIVACY_SAFE_COHORT_PACKAGE_PUBLIC_ID_AND_AGGREGATE_MEASURES_ONLY",
+    "issuerOutput": "SIGNED_OPAQUE_PARTICIPATION_ENVELOPE_NO_PRINCIPAL_OR_WORKER_ID_TO_PROTECTED",
+    "localIdentity": "BIGINT_STREAM_LOCAL_NEVER_TRANSPORTED_ACROSS_STREAM",
+    "protectedResponseParent": "hris_listening_protected.sys_hris_listening_admission_versions(tenant_id,listening_admission_version_id)",
+    "semanticRegistryMode": "THIS_SUCCESSOR_OVERRIDES_PREDECESSOR_LISTENING_ROWS"
+  },
+  "publicOperationBindings": [
+    {
+      "authoritativeStreamKey": "platform-hris-listening-protected",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "QUERY",
+      "operationId": "modern.listening.active.query",
+      "ownerPortOperation": "protected.listActiveAdmissions",
+      "publicPath": "GET /api/platform/v1/hris/listening/surveys/active",
+      "resultUnknownRefetchRequired": false,
+      "transactionBoundary": "PROTECTED_READ_ONLY_TRANSACTION"
+    },
+    {
+      "authoritativeStreamKey": "platform-hris-listening-protected",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "COMMAND",
+      "operationId": "modern.listening.response.submit",
+      "ownerPortOperation": "protected.submitResponse",
+      "publicPath": "POST /api/platform/v1/hris/listening/surveys/{surveyId}/responses",
+      "resultUnknownRefetchRequired": false,
+      "transactionBoundary": "PROTECTED_SUBMIT_CLOSE_FENCE_TRANSACTION"
+    },
+    {
+      "authoritativeStreamKey": "platform-hris-configuration",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "COMMAND",
+      "operationId": "modern.listening.survey.create",
+      "ownerPortOperation": "configuration.createSurvey",
+      "publicPath": "POST /api/platform/v1/admin/hris/listening/surveys",
+      "resultUnknownRefetchRequired": false,
+      "transactionBoundary": "CONFIGURATION_LOCAL_TRANSACTION"
+    },
+    {
+      "authoritativeStreamKey": "platform-hris-configuration",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "COMMAND",
+      "operationId": "modern.listening.survey.publish",
+      "ownerPortOperation": "configuration.publishSurveyOrchestrate",
+      "publicPath": "POST /api/platform/v1/admin/hris/listening/surveys/{surveyId}/publish",
+      "resultUnknownRefetchRequired": true,
+      "transactionBoundary": "LOCAL_COMMIT_THEN_PROTECTED_PORT_REFETCH"
+    },
+    {
+      "authoritativeStreamKey": "platform-hris-configuration",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "COMMAND",
+      "operationId": "modern.listening.survey.close",
+      "ownerPortOperation": "configuration.closeSurveyOrchestrate",
+      "publicPath": "POST /api/platform/v1/admin/hris/listening/surveys/{surveyId}/close",
+      "resultUnknownRefetchRequired": true,
+      "transactionBoundary": "PROTECTED_CLOSE_REFETCH_THEN_CONFIGURATION_FINALIZE"
+    },
+    {
+      "authoritativeStreamKey": "platform-hris-insights",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "QUERY",
+      "operationId": "modern.listening.cohorts.query",
+      "ownerPortOperation": "insights.queryCohortResults",
+      "publicPath": "GET /api/platform/v1/admin/hris/listening/surveys/{surveyId}/cohort-results",
+      "resultUnknownRefetchRequired": false,
+      "transactionBoundary": "INSIGHTS_READ_ONLY_TRANSACTION"
+    },
+    {
+      "authoritativeStreamKey": "platform-hris-configuration",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "COMMAND",
+      "operationId": "modern.listening.action.create",
+      "ownerPortOperation": "configuration.createAction",
+      "publicPath": "POST /api/platform/v1/admin/hris/listening/surveys/{surveyId}/actions",
+      "resultUnknownRefetchRequired": false,
+      "transactionBoundary": "CONFIGURATION_LOCAL_TRANSACTION"
+    },
+    {
+      "authoritativeStreamKey": "platform-hris-configuration",
+      "crossDatabaseTransactionClaimAllowed": false,
+      "foreignLocalIdAllowed": false,
+      "foreignRepositoryReadAllowed": false,
+      "implementationState": "NOT_STARTED_G3",
+      "kind": "COMMAND",
+      "operationId": "modern.listening.action.complete",
+      "ownerPortOperation": "configuration.completeAction",
+      "publicPath": "POST /api/platform/v1/admin/hris/listening/actions/{actionId}/complete",
+      "resultUnknownRefetchRequired": false,
+      "transactionBoundary": "CONFIGURATION_LOCAL_TRANSACTION"
+    }
+  ],
+  "requiredCanonicalConsumers": [
+    "coding-readiness/03-backend-service-architecture.md",
+    "coding-readiness/physical-owner-prefix-register.csv",
+    "coding-readiness/module-structure-contract-register.csv",
+    "coding-readiness/07-modern-capability-coding-contract.md",
+    "coding-readiness/modern-capability-coding-contract-register.csv",
+    "coding-readiness/modern-capability-trace-register.csv",
+    "coding-readiness/g3-slice-code-go-register.csv",
+    "coding-readiness/g3-file-allocation-register.csv",
+    "coding-readiness/sys-exact-business-start-successor.v1.json",
+    "coding-readiness/sys-exact-business-start-pin.v1.json",
+    "g0/file-ownership-register.csv",
+    "g0/migration-stream-register.csv",
+    "g0/migration-allocation-register.csv",
+    "session-prompts/00-common-session-contract.md",
+    "session-prompts/05-cloudhr-sys-session.md",
+    "session-prompts/06-hris-integration-control.md"
+  ],
+  "schemaVersion": 1,
+  "scope": "GENERIC_GLOBAL_PRODUCT_CORE_SYS_EMPLOYEE_LISTENING_BOUNDARY",
+  "sealedPayloadSha256": "45973285a659239b080bb89cbb60d2ccd34899a44edea776461364643f525804",
+  "sessionTopology": "FIVE_SESSIONS_UNCHANGED_HRM_PER_PAY_TIM_SYS",
+  "status": "CANONICAL_G3_START_AUTHORITY_NOT_IMPLEMENTED",
+  "tableOwnership": [
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-configuration",
+      "tableName": "sys_hris_listening_surveys",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_survey_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_survey_id"
+          ],
+          "targetTable": "sys_hris_listening_surveys"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-configuration",
+      "tableName": "sys_hris_listening_survey_versions",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_survey_version_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_survey_version_id"
+          ],
+          "targetTable": "sys_hris_listening_survey_versions"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-configuration",
+      "tableName": "sys_hris_listening_actions",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-configuration",
+      "tableName": "sys_hris_listening_operation_receipts",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-configuration",
+      "tableName": "sys_hris_listening_domain_outbox",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_admission_versions",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_admission_version_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_admission_version_id"
+          ],
+          "targetTable": "sys_hris_listening_admission_versions"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_responses",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_response_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_response_id"
+          ],
+          "targetTable": "sys_hris_listening_responses"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_answer_values",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_admission_version_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_admission_version_id"
+          ],
+          "targetTable": "sys_hris_listening_admission_versions"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_token_consumptions",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_response_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_response_id"
+          ],
+          "targetTable": "sys_hris_listening_responses"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_protected_receipts",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_response_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_response_id"
+          ],
+          "targetTable": "sys_hris_listening_responses"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_erasure_tickets",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_admission_version_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_admission_version_id"
+          ],
+          "targetTable": "sys_hris_listening_admission_versions"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_cohort_budgets",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_cohort_budget_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_cohort_budget_id"
+          ],
+          "targetTable": "sys_hris_listening_cohort_budgets"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_cohort_packages",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-listening-protected",
+      "tableName": "sys_hris_listening_protected_outbox",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-insights",
+      "tableName": "sys_hris_listening_cohort_projections",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_cohort_projection_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_cohort_projection_id"
+          ],
+          "targetTable": "sys_hris_listening_cohort_projections"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-insights",
+      "tableName": "sys_hris_listening_lineage_receipts",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_cohort_projection_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_cohort_projection_id"
+          ],
+          "targetTable": "sys_hris_listening_cohort_projections"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-insights",
+      "tableName": "sys_hris_listening_export_receipts",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-insights",
+      "tableName": "sys_hris_listening_insights_inbox",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "platform-hris-insights",
+      "tableName": "sys_hris_listening_insights_outbox",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "auth-hris-participation-issuer",
+      "tableName": "sys_hris_listening_eligibility_versions",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_eligibility_version_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_eligibility_version_id"
+          ],
+          "targetTable": "sys_hris_listening_eligibility_versions"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "auth-hris-participation-issuer",
+      "tableName": "sys_hris_listening_token_issuances",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [
+        {
+          "columns": [
+            "tenant_id",
+            "listening_token_issuance_id"
+          ],
+          "mode": "TENANT_LOCAL_COMPOSITE_FK",
+          "targetColumns": [
+            "tenant_id",
+            "listening_token_issuance_id"
+          ],
+          "targetTable": "sys_hris_listening_token_issuances"
+        }
+      ],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "auth-hris-participation-issuer",
+      "tableName": "sys_hris_listening_token_revocations",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "auth-hris-participation-issuer",
+      "tableName": "sys_hris_listening_issuer_receipts",
+      "tenantScoped": true
+    },
+    {
+      "crossSchemaForeignKeys": [],
+      "foreignLocalIdColumns": [],
+      "implementationState": "NOT_STARTED_G4",
+      "localForeignKeys": [],
+      "publicIdentity": "UUID_PUBLIC_ID_WHEN_EXTERNALLY_REFERENCED",
+      "streamKey": "auth-hris-participation-issuer",
+      "tableName": "sys_hris_listening_issuer_outbox",
+      "tenantScoped": true
+    }
+  ],
+  "transactionAndIdempotency": {
+    "close": "SIGNED_PROTECTED_CLOSE_FENCE_COMMIT_AND_REFETCH_BEFORE_CONFIGURATION_FINALIZE",
+    "cohortTransfer": "FIXED_QUERY_EPOCH_BUDGET_MINIMIZED_AGGREGATE_ONLY",
+    "crossDatabaseAtomicityClaim": "FORBIDDEN",
+    "ownerLocalOutboxInboxHistory": "REQUIRED_PER_STREAM_NO_SHARED_RECEIPT_TABLE",
+    "publish": "CONFIGURATION_INTENT_COMMIT_THEN_SIGNED_PROTECTED_INSTALL_RESULT_UNKNOWN_REFETCH_THEN_CONFIGURATION_FINALIZE",
+    "replayAfterErasure": "SAME_VALID_CONSUMED_TOKEN_ALWAYS_RETURNS_SAME_ERASED_RECEIPT_NO_COMPARISON_ORACLE",
+    "replayBeforeErasure": "SAME_TOKEN_SAME_PAYLOAD_RETURNS_SAME_ACCEPTED_RECEIPT_DIFFERENT_PAYLOAD_CONFLICT",
+    "submit": "PROTECTED_ADMISSION_LOCK_PLUS_WINDOW_TOKEN_CONSENT_RESPONSE_ANSWER_TOKEN_CONSUMPTION_RECEIPT_ATOMIC",
+    "submitCloseOrdering": "SAME_PROTECTED_ADMISSION_LOCK_FENCE"
+  },
+  "verificationProfileBindings": [
+    {
+      "ownerService": "dwp-platform-server",
+      "profileId": "G3-SYS-LISTEN-CONFIGURATION-BE",
+      "state": "CONTROL_CATALOG_BINDING_REQUIRED",
+      "streamKeys": [
+        "platform-hris-configuration"
+      ]
+    },
+    {
+      "ownerService": "dwp-platform-server",
+      "profileId": "G3-SYS-LISTEN-PROTECTED-BE",
+      "state": "CONTROL_CATALOG_BINDING_REQUIRED",
+      "streamKeys": [
+        "platform-hris-listening-protected"
+      ]
+    },
+    {
+      "ownerService": "dwp-platform-server",
+      "profileId": "G3-SYS-LISTEN-INSIGHTS-BE",
+      "state": "CONTROL_CATALOG_BINDING_REQUIRED",
+      "streamKeys": [
+        "platform-hris-insights"
+      ]
+    },
+    {
+      "ownerService": "dwp-auth-server",
+      "profileId": "G3-SYS-LISTEN-ISSUER-BE",
+      "state": "CONTROL_CATALOG_BINDING_REQUIRED",
+      "streamKeys": [
+        "auth-hris-participation-issuer"
+      ]
+    },
+    {
+      "ownerService": "dwp-frontend",
+      "profileId": "G3-SYS-LISTEN-FE",
+      "state": "CONTROL_CATALOG_BINDING_REQUIRED",
+      "streamKeys": []
+    }
+  ]
+}

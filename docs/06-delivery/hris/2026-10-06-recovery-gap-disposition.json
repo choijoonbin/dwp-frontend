@@ -1,0 +1,102 @@
+{
+  "schema": "dwp.hris.recovery-gap-disposition.v1",
+  "packetId": "HRIS-G1-INTEGRATION-LOCK-20261006-R1",
+  "status": "G1_CLOSED_WITH_SUCCESSOR_OBLIGATIONS",
+  "principles": [
+    "The raw recovery mirror is immutable evidence.",
+    "An exact supplement may override the same relative path only when its pin or deterministic atomic provenance is validated.",
+    "A missing historical final artifact is never invented merely to make an old validator pass.",
+    "Successor-required items block G7 module delegation until current/reconciled canonical authority is issued and pinned."
+  ],
+  "resolved": [
+    {
+      "gap": "Partial 44-row atomic duty matrix",
+      "disposition": "PIN_EXACT_SUPPLEMENT",
+      "evidence": "128 unique duties = 67 base + 48 modern + 13 IA; permission package reference set is exactly equal."
+    },
+    {
+      "gap": "Partial target-family resolution register",
+      "disposition": "PIN_EXACT_SUPPLEMENT",
+      "evidence": "86 unique resolutions, 11 columns, exact SYS pin bytes and SHA."
+    },
+    {
+      "gap": "Missing IA query API register and truncated projection schema",
+      "disposition": "PIN_EXACT_SUPPLEMENT",
+      "evidence": "66 APIs and 66 projections match the SYS pin exactly."
+    },
+    {
+      "gap": "Missing IA runtime invariant and action key registers",
+      "disposition": "PIN_ERA_DETERMINISTIC_COMPANION",
+      "evidence": "Same atomic generator run produced 66 runtime rows and 202 unique action keys while the pinned API/schema outputs matched exactly."
+    },
+    {
+      "gap": "Post-pin Listening allocation successor authority was absent from the raw mirror",
+      "disposition": "ACCEPTED_SUCCESSOR_EXACT_AND_DETERMINISTIC_COMPANION",
+      "evidence": "Recovered the 100,020-byte IA API successor and 46,420-byte sealed Listening v1 exactly; isolated replay reproduced the 51,783-byte runtime companion and proved schema/action outputs unchanged."
+    },
+    {
+      "gap": "Historical authoring worktrees no longer exist",
+      "disposition": "REPLACED_BY_CURRENT_G1_WORKTREES",
+      "evidence": "Current-pin frontend/backend integration branches and managed worktrees were created and pushed; their state is sealed in the G1 receipt."
+    },
+    {
+      "gap": "Historical slice register marks all 100 active slices NOT_STARTED despite current/reconciled implementation; two additional slices are retired",
+      "disposition": "CURRENT_STATE_OVERLAY",
+      "evidence": "All 102 historical slice IDs receive a non-destructive current/reconciled disposition in current-slice-integration-status.v1.csv."
+    },
+    {
+      "gap": "Scoped authoring materializer is incomplete",
+      "disposition": "SUPERSEDED_FOR_G1",
+      "evidence": "G1 uses freshly generated conflict, worktree, migration and test-map receipts against current pins instead of replaying the historical materializer."
+    }
+  ],
+  "successorRequired": [
+    {
+      "path": "session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+      "reason": "Recovered bytes do not match the historical packet final digest.",
+      "ownerGate": "G2_HRM_PEOPLE_CONTRACT_DISPOSITION"
+    },
+    {
+      "path": "coding-readiness/g3-contract-primary-ownership-register.csv",
+      "reason": "The final exact ownership authority cannot be proven without missing modern canonical inputs.",
+      "ownerGate": "G2_OWNER_CONTRACT_DISPOSITION"
+    },
+    {
+      "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "reason": "Final exact bytes are not independently recoverable.",
+      "ownerGate": "G3_CANONICAL_GENERATION"
+    },
+    {
+      "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+      "reason": "Final exact bytes are not independently recoverable.",
+      "ownerGate": "G3_CANONICAL_GENERATION"
+    },
+    {
+      "path": "coding-readiness/modern-capability-public-identity-registry.v1.json",
+      "reason": "Final exact bytes are not independently recoverable.",
+      "ownerGate": "G3_CANONICAL_GENERATION"
+    },
+    {
+      "path": "coding-readiness/modern-capability-semantic-bindings.v1.json",
+      "reason": "Final exact bytes are not independently recoverable.",
+      "ownerGate": "G3_CANONICAL_GENERATION"
+    },
+    {
+      "path": "session-registers/hris-hrm-source-coverage.csv",
+      "reason": "The final 514,029-byte/583-row fingerprint is pinned but complete bytes are not recoverable.",
+      "ownerGate": "G2_HRM_SOURCE_COVERAGE_SUCCESSOR"
+    }
+  ],
+  "historicalOnly": {
+    "missingWithFileChangeHistoryCount": 10,
+    "referenceOnlyPathCount": 337,
+    "policy": "Retain the raw recovery counts and original classifications. Exact/accepted exceptions are enumerated in resolved above; every other remaining reference-only item is not promoted to current authority and does not independently block G2 integration."
+  },
+  "exitDecision": {
+    "g1IntegrationLock": "PASS_WITH_SUCCESSOR_OBLIGATIONS",
+    "g2BackendSemanticIntegration": "AUTHORIZED",
+    "moduleParallelDevelopment": "BLOCKED_UNTIL_G7_PACKET_ISSUANCE",
+    "customerActivation": "NOT_AUTHORIZED",
+    "productionRelease": "NOT_AUTHORIZED"
+  }
+}

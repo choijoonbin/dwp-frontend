@@ -1,0 +1,273 @@
+{
+  "schema": "dwp.hris.g1-migration-admission-and-lease.v1",
+  "packetId": "HRIS-G1-INTEGRATION-LOCK-20261006-R1",
+  "status": "ISSUED_WITH_PENDING_G2_G5_VALIDATION",
+  "backendBaseCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+  "backendReconciledCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+  "singleWriter": "SYS_COMMON_INTEGRATION_CONTROL",
+  "issuedAt": "2026-10-06T12:33:13Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "leases": [
+    {
+      "leaseId": "HRIS-AUTH-V242-20261006-R1",
+      "stream": "AUTH",
+      "database": "dwp_auth",
+      "schema": "public",
+      "versionStart": "242",
+      "versionEnd": "242",
+      "status": "ISSUED_NOT_USED",
+      "issuedAt": "2026-10-06T12:33:13Z",
+      "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+      "baseBranch": "codex/hris-g1-integration-backend-20261006",
+      "baseCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "ownerModule": "SYS_COMMON",
+      "taskPacket": "HRIS-G1-INTEGRATION-LOCK-20261006-R1",
+      "allowedPath": "dwp-auth-server/src/main/resources/db/migration/V242__authorize_exact_payroll_foundation_operations.sql",
+      "sourceEffectPath": "dwp-auth-server/src/main/resources/db/migration/V234__authorize_exact_payroll_foundation_operations.sql",
+      "sourceEffectSha256": "3d4fc515a6b3e4904f3d6eb89fc71991a709346eeeeaf04e13e601e7096668d9",
+      "schemaEffect": "Add and seed exact SIMULATE, PUBLISH, REVERSE and RECONCILE permissions for DATA.HR_PAY.",
+      "writer": "SYS_COMMON_INTEGRATION_CONTROL",
+      "rollbackPolicy": "Before application, remove only the uncommitted leased file and record RELEASED_UNUSED. After application, never edit or delete it; use a new forward-fix lease.",
+      "forwardFixPolicy": "Never edit an applied migration; allocate the next free AUTH version through a new lease.",
+      "expiresWhen": "Packet is superseded, V242 becomes occupied, the base pin drifts, or G2 rejects the source effect.",
+      "unusedVersionPolicy": "Record RELEASED_UNUSED; do not create a placeholder migration.",
+      "validation": {
+        "duplicateVersion": "PASS_AT_ISSUANCE",
+        "streamOrder": "PASS_AT_ISSUANCE",
+        "issuanceEvidence": {
+          "command": "Parse dwp-auth-server/src/main/resources/db/migration/V*.sql at backendBaseCommit; require unique versions, no V242, and highest integer version 241.",
+          "migrationFileCount": 143,
+          "duplicateVersions": [],
+          "v242Paths": [],
+          "highestIntegerVersion": 241
+        },
+        "cleanInstall": "PENDING_G5_AFTER_INTEGRATION",
+        "existingDatabaseUpgrade": "PENDING_G5_AFTER_INTEGRATION"
+      }
+    }
+  ],
+  "conditionalLeases": [
+    {
+      "stream": "AUTH",
+      "candidateVersion": "243",
+      "status": "NOT_ISSUED",
+      "purpose": "Authorization successor seed only if the integrated canonical semantic source differs from current v34.",
+      "issueCondition": "G2 semantic comparison is non-empty and the successor bundle is approved.",
+      "prohibition": "Do not create v35 or V243 merely to label the integration."
+    },
+    {
+      "stream": "PLATFORM",
+      "candidateVersion": "322",
+      "status": "NOT_REQUIRED",
+      "purpose": "Visible HCM-to-HRIS rename remediation.",
+      "evidence": {
+        "currentV321Sha256": "7b1efb6b4e8983f106c20448dfa56b2228893ddb0502d79fded4066d2097ccf2",
+        "reconciledV320Sha256": "7b1efb6b4e8983f106c20448dfa56b2228893ddb0502d79fded4066d2097ccf2"
+      },
+      "decision": "The effects are byte-identical, so no duplicate migration is admitted."
+    }
+  ],
+  "immutableAdmissions": [
+    {
+      "stream": "AUTH_RENAME",
+      "status": "DEDUPLICATED",
+      "reconciledPath": "dwp-auth-server/src/main/resources/db/migration/V234_1__rename_visible_hcm_product_to_hris.sql",
+      "currentPath": "dwp-auth-server/src/main/resources/db/migration/V239__rename_visible_hcm_product_to_hris.sql",
+      "sharedSha256": "55f2cad8d951acb0d640d3c9599861d34381ae5df62a7114e7b2c8059f7e4fc3",
+      "decision": "Preserve current V239 and do not admit reconciled V234_1."
+    },
+    {
+      "stream": "PEOPLE",
+      "versions": "49..52",
+      "status": "ADMITTED_IMMUTABLE_PENDING_ENVIRONMENT_HISTORY_CHECK",
+      "database": "dwp_people",
+      "decision": "Admit the reconciled predecessors unchanged before current V53.",
+      "stopCondition": "If any target environment has V53 applied without V49..V52, stop and design a forward-only reconciliation before execution."
+    },
+    {
+      "stream": "PAYROLL",
+      "versions": "1..5",
+      "status": "ADMITTED_IMMUTABLE",
+      "database": "dwp_payroll",
+      "schema": "public",
+      "historyTable": "flyway_schema_history",
+      "evidencePath": "dwp-payroll-server/src/main/resources/application.yml"
+    },
+    {
+      "stream": "TIME",
+      "versions": "1..7",
+      "status": "ADMITTED_IMMUTABLE",
+      "database": "dwp_time",
+      "schema": "public",
+      "historyTable": "flyway_schema_history",
+      "evidencePath": "dwp-time-server/src/main/resources/application.yml"
+    }
+  ],
+  "immutableArtifactManifest": {
+    "sourceCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "policy": "Admit each listed migration at exactly these bytes; renumbering or content edits require rejection and a new forward-only lease.",
+    "streamDigests": {
+      "algorithm": "SHA-256 over path\\0bytes\\0sha256\\n records sorted by path",
+      "PEOPLE": "b9ac105c7676bc5a09c6109dea8342216ec6ca4bbe67f1131e7dfdf73b7ec4e9",
+      "PAYROLL": "679e84e6138cabcf2db3f0904017d4e980ac27788319827962cb04e47f7d27f6",
+      "TIME": "76db530fbaa8ddce1188fc1446bed5d1c23c28a4bddda292a5032d573a71aaf9"
+    },
+    "artifacts": [
+      {
+        "stream": "PEOPLE",
+        "path": "dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+        "bytes": 918,
+        "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3"
+      },
+      {
+        "stream": "PEOPLE",
+        "path": "dwp-people-server/src/main/resources/db/migration/V50__align_workforce_policy_role_code_compatibility.sql",
+        "bytes": 1004,
+        "sha256": "6ac12cc8dc366c022e29f57d940923dda11da4909338b6afc200e093f9e00e89"
+      },
+      {
+        "stream": "PEOPLE",
+        "path": "dwp-people-server/src/main/resources/db/migration/V51__harden_people_audit_runtime_role.sql",
+        "bytes": 2778,
+        "sha256": "8cbb7862a90cc58d4cee89d35f52509aff90231a29cf9288b51d35b197b78cb1"
+      },
+      {
+        "stream": "PEOPLE",
+        "path": "dwp-people-server/src/main/resources/db/migration/V52__rebind_uuid_defaults_to_pg_catalog.sql",
+        "bytes": 5757,
+        "sha256": "58e11e7273b0857a9b702172f160436d7ff819ac6a60f0747b5ce8742ea3ff80"
+      },
+      {
+        "stream": "PAYROLL",
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V1__pay_create_payroll_foundation.sql",
+        "bytes": 13193,
+        "sha256": "1d27d87164564162d0ade0948a577a1c3ca96d607798725d89c553c0f6c05112"
+      },
+      {
+        "stream": "PAYROLL",
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V2__pay_create_legal_entity_scope_projection.sql",
+        "bytes": 8641,
+        "sha256": "c05c74c8d5f45592931f274543dd7e803dc5d0839f73980541a4c0a002a27b0f"
+      },
+      {
+        "stream": "PAYROLL",
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V3__pay_authorize_projection_publisher.sql",
+        "bytes": 2369,
+        "sha256": "69072d13c6da4f1c99549a239e5823f7a41d9226308ec1b348cb61fa6bd26ca6"
+      },
+      {
+        "stream": "PAYROLL",
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V4__pay_adopt_derived_hcm_scope_keys.sql",
+        "bytes": 840,
+        "sha256": "15a2ab8f40dddcd75cca7a4d6f35f94f216d04a3db83da4493b64a551ec0872b"
+      },
+      {
+        "stream": "PAYROLL",
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V5__pay_harden_owner_trigger_boundaries.sql",
+        "bytes": 1076,
+        "sha256": "e33258e374fe8641d1092421248bec5b1e6206485648ec797e526ed2702652eb"
+      },
+      {
+        "stream": "TIME",
+        "path": "dwp-time-server/src/main/resources/db/migration/V1__tim_create_work_regime_foundation.sql",
+        "bytes": 55229,
+        "sha256": "fbcfb8bc865c685e341126c363db985134940d3f5927a305c58caca8ef42b4c3"
+      },
+      {
+        "stream": "TIME",
+        "path": "dwp-time-server/src/main/resources/db/migration/V2__tim_create_target_population_authority_projection.sql",
+        "bytes": 8145,
+        "sha256": "c6c62cbd95c5b0f7df671563a17d58ed78987ecb42285cc44e3da2eb0fb705de"
+      },
+      {
+        "stream": "TIME",
+        "path": "dwp-time-server/src/main/resources/db/migration/V3__tim_create_command_target_authority_evidence.sql",
+        "bytes": 3454,
+        "sha256": "6a794aeca64aa8df2fc70b1c41669de35e093cf74040e62a84c81d24ec9ef355"
+      },
+      {
+        "stream": "TIME",
+        "path": "dwp-time-server/src/main/resources/db/migration/V4__tim_harden_sod_and_projection_locks.sql",
+        "bytes": 4093,
+        "sha256": "b02b9b6c9cfb509a223255aaa998dbff2ea99d9a48eb83ca57f85e47e9eb241f"
+      },
+      {
+        "stream": "TIME",
+        "path": "dwp-time-server/src/main/resources/db/migration/V5__tim_authorize_projection_publisher.sql",
+        "bytes": 3117,
+        "sha256": "7c6b5c856a35bba1648696f60bcf765072b9d8df3dff5e63d895e417651d7d51"
+      },
+      {
+        "stream": "TIME",
+        "path": "dwp-time-server/src/main/resources/db/migration/V6__tim_adopt_derived_hcm_scope_keys.sql",
+        "bytes": 1901,
+        "sha256": "05b2a10df0e65886ccd32d2fff082a96ee07d727923a01eeeb846934970635e2"
+      },
+      {
+        "stream": "TIME",
+        "path": "dwp-time-server/src/main/resources/db/migration/V7__tim_harden_owner_trigger_boundaries.sql",
+        "bytes": 972,
+        "sha256": "de4e401dc7102a60a45417616cd37635c4fb4c51a77757b3b15ba970cde595c0"
+      }
+    ]
+  },
+  "preservedRanges": {
+    "auth": "current V232..V241",
+    "platform": "current V320..V321",
+    "people": "reconciled V49..V52 followed by current V53",
+    "payroll": "reconciled independent V1..V5",
+    "time": "reconciled independent V1..V7"
+  },
+  "stopConditions": [
+    "Any occupied leased version in the same service migration stream.",
+    "A dirty or drifted integration worktree/base pin.",
+    "An environment with People V53 but without all immutable V49..V52 predecessors.",
+    "A canonical semantic-source change after a successor bundle or seed has been generated.",
+    "Any request to renumber or edit an already applied migration."
+  ],
+  "authorizationSemanticDecision": {
+    "currentVersion": 34,
+    "reconciledVersion": 33,
+    "currentInput": {
+      "commit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v34.json",
+      "bytes": 2234076,
+      "sha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+      "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    "reconciledInput": {
+      "commit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v33.json",
+      "bytes": 2212626,
+      "sha256": "0616d24f6ed473bcec3f0fae3edeffeefa3632648732e26bfc884d91b2eed456",
+      "semanticChecksum": "254ead674e1126d50e8dcf1011486ea1127fb2479f7a82d832cdf0466995bc49"
+    },
+    "reconciledOnlyRoutes": 0,
+    "reconciledOnlyCapabilities": 0,
+    "reconciledOnlyAccessPolicies": 0,
+    "reconciledOnlyPredicates": 0,
+    "reconciledOnlyEntitlementExpressions": 0,
+    "currentOnly": {
+      "routes": 8,
+      "capabilities": 4,
+      "accessPolicies": 0,
+      "predicates": 1,
+      "entitlementExpressions": 0
+    },
+    "expandedCommonKeys": {
+      "capabilities": [
+        "communications.content.read",
+        "hcm.operations.workforce.read"
+      ],
+      "predicatePolicies": [
+        "predicate.hcm-workforce-visible-person.v1",
+        "predicate.people.object-version.v1"
+      ],
+      "onlyChangedField": "routeContractKeys",
+      "rule": "Each reconciled routeContractKeys set is a strict subset of the current set; every other field is byte-equivalent after structured JSON parsing."
+    },
+    "comparisonAlgorithm": "Identity-key each semantic collection, reject any reconciled-only key, require exact common objects except approved routeContractKeys strict-superset expansions, and pin all observed current-only/expanded keys.",
+    "validatorCommand": "python3 docs/06-delivery/hris/tools/verify_authorization_superset.py --backend ../dwp-backend",
+    "decision": "KEEP_V34_UNLESS_G2_CANONICAL_SOURCE_DIFF_IS_NON_EMPTY"
+  }
+}

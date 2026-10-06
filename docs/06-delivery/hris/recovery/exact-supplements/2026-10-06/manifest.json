@@ -1,0 +1,202 @@
+{
+  "schema": "dwp.hris.exact-recovery-supplement.v1",
+  "supplementId": "HRIS-EXACT-RECOVERY-SUPPLEMENT-20261006-R1",
+  "rawRecoveryPolicy": "IMMUTABLE_EVIDENCE_DO_NOT_OVERWRITE",
+  "authorityScope": "HISTORICAL_SYS_EXACT_BUSINESS_START_PIN_CHECKPOINT",
+  "precedence": "Use this supplement only over the raw partial/missing file when validating the sealed historical SYS exact business-start pin checkpoint. Current/reconciled canonical source and any later accepted successor have higher authority for current integration.",
+  "artifacts": [
+    {
+      "path": "hris-porting-blueprint-2026-09-09/hris-atomic-duty-matrix.csv",
+      "bytes": 59593,
+      "sha256": "bc6a387b648be7ead865691653f647bd67f694b2bf3868e5d5eaad5dfab16caa",
+      "classification": "PIN_EXACT_CHECKPOINT"
+    },
+    {
+      "path": "hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "bytes": 38399,
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "classification": "PIN_EXACT_CHECKPOINT"
+    },
+    {
+      "path": "hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "bytes": 99982,
+      "sha256": "cb8d5b5ff815ab5de960025c491d8ac0b565cfda644898dee019967a0fd85bbe",
+      "classification": "PIN_EXACT_CHECKPOINT"
+    },
+    {
+      "path": "hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "bytes": 1523618,
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "classification": "PIN_EXACT_CHECKPOINT"
+    },
+    {
+      "path": "hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "bytes": 51745,
+      "sha256": "3b9bd24be721fe1ea9ac11f011a840809dc154f459bd3e7d9288977a27586eda",
+      "classification": "PIN_ERA_DETERMINISTIC_COMPANION"
+    },
+    {
+      "path": "hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-action-key-register.csv",
+      "bytes": 78170,
+      "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+      "classification": "PIN_ERA_DETERMINISTIC_COMPANION"
+    }
+  ],
+  "acceptedSuccessors": [
+    {
+      "path": "accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "bytes": 100020,
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "classification": "ACCEPTED_POST_PIN_SUCCESSOR_EXACT",
+      "changeFromCheckpoint": "IAQ-033 and IAQ-065 test_allocation_id only"
+    },
+    {
+      "path": "accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "bytes": 51783,
+      "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+      "classification": "ACCEPTED_POST_PIN_DETERMINISTIC_COMPANION",
+      "changeFromCheckpoint": "IAQ-033 and IAQ-065 test_allocation_id only"
+    },
+    {
+      "path": "accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/sys-listening-stream-authority-successor.v1.json",
+      "bytes": 46420,
+      "sha256": "62f110f36a4d26dab7dda3051e6baf1a5872a475b8f2a83cee19f2cd950496b1",
+      "classification": "ACCEPTED_POST_PIN_SUCCESSOR_EXACT"
+    }
+  ],
+  "acceptedSuccessorInheritance": {
+    "coding-readiness/ia-entry-query-projection-schemas.v1.json": "Byte-identical to the historical checkpoint SHA b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048.",
+    "coding-readiness/ia-entry-query-action-key-register.csv": "Byte-identical to the historical checkpoint SHA 19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e."
+  },
+  "reconstructionEvidence": {
+    "atomicDuty": {
+      "method": "Final numbered readback plus unchanged lines from the complete initial snapshot; later PER owner changes selected by event chronology.",
+      "rows": 128,
+      "columns": 23,
+      "inventedContent": false
+    },
+    "targetFamily": {
+      "fullResolvedRowsEvent": "exec-f98ae17b-f6f5-498c-994f-d2dc4f4c2086",
+      "retiredLine68Event": "exec-7f5ccc2a-11d8-42f7-a2b4-2843a480c2f4",
+      "retiredLine7Event": "exec-b8715f07-0df3-4fa3-9998-e613d0df0674"
+    },
+    "iaApi": {
+      "allDataRowsEvent": "exec-e093f0da-e0bf-4669-b506-0507d654358d",
+      "prePinOverrideRowsEvent": "exec-3f2f2cdf-d796-4321-8ea1-27a4507b7273"
+    },
+    "iaAtomicGenerator": {
+      "generatorPath": "reconstruction/generate_ia_entry_query_projection_schemas.pin-era.py",
+      "generatorSha256": "11fbbdfdea806ceb6068ad42fd99c0b4f5eefc6de3b01ced3ec7f92a52c99240",
+      "postPinChangeReversed": {
+        "event": "exec-53411746-479a-47eb-9c5c-902df517237e",
+        "effect": "Reverse the two later Employee Listening test-allocation overrides for IAQ-033 and IAQ-065."
+      },
+      "inputs": [
+        {
+          "path": "coding-readiness/api-pep-binding-register.csv",
+          "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+        },
+        {
+          "path": "coding-readiness/hris-information-architecture-register.csv",
+          "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"
+        },
+        {
+          "path": "coding-readiness/ia-entry-query-field-type-register.csv",
+          "sha256": "1e103d8c823d62518607334f7b985ae416f7b5ceee55ef8098aae94972a7a948"
+        },
+        {
+          "path": "coding-readiness/ia-entry-query-projection-register.csv",
+          "sha256": "86c55b9d4be19056fcb550b8ea05ff662c88684a8da85c7a2d2b17423329fb6f"
+        },
+        {
+          "path": "coding-readiness/ia-node-access-contract-register.csv",
+          "sha256": "3fc33ce63642c337c9cf8dc6cfbd3b9287d9b1202c5b709e137744c7b28494bf"
+        },
+        {
+          "path": "coding-readiness/shared-contract-catalog.csv",
+          "sha256": "34ffec83a60a7cb369406807bb856755e7bb34cf2be5dacb67dac1b0f3a07118"
+        },
+        {
+          "path": "session-evidence/hrm/g3-modern-capability-contracts.v1.json",
+          "sha256": "2e6e4b6b7911ae1dcf2a5e70f1cf9877c2699cba3d4fdeb763c5f510cb6d34c5"
+        },
+        {
+          "path": "session-evidence/per/g3-modern-capability-contracts.v2.json",
+          "sha256": "e4b221549aa80f34944a352e7466221dfb0ba4969ce5a2ddc24d8c4dd75bd92f"
+        },
+        {
+          "path": "session-evidence/tim/g3-modern-capability-contracts.v1.json",
+          "sha256": "b652b639575f8e767a0ead4abb8370b3f8f356ea4df98ea45fcb9d921a4f4196"
+        },
+        {
+          "path": "session-evidence/sys/g3-modern-capability-contracts.v1.json",
+          "sha256": "95baf1156baf603e3ddbc4a5891da0f6217c4f5ab7fb2a86eebbbc188d17ae5b"
+        }
+      ],
+      "replayCommand": "python3 docs/06-delivery/hris/tools/replay_ia_pin_checkpoint.py",
+      "replayResultPath": "reconstruction/ia-pin-replay-result.json",
+      "replayResultSha256": "45b960fdd53b7d6480a884d5b26a392da569f2ca005e20665bfbf3184c0d7a39",
+      "generatedCounts": {
+        "projections": 66,
+        "api": 66,
+        "runtime": 66,
+        "actions": 202
+      }
+    },
+    "acceptedIaSuccessor": {
+      "generatorPath": "hris-porting-blueprint-2026-09-09/coding-readiness/generate_ia_entry_query_projection_schemas.py",
+      "generatorSha256": "11041a6c61fc8aacb5d101574604c12af464bd930525c247bf85d7da80733cf7",
+      "acceptedChangeEvent": "exec-53411746-479a-47eb-9c5c-902df517237e",
+      "finalFingerprintEvents": [
+        "exec-c165980e-62ae-4ad0-bc2c-b63743d93388",
+        "exec-9a297cb3-0213-460a-a187-3f077ce6027e",
+        "exec-edef3a85-54f8-4b55-bb0a-7114f63f9dfd"
+      ],
+      "change": "Assign IAQ-033 to G3-SYS-LISTEN-CONFIGURATION-BE-TEST and IAQ-065 to G3-SYS-LISTEN-PROTECTED-BE-TEST.",
+      "replayCommand": "python3 docs/06-delivery/hris/tools/replay_ia_accepted_successor.py",
+      "replayResultPath": "reconstruction/ia-accepted-successor-replay-result.json",
+      "replayResultSha256": "122832f79617061a88162c94e01d98a10776197ea1fd2a3fb2714f91f9bd14d5"
+    },
+    "acceptedListeningSuccessor": {
+      "baseReadbackEvent": "exec-ba9513f2-f073-4d3d-ae1e-efbe1eef4a8c",
+      "laterPinDeltaEvent": "exec-20c1748d-1514-4369-97be-8cec8a69eabb",
+      "finalReadbackEvent": "exec-ce890563-9d12-4c45-af22-18524c72baf2",
+      "sealedPayloadSha256": "45973285a659239b080bb89cbb60d2ccd34899a44edea776461364643f525804",
+      "verification": "Complete JSON readback plus exact later five-pin delta, canonical reseal, JSON parse and self-seal match."
+    }
+  },
+  "knownFingerprintsWithoutRecoverableBytes": [
+    {
+      "path": "coding-readiness/g3-contract-primary-ownership-register.csv",
+      "bytes": 102456,
+      "sha256": "11f51f88e25ff01666f347467c82d2e825a81091926cff03f141fd750b476e9b",
+      "dataRows": 525,
+      "disposition": "SUCCESSOR_REQUIRED_NO_CANDIDATE_FILE"
+    },
+    {
+      "path": "coding-readiness/modern-capability-public-identity-registry.v1.json",
+      "bytes": 282654,
+      "sha256": "d3c09697221660a35b6fd405182433d1dbbe6b36c4198fa5b08db088f9d00a06",
+      "disposition": "SUCCESSOR_REQUIRED_NO_CANDIDATE_FILE"
+    },
+    {
+      "path": "coding-readiness/modern-capability-semantic-bindings.v1.json",
+      "bytes": 3168251,
+      "sha256": "834cd00e20148cded2765f1f41790926a479515afd0f23f6d95a0cea4ba389dd",
+      "disposition": "SUCCESSOR_REQUIRED_NO_CANDIDATE_FILE"
+    },
+    {
+      "path": "session-registers/hris-hrm-source-coverage.csv",
+      "bytes": 514029,
+      "sha256": "8b9044ed595be8847fddab74075c5f308e61343f179da1da4e231e8ffe48e6c2",
+      "dataRows": 583,
+      "disposition": "SUCCESSOR_REQUIRED_NO_CANDIDATE_FILE"
+    }
+  ],
+  "validation": {
+    "command": "python3 docs/06-delivery/hris/tools/validate_recovery_resolution.py",
+    "replayCommand": "python3 docs/06-delivery/hris/tools/replay_ia_pin_checkpoint.py",
+    "acceptedSuccessorReplayCommand": "python3 docs/06-delivery/hris/tools/replay_ia_accepted_successor.py",
+    "expectedStatus": "PASS"
+  }
+}

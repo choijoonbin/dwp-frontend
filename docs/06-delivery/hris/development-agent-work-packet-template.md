@@ -35,6 +35,8 @@
 | OpenAPI/Canonical Contract Pin | `<artifact / sha256-or-commit>` |
 | SKKF Source HEAD·`stateSha256` | `<all-used-source-pins>` |
 | 선행 Packet·Slice | `<approved-ids-and-result-commits>` |
+| Dependency IDs | `<exact DEP-/XCON identifiers from the approved overlay>` |
+| Producer Contract Pins | `<producer result commit / schema or event checksum per dependency>` |
 | 외부 Gate ID | `<backend-customer-register-ids-or-none>` |
 
 Pin이 실제 Worktree와 다르면 작업을 멈추고 패킷 Revision을 요청한다. 최신 Source를 자동으로
