@@ -5,7 +5,10 @@ import path from 'node:path';
 
 import {
   REQUIRED_ASSERTIONS,
+  SHA256,
+  exactKeys,
   hold,
+  record,
   sha256Bytes,
   sha256Canonical,
 } from './hris-w1-checkpoint-core.mjs';
@@ -45,6 +48,77 @@ function pathLineageObservation(input) {
     expectedFinalVersion: input.runtimeFixture.version + 2,
   };
   return Object.freeze({ ...observation, observationSha256: sha256Canonical(observation) });
+}
+
+export function globalHomeIdentityObservation(input) {
+  const tenants = input.browserSummary?.tenants;
+  const expectedTenant = input.environment?.tenants?.[0];
+  const matches = Array.isArray(tenants)
+    ? tenants.filter((tenant) => tenant?.label === 'tenant-a')
+    : [];
+  if (!expectedTenant || matches.length !== 1 || matches[0].tenantId !== expectedTenant.tenantId) {
+    hold('Validated browser summary lost the exact tenant-A Global Home identity binding.');
+  }
+  const identity = record(
+    matches[0].homeLaunchpadIdentity,
+    'browserSummary tenant-A homeLaunchpadIdentity'
+  );
+  exactKeys(
+    identity,
+    [
+      'requestedPath',
+      'finalPath',
+      'appId',
+      'visibleLabel',
+      'shortLabel',
+      'fullLabel',
+      'screenshot',
+    ],
+    'browserSummary tenant-A homeLaunchpadIdentity'
+  );
+  const screenshot = record(
+    identity.screenshot,
+    'browserSummary tenant-A homeLaunchpadIdentity.screenshot'
+  );
+  exactKeys(
+    screenshot,
+    ['path', 'sha256'],
+    'browserSummary tenant-A homeLaunchpadIdentity.screenshot'
+  );
+  if (
+    identity.requestedPath !== '/' ||
+    identity.finalPath !== '/' ||
+    identity.appId !== 'ref-app-people' ||
+    identity.visibleLabel !== 'HRIS' ||
+    identity.shortLabel !== 'HRIS' ||
+    identity.fullLabel !== 'HRIS' ||
+    typeof screenshot.path !== 'string' ||
+    !screenshot.path ||
+    screenshot.path.trim() !== screenshot.path ||
+    /[\r\n\0]/u.test(screenshot.path) ||
+    path.isAbsolute(screenshot.path) ||
+    screenshot.path.split(/[\\/]/u).includes('..') ||
+    typeof screenshot.sha256 !== 'string' ||
+    !SHA256.test(screenshot.sha256)
+  ) {
+    hold('Validated browser summary lost exact digest-bound Global Home HRIS evidence.');
+  }
+  const observation = {
+    source: 'BROWSER_GLOBAL_HOME_IDENTITY',
+    tenantId: expectedTenant.tenantId,
+    requestedPath: '/',
+    finalPath: '/',
+    appId: 'ref-app-people',
+    visibleLabel: 'HRIS',
+    shortLabel: 'HRIS',
+    fullLabel: 'HRIS',
+    screenshot: { path: screenshot.path, sha256: screenshot.sha256 },
+  };
+  return Object.freeze({ ...observation, observationSha256: sha256Canonical(observation) });
+}
+
+export function pathBrowserGatewayOwnerDbObservations(input) {
+  return Object.freeze([pathLineageObservation(input), globalHomeIdentityObservation(input)]);
 }
 
 export function generalOwnerApiObservations(input) {
@@ -126,7 +200,7 @@ function assertionObservations(input) {
     ['negative.expired-evidence-denied', [negatives['negative.expired-evidence-denied']]],
     ['negative.revoked-evidence-denied', [negatives['negative.revoked-evidence-denied']]],
     ['negative.unmapped-route-denied', [input.unmappedBoundary, input.contracts.deniedPage]],
-    ['path.browser-gateway-owner-db', [pathLineageObservation(input)]],
+    ['path.browser-gateway-owner-db', pathBrowserGatewayOwnerDbObservations(input)],
     [
       'rollout.flag-off',
       [

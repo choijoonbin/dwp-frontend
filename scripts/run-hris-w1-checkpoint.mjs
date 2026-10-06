@@ -22,6 +22,7 @@ const EXECUTION_MODULES = Object.freeze([
 ]);
 const CLOSURE_PATHS = Object.freeze([
   ...EXECUTION_MODULES,
+  'scripts/hris-w1-playwright-artifact-ownership.mjs',
   'playwright.hris-w1-live.config.ts',
   'e2e/hris-w1-live-synthetic-acceptance.spec.ts',
   'e2e/support/hris-w1-live-environment.ts',
@@ -34,6 +35,7 @@ const CLOSURE_PATHS = Object.freeze([
 ]);
 const LINE_LIMITED_MODULES = new Set([
   ...EXECUTION_MODULES,
+  'scripts/hris-w1-playwright-artifact-ownership.mjs',
   'e2e/support/hris-w1-live-artifact-sanitizer.ts',
 ]);
 

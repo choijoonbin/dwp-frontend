@@ -39,10 +39,13 @@ Playwright suite, and validates the complete `hris-w1-live-browser/v3` manifest 
 The browser PAY response records its raw body SHA-256 and the one expected configuration id. For
 tenant A, the browser also opens the global Home `/`, requires exactly one `ref-app-people` tile,
 proves that its visible, short, and full labels are all exactly `HRIS`, and binds a screenshot to
-that closed manifest record. The bridge then reuses the same authenticated Gateway session for PAY owner read, update, exact
-idempotency replay, simulate, receipt lookup/lineage, and the author=self separation-of-duties read
-model. The separation-of-duties assertion is explicitly read-model evidence: no publish command is
-claimed because the live authority correctly requires a HIGH step-up challenge. The population
+that closed manifest record. Its relative screenshot path and SHA-256 are also preserved as a
+canonically digested Global Home observation in `path.browser-gateway-owner-db`; the final manifest
+SHA-256-binds that assertion file. The bridge then reuses the same authenticated Gateway session for
+PAY owner read, update, exact idempotency replay, simulate, receipt lookup/lineage, and the
+author=self separation-of-duties read model. The separation-of-duties assertion is explicitly
+read-model evidence: no publish command is claimed because the live authority correctly requires a
+HIGH step-up challenge. The population
 boundary requires an exact HTTP 200 for the runner's target person, binds the live response to the
 target worker number, assignment key, and derived `policyRevision`, and records the runner-attested
 target person/worker/assignment public ids. The real actor person supplies the contrasting 403/404;
@@ -131,8 +134,8 @@ Static verification commands for a frozen bridge change are:
 
 ```sh
 node --check scripts/run-hris-w1-checkpoint.mjs
-node --test scripts/run-hris-w1-checkpoint.test.mjs scripts/hris-w1-checkpoint-csrf.test.mjs scripts/hris-w1-checkpoint-browser-evidence.test.mjs
-yarn prettier --check scripts/run-hris-w1-checkpoint.mjs scripts/run-hris-w1-checkpoint.test.mjs scripts/hris-w1-checkpoint-csrf.test.mjs scripts/hris-w1-checkpoint-test-fixtures.mjs scripts/hris-w1-checkpoint-browser-evidence.mjs scripts/hris-w1-checkpoint-browser-evidence.test.mjs e2e/hris-w1-live-synthetic-acceptance.spec.ts e2e/support/hris-w1-live-home-identity.ts e2e/HRIS_W1_LIVE.md
+node --test scripts/run-hris-w1-checkpoint.test.mjs scripts/hris-w1-checkpoint-csrf.test.mjs scripts/hris-w1-checkpoint-browser-evidence.test.mjs scripts/hris-w1-playwright-artifact-ownership.test.mjs scripts/hris-w1-checkpoint-cross-tenant.test.mjs
+yarn prettier --check scripts/run-hris-w1-checkpoint.mjs scripts/run-hris-w1-checkpoint.test.mjs scripts/hris-w1-checkpoint-csrf.test.mjs scripts/hris-w1-checkpoint-cross-tenant.test.mjs scripts/hris-w1-checkpoint-test-fixtures.mjs scripts/hris-w1-checkpoint-browser-evidence.mjs scripts/hris-w1-checkpoint-browser-evidence.test.mjs scripts/hris-w1-playwright-artifact-ownership.mjs scripts/hris-w1-playwright-artifact-ownership.test.mjs playwright.hris-w1-live.config.ts e2e/hris-w1-live-synthetic-acceptance.spec.ts e2e/support/hris-w1-live-home-identity.ts e2e/HRIS_W1_LIVE.md
 ```
 
 These checks do not produce live acceptance evidence. Only the backend runner's isolated full-mode
@@ -161,6 +164,7 @@ execution can change the handoff status from HOLD.
 | `HRIS_W1_LIVE_BASE_URL`                                        | Owned `http://127.0.0.1:<frontend-port>/` URL                       |
 | `HRIS_W1_LIVE_GATEWAY_URL`                                     | Different owned `http://127.0.0.1:<gateway-port>` URL               |
 | `HRIS_W1_LIVE_ARTIFACT_DIR`                                    | New absolute path whose basename is `hris-w1-live-browser-<run-id>` |
+| `HRIS_W1_LIVE_ARTIFACT_OWNER_TOKEN`                            | Runner-generated 64-character lowercase hex token; never reuse      |
 | `HRIS_W1_TENANT_A_ID`, `HRIS_W1_TENANT_B_ID`                   | Distinct positive integer tenant ids                                |
 | `HRIS_W1_TENANT_A_EMAIL`, `HRIS_W1_TENANT_B_EMAIL`             | Synthetic-only address using an accepted local/test suffix          |
 | `HRIS_W1_TENANT_A_PASSWORD`, `HRIS_W1_TENANT_B_PASSWORD`       | Secret-injected synthetic password; never commit or print it        |
@@ -175,8 +179,11 @@ yarn test:e2e:hris-w1-live
 ```
 
 The config starts an owned Vite process in dedicated `hris-w1-live` mode and proxies `/api` only to
-the configured localhost Gateway. Credential variables and external LiveKit, telemetry, attachment,
-notification, and Dwaion runtime variables are neutralized in the Vite child process.
+the configured localhost Gateway. On its first evaluation it creates an exclusive, digest-bound
+owner marker inside the new artifact directory. Later config evaluations from that same Playwright
+execution may reuse only that exact marker; a pre-existing unowned directory or a marker from a
+different execution remains rejected. Credential, owner-token, external LiveKit, telemetry,
+attachment, notification, and Dwaion runtime variables are neutralized in the Vite child process.
 
 ## Route matrix schema
 

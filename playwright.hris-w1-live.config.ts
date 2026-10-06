@@ -1,21 +1,19 @@
-import { chmodSync, existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 
 import { defineConfig } from '@playwright/test';
 
 import { loadHrisW1LiveEnvironment } from './e2e/support/hris-w1-live-environment';
+import {
+  HRIS_W1_ARTIFACT_OWNER_ENV,
+  claimHrisW1ArtifactRoot,
+} from './scripts/hris-w1-playwright-artifact-ownership.mjs';
 
 const runtime = loadHrisW1LiveEnvironment();
-if (existsSync(runtime.artifactRoot)) {
-  throw new Error(
-    'HRIS W1 live acceptance requires a new artifact directory; refusing to reuse existing evidence.'
-  );
-}
-if (!existsSync(path.dirname(runtime.artifactRoot))) {
-  throw new Error('The parent of HRIS_W1_LIVE_ARTIFACT_DIR must already exist.');
-}
-mkdirSync(runtime.artifactRoot, { mode: 0o700 });
-chmodSync(runtime.artifactRoot, 0o700);
+claimHrisW1ArtifactRoot(
+  runtime.artifactRoot,
+  runtime.runId,
+  process.env[HRIS_W1_ARTIFACT_OWNER_ENV] ?? ''
+);
 
 const frontendPort = new URL(runtime.baseURL).port;
 
@@ -73,6 +71,7 @@ export default defineConfig({
       VITE_WEB_VITALS_ENDPOINT: '',
       HRIS_W1_LIVE_ACK: '',
       HRIS_W1_LIVE_ARTIFACT_DIR: '',
+      HRIS_W1_LIVE_ARTIFACT_OWNER_TOKEN: '',
       HRIS_W1_LIVE_ASSERTION_TIMEOUT_MS: '',
       HRIS_W1_LIVE_BASE_URL: '',
       HRIS_W1_LIVE_GATEWAY_URL: '',

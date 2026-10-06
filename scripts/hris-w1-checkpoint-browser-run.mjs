@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import { existsSync, lstatSync, readdirSync, realpathSync, rmSync } from 'node:fs';
 import { chmod, mkdir } from 'node:fs/promises';
 import net from 'node:net';
@@ -62,8 +63,12 @@ export function browserChildEnvironment(
   routeMatrices,
   frontendPort,
   artifactRoot,
-  payrollFoundation
+  payrollFoundation,
+  artifactOwnerToken
 ) {
+  if (!/^[0-9a-f]{64}$/u.test(artifactOwnerToken)) {
+    hold('Browser artifact owner token is noncanonical.');
+  }
   const inherited = {};
   for (const name of ['PATH', 'LANG', 'LC_ALL', 'TMPDIR', 'TZ']) {
     if (process.env[name]) inherited[name] = process.env[name];
@@ -76,6 +81,7 @@ export function browserChildEnvironment(
     HRIS_W1_LIVE_BASE_URL: `http://${LOCAL_HOST}:${frontendPort}/`,
     HRIS_W1_LIVE_GATEWAY_URL: environment.endpoints.gateway,
     HRIS_W1_LIVE_ARTIFACT_DIR: artifactRoot,
+    HRIS_W1_LIVE_ARTIFACT_OWNER_TOKEN: artifactOwnerToken,
     HRIS_W1_LIVE_ASSERTION_TIMEOUT_MS: '60000',
     HRIS_W1_EXPECTED_PAYROLL_CONFIGURATION_ID: payrollFoundation.configurationId,
     HRIS_W1_TENANT_A_ID: String(environment.tenants[0].tenantId),
@@ -167,12 +173,14 @@ export async function runBrowserSuite(
 ) {
   const playwrightCli = path.join(frontendRoot, 'node_modules', '@playwright', 'test', 'cli.js');
   readAttestedRegular(playwrightCli, 'Playwright CLI', 4 * 1024 * 1024);
+  const artifactOwnerToken = randomBytes(32).toString('hex');
   const childEnvironment = browserChildEnvironment(
     environment,
     routeMatrices,
     frontendPort,
     artifactRoot,
-    payrollFoundation
+    payrollFoundation,
+    artifactOwnerToken
   );
   let processGroup = null;
   let exit;

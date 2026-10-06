@@ -694,14 +694,52 @@ export async function deriveLiveContracts(sessionA, sessionB) {
 }
 
 export async function crossTenantFence(sessionA, tenantB) {
-  const response = await requestJson(sessionA, 'GET', '/api/auth/me', {
-    headers: { 'X-Tenant-ID': String(tenantB.tenantId) },
-  });
-  if (![401, 403].includes(response.status)) hold('Live cross-tenant session did not fail closed.');
+  const response = await requestCrossTenantDeniedStatus(sessionA, tenantB.tenantId);
   return Object.freeze({
     ...responseSummary(response),
     requestedTenantId: tenantB.tenantId,
-    errorCode: errorCode(response.root, 'cross-tenant response'),
+    outcome: 'DENIED',
+  });
+}
+
+async function requestCrossTenantDeniedStatus(session, requestedTenantId) {
+  const requestPath = '/api/auth/me';
+  const expectedURL = new URL(requestPath, 'http://127.0.0.1');
+  const response = await session.context.fetch(requestPath, {
+    headers: {
+      Accept: 'application/json',
+      'X-Tenant-ID': String(requestedTenantId),
+    },
+    failOnStatusCode: false,
+    maxRedirects: 0,
+    timeout: 45_000,
+    method: 'GET',
+  });
+  const responseURL = new URL(response.url());
+  if (
+    responseURL.origin !== session.gatewayURL ||
+    responseURL.pathname !== expectedURL.pathname ||
+    responseURL.search !== expectedURL.search
+  ) {
+    hold('Cross-tenant denial escaped the exact live Gateway boundary.');
+  }
+  const status = response.status();
+  if (status >= 300 && status < 400) {
+    hold('Live cross-tenant session attempted a redirect.');
+  }
+  if (![401, 403].includes(status)) {
+    hold(`Live cross-tenant session did not fail closed (HTTP ${status}).`);
+  }
+  const bytes = await response.body();
+  if (!Buffer.isBuffer(bytes) || bytes.byteLength > 64 * 1024) {
+    hold('Cross-tenant denial body is not a bounded byte response.');
+  }
+  return Object.freeze({
+    method: 'GET',
+    path: requestPath,
+    status,
+    bodySha256: sha256Bytes(bytes),
+    bodyByteCount: bytes.byteLength,
   });
 }
 
