@@ -1,0 +1,87 @@
+{
+  "schema": "dwp.hris.scoped-authoring-environment-preflight-receipt.v1",
+  "authority": "SCOPED_G3_AUTHORING",
+  "capturedAt": "2026-09-16T18:23:05+09:00",
+  "capturedBy": "HRIS-INTEGRATION-CONTROL",
+  "officialGate": "CLOSED_FAIL_SAFE",
+  "startCommandIssued": false,
+  "developmentStarted": false,
+  "featureTestsExecuted": false,
+  "codeChangesObserved": false,
+  "result": "ENVIRONMENT_PREFLIGHT_PASS_READY_TO_START_HOLD",
+  "frontendProfile": {
+    "dependencyInstall": "yarn install --immutable",
+    "packageManagerCheck": "yarn package-manager:check",
+    "architectureScan": "node scripts/verification/hris-layer-contract-v1.mjs --mode scan",
+    "typecheck": "yarn typecheck",
+    "expectedClosedGateObservation": {
+      "structuralPass": true,
+      "readinessPass": false,
+      "g3StartAuthorized": false,
+      "reason": "The official G3 gate remains closed by design."
+    }
+  },
+  "backendProfiles": {
+    "HRIS-HRM": ":dwp-people-server:compileJava :dwp-people-server:compileTestJava",
+    "HRIS-PER": ":dwp-people-server:compileJava :dwp-people-server:compileTestJava",
+    "HRIS-PAY": ":dwp-payroll-server:compileJava :dwp-payroll-server:compileTestJava",
+    "HRIS-TIM": ":dwp-time-server:compileJava :dwp-time-server:compileTestJava",
+    "HRIS-SYS": ":dwp-auth-server:compileJava :dwp-auth-server:compileTestJava :dwp-platform-server:compileJava :dwp-platform-server:compileTestJava"
+  },
+  "modules": {
+    "HRIS-HRM": {
+      "frontendDependencyInstall": "PASS",
+      "frontendPackageManagerCheck": "PASS",
+      "frontendArchitectureScan": "PASS_EXPECTED_GATE_CLOSED",
+      "frontendTypecheck": "PASS",
+      "backendCompile": "PASS",
+      "worktreesCleanAfterChecks": true
+    },
+    "HRIS-PER": {
+      "frontendDependencyInstall": "PASS",
+      "frontendPackageManagerCheck": "PASS",
+      "frontendArchitectureScan": "PASS_EXPECTED_GATE_CLOSED",
+      "frontendTypecheck": "PASS",
+      "backendCompile": "PASS",
+      "worktreesCleanAfterChecks": true
+    },
+    "HRIS-PAY": {
+      "frontendDependencyInstall": "PASS",
+      "frontendPackageManagerCheck": "PASS",
+      "frontendArchitectureScan": "PASS_EXPECTED_GATE_CLOSED",
+      "frontendTypecheck": "PASS",
+      "backendCompile": "PASS",
+      "worktreesCleanAfterChecks": true
+    },
+    "HRIS-TIM": {
+      "frontendDependencyInstall": "PASS",
+      "frontendPackageManagerCheck": "PASS",
+      "frontendArchitectureScan": "PASS_EXPECTED_GATE_CLOSED",
+      "frontendTypecheck": "PASS",
+      "backendCompile": "PASS_WITH_EXISTING_WARNINGS",
+      "worktreesCleanAfterChecks": true
+    },
+    "HRIS-SYS": {
+      "frontendDependencyInstall": "PASS",
+      "frontendPackageManagerCheck": "PASS",
+      "frontendArchitectureScan": "PASS_EXPECTED_GATE_CLOSED",
+      "frontendTypecheck": "PASS",
+      "backendCompile": "PASS_WITH_EXISTING_WARNINGS",
+      "worktreesCleanAfterChecks": true
+    }
+  },
+  "worktreeObservation": {
+    "count": 10,
+    "dirtyCount": 0,
+    "backendHeadSha": "299336eacb52de29a85366318a08151ea691eb5e",
+    "backendTreeSha": "d5277fabaa2315ddc28a4220fa8075875be28920",
+    "frontendHeadSha": "cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca",
+    "frontendTreeSha": "29a8ed87a323bfc318043b2171d39fb73129fe28"
+  },
+  "notes": [
+    "Compilation and static environment checks are preflight evidence only.",
+    "No module feature test was available or executed before authoring starts.",
+    "No start token, code authorization, migration authorization, or integration authorization was issued."
+  ],
+  "sealedPayloadSha256": "08a1605401a461bdc69800188074e0229faba46c67a641e01f995a5b8967cf89"
+}

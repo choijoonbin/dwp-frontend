@@ -1,0 +1,421 @@
+{
+  "schema": "dwp.hris.modern-causal-module-successor-readonly-candidate-check-repair/v1",
+  "reportId": "modern-causal-module-successor-readonly-candidate-check-repair-2026-09-16.v1",
+  "recordedAt": "2026-09-16",
+  "status": "PASS_READONLY_REPAIR_NO_FINAL_CANDIDATE_CREATED",
+  "authority": "REPAIR_VERIFICATION_ONLY_NOT_CANONICAL_PROMOTION_AUTHORITY",
+  "scope": {
+    "auditRoot": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "generator": "coding-readiness/generate_modern_causal_module_successor.py",
+    "readonlyCandidateMode": "--check-candidate-dir PATH",
+    "candidateBoundary": "EXACT_EIGHT_FILES",
+    "candidateBoundaryFiles": [
+      "modern-capability-causal-state-contracts.v2.json",
+      "modern-capability-closed-set-manifest.v3.json",
+      "modern-capability-event-payload-contracts.v1.json",
+      "modern-capability-exact-schema-contracts.v1.json",
+      "modern-capability-operation-causal-contract-ssot.v2.json",
+      "modern-capability-public-identity-registry.v1.json",
+      "modern-capability-semantic-bindings.v1.json",
+      "sys-listening-stream-authority-successor.v2.json"
+    ],
+    "allowedWorkspaceWrite": "THIS_REPORT_AND_REQUESTED_GENERATOR_REPAIR_ONLY",
+    "candidateMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "newFinalCandidate": "NOT_CREATED"
+  },
+  "repair": {
+    "generatorPath": "coding-readiness/generate_modern_causal_module_successor.py",
+    "previousRecordedSha256": "3e71f86c42b6e8f4022512d4132f5abc595c3fdc101b043106669b16f0490088",
+    "repairedSha256": "1e947bf2ba1f5ec6a2055093b49c82d7146e9459613db630dff38ba64f105d45",
+    "implementedControls": [
+      "--candidate-dir remains explicit WRITE mode and output includes mode=WRITE",
+      "--check-candidate-dir is an explicit READ_ONLY mode",
+      "exact eight-file candidate set rejects missing, extra, non-regular, and symlink entries",
+      "expected causal document is synthesized in memory from candidate source documents",
+      "causal bytes, causal self-seal, manifest link, and exactly five canonical source pins are compared",
+      "manifest ownerBoundaryInputs.listeningStreamAuthority contractId, fileSha256, sealedPayloadSha256, path, authority bytes, self-seal, and precedence are mutually checked",
+      "each candidate file is opened once with O_RDONLY|O_NOFOLLOW|O_CLOEXEC and checked by fstat, bounded FD read, fstat, and path lstat identity",
+      "candidate file path, SHA256, inode, size, mode, mtime_ns, and ctime_ns are snapshotted before and after",
+      "candidate directory FD/path identity, listing, and metadata are checked before and after all file reads",
+      "candidate mutation during validation fails closed",
+      "check mode performs no candidate tempfile, replace, chmod, or write operation",
+      "hostile rebinding and resealed substituted Listening authority are rejected"
+    ],
+    "sourceDependencySha256": {
+      "coding-readiness/generate_modern_operation_ssot_successor.py": "733f9ccef95e6509232dcb6ae028aaa9138b4163289c025b9316ffcf78f772bc",
+      "coding-readiness/generate_modern_semantic_identity_successor.py": "14efcf5b8d50e36e047cef8234abecdaf910aa81818d8927b7cace445573abc4",
+      "coding-readiness/modern_closed_set_design.py": "61e5588caf114cf444396446b245b4f32ddf945de32a29dcaa6f87090b5aad66",
+      "coding-readiness/sys_listening_canonical_design.py": "bc3950f505deeaff6be4ea3dd048f6ac7d662c6bdaab9f056505ebfb6482aa85"
+    },
+    "latestLiveCanonicalSourceInputs": {
+      "modern-capability-operation-causal-contract-ssot.v2.json": {
+        "fileSha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+        "sealedPayloadSha256": null,
+        "size": 3448189,
+        "mtime_ns": 1789482772896697185,
+        "ctime_ns": 1789482772912511769
+      },
+      "modern-capability-exact-schema-contracts.v1.json": {
+        "fileSha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730",
+        "sealedPayloadSha256": null,
+        "size": 4617575,
+        "mtime_ns": 1789482772900814571,
+        "ctime_ns": 1789482772913059645
+      },
+      "modern-capability-event-payload-contracts.v1.json": {
+        "fileSha256": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b",
+        "sealedPayloadSha256": null,
+        "size": 1088230,
+        "mtime_ns": 1789482772905710584,
+        "ctime_ns": 1789482772913672314
+      },
+      "modern-capability-semantic-bindings.v1.json": {
+        "fileSha256": "834cd00e20148cded2765f1f41790926a479515afd0f23f6d95a0cea4ba389dd",
+        "sealedPayloadSha256": "575cf4c7a631795cb7702483b656a69cbc73bc789970c8aed3e4b2aaf42fff70",
+        "size": 3168251,
+        "mtime_ns": 1789482772907575839,
+        "ctime_ns": 1789482772914353899
+      },
+      "modern-capability-public-identity-registry.v1.json": {
+        "fileSha256": "d3c09697221660a35b6fd405182433d1dbbe6b36c4198fa5b08db088f9d00a06",
+        "sealedPayloadSha256": "fa1a1bfa542bfa881b50566022e56318e5245ca3b958a300a466de04496dda3a",
+        "size": 282654,
+        "mtime_ns": 1789482772911252182,
+        "ctime_ns": 1789482772914675316
+      },
+      "modern-capability-closed-set-manifest.v3.json": {
+        "fileSha256": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+        "sealedPayloadSha256": "c7359826529cbd586436b628a9b314146b671c6f1639f556be3b96e4c031e417",
+        "size": 68869,
+        "mtime_ns": 1789482534900653651,
+        "ctime_ns": 1789482534900653651
+      }
+    }
+  },
+  "candidateReadOnlyCheck": {
+    "path": "coding-readiness/modern-canonical-candidate.v5p1363-final",
+    "command": "python3 -B output/hris-porting-blueprint-2026-09-09/coding-readiness/generate_modern_causal_module_successor.py --check-candidate-dir output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-canonical-candidate.v5p1363-final",
+    "returnCode": 0,
+    "output": "MODERN_CAUSAL_CANDIDATE_READONLY_CHECK=PASS mode=READ_ONLY files=8 causalSha256=7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe causalSeal=7d460ba031a94fa82d870f434da5e811b466da008ae970b8e079d752a01797c0 metadata=UNCHANGED candidateMutation=NONE",
+    "expectedCausalInMemory": {
+      "causalBytesEqual": true,
+      "causalSelfSealValid": true,
+      "causalManifestLinkValid": true,
+      "causalSourcePinsValid": true,
+      "canonicalSourcePinCount": 5,
+      "canonicalSourcePinNames": [
+        "modern-capability-event-payload-contracts.v1.json",
+        "modern-capability-exact-schema-contracts.v1.json",
+        "modern-capability-operation-causal-contract-ssot.v2.json",
+        "modern-capability-public-identity-registry.v1.json",
+        "modern-capability-semantic-bindings.v1.json"
+      ],
+      "expectedCausalSha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+      "causalSealedPayloadSha256": "7d460ba031a94fa82d870f434da5e811b466da008ae970b8e079d752a01797c0"
+    },
+    "candidateFileSha256": {
+      "modern-capability-causal-state-contracts.v2.json": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+      "modern-capability-closed-set-manifest.v3.json": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+      "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+      "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+      "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+      "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+      "sys-listening-stream-authority-successor.v2.json": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+    },
+    "manifest": {
+      "manifestId": "dwp.hris.modern.closed-set-manifest.v3",
+      "schemaVersion": 3,
+      "sealedPayloadSha256": "d0bf2a0492b3fcd0acf0b201846f4d48aeabd5f3676b0346ec10ab743d49ba1a",
+      "fileSha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612"
+    },
+    "canonicalSourcePins": {
+      "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+      "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+      "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+      "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598"
+    },
+    "listeningAuthority": {
+      "contractId": "dwp.hris.sys.listening.stream-authority-successor.v2",
+      "schemaVersion": 2,
+      "sealedPayloadSha256": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4",
+      "fileSha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+    },
+    "manifestOwnerBoundaryInputPin": {
+      "contractId": "dwp.hris.sys.listening.stream-authority-successor.v2",
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v2.json",
+      "fileSha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316",
+      "sealedPayloadSha256": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4"
+    },
+    "metadataSnapshot": {
+      "aggregateDefinition": "sha256(json.dumps(files, ensure_ascii=False, sort_keys=True, separators=(',', ':')))",
+      "fieldsChecked": [
+        "path",
+        "fileSha256",
+        "device",
+        "inode",
+        "size",
+        "mode",
+        "mtime_ns",
+        "ctime_ns"
+      ],
+      "beforeAggregateSha256": "a157bcfbaf68ab0be93bf83a4baf4638c2d50b004441422a787b63ea339386ba",
+      "afterAggregateSha256": "a157bcfbaf68ab0be93bf83a4baf4638c2d50b004441422a787b63ea339386ba",
+      "beforeAfterEqual": true,
+      "files": {
+        "modern-capability-causal-state-contracts.v2.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-causal-state-contracts.v2.json",
+          "fileSha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+          "device": 16777234,
+          "inode": 47549602,
+          "size": 4790036,
+          "mode": 384,
+          "mtime_ns": 1789527909013465769,
+          "ctime_ns": 1789527909014675199
+        },
+        "modern-capability-closed-set-manifest.v3.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-closed-set-manifest.v3.json",
+          "fileSha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+          "device": 16777234,
+          "inode": 47502138,
+          "size": 294333,
+          "mode": 384,
+          "mtime_ns": 1789526564289415972,
+          "ctime_ns": 1789526564301898565
+        },
+        "modern-capability-event-payload-contracts.v1.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-event-payload-contracts.v1.json",
+          "fileSha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+          "device": 16777234,
+          "inode": 47502217,
+          "size": 1687439,
+          "mode": 420,
+          "mtime_ns": 1789526575447960471,
+          "ctime_ns": 1789526575458937479
+        },
+        "modern-capability-exact-schema-contracts.v1.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-exact-schema-contracts.v1.json",
+          "fileSha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+          "device": 16777234,
+          "inode": 47502216,
+          "size": 7912823,
+          "mode": 420,
+          "mtime_ns": 1789526575437960880,
+          "ctime_ns": 1789526575458729979
+        },
+        "modern-capability-operation-causal-contract-ssot.v2.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-operation-causal-contract-ssot.v2.json",
+          "fileSha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+          "device": 16777234,
+          "inode": 47502215,
+          "size": 5279746,
+          "mode": 420,
+          "mtime_ns": 1789526575406015106,
+          "ctime_ns": 1789526575458545437
+        },
+        "modern-capability-public-identity-registry.v1.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-public-identity-registry.v1.json",
+          "fileSha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+          "device": 16777234,
+          "inode": 47502219,
+          "size": 759646,
+          "mode": 420,
+          "mtime_ns": 1789526575456738519,
+          "ctime_ns": 1789526575459390313
+        },
+        "modern-capability-semantic-bindings.v1.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-semantic-bindings.v1.json",
+          "fileSha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+          "device": 16777234,
+          "inode": 47502218,
+          "size": 5400337,
+          "mode": 420,
+          "mtime_ns": 1789526575451067723,
+          "ctime_ns": 1789526575459132271
+        },
+        "sys-listening-stream-authority-successor.v2.json": {
+          "path": "coding-readiness/modern-canonical-candidate.v5p1363-final/sys-listening-stream-authority-successor.v2.json",
+          "fileSha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316",
+          "device": 16777234,
+          "inode": 47502143,
+          "size": 298993,
+          "mode": 420,
+          "mtime_ns": 1789526564567336098,
+          "ctime_ns": 1789526564590245157
+        }
+      }
+    }
+  },
+  "existingCandidateChecks": {
+    "allCandidateMetadataFieldsChecked": true,
+    "metadataFields": [
+      "path",
+      "fileSha256",
+      "device",
+      "inode",
+      "size",
+      "mode",
+      "mtime_ns",
+      "ctime_ns"
+    ],
+    "candidateResults": [
+      {
+        "path": "coding-readiness/modern-canonical-candidate.2eZCXW",
+        "returnCode": 1,
+        "status": "EXPECTED_REJECT_PARTIAL_FILE_SET",
+        "reason": "missing sys-listening-stream-authority-successor.v2.json",
+        "fileCount": 7,
+        "beforeAggregateSha256": "bd8b4362827c30191040e81d77c15c873c3acd9e8691d1813674c672299b7cce",
+        "afterAggregateSha256": "bd8b4362827c30191040e81d77c15c873c3acd9e8691d1813674c672299b7cce",
+        "metadataUnchanged": true
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.Qs4ngh",
+        "returnCode": 1,
+        "status": "EXPECTED_REJECT_PARTIAL_FILE_SET",
+        "reason": "missing sys-listening-stream-authority-successor.v2.json",
+        "fileCount": 7,
+        "beforeAggregateSha256": "a8ac393b6ecfc0d3618f45478db9ec3173f8f142b76053b30d41d2250f532cf4",
+        "afterAggregateSha256": "a8ac393b6ecfc0d3618f45478db9ec3173f8f142b76053b30d41d2250f532cf4",
+        "metadataUnchanged": true
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.ZorhI5",
+        "returnCode": 1,
+        "status": "EXPECTED_REJECT_PARTIAL_FILE_SET",
+        "reason": "missing modern-capability-causal-state-contracts.v2.json",
+        "fileCount": 7,
+        "beforeAggregateSha256": "5b53e644266751307cf1262f0a0c302b6bed8b0d8c10f91c01749170d34fefc1",
+        "afterAggregateSha256": "5b53e644266751307cf1262f0a0c302b6bed8b0d8c10f91c01749170d34fefc1",
+        "metadataUnchanged": true
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.q0mnJg",
+        "returnCode": 1,
+        "status": "EXPECTED_REJECT_PARTIAL_FILE_SET",
+        "reason": "missing sys-listening-stream-authority-successor.v2.json",
+        "fileCount": 7,
+        "beforeAggregateSha256": "850ece67b5bfd714f0f0357a42d5c1500a57b36a21a9fc71d97a9dfb5b48d6d6",
+        "afterAggregateSha256": "850ece67b5bfd714f0f0357a42d5c1500a57b36a21a9fc71d97a9dfb5b48d6d6",
+        "metadataUnchanged": true
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.uaHfXj",
+        "returnCode": 0,
+        "status": "PASS_READ_ONLY",
+        "causalSha256": "7344a37bc5b06d58c384987c091a8ec3404e076199d2d9d609d7cf320e71dd47",
+        "beforeAggregateSha256": "01577ef7ab18d61274058ef26cc639b10ddc7e1d98760adcfd1ab3f88046ca20",
+        "afterAggregateSha256": "01577ef7ab18d61274058ef26cc639b10ddc7e1d98760adcfd1ab3f88046ca20",
+        "metadataUnchanged": true
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.v5p1363-final",
+        "returnCode": 0,
+        "status": "PASS_READ_ONLY",
+        "causalSha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+        "beforeAggregateSha256": "dca6f805cb71ba8e98941d99180ab78afcc7a7ed1cc5b96608314854fd6fbe8a",
+        "afterAggregateSha256": "dca6f805cb71ba8e98941d99180ab78afcc7a7ed1cc5b96608314854fd6fbe8a",
+        "metadataUnchanged": true
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.v5sigfix",
+        "returnCode": 0,
+        "status": "PASS_READ_ONLY",
+        "causalSha256": "3e74e09a28c97070d7af79b41c44685b55db1dafc91f832335767d96ba17c0aa",
+        "beforeAggregateSha256": "083a9fc09e4655d6973f2f8d2f9e3b87bc066218775169cea3ed53566ef50447",
+        "afterAggregateSha256": "083a9fc09e4655d6973f2f8d2f9e3b87bc066218775169cea3ed53566ef50447",
+        "metadataUnchanged": true
+      }
+    ]
+  },
+  "selfTests": {
+    "command": "python3 -B output/hris-porting-blueprint-2026-09-09/coding-readiness/generate_modern_causal_module_successor.py --self-test-candidate-dir output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-canonical-candidate.v5p1363-final",
+    "returnCode": 0,
+    "output": "MODERN_CAUSAL_MODULE_SUCCESSOR_SELFTEST=PASS cases=22 legacyCases=22/22 readonlyCases=8/8 names=baseline-closed-set,rootless-handler-no-invention,additional-handler-event,branch-command-lossless,duplicate-operation,invalid-mode,query-transition,command-transition-missing,branch-state-missing,handler-half-state,handler-root-type,exact-operation-removed,event-producer-drift,manifest-mode-drift,versioned-successor-closed-set,versioned-successor-lineage-sealed,atomic-no-replace-write,existing-target-no-replace,predecessor-pin-drift,successor-path-substitution,predecessor-path-substitution,successor-output-closed-set readonlyNames=readonly-missing-file,readonly-extra-file,readonly-symlink-rejected,readonly-authority-substitution,readonly-source-pin-drift,readonly-causal-mismatch,readonly-rebinding-rejected,readonly-no-write",
+    "legacyGeneratorCases": "22/22",
+    "readonlyHostileCases": "8/8",
+    "readonlyHostileCaseNames": [
+      "readonly-missing-file",
+      "readonly-extra-file",
+      "readonly-symlink-rejected",
+      "readonly-authority-substitution",
+      "readonly-source-pin-drift",
+      "readonly-causal-mismatch",
+      "readonly-rebinding-rejected",
+      "readonly-no-write"
+    ],
+    "legacyCasesPreserved": [
+      "baseline-closed-set",
+      "rootless-handler-no-invention",
+      "additional-handler-event",
+      "branch-command-lossless",
+      "duplicate-operation",
+      "invalid-mode",
+      "query-transition",
+      "command-transition-missing",
+      "branch-state-missing",
+      "handler-half-state",
+      "handler-root-type",
+      "exact-operation-removed",
+      "event-producer-drift",
+      "manifest-mode-drift",
+      "versioned-successor-closed-set",
+      "versioned-successor-lineage-sealed",
+      "atomic-no-replace-write",
+      "existing-target-no-replace",
+      "predecessor-pin-drift",
+      "successor-path-substitution",
+      "predecessor-path-substitution",
+      "successor-output-closed-set"
+    ],
+    "moduleVersioningSafety": "PASS",
+    "moduleVersioningSafetyCases": [
+      "versioned-successor-closed-set",
+      "versioned-successor-lineage-sealed",
+      "atomic-no-replace-write",
+      "existing-target-no-replace",
+      "predecessor-pin-drift",
+      "successor-path-substitution",
+      "predecessor-path-substitution",
+      "successor-output-closed-set"
+    ]
+  },
+  "modeRegressions": {
+    "writeMode": {
+      "command": "python3 -B output/hris-porting-blueprint-2026-09-09/coding-readiness/generate_modern_causal_module_successor.py --candidate-dir /var/folders/qp/_8pgqkt50bn5qm2hyh4y6km40000gq/T/tmp.lRQesm621H",
+      "returnCode": 0,
+      "output": "MODERN_CAUSAL_CANDIDATE_WRITE=PASS mode=WRITE path=/var/folders/qp/_8pgqkt50bn5qm2hyh4y6km40000gq/T/tmp.lRQesm621H/modern-capability-causal-state-contracts.v2.json sha256=4f604faf4593e765e3a10671a8577cfa3e43a250fc3d7f34d89759518a4d0b08",
+      "sourceBasis": "current live coding-readiness six source inputs; disposable directory only",
+      "temporaryDirectoryOnly": true
+    },
+    "versionedSuccessorCheck": {
+      "command": "python3 -B output/hris-porting-blueprint-2026-09-09/coding-readiness/generate_modern_causal_module_successor.py --check",
+      "returnCode": 2,
+      "status": "PENDING_NO_SUCCESSOR_OUTPUTS_PUBLISHED",
+      "output": "MODERN_CAUSAL_VERSIONED_SUCCESSOR_CHECK=PENDING reason=NO_SUCCESSOR_OUTPUTS_PUBLISHED",
+      "failClosed": true
+    },
+    "helpText": {
+      "command": "python3 -B output/hris-porting-blueprint-2026-09-09/coding-readiness/generate_modern_causal_module_successor.py --help",
+      "returnCode": 0,
+      "writeHelpExplicit": true,
+      "readonlyHelpExplicit": true
+    }
+  },
+  "mutationBoundary": {
+    "candidateDirectoriesObserved": 7,
+    "candidateMetadataUnchangedForAllObserved": true,
+    "candidateBytesUnchangedForAllObserved": true,
+    "readonlyCheckMutationAttemptGuard": "PASS",
+    "newFinalCandidateCreated": false,
+    "oldReportsModified": false,
+    "liveCanonicalModified": false,
+    "GateModified": false,
+    "policyModified": false,
+    "successorModuleFilesPublished": false,
+    "forbiddenCandidateWrites": false
+  },
+  "conclusion": "The repaired generator now exposes an explicit --check-candidate-dir READ_ONLY mode. It accepts only an exact eight-file canonical candidate, validates manifest links, the exact five causal source pins, and the manifest Listening authority edge, synthesizes the expected causal document in memory, and compares causal bytes and self-seal while checking every candidate file through a single no-follow FD and path identity plus SHA/inode/size/mode/mtime_ns/ctime_ns before and after. Existing 22/22 generator and module-versioning safety tests remain passing; eight hostile read-only cases pass, including resealed authority substitution and path rebinding. Existing partial rejected candidates fail closed and all observed candidate metadata and bytes remain unchanged. No new final candidate or versioned successor was created.",
+  "sealedPayloadSha256": "7c5acc3dafa0cd6b3fee50fccb02b7061d9645ad61ec8df3ebaebea29a1f97dd"
+}

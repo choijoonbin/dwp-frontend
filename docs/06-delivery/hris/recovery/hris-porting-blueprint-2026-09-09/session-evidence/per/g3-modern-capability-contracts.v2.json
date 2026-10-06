@@ -1,0 +1,2189 @@
+{
+  "contractId": "dwp.hris.modern.per.v1",
+  "schemaVersion": 1,
+  "status": "G3_CONTRACT_READY_NOT_IMPLEMENTED",
+  "session": "HRIS-PER",
+  "runtimeOwners": [
+    "dwp-people-server"
+  ],
+  "inProcessBoundary": "HRM and PER share dwp-people-server deploy unit; typed application ports and module architecture tests replace self-HTTP and fake workload identities",
+  "eventEnvelope": {
+    "schemaRef": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+    "required": [
+      "specVersion",
+      "id",
+      "source",
+      "type",
+      "schemaVersion",
+      "time",
+      "tenantId",
+      "aggregateType",
+      "aggregateId",
+      "aggregateSequence",
+      "correlationId",
+      "data"
+    ],
+    "partitionKey": "tenantId:aggregateId",
+    "outbox": "same_transaction",
+    "consumerRule": "inbox_dedupe_by_tenantId_and_event_id_then_aggregateSequence_gap_detection"
+  },
+  "physicalTableDefaults": {
+    "tenantColumn": "tenant_id BIGINT NOT NULL",
+    "internalId": "module-specific BIGSERIAL PRIMARY KEY; never exposed outside owning runtime",
+    "publicId": "public_id UUID NOT NULL; UNIQUE(tenant_id,public_id)",
+    "aggregateVersion": "aggregate_version BIGINT NOT NULL DEFAULT 0 CHECK (aggregate_version >= 0)",
+    "auditColumns": "created_at TIMESTAMPTZ NOT NULL; created_by UUID NOT NULL; updated_at TIMESTAMPTZ; updated_by UUID; correlation_id UUID NOT NULL",
+    "rowSecurity": "ENABLE ROW LEVEL SECURITY; FORCE ROW LEVEL SECURITY; tenant predicate current_setting('dwp.tenant_id',true)::bigint; application role NOBYPASSRLS",
+    "foreignKeyBoundary": "composite (tenant_id,id) FK only inside dwp-people-server store; HRM-to-PER integration uses typed application ports and tenant-purpose-field projection tests, never self-HTTP or invented workload identity; cross-runtime references are opaque public UUIDs",
+    "deletionRule": "retention-class policy; terminal or evidence records use reversal/supersession and are never hard-deleted",
+    "indexRule": "every work queue or as-of query begins with tenant_id; no unbounded JSONB search index"
+  },
+  "capabilities": [
+    {
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "session": "HRIS-PER",
+      "boundedContext": "DWP_PEOPLE_HRIS_PERFORMANCE",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance",
+      "frontendBase": "apps/dwp/src/features/hris/performance",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "performance/skills",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/skills",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/skills",
+      "frontendRoot": "apps/dwp/src/features/hris/performance/skills",
+      "frontendTestRoot": "apps/dwp/src/features/hris/performance/skills/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_skills_ontology.sql",
+      "openapiFile": "contracts/openapi/hris/per/skills-ontology.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/per/skills-ontology.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.growth",
+        "hcm.settings.skills"
+      ],
+      "authorizationCapabilities": [
+        "hcm.skills.view",
+        "hcm.skills.manage",
+        "hcm.skills.evidence.verify"
+      ],
+      "dataContracts": [
+        "SkillTaxonomy.v1",
+        "WorkerSkillEvidence.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.skills.taxonomies.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/performance/skills/taxonomies",
+          "action": "SKILL_TAXONOMY_QUERY",
+          "authorizationCapability": "hcm.skills.view",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "QUERY",
+          "response": "SkillTaxonomyPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.skills.taxonomy.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/skills/taxonomies",
+          "action": "SKILL_TAXONOMY_CREATE",
+          "authorizationCapability": "hcm.skills.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-SKILLS-TR-001"
+          ],
+          "emits": [
+            "SkillsTaxonomyPublished.v1"
+          ]
+        },
+        {
+          "operationId": "modern.skills.taxonomy.validate",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/versions/{version}/validate",
+          "action": "SKILL_TAXONOMY_VALIDATE",
+          "authorizationCapability": "hcm.skills.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "SkillTaxonomyValidationReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-SKILLS-TR-002"
+          ],
+          "emits": [
+            "SkillsTaxonomyPublished.v1"
+          ]
+        },
+        {
+          "operationId": "modern.skills.taxonomy.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/versions/{version}/publish",
+          "action": "SKILL_TAXONOMY_PUBLISH",
+          "authorizationCapability": "hcm.skills.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-SKILLS-TR-003"
+          ],
+          "emits": [
+            "SkillsTaxonomyPublished.v1"
+          ]
+        },
+        {
+          "operationId": "modern.skills.evidence.verify",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/skills/worker-evidence/{evidenceId}/verify",
+          "action": "WORKER_SKILL_EVIDENCE_VERIFY",
+          "authorizationCapability": "hcm.skills.evidence.verify",
+          "scope": [
+            "SELF",
+            "DIRECT_REPORT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-SKILLS-TR-004"
+          ],
+          "emits": [
+            "WorkerSkillEvidenceVerified.v1"
+          ]
+        },
+        {
+          "operationId": "modern.skills.worker.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/performance/skills/workers/{workerId}",
+          "action": "WORKER_SKILL_QUERY",
+          "authorizationCapability": "hcm.skills.view",
+          "scope": [
+            "SELF",
+            "DIRECT_REPORT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "QUERY",
+          "response": "WorkerSkillProfile.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-PER-SKILLS-SM-001",
+          "aggregate": "SkillGovernanceControl",
+          "initialState": "NONE",
+          "terminalStates": [
+            "PUBLISHED",
+            "RETIRED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-PER-SKILLS-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.skills.taxonomy.create",
+              "guard": "taxonomy key and locale-neutral definition unique"
+            },
+            {
+              "transitionId": "MOD-PER-SKILLS-TR-002",
+              "from": "DRAFT",
+              "to": "VALIDATED",
+              "operationId": "modern.skills.taxonomy.validate",
+              "guard": "no cycles or orphan skills and migration mapping complete"
+            },
+            {
+              "transitionId": "MOD-PER-SKILLS-TR-003",
+              "from": "VALIDATED",
+              "to": "PUBLISHED",
+              "operationId": "modern.skills.taxonomy.publish",
+              "guard": "approval and effective date present"
+            },
+            {
+              "transitionId": "MOD-PER-SKILLS-TR-004",
+              "from": "PUBLISHED",
+              "to": "PUBLISHED",
+              "operationId": "modern.skills.evidence.verify",
+              "guard": "evidence provenance consent and verifier scope valid"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "SkillsTaxonomyPublished.v1",
+          "type": "SkillsTaxonomyPublished",
+          "version": 1,
+          "topic": "dwp.hris.skills.taxonomy.published.v1",
+          "aggregate": "SkillGovernanceControl",
+          "payloadRequired": [
+            "taxonomyId",
+            "taxonomyVersion",
+            "effectiveFrom",
+            "skillCount",
+            "mappingDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-SKILLS-TR-001",
+            "MOD-PER-SKILLS-TR-002",
+            "MOD-PER-SKILLS-TR-003"
+          ]
+        },
+        {
+          "name": "WorkerSkillEvidenceVerified.v1",
+          "type": "WorkerSkillEvidenceVerified",
+          "version": 1,
+          "topic": "dwp.hris.skills.worker-evidence.verified.v1",
+          "aggregate": "SkillGovernanceControl",
+          "payloadRequired": [
+            "evidenceId",
+            "workerPublicId",
+            "skillId",
+            "proficiencyLevel",
+            "provenanceType",
+            "verifiedAt",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-SKILLS-TR-004"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "prf_skl_taxonomies",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "skill_taxonomy_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL; half-open [from,to)",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:configuration_scope_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,taxonomy_key)",
+            "(tenant_id,public_id)",
+            "(tenant_id,skill_taxonomy_id)"
+          ],
+          "checks": [
+            "status IN ('DRAFT','VALIDATED','PUBLISHED','RETIRED')",
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,valid_from)"
+          ],
+          "retentionClass": "TALENT_CONFIGURATION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_skl_taxonomy_versions",
+          "kind": "REVISION_LEDGER",
+          "idColumn": "skill_taxonomy_version_id",
+          "effectiveTime": "effective_from DATE NOT NULL; effective_to DATE NULL",
+          "immutability": "APPEND_ONLY_AFTER_PUBLISH",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,skill_taxonomy_id)->prf_skl_taxonomies"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,skill_taxonomy_id,version_no)",
+            "(tenant_id,content_digest)"
+          ],
+          "checks": [
+            "version_no > 0",
+            "content_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,skill_taxonomy_id,version_no DESC)"
+          ],
+          "retentionClass": "TALENT_CONFIGURATION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_skl_worker_evidence",
+          "kind": "EVIDENCE_LEDGER",
+          "idColumn": "worker_skill_evidence_id",
+          "effectiveTime": "observed_at TIMESTAMPTZ NOT NULL; expires_at TIMESTAMPTZ",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:worker_public_id->HRM.Worker",
+            "OPAQUE:skill_public_id->published taxonomy"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,worker_public_id,skill_public_id,source_key,source_revision)",
+            "(tenant_id,evidence_digest)"
+          ],
+          "checks": [
+            "proficiency_level >= 0",
+            "evidence_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,worker_public_id,skill_public_id,observed_at DESC)"
+          ],
+          "retentionClass": "WORKER_TALENT_CONSENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-PER-SKILLS-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/per/g4/modern/skills-ontology/contract-test.json",
+          "assertion": "versioned taxonomy publish and evidence contract exact"
+        },
+        {
+          "testId": "MOD-PER-SKILLS-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/per/g4/modern/skills-ontology/security-negative.json",
+          "assertion": "consent field-policy and cross-tenant negatives fail closed"
+        },
+        {
+          "testId": "MOD-PER-SKILLS-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/per/g4/modern/skills-ontology/acceptance.json",
+          "assertion": "taxonomy migration mapping preserves semantic IDs and evidence provenance"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "customer skill taxonomy import",
+        "external credential provider"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "session": "HRIS-PER",
+      "boundedContext": "DWP_PEOPLE_HRIS_PERFORMANCE",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance",
+      "frontendBase": "apps/dwp/src/features/hris/performance",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "performance/growth",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/growth",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/growth",
+      "frontendRoot": "apps/dwp/src/features/hris/performance/growth",
+      "frontendTestRoot": "apps/dwp/src/features/hris/performance/growth/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_modern_growth_profile.sql",
+      "openapiFile": "contracts/openapi/hris/per/growth-profile.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/per/growth-profile.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.growth"
+      ],
+      "authorizationCapabilities": [
+        "hcm.growth.self.view",
+        "hcm.growth.self.manage",
+        "hcm.growth.manager.coach"
+      ],
+      "dataContracts": [
+        "GrowthProfile.v1",
+        "GrowthEvidenceLink.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.growth.self.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/performance/growth-profiles/me",
+          "action": "GROWTH_PROFILE_SELF_QUERY",
+          "authorizationCapability": "hcm.growth.self.view",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "QUERY",
+          "response": "GrowthProfile.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.growth.profile.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/growth-profiles",
+          "action": "GROWTH_PROFILE_CREATE",
+          "authorizationCapability": "hcm.growth.self.manage",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-GROWTH-TR-001"
+          ],
+          "emits": [
+            "GrowthProfileChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.growth.profile.update",
+          "method": "PUT",
+          "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}",
+          "action": "GROWTH_PROFILE_UPDATE",
+          "authorizationCapability": "hcm.growth.self.manage",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-GROWTH-TR-002"
+          ],
+          "emits": [
+            "GrowthProfileChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.growth.evidence.link",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/evidence-links",
+          "action": "GROWTH_EVIDENCE_LINK",
+          "authorizationCapability": "hcm.growth.self.manage",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-GROWTH-TR-003"
+          ],
+          "emits": [
+            "GrowthEvidenceLinked.v1"
+          ]
+        },
+        {
+          "operationId": "modern.growth.coaching.record",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/coaching-notes",
+          "action": "GROWTH_COACHING_RECORD",
+          "authorizationCapability": "hcm.growth.manager.coach",
+          "scope": [
+            "DIRECT_REPORT"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-GROWTH-TR-004"
+          ],
+          "emits": [
+            "GrowthProfileChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.growth.profile.archive",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/archive",
+          "action": "GROWTH_PROFILE_ARCHIVE",
+          "authorizationCapability": "hcm.growth.self.manage",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-GROWTH-TR-005"
+          ],
+          "emits": [
+            "GrowthProfileChanged.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-PER-GROWTH-SM-001",
+          "aggregate": "GrowthProfile",
+          "initialState": "NONE",
+          "terminalStates": [
+            "ARCHIVED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-PER-GROWTH-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.growth.profile.create",
+              "guard": "employee owns aspiration profile"
+            },
+            {
+              "transitionId": "MOD-PER-GROWTH-TR-002",
+              "from": "DRAFT|ACTIVE",
+              "to": "ACTIVE",
+              "operationId": "modern.growth.profile.update",
+              "guard": "aspirations separated from verified evidence"
+            },
+            {
+              "transitionId": "MOD-PER-GROWTH-TR-003",
+              "from": "DRAFT|ACTIVE",
+              "to": "ACTIVE",
+              "operationId": "modern.growth.evidence.link",
+              "guard": "evidence exists and consent permits use"
+            },
+            {
+              "transitionId": "MOD-PER-GROWTH-TR-004",
+              "from": "ACTIVE",
+              "to": "ACTIVE",
+              "operationId": "modern.growth.coaching.record",
+              "guard": "manager relation live and employee visibility flag explicit"
+            },
+            {
+              "transitionId": "MOD-PER-GROWTH-TR-005",
+              "from": "DRAFT|ACTIVE",
+              "to": "ARCHIVED",
+              "operationId": "modern.growth.profile.archive",
+              "guard": "archive reason and portability export offered"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "GrowthProfileChanged.v1",
+          "type": "GrowthProfileChanged",
+          "version": 1,
+          "topic": "dwp.hris.growth.profile.changed.v1",
+          "aggregate": "GrowthProfile",
+          "payloadRequired": [
+            "profileId",
+            "workerPublicId",
+            "fromState",
+            "toState",
+            "aspirationRevision",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-GROWTH-TR-001",
+            "MOD-PER-GROWTH-TR-002",
+            "MOD-PER-GROWTH-TR-004",
+            "MOD-PER-GROWTH-TR-005"
+          ]
+        },
+        {
+          "name": "GrowthEvidenceLinked.v1",
+          "type": "GrowthEvidenceLinked",
+          "version": 1,
+          "topic": "dwp.hris.growth.evidence.linked.v1",
+          "aggregate": "GrowthProfile",
+          "payloadRequired": [
+            "profileId",
+            "evidenceId",
+            "evidenceType",
+            "sourceRevision",
+            "consentRevision",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-GROWTH-TR-003"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "prf_grw_profiles",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "growth_profile_id",
+          "effectiveTime": "valid_from DATE NOT NULL; archived_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,worker_public_id,profile_version)",
+            "(tenant_id,public_id)",
+            "(tenant_id,growth_profile_id)"
+          ],
+          "checks": [
+            "status IN ('DRAFT','ACTIVE','ARCHIVED')",
+            "profile_version > 0"
+          ],
+          "indexes": [
+            "(tenant_id,worker_public_id,status)"
+          ],
+          "retentionClass": "WORKER_TALENT_CONSENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_grw_aspirations",
+          "kind": "VERSIONED_CHILD",
+          "idColumn": "growth_aspiration_id",
+          "effectiveTime": "target_date DATE; recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,growth_profile_id)->prf_grw_profiles"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,growth_profile_id,aspiration_key,revision_no)"
+          ],
+          "checks": [
+            "revision_no > 0",
+            "aspiration_type <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,growth_profile_id,recorded_at DESC)"
+          ],
+          "retentionClass": "WORKER_OWNED_PROFILE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_grw_evidence_links",
+          "kind": "EVIDENCE_LINK_LEDGER",
+          "idColumn": "growth_evidence_link_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL; consent_expires_at TIMESTAMPTZ",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,growth_profile_id)->prf_grw_profiles",
+            "OPAQUE:evidence_public_id->SkillsOrLearning"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,growth_profile_id,evidence_public_id,source_revision)"
+          ],
+          "checks": [
+            "source_revision > 0",
+            "consent_revision > 0"
+          ],
+          "indexes": [
+            "(tenant_id,growth_profile_id,recorded_at DESC)",
+            "(tenant_id,consent_expires_at)"
+          ],
+          "retentionClass": "WORKER_TALENT_CONSENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-PER-GROWTH-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/per/g4/modern/growth-profile/journey-test.json",
+          "assertion": "profile aspiration evidence and archive lifecycle exact"
+        },
+        {
+          "testId": "MOD-PER-GROWTH-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/per/g4/modern/growth-profile/privacy-negative.json",
+          "assertion": "manager cannot edit aspiration or view hidden evidence"
+        },
+        {
+          "testId": "MOD-PER-GROWTH-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/per/g4/modern/growth-profile/acceptance.json",
+          "assertion": "portable export separates self assertion from verified provenance"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "external career recommendation model"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "session": "HRIS-PER",
+      "boundedContext": "DWP_PEOPLE_HRIS_PERFORMANCE",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance",
+      "frontendBase": "apps/dwp/src/features/hris/performance",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "performance/learning",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/learning",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/learning",
+      "frontendRoot": "apps/dwp/src/features/hris/performance/learning",
+      "frontendTestRoot": "apps/dwp/src/features/hris/performance/learning/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/performance-migration/V19__per_modern_learning.sql",
+      "openapiFile": "contracts/openapi/hris/per/learning.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/per/learning.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.learning",
+        "hcm.operations.learning"
+      ],
+      "authorizationCapabilities": [
+        "hcm.learning.self.view",
+        "hcm.learning.self.enroll",
+        "hcm.learning.operate"
+      ],
+      "dataContracts": [
+        "LearningOffering.v1",
+        "LearningAssignment.v1",
+        "VerifiedCompletion.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.learning.catalog.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/performance/learning/offerings",
+          "action": "LEARNING_CATALOG_QUERY",
+          "authorizationCapability": "hcm.learning.self.view",
+          "scope": [
+            "SELF",
+            "TENANT"
+          ],
+          "mode": "QUERY",
+          "response": "LearningOfferingPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.learning.offering.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/learning/offerings",
+          "action": "LEARNING_OFFERING_CREATE",
+          "authorizationCapability": "hcm.learning.operate",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-LEARNING-TR-001"
+          ],
+          "emits": [
+            "LearningAssignmentChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.learning.offering.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}/publish",
+          "action": "LEARNING_OFFERING_PUBLISH",
+          "authorizationCapability": "hcm.learning.operate",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-LEARNING-TR-002"
+          ],
+          "emits": [
+            "LearningAssignmentChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.learning.self.enroll",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/learning/enrollments",
+          "action": "LEARNING_SELF_ENROLL",
+          "authorizationCapability": "hcm.learning.self.enroll",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-LEARNING-TR-003"
+          ],
+          "emits": [
+            "LearningAssignmentChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.learning.assignment.start",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/start",
+          "action": "LEARNING_ASSIGNMENT_START",
+          "authorizationCapability": "hcm.learning.self.enroll",
+          "scope": [
+            "SELF",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-LEARNING-TR-004"
+          ],
+          "emits": [
+            "LearningAssignmentChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.learning.completion.verify",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/completion-verifications",
+          "action": "LEARNING_COMPLETION_VERIFY",
+          "authorizationCapability": "hcm.learning.operate",
+          "scope": [
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "VerifiedCompletion.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-LEARNING-TR-005"
+          ],
+          "emits": [
+            "LearningCompletionVerified.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-PER-LEARNING-SM-001",
+          "aggregate": "LearningLifecycle",
+          "initialState": "NONE",
+          "terminalStates": [
+            "COMPLETED",
+            "CANCELLED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-PER-LEARNING-TR-001",
+              "from": "NONE",
+              "to": "OFFERING_DRAFT",
+              "operationId": "modern.learning.offering.create",
+              "guard": "offering owner and outcome skill mappings valid"
+            },
+            {
+              "transitionId": "MOD-PER-LEARNING-TR-002",
+              "from": "OFFERING_DRAFT",
+              "to": "OFFERING_PUBLISHED",
+              "operationId": "modern.learning.offering.publish",
+              "guard": "content provenance and accessibility checks pass"
+            },
+            {
+              "transitionId": "MOD-PER-LEARNING-TR-003",
+              "from": "OFFERING_PUBLISHED",
+              "to": "ENROLLED",
+              "operationId": "modern.learning.self.enroll",
+              "guard": "eligibility capacity and consent pass"
+            },
+            {
+              "transitionId": "MOD-PER-LEARNING-TR-004",
+              "from": "ENROLLED",
+              "to": "IN_PROGRESS",
+              "operationId": "modern.learning.assignment.start",
+              "guard": "assignment active and actor allowed"
+            },
+            {
+              "transitionId": "MOD-PER-LEARNING-TR-005",
+              "from": "IN_PROGRESS",
+              "to": "COMPLETED",
+              "operationId": "modern.learning.completion.verify",
+              "guard": "completion source evidence and verifier valid"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "LearningAssignmentChanged.v1",
+          "type": "LearningAssignmentChanged",
+          "version": 1,
+          "topic": "dwp.hris.learning.assignment.changed.v1",
+          "aggregate": "LearningLifecycle",
+          "payloadRequired": [
+            "assignmentId",
+            "workerPublicId",
+            "offeringId",
+            "fromState",
+            "toState",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-LEARNING-TR-001",
+            "MOD-PER-LEARNING-TR-002",
+            "MOD-PER-LEARNING-TR-003",
+            "MOD-PER-LEARNING-TR-004"
+          ]
+        },
+        {
+          "name": "LearningCompletionVerified.v1",
+          "type": "LearningCompletionVerified",
+          "version": 1,
+          "topic": "dwp.hris.learning.completion.verified.v1",
+          "aggregate": "LearningLifecycle",
+          "payloadRequired": [
+            "completionId",
+            "assignmentId",
+            "workerPublicId",
+            "completedAt",
+            "evidenceDigest",
+            "skillEvidenceIds",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-LEARNING-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "prf_lrn_offerings",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "learning_offering_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:provider_public_id->SYS.Connector"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,offering_code)",
+            "(tenant_id,public_id)",
+            "(tenant_id,learning_offering_id)"
+          ],
+          "checks": [
+            "status IN ('DRAFT','PUBLISHED','RETIRED')",
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,valid_from)"
+          ],
+          "retentionClass": "LEARNING_CATALOG_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_lrn_assignments",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "learning_assignment_id",
+          "effectiveTime": "assigned_at TIMESTAMPTZ NOT NULL; due_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,learning_offering_id)->prf_lrn_offerings",
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,worker_public_id,learning_offering_id,assignment_revision)",
+            "(tenant_id,learning_assignment_id)"
+          ],
+          "checks": [
+            "status IN ('ENROLLED','IN_PROGRESS','COMPLETED','CANCELLED')",
+            "assignment_revision > 0"
+          ],
+          "indexes": [
+            "(tenant_id,worker_public_id,status,due_at)"
+          ],
+          "retentionClass": "WORKER_LEARNING_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_lrn_completion_evidence",
+          "kind": "EVIDENCE_LEDGER",
+          "idColumn": "learning_completion_evidence_id",
+          "effectiveTime": "completed_at TIMESTAMPTZ NOT NULL; verified_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,learning_assignment_id)->prf_lrn_assignments",
+            "OPAQUE:source_receipt_id->provider"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,learning_assignment_id,completion_revision)",
+            "(tenant_id,evidence_digest)"
+          ],
+          "checks": [
+            "completion_revision > 0",
+            "evidence_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,learning_assignment_id,completion_revision DESC)"
+          ],
+          "retentionClass": "PORTABLE_LEARNING_EVIDENCE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-PER-LEARNING-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/per/g4/modern/learning/state-machine-test.json",
+          "assertion": "offering enrollment assignment completion lifecycle exact"
+        },
+        {
+          "testId": "MOD-PER-LEARNING-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/per/g4/modern/learning/provenance-test.json",
+          "assertion": "untrusted completion or missing consent cannot create verified skill evidence"
+        },
+        {
+          "testId": "MOD-PER-LEARNING-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/per/g4/modern/learning/acceptance.json",
+          "assertion": "completion evidence is portable and reconciles provider receipt"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "learning content provider connector",
+        "real catalog licenses"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "session": "HRIS-PER",
+      "boundedContext": "DWP_PEOPLE_HRIS_PERFORMANCE",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance",
+      "frontendBase": "apps/dwp/src/features/hris/performance",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "performance/opportunity",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/opportunity",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/opportunity",
+      "frontendRoot": "apps/dwp/src/features/hris/performance/opportunities",
+      "frontendTestRoot": "apps/dwp/src/features/hris/performance/opportunities/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/performance-migration/V20__per_modern_internal_marketplace.sql",
+      "openapiFile": "contracts/openapi/hris/per/internal-marketplace.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/per/internal-marketplace.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.opportunities",
+        "hcm.operations.opportunities"
+      ],
+      "authorizationCapabilities": [
+        "hcm.opportunity.self.view",
+        "hcm.opportunity.self.apply",
+        "hcm.opportunity.operate"
+      ],
+      "dataContracts": [
+        "InternalOpportunity.v1",
+        "OpportunityApplication.v1",
+        "MatchExplanation.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.opportunity.catalog.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/performance/opportunities",
+          "action": "OPPORTUNITY_CATALOG_QUERY",
+          "authorizationCapability": "hcm.opportunity.self.view",
+          "scope": [
+            "SELF",
+            "TENANT"
+          ],
+          "mode": "QUERY",
+          "response": "InternalOpportunityPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.opportunity.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/opportunities",
+          "action": "OPPORTUNITY_CREATE",
+          "authorizationCapability": "hcm.opportunity.operate",
+          "scope": [
+            "TENANT",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-MARKET-TR-001"
+          ],
+          "emits": [
+            "OpportunityApplicationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.opportunity.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/publish",
+          "action": "OPPORTUNITY_PUBLISH",
+          "authorizationCapability": "hcm.opportunity.operate",
+          "scope": [
+            "TENANT",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-MARKET-TR-002"
+          ],
+          "emits": [
+            "OpportunityApplicationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.opportunity.apply",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications",
+          "action": "OPPORTUNITY_APPLY",
+          "authorizationCapability": "hcm.opportunity.self.apply",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-MARKET-TR-003"
+          ],
+          "emits": [
+            "OpportunityApplicationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.opportunity.shortlist",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications/{applicationId}/shortlist",
+          "action": "OPPORTUNITY_SHORTLIST",
+          "authorizationCapability": "hcm.opportunity.operate",
+          "scope": [
+            "ORG_UNIT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-MARKET-TR-004"
+          ],
+          "emits": [
+            "OpportunityApplicationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.opportunity.selection.record",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications/{applicationId}/selection-decisions",
+          "action": "OPPORTUNITY_SELECTION_RECORD",
+          "authorizationCapability": "hcm.opportunity.operate",
+          "scope": [
+            "ORG_UNIT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-MARKET-TR-005"
+          ],
+          "emits": [
+            "OpportunitySelectionRecorded.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-PER-MARKET-SM-001",
+          "aggregate": "OpportunityLifecycle",
+          "initialState": "NONE",
+          "terminalStates": [
+            "SELECTED",
+            "NOT_SELECTED",
+            "CLOSED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-PER-MARKET-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.opportunity.create",
+              "guard": "opportunity type owner capacity and skill criteria valid"
+            },
+            {
+              "transitionId": "MOD-PER-MARKET-TR-002",
+              "from": "DRAFT",
+              "to": "OPEN",
+              "operationId": "modern.opportunity.publish",
+              "guard": "prohibited attributes absent and publish policy pass"
+            },
+            {
+              "transitionId": "MOD-PER-MARKET-TR-003",
+              "from": "OPEN",
+              "to": "APPLIED",
+              "operationId": "modern.opportunity.apply",
+              "guard": "worker controls application and consent"
+            },
+            {
+              "transitionId": "MOD-PER-MARKET-TR-004",
+              "from": "APPLIED",
+              "to": "SHORTLISTED",
+              "operationId": "modern.opportunity.shortlist",
+              "guard": "explanation contains only allowed evidence"
+            },
+            {
+              "transitionId": "MOD-PER-MARKET-TR-005",
+              "from": "APPLIED|SHORTLISTED",
+              "to": "SELECTED|NOT_SELECTED",
+              "operationId": "modern.opportunity.selection.record",
+              "guard": "human decision receipt and reason present"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "OpportunityApplicationChanged.v1",
+          "type": "OpportunityApplicationChanged",
+          "version": 1,
+          "topic": "dwp.hris.opportunity.application.changed.v1",
+          "aggregate": "OpportunityLifecycle",
+          "payloadRequired": [
+            "opportunityId",
+            "applicationId",
+            "workerPublicId",
+            "fromState",
+            "toState",
+            "explanationId",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-MARKET-TR-001",
+            "MOD-PER-MARKET-TR-002",
+            "MOD-PER-MARKET-TR-003",
+            "MOD-PER-MARKET-TR-004"
+          ]
+        },
+        {
+          "name": "OpportunitySelectionRecorded.v1",
+          "type": "OpportunitySelectionRecorded",
+          "version": 1,
+          "topic": "dwp.hris.opportunity.selection.recorded.v1",
+          "aggregate": "OpportunityLifecycle",
+          "payloadRequired": [
+            "opportunityId",
+            "applicationId",
+            "decision",
+            "humanDecisionReceiptId",
+            "reasonCode",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-MARKET-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "prf_mkt_opportunities",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "internal_opportunity_id",
+          "effectiveTime": "open_from TIMESTAMPTZ NOT NULL; close_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:owner_org_public_id->HRM.Organization"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,opportunity_code)",
+            "(tenant_id,public_id)",
+            "(tenant_id,internal_opportunity_id)"
+          ],
+          "checks": [
+            "status IN ('DRAFT','OPEN','CLOSED','CANCELLED')",
+            "close_at IS NULL OR close_at > open_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,open_from)",
+            "(tenant_id,owner_org_public_id,status)"
+          ],
+          "retentionClass": "INTERNAL_MOBILITY_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_mkt_applications",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "opportunity_application_id",
+          "effectiveTime": "applied_at TIMESTAMPTZ NOT NULL",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,internal_opportunity_id)->prf_mkt_opportunities",
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,internal_opportunity_id,worker_public_id)",
+            "(tenant_id,public_id)",
+            "(tenant_id,opportunity_application_id)"
+          ],
+          "checks": [
+            "status IN ('APPLIED','SHORTLISTED','SELECTED','NOT_SELECTED','WITHDRAWN')"
+          ],
+          "indexes": [
+            "(tenant_id,internal_opportunity_id,status,applied_at)"
+          ],
+          "retentionClass": "WORKER_TALENT_CONSENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_mkt_match_explanations",
+          "kind": "EVIDENCE_LEDGER",
+          "idColumn": "match_explanation_id",
+          "effectiveTime": "generated_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,opportunity_application_id)->prf_mkt_applications",
+            "OPAQUE:model_policy_version_id->SYS.AI"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,opportunity_application_id,input_revision,policy_revision)",
+            "(tenant_id,payload_digest)"
+          ],
+          "checks": [
+            "prohibited_attribute_count = 0",
+            "payload_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,opportunity_application_id,generated_at DESC)"
+          ],
+          "retentionClass": "AI_EXPLANATION_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-PER-MARKET-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/per/g4/modern/internal-marketplace/journey-test.json",
+          "assertion": "opportunity application shortlist and human selection lifecycle exact"
+        },
+        {
+          "testId": "MOD-PER-MARKET-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/per/g4/modern/internal-marketplace/fairness-negative.json",
+          "assertion": "prohibited attributes and unexplained rankings fail closed"
+        },
+        {
+          "testId": "MOD-PER-MARKET-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/per/g4/modern/internal-marketplace/acceptance.json",
+          "assertion": "employee controls application and every selection has human receipt"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "tenant opportunity types",
+        "external mentoring or project connector"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "session": "HRIS-PER",
+      "boundedContext": "DWP_PEOPLE_HRIS_PERFORMANCE",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance",
+      "frontendBase": "apps/dwp/src/features/hris/performance",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "performance/succession",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/succession",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/succession",
+      "frontendRoot": "apps/dwp/src/features/hris/performance/succession",
+      "frontendTestRoot": "apps/dwp/src/features/hris/performance/succession/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/performance-migration/V21__per_modern_succession.sql",
+      "openapiFile": "contracts/openapi/hris/per/succession.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/per/succession.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.operations.succession"
+      ],
+      "authorizationCapabilities": [
+        "hcm.succession.view.restricted",
+        "hcm.succession.manage",
+        "hcm.succession.publish"
+      ],
+      "dataContracts": [
+        "SuccessionPlan.v1",
+        "SuccessionNomination.v1",
+        "ReadinessEvidence.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.succession.plans.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/performance/succession/plans",
+          "action": "SUCCESSION_PLAN_QUERY",
+          "authorizationCapability": "hcm.succession.view.restricted",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "NAMED_POPULATION"
+          ],
+          "mode": "QUERY",
+          "response": "SuccessionPlanPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.succession.plan.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/succession/plans",
+          "action": "SUCCESSION_PLAN_CREATE",
+          "authorizationCapability": "hcm.succession.manage",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-SUCCESSION-TR-001"
+          ],
+          "emits": [
+            "SuccessionPlanChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.succession.nomination.add",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/succession/plans/{planId}/nominations",
+          "action": "SUCCESSION_NOMINATION_ADD",
+          "authorizationCapability": "hcm.succession.manage",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-SUCCESSION-TR-002"
+          ],
+          "emits": [
+            "SuccessionPlanChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.succession.plan.submit",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/succession/plans/{planId}/submit",
+          "action": "SUCCESSION_PLAN_SUBMIT",
+          "authorizationCapability": "hcm.succession.manage",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-SUCCESSION-TR-003"
+          ],
+          "emits": [
+            "SuccessionPlanChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.succession.plan.approve",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/succession/plans/{planId}/approve",
+          "action": "SUCCESSION_PLAN_APPROVE",
+          "authorizationCapability": "hcm.succession.publish",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-SUCCESSION-TR-004"
+          ],
+          "emits": [
+            "SuccessionPlanChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.succession.plan.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/succession/plans/{planId}/publish",
+          "action": "SUCCESSION_PLAN_PUBLISH",
+          "authorizationCapability": "hcm.succession.publish",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-SUCCESSION-TR-005"
+          ],
+          "emits": [
+            "SuccessionPlanPublished.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-PER-SUCCESSION-SM-001",
+          "aggregate": "SuccessionPlan",
+          "initialState": "NONE",
+          "terminalStates": [
+            "PUBLISHED",
+            "RETIRED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-PER-SUCCESSION-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.succession.plan.create",
+              "guard": "key position and restricted cohort policy valid"
+            },
+            {
+              "transitionId": "MOD-PER-SUCCESSION-TR-002",
+              "from": "DRAFT",
+              "to": "DRAFT",
+              "operationId": "modern.succession.nomination.add",
+              "guard": "consented evidence and nominated population scope pass"
+            },
+            {
+              "transitionId": "MOD-PER-SUCCESSION-TR-003",
+              "from": "DRAFT",
+              "to": "PENDING_APPROVAL",
+              "operationId": "modern.succession.plan.submit",
+              "guard": "readiness evidence and plan version frozen"
+            },
+            {
+              "transitionId": "MOD-PER-SUCCESSION-TR-004",
+              "from": "PENDING_APPROVAL",
+              "to": "APPROVED",
+              "operationId": "modern.succession.plan.approve",
+              "guard": "maker-checker and restricted reviewer pass"
+            },
+            {
+              "transitionId": "MOD-PER-SUCCESSION-TR-005",
+              "from": "APPROVED",
+              "to": "PUBLISHED",
+              "operationId": "modern.succession.plan.publish",
+              "guard": "approval revision unchanged and publish audience explicit"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "SuccessionPlanChanged.v1",
+          "type": "SuccessionPlanChanged",
+          "version": 1,
+          "topic": "dwp.hris.succession.plan.changed.v1",
+          "aggregate": "SuccessionPlan",
+          "payloadRequired": [
+            "planId",
+            "keyPositionId",
+            "fromState",
+            "toState",
+            "nominationCount",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-SUCCESSION-TR-001",
+            "MOD-PER-SUCCESSION-TR-002",
+            "MOD-PER-SUCCESSION-TR-003",
+            "MOD-PER-SUCCESSION-TR-004"
+          ]
+        },
+        {
+          "name": "SuccessionPlanPublished.v1",
+          "type": "SuccessionPlanPublished",
+          "version": 1,
+          "topic": "dwp.hris.succession.plan.published.v1",
+          "aggregate": "SuccessionPlan",
+          "payloadRequired": [
+            "planId",
+            "planVersion",
+            "approvalReceiptId",
+            "publishedAt",
+            "audiencePolicyRevision",
+            "payloadDigest"
+          ],
+          "emittedOn": [
+            "MOD-PER-SUCCESSION-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "prf_suc_plans",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "succession_plan_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:key_position_public_id->HRM.Position",
+            "OPAQUE:audience_policy_id->HRM.Access"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,plan_key,plan_version)",
+            "(tenant_id,public_id)",
+            "(tenant_id,succession_plan_id)"
+          ],
+          "checks": [
+            "status IN ('DRAFT','PENDING_APPROVAL','APPROVED','PUBLISHED','RETIRED')",
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,valid_from)",
+            "(tenant_id,key_position_public_id,status)"
+          ],
+          "retentionClass": "RESTRICTED_SUCCESSION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_suc_nominations",
+          "kind": "VERSIONED_CHILD",
+          "idColumn": "succession_nomination_id",
+          "effectiveTime": "nominated_at TIMESTAMPTZ NOT NULL; review_due_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,succession_plan_id)->prf_suc_plans",
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,succession_plan_id,worker_public_id,nomination_revision)",
+            "(tenant_id,succession_nomination_id)"
+          ],
+          "checks": [
+            "readiness_code <> ''",
+            "consent_revision > 0"
+          ],
+          "indexes": [
+            "(tenant_id,succession_plan_id,readiness_code)"
+          ],
+          "retentionClass": "RESTRICTED_SUCCESSION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_suc_readiness_evidence",
+          "kind": "EVIDENCE_LEDGER",
+          "idColumn": "readiness_evidence_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL; expires_at TIMESTAMPTZ",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,succession_nomination_id)->prf_suc_nominations",
+            "OPAQUE:evidence_public_id->PER.Evidence"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,succession_nomination_id,evidence_public_id,source_revision)"
+          ],
+          "checks": [
+            "source_revision > 0",
+            "evidence_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,succession_nomination_id,recorded_at DESC)"
+          ],
+          "retentionClass": "RESTRICTED_TALENT_EVIDENCE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-PER-SUCCESSION-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/per/g4/modern/succession/publish-test.json",
+          "assertion": "draft nomination approval and publish version lifecycle exact"
+        },
+        {
+          "testId": "MOD-PER-SUCCESSION-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/per/g4/modern/succession/field-policy-negative.json",
+          "assertion": "restricted plans and cohorts are omitted outside purpose and scope"
+        },
+        {
+          "testId": "MOD-PER-SUCCESSION-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/per/g4/modern/succession/acceptance.json",
+          "assertion": "publish audit retention and evidence provenance reconcile"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "tenant succession policy",
+        "external assessment provider"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "session": "HRIS-PER",
+      "boundedContext": "DWP_PEOPLE_HRIS_PERFORMANCE",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance",
+      "frontendBase": "apps/dwp/src/features/hris/performance",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "COUNTRY_PACK",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "performance/compensationplanning",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/compensationplanning",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/compensationplanning",
+      "frontendRoot": "apps/dwp/src/features/hris/performance/compensation-planning",
+      "frontendTestRoot": "apps/dwp/src/features/hris/performance/compensation-planning/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/performance-migration/V22__per_modern_compensation_planning.sql",
+      "openapiFile": "contracts/openapi/hris/per/compensation-planning.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/per/compensation-planning.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.operations.compensation-planning"
+      ],
+      "authorizationCapabilities": [
+        "hcm.compensation.plan.view",
+        "hcm.compensation.plan.propose",
+        "hcm.compensation.plan.approve"
+      ],
+      "dataContracts": [
+        "CompensationPlan.v1",
+        "CompensationBudgetLedger.v1",
+        "ApprovedCompensationPlanSnapshot.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.compplan.cycles.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/performance/compensation-planning/cycles",
+          "action": "COMPENSATION_PLAN_QUERY",
+          "authorizationCapability": "hcm.compensation.plan.view",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "NAMED_POPULATION"
+          ],
+          "mode": "QUERY",
+          "response": "CompensationCyclePage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.compplan.cycle.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/compensation-planning/cycles",
+          "action": "COMPENSATION_CYCLE_CREATE",
+          "authorizationCapability": "hcm.compensation.plan.propose",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-PER-COMPPLAN-TR-001"
+          ],
+          "emits": [
+            "CompensationPlanChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.compplan.budget.allocate",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/budget-allocations",
+          "action": "COMPENSATION_BUDGET_ALLOCATE",
+          "authorizationCapability": "hcm.compensation.plan.propose",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-COMPPLAN-TR-002"
+          ],
+          "emits": [
+            "CompensationPlanChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.compplan.proposal.submit",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals/{proposalId}/submit",
+          "action": "COMPENSATION_PROPOSAL_SUBMIT",
+          "authorizationCapability": "hcm.compensation.plan.propose",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-COMPPLAN-TR-003"
+          ],
+          "emits": [
+            "CompensationPlanChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.compplan.plan.approve",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approve",
+          "action": "COMPENSATION_PLAN_APPROVE",
+          "authorizationCapability": "hcm.compensation.plan.approve",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "PerformanceCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-COMPPLAN-TR-004"
+          ],
+          "emits": [
+            "CompensationPlanApproved.v1"
+          ]
+        },
+        {
+          "operationId": "modern.compplan.snapshot.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approved-snapshots",
+          "action": "COMPENSATION_SNAPSHOT_PUBLISH",
+          "authorizationCapability": "hcm.compensation.plan.approve",
+          "scope": [
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "ApprovedCompensationPlanSnapshot.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-PER-COMPPLAN-TR-005"
+          ],
+          "emits": [
+            "CompensationPlanApproved.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-PER-COMPPLAN-SM-001",
+          "aggregate": "CompensationPlanCycle",
+          "initialState": "NONE",
+          "terminalStates": [
+            "PUBLISHED",
+            "CANCELLED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-PER-COMPPLAN-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.compplan.cycle.create",
+              "guard": "currency guideline and population snapshots pinned"
+            },
+            {
+              "transitionId": "MOD-PER-COMPPLAN-TR-002",
+              "from": "DRAFT",
+              "to": "OPEN",
+              "operationId": "modern.compplan.budget.allocate",
+              "guard": "budget ledger balanced and allocation revision unique"
+            },
+            {
+              "transitionId": "MOD-PER-COMPPLAN-TR-003",
+              "from": "OPEN",
+              "to": "PROPOSAL_REVIEW",
+              "operationId": "modern.compplan.proposal.submit",
+              "guard": "proposal within guardrail or exception reason present"
+            },
+            {
+              "transitionId": "MOD-PER-COMPPLAN-TR-004",
+              "from": "PROPOSAL_REVIEW",
+              "to": "APPROVED",
+              "operationId": "modern.compplan.plan.approve",
+              "guard": "maker-checker and budget invariant pass"
+            },
+            {
+              "transitionId": "MOD-PER-COMPPLAN-TR-005",
+              "from": "APPROVED",
+              "to": "PUBLISHED",
+              "operationId": "modern.compplan.snapshot.publish",
+              "guard": "approval revision frozen and immutable PAY projection digest created"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "CompensationPlanChanged.v1",
+          "type": "CompensationPlanChanged",
+          "version": 1,
+          "topic": "dwp.hris.compensation-plan.changed.v1",
+          "aggregate": "CompensationPlanCycle",
+          "payloadRequired": [
+            "cycleId",
+            "planId",
+            "fromState",
+            "toState",
+            "budgetCurrency",
+            "budgetTotal",
+            "allocatedTotal",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-PER-COMPPLAN-TR-001",
+            "MOD-PER-COMPPLAN-TR-002",
+            "MOD-PER-COMPPLAN-TR-003"
+          ]
+        },
+        {
+          "name": "CompensationPlanApproved.v1",
+          "type": "CompensationPlanApproved",
+          "version": 1,
+          "topic": "dwp.hris.compensation-plan.approved.v1",
+          "aggregate": "CompensationPlanCycle",
+          "payloadRequired": [
+            "planId",
+            "cycleId",
+            "approvalRevision",
+            "effectiveDate",
+            "snapshotId",
+            "payloadDigest"
+          ],
+          "emittedOn": [
+            "MOD-PER-COMPPLAN-TR-004",
+            "MOD-PER-COMPPLAN-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "prf_cmp_cycles",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "compensation_cycle_id",
+          "effectiveTime": "effective_from DATE NOT NULL; effective_to DATE NOT NULL",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:population_snapshot_id->HRM.Workforce",
+            "OPAQUE:guideline_policy_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,cycle_code)",
+            "(tenant_id,public_id)",
+            "(tenant_id,compensation_cycle_id)"
+          ],
+          "checks": [
+            "status IN ('DRAFT','OPEN','PROPOSAL_REVIEW','APPROVED','PUBLISHED','CANCELLED')",
+            "effective_to > effective_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,effective_from)"
+          ],
+          "retentionClass": "COMPENSATION_RESTRICTED_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_cmp_budget_ledger",
+          "kind": "MONETARY_LEDGER",
+          "idColumn": "compensation_budget_ledger_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY_REVERSAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,compensation_cycle_id)->prf_cmp_cycles",
+            "OPAQUE:org_public_id->HRM.Organization"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,compensation_cycle_id,entry_sequence)",
+            "(tenant_id,correlation_id)"
+          ],
+          "checks": [
+            "amount >= 0",
+            "currency_code ~ '^[A-Z]{3}$'",
+            "entry_sequence > 0"
+          ],
+          "indexes": [
+            "(tenant_id,compensation_cycle_id,entry_sequence)",
+            "(tenant_id,org_public_id,recorded_at)"
+          ],
+          "retentionClass": "COMPENSATION_RESTRICTED_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_cmp_proposals",
+          "kind": "AGGREGATE_CHILD",
+          "idColumn": "compensation_proposal_id",
+          "effectiveTime": "effective_date DATE NOT NULL; submitted_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,compensation_cycle_id)->prf_cmp_cycles",
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,compensation_cycle_id,worker_public_id,component_code)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "amount >= 0",
+            "currency_code ~ '^[A-Z]{3}$'",
+            "status IN ('DRAFT','SUBMITTED','APPROVED','REJECTED')"
+          ],
+          "indexes": [
+            "(tenant_id,compensation_cycle_id,status)",
+            "(tenant_id,worker_public_id,effective_date)"
+          ],
+          "retentionClass": "COMPENSATION_RESTRICTED_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_cmp_approved_snapshots",
+          "kind": "IMMUTABLE_SNAPSHOT_HEADER",
+          "idColumn": "approved_compensation_snapshot_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL; effective_from DATE NOT NULL; effective_to DATE NULL; half-open [from,to)",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,compensation_cycle_id)->prf_cmp_cycles",
+            "OPAQUE:approval_receipt_id->Approval"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,compensation_cycle_id,snapshot_revision)",
+            "(tenant_id,public_id)",
+            "(tenant_id,payload_digest)",
+            "(tenant_id,approved_compensation_snapshot_id)"
+          ],
+          "checks": [
+            "snapshot_revision > 0",
+            "payload_digest ~ '^[0-9a-f]{64}$'",
+            "source_version > 0",
+            "line_count BETWEEN 1 AND 100000",
+            "effective_to IS NULL OR effective_to > effective_from"
+          ],
+          "indexes": [
+            "(tenant_id,compensation_cycle_id,snapshot_revision)",
+            "(tenant_id,approval_receipt_id,recorded_at)"
+          ],
+          "retentionClass": "PAYROLL_INPUT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "prf_cmp_approved_snapshot_lines",
+          "kind": "IMMUTABLE_SNAPSHOT_LINE",
+          "idColumn": "approved_compensation_snapshot_line_id",
+          "effectiveTime": "effective_from DATE NOT NULL; effective_to DATE NULL; half-open [from,to)",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,approved_compensation_snapshot_id)->prf_cmp_approved_snapshots",
+            "OPAQUE:worker_public_id->HRM.Worker",
+            "OPAQUE:assignment_public_id->HRM.Assignment"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,approved_compensation_snapshot_id,line_sequence)",
+            "(tenant_id,public_id)",
+            "(tenant_id,approved_compensation_snapshot_id,worker_public_id,assignment_public_id,component_code)"
+          ],
+          "checks": [
+            "line_sequence BETWEEN 1 AND 100000",
+            "approved_amount >= 0",
+            "currency_code ~ '^[A-Z]{3}$'",
+            "line_digest ~ '^[0-9a-f]{64}$'",
+            "effective_to IS NULL OR effective_to > effective_from"
+          ],
+          "indexes": [
+            "(tenant_id,approved_compensation_snapshot_id,line_sequence)",
+            "(tenant_id,worker_public_id,effective_from)"
+          ],
+          "retentionClass": "PAYROLL_INPUT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-PER-COMPPLAN-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/per/g4/modern/compensation-planning/budget-invariant-test.json",
+          "assertion": "budget ledger currency rounding and proposal totals reconcile"
+        },
+        {
+          "testId": "MOD-PER-COMPPLAN-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/per/g4/modern/compensation-planning/sod-negative.json",
+          "assertion": "proposer cannot approve or publish and compensation fields are purpose restricted"
+        },
+        {
+          "testId": "MOD-PER-COMPPLAN-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/per/g4/modern/compensation-planning/handoff-reconciliation.json",
+          "assertion": "PAY refetches only approved immutable snapshot and verifies revision digest"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "country compensation guidelines",
+        "tenant budget and currency configuration",
+        "real payroll activation"
+      ],
+      "approvedSnapshotContract": {
+        "responseSchema": "ApprovedCompensationPlanSnapshot.v1",
+        "lineSchema": "ApprovedCompensationPlanLine.v1",
+        "cardinality": "one prf_cmp_approved_snapshots header to 1..100000 prf_cmp_approved_snapshot_lines; line_count equals exact child count",
+        "ordering": "line_sequence contiguous from 1 and serialized ASC",
+        "digest": "each line_digest covers canonical typed line; payload_digest covers canonical header plus ordered line_digest list",
+        "payMaterialization": "PAY creates exactly one immutable pay_compensation_plan_inputs row per line after tenant/revision/approval/effective/digest verification"
+      }
+    }
+  ]
+}

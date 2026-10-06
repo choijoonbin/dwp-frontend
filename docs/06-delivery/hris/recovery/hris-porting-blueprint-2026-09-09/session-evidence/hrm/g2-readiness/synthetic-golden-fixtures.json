@@ -1,0 +1,559 @@
+{
+  "fixtureId": "dwp-hris-hrm-golden-v1",
+  "schemaVersion": 1,
+  "dataClassification": "SYNTHETIC_NO_CUSTOMER_DATA",
+  "effectivePeriodConvention": "[from,to)",
+  "canonicalRequestHash": "sha256-of-normalized-synthetic-command",
+  "tenants": [
+    {
+      "tenantKey": "SYNTH-A",
+      "tenantId": 910001,
+      "defaultLocale": "ko-KR",
+      "defaultTimeZone": "Asia/Seoul"
+    },
+    {
+      "tenantKey": "SYNTH-B",
+      "tenantId": 910002,
+      "defaultLocale": "en-US",
+      "defaultTimeZone": "America/New_York"
+    }
+  ],
+  "configuration": {
+    "referenceVersion": "SYNTH-A-REF-3",
+    "workflowVersion": "SYNTH-A-WF-2",
+    "profilePatchSchema": {
+      "key": "contact-change",
+      "version": 2,
+      "published": true,
+      "allowedFieldGroups": [
+        "CONTACT"
+      ]
+    },
+    "assignmentReasons": [
+      "SYNTH_HIRE",
+      "SYNTH_TRANSFER",
+      "SYNTH_CORRECTION"
+    ],
+    "certificateTemplate": {
+      "publicId": "10000000-0000-4000-8000-000000000901",
+      "version": 3,
+      "published": true,
+      "effectiveFrom": "2029-01-01"
+    }
+  },
+  "legalEmployers": [
+    {
+      "tenantKey": "SYNTH-A",
+      "publicId": "10000000-0000-4000-8000-000000000111",
+      "key": "SYNTH-A-LEGAL",
+      "name": "Synthetic Alpha Legal Employer",
+      "countryCode": "KR",
+      "validFrom": "2029-01-01",
+      "validTo": null
+    },
+    {
+      "tenantKey": "SYNTH-B",
+      "publicId": "20000000-0000-4000-8000-000000000111",
+      "key": "SYNTH-B-LEGAL",
+      "name": "Synthetic Beta Legal Employer",
+      "countryCode": "US",
+      "validFrom": "2029-01-01",
+      "validTo": null
+    }
+  ],
+  "organizations": [
+    {
+      "tenantKey": "SYNTH-A",
+      "publicId": "10000000-0000-4000-8000-000000000101",
+      "key": "SYNTH-A-ROOT",
+      "type": "COMPANY",
+      "name": "Synthetic Alpha",
+      "validFrom": "2029-01-01",
+      "validTo": null
+    },
+    {
+      "tenantKey": "SYNTH-A",
+      "publicId": "10000000-0000-4000-8000-000000000102",
+      "key": "SYNTH-A-OLD",
+      "type": "DEPARTMENT",
+      "name": "Synthetic Old Unit",
+      "validFrom": "2029-01-01",
+      "validTo": "2030-07-01",
+      "parentPublicId": "10000000-0000-4000-8000-000000000101"
+    },
+    {
+      "tenantKey": "SYNTH-A",
+      "publicId": "10000000-0000-4000-8000-000000000103",
+      "key": "SYNTH-A-NEW",
+      "type": "DEPARTMENT",
+      "name": "Synthetic New Unit",
+      "validFrom": "2030-07-01",
+      "validTo": null,
+      "parentPublicId": "10000000-0000-4000-8000-000000000101"
+    },
+    {
+      "tenantKey": "SYNTH-B",
+      "publicId": "20000000-0000-4000-8000-000000000101",
+      "key": "SYNTH-B-ROOT",
+      "type": "COMPANY",
+      "name": "Synthetic Beta",
+      "validFrom": "2029-01-01",
+      "validTo": null
+    }
+  ],
+  "people": [
+    {
+      "tenantKey": "SYNTH-A",
+      "personPublicId": "10000000-0000-4000-8000-000000000201",
+      "personKey": "SYNTH-PERSON-A1",
+      "displayName": "Synthetic Person A1",
+      "version": 4,
+      "fieldTokens": {
+        "personalIdentifier": "masked:******-A1",
+        "contact": "encrypted:synthetic-contact-a1"
+      }
+    },
+    {
+      "tenantKey": "SYNTH-A",
+      "personPublicId": "10000000-0000-4000-8000-000000000202",
+      "personKey": "SYNTH-PERSON-A2",
+      "displayName": "Synthetic Person A2",
+      "version": 1,
+      "fieldTokens": {
+        "contact": "encrypted:synthetic-contact-a2"
+      }
+    },
+    {
+      "tenantKey": "SYNTH-B",
+      "personPublicId": "20000000-0000-4000-8000-000000000201",
+      "personKey": "SYNTH-PERSON-B1",
+      "displayName": "Synthetic Person B1",
+      "version": 1,
+      "fieldTokens": {
+        "personalIdentifier": "masked:******-B1"
+      }
+    }
+  ],
+  "workers": [
+    {
+      "tenantKey": "SYNTH-A",
+      "workerPublicId": "10000000-0000-4000-8000-000000000301",
+      "personPublicId": "10000000-0000-4000-8000-000000000201",
+      "workerNumber": "SYNTH-A-0001",
+      "workerType": "EMPLOYEE",
+      "workerStatus": "ACTIVE",
+      "version": 3
+    },
+    {
+      "tenantKey": "SYNTH-A",
+      "workerPublicId": "10000000-0000-4000-8000-000000000302",
+      "personPublicId": "10000000-0000-4000-8000-000000000202",
+      "workerNumber": "SYNTH-A-0002",
+      "workerType": "EMPLOYEE",
+      "workerStatus": "ACTIVE",
+      "version": 1
+    },
+    {
+      "tenantKey": "SYNTH-B",
+      "workerPublicId": "20000000-0000-4000-8000-000000000301",
+      "personPublicId": "20000000-0000-4000-8000-000000000201",
+      "workerNumber": "SYNTH-B-0001",
+      "workerType": "EMPLOYEE",
+      "workerStatus": "ACTIVE",
+      "version": 1
+    }
+  ],
+  "relationships": [
+    {
+      "tenantKey": "SYNTH-A",
+      "relationshipPublicId": "10000000-0000-4000-8000-000000000401",
+      "workerPublicId": "10000000-0000-4000-8000-000000000301",
+      "legalEntityPublicId": "10000000-0000-4000-8000-000000000111",
+      "primary": true,
+      "startDate": "2029-01-01",
+      "endDate": null,
+      "version": 2
+    },
+    {
+      "tenantKey": "SYNTH-A",
+      "relationshipPublicId": "10000000-0000-4000-8000-000000000402",
+      "workerPublicId": "10000000-0000-4000-8000-000000000302",
+      "legalEntityPublicId": "10000000-0000-4000-8000-000000000111",
+      "primary": true,
+      "startDate": "2029-01-01",
+      "endDate": null,
+      "version": 1
+    }
+  ],
+  "assignments": [
+    {
+      "tenantKey": "SYNTH-A",
+      "assignmentPublicId": "10000000-0000-4000-8000-000000000501",
+      "relationshipPublicId": "10000000-0000-4000-8000-000000000401",
+      "primary": true,
+      "validFrom": "2029-01-01",
+      "validTo": "2030-07-01",
+      "organizationPublicId": "10000000-0000-4000-8000-000000000102",
+      "status": "ACTIVE",
+      "version": 6
+    },
+    {
+      "tenantKey": "SYNTH-A",
+      "assignmentPublicId": "10000000-0000-4000-8000-000000000501",
+      "relationshipPublicId": "10000000-0000-4000-8000-000000000401",
+      "primary": true,
+      "validFrom": "2030-07-01",
+      "validTo": null,
+      "organizationPublicId": "10000000-0000-4000-8000-000000000103",
+      "status": "ACTIVE",
+      "version": 7
+    },
+    {
+      "tenantKey": "SYNTH-A",
+      "assignmentPublicId": "10000000-0000-4000-8000-000000000502",
+      "relationshipPublicId": "10000000-0000-4000-8000-000000000401",
+      "primary": false,
+      "validFrom": "2030-03-01",
+      "validTo": "2030-10-01",
+      "organizationPublicId": "10000000-0000-4000-8000-000000000101",
+      "status": "ACTIVE",
+      "version": 1
+    }
+  ],
+  "actors": [
+    {
+      "actorKey": "A1-EMPLOYEE",
+      "tenantKey": "SYNTH-A",
+      "personPublicId": "10000000-0000-4000-8000-000000000201",
+      "packages": [
+        "HRIS_EMPLOYEE"
+      ],
+      "population": "SELF"
+    },
+    {
+      "actorKey": "A-HR-MAKER",
+      "tenantKey": "SYNTH-A",
+      "personPublicId": "10000000-0000-4000-8000-000000000202",
+      "packages": [
+        "HRIS_HR_BUSINESS_PARTNER"
+      ],
+      "population": "LEGAL_ENTITY:SYNTH-A"
+    },
+    {
+      "actorKey": "A-HR-APPROVER",
+      "tenantKey": "SYNTH-A",
+      "personPublicId": "10000000-0000-4000-8000-000000000203",
+      "packages": [
+        "HRIS_HR_LIFECYCLE_APPROVER"
+      ],
+      "population": "LEGAL_ENTITY:SYNTH-A",
+      "stepUp": "fresh:synthetic-token"
+    },
+    {
+      "actorKey": "B-HR",
+      "tenantKey": "SYNTH-B",
+      "personPublicId": "20000000-0000-4000-8000-000000000201",
+      "packages": [
+        "HRIS_HR_BUSINESS_PARTNER"
+      ],
+      "population": "LEGAL_ENTITY:SYNTH-B"
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "HRM-GOLD-001",
+      "title": "Half-open as-of assignment boundary",
+      "operation": "queryPerson360",
+      "actorKey": "A-HR-MAKER",
+      "inputs": {
+        "personPublicId": "10000000-0000-4000-8000-000000000201",
+        "asOfDates": [
+          "2030-06-30",
+          "2030-07-01",
+          "2030-07-02"
+        ]
+      },
+      "expected": {
+        "organizationByDate": {
+          "2030-06-30": "10000000-0000-4000-8000-000000000102",
+          "2030-07-01": "10000000-0000-4000-8000-000000000103",
+          "2030-07-02": "10000000-0000-4000-8000-000000000103"
+        },
+        "currentPrimaryCount": 1
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-002",
+      "title": "Secondary assignment is allowed",
+      "operation": "publishAssignmentEvent",
+      "actorKey": "A-HR-APPROVER",
+      "inputs": {
+        "relationshipPublicId": "10000000-0000-4000-8000-000000000401",
+        "primary": false,
+        "validFrom": "2030-03-01",
+        "validTo": "2030-10-01"
+      },
+      "expected": {
+        "httpStatus": 200,
+        "receiptStatus": "SUCCEEDED",
+        "primaryAssignmentCount": 1,
+        "semanticEventCount": 1
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-003",
+      "title": "Overlapping primary assignment is rejected",
+      "operation": "createAssignmentEvent",
+      "actorKey": "A-HR-MAKER",
+      "inputs": {
+        "relationshipPublicId": "10000000-0000-4000-8000-000000000401",
+        "primary": true,
+        "validFrom": "2030-06-15",
+        "validTo": "2030-08-01"
+      },
+      "expected": {
+        "httpStatus": 409,
+        "errorCode": "EFFECTIVE_PERIOD_OVERLAP",
+        "businessWriteCount": 0,
+        "semanticEventCount": 0
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-004",
+      "title": "Future contact change request",
+      "operation": "requestApproveAndApplyEmployeeChange",
+      "actorKey": "A1-EMPLOYEE",
+      "inputs": {
+        "targetPersonPublicId": "10000000-0000-4000-8000-000000000201",
+        "changeType": "CONTACT_CHANGE",
+        "effectiveDate": "2030-08-01",
+        "patchSchemaKey": "contact-change",
+        "patchSchemaVersion": 2,
+        "patchToken": "encrypted:synthetic-new-contact"
+      },
+      "expected": {
+        "finalRequestState": "APPLIED",
+        "valueBeforeEffectiveDate": "masked:synthetic-old-contact",
+        "valueOnEffectiveDate": "masked:synthetic-new-contact",
+        "auditOutcome": "SUCCESS",
+        "semanticEventCount": 1
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-005",
+      "title": "Maker cannot approve own change",
+      "operation": "approveEmployeeChange",
+      "actorKey": "A-HR-MAKER",
+      "inputs": {
+        "requestMakerActorKey": "A-HR-MAKER",
+        "requestPublicId": "10000000-0000-4000-8000-000000000601"
+      },
+      "expected": {
+        "httpStatus": 403,
+        "errorCode": "SOD_NO_APPROVE_OWN_CHANGE",
+        "businessWriteCount": 0,
+        "denialAuditCount": 1
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-006",
+      "title": "Identical idempotent replay",
+      "operation": "createEmployeeChangeRequest",
+      "actorKey": "A1-EMPLOYEE",
+      "inputs": {
+        "idempotencyKey": "synth-idem-006",
+        "requestHash": "synthetic-hash-006",
+        "repeatCount": 2
+      },
+      "expected": {
+        "httpStatuses": [
+          202,
+          202
+        ],
+        "distinctReceiptCount": 1,
+        "businessEffectCount": 1,
+        "semanticEventCount": 1
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-007",
+      "title": "Idempotency key payload mismatch",
+      "operation": "createEmployeeChangeRequest",
+      "actorKey": "A1-EMPLOYEE",
+      "inputs": {
+        "idempotencyKey": "synth-idem-007",
+        "requestHashes": [
+          "synthetic-hash-007-a",
+          "synthetic-hash-007-b"
+        ]
+      },
+      "expected": {
+        "httpStatuses": [
+          202,
+          409
+        ],
+        "secondErrorCode": "IDEMPOTENCY_KEY_REUSED",
+        "businessEffectCount": 1
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-008",
+      "title": "Stale assignment publish",
+      "operation": "publishAssignmentEvent",
+      "actorKey": "A-HR-APPROVER",
+      "inputs": {
+        "assignmentPublicId": "10000000-0000-4000-8000-000000000501",
+        "expectedVersion": 5,
+        "actualVersion": 6
+      },
+      "expected": {
+        "httpStatus": 409,
+        "errorCode": "STALE_VERSION",
+        "currentETag": "synthetic-etag-v6",
+        "businessWriteCount": 0
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-009",
+      "title": "Published transfer correction is append-only",
+      "operation": "correctAssignmentEvent",
+      "actorKey": "A-HR-APPROVER",
+      "inputs": {
+        "publishedEventPublicId": "10000000-0000-4000-8000-000000000701",
+        "correctionEventPublicId": "10000000-0000-4000-8000-000000000702",
+        "effectiveDate": "2030-07-01"
+      },
+      "expected": {
+        "originalEventMutationCount": 0,
+        "newCorrectionEventCount": 1,
+        "lineageLinked": true,
+        "reconstructedCurrentVersion": 8
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-010",
+      "title": "Cross-tenant public ID does not disclose",
+      "operation": "getPerson360",
+      "actorKey": "B-HR",
+      "inputs": {
+        "personPublicId": "10000000-0000-4000-8000-000000000201",
+        "asOf": "2030-07-01"
+      },
+      "expected": {
+        "httpStatus": 404,
+        "errorCode": "TARGET_NOT_DISCLOSED",
+        "responseContainsTarget": false,
+        "sharedCacheWriteCount": 0,
+        "denialAuditCount": 1
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-011",
+      "title": "Masked field cannot be used as search oracle",
+      "operation": "searchPeople",
+      "actorKey": "A-HR-MAKER",
+      "inputs": {
+        "queryField": "personalIdentifier",
+        "queryToken": "synthetic-restricted-search"
+      },
+      "expected": {
+        "httpStatus": 403,
+        "errorCode": "FIELD_OPERATION_DENIED",
+        "resultCountDisclosed": false,
+        "facetDisclosed": false
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-012",
+      "title": "Certificate issue and revoke",
+      "operation": "issueAndRevokeCertificate",
+      "actorKey": "A-HR-APPROVER",
+      "inputs": {
+        "subjectPersonPublicId": "10000000-0000-4000-8000-000000000201",
+        "templatePublicId": "10000000-0000-4000-8000-000000000901",
+        "templateVersion": 3,
+        "purpose": "SYNTH_EMPLOYMENT_PROOF"
+      },
+      "expected": {
+        "issueState": "ISSUED",
+        "finalState": "REVOKED",
+        "immutableDigestPresent": true,
+        "downloadAfterRevokeStatus": 403,
+        "issueAndRevokeAuditCount": 2
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-013",
+      "title": "Duplicate and out-of-order provider delivery",
+      "operation": "ingestWorkforceEvents",
+      "actorKey": "A-HR-MAKER",
+      "inputs": {
+        "sourceSystem": "SYNTHETIC_PROVIDER",
+        "deliveries": [
+          {
+            "sourceRecordKey": "SYNTH-REC-13",
+            "sourceVersion": 2,
+            "payloadHash": "synthetic-provider-hash-v2"
+          },
+          {
+            "sourceRecordKey": "SYNTH-REC-13",
+            "sourceVersion": 2,
+            "payloadHash": "synthetic-provider-hash-v2"
+          },
+          {
+            "sourceRecordKey": "SYNTH-REC-13",
+            "sourceVersion": 1,
+            "payloadHash": "synthetic-provider-hash-v1"
+          }
+        ]
+      },
+      "expected": {
+        "appliedCount": 1,
+        "duplicateCount": 1,
+        "quarantinedCount": 1,
+        "businessEffectCount": 1,
+        "cursorVersion": 2,
+        "unexplainedDifference": 0
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-014",
+      "title": "Bulk appointment item isolation",
+      "operation": "prepareBulkAssignmentEvents",
+      "actorKey": "A-HR-MAKER",
+      "inputs": {
+        "atomicity": "ITEM_ATOMIC",
+        "itemKeys": [
+          "SYNTH-VALID-14-A",
+          "SYNTH-INVALID-14-B",
+          "SYNTH-VALID-14-C"
+        ]
+      },
+      "expected": {
+        "batchState": "PARTIAL",
+        "acceptedCount": 2,
+        "rejectedCount": 1,
+        "perItemReceiptCount": 3,
+        "falseAllSuccess": false
+      }
+    },
+    {
+      "caseId": "HRM-GOLD-015",
+      "title": "Home workforce widget partial failure",
+      "operation": "getHrisHomeWidgets",
+      "actorKey": "A1-EMPLOYEE",
+      "inputs": {
+        "failedDependency": "SYNTHETIC_WORKFORCE_WIDGET",
+        "failureType": "TIMEOUT"
+      },
+      "expected": {
+        "pageStatus": 200,
+        "successfulWidgetsVisible": true,
+        "failedWidgetState": "RETRYABLE_PARTIAL_FAILURE",
+        "freshnessVisible": true,
+        "restrictedFieldLeakCount": 0,
+        "menuCatalogMountedAsHomeContent": false
+      }
+    }
+  ]
+}

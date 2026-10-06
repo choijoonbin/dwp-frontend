@@ -1,0 +1,233 @@
+{
+  "reportId": "dwp.hris.modern-successor-atomic-promotion-independent-audit.2026-09-16.v1",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T03:20:52Z",
+  "status": "NO_GO_READER_FENCE_COVERAGE_UNPROVEN_AND_INCOMPLETE",
+  "executionDecision": {
+    "go": false,
+    "verdict": "NO_GO_DO_NOT_EXECUTE_PROMOTION_OR_RECOVERY_ON_THIS_WORKSPACE",
+    "reason": "The no-mixed-generation guarantee depends on every supported reader consulting the nonterminal promotion journal as well as cooperating on hris-verification. Static inspection found direct live readers with no promotion-journal fence call; a PREPARED, COMMITTING, or FINALIZING crash state could therefore be consumed after the writer releases its semaphore."
+  },
+  "authorityBoundary": "INDEPENDENT_SOURCE_ONLY_AUDIT_NOT_ACCEPTANCE_EVIDENCE_NOT_PROMOTION_AUTHORITY_NOT_GATE_AUTHORITY",
+  "writeBoundary": {
+    "modified": [
+      "coding-readiness/reports/modern-successor-atomic-promotion-independent-audit-2026-09-16.v1.json"
+    ],
+    "notModified": [
+      "coding-readiness/promote_modern_successor_bundle.py",
+      "g0/central_transaction_fence.py",
+      "all canonical candidates",
+      "all physical candidates",
+      "live canonical and physical destinations",
+      "g0/current-g3-gate-decision.json",
+      "g0/modern-successor-promotion-transaction-state.json",
+      "all existing Gate and Control records"
+    ],
+    "promotionExecuted": false,
+    "specCreated": false,
+    "preflightAgainstLive": "NOT_RUN: no qualified acceptance evidence or promotable fresh candidate exists; no PASS evidence was fabricated"
+  },
+  "inputs": {
+    "promotionTool": {
+      "path": "coding-readiness/promote_modern_successor_bundle.py",
+      "sha256": "85492db76784aeb0f7f54829bcf6e4d6ceb715af17b7c402a6485d2d1aa28020",
+      "lineCount": 1830
+    },
+    "centralFence": {
+      "path": "g0/central_transaction_fence.py",
+      "sha256": "943c2c467142ed3e505ce7f3e33f99f88b9a6555dc917d2879ed2331945b59ac",
+      "lineCount": 514
+    },
+    "authorVerification": {
+      "path": "coding-readiness/reports/modern-successor-atomic-promotion-tool-author-verification-2026-09-16.v1.json",
+      "sha256": "3a8e946ff33f9400555971d099d97a2c41676fa691426115ee66ead67c5b1024",
+      "sealedPayloadSha256": "52ca26a3d05ac732fdc38bede72bfbdb80d819f88d5fc336e56b33d9a3f8b30f",
+      "sealRecomputed": true,
+      "role": "AUTHOR_EVIDENCE_NOT_INDEPENDENT_ACCEPTANCE"
+    },
+    "downstreamPlan": {
+      "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-2026-09-16.v1.json",
+      "sha256": "5b213caa17c1bdb09d33778c19d4478955c9309f67b34b768fe3dd08f1229887",
+      "staleWording": "Promote the seven canonical artifacts, Listening v2 authority and six physical artifacts as one Control-owned transaction."
+    }
+  },
+  "protectedByteSnapshot": {
+    "before": {
+      "entryCount": 95,
+      "entriesDigest": "31c00c1009dc1e9815089385c4938cd3dc4645d2ddfdc7c177c8f041d63eb9cb",
+      "missingExpectedLiveDestinations": 10,
+      "promotionJournalExists": false,
+      "gateSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e"
+    },
+    "after": {
+      "entryCount": 95,
+      "entriesDigest": "31c00c1009dc1e9815089385c4938cd3dc4645d2ddfdc7c177c8f041d63eb9cb",
+      "missingExpectedLiveDestinations": 10,
+      "promotionJournalExists": false,
+      "gateSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e"
+    },
+    "unchanged": true,
+    "coverage": "promotion/fence/author report, Gate, optional journal, sixteen live destination paths, and every current canonical/physical candidate file"
+  },
+  "positiveSourceChecks": {
+    "pythonCompileAndAst": {
+      "status": "PASS",
+      "files": 2,
+      "pycOutput": "/tmp only"
+    },
+    "promotionToolSelfTest": {
+      "status": "PASS",
+      "cases": "13/13",
+      "coverage": [
+        "same-byte source inode/ctime rebinding",
+        "destination CAS drift before journal",
+        "candidate exact-set extra and symlink rejection",
+        "acceptance-seal tamper and immutable receipt collision",
+        "crash after first install rolls back exact predecessor",
+        "crash after receipt publication finalizes exact successor",
+        "isolated sixteen-file success path"
+      ]
+    },
+    "centralFenceSelfTest": {
+      "status": "PASS",
+      "cases": "20/20",
+      "covers": "nonterminal promotion journal blocks the central-fence helper; absent, committed, and malformed states are distinguished"
+    },
+    "currentCentralFence": {
+      "status": "PASS",
+      "errors": [],
+      "journalState": "ABSENT_NO_PROMOTION_STARTED"
+    }
+  },
+  "promotionMechanicsReview": {
+    "exactManifest": {
+      "status": "PASS",
+      "canonicalFiles": 8,
+      "physicalFiles": 8,
+      "destinations": 16,
+      "physicalFilesAre": [
+        "five owner DDL units",
+        "two physical contracts",
+        "self-sealed physical generation report"
+      ],
+      "directoryRules": "exact names only; missing, extra, non-regular, and symlink entries fail closed"
+    },
+    "acceptanceEvidenceValidation": {
+      "status": "MECHANISM_PASS_BUT_NOT_SATISFIED_BY_ANY_CURRENT_EVIDENCE",
+      "requiredSchema": "dwp.hris.modern-successor-bundle-independent-acceptance.v1",
+      "requiredChecks": {
+        "canonicalStatic": "PASS",
+        "canonicalHostile": "PASS",
+        "physicalStatic": "PASS",
+        "postgresql16": "PASS",
+        "postgresql18": "PASS",
+        "normalizedEquality": "PASS",
+        "candidateSourceStability": "PASS",
+        "readerFenceCoverage": "PASS",
+        "controlJournalRecovery": "PASS"
+      },
+      "binds": "both exact candidate hash maps, candidate directories, self-seal, independent reviewer declaration, and NOT_AUTHORIZED_G6",
+      "currentAcceptanceEvidence": "NONE"
+    },
+    "candidateAndDestinationCAS": {
+      "status": "PASS_SOURCE_MECHANISM",
+      "candidateIdentity": "O_NOFOLLOW stable descriptor/path identity with device, inode, mode, uid, gid, size, mtimeNs, ctimeNs, and SHA-256",
+      "destinationPreimages": "all 16 captured in immutable self-sealed spec and rechecked before journal, after staging, during each rename, and before receipt",
+      "candidateRechecks": "after staging and after all installs"
+    },
+    "durabilityAndRecovery": {
+      "status": "PASS_SOURCE_MECHANISM",
+      "stagingAndBackup": "create-new on destination filesystem; file and containing-directory fsync",
+      "publication": "per-destination atomic rename with parent fsync; receipt uses create-new hard-link publication",
+      "journalPhases": [
+        "PREPARED",
+        "COMMITTING",
+        "FINALIZING",
+        "COMMITTED",
+        "ROLLED_BACK"
+      ],
+      "recovery": "foreign destination refuses rollback; partial pre-receipt state restores exact predecessor; post-receipt state finalizes only an exact all-successor generation"
+    },
+    "lockSemantics": {
+      "status": "PASS_FOR_COOPERATING_WRITER_AND_PRELIGHT_PATHS_ONLY",
+      "semaphore": "exclusive hris-verification held by preflight, promotion, and recovery",
+      "opaqueCapability": "promotion and recovery require active same-thread capability",
+      "limitation": "The lock does not protect readers after a crash releases it unless each reader also performs the persistent journal fence."
+    },
+    "stalePlanPhysicalCount": {
+      "status": "BLOCKING_DOCUMENTATION_DRIFT",
+      "planSays": 6,
+      "toolRequires": 8,
+      "assessment": "The implementation correctly protects the actual exact eight physical files, but the still-active downstream plan must be reconciled before operational promotion."
+    }
+  },
+  "readerFenceCoverageAudit": {
+    "status": "FAIL",
+    "method": "Static source discovery of Python/JS/CJS files that directly reference one or more of the sixteen promotion destination basenames, then call-site inspection for modern_successor_promotion_errors or assert_all_central_transactions_committed and hris-verification usage.",
+    "directReaderOrWriterCandidates": 44,
+    "promotionJournalFenced": 0,
+    "semaphoreAware": 5,
+    "bothJournalFencedAndSemaphoreSafe": 0,
+    "representativeUnfencedDirectReaders": [
+      {
+        "path": "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py",
+        "reads": "six canonical destination files via CANONICAL_PATHS",
+        "journalFence": false,
+        "semaphore": false
+      },
+      {
+        "path": "coding-readiness/validate_modern_causal_state_contracts.py",
+        "reads": "causal, exact, event, semantic, and identity destination files",
+        "journalFence": false,
+        "semaphore": false
+      },
+      {
+        "path": "coding-readiness/validate_modern_capability_contracts.py",
+        "reads": "exact and event destination files",
+        "journalFence": false,
+        "semaphore": false
+      },
+      {
+        "path": "coding-readiness/validate_full_coding_readiness.py",
+        "reads and dispatches": "canonical/causal validators under hris-verification for live mode",
+        "journalFence": false,
+        "semaphore": true,
+        "failureMode": "After writer crash, the shared lock is released but a PREPARED/COMMITTING/FINALIZING journal remains; this reader has no call that rejects that state."
+      },
+      {
+        "path": "coding-readiness/validate_published_gate_truth.py",
+        "reads": "canonical destination inventories under hris-verification",
+        "journalFence": false,
+        "semaphore": true
+      },
+      {
+        "path": "g0/validate_blueprint_artifact_lineage.py",
+        "reads": "exact and event destination files",
+        "journalFence": false,
+        "semaphore": false
+      }
+    ],
+    "centralFenceLimitation": "central_transaction_fence.py correctly evaluates the optional promotion journal only when a caller invokes it. It is not automatically interposed on file reads and its self-test does not demonstrate that active readers invoke it.",
+    "acceptanceEvidenceLimitation": "The promotion tool compares readerFenceCoverage to a PASS string in supplied evidence; it does not discover or enforce the actual reader set. Independent evidence cannot truthfully set that check to PASS at this revision."
+  },
+  "requiredClosuresBeforeAnyGO": [
+    "Define the authoritative active-reader inventory for all 16 destination paths, including direct CLI validators, Gate/readiness orchestrators, generators, and physical readers.",
+    "Route every supported reader through one mandatory wrapper that acquires hris-verification and invokes the promotion-journal fence before any destination snapshot/read; direct bypasses must fail closed.",
+    "Add hostile integration tests that persist PREPARED, COMMITTING, FINALIZING, malformed, COMMITTED, and ROLLED_BACK journals and demonstrate each inventoried reader blocks or admits exactly as required after writer-lock release.",
+    "Reconcile the downstream execution plan's stale six-physical-artifact wording with the exact eight physical files.",
+    "Create fresh, independently accepted canonical and physical candidates. Existing candidates and derivatives remain non-promotable diagnostic evidence.",
+    "Only after these closures may an independent acceptance artifact truthfully use the required acceptance schema and set readerFenceCoverage to PASS; then create a unique immutable spec and run its read-only preflight before any separate promotion authorization."
+  ],
+  "finalAssertion": {
+    "sourceTransactionMechanicsPass": true,
+    "readerFenceCoveragePass": false,
+    "qualifiedAcceptanceEvidenceExists": false,
+    "currentCandidatesPromotable": false,
+    "promotionMayExecute": false,
+    "recoveryMayExecuteOnLive": false,
+    "gateMayOpen": false,
+    "productionActivation": "NOT_AUTHORIZED_G6"
+  },
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "e1eec0d7346675c854e7921194223bd1d3079f37a224c7dab587b121d714872d"
+}

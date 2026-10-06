@@ -1,0 +1,17 @@
+{
+  "schema": "dwp.hris.current-g3-gate-decision.v1",
+  "basisDate": "2026-09-11",
+  "decisionAuthority": "AUTHORITATIVE_LIVE_VALIDATOR_AND_PUBLISHED_TRUTH_ONLY",
+  "designEligibility": "G3_ENGINEERING_SCOPE_DEFINED",
+  "effectiveGate": "CLOSED_FAIL_SAFE",
+  "currentState": "VALIDATOR_CONTROLLED_BLOCKED",
+  "requiredPasses": [
+    "python3 g0/validate_code_checkpoint.py --check-live",
+    "python3 coding-readiness/validate_full_coding_readiness.py --check-live --write-report",
+    "python3 coding-readiness/validate_published_gate_truth.py --compact",
+    "python3 coding-readiness/validate_published_gate_truth.py --self-test"
+  ],
+  "atomicOpenCondition": "ALL_REQUIRED_PASSES_AND_LATEST_REPORT_LIVE_AUTHORITATIVE_OPEN",
+  "registerOpenTokensMeaning": "DESIGN_TARGET_OR_HISTORICAL_ENTRY_SEAL_NOT_CURRENT_EFFECTIVE_GATE",
+  "productionActivation": "NOT_AUTHORIZED_G6"
+}

@@ -1,0 +1,47 @@
+{
+  "baselineId": "dwp.hris.modern.canonical-predecessor-byte-baseline.v1",
+  "capturedDate": "2026-09-15",
+  "pathBase": "DWP_WORKSPACE_ROOT",
+  "disposition": "IMMUTABLE_PREDECESSOR_BYTES_AND_HISTORICAL_MIGRATIONS_DO_NOT_EDIT",
+  "canonicalFive": [
+    {
+      "path": "modern-capability-operation-causal-contract-ssot.v2.json",
+      "bytes": 2254625,
+      "sha256": "ad3a28d37850b29ccafad41dcf78b4934694a3df1116d816b372a7ed26a58eb3"
+    },
+    {
+      "path": "modern-capability-exact-schema-contracts.v1.json",
+      "bytes": 3599004,
+      "sha256": "2e139acac2a9250a86f21db466d4afd62e7342ba5bce40913bb46f5c0faa6486"
+    },
+    {
+      "path": "modern-capability-event-payload-contracts.v1.json",
+      "bytes": 722231,
+      "sha256": "7a361f78d0f21862127be310ccd1bd9772353ed14adb971cda0b8a9b81543d98"
+    },
+    {
+      "path": "modern-capability-semantic-bindings.v1.json",
+      "bytes": 2372442,
+      "sha256": "79053fdc852542808b5b6e2d8e41f420a88ca7016259b3ba73b3864b1330d13b"
+    },
+    {
+      "path": "modern-capability-public-identity-registry.v1.json",
+      "bytes": 167555,
+      "sha256": "ff166343a76874b283cd1164253cfb1d1aca9c7593bdcdb2572dc249ce5296e2"
+    }
+  ],
+  "historicalLiveMigrations": [
+    {
+      "path": "dwp-backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "bytes": 27320,
+      "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+      "mutation": "FORBIDDEN_USE_FORWARD_MIGRATION"
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/resources/db/migration/V5__add_navigation_localization_and_admin_command_foundation.sql",
+      "bytes": 8865,
+      "sha256": "0d9b634528017faa703fedf980ce80836735708e10c238124e7b6a10a6bc283b",
+      "mutation": "FORBIDDEN_USE_FORWARD_MIGRATION"
+    }
+  ]
+}

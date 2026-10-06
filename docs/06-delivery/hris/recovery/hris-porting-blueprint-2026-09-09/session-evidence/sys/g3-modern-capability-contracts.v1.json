@@ -1,0 +1,1262 @@
+{
+  "contractId": "dwp.hris.modern.sys.v1",
+  "schemaVersion": 1,
+  "status": "G3_CONTRACT_READY_NOT_IMPLEMENTED",
+  "session": "HRIS-SYS",
+  "runtimeOwners": [
+    "dwp-platform-server"
+  ],
+  "serviceBoundary": "SYS extends DWP Auth/Platform/Gateway/Audit; no dwp-sys-server. These modern capabilities execute in dwp-platform-server; authorization catalogs remain in dwp-auth-server.",
+  "eventEnvelope": {
+    "schemaRef": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+    "required": [
+      "specVersion",
+      "id",
+      "source",
+      "type",
+      "schemaVersion",
+      "time",
+      "tenantId",
+      "aggregateType",
+      "aggregateId",
+      "aggregateSequence",
+      "correlationId",
+      "data"
+    ],
+    "partitionKey": "tenantId:aggregateId",
+    "outbox": "same_transaction",
+    "consumerRule": "inbox_dedupe_by_tenantId_and_event_id_then_aggregateSequence_gap_detection"
+  },
+  "physicalTableDefaults": {
+    "tenantColumn": "tenant_id BIGINT NOT NULL",
+    "internalId": "module-specific BIGSERIAL PRIMARY KEY; never exposed outside owning runtime",
+    "publicId": "public_id UUID NOT NULL; UNIQUE(tenant_id,public_id)",
+    "aggregateVersion": "aggregate_version BIGINT NOT NULL DEFAULT 0 CHECK (aggregate_version >= 0)",
+    "auditColumns": "created_at TIMESTAMPTZ NOT NULL; created_by UUID NOT NULL; updated_at TIMESTAMPTZ; updated_by UUID; correlation_id UUID NOT NULL",
+    "rowSecurity": "ENABLE ROW LEVEL SECURITY; FORCE ROW LEVEL SECURITY; tenant predicate current_setting('dwp.tenant_id',true)::bigint; application role NOBYPASSRLS",
+    "foreignKeyBoundary": "composite (tenant_id,id) FK only inside dwp-platform-server; domain data references are tenant-bound opaque public UUIDs or privacy-safe projections with no cross-service DB FK",
+    "deletionRule": "retention-class policy; response/evaluation/export/provenance records are append-only or crypto-erased by approved privacy workflow",
+    "indexRule": "every admin queue or cohort query begins with tenant_id; raw survey responses never indexed by respondent identity"
+  },
+  "capabilities": [
+    {
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "session": "HRIS-SYS",
+      "boundedContext": "DWP_PLATFORM_HRIS_CONFIGURATION",
+      "runtimeOwner": "dwp-platform-server",
+      "backendBase": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration",
+      "backendTestBase": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration",
+      "frontendBase": "apps/dwp/src/features/hris/administration",
+      "migrationBase": "dwp-platform-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "hrisconfiguration/listening",
+      "backendRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/listening",
+      "backendTestRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/listening",
+      "frontendRoot": "apps/dwp/src/features/hris/administration/listening",
+      "frontendTestRoot": "apps/dwp/src/features/hris/administration/listening/__tests__",
+      "migrationFile": "dwp-platform-server/src/main/resources/db/migration/V287__hris_platform_modern_employee_listening.sql",
+      "openapiFile": "contracts/openapi/hris/sys/employee-listening.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/sys/employee-listening.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.listening",
+        "hcm.settings.listening"
+      ],
+      "authorizationCapabilities": [
+        "hcm.listening.respond",
+        "hcm.listening.manage",
+        "hcm.listening.cohort.view"
+      ],
+      "dataContracts": [
+        "ListeningSurvey.v1",
+        "ProtectedSurveyResponse.v1",
+        "CohortResult.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.listening.active.query",
+          "method": "GET",
+          "path": "/api/platform/v1/hris/listening/surveys/active",
+          "action": "LISTENING_ACTIVE_SURVEY_QUERY",
+          "authorizationCapability": "hcm.listening.respond",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "QUERY",
+          "response": "ListeningSurveyPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.listening.response.submit",
+          "method": "POST",
+          "path": "/api/platform/v1/hris/listening/surveys/{surveyId}/responses",
+          "action": "LISTENING_RESPONSE_SUBMIT",
+          "authorizationCapability": "hcm.listening.respond",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "ListeningResponseReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-SYS-LISTEN-TR-003"
+          ],
+          "emits": [
+            "ListeningProgramChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.listening.survey.create",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/listening/surveys",
+          "action": "LISTENING_SURVEY_CREATE",
+          "authorizationCapability": "hcm.listening.manage",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-SYS-LISTEN-TR-001"
+          ],
+          "emits": [
+            "ListeningProgramChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.listening.survey.publish",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/publish",
+          "action": "LISTENING_SURVEY_PUBLISH",
+          "authorizationCapability": "hcm.listening.manage",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-LISTEN-TR-002"
+          ],
+          "emits": [
+            "ListeningSurveyPublished.v1"
+          ]
+        },
+        {
+          "operationId": "modern.listening.survey.close",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/close",
+          "action": "LISTENING_SURVEY_CLOSE",
+          "authorizationCapability": "hcm.listening.manage",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-LISTEN-TR-004"
+          ],
+          "emits": [
+            "ListeningProgramChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.listening.cohorts.query",
+          "method": "GET",
+          "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/cohort-results",
+          "action": "LISTENING_COHORT_RESULT_QUERY",
+          "authorizationCapability": "hcm.listening.cohort.view",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "ORG_UNIT"
+          ],
+          "mode": "QUERY",
+          "response": "CohortResultPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.listening.action.create",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/actions",
+          "action": "LISTENING_ACTION_CREATE",
+          "authorizationCapability": "hcm.listening.manage",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-LISTEN-TR-005"
+          ],
+          "emits": [
+            "ListeningProgramChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.listening.action.complete",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/listening/actions/{actionId}/complete",
+          "action": "LISTENING_ACTION_COMPLETE",
+          "authorizationCapability": "hcm.listening.manage",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-LISTEN-TR-006"
+          ],
+          "emits": [
+            "ListeningProgramChanged.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-SYS-LISTEN-SM-001",
+          "aggregate": "ListeningProgram",
+          "initialState": "NONE",
+          "terminalStates": [
+            "COMPLETED",
+            "CANCELLED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-SYS-LISTEN-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.listening.survey.create",
+              "guard": "purpose consent anonymity threshold and question schema valid"
+            },
+            {
+              "transitionId": "MOD-SYS-LISTEN-TR-002",
+              "from": "DRAFT",
+              "to": "PUBLISHED",
+              "operationId": "modern.listening.survey.publish",
+              "guard": "audience snapshot and start/end window frozen"
+            },
+            {
+              "transitionId": "MOD-SYS-LISTEN-TR-003",
+              "from": "PUBLISHED",
+              "to": "PUBLISHED",
+              "operationId": "modern.listening.response.submit",
+              "guard": "one tenant-bound response token per participant; identity separation enforced"
+            },
+            {
+              "transitionId": "MOD-SYS-LISTEN-TR-004",
+              "from": "PUBLISHED",
+              "to": "CLOSED",
+              "operationId": "modern.listening.survey.close",
+              "guard": "end window reached or approved early-close reason"
+            },
+            {
+              "transitionId": "MOD-SYS-LISTEN-TR-005",
+              "from": "CLOSED",
+              "to": "ACTION_TRACKING",
+              "operationId": "modern.listening.action.create",
+              "guard": "cohort meets anonymity threshold and action owner assigned"
+            },
+            {
+              "transitionId": "MOD-SYS-LISTEN-TR-006",
+              "from": "ACTION_TRACKING",
+              "to": "COMPLETED",
+              "operationId": "modern.listening.action.complete",
+              "guard": "completion evidence and non-retaliation review receipt present"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "ListeningProgramChanged.v1",
+          "type": "ListeningProgramChanged",
+          "version": 1,
+          "topic": "dwp.hris.listening.program.changed.v1",
+          "aggregate": "ListeningProgram",
+          "payloadRequired": [
+            "surveyId",
+            "fromState",
+            "toState",
+            "audienceSnapshotId",
+            "anonymityThreshold",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-SYS-LISTEN-TR-001",
+            "MOD-SYS-LISTEN-TR-003",
+            "MOD-SYS-LISTEN-TR-004",
+            "MOD-SYS-LISTEN-TR-005",
+            "MOD-SYS-LISTEN-TR-006"
+          ]
+        },
+        {
+          "name": "ListeningSurveyPublished.v1",
+          "type": "ListeningSurveyPublished",
+          "version": 1,
+          "topic": "dwp.hris.listening.survey.published.v1",
+          "aggregate": "ListeningProgram",
+          "payloadRequired": [
+            "surveyId",
+            "surveyVersion",
+            "opensAt",
+            "closesAt",
+            "audienceDigest",
+            "consentPolicyVersion",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-SYS-LISTEN-TR-002"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "sys_hris_listening_surveys",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "listening_survey_id",
+          "effectiveTime": "opens_at TIMESTAMPTZ NOT NULL; closes_at TIMESTAMPTZ NOT NULL",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:audience_snapshot_id->HRM.Access",
+            "OPAQUE:consent_policy_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,survey_key,survey_version)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (DRAFT,PUBLISHED,CLOSED,ACTION_TRACKING,COMPLETED,CANCELLED)",
+            "closes_at > opens_at",
+            "anonymity_threshold >= 5"
+          ],
+          "indexes": [
+            "(tenant_id,status,opens_at,closes_at)"
+          ],
+          "retentionClass": "EMPLOYEE_LISTENING_POLICY_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_listening_responses",
+          "kind": "PROTECTED_RESPONSE_LEDGER",
+          "idColumn": "listening_response_id",
+          "effectiveTime": "submitted_at TIMESTAMPTZ NOT NULL; erase_after TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY_CRYPTO_ERASURE",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,listening_survey_id)->sys_hris_listening_surveys",
+            "OPAQUE:response_token_hash->identity-separated token store"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,listening_survey_id,response_token_hash)",
+            "(tenant_id,response_digest)"
+          ],
+          "checks": [
+            "response_digest <> ''",
+            "respondent_public_id IS NULL"
+          ],
+          "indexes": [
+            "(tenant_id,listening_survey_id,submitted_at)",
+            "(tenant_id,erase_after)"
+          ],
+          "retentionClass": "ANONYMOUS_SURVEY_RESPONSE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_listening_cohort_results",
+          "kind": "PRIVACY_SAFE_PROJECTION",
+          "idColumn": "listening_cohort_result_id",
+          "effectiveTime": "calculated_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,listening_survey_id)->sys_hris_listening_surveys",
+            "OPAQUE:cohort_definition_id->HRM.Access"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,listening_survey_id,cohort_definition_id,projection_revision)",
+            "(tenant_id,result_digest)"
+          ],
+          "checks": [
+            "participant_count >= anonymity_threshold",
+            "suppressed_count >= 0",
+            "result_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,listening_survey_id,projection_revision DESC)"
+          ],
+          "retentionClass": "ANONYMOUS_COHORT_RESULT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_listening_actions",
+          "kind": "ACTION_LEDGER",
+          "idColumn": "listening_action_id",
+          "effectiveTime": "due_at TIMESTAMPTZ NOT NULL; completed_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,listening_survey_id)->sys_hris_listening_surveys",
+            "OPAQUE:owner_principal_id->Auth.Principal"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,listening_survey_id,action_key)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (OPEN,IN_PROGRESS,COMPLETED,CANCELLED)",
+            "cohort_identity_exported = FALSE"
+          ],
+          "indexes": [
+            "(tenant_id,owner_principal_id,status,due_at)"
+          ],
+          "retentionClass": "LISTENING_ACTION_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-SYS-LISTEN-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/sys/g4/modern/employee-listening/anonymity-property-test.json",
+          "assertion": "random cohort partitions never reveal results below configured threshold"
+        },
+        {
+          "testId": "MOD-SYS-LISTEN-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/sys/g4/modern/employee-listening/retaliation-negative.json",
+          "assertion": "response identity cannot be queried joined exported or used as retaliation signal"
+        },
+        {
+          "testId": "MOD-SYS-LISTEN-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/sys/g4/modern/employee-listening/acceptance.json",
+          "assertion": "publish response close cohort and action lifecycle reconciles"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "tenant survey content",
+        "approved anonymity threshold",
+        "external survey connector"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "session": "HRIS-SYS",
+      "boundedContext": "DWP_PLATFORM_HRIS_CONFIGURATION",
+      "runtimeOwner": "dwp-platform-server",
+      "backendBase": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration",
+      "backendTestBase": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration",
+      "frontendBase": "apps/dwp/src/features/hris/administration",
+      "migrationBase": "dwp-platform-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "hrisconfiguration/peopleanalytics",
+      "backendRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/peopleanalytics",
+      "backendTestRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/peopleanalytics",
+      "frontendRoot": "apps/dwp/src/features/hris/administration/people-analytics",
+      "frontendTestRoot": "apps/dwp/src/features/hris/administration/people-analytics/__tests__",
+      "migrationFile": "dwp-platform-server/src/main/resources/db/migration/V288__hris_platform_modern_people_analytics.sql",
+      "openapiFile": "contracts/openapi/hris/sys/people-analytics.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/sys/people-analytics.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.operations.people-analytics"
+      ],
+      "authorizationCapabilities": [
+        "hcm.analytics.metric.view",
+        "hcm.analytics.metric.manage",
+        "hcm.analytics.export"
+      ],
+      "dataContracts": [
+        "MetricDefinition.v1",
+        "MetricProjection.v1",
+        "CohortExportReceipt.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.analytics.metrics.query",
+          "method": "GET",
+          "path": "/api/platform/v1/admin/hris/people-analytics/metrics",
+          "action": "ANALYTICS_METRIC_QUERY",
+          "authorizationCapability": "hcm.analytics.metric.view",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "QUERY",
+          "response": "MetricDefinitionPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.analytics.metric.create",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/people-analytics/metrics",
+          "action": "ANALYTICS_METRIC_CREATE",
+          "authorizationCapability": "hcm.analytics.metric.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-SYS-ANALYTICS-TR-001"
+          ],
+          "emits": [
+            "MetricProjectionChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.analytics.metric.validate",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/versions/{version}/validate",
+          "action": "ANALYTICS_METRIC_VALIDATE",
+          "authorizationCapability": "hcm.analytics.metric.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "MetricValidationReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-ANALYTICS-TR-002"
+          ],
+          "emits": [
+            "MetricProjectionChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.analytics.metric.publish",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/versions/{version}/publish",
+          "action": "ANALYTICS_METRIC_PUBLISH",
+          "authorizationCapability": "hcm.analytics.metric.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-ANALYTICS-TR-003"
+          ],
+          "emits": [
+            "MetricDefinitionPublished.v1"
+          ]
+        },
+        {
+          "operationId": "modern.analytics.cohorts.query",
+          "method": "GET",
+          "path": "/api/platform/v1/admin/hris/people-analytics/cohorts",
+          "action": "ANALYTICS_COHORT_QUERY",
+          "authorizationCapability": "hcm.analytics.metric.view",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "ORG_UNIT"
+          ],
+          "mode": "QUERY",
+          "response": "MetricProjectionPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.analytics.export.create",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/people-analytics/exports",
+          "action": "ANALYTICS_EXPORT_CREATE",
+          "authorizationCapability": "hcm.analytics.export",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "CohortExportReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-SYS-ANALYTICS-TR-004"
+          ],
+          "emits": [
+            "MetricProjectionChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.analytics.metric.retire",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/retire",
+          "action": "ANALYTICS_METRIC_RETIRE",
+          "authorizationCapability": "hcm.analytics.metric.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-ANALYTICS-TR-005"
+          ],
+          "emits": [
+            "MetricProjectionChanged.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-SYS-ANALYTICS-SM-001",
+          "aggregate": "PeopleMetricControl",
+          "initialState": "NONE",
+          "terminalStates": [
+            "RETIRED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-SYS-ANALYTICS-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.analytics.metric.create",
+              "guard": "metric key grain owner lineage and field policy declared"
+            },
+            {
+              "transitionId": "MOD-SYS-ANALYTICS-TR-002",
+              "from": "DRAFT",
+              "to": "VALIDATED",
+              "operationId": "modern.analytics.metric.validate",
+              "guard": "temporal fixtures reconcile and no prohibited direct identifier"
+            },
+            {
+              "transitionId": "MOD-SYS-ANALYTICS-TR-003",
+              "from": "VALIDATED",
+              "to": "PUBLISHED",
+              "operationId": "modern.analytics.metric.publish",
+              "guard": "approval and effective revision present"
+            },
+            {
+              "transitionId": "MOD-SYS-ANALYTICS-TR-004",
+              "from": "PUBLISHED",
+              "to": "PUBLISHED",
+              "operationId": "modern.analytics.export.create",
+              "guard": "cohort threshold purpose field projection and export policy pass"
+            },
+            {
+              "transitionId": "MOD-SYS-ANALYTICS-TR-005",
+              "from": "PUBLISHED",
+              "to": "RETIRED",
+              "operationId": "modern.analytics.metric.retire",
+              "guard": "replacement or retirement reason present"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "MetricProjectionChanged.v1",
+          "type": "MetricProjectionChanged",
+          "version": 1,
+          "topic": "dwp.hris.analytics.metric-projection.changed.v1",
+          "aggregate": "PeopleMetricControl",
+          "payloadRequired": [
+            "metricId",
+            "metricVersion",
+            "projectionRevision",
+            "asOf",
+            "cohortCount",
+            "lineageDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-SYS-ANALYTICS-TR-001",
+            "MOD-SYS-ANALYTICS-TR-002",
+            "MOD-SYS-ANALYTICS-TR-004",
+            "MOD-SYS-ANALYTICS-TR-005"
+          ]
+        },
+        {
+          "name": "MetricDefinitionPublished.v1",
+          "type": "MetricDefinitionPublished",
+          "version": 1,
+          "topic": "dwp.hris.analytics.metric-definition.published.v1",
+          "aggregate": "PeopleMetricControl",
+          "payloadRequired": [
+            "metricId",
+            "metricKey",
+            "metricVersion",
+            "effectiveFrom",
+            "definitionDigest",
+            "lineageDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-SYS-ANALYTICS-TR-003"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "sys_hris_metric_definitions",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "metric_definition_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:owner_principal_id->Auth.Principal"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,metric_key)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (DRAFT,VALIDATED,PUBLISHED,RETIRED)",
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,valid_from)"
+          ],
+          "retentionClass": "ANALYTICS_CONFIGURATION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_metric_versions",
+          "kind": "REVISION_LEDGER",
+          "idColumn": "metric_version_id",
+          "effectiveTime": "effective_from DATE NOT NULL; effective_to DATE NULL",
+          "immutability": "APPEND_ONLY_AFTER_PUBLISH",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,metric_definition_id)->sys_hris_metric_definitions"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,metric_definition_id,version_no)",
+            "(tenant_id,definition_digest)"
+          ],
+          "checks": [
+            "version_no > 0",
+            "definition_digest <> ''",
+            "lineage_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,metric_definition_id,version_no DESC)"
+          ],
+          "retentionClass": "ANALYTICS_CONFIGURATION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_metric_projections",
+          "kind": "PRIVACY_SAFE_PROJECTION",
+          "idColumn": "metric_projection_id",
+          "effectiveTime": "as_of TIMESTAMPTZ NOT NULL; calculated_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,metric_version_id)->sys_hris_metric_versions",
+            "OPAQUE:cohort_definition_id->HRM.Access"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,metric_version_id,cohort_definition_id,projection_revision)",
+            "(tenant_id,payload_digest)"
+          ],
+          "checks": [
+            "subject_count >= anonymity_threshold",
+            "payload_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,metric_version_id,as_of DESC)",
+            "(tenant_id,cohort_definition_id,as_of DESC)"
+          ],
+          "retentionClass": "PRIVACY_SAFE_ANALYTICS_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_analytics_export_receipts",
+          "kind": "EXPORT_LEDGER",
+          "idColumn": "analytics_export_receipt_id",
+          "effectiveTime": "requested_at TIMESTAMPTZ NOT NULL; expires_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "OPAQUE:metric_projection_ids->SYS projections",
+            "OPAQUE:requester_principal_id->Auth.Principal"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,idempotency_key)",
+            "(tenant_id,object_digest)"
+          ],
+          "checks": [
+            "row_count >= 0",
+            "object_digest <> ''",
+            "expires_at > requested_at"
+          ],
+          "indexes": [
+            "(tenant_id,requester_principal_id,requested_at DESC)",
+            "(tenant_id,expires_at)"
+          ],
+          "retentionClass": "CONTROLLED_ANALYTICS_EXPORT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-SYS-ANALYTICS-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/sys/g4/modern/people-analytics/metric-contract-test.json",
+          "assertion": "metric version grain temporal semantics and lineage are exact"
+        },
+        {
+          "testId": "MOD-SYS-ANALYTICS-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/sys/g4/modern/people-analytics/cohort-negative.json",
+          "assertion": "small cohorts direct identifiers and unapproved exports fail closed"
+        },
+        {
+          "testId": "MOD-SYS-ANALYTICS-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/sys/g4/modern/people-analytics/acceptance.json",
+          "assertion": "projection totals reconcile owner events and every export has expiring receipt"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "customer metric catalog",
+        "real warehouse connector",
+        "tenant cohort threshold approval"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "session": "HRIS-SYS",
+      "boundedContext": "DWP_PLATFORM_HRIS_CONFIGURATION",
+      "runtimeOwner": "dwp-platform-server",
+      "backendBase": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration",
+      "backendTestBase": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration",
+      "frontendBase": "apps/dwp/src/features/hris/administration",
+      "migrationBase": "dwp-platform-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "hrisconfiguration/aigovernance",
+      "backendRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/aigovernance",
+      "backendTestRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/aigovernance",
+      "frontendRoot": "apps/dwp/src/features/hris/administration/ai-governance",
+      "frontendTestRoot": "apps/dwp/src/features/hris/administration/ai-governance/__tests__",
+      "migrationFile": "dwp-platform-server/src/main/resources/db/migration/V289__hris_platform_modern_governed_ai.sql",
+      "openapiFile": "contracts/openapi/hris/sys/governed-ai.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/sys/governed-ai.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.assistant",
+        "hcm.settings.ai-governance"
+      ],
+      "authorizationCapabilities": [
+        "hcm.ai.assist.use",
+        "hcm.ai.policy.manage",
+        "hcm.ai.kill-switch.execute"
+      ],
+      "dataContracts": [
+        "AiUsePolicy.v1",
+        "AiEvaluationThreshold.v1",
+        "AiProvenanceReceipt.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.ai.assist.create",
+          "method": "POST",
+          "path": "/api/platform/v1/hris/ai-assistance",
+          "action": "AI_ASSIST_CREATE",
+          "authorizationCapability": "hcm.ai.assist.use",
+          "scope": [
+            "SELF",
+            "DIRECT_REPORT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "AiAssistanceReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-SYS-AI-TR-004"
+          ],
+          "emits": [
+            "AiAssistanceProduced.v1"
+          ]
+        },
+        {
+          "operationId": "modern.ai.policies.query",
+          "method": "GET",
+          "path": "/api/platform/v1/admin/hris/ai-governance/policies",
+          "action": "AI_POLICY_QUERY",
+          "authorizationCapability": "hcm.ai.policy.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "QUERY",
+          "response": "AiUsePolicyPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.ai.policy.create",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/ai-governance/policies",
+          "action": "AI_POLICY_CREATE",
+          "authorizationCapability": "hcm.ai.policy.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-SYS-AI-TR-001"
+          ],
+          "emits": [
+            "AiPolicyChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.ai.policy.evaluate",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/evaluations",
+          "action": "AI_POLICY_EVALUATE",
+          "authorizationCapability": "hcm.ai.policy.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "AiEvaluationReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-AI-TR-002"
+          ],
+          "emits": [
+            "AiPolicyChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.ai.policy.publish",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/publish",
+          "action": "AI_POLICY_PUBLISH",
+          "authorizationCapability": "hcm.ai.policy.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-AI-TR-003"
+          ],
+          "emits": [
+            "AiPolicyChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.ai.kill.switch",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/ai-governance/kill-switches/{useCaseKey}/execute",
+          "action": "AI_KILL_SWITCH_EXECUTE",
+          "authorizationCapability": "hcm.ai.kill-switch.execute",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "AiKillSwitchReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-AI-TR-005"
+          ],
+          "emits": [
+            "AiPolicyChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.ai.policy.retire",
+          "method": "POST",
+          "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/retire",
+          "action": "AI_POLICY_RETIRE",
+          "authorizationCapability": "hcm.ai.policy.manage",
+          "scope": [
+            "TENANT"
+          ],
+          "mode": "COMMAND",
+          "response": "PlatformCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-SYS-AI-TR-006"
+          ],
+          "emits": [
+            "AiPolicyChanged.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-SYS-AI-SM-001",
+          "aggregate": "AiGovernanceControl",
+          "initialState": "NONE",
+          "terminalStates": [
+            "RETIRED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-SYS-AI-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.ai.policy.create",
+              "guard": "use case purpose data classes human control and forbidden decisions declared"
+            },
+            {
+              "transitionId": "MOD-SYS-AI-TR-002",
+              "from": "DRAFT|EVALUATED",
+              "to": "EVALUATED",
+              "operationId": "modern.ai.policy.evaluate",
+              "guard": "deterministic fixture evaluation provenance and thresholds recorded"
+            },
+            {
+              "transitionId": "MOD-SYS-AI-TR-003",
+              "from": "EVALUATED",
+              "to": "ACTIVE",
+              "operationId": "modern.ai.policy.publish",
+              "guard": "privacy security product and accountable human approvals present"
+            },
+            {
+              "transitionId": "MOD-SYS-AI-TR-004",
+              "from": "ACTIVE",
+              "to": "ACTIVE",
+              "operationId": "modern.ai.assist.create",
+              "guard": "policy active permission purpose field projection and model route allowed"
+            },
+            {
+              "transitionId": "MOD-SYS-AI-TR-005",
+              "from": "ACTIVE",
+              "to": "SUSPENDED",
+              "operationId": "modern.ai.kill.switch",
+              "guard": "authorized emergency actor and reason; deny takes effect before receipt"
+            },
+            {
+              "transitionId": "MOD-SYS-AI-TR-006",
+              "from": "DRAFT|EVALUATED|ACTIVE|SUSPENDED",
+              "to": "RETIRED",
+              "operationId": "modern.ai.policy.retire",
+              "guard": "retirement reason retention and replacement linkage present"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "AiPolicyChanged.v1",
+          "type": "AiPolicyChanged",
+          "version": 1,
+          "topic": "dwp.hris.ai.policy.changed.v1",
+          "aggregate": "AiGovernanceControl",
+          "payloadRequired": [
+            "policyId",
+            "useCaseKey",
+            "fromState",
+            "toState",
+            "evaluationRevision",
+            "policyDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-SYS-AI-TR-001",
+            "MOD-SYS-AI-TR-002",
+            "MOD-SYS-AI-TR-003",
+            "MOD-SYS-AI-TR-005",
+            "MOD-SYS-AI-TR-006"
+          ]
+        },
+        {
+          "name": "AiAssistanceProduced.v1",
+          "type": "AiAssistanceProduced",
+          "version": 1,
+          "topic": "dwp.hris.ai.assistance.produced.v1",
+          "aggregate": "AiGovernanceControl",
+          "payloadRequired": [
+            "assistanceReceiptId",
+            "useCaseKey",
+            "policyVersion",
+            "modelRouteKey",
+            "inputDigest",
+            "outputDigest",
+            "humanConfirmationRequired",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-SYS-AI-TR-004"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "sys_hris_ai_use_policies",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "ai_use_policy_id",
+          "effectiveTime": "valid_from TIMESTAMPTZ NOT NULL; valid_to TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:owner_principal_id->Auth.Principal"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,use_case_key,policy_version)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (DRAFT,EVALUATED,ACTIVE,SUSPENDED,RETIRED)",
+            "autonomous_employment_decision_allowed = FALSE"
+          ],
+          "indexes": [
+            "(tenant_id,use_case_key,status,valid_from)"
+          ],
+          "retentionClass": "AI_GOVERNANCE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_ai_policy_versions",
+          "kind": "REVISION_LEDGER",
+          "idColumn": "ai_policy_version_id",
+          "effectiveTime": "effective_from TIMESTAMPTZ NOT NULL; effective_to TIMESTAMPTZ",
+          "immutability": "APPEND_ONLY_AFTER_ACTIVATION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,ai_use_policy_id)->sys_hris_ai_use_policies"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,ai_use_policy_id,version_no)",
+            "(tenant_id,policy_digest)"
+          ],
+          "checks": [
+            "version_no > 0",
+            "policy_digest <> ''",
+            "human_control_mode <> 'NONE'"
+          ],
+          "indexes": [
+            "(tenant_id,ai_use_policy_id,version_no DESC)"
+          ],
+          "retentionClass": "AI_GOVERNANCE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_ai_evaluation_receipts",
+          "kind": "EVALUATION_LEDGER",
+          "idColumn": "ai_evaluation_receipt_id",
+          "effectiveTime": "evaluated_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,ai_policy_version_id)->sys_hris_ai_policy_versions",
+            "OPAQUE:evaluation_suite_version_id->evaluation registry"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,ai_policy_version_id,evaluation_revision)",
+            "(tenant_id,result_digest)"
+          ],
+          "checks": [
+            "evaluation_revision > 0",
+            "result_digest <> ''",
+            "blocking_failure_count >= 0"
+          ],
+          "indexes": [
+            "(tenant_id,ai_policy_version_id,evaluated_at DESC)"
+          ],
+          "retentionClass": "AI_EVALUATION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "sys_hris_ai_provenance_receipts",
+          "kind": "PROVENANCE_LEDGER",
+          "idColumn": "ai_provenance_receipt_id",
+          "effectiveTime": "generated_at TIMESTAMPTZ NOT NULL; expires_at TIMESTAMPTZ",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "OPAQUE:requester_principal_id->Auth.Principal",
+            "OPAQUE:source_refs->owner projections"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,idempotency_key)",
+            "(tenant_id,input_digest,output_digest,policy_version)"
+          ],
+          "checks": [
+            "input_digest <> ''",
+            "output_digest <> ''",
+            "raw_prompt_stored = FALSE"
+          ],
+          "indexes": [
+            "(tenant_id,use_case_key,generated_at DESC)",
+            "(tenant_id,expires_at)"
+          ],
+          "retentionClass": "AI_PROVENANCE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-SYS-AI-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/sys/g4/modern/governed-ai/evaluation-threshold.json",
+          "assertion": "policy version evaluation thresholds provenance and deterministic stub contract exact"
+        },
+        {
+          "testId": "MOD-SYS-AI-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/sys/g4/modern/governed-ai/policy-negative.json",
+          "assertion": "permission purpose policy failure and autonomous employment decision fail closed"
+        },
+        {
+          "testId": "MOD-SYS-AI-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/sys/g4/modern/governed-ai/acceptance.json",
+          "assertion": "human confirmation kill switch feedback and provenance receipts reconcile"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "approved model provider",
+        "real model evaluation set",
+        "privacy impact approval",
+        "use-case accountable owner"
+      ]
+    }
+  ]
+}

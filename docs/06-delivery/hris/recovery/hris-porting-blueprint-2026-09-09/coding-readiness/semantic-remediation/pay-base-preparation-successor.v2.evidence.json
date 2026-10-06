@@ -1,0 +1,992 @@
+{
+  "status": "AUTHOR_STRUCTURE_FIXTURE_VERIFIED_G3_CLOSED",
+  "startedAt": "2026-09-14T06:03:25.580Z",
+  "endedAt": "2026-09-14T06:03:27.316Z",
+  "actualArgv": [
+    "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend"
+  ],
+  "engine": {
+    "name": "Ajv",
+    "version": "6.12.6",
+    "draft": "FULL_DRAFT07_LOCAL_PROJECTION_NOT_CANONICAL_2020",
+    "formats": "full",
+    "coercion": false
+  },
+  "compiledSchemas": 662,
+  "recursiveSchemaLeaves": 2695,
+  "referenceMetadataNotAuthority": 180,
+  "assertions": 41534,
+  "apiValidInheritedABRequestBodies": 36,
+  "ownerInheritedBodies": 8,
+  "typedBoundaryCases": 54,
+  "governanceSyntheticPairs": 8,
+  "materializationDigests": 4,
+  "mutationChecks": 10,
+  "columnsChecked": 1303,
+  "loadedColumnLeavesChecked": 5538,
+  "sameOwnerFKColumnsChecked": 146,
+  "draftPublicDDLTables": 78,
+  "assembledPublicDDLTables": 88,
+  "SQLNativeSyntaxExecution": 0,
+  "criticalGraphQueryFields": 197,
+  "criticalGraphQueries": 12,
+  "criticalGraphNodes": 12,
+  "cancellationBranchGraphs": 6,
+  "nativePlannedNewColumns": 28,
+  "nativeSyntheticShapes": 14,
+  "storedGovernancePairs": 16,
+  "cancelApiShapes": 90,
+  "cancelBranchOutcomes": 30,
+  "successorFoundationBodies": 18,
+  "allEightFoundationBodies": 16,
+  "directInitialSources": 447,
+  "openInitialSources": 856,
+  "sourceIssues": [],
+  "unmatchedFullAPINegativePayloads": [
+    "PAY_NEG_001_CROSS_TENANT_ENTITY",
+    "PAY_NEG_003_PRINCIPAL_EQUALS_WORKER_UUID",
+    "PAY_NEG_004_SELF_AUTH_PERSON_UNLINKED",
+    "PAY_NEG_005_MULTI_EMPLOYMENT_AMBIGUOUS",
+    "PAY_NEG_006_SELF_CONTEXT_STALE_REVOKED",
+    "PAY_NEG_008_LOCAL_REF_WRONG_ENTITY",
+    "PAY_NEG_010_SOURCE_DIGEST_MISMATCH",
+    "PAY_NEG_011_SOURCE_AS_OF_STALE",
+    "PAY_NEG_012_TIME_RESULT_REOPENED",
+    "PAY_NEG_013_TIME_LINES_DUPLICATE_GAP_COUNT",
+    "PAY_NEG_014_PER_PLAN_UNAPPROVED_OR_SUPERSEDED",
+    "PAY_NEG_016_FORMULA_CYCLE",
+    "PAY_NEG_018_MONEY_PLUS_HOURS",
+    "PAY_NEG_019_HOURLY_PRICE_TIMES_DAY",
+    "PAY_NEG_024_SOD_RUN_MAKER_APPROVES_OR_FINALIZES",
+    "PAY_NEG_025_CAS_STALE",
+    "PAY_NEG_026_EXPIRED_FENCE_LATE_COMMIT",
+    "PAY_NEG_027_COMMIT_HTTP_LOST",
+    "PAY_NEG_030_FINALIZED_TIME_REOPEN",
+    "PAY_NEG_031_UNFINALIZED_SOURCE_INVALIDATE_APPROVAL_PENDING",
+    "PAY_NEG_033_FINALIZED_AMEND_DESTRUCTIVE",
+    "PAY_NEG_034_DOUBLE_RETRO_AND_FULL_REVERSAL",
+    "PAY_NEG_035_BANK_TOKEN_REVOKED_OR_UNVERIFIED",
+    "PAY_NEG_036_BANK_SOURCE_CHANGER_RELEASES",
+    "PAY_NEG_037_PAYMENT_TIMEOUT_UNKNOWN",
+    "PAY_NEG_038_PAYMENT_PARTIAL_ACK",
+    "PAY_NEG_039_MANUAL_PROOF_AS_BANK_ACK",
+    "PAY_NEG_040_CANCEL_UNKNOWN_SEND",
+    "PAY_NEG_041_APPROVAL_CANCEL_ALREADY_APPROVED",
+    "PAY_NEG_042_APPROVAL_CANCEL_UNKNOWN_NOT_FOUND",
+    "PAY_NEG_043_GL_UNBALANCED_OR_MAPPING_STALE",
+    "PAY_NEG_044_NATIVE_JOURNAL_AS_ERP_POSTED",
+    "PAY_NEG_045_PAYSPLIP_REVOKED_OR_PURPOSE_STEPUP_MISSING",
+    "PAY_NEG_046_RECEIPT_ENTITLEMENT_REVOKED",
+    "PAY_NEG_047_DISABLED_COUNTRY_YEA",
+    "PAY_NEG_048_RETIREMENT_CREDITED_SERVICE_MISSING",
+    "PAY_NEG_049_YEAR_END_ANNUAL_SOURCE_RESTORATION_UNVERIFIED",
+    "PAY_NEG_050_DST_PERIOD_CIVIL_END",
+    "PAY_NEG_051_COUNTRY_EFFECTIVE_OVERLAP"
+  ],
+  "all119ExactMutationSourceClosed": false,
+  "sourceFamilyMeaningIndependentlyApproved": false,
+  "before": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-exact.proposal.v1.json",
+      "sha256": "bfe3e38b1417b180339e91ca22e20409e75f3991904ab26ecf0e8f3cb7e22455",
+      "mtimeNs": "1789355210183312605",
+      "bytes": 4867094
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-exact.proposal.v1.md",
+      "sha256": "633992f8db76e2d15ceb5137f79d0e4459647f4659dc2907d15fbbe907817acb",
+      "mtimeNs": "1789355210467677201",
+      "bytes": 69514
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/pay-base-proposal-independent-review-2026-09-14.md",
+      "sha256": "3b1f28d1eb059a168d3ee28a00e32bd36c8c175e4ab3850e0dc5208ffae90158",
+      "mtimeNs": "1789356132511999415",
+      "bytes": 9738
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/decimal-value-types.v1.json",
+      "sha256": "8597640fa5cf5051cccc14fe4b83a4f179d54dfe36f0ffdaa319dc1149b5c6a6",
+      "mtimeNs": "1789030395989818747",
+      "bytes": 5766
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv",
+      "sha256": "7413f9d227b889f7b86949d8998f40823d953ab097047646a34a00cc023c9cba",
+      "mtimeNs": "1789054095274304138",
+      "bytes": 2015
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-registers/hris-pay-source-coverage.csv",
+      "sha256": "ee6c851040b80f1ccc3bef86d603fc07c6f8f5ce8c97fdb862dd8dbdfe21319d",
+      "mtimeNs": "1789015519352510743",
+      "bytes": 506567
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-physical-schema.sql",
+      "sha256": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0",
+      "mtimeNs": "1789047217890036776",
+      "bytes": 72758
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java",
+      "sha256": "e9bce1e7a69874ffc4f67ef09d0b5c7ea11da7bad15fe222d7003f99bc2b0214",
+      "mtimeNs": "1789121399525139139",
+      "bytes": 9107
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/main/resources/application.yml",
+      "sha256": "9e0c14289d1e45c43d42eb002a0fa5e319356e422df3ddf966a105675f78011f",
+      "mtimeNs": "1789121229408315630",
+      "bytes": 4598
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+      "mtimeNs": "1788935965796121926",
+      "bytes": 27320
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+      "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+      "mtimeNs": "1789360448778031618",
+      "bytes": 918
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+      "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+      "mtimeNs": "1789354991077290911",
+      "bytes": 649
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+      "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+      "mtimeNs": "1789354991078381067",
+      "bytes": 1496
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+      "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+      "mtimeNs": "1789360393439338720",
+      "bytes": 9105
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+      "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+      "mtimeNs": "1789359261552529839",
+      "bytes": 4887
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR_Front/cloudhr-front/packages/yea/src/app/router/yeaRouter.js",
+      "sha256": "80aef94640c0b0d86be4d2e3882e9c6c4c9245c1788bda1ae950a2ef38ce0c1b",
+      "mtimeNs": "1708495200000000000",
+      "bytes": 5143
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR_Front/cloudhr-front/packages/pay/src/app/router/retRouter.js",
+      "sha256": "b3a8330e5f8db97980bff938f7a3a2e2a3c2b33cc2c49fa4c50f478391b4d5b9",
+      "mtimeNs": "1728889088000000000",
+      "bytes": 8131
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/RetireTrgter.java",
+      "sha256": "e3401ec54d156d7c202a6306def14bab925e8650ca4c29e65282d91d7516b59b",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 12546
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/RetnmAgrStnd.java",
+      "sha256": "97852313684cc3d392998f9629e9e5b275dd52e48d0ca3ad96e8a3a2ebefb938",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 5898
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/RtrpayCalcDtls.java",
+      "sha256": "8dd7c7a10550b8fcd3a1dc0ebf9e788f0552219070b145aaafbccba22b4a5d88",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 5791
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/OfcrMulcnt.java",
+      "sha256": "edb7634979043605889b78380a5d1baa81947845380be9b2649ee56c962636c0",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 5051
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.build.cjs",
+      "sha256": "7aa0db607d866fcd89f7d7948c350fc2d241b89b356191de20ffe528db30f8b6",
+      "mtimeNs": "1789365765297063552",
+      "bytes": 35465
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+      "sha256": "0854a18e38ae9fa6dccc2961e77bd78785442a734eddc6fa198bd81441db9836",
+      "mtimeNs": "1789365804537835270",
+      "bytes": 24234
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.json",
+      "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90",
+      "mtimeNs": "1789365765874398592",
+      "bytes": 1606606
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.schemas.json",
+      "sha256": "07c8e2c60087e8910432afabbb08d7426aba9e5275648dfe2795b60a87e4f4e0",
+      "mtimeNs": "1789364709488676709",
+      "bytes": 26745
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.fixtures.json",
+      "sha256": "52daaaade54c467965d972fc8437c7f893c795d0f3147e4d9af550fd1f57313c",
+      "mtimeNs": "1789364371401849304",
+      "bytes": 362357
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.md",
+      "sha256": "52e68a0197636ecdbf5d7e2111d80cb0e9261c98caf61aee9e219a7136bc1ee3",
+      "mtimeNs": "1789365765947115891",
+      "bytes": 13027
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.sql-plan.cjs",
+      "sha256": "e19379a270f0de4923f1c5377c3defd2728230332889176a5f02c430bcdd402a",
+      "mtimeNs": "1789364765336406904",
+      "bytes": 4037
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.planned.sql",
+      "sha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+      "mtimeNs": "1789365101397570906",
+      "bytes": 111536
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.cjs",
+      "sha256": "3a4bc19e57f7249a0864754c7c59ba6816964438c7f512839aba3308456094a2",
+      "mtimeNs": "1789365239473461170",
+      "bytes": 10887
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.json",
+      "sha256": "ea8c5822fb655f448b94ac1a121d9dbf17bc21eca6eb093ded554712378bfc5c",
+      "mtimeNs": "1789365239473914659",
+      "bytes": 69312
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.native-columns.json",
+      "sha256": "043e28263a9121cab7cc5505c8c825a971dbd8541bbf83bf42136c662ab0057a",
+      "mtimeNs": "1789365049693145979",
+      "bytes": 10293
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.owner-fixtures.json",
+      "sha256": "5c9f98a70150dc28e6655cfc0ac1e902bce0611b3832a480a34bc08a5f01b418",
+      "mtimeNs": "1789365150302527233",
+      "bytes": 38569
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.cancel-fixtures.json",
+      "sha256": "429cc5ba3a85276886b8e77062406b41acc532fa2ad97fdaeb03027caeb9d9f5",
+      "mtimeNs": "1789365320010347975",
+      "bytes": 63199
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation.schemas.json",
+      "sha256": "ff1103f7d31bb7d6f727811904eabd3d105d733a644e42ef34036cb085c83c5c",
+      "mtimeNs": "1789365459772171684",
+      "bytes": 17419
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation-fixtures.json",
+      "sha256": "76dd5c9ecc869feb9892081f02a22a6734a98a122d619debb25384c29ca311f4",
+      "mtimeNs": "1789365523479217091",
+      "bytes": 61230
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.source-file-allocation.json",
+      "sha256": "02d3aa98cd1db1784c649955ee4a8996125f22974d06addd389f68c23d69e4ac",
+      "mtimeNs": "1789365687273456994",
+      "bytes": 5211
+    }
+  ],
+  "after": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-exact.proposal.v1.json",
+      "sha256": "bfe3e38b1417b180339e91ca22e20409e75f3991904ab26ecf0e8f3cb7e22455",
+      "mtimeNs": "1789355210183312605",
+      "bytes": 4867094
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-exact.proposal.v1.md",
+      "sha256": "633992f8db76e2d15ceb5137f79d0e4459647f4659dc2907d15fbbe907817acb",
+      "mtimeNs": "1789355210467677201",
+      "bytes": 69514
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/pay-base-proposal-independent-review-2026-09-14.md",
+      "sha256": "3b1f28d1eb059a168d3ee28a00e32bd36c8c175e4ab3850e0dc5208ffae90158",
+      "mtimeNs": "1789356132511999415",
+      "bytes": 9738
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/decimal-value-types.v1.json",
+      "sha256": "8597640fa5cf5051cccc14fe4b83a4f179d54dfe36f0ffdaa319dc1149b5c6a6",
+      "mtimeNs": "1789030395989818747",
+      "bytes": 5766
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv",
+      "sha256": "7413f9d227b889f7b86949d8998f40823d953ab097047646a34a00cc023c9cba",
+      "mtimeNs": "1789054095274304138",
+      "bytes": 2015
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-registers/hris-pay-source-coverage.csv",
+      "sha256": "ee6c851040b80f1ccc3bef86d603fc07c6f8f5ce8c97fdb862dd8dbdfe21319d",
+      "mtimeNs": "1789015519352510743",
+      "bytes": 506567
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-physical-schema.sql",
+      "sha256": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0",
+      "mtimeNs": "1789047217890036776",
+      "bytes": 72758
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java",
+      "sha256": "e9bce1e7a69874ffc4f67ef09d0b5c7ea11da7bad15fe222d7003f99bc2b0214",
+      "mtimeNs": "1789121399525139139",
+      "bytes": 9107
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/main/resources/application.yml",
+      "sha256": "9e0c14289d1e45c43d42eb002a0fa5e319356e422df3ddf966a105675f78011f",
+      "mtimeNs": "1789121229408315630",
+      "bytes": 4598
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+      "mtimeNs": "1788935965796121926",
+      "bytes": 27320
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+      "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+      "mtimeNs": "1789360448778031618",
+      "bytes": 918
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+      "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+      "mtimeNs": "1789354991077290911",
+      "bytes": 649
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+      "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+      "mtimeNs": "1789354991078381067",
+      "bytes": 1496
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+      "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+      "mtimeNs": "1789360393439338720",
+      "bytes": 9105
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+      "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+      "mtimeNs": "1789359261552529839",
+      "bytes": 4887
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR_Front/cloudhr-front/packages/yea/src/app/router/yeaRouter.js",
+      "sha256": "80aef94640c0b0d86be4d2e3882e9c6c4c9245c1788bda1ae950a2ef38ce0c1b",
+      "mtimeNs": "1708495200000000000",
+      "bytes": 5143
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR_Front/cloudhr-front/packages/pay/src/app/router/retRouter.js",
+      "sha256": "b3a8330e5f8db97980bff938f7a3a2e2a3c2b33cc2c49fa4c50f478391b4d5b9",
+      "mtimeNs": "1728889088000000000",
+      "bytes": 8131
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/RetireTrgter.java",
+      "sha256": "e3401ec54d156d7c202a6306def14bab925e8650ca4c29e65282d91d7516b59b",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 12546
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/RetnmAgrStnd.java",
+      "sha256": "97852313684cc3d392998f9629e9e5b275dd52e48d0ca3ad96e8a3a2ebefb938",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 5898
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/RtrpayCalcDtls.java",
+      "sha256": "8dd7c7a10550b8fcd3a1dc0ebf9e788f0552219070b145aaafbccba22b4a5d88",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 5791
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/SKKF/eHR/cloudhr-pay/src/main/java/com/kolonbenit/benitworx/app/ret/entity/OfcrMulcnt.java",
+      "sha256": "edb7634979043605889b78380a5d1baa81947845380be9b2649ee56c962636c0",
+      "mtimeNs": "1710422182000000000",
+      "bytes": 5051
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.build.cjs",
+      "sha256": "7aa0db607d866fcd89f7d7948c350fc2d241b89b356191de20ffe528db30f8b6",
+      "mtimeNs": "1789365765297063552",
+      "bytes": 35465
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+      "sha256": "0854a18e38ae9fa6dccc2961e77bd78785442a734eddc6fa198bd81441db9836",
+      "mtimeNs": "1789365804537835270",
+      "bytes": 24234
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.json",
+      "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90",
+      "mtimeNs": "1789365765874398592",
+      "bytes": 1606606
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.schemas.json",
+      "sha256": "07c8e2c60087e8910432afabbb08d7426aba9e5275648dfe2795b60a87e4f4e0",
+      "mtimeNs": "1789364709488676709",
+      "bytes": 26745
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.fixtures.json",
+      "sha256": "52daaaade54c467965d972fc8437c7f893c795d0f3147e4d9af550fd1f57313c",
+      "mtimeNs": "1789364371401849304",
+      "bytes": 362357
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.md",
+      "sha256": "52e68a0197636ecdbf5d7e2111d80cb0e9261c98caf61aee9e219a7136bc1ee3",
+      "mtimeNs": "1789365765947115891",
+      "bytes": 13027
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.sql-plan.cjs",
+      "sha256": "e19379a270f0de4923f1c5377c3defd2728230332889176a5f02c430bcdd402a",
+      "mtimeNs": "1789364765336406904",
+      "bytes": 4037
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.planned.sql",
+      "sha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+      "mtimeNs": "1789365101397570906",
+      "bytes": 111536
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.cjs",
+      "sha256": "3a4bc19e57f7249a0864754c7c59ba6816964438c7f512839aba3308456094a2",
+      "mtimeNs": "1789365239473461170",
+      "bytes": 10887
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.json",
+      "sha256": "ea8c5822fb655f448b94ac1a121d9dbf17bc21eca6eb093ded554712378bfc5c",
+      "mtimeNs": "1789365239473914659",
+      "bytes": 69312
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.native-columns.json",
+      "sha256": "043e28263a9121cab7cc5505c8c825a971dbd8541bbf83bf42136c662ab0057a",
+      "mtimeNs": "1789365049693145979",
+      "bytes": 10293
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.owner-fixtures.json",
+      "sha256": "5c9f98a70150dc28e6655cfc0ac1e902bce0611b3832a480a34bc08a5f01b418",
+      "mtimeNs": "1789365150302527233",
+      "bytes": 38569
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.cancel-fixtures.json",
+      "sha256": "429cc5ba3a85276886b8e77062406b41acc532fa2ad97fdaeb03027caeb9d9f5",
+      "mtimeNs": "1789365320010347975",
+      "bytes": 63199
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation.schemas.json",
+      "sha256": "ff1103f7d31bb7d6f727811904eabd3d105d733a644e42ef34036cb085c83c5c",
+      "mtimeNs": "1789365459772171684",
+      "bytes": 17419
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation-fixtures.json",
+      "sha256": "76dd5c9ecc869feb9892081f02a22a6734a98a122d619debb25384c29ca311f4",
+      "mtimeNs": "1789365523479217091",
+      "bytes": 61230
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.source-file-allocation.json",
+      "sha256": "02d3aa98cd1db1784c649955ee4a8996125f22974d06addd389f68c23d69e4ac",
+      "mtimeNs": "1789365687273456994",
+      "bytes": 5211
+    }
+  ],
+  "executionDrift": [],
+  "proposalInputPinDrift": [],
+  "outcomes": [
+    {
+      "caseId": "PAY_NEG_001_CROSS_TENANT_ENTITY",
+      "operationId": "pay.paygroup.version.create",
+      "outcome": "404_OPAQUE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_002_CROSS_PAY_GROUP_POPULATION",
+      "operationId": "run.prepare",
+      "outcome": "404_OPAQUE",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_003_PRINCIPAL_EQUALS_WORKER_UUID",
+      "operationId": "payslip.query",
+      "outcome": "404_OPAQUE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_004_SELF_AUTH_PERSON_UNLINKED",
+      "operationId": "payslip.query",
+      "outcome": "403_SELF_IDENTITY_UNVERIFIED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_005_MULTI_EMPLOYMENT_AMBIGUOUS",
+      "operationId": "payslip.query",
+      "outcome": "PERSON_BOUND_STATEMENT_NO_CURRENT_CONTEXT_REQUIRED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_006_SELF_CONTEXT_STALE_REVOKED",
+      "operationId": "yearend.case.create",
+      "outcome": "404_OPAQUE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_007_CONFIG_DIGEST_WITHOUT_PAYLOAD",
+      "operationId": "pay.calendar.version.create",
+      "outcome": "400_SCHEMA_INVALID",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_008_LOCAL_REF_WRONG_ENTITY",
+      "operationId": "pay.paygroup.version.create",
+      "outcome": "404_OPAQUE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_009_REGISTRY_OWNER_UNPUBLISHED",
+      "operationId": "run.prepare",
+      "outcome": "503_SOURCE_OWNER_CONTRACT_NOT_PUBLISHED",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_010_SOURCE_DIGEST_MISMATCH",
+      "operationId": "pay.input.source.ingest",
+      "outcome": "422_SOURCE_DIGEST_MISMATCH",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_011_SOURCE_AS_OF_STALE",
+      "operationId": "pay.input.source.ingest",
+      "outcome": "422_SOURCE_STALE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_012_TIME_RESULT_REOPENED",
+      "operationId": "pay.input.source.ingest",
+      "outcome": "422_SOURCE_SUPERSEDED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_013_TIME_LINES_DUPLICATE_GAP_COUNT",
+      "operationId": "pay.input.source.ingest",
+      "outcome": "422_SOURCE_SEQUENCE_OR_COUNT",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_014_PER_PLAN_UNAPPROVED_OR_SUPERSEDED",
+      "operationId": "pay.input.source.ingest",
+      "outcome": "422_SOURCE_SUPERSEDED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_015_OPTIONAL_SOURCE_REQUIRED_BUT_NOT_SELECTED",
+      "operationId": "pay.run.input.freeze",
+      "outcome": "422_MISSING_REQUIRED_INPUT",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_016_FORMULA_CYCLE",
+      "operationId": "pay.config.validate",
+      "outcome": "422_FORMULA_CYCLE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_017_UNKNOWN_FUNCTION_EXECUTABLE_STRING",
+      "operationId": "formula.version.create",
+      "outcome": "400_SCHEMA_INVALID",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_018_MONEY_PLUS_HOURS",
+      "operationId": "pay.config.validate",
+      "outcome": "422_UNIT_MISMATCH",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_019_HOURLY_PRICE_TIMES_DAY",
+      "operationId": "pay.config.validate",
+      "outcome": "422_UNIT_MISMATCH",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_020_CROSS_CURRENCY",
+      "operationId": "run.calculate",
+      "outcome": "422_CROSS_CURRENCY_FORBIDDEN",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_021_DIVIDE_ZERO",
+      "operationId": "run.calculate",
+      "outcome": "422_DIVIDE_BY_ZERO",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_022_AST_NODE_DEPTH_COLLECTION_CPU_MEMORY",
+      "operationId": "run.calculate",
+      "outcome": "422_FORMULA_LIMIT",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_023_DECIMAL_EXPONENT_JSON_NUMBER_OVERFLOW",
+      "operationId": "worker.entry.create",
+      "outcome": "400_OR_422_DECIMAL_INVALID",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_024_SOD_RUN_MAKER_APPROVES_OR_FINALIZES",
+      "operationId": "run.finalize",
+      "outcome": "409_SOD_CONFLICT",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_025_CAS_STALE",
+      "operationId": "run.finalize",
+      "outcome": "409_STALE_OR_STATE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_026_EXPIRED_FENCE_LATE_COMMIT",
+      "operationId": "pay.attempt.commit",
+      "outcome": "409_STALE_FENCE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_027_COMMIT_HTTP_LOST",
+      "operationId": "run.finalize",
+      "outcome": "ORIGINAL_SUCCEEDED_RECEIPT",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_028_SAME_IDEMPOTENCY_DIFFERENT_DIGEST",
+      "operationId": "run.prepare",
+      "outcome": "409_IDEMPOTENCY_KEY_REUSED",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_029_DIFFERENT_PRINCIPAL_SAME_KEY",
+      "operationId": "run.prepare",
+      "outcome": "INDEPENDENT_SCOPE_RECEIPT",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_030_FINALIZED_TIME_REOPEN",
+      "operationId": "pay.input.source.invalidate",
+      "outcome": "FINAL_RETRO_ASSESSMENT",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_031_UNFINALIZED_SOURCE_INVALIDATE_APPROVAL_PENDING",
+      "operationId": "pay.input.source.invalidate",
+      "outcome": "INPUT_INVALIDATED_OR_BLOCKED_PENDING_CANCEL",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_032_REGULAR_SECOND_ACTIVE_OR_UNLINKED_SUCCESSOR",
+      "operationId": "run.prepare",
+      "outcome": "409_REGULAR_RUN_EXISTS",
+      "APIRequestPresent": true,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_033_FINALIZED_AMEND_DESTRUCTIVE",
+      "operationId": "pay.run.amend",
+      "outcome": "409_FINAL_FACT_IMMUTABLE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_034_DOUBLE_RETRO_AND_FULL_REVERSAL",
+      "operationId": "correction.create",
+      "outcome": "422_CORRECTION_MODE_CONFLICT",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_035_BANK_TOKEN_REVOKED_OR_UNVERIFIED",
+      "operationId": "payment.release",
+      "outcome": "422_BANK_TOKEN_UNVERIFIED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_036_BANK_SOURCE_CHANGER_RELEASES",
+      "operationId": "payment.release",
+      "outcome": "409_SOD_CONFLICT",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_037_PAYMENT_TIMEOUT_UNKNOWN",
+      "operationId": "pay.payment.reconcile",
+      "outcome": "503_RESULT_UNKNOWN",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_038_PAYMENT_PARTIAL_ACK",
+      "operationId": "pay.payment.reconcile",
+      "outcome": "PARTIALLY_ACKNOWLEDGED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_039_MANUAL_PROOF_AS_BANK_ACK",
+      "operationId": "pay.payment.manual.record",
+      "outcome": "422_SETTLEMENT_METHOD_MISMATCH",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_040_CANCEL_UNKNOWN_SEND",
+      "operationId": "pay.payment.cancel",
+      "outcome": "409_RESULT_UNKNOWN_RECONCILE_REQUIRED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_041_APPROVAL_CANCEL_ALREADY_APPROVED",
+      "operationId": "pay.approval.reconcile",
+      "outcome": "ADOPT_APPROVED_OWNER_OUTCOME",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_042_APPROVAL_CANCEL_UNKNOWN_NOT_FOUND",
+      "operationId": "pay.approval.reconcile",
+      "outcome": "503_RESULT_UNKNOWN",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_043_GL_UNBALANCED_OR_MAPPING_STALE",
+      "operationId": "gl.post",
+      "outcome": "422_GL_NOT_BALANCED_OR_SOURCE_STALE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_044_NATIVE_JOURNAL_AS_ERP_POSTED",
+      "operationId": "gl.post",
+      "outcome": "NATIVE_POSTED_ONLY",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_045_PAYSPLIP_REVOKED_OR_PURPOSE_STEPUP_MISSING",
+      "operationId": "payslip.download",
+      "outcome": "404_OR_403_FIELD_STEPUP",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_046_RECEIPT_ENTITLEMENT_REVOKED",
+      "operationId": "command.receipt.query",
+      "outcome": "404_OPAQUE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_047_DISABLED_COUNTRY_YEA",
+      "operationId": "yearend.provider.submit",
+      "outcome": "422_PROVIDER_NOT_ACTIVE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_048_RETIREMENT_CREDITED_SERVICE_MISSING",
+      "operationId": "pay.retirement.case.validate",
+      "outcome": "422_RETIREMENT_BASIS_INCOMPLETE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_049_YEAR_END_ANNUAL_SOURCE_RESTORATION_UNVERIFIED",
+      "operationId": "pay.yearend.case.validate",
+      "outcome": "422_YEAR_END_SOURCE_COVERAGE_UNVERIFIED",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_050_DST_PERIOD_CIVIL_END",
+      "operationId": "pay.period.materialize",
+      "outcome": "EXACT_CIVIL_DATE_NO_24H_SHIFT",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "PAY_NEG_051_COUNTRY_EFFECTIVE_OVERLAP",
+      "operationId": "country.pack.activate",
+      "outcome": "409_23P01",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "DUPLICATE_ROUNDING_STAGE",
+      "operationId": null,
+      "outcome": "422_ROUNDING_STAGE_DUPLICATE",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "INVALID_TIME_ZONE",
+      "operationId": null,
+      "outcome": "422_TIME_ZONE_INVALID",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    },
+    {
+      "caseId": "SIGNED_ZERO_CANONICAL",
+      "operationId": null,
+      "outcome": "NORMALIZED_ZERO",
+      "APIRequestPresent": false,
+      "scope": "SYNTHETIC_BOUNDARY_MODEL_NO_NATIVE_OR_DML",
+      "actualProviderCalls": 0
+    }
+  ],
+  "actualNativeRuns": 0,
+  "actualDml": 0,
+  "productionOwnerRegistration": 0,
+  "authorOnly": true,
+  "executionEnvelope": {
+    "exitCode": 0,
+    "actualInvokedExecutable": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "actualArgs": [
+      "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+      "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend"
+    ],
+    "measuredNanoseconds": "2292171458",
+    "stdoutSha256": "ab8764426eeb346dc540634723476fd78e119a7fc4fab07578810f9270cddd1a",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backendHeadBefore": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "backendHeadAfter": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "backendWholeTreeApproval": false
+  }
+}

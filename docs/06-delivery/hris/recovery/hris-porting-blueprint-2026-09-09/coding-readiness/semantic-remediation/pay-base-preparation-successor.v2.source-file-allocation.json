@@ -1,0 +1,109 @@
+{
+  "status": "INTERNAL_OWNER_FILE_PLAN_PROPOSED_NOT_CURRENT_REGISTRATION",
+  "rows": [
+    {
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v2/PayrollConfigurationGovernancePortV2.java",
+      "sessionOwner": "HRIS-SYS",
+      "sharedCodeOwner": "Platform Contracts",
+      "phase": "G3_SHARED_OWNER_ABI_SPI_NATIVE_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v2/PayrollGovernanceRequestV2.java",
+      "sessionOwner": "HRIS-SYS",
+      "sharedCodeOwner": "Platform Contracts",
+      "phase": "G3_SHARED_OWNER_ABI_SPI_NATIVE_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v2/PayrollGovernanceSnapshotV2.java",
+      "sessionOwner": "HRIS-SYS",
+      "sharedCodeOwner": "Platform Contracts",
+      "phase": "G3_SHARED_OWNER_ABI_SPI_NATIVE_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-server/src/main/java/com/dwp/services/platform/hris/configuration/payroll/v2/PayrollGovernanceQueryServiceV2.java",
+      "sessionOwner": "HRIS-SYS",
+      "sharedCodeOwner": "Platform Configuration",
+      "phase": "G3_SHARED_OWNER_ABI_SPI_NATIVE_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-server/src/main/java/com/dwp/services/platform/hris/configuration/payroll/v2/PayrollGovernanceQueryControllerV2.java",
+      "sessionOwner": "HRIS-SYS",
+      "sharedCodeOwner": "Platform Configuration",
+      "phase": "G3_SHARED_OWNER_ABI_SPI_NATIVE_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-server/src/main/java/com/dwp/services/platform/hris/configuration/payroll/v2/PayrollGovernanceSourceAdapterV2.java",
+      "sessionOwner": "HRIS-SYS",
+      "sharedCodeOwner": "Platform Configuration",
+      "phase": "G3_SHARED_OWNER_ABI_SPI_NATIVE_FAILCLOSED"
+    },
+    {
+      "file": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/configuration/v2/PayrollGovernanceConsumerV2.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_SHARED_OWNER_CONSUMER_COMPILE"
+    },
+    {
+      "file": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/identity/v2/NativePersonStatementAuthorityConsumerV2.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_SHARED_OWNER_CONSUMER_COMPILE"
+    },
+    {
+      "file": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/configuration/v2/DisabledPayrollGovernanceAdapterV2.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_SHARED_OWNER_CONSUMER_COMPILE"
+    },
+    {
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hris/configuration/payroll/v2/PayrollGovernanceSourceColumnContractTest.java",
+      "sessionOwner": "HRIS-SYS",
+      "phase": "G3_SOURCE_SCHEMA_PURPOSE_POPULATION_SOD_REFETCH_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hris/configuration/payroll/v2/PayrollGovernanceEightQueriesTest.java",
+      "sessionOwner": "HRIS-SYS",
+      "phase": "G3_SOURCE_SCHEMA_PURPOSE_POPULATION_SOD_REFETCH_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hris/configuration/payroll/v2/PayrollGovernanceTenantPurposePopulationSodTest.java",
+      "sessionOwner": "HRIS-SYS",
+      "phase": "G3_SOURCE_SCHEMA_PURPOSE_POPULATION_SOD_REFETCH_FAILCLOSED"
+    },
+    {
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hris/configuration/payroll/v2/PayrollGovernanceStaleDigestVersionTest.java",
+      "sessionOwner": "HRIS-SYS",
+      "phase": "G3_SOURCE_SCHEMA_PURPOSE_POPULATION_SOD_REFETCH_FAILCLOSED"
+    },
+    {
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/preparation/v2/PayrollGovernanceConsumerCompileTest.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_ABI_COMPILE_GUARD_SOURCE_FIXTURES"
+    },
+    {
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/preparation/v2/MissingPayrollGovernanceAdapterZeroCallTest.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_ABI_COMPILE_GUARD_SOURCE_FIXTURES"
+    },
+    {
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/preparation/v2/NativePersonPayslipAuthorityTest.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_ABI_COMPILE_GUARD_SOURCE_FIXTURES"
+    },
+    {
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/preparation/v2/PayrollNormalizedMutationSourceTest.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_ABI_COMPILE_GUARD_SOURCE_FIXTURES"
+    },
+    {
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/preparation/v2/PayrollCancelSixBranchesTest.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_ABI_COMPILE_GUARD_SOURCE_FIXTURES"
+    },
+    {
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/preparation/v2/PayrollFormulaClosedAstTest.java",
+      "sessionOwner": "HRIS-PAY",
+      "phase": "G3_ABI_COMPILE_GUARD_SOURCE_FIXTURES"
+    }
+  ],
+  "noFileAllocatedOrCreatedInBackend": true,
+  "migrationVersions": "REQUIRED_NOT_ALLOCATED",
+  "domainCrudPhase": "G4 not G3 prerequisite"
+}

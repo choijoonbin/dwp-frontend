@@ -1,0 +1,1514 @@
+{
+  "contractId": "DWP.FrontendPayroll.ScopedCodecAndDownloadRemediation.v1",
+  "status": "AUTHOR_IMPLEMENTED_58_UNITS_AND_7_QUALITY_VERIFIED_SHARED_TEST_TSC_OPEN",
+  "G3Gate": "CLOSED_NO_OPENING_AUTHORITY",
+  "nativePepApproved": false,
+  "wholePayrollApproved": false,
+  "wholeFrontendApproved": false,
+  "independentRemediationApproved": false,
+  "commitCreated": false,
+  "scope": {
+    "repository": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+    "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+    "ownedFiles": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+        "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+        "mtimeNs": "1789378987522511513",
+        "bytes": 8035,
+        "lines": 215
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+        "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+        "mtimeNs": "1789379106798956838",
+        "bytes": 8462,
+        "lines": 233
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+        "relativePath": "apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+        "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+        "mtimeNs": "1789379106800047253",
+        "bytes": 14545,
+        "lines": 364
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+        "relativePath": "apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+        "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+        "mtimeNs": "1789378945041726554",
+        "bytes": 16338,
+        "lines": 452
+      }
+    ],
+    "nonOwnedPay4": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+        "original": {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+          "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+          "mtimeNs": "1789376764850373547"
+        },
+        "current": {
+          "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+          "mtimeNs": "1789376764850373547"
+        },
+        "unchanged": true
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+        "original": {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+          "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+          "mtimeNs": "1789376764849545251"
+        },
+        "current": {
+          "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+          "mtimeNs": "1789376764849545251"
+        },
+        "unchanged": true
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+        "original": {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+          "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+          "mtimeNs": "1789376764852101348"
+        },
+        "current": {
+          "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+          "mtimeNs": "1789376764852101348"
+        },
+        "unchanged": true
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+        "original": {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+          "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+          "mtimeNs": "1789376816340683289"
+        },
+        "current": {
+          "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+          "mtimeNs": "1789376816340683289"
+        },
+        "unchanged": true
+      }
+    ],
+    "sharedSourceOwnedByParentOnly": true,
+    "preexistingRootLayeringDirtyTree": "Preserved; working tree/whole source immutability or clean-commit status is not claimed.",
+    "sourceEditsAppliedWith": "apply_patch"
+  },
+  "rules": {
+    "fullyReadBeforeActions": [
+      "AGENTS.md",
+      "docs/04-design-system/DWP Product Experience Rules.md",
+      "docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md"
+    ],
+    "effect": "Preserved approved layout/copy/public callback/read-only API boundary and full authority query key; material malformed-wire/failure/loading states, no synthetic success."
+  },
+  "corrections": [
+    {
+      "id": "FE-PAY-P1-001",
+      "classification": "PREEXISTING_RUNTIME_LEAF_CODEC_DEFECT_IMPLEMENTED_AUTHOR_TESTED",
+      "changes": [
+        "Validate all selected workspace/cycle/statement scalar, true boolean, opaque nonblank whitespace-free ID, actual Gregorian DATE, supported RFC3339 instant, closed dataOrigin and list/unique identities before primitive allowlist projection.",
+        "Reject malformed rather than coerce/download a truthy string; field-path-only error messages do not echo employee/payroll values.",
+        "Preserve UNKNOWN availability including empty/unknown strings, nullable publication/optional cycle, no amount/employee/bank extras, opaque current source IDs and valid pre/end-period payment dates. No company/law/provider constant introduced."
+      ]
+    },
+    {
+      "id": "FE-PAY-P1-002",
+      "classification": "PREEXISTING_CONCURRENT_DOWNLOAD_STATE_DEFECT_IMPLEMENTED_AUTHOR_TESTED",
+      "changes": [
+        "Map loading/error separately by exact statement ID; starting/completing/retrying A does not clear B.",
+        "Synchronous per-ID token guard rejects re-entry before React state commits.",
+        "Authority-key unmount clears active tokens and prevents stale callback settlement setting new UI state. Callback public signature and all copy/layout retained."
+      ]
+    }
+  ],
+  "actualEvidence": {
+    "exactFailBefore": {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-remediation-fail-before-2026-09-14.json",
+      "sha256": "6c9a3739c41b09fc78b17f1419c85eed8fe79e70bf6cdc0c91c93021a71048a7",
+      "mtimeNs": "1789379015231014435",
+      "bytes": 41071
+    },
+    "exactPassAfter": {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-remediation-pass-after-2026-09-14.json",
+      "sha256": "8c51270a435a9506b2161f53129fcc595b0a85c0e72a9cbade45d6040767d142",
+      "mtimeNs": "1789379374914507104",
+      "bytes": 39758
+    },
+    "failBefore": {
+      "startedAt": "2026-09-14T09:43:17.463079+00:00",
+      "finishedAt": "2026-09-14T09:43:26.639363+00:00",
+      "exitCode": 1,
+      "total": 58,
+      "passed": 27,
+      "failed": 31,
+      "pending": 0,
+      "uniqueCases": 58,
+      "sourcePins": 23,
+      "prePostStable": true,
+      "hostLock": {
+        "schema": "dwp.hris.host-semaphore-receipt.v1",
+        "name": "hris-verification",
+        "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+        "requestedAt": "2026-09-14T09:43:17.453Z",
+        "acquiredAt": "2026-09-14T09:43:17.454Z",
+        "releasedAt": "2026-09-14T09:43:26.646Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      }
+    },
+    "passAfter": {
+      "startedAt": "2026-09-14T09:49:20.629176+00:00",
+      "finishedAt": "2026-09-14T09:49:30.234537+00:00",
+      "exitCode": 0,
+      "total": 58,
+      "passed": 58,
+      "failed": 0,
+      "pending": 0,
+      "uniqueCases": 58,
+      "sourcePins": 23,
+      "prePostStable": true,
+      "hostLock": {
+        "schema": "dwp.hris.host-semaphore-receipt.v1",
+        "name": "hris-verification",
+        "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+        "requestedAt": "2026-09-14T09:49:20.619Z",
+        "acquiredAt": "2026-09-14T09:49:20.620Z",
+        "releasedAt": "2026-09-14T09:49:30.240Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      }
+    },
+    "unchangedExpectations": {
+      "exact58NamesSame": true,
+      "testPinsSame": true,
+      "original25Preserved": true
+    },
+    "initialDuplicateTitleReplay": "Initial58=27PASS/31FAIL preserved separately; parameter case IDs then gained %j values only. Final58 identities and test SHA/ns are identical before/after.",
+    "argv": [
+      "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--project",
+      "dwp-app",
+      "apps/dwp/src/features/hris/payroll/",
+      "--maxWorkers=1",
+      "--reporter=json"
+    ],
+    "nodeVersion": "v24.19.0",
+    "boundary": "Actual installed Node/Vitest/ReactDOM/jsdom plus existing explicit fetch/API/request-scope mocks; no native PEP/server/browser/DML execution claim."
+  },
+  "quality": {
+    "firstWrapperFailure": {
+      "status": "ACTUAL_WRAPPER_EXIT_1_TIMEOUT_FAILURE_NO_PARTIAL_PASS_CLAIM",
+      "exitCode": 1,
+      "argv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/check-unused-internal-exports.mjs"
+      ],
+      "timeoutSeconds": 60,
+      "toolReportedTracebackUtf8": "Traceback (most recent call last):\n  File \"<string>\", line 22, in <module>\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 550, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 1209, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 2116, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 1253, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node', 'scripts/check-unused-internal-exports.mjs']' timed out after 60 seconds\n",
+      "traceOrigin": "Exact observed exec tool text transcribed; child raw outputs/earlier command results/prepost manifest/lock timestamps not emitted by initial wrapper and not retrospectively reconstructed.",
+      "native": false,
+      "canonicalApproval": false
+    },
+    "initialSame60Probe": {
+      "status": "SCOPED_PAYROLL_REMEDIATION_COMPILE_AND_QUALITY_NOT_NATIVE_G3",
+      "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+      "nodeVersion": "v24.19.0",
+      "preSources": [
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+          "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+          "mtimeNs": "1789376764850373547",
+          "bytes": 2145
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+          "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+          "mtimeNs": "1789376764849545251",
+          "bytes": 687
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+          "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+          "mtimeNs": "1789376764852101348",
+          "bytes": 1087
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+          "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+          "mtimeNs": "1789376816340683289",
+          "bytes": 713
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+          "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+          "mtimeNs": "1789378987522511513",
+          "bytes": 8035
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+          "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+          "mtimeNs": "1789379106798956838",
+          "bytes": 8462
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+          "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+          "mtimeNs": "1789379106800047253",
+          "bytes": 14545
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+          "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+          "mtimeNs": "1789378945041726554",
+          "bytes": 16338
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+          "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+          "mtimeNs": "1788935983012002560",
+          "bytes": 3535
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+          "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+          "mtimeNs": "1788935983730374125",
+          "bytes": 19913
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+          "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+          "mtimeNs": "1788935983717918934",
+          "bytes": 39012
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991",
+          "bytes": 11497
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/yarn.lock",
+          "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+          "mtimeNs": "1789007297916953519",
+          "bytes": 300528
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/vitest.config.ts",
+          "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+          "mtimeNs": "1788935990540016523",
+          "bytes": 333
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/vitest.config.ts",
+          "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+          "mtimeNs": "1788935983686664189",
+          "bytes": 710
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879",
+          "bytes": 1300
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335",
+          "bytes": 146
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/hcm-query-state.tsx",
+          "sha256": "b373c917d98042828964322de89d9c8792bd66849b1bcd1bd5382a91c746426b",
+          "mtimeNs": "1788935983034905262",
+          "bytes": 3314
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+          "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+          "mtimeNs": "1788935983069076131",
+          "bytes": 3311
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-instance.ts",
+          "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+          "mtimeNs": "1789378714720758289",
+          "bytes": 18168
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/product-surface-read-scope.ts",
+          "sha256": "9d88813d8ab122c0371ff739cb8f3ecc37e90e07b771ca1b922c1e5d9b787540",
+          "mtimeNs": "1788935990330507461",
+          "bytes": 470
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/vitest/package.json",
+          "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34",
+          "mtimeNs": "1788936289508405018",
+          "bytes": 5932
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/host_semaphore.py",
+          "sha256": "7e55dcbe122a47d799d03bb6b3750b5e4b926ed774ee5ede83a16475ff632a98",
+          "mtimeNs": "1789053706840031291",
+          "bytes": 6148
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/eslint.config.mjs",
+          "sha256": "2d19a25f026fce3f09f0a1498ab791711624a2b69ea0efe400531a941bf1d7e1",
+          "mtimeNs": "1788935990192442381",
+          "bytes": 2360
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+          "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+          "mtimeNs": "1788935990504762087",
+          "bytes": 2319
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+          "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+          "mtimeNs": "1788935990502329582",
+          "bytes": 3102
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+          "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+          "mtimeNs": "1788935990517149695",
+          "bytes": 4278
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-source-size.mjs",
+          "sha256": "7c778ded235b6c885450e294fdd6d0766e640295d139dd6da241350bfa47692f",
+          "mtimeNs": "1788935990518133889",
+          "bytes": 4361
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-maintenance-source-size.mjs",
+          "sha256": "061ffe62ceb1eff85161d6377fbdfa644214b85203327b0b4b42118e2d171688",
+          "mtimeNs": "1788935990505981277",
+          "bytes": 5426
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-unused-internal-exports.mjs",
+          "sha256": "a2d6cbeac607d49d9bbba030a3b48f1b5579073b59e6fe0f484da9f37a3b5dd1",
+          "mtimeNs": "1788935990518665798",
+          "bytes": 7414
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/typescript/package.json",
+          "sha256": "9332e97c30d3e53ed54910b89207ed657fb444066484df6e5b6965bf130865e9",
+          "mtimeNs": "1788936289273217711",
+          "bytes": 3527
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/eslint/package.json",
+          "sha256": "6d8e41c2b8902fe6d6a0b7f52886c330ef8c415d98fdf1036276b7551cd3608e",
+          "mtimeNs": "1788936284901453692",
+          "bytes": 7225
+        }
+      ],
+      "postSources": [
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+          "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+          "mtimeNs": "1789376764850373547",
+          "bytes": 2145
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+          "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+          "mtimeNs": "1789376764849545251",
+          "bytes": 687
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+          "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+          "mtimeNs": "1789376764852101348",
+          "bytes": 1087
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+          "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+          "mtimeNs": "1789376816340683289",
+          "bytes": 713
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+          "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+          "mtimeNs": "1789378987522511513",
+          "bytes": 8035
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+          "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+          "mtimeNs": "1789379106798956838",
+          "bytes": 8462
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+          "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+          "mtimeNs": "1789379106800047253",
+          "bytes": 14545
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+          "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+          "mtimeNs": "1789378945041726554",
+          "bytes": 16338
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+          "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+          "mtimeNs": "1788935983012002560",
+          "bytes": 3535
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+          "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+          "mtimeNs": "1788935983730374125",
+          "bytes": 19913
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+          "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+          "mtimeNs": "1788935983717918934",
+          "bytes": 39012
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991",
+          "bytes": 11497
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/yarn.lock",
+          "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+          "mtimeNs": "1789007297916953519",
+          "bytes": 300528
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/vitest.config.ts",
+          "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+          "mtimeNs": "1788935990540016523",
+          "bytes": 333
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/vitest.config.ts",
+          "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+          "mtimeNs": "1788935983686664189",
+          "bytes": 710
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879",
+          "bytes": 1300
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335",
+          "bytes": 146
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/hcm-query-state.tsx",
+          "sha256": "b373c917d98042828964322de89d9c8792bd66849b1bcd1bd5382a91c746426b",
+          "mtimeNs": "1788935983034905262",
+          "bytes": 3314
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+          "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+          "mtimeNs": "1788935983069076131",
+          "bytes": 3311
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-instance.ts",
+          "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+          "mtimeNs": "1789378714720758289",
+          "bytes": 18168
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/product-surface-read-scope.ts",
+          "sha256": "9d88813d8ab122c0371ff739cb8f3ecc37e90e07b771ca1b922c1e5d9b787540",
+          "mtimeNs": "1788935990330507461",
+          "bytes": 470
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/vitest/package.json",
+          "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34",
+          "mtimeNs": "1788936289508405018",
+          "bytes": 5932
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/host_semaphore.py",
+          "sha256": "7e55dcbe122a47d799d03bb6b3750b5e4b926ed774ee5ede83a16475ff632a98",
+          "mtimeNs": "1789053706840031291",
+          "bytes": 6148
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/eslint.config.mjs",
+          "sha256": "2d19a25f026fce3f09f0a1498ab791711624a2b69ea0efe400531a941bf1d7e1",
+          "mtimeNs": "1788935990192442381",
+          "bytes": 2360
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+          "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+          "mtimeNs": "1788935990504762087",
+          "bytes": 2319
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+          "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+          "mtimeNs": "1788935990502329582",
+          "bytes": 3102
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+          "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+          "mtimeNs": "1788935990517149695",
+          "bytes": 4278
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-source-size.mjs",
+          "sha256": "7c778ded235b6c885450e294fdd6d0766e640295d139dd6da241350bfa47692f",
+          "mtimeNs": "1788935990518133889",
+          "bytes": 4361
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-maintenance-source-size.mjs",
+          "sha256": "061ffe62ceb1eff85161d6377fbdfa644214b85203327b0b4b42118e2d171688",
+          "mtimeNs": "1788935990505981277",
+          "bytes": 5426
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-unused-internal-exports.mjs",
+          "sha256": "a2d6cbeac607d49d9bbba030a3b48f1b5579073b59e6fe0f484da9f37a3b5dd1",
+          "mtimeNs": "1788935990518665798",
+          "bytes": 7414
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/typescript/package.json",
+          "sha256": "9332e97c30d3e53ed54910b89207ed657fb444066484df6e5b6965bf130865e9",
+          "mtimeNs": "1788936289273217711",
+          "bytes": 3527
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/eslint/package.json",
+          "sha256": "6d8e41c2b8902fe6d6a0b7f52886c330ef8c415d98fdf1036276b7551cd3608e",
+          "mtimeNs": "1788936284901453692",
+          "bytes": 7225
+        }
+      ],
+      "sourceStable": true,
+      "results": [
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/check-unused-internal-exports.mjs"
+          ],
+          "startedAt": "2026-09-14T09:52:24.097807+00:00",
+          "finishedAt": "2026-09-14T09:53:22.045291+00:00",
+          "durationSeconds": 57.95020908396691,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "cf12976bb3e1fa3714dcb6ad920d7a826feb144011bb6348fbaf533d7e91e509",
+            "bytes": 83,
+            "gzipBase64": "H4sIAAAAAAACEwtwDA5WyMwrSS3KS8xRSK0oyC8qKbZSMDYyMFBISU3OSSxKLMnMzytWSM5ITc5OTbFWMAGqSkwuUUjJTy7NTQXqTAEKJKcWgJRpFGvqcQEAIvcFgVMAAAA="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        }
+      ],
+      "canonicalApproval": false,
+      "native": false,
+      "limits": [
+        "Whole TypeScript compile and six structural checks plus focused payroll ESLint, not native PEP or all-module semantic readiness; mock-only targeted units are recorded separately."
+      ],
+      "hostLock": {
+        "schema": "dwp.hris.host-semaphore-receipt.v1",
+        "name": "hris-verification",
+        "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+        "requestedAt": "2026-09-14T09:52:24.083Z",
+        "acquiredAt": "2026-09-14T09:52:24.083Z",
+        "releasedAt": "2026-09-14T09:53:22.069Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      }
+    },
+    "collectedEightCommands": {
+      "status": "SCOPED_PAYROLL_REMEDIATION_COMPILE_AND_QUALITY_NOT_NATIVE_G3",
+      "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+      "nodeVersion": "v24.19.0",
+      "preSources": [
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+          "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+          "mtimeNs": "1789376764850373547",
+          "bytes": 2145
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+          "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+          "mtimeNs": "1789376764849545251",
+          "bytes": 687
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+          "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+          "mtimeNs": "1789376764852101348",
+          "bytes": 1087
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+          "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+          "mtimeNs": "1789376816340683289",
+          "bytes": 713
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+          "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+          "mtimeNs": "1789378987522511513",
+          "bytes": 8035
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+          "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+          "mtimeNs": "1789379106798956838",
+          "bytes": 8462
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+          "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+          "mtimeNs": "1789379106800047253",
+          "bytes": 14545
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+          "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+          "mtimeNs": "1789378945041726554",
+          "bytes": 16338
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+          "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+          "mtimeNs": "1788935983012002560",
+          "bytes": 3535
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+          "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+          "mtimeNs": "1788935983730374125",
+          "bytes": 19913
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+          "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+          "mtimeNs": "1788935983717918934",
+          "bytes": 39012
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991",
+          "bytes": 11497
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/yarn.lock",
+          "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+          "mtimeNs": "1789007297916953519",
+          "bytes": 300528
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/vitest.config.ts",
+          "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+          "mtimeNs": "1788935990540016523",
+          "bytes": 333
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/vitest.config.ts",
+          "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+          "mtimeNs": "1788935983686664189",
+          "bytes": 710
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879",
+          "bytes": 1300
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335",
+          "bytes": 146
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/hcm-query-state.tsx",
+          "sha256": "b373c917d98042828964322de89d9c8792bd66849b1bcd1bd5382a91c746426b",
+          "mtimeNs": "1788935983034905262",
+          "bytes": 3314
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+          "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+          "mtimeNs": "1788935983069076131",
+          "bytes": 3311
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-instance.ts",
+          "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+          "mtimeNs": "1789378714720758289",
+          "bytes": 18168
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/product-surface-read-scope.ts",
+          "sha256": "9d88813d8ab122c0371ff739cb8f3ecc37e90e07b771ca1b922c1e5d9b787540",
+          "mtimeNs": "1788935990330507461",
+          "bytes": 470
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/vitest/package.json",
+          "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34",
+          "mtimeNs": "1788936289508405018",
+          "bytes": 5932
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/host_semaphore.py",
+          "sha256": "7e55dcbe122a47d799d03bb6b3750b5e4b926ed774ee5ede83a16475ff632a98",
+          "mtimeNs": "1789053706840031291",
+          "bytes": 6148
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/eslint.config.mjs",
+          "sha256": "2d19a25f026fce3f09f0a1498ab791711624a2b69ea0efe400531a941bf1d7e1",
+          "mtimeNs": "1788935990192442381",
+          "bytes": 2360
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+          "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+          "mtimeNs": "1788935990504762087",
+          "bytes": 2319
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+          "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+          "mtimeNs": "1788935990502329582",
+          "bytes": 3102
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+          "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+          "mtimeNs": "1788935990517149695",
+          "bytes": 4278
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-source-size.mjs",
+          "sha256": "7c778ded235b6c885450e294fdd6d0766e640295d139dd6da241350bfa47692f",
+          "mtimeNs": "1788935990518133889",
+          "bytes": 4361
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-maintenance-source-size.mjs",
+          "sha256": "061ffe62ceb1eff85161d6377fbdfa644214b85203327b0b4b42118e2d171688",
+          "mtimeNs": "1788935990505981277",
+          "bytes": 5426
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-unused-internal-exports.mjs",
+          "sha256": "a2d6cbeac607d49d9bbba030a3b48f1b5579073b59e6fe0f484da9f37a3b5dd1",
+          "mtimeNs": "1788935990518665798",
+          "bytes": 7414
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/typescript/package.json",
+          "sha256": "9332e97c30d3e53ed54910b89207ed657fb444066484df6e5b6965bf130865e9",
+          "mtimeNs": "1788936289273217711",
+          "bytes": 3527
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/eslint/package.json",
+          "sha256": "6d8e41c2b8902fe6d6a0b7f52886c330ef8c415d98fdf1036276b7551cd3608e",
+          "mtimeNs": "1788936284901453692",
+          "bytes": 7225
+        }
+      ],
+      "postSources": [
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+          "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+          "mtimeNs": "1789376764850373547",
+          "bytes": 2145
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+          "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+          "mtimeNs": "1789376764849545251",
+          "bytes": 687
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+          "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+          "mtimeNs": "1789376764852101348",
+          "bytes": 1087
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+          "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+          "mtimeNs": "1789376816340683289",
+          "bytes": 713
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+          "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+          "mtimeNs": "1789378987522511513",
+          "bytes": 8035
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+          "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+          "mtimeNs": "1789379106798956838",
+          "bytes": 8462
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+          "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+          "mtimeNs": "1789379106800047253",
+          "bytes": 14545
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+          "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+          "mtimeNs": "1789378945041726554",
+          "bytes": 16338
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+          "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+          "mtimeNs": "1788935983012002560",
+          "bytes": 3535
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+          "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+          "mtimeNs": "1788935983730374125",
+          "bytes": 19913
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+          "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+          "mtimeNs": "1788935983717918934",
+          "bytes": 39012
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991",
+          "bytes": 11497
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/yarn.lock",
+          "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+          "mtimeNs": "1789007297916953519",
+          "bytes": 300528
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/vitest.config.ts",
+          "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+          "mtimeNs": "1788935990540016523",
+          "bytes": 333
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/vitest.config.ts",
+          "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+          "mtimeNs": "1788935983686664189",
+          "bytes": 710
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879",
+          "bytes": 1300
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335",
+          "bytes": 146
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/hcm-query-state.tsx",
+          "sha256": "b373c917d98042828964322de89d9c8792bd66849b1bcd1bd5382a91c746426b",
+          "mtimeNs": "1788935983034905262",
+          "bytes": 3314
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+          "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+          "mtimeNs": "1788935983069076131",
+          "bytes": 3311
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-instance.ts",
+          "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+          "mtimeNs": "1789378714720758289",
+          "bytes": 18168
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/product-surface-read-scope.ts",
+          "sha256": "9d88813d8ab122c0371ff739cb8f3ecc37e90e07b771ca1b922c1e5d9b787540",
+          "mtimeNs": "1788935990330507461",
+          "bytes": 470
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/vitest/package.json",
+          "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34",
+          "mtimeNs": "1788936289508405018",
+          "bytes": 5932
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/host_semaphore.py",
+          "sha256": "7e55dcbe122a47d799d03bb6b3750b5e4b926ed774ee5ede83a16475ff632a98",
+          "mtimeNs": "1789053706840031291",
+          "bytes": 6148
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/eslint.config.mjs",
+          "sha256": "2d19a25f026fce3f09f0a1498ab791711624a2b69ea0efe400531a941bf1d7e1",
+          "mtimeNs": "1788935990192442381",
+          "bytes": 2360
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+          "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+          "mtimeNs": "1788935990504762087",
+          "bytes": 2319
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+          "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+          "mtimeNs": "1788935990502329582",
+          "bytes": 3102
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+          "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+          "mtimeNs": "1788935990517149695",
+          "bytes": 4278
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-source-size.mjs",
+          "sha256": "7c778ded235b6c885450e294fdd6d0766e640295d139dd6da241350bfa47692f",
+          "mtimeNs": "1788935990518133889",
+          "bytes": 4361
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-maintenance-source-size.mjs",
+          "sha256": "061ffe62ceb1eff85161d6377fbdfa644214b85203327b0b4b42118e2d171688",
+          "mtimeNs": "1788935990505981277",
+          "bytes": 5426
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-unused-internal-exports.mjs",
+          "sha256": "a2d6cbeac607d49d9bbba030a3b48f1b5579073b59e6fe0f484da9f37a3b5dd1",
+          "mtimeNs": "1788935990518665798",
+          "bytes": 7414
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/typescript/package.json",
+          "sha256": "9332e97c30d3e53ed54910b89207ed657fb444066484df6e5b6965bf130865e9",
+          "mtimeNs": "1788936289273217711",
+          "bytes": 3527
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/eslint/package.json",
+          "sha256": "6d8e41c2b8902fe6d6a0b7f52886c330ef8c415d98fdf1036276b7551cd3608e",
+          "mtimeNs": "1788936284901453692",
+          "bytes": 7225
+        }
+      ],
+      "sourceStable": true,
+      "results": [
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit"
+          ],
+          "startedAt": "2026-09-14T09:54:12.801455+00:00",
+          "finishedAt": "2026-09-14T09:54:26.584027+00:00",
+          "durationSeconds": 13.783827917010058,
+          "exitCode": 1,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "573f643d6dbcc2776a7c08c71ac4c8430e118dc5d7f0584ce681d8b2e04514ee",
+            "bytes": 621,
+            "gzipBase64": "H4sIAAAAAAACE8VSMU7DQBDs84rpnEiOoySiwAkpoIECCUE6RHGx1+SUy611eya2gL+zdkLDB6jOe56ZnRmdszuZyd4EKqdNtE6HUMxMa1mmgaRmLzR1tqKiKxxlkSRmUcbLeTpfTHJQCBywfVksrxY57th/UBDLHlwhdjUh+cRrm0NisP79LYdvjjsK+EIMDelxT6ZUin49cnFYjye42eAp8NEKrc8s/XfreLfZrMCHfCCuVNDERn71VtifdfJfwRW+E0S+mHi+JElwNB12BANdEM2BdChMIwRPNu7V2UCQpqpsYclH14E1kzO14KQIKAjcIzM8aMa91XsjsD4qWpMbl6IYeogDltpaexw6UTtJ4w+eTz5BZYNWOQK2/16TRlAd6TV6xxU7x6d+qgPXmsOSoNJdf8vMoa/GBioilell1ZbamA7AFE3QLowvcY0jB8pGP0aEiEBtAgAA"
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        },
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/check-feature-boundaries.mjs"
+          ],
+          "startedAt": "2026-09-14T09:54:26.584989+00:00",
+          "finishedAt": "2026-09-14T09:54:27.099729+00:00",
+          "durationSeconds": 0.5149647909565829,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "4e753d5a8b955819d014f9ecbb163ce7c53a6f1ec7b21e2790710e577f9f26b7",
+            "bytes": 89,
+            "gzipBase64": "H4sIAAAAAAACEwtwDA5WSEtNLCktSlVIyi/NS0ksykwttlIoKMpPKU0ugckVK6TkK+Tllyhk5hbkF5UoFGcm5WTmpcO1AoVzUnNT80oSSzLz84r1uAA8RV1mWQAAAA=="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        },
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/check-api-boundaries.mjs"
+          ],
+          "startedAt": "2026-09-14T09:54:27.100034+00:00",
+          "finishedAt": "2026-09-14T09:54:28.140928+00:00",
+          "durationSeconds": 1.0410204160143621,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "d520521f4a90c08e7db0b01dcd281522b81269d842c8d23594c513ca3521925b",
+            "bytes": 93,
+            "gzipBase64": "H4sIAAAAAAACEw3KMQ5AQBAF0N4pfq2g16lEJ3GCYQeTrFmZnY1werpXvKmfZ/TTiCUVDWTCucNmSZ01wIq6nIyVYswg+8XqRlFeDvDDUtkPDOR804OWLmnrGmuUf+Wm+gCRCfEbXQAAAA=="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        },
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/check-relative-import-cycles.mjs"
+          ],
+          "startedAt": "2026-09-14T09:54:28.141243+00:00",
+          "finishedAt": "2026-09-14T09:54:30.906353+00:00",
+          "durationSeconds": 2.7653272909810767,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "4cfb904c36709b49f88c3eec153ba0b18096dc47d30e54e60fd5a1764e668627",
+            "bytes": 62,
+            "gzipBase64": "H4sIAAAAAAACEwtwDA5WKErNSSzJLEtVyMwtyC8qUUiuTM5JLbZSMDQxtlAoKMpPKU0uyczPU8gFsoASCskZqcnZqSl6XADjeeaVPgAAAA=="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        },
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/check-source-size.mjs"
+          ],
+          "startedAt": "2026-09-14T09:54:30.906641+00:00",
+          "finishedAt": "2026-09-14T09:54:31.721291+00:00",
+          "durationSeconds": 0.8147336249821819,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "a08a354b9049ae0897a6ad36baab635ce3ad8b293698b9f07eb49f3ff8687474",
+            "bytes": 123,
+            "gzipBase64": "H4sIAAAAAAACEy2LMQ7CMBAEe16xJRQgJ0IUUPEDpLwg3C3hhLGRzxaI10MQ5WhmTsdhgOdWhGu3N3FuOrHu0Yd+h0fJ2qRaTrhYpEOulBv1gC0mJpaxUn9q6SvwJbHpbBOf/2EsRLS7zV3N6EIIX070zeID12kcRXsAAAA="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        },
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/check-maintenance-source-size.mjs"
+          ],
+          "startedAt": "2026-09-14T09:54:31.721437+00:00",
+          "finishedAt": "2026-09-14T09:54:32.211529+00:00",
+          "durationSeconds": 0.49017991696018726,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "c7a72e7d7f95f335b0fc89cca2487f48bb930e910d3ca59e1b2bb64e065865c0",
+            "bytes": 133,
+            "gzipBase64": "H4sIAAAAAAACEy3LOw7CMBAFwJ5TvBIKwFEKJFJxA6ScwFk/goWzRtmN+JyeFJRTzPXS95hiVqdGFcLqMgv3lr/EsKSRfkbbnOA0P3qtBbdcaJA75cHUoWnBdxRH4Rjls0L49Fx1a7sOytc/xJkoecrOBK9oQgirlXbY/ADe4bYmhQAAAA=="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        },
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/check-unused-internal-exports.mjs"
+          ],
+          "startedAt": "2026-09-14T09:54:32.211674+00:00",
+          "finishedAt": "2026-09-14T09:55:09.551177+00:00",
+          "durationSeconds": 37.34107354102889,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 90,
+          "stdoutArchive": {
+            "sha256": "cf12976bb3e1fa3714dcb6ad920d7a826feb144011bb6348fbaf533d7e91e509",
+            "bytes": 83,
+            "gzipBase64": "H4sIAAAAAAACEwtwDA5WyMwrSS3KS8xRSK0oyC8qKbZSMDYyMFBISU3OSSxKLMnMzytWSM5ITc5OTbFWMAGqSkwuUUjJTy7NTQXqTAEKJKcWgJRpFGvqcQEAIvcFgVMAAAA="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        },
+        {
+          "argv": [
+            "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "node_modules/eslint/bin/eslint.js",
+            "apps/dwp/src/features/hris/payroll"
+          ],
+          "startedAt": "2026-09-14T09:55:09.551461+00:00",
+          "finishedAt": "2026-09-14T09:55:11.005187+00:00",
+          "durationSeconds": 1.4538116250187159,
+          "exitCode": 0,
+          "timedOut": false,
+          "timeoutSeconds": 60,
+          "stdoutArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          },
+          "stderrArchive": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+          }
+        }
+      ],
+      "canonicalApproval": false,
+      "native": false,
+      "limits": [
+        "Whole TypeScript compile and six structural checks plus focused payroll ESLint, not native PEP or all-module semantic readiness; mock-only targeted units are recorded separately."
+      ],
+      "hostLock": {
+        "schema": "dwp.hris.host-semaphore-receipt.v1",
+        "name": "hris-verification",
+        "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+        "requestedAt": "2026-09-14T09:54:12.779Z",
+        "acquiredAt": "2026-09-14T09:54:12.780Z",
+        "releasedAt": "2026-09-14T09:55:11.012Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      }
+    },
+    "overallPassed": false,
+    "compilationFailure": {
+      "file": "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+      "line": 31,
+      "code": "TS2352",
+      "selector": "response fixture object assertion `as Response`",
+      "owner": "Parent shared-transport task",
+      "minimalCorrection": "Type assertion through unknown for explicit incomplete Response fake; do not change runtime expectations or transport permission rules.",
+      "ourSourceEdits": 0,
+      "successorCompileReplay": "OPEN_PENDING_PARENT_FIX_AND_FRESH_REPLAY"
+    },
+    "collectorBudgetJustification": "Rules/script/semaphore/allowlist untouched. Initial private wrapper60 expired; same60 standalone passed in57.950209s. Subsequent private collector timeout90 only for unused-exports (actual37.341074s), others60. Seven quality exit0; tsc exit1 preserved, no eight-pass claim."
+  },
+  "preservedFrozenIndependentAudit": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-real-layer-independent-review-2026-09-14.json",
+      "sha256": "3fb650601ea3b1999d9b237c9fcb3af9c8673d0184242588c5cae939538aaba9",
+      "mtimeNs": "1789378571350098077",
+      "bytes": 150400
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-real-layer-independent-review-2026-09-14.md",
+      "sha256": "4ddbd1dc860f5e257759e15f67b3cca8649cb99cdfe36f0f90f52495c67f597a",
+      "mtimeNs": "1789378419081657988",
+      "bytes": 5840
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-real-layer-independent-counterexamples-2026-09-14.cjs",
+      "sha256": "50ce43bbb0c5c18bbdff36ed14ae0b08b7ae4969eaa7dd8cd6afdd6c2c74c96a",
+      "mtimeNs": "1789378184220307665",
+      "bytes": 14496
+    }
+  ],
+  "sourceSnapshot": {
+    "capturedAt": "2026-09-14T09:54:30.150836+00:00",
+    "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+    "sources": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+        "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+        "mtimeNs": "1789376764850373547",
+        "bytes": 2145,
+        "lines": 60,
+        "utf8": "import { afterEach, describe, expect, it, vi } from 'vitest';\nimport { resetCsrfToken } from '@dwp-frontend/shared-utils/axios-instance';\nimport { HttpTransportError } from '@dwp-frontend/shared-utils';\n\nimport { getHrisPayrollWorkspace } from './payroll-api';\n\nfunction jsonResponse(data: unknown): Response {\n  return {\n    ok: true,\n    status: 200,\n    text: async () => JSON.stringify({ data }),\n  } as Response;\n}\n\ndescribe('getHrisPayrollWorkspace', () => {\n  afterEach(() => {\n    resetCsrfToken();\n    vi.unstubAllGlobals();\n  });\n\n  it('binds the personal HR scope to the Gateway GET', async () => {\n    const response = { employee: { personId: 'person-1' }, statements: [] };\n    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(response));\n    vi.stubGlobal('fetch', fetchMock);\n    const controller = new AbortController();\n\n    await expect(\n      getHrisPayrollWorkspace('scope:hcm/personal-pay', controller.signal)\n    ).resolves.toEqual(response);\n\n    expect(fetchMock).toHaveBeenCalledOnce();\n    expect(fetchMock.mock.calls[0]?.[0]).toBe(\n      '/api/people/v1/hr/pay?contextScopeKey=scope%3Ahcm%2Fpersonal-pay'\n    );\n    expect((fetchMock.mock.calls[0]?.[1] as RequestInit).signal).toBeInstanceOf(AbortSignal);\n  });\n\n  it('propagates React Query cancellation to the active Gateway request', async () => {\n    const fetchMock = vi.fn(\n      (_url: string, init?: RequestInit) =>\n        new Promise<Response>((_resolve, reject) => {\n          init?.signal?.addEventListener('abort', () => {\n            reject(new DOMException('The operation was aborted.', 'AbortError'));\n          });\n        })\n    );\n    vi.stubGlobal('fetch', fetchMock);\n    const controller = new AbortController();\n\n    const request = getHrisPayrollWorkspace('scope:hcm/personal-pay', controller.signal).then(\n      () => undefined,\n      (error: unknown) => error\n    );\n    controller.abort('scope-changed');\n\n    await expect(request).resolves.toEqual(expect.any(HttpTransportError));\n    await expect(request).resolves.toMatchObject({ reason: 'ABORT' });\n    expect(fetchMock.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);\n  });\n});\n"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+        "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+        "mtimeNs": "1789376764849545251",
+        "bytes": 687,
+        "lines": 17,
+        "utf8": "import { axiosInstance } from '@dwp-frontend/shared-utils/axios-instance';\nimport { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/product-surface-read-scope';\n\nimport type { ApiResponse, HrPayWorkspace } from '@dwp-frontend/shared-utils';\n\nexport const HRIS_PAYROLL_WORKSPACE_API_PATH = '/api/people/v1/hr/pay' as const;\n\nexport async function getHrisPayrollWorkspace(\n  contextScopeKey: string | undefined,\n  signal: AbortSignal\n): Promise<HrPayWorkspace> {\n  const response = await axiosInstance.get<ApiResponse<HrPayWorkspace>>(\n    HRIS_PAYROLL_WORKSPACE_API_PATH,\n    productSurfaceReadScopeConfig(contextScopeKey, signal)\n  );\n  return response.data.data;\n}\n"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+        "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+        "mtimeNs": "1789376764852101348",
+        "bytes": 1087,
+        "lines": 32,
+        "utf8": "import { useQuery } from '@tanstack/react-query';\n\nimport { useProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';\nimport { getHrisPayrollWorkspace } from '../api/payroll-api';\nimport { buildPayrollSelfServiceModel } from '../model/payroll-self-service-model';\n\nexport function useHrisPayrollWorkspace() {\n  const requestScope = useProductSurfaceRequestScope({\n    productKey: 'hcm',\n    surfaceKey: 'hcm.personal',\n  });\n  const query = useQuery({\n    queryKey: ['hcm', 'pay', ...requestScope.cacheKey],\n    queryFn: async ({ signal }) => {\n      const source = await getHrisPayrollWorkspace(requestScope.contextScopeKey, signal);\n      return buildPayrollSelfServiceModel(source);\n    },\n    enabled: requestScope.ready,\n    meta: requestScope.queryMeta,\n    staleTime: 60_000,\n  });\n\n  return {\n    ready: requestScope.ready,\n    authorityKey: JSON.stringify(requestScope.cacheKey),\n    model: query.data,\n    isLoading: query.isLoading,\n    isFetching: query.isFetching,\n    error: query.error,\n    retry: () => void query.refetch(),\n  };\n}\n"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/index.ts",
+        "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+        "mtimeNs": "1789376816340683289",
+        "bytes": 713,
+        "lines": 21,
+        "utf8": "export {\n  HrisPayrollWorkspace,\n  type HrisPayrollWorkspaceProps,\n} from './pages/hris-payroll-workspace';\nexport { default } from './pages/hris-payroll-workspace';\nexport { getHrisPayrollWorkspace, HRIS_PAYROLL_WORKSPACE_API_PATH } from './api/payroll-api';\nexport {\n  HRIS_PAYROLL_ROUTE,\n  PAYROLL_SELF_SERVICE_CONTRACT,\n  buildPayrollSelfServiceModel,\n  normalizePayrollStatementAvailability,\n  toPayrollStatementModel,\n  type PayrollSelfServiceModel,\n  type PayrollDataOrigin,\n  type PayrollCycleModel,\n  type PayrollStatementSource,\n  type PayrollWorkspaceSource,\n  type PayrollStatementAccess,\n  type PayrollStatementAvailability,\n  type PayrollStatementModel,\n} from './model/payroll-self-service-model';\n"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+        "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+        "mtimeNs": "1789378987522511513",
+        "bytes": 8035,
+        "lines": 215,
+        "utf8": "import { describe, expect, it } from 'vitest';\n\nimport {\n  PAYROLL_SELF_SERVICE_CONTRACT,\n  buildPayrollSelfServiceModel,\n  normalizePayrollStatementAvailability,\n  toPayrollStatementModel,\n} from './payroll-self-service-model';\n\nimport type { PayrollStatementSource, PayrollWorkspaceSource } from './payroll-self-service-model';\n\nfunction workspace(overrides: Partial<PayrollWorkspaceSource> = {}): PayrollWorkspaceSource {\n  return {\n    nextCycle: {\n      payCycleId: 'cycle-1',\n      name: 'September payroll',\n      periodStart: '2026-09-01',\n      periodEnd: '2026-09-30',\n      payDate: '2026-09-25',\n      status: 'OPEN',\n      timeValidated: true,\n      absenceValidated: false,\n      sourceConfirmed: true,\n      dataOrigin: 'SOURCE',\n    },\n    statements: [],\n    monetaryDataRedacted: true,\n    ...overrides,\n  };\n}\n\nfunction statement(overrides: Partial<PayrollStatementSource> = {}): PayrollStatementSource {\n  return {\n    statementId: 'statement-1',\n    periodLabel: 'August 2026',\n    availabilityState: 'AVAILABLE',\n    publishedAt: '2026-08-25T00:00:00Z',\n    downloadable: true,\n    ...overrides,\n  };\n}\n\ndescribe('PAYROLL_SELF_SERVICE_CONTRACT', () => {\n  it('keeps the personal pay anchor outside payroll calculation and payment execution', () => {\n    expect(PAYROLL_SELF_SERVICE_CONTRACT).toMatchObject({\n      route: '/hr/pay',\n      primaryUser: 'EMPLOYEE',\n      primaryAction: 'DOWNLOAD_AVAILABLE_SOURCE_STATEMENT',\n      calculatesPayroll: false,\n      confirmsPayroll: false,\n      initiatesPayment: false,\n      displaysMonetaryValues: false,\n    });\n  });\n});\n\ndescribe('buildPayrollSelfServiceModel', () => {\n  it('exposes reference provenance, source confirmation and redaction without inventing values', () => {\n    const model = buildPayrollSelfServiceModel(\n      workspace({\n        nextCycle: {\n          ...workspace().nextCycle!,\n          dataOrigin: 'REFERENCE',\n          sourceConfirmed: false,\n        },\n        monetaryDataRedacted: false,\n      })\n    );\n\n    expect(model).toMatchObject({\n      dataOrigin: 'REFERENCE',\n      containsReferenceData: true,\n      sourceConfirmed: false,\n      monetaryDataRedacted: false,\n    });\n  });\n\n  it('reports an empty anchor only when neither cycle nor statement exists', () => {\n    expect(buildPayrollSelfServiceModel(workspace({ nextCycle: null })).empty).toBe(true);\n    expect(\n      buildPayrollSelfServiceModel(workspace({ nextCycle: null, statements: [statement()] })).empty\n    ).toBe(false);\n  });\n\n  it('projects only declared cycle fields and does not retain source objects or sensitive extras', () => {\n    const source = workspace();\n    const cycle = { ...source.nextCycle!, bankAccount: 'must-not-reach-ui', grossAmount: 12345 };\n    const model = buildPayrollSelfServiceModel({ ...source, nextCycle: cycle });\n\n    expect(model.nextCycle).not.toBe(cycle);\n    expect(model.nextCycle).toEqual(source.nextCycle);\n    expect(model.nextCycle).not.toHaveProperty('bankAccount');\n    expect(model.nextCycle).not.toHaveProperty('grossAmount');\n    cycle.name = 'Changed source after projection';\n    expect(model.nextCycle?.name).toBe('September payroll');\n  });\n\n  it.each([\n    ['monetaryDataRedacted', 'false'],\n    ['statements', null],\n    ['statements', {}],\n    ['nextCycle', false],\n  ])('rejects malformed workspace field %s=%j before projection', (field, value) => {\n    const source = { ...workspace(), [field]: value } as unknown as PayrollWorkspaceSource;\n    expect(() => buildPayrollSelfServiceModel(source)).toThrow(/Invalid payroll source/);\n  });\n\n  it.each([\n    ['payCycleId', ''],\n    ['payCycleId', ' cycle-1'],\n    ['payCycleId', 'cycle\\n1'],\n    ['name', { secret: 'must-not-reach-ui' }],\n    ['status', 1],\n    ['timeValidated', 'false'],\n    ['absenceValidated', 0],\n    ['sourceConfirmed', {}],\n    ['dataOrigin', 'CUSTOM'],\n    ['periodStart', '2026-02-30'],\n    ['periodEnd', '2026-13-01'],\n    ['payDate', 'not-a-date'],\n  ])('rejects malformed cycle field %s=%j before projection', (field, value) => {\n    const source = workspace({\n      nextCycle: { ...workspace().nextCycle!, [field]: value },\n    } as unknown as Partial<PayrollWorkspaceSource>);\n    expect(() => buildPayrollSelfServiceModel(source)).toThrow(/Invalid payroll source/);\n  });\n\n  it('rejects reversed periods, sparse lists and colliding statement identities', () => {\n    expect(() => buildPayrollSelfServiceModel(workspace({ nextCycle: {\n      ...workspace().nextCycle!, periodStart: '2026-10-01',\n    } }))).toThrow(/Invalid payroll source/);\n    expect(() => buildPayrollSelfServiceModel(workspace({ statements: new Array(1) })))\n      .toThrow(/Invalid payroll source/);\n    expect(() => buildPayrollSelfServiceModel(workspace({ statements: [statement(), statement()] })))\n      .toThrow(/Invalid payroll source/);\n  });\n\n  it('does not echo rejected source values or accept nested source references', () => {\n    const source = workspace({ nextCycle: {\n      ...workspace().nextCycle!, name: { secret: 'sensitive-value' },\n    } } as unknown as Partial<PayrollWorkspaceSource>);\n    expect(() => buildPayrollSelfServiceModel(source)).toThrow('Invalid payroll source: nextCycle.name');\n    expect(() => buildPayrollSelfServiceModel(source)).not.toThrow(/sensitive-value/);\n  });\n});\n\ndescribe('pay statement availability', () => {\n  it.each([\n    [' available ', 'AVAILABLE'],\n    ['PENDING', 'PENDING'],\n    ['withheld', 'WITHHELD'],\n    ['RETIRED', 'RETIRED'],\n    ['PUBLISHED', 'UNKNOWN'],\n    ['', 'UNKNOWN'],\n  ] as const)('normalizes %j conservatively to %s', (source, expected) => {\n    expect(normalizePayrollStatementAvailability(source)).toBe(expected);\n  });\n\n  it('requires both AVAILABLE state and the source download flag', () => {\n    expect(toPayrollStatementModel(statement()).access).toBe('DOWNLOADABLE');\n    expect(toPayrollStatementModel(statement({ downloadable: false })).access).toBe(\n      'DOWNLOAD_NOT_GRANTED'\n    );\n    expect(\n      toPayrollStatementModel(statement({ availabilityState: 'WITHHELD', downloadable: true }))\n    ).toMatchObject({\n      availability: 'WITHHELD',\n      sourceAvailability: 'WITHHELD',\n      sourceDownloadable: false,\n      access: 'NOT_AVAILABLE',\n    });\n  });\n\n  it('preserves an unknown source value for truthful display', () => {\n    expect(\n      toPayrollStatementModel(statement({ availabilityState: 'SOURCE_DELAYED' }))\n    ).toMatchObject({\n      availability: 'UNKNOWN',\n      sourceAvailability: 'SOURCE_DELAYED',\n      sourceDownloadable: false,\n    });\n  });\n\n  it.each([\n    ['statementId', ''],\n    ['statementId', ' statement-1'],\n    ['periodLabel', {}],\n    ['availabilityState', 7],\n    ['downloadable', 'false'],\n    ['downloadable', 1],\n    ['publishedAt', '2026-02-30T00:00:00Z'],\n    ['publishedAt', '2026-08-25'],\n    ['publishedAt', '2026-08-25T24:00:00Z'],\n  ])('rejects malformed statement field %s=%j without coercion', (field, value) => {\n    const source = { ...statement(), [field]: value } as unknown as PayrollStatementSource;\n    expect(() => toPayrollStatementModel(source)).toThrow(/Invalid payroll source/);\n  });\n\n  it('accepts calendar-valid leap dates, explicit offsets and fractional publication instants', () => {\n    expect(buildPayrollSelfServiceModel(workspace({ nextCycle: {\n      ...workspace().nextCycle!, periodStart: '2024-02-01', periodEnd: '2024-02-29',\n      payDate: '2024-02-15',\n    } })).nextCycle?.periodEnd).toBe('2024-02-29');\n    expect(toPayrollStatementModel(statement({\n      publishedAt: '2026-08-25T09:30:00.123456789+09:00',\n    })).publishedAt).toBe('2026-08-25T09:30:00.123456789+09:00');\n    expect(toPayrollStatementModel(statement({ publishedAt: null })).publishedAt).toBeNull();\n    expect(toPayrollStatementModel(statement({ publishedAt: undefined })).publishedAt).toBeNull();\n  });\n\n  it('rejects non-string availability through its public normalizer', () => {\n    expect(() => normalizePayrollStatementAvailability(7 as unknown as string))\n      .toThrow(/Invalid payroll source/);\n  });\n});\n"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+        "relativePath": "apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+        "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+        "mtimeNs": "1789379106798956838",
+        "bytes": 8462,
+        "lines": 233,
+        "utf8": "// Domain projection inputs deliberately exclude the employee and monetary transport payload.\n// API/hook adapters may supply structurally compatible source values; UI only receives the model.\nexport type PayrollDataOrigin = 'SOURCE' | 'MANUAL' | 'REFERENCE' | 'MIXED' | 'NONE' | 'UNKNOWN';\n\nexport type PayrollCycleModel = {\n  payCycleId: string;\n  name: string;\n  periodStart: string;\n  periodEnd: string;\n  payDate: string;\n  status: string;\n  timeValidated: boolean;\n  absenceValidated: boolean;\n  sourceConfirmed: boolean;\n  dataOrigin: PayrollDataOrigin;\n};\n\nexport type PayrollStatementSource = {\n  statementId: string;\n  periodLabel: string;\n  availabilityState: string;\n  publishedAt?: string | null;\n  downloadable: boolean;\n};\n\nexport type PayrollWorkspaceSource = {\n  nextCycle?: PayrollCycleModel | null;\n  statements: PayrollStatementSource[];\n  monetaryDataRedacted: boolean;\n};\n\nexport const HRIS_PAYROLL_ROUTE = '/hr/pay' as const;\n\nexport const PAYROLL_SELF_SERVICE_CONTRACT = {\n  route: HRIS_PAYROLL_ROUTE,\n  primaryUser: 'EMPLOYEE',\n  operationalQuestion: 'Which pay statements has the secure payroll source made available to me?',\n  primaryAction: 'DOWNLOAD_AVAILABLE_SOURCE_STATEMENT',\n  pageArchetype: 'LIST_DETAIL',\n  calculatesPayroll: false,\n  confirmsPayroll: false,\n  initiatesPayment: false,\n  displaysMonetaryValues: false,\n} as const;\n\nexport type PayrollStatementAvailability =\n  'AVAILABLE' | 'PENDING' | 'WITHHELD' | 'RETIRED' | 'UNKNOWN';\n\nexport type PayrollStatementAccess = 'DOWNLOADABLE' | 'DOWNLOAD_NOT_GRANTED' | 'NOT_AVAILABLE';\n\nexport type PayrollStatementModel = {\n  statementId: string;\n  periodLabel: string;\n  availability: PayrollStatementAvailability;\n  sourceAvailability: string;\n  publishedAt: string | null;\n  sourceDownloadable: boolean;\n  access: PayrollStatementAccess;\n};\n\nexport type PayrollSelfServiceModel = {\n  dataOrigin: PayrollDataOrigin;\n  containsReferenceData: boolean;\n  sourceConfirmed: boolean | null;\n  monetaryDataRedacted: boolean;\n  nextCycle: PayrollCycleModel | null | undefined;\n  statements: PayrollStatementModel[];\n  empty: boolean;\n};\n\nconst KNOWN_AVAILABILITY = new Set<PayrollStatementAvailability>([\n  'AVAILABLE',\n  'PENDING',\n  'WITHHELD',\n  'RETIRED',\n]);\n\nconst DATA_ORIGINS = new Set<PayrollDataOrigin>([\n  'SOURCE', 'MANUAL', 'REFERENCE', 'MIXED', 'NONE', 'UNKNOWN',\n]);\n\nfunction invalidSource(path: string): never {\n  // Field paths only: rejected payroll/employee values must not reach error feedback.\n  throw new Error(`Invalid payroll source: ${path}`);\n}\n\nfunction record(value: unknown, path: string): Record<string, unknown> {\n  if (typeof value !== 'object' || value === null || Array.isArray(value)) invalidSource(path);\n  return value as Record<string, unknown>;\n}\n\nfunction text(value: unknown, path: string, allowEmpty = false): string {\n  if (\n    typeof value !== 'string' ||\n    (!allowEmpty && !value.trim()) ||\n    Array.from(value).some(\n      (character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127\n    )\n  ) {\n    invalidSource(path);\n  }\n  return value;\n}\n\nfunction identifier(value: unknown, path: string): string {\n  const result = text(value, path);\n  // Existing owner IDs are opaque strings, not newly invented UUIDs or coerced business keys.\n  if (/\\s/.test(result)) invalidSource(path);\n  return result;\n}\n\nfunction boolean(value: unknown, path: string): boolean {\n  if (typeof value !== 'boolean') invalidSource(path);\n  return value;\n}\n\nfunction civilDate(value: unknown, path: string): string {\n  const result = text(value, path);\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(result)) invalidSource(path);\n  const [year, month, day] = result.split('-').map(Number);\n  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);\n  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n  if (year < 1 || month < 1 || month > 12 || day < 1 || day > days[month - 1]) {\n    invalidSource(path);\n  }\n  return result;\n}\n\nfunction publicationInstant(value: unknown, path: string): string | null {\n  if (value === null || value === undefined) return null;\n  const result = text(value, path);\n  const match = /^(\\d{4}-\\d{2}-\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.\\d{1,9})?(Z|[+-](\\d{2}):(\\d{2}))$/.exec(result);\n  if (!match) invalidSource(path);\n  civilDate(match[1], path);\n  if (\n    Number(match[2]) > 23 || Number(match[3]) > 59 || Number(match[4]) > 59 ||\n    (match[6] !== undefined && (Number(match[6]) > 23 || Number(match[7]) > 59)) ||\n    !Number.isFinite(Date.parse(result))\n  ) {\n    invalidSource(path);\n  }\n  return result;\n}\n\nfunction projectCycle(value: unknown): PayrollCycleModel | null | undefined {\n  if (value === null || value === undefined) return value;\n  const source = record(value, 'nextCycle');\n  const periodStart = civilDate(source.periodStart, 'nextCycle.periodStart');\n  const periodEnd = civilDate(source.periodEnd, 'nextCycle.periodEnd');\n  if (periodEnd < periodStart) invalidSource('nextCycle.periodEnd');\n  const dataOrigin = text(source.dataOrigin, 'nextCycle.dataOrigin');\n  if (!DATA_ORIGINS.has(dataOrigin as PayrollDataOrigin)) invalidSource('nextCycle.dataOrigin');\n  return {\n    payCycleId: identifier(source.payCycleId, 'nextCycle.payCycleId'),\n    name: text(source.name, 'nextCycle.name'),\n    periodStart,\n    periodEnd,\n    // A source may pay before or after a period ends; no company-specific timing rule is invented.\n    payDate: civilDate(source.payDate, 'nextCycle.payDate'),\n    status: text(source.status, 'nextCycle.status'),\n    timeValidated: boolean(source.timeValidated, 'nextCycle.timeValidated'),\n    absenceValidated: boolean(source.absenceValidated, 'nextCycle.absenceValidated'),\n    sourceConfirmed: boolean(source.sourceConfirmed, 'nextCycle.sourceConfirmed'),\n    dataOrigin: dataOrigin as PayrollDataOrigin,\n  };\n}\n\nexport function normalizePayrollStatementAvailability(\n  availabilityState: string\n): PayrollStatementAvailability {\n  const normalized = text(availabilityState, 'availabilityState', true).trim().toUpperCase();\n  return KNOWN_AVAILABILITY.has(normalized as PayrollStatementAvailability)\n    ? (normalized as PayrollStatementAvailability)\n    : 'UNKNOWN';\n}\n\nexport function toPayrollStatementModel(statement: PayrollStatementSource): PayrollStatementModel {\n  return projectStatement(statement, 'statement');\n}\n\nfunction projectStatement(value: unknown, path: string): PayrollStatementModel {\n  const source = record(value, path);\n  const statementId = identifier(source.statementId, `${path}.statementId`);\n  const periodLabel = text(source.periodLabel, `${path}.periodLabel`);\n  const availabilityState = text(source.availabilityState, `${path}.availabilityState`, true);\n  const downloadable = boolean(source.downloadable, `${path}.downloadable`);\n  const publishedAt = publicationInstant(source.publishedAt, `${path}.publishedAt`);\n  const availability = normalizePayrollStatementAvailability(availabilityState);\n  const sourceDownloadable = availability === 'AVAILABLE' && downloadable;\n  const access: PayrollStatementAccess =\n    availability !== 'AVAILABLE'\n      ? 'NOT_AVAILABLE'\n      : sourceDownloadable\n        ? 'DOWNLOADABLE'\n        : 'DOWNLOAD_NOT_GRANTED';\n\n  return {\n    statementId,\n    periodLabel,\n    availability,\n    sourceAvailability: availabilityState || 'UNKNOWN',\n    publishedAt,\n    sourceDownloadable,\n    access,\n  };\n}\n\nexport function buildPayrollSelfServiceModel(\n  workspace: PayrollWorkspaceSource\n): PayrollSelfServiceModel {\n  const source = record(workspace, 'workspace');\n  const monetaryDataRedacted = boolean(source.monetaryDataRedacted, 'monetaryDataRedacted');\n  const nextCycle = projectCycle(source.nextCycle);\n  if (!Array.isArray(source.statements)) invalidSource('statements');\n  const statementIds = new Set<string>();\n  const statements = Array.from(source.statements, (item, index) => {\n    const projected = projectStatement(item, `statements[${index}]`);\n    if (statementIds.has(projected.statementId)) invalidSource(`statements[${index}].statementId`);\n    statementIds.add(projected.statementId);\n    return projected;\n  });\n  const dataOrigin = nextCycle?.dataOrigin ?? 'NONE';\n\n  return {\n    dataOrigin,\n    containsReferenceData: dataOrigin === 'REFERENCE' || dataOrigin === 'MIXED',\n    sourceConfirmed: nextCycle?.sourceConfirmed ?? null,\n    monetaryDataRedacted,\n    nextCycle,\n    statements,\n    empty: !nextCycle && statements.length === 0,\n  };\n}\n"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+        "relativePath": "apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+        "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+        "mtimeNs": "1789379106800047253",
+        "bytes": 14545,
+        "lines": 364,
+        "utf8": "import { useEffect, useRef, useState } from 'react';\nimport { useTranslation } from 'react-i18next';\nimport { Download, FileLock2, ReceiptText, ShieldCheck } from 'lucide-react';\nimport {\n  ActionButton,\n  EmptyState,\n  InlineFeedback,\n  SectionHeader,\n} from '@dwp-frontend/design-system';\nimport { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';\n\nimport Box from '@mui/material/Box';\nimport Chip from '@mui/material/Chip';\nimport Divider from '@mui/material/Divider';\nimport Paper from '@mui/material/Paper';\nimport Stack from '@mui/material/Stack';\nimport Typography from '@mui/material/Typography';\n\nimport { HcmQueryState } from '../../../../components/hcm-query-state';\nimport { useHrisPayrollWorkspace } from '../hooks/use-hris-payroll-workspace';\n\nimport type { PayrollSelfServiceModel } from '../model/payroll-self-service-model';\n\nconst PAYROLL_COPY = {\n  en: {\n    boundaryTitle: 'Read-only payroll source view',\n    boundaryDescription:\n      'This page does not calculate payroll, confirm payroll results, or initiate payment. It only shows status and secure statement references supplied by the payroll source.',\n    sourceTitle: 'Source and privacy',\n    sourceDescription: 'Provenance and monetary-data handling reported by the source.',\n    dataOrigin: 'Next-cycle data origin',\n    sourceConfirmed: 'Source confirmation reported',\n    monetaryRedaction: 'Monetary data redacted by source',\n    yes: 'Yes',\n    no: 'No',\n    unknown: 'Not reported',\n    cycleUnavailable: 'No upcoming cycle was supplied by the source.',\n    statementAvailability: 'Source availability',\n    statementDownloadability: 'Source downloadability',\n    downloadable: 'Downloadable',\n    notDownloadable: 'Not downloadable',\n    download: 'Download statement',\n    downloadFor: 'Download pay statement for {{period}}',\n    downloadConnectionPending:\n      'The source marks this statement downloadable, but secure download is not connected here yet.',\n    statementNotAvailable: 'The source has not made this statement available for download.',\n    downloadError: 'The secure statement could not be opened. Nothing was changed.',\n  },\n  ko: {\n    boundaryTitle: '급여 원천 조회 전용 화면',\n    boundaryDescription:\n      '이 화면은 급여를 계산하거나 결과를 확정하거나 지급을 실행하지 않습니다. 급여 원천이 제공한 상태와 보안 명세 참조만 보여줍니다.',\n    sourceTitle: '원천 및 개인정보 보호',\n    sourceDescription: '원천이 보고한 데이터 출처와 금액 데이터 처리 상태입니다.',\n    dataOrigin: '다음 급여 주기 데이터 출처',\n    sourceConfirmed: '원천 확인 보고 여부',\n    monetaryRedaction: '원천의 금액 데이터 마스킹',\n    yes: '예',\n    no: '아니요',\n    unknown: '보고되지 않음',\n    cycleUnavailable: '원천에서 제공한 예정 급여 주기가 없습니다.',\n    statementAvailability: '원천 이용 가능 상태',\n    statementDownloadability: '원천 다운로드 가능 여부',\n    downloadable: '다운로드 가능',\n    notDownloadable: '다운로드 불가',\n    download: '급여 명세 다운로드',\n    downloadFor: '{{period}} 급여 명세 다운로드',\n    downloadConnectionPending:\n      '원천은 다운로드 가능으로 보고했지만 이 화면에는 보안 다운로드가 아직 연결되지 않았습니다.',\n    statementNotAvailable: '원천에서 이 명세를 다운로드 가능 상태로 제공하지 않았습니다.',\n    downloadError: '보안 급여 명세를 열지 못했습니다. 변경된 내용은 없습니다.',\n  },\n} as const;\n\ntype PayrollCopy = (typeof PAYROLL_COPY)[keyof typeof PAYROLL_COPY];\n\nexport type HrisPayrollWorkspaceProps = {\n  onDownloadStatement?: (statementId: string) => void | Promise<void>;\n};\n\nfunction interpolatePeriod(template: string, period: string): string {\n  return template.replace('{{period}}', period);\n}\n\nfunction SourceFact({ label, value }: { label: string; value: string }) {\n  return (\n    <Stack direction=\"row\" alignItems=\"baseline\" justifyContent=\"space-between\" gap={2}>\n      <Typography variant=\"caption\" color=\"text.secondary\">\n        {label}\n      </Typography>\n      <Typography variant=\"body2\" textAlign=\"right\">\n        {value}\n      </Typography>\n    </Stack>\n  );\n}\n\nfunction PayrollWorkspaceView({\n  model,\n  copy,\n  onDownloadStatement,\n}: {\n  model: PayrollSelfServiceModel;\n  copy: PayrollCopy;\n  onDownloadStatement?: HrisPayrollWorkspaceProps['onDownloadStatement'];\n}) {\n  const { t } = useTranslation('hcm');\n  const [downloadStates, setDownloadStates] = useState(\n    () => new Map<string, { loading: boolean; error: boolean }>()\n  );\n  const activeDownloads = useRef(new Map<string, symbol>());\n  const mounted = useRef(true);\n\n  useEffect(() => {\n    mounted.current = true;\n    const tokens = activeDownloads.current;\n    return () => {\n      mounted.current = false;\n      tokens.clear();\n    };\n  }, []);\n\n  const downloadStatement = async (statementId: string) => {\n    if (!onDownloadStatement || !mounted.current || activeDownloads.current.has(statementId)) return;\n    const token = Symbol(statementId);\n    activeDownloads.current.set(statementId, token);\n    setDownloadStates((previous) =>\n      new Map(previous).set(statementId, { loading: true, error: false })\n    );\n    let failed = false;\n    try {\n      await onDownloadStatement(statementId);\n    } catch {\n      failed = true;\n    } finally {\n      // Authority-key remounts invalidate UI completion, not external callback side effects.\n      // Native cancellation/re-authorization remains the future secure adapter's responsibility.\n      if (mounted.current && activeDownloads.current.get(statementId) === token) {\n        activeDownloads.current.delete(statementId);\n        setDownloadStates((previous) =>\n          new Map(previous).set(statementId, { loading: false, error: failed })\n        );\n      }\n    }\n  };\n\n  return (\n    <Stack gap={2} data-testid=\"hris-payroll-workspace\">\n      <Stack\n        component=\"aside\"\n        role=\"note\"\n        direction=\"row\"\n        alignItems=\"flex-start\"\n        gap={1}\n        sx={{ p: 1.5, border: 1, borderColor: 'divider', bgcolor: 'action.hover' }}\n      >\n        <FileLock2 size={18} aria-hidden=\"true\" />\n        <Box minWidth={0}>\n          <Typography component=\"h2\" variant=\"subtitle2\">\n            {copy.boundaryTitle}\n          </Typography>\n          <Typography variant=\"caption\" color=\"text.secondary\">\n            {copy.boundaryDescription}\n          </Typography>\n        </Box>\n      </Stack>\n\n      {model.containsReferenceData && (\n        <InlineFeedback severity=\"info\" title={t('domains.reference.title')}>\n          {t('domains.reference.description')}\n        </InlineFeedback>\n      )}\n\n      <Box\n        sx={{\n          display: 'grid',\n          gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },\n          gap: 1,\n        }}\n      >\n        <Paper component=\"section\" variant=\"outlined\" sx={{ p: 2 }}>\n          <Stack direction=\"row\" alignItems=\"center\" gap={1} sx={{ mb: 1.5 }}>\n            <ShieldCheck size={19} aria-hidden=\"true\" />\n            <Box>\n              <Typography component=\"h2\" variant=\"subtitle1\">\n                {copy.sourceTitle}\n              </Typography>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                {copy.sourceDescription}\n              </Typography>\n            </Box>\n          </Stack>\n          <Stack gap={1}>\n            <SourceFact label={copy.dataOrigin} value={model.dataOrigin} />\n            <SourceFact\n              label={copy.sourceConfirmed}\n              value={\n                model.sourceConfirmed === null\n                  ? copy.unknown\n                  : model.sourceConfirmed\n                    ? copy.yes\n                    : copy.no\n              }\n            />\n            <SourceFact\n              label={copy.monetaryRedaction}\n              value={model.monetaryDataRedacted ? copy.yes : copy.no}\n            />\n          </Stack>\n        </Paper>\n\n        <Paper component=\"section\" variant=\"outlined\" sx={{ p: 2 }}>\n          <Stack direction=\"row\" alignItems=\"center\" justifyContent=\"space-between\" gap={1}>\n            <Typography component=\"h2\" variant=\"subtitle1\">\n              {t('domains.pay.nextPayDay')}\n            </Typography>\n            {model.nextCycle && (\n              <Chip size=\"small\" variant=\"outlined\" label={model.nextCycle.status} />\n            )}\n          </Stack>\n          {model.nextCycle ? (\n            <Stack gap={0.75} sx={{ mt: 1.25 }}>\n              <Typography component=\"p\" variant=\"h5\">\n                {formatDate(model.nextCycle.payDate, { dateStyle: 'long' })}\n              </Typography>\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                {model.nextCycle.name}\n              </Typography>\n              <Stack direction=\"row\" flexWrap=\"wrap\" gap={0.75} useFlexGap>\n                <Chip\n                  size=\"small\"\n                  variant=\"outlined\"\n                  label={`${t('domains.pay.readinessItems.time')}: ${model.nextCycle.timeValidated ? copy.yes : copy.no}`}\n                />\n                <Chip\n                  size=\"small\"\n                  variant=\"outlined\"\n                  label={`${t('domains.pay.readinessItems.absence')}: ${model.nextCycle.absenceValidated ? copy.yes : copy.no}`}\n                />\n              </Stack>\n            </Stack>\n          ) : (\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 1.25 }}>\n              {copy.cycleUnavailable}\n            </Typography>\n          )}\n        </Paper>\n      </Box>\n\n      <Paper component=\"section\" variant=\"outlined\" sx={{ overflow: 'hidden', minWidth: 0 }}>\n        <Box sx={{ px: 2, py: 1.75 }}>\n          <SectionHeader\n            icon={ReceiptText}\n            title={t('domains.pay.statementsTitle')}\n            meta={t('domains.pay.statementsDescription')}\n            glyph=\"plain\"\n          />\n        </Box>\n        <Divider />\n        {model.statements.length ? (\n          <Box>\n            {model.statements.map((statement, index) => {\n              const hasDownloadHandler = Boolean(onDownloadStatement);\n              const canDownload = statement.sourceDownloadable && hasDownloadHandler;\n              return (\n                <Box key={statement.statementId}>\n                  {index > 0 && <Divider />}\n                  <Stack\n                    direction={{ xs: 'column', sm: 'row' }}\n                    alignItems={{ xs: 'stretch', sm: 'center' }}\n                    gap={1.25}\n                    sx={{ px: 2, py: 1.5 }}\n                  >\n                    <ReceiptText size={19} aria-hidden=\"true\" />\n                    <Box minWidth={0} flex={1}>\n                      <Typography component=\"h3\" variant=\"subtitle2\">\n                        {statement.periodLabel}\n                      </Typography>\n                      <Typography variant=\"caption\" color=\"text.secondary\" display=\"block\">\n                        {statement.publishedAt\n                          ? formatDate(statement.publishedAt, { dateStyle: 'medium' })\n                          : t('domains.pay.awaitingPublication')}\n                      </Typography>\n                      <Typography variant=\"caption\" color=\"text.secondary\" display=\"block\">\n                        {copy.statementAvailability}: {statement.sourceAvailability || 'UNKNOWN'}\n                      </Typography>\n                      <Typography variant=\"caption\" color=\"text.secondary\" display=\"block\">\n                        {copy.statementDownloadability}:{' '}\n                        {statement.sourceDownloadable ? copy.downloadable : copy.notDownloadable}\n                      </Typography>\n                      {!statement.sourceDownloadable && (\n                        <Typography variant=\"caption\" color=\"text.secondary\" display=\"block\">\n                          {copy.statementNotAvailable}\n                        </Typography>\n                      )}\n                      {statement.sourceDownloadable && !hasDownloadHandler && (\n                        <Typography variant=\"caption\" color=\"text.secondary\" display=\"block\">\n                          {copy.downloadConnectionPending}\n                        </Typography>\n                      )}\n                      {downloadStates.get(statement.statementId)?.error && (\n                        <Typography role=\"alert\" variant=\"caption\" color=\"error\" display=\"block\">\n                          {copy.downloadError}\n                        </Typography>\n                      )}\n                    </Box>\n                    <Chip size=\"small\" variant=\"outlined\" label={statement.availability} />\n                    {canDownload && (\n                      <ActionButton\n                        intent=\"secondary\"\n                        size=\"small\"\n                        startIcon={<Download size={15} aria-hidden=\"true\" />}\n                        loading={downloadStates.get(statement.statementId)?.loading ?? false}\n                        aria-label={interpolatePeriod(copy.downloadFor, statement.periodLabel)}\n                        onClick={() => void downloadStatement(statement.statementId)}\n                      >\n                        {copy.download}\n                      </ActionButton>\n                    )}\n                  </Stack>\n                </Box>\n              );\n            })}\n          </Box>\n        ) : (\n          <EmptyState\n            size=\"compact\"\n            title={t('domains.pay.emptyTitle')}\n            description={t('domains.pay.emptyDescription')}\n          />\n        )}\n      </Paper>\n    </Stack>\n  );\n}\n\nexport function HrisPayrollWorkspace({ onDownloadStatement }: HrisPayrollWorkspaceProps) {\n  const { i18n } = useTranslation('hcm');\n  const copy = PAYROLL_COPY[resolveSupportedLocale(i18n.resolvedLanguage, i18n.language)];\n  const query = useHrisPayrollWorkspace();\n\n  if (!query.ready || query.isLoading || query.error) {\n    return (\n      <HcmQueryState\n        loading={!query.ready || query.isLoading}\n        error={query.error}\n        retrying={query.isFetching}\n        onRetry={query.retry}\n        size=\"page\"\n      />\n    );\n  }\n  if (!query.model) return null;\n  return (\n    <PayrollWorkspaceView\n      key={query.authorityKey}\n      model={query.model}\n      copy={copy}\n      onDownloadStatement={onDownloadStatement}\n    />\n  );\n}\n\nexport default HrisPayrollWorkspace;\n"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+        "relativePath": "apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+        "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+        "mtimeNs": "1789378945041726554",
+        "bytes": 16338,
+        "lines": 452,
+        "utf8": "// @vitest-environment jsdom\nimport { act } from 'react';\nimport { createRoot, type Root } from 'react-dom/client';\nimport { QueryClient, QueryClientProvider } from '@tanstack/react-query';\nimport { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';\nimport { HttpError } from '@dwp-frontend/shared-utils';\n\nimport { HrisPayrollWorkspace, buildPayrollSelfServiceModel, getHrisPayrollWorkspace } from '..';\n\nimport type { HrPayStatement, HrPayWorkspace } from '@dwp-frontend/shared-utils';\nimport type { ProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';\n\nconst scopeRuntime = vi.hoisted(() => ({\n  current: null as ProductSurfaceRequestScope | null,\n}));\n\nvi.mock('react-i18next', () => ({\n  useTranslation: () => ({\n    t: (key: string) => key,\n    i18n: { language: 'en', resolvedLanguage: 'en' },\n  }),\n}));\n\nvi.mock('../api/payroll-api', () => ({ getHrisPayrollWorkspace: vi.fn() }));\n\nvi.mock('../../../../components/use-product-surface-request-scope', () => ({\n  useProductSurfaceRequestScope: () => scopeRuntime.current,\n}));\n\nfunction requestScope({\n  tenantId = 'tenant-a',\n  actorId = 'actor-a',\n  accessMode = 'NORMAL',\n  contextScopeKey = 'scope-personal-a',\n  decisionRevision = 'revision-a',\n  ready = true,\n}: Partial<{\n  tenantId: string;\n  actorId: string;\n  accessMode: string;\n  contextScopeKey: string;\n  decisionRevision: string;\n  ready: boolean;\n}> = {}): ProductSurfaceRequestScope {\n  return {\n    governed: true,\n    ready,\n    ...(ready ? { contextScopeKey } : {}),\n    cacheKey: [\n      tenantId,\n      actorId,\n      accessMode,\n      'hcm.personal',\n      ready ? contextScopeKey : '',\n      decisionRevision,\n    ],\n    queryMeta: {\n      accessSensitive: true,\n      tenantId,\n      actorId,\n      accessMode,\n      productId: 'hcm',\n      surfaceId: 'hcm.personal',\n      ...(ready ? { contextScopeKey } : {}),\n      decisionRevision,\n    },\n  };\n}\n\nfunction statement(overrides: Partial<HrPayStatement> = {}): HrPayStatement {\n  return {\n    statementId: 'statement-1',\n    periodLabel: 'August 2026',\n    availabilityState: 'AVAILABLE',\n    publishedAt: '2026-08-25T00:00:00Z',\n    downloadable: true,\n    ...overrides,\n  };\n}\n\nfunction workspace(overrides: Partial<HrPayWorkspace> = {}): HrPayWorkspace {\n  return {\n    employee: {\n      personId: 'person-1',\n      displayName: 'Kim DWP',\n      directReportCount: 0,\n    },\n    nextCycle: {\n      payCycleId: 'cycle-1',\n      name: 'September payroll',\n      periodStart: '2026-09-01',\n      periodEnd: '2026-09-30',\n      payDate: '2026-09-25',\n      status: 'OPEN',\n      timeValidated: true,\n      absenceValidated: false,\n      sourceConfirmed: true,\n      dataOrigin: 'SOURCE',\n    },\n    statements: [statement()],\n    monetaryDataRedacted: true,\n    ...overrides,\n  };\n}\n\nfunction deferred<T>() {\n  let resolve!: (value: T) => void;\n  let reject!: (reason: Error) => void;\n  const promise = new Promise<T>((done, fail) => {\n    resolve = done;\n    reject = fail;\n  });\n  return { promise, resolve, reject };\n}\n\nlet host: HTMLDivElement;\nlet root: Root;\nlet queryClient: QueryClient;\n\nasync function settle() {\n  await act(async () => new Promise((resolve) => setTimeout(resolve, 0)));\n}\n\nasync function renderWorkspace(\n  onDownloadStatement?: (statementId: string) => void | Promise<void>\n) {\n  await act(async () =>\n    root.render(\n      <QueryClientProvider client={queryClient}>\n        <HrisPayrollWorkspace onDownloadStatement={onDownloadStatement} />\n      </QueryClientProvider>\n    )\n  );\n  await settle();\n}\n\ndescribe('HrisPayrollWorkspace runtime states', () => {\n  beforeEach(() => {\n    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });\n    vi.clearAllMocks();\n    scopeRuntime.current = requestScope();\n    queryClient = new QueryClient({\n      defaultOptions: { queries: { retry: false, gcTime: 0 } },\n    });\n    host = document.createElement('div');\n    document.body.appendChild(host);\n    root = createRoot(host);\n  });\n\n  afterEach(async () => {\n    await act(async () => root.unmount());\n    queryClient.clear();\n    host.remove();\n  });\n\n  it('uses the scoped pay query and renders a complete loading state', async () => {\n    vi.mocked(getHrisPayrollWorkspace).mockReturnValue(deferred<HrPayWorkspace>().promise);\n\n    await renderWorkspace();\n\n    expect(getHrisPayrollWorkspace).toHaveBeenCalledTimes(1);\n    expect(getHrisPayrollWorkspace).toHaveBeenCalledWith(\n      'scope-personal-a',\n      expect.any(AbortSignal)\n    );\n    expect(host.querySelector('[data-query-state=\"loading\"]')).not.toBeNull();\n    expect(host.querySelector('[data-testid=\"hris-payroll-workspace\"]')).toBeNull();\n  });\n\n  it('does not issue a personal-pay request until the governed scope is ready', async () => {\n    scopeRuntime.current = requestScope({ ready: false });\n\n    await renderWorkspace();\n\n    expect(getHrisPayrollWorkspace).not.toHaveBeenCalled();\n    expect(host.querySelector('[data-query-state=\"loading\"]')).not.toBeNull();\n    expect(host.textContent).not.toContain('September payroll');\n  });\n\n  it('rekeys on the full authority scope and never revives an old deferred response', async () => {\n    const oldResponse = deferred<HrPayWorkspace>();\n    const nextResponse = deferred<HrPayWorkspace>();\n    let oldSignal: AbortSignal | undefined;\n    let nextSignal: AbortSignal | undefined;\n    vi.mocked(getHrisPayrollWorkspace).mockImplementation((contextScopeKey, signal) => {\n      if (contextScopeKey === 'scope-personal-a') {\n        oldSignal = signal;\n        return oldResponse.promise;\n      }\n      nextSignal = signal;\n      return nextResponse.promise;\n    });\n\n    await renderWorkspace();\n    const oldScope = scopeRuntime.current!;\n    expect(\n      queryClient.getQueryCache().find({\n        queryKey: ['hcm', 'pay', ...oldScope.cacheKey],\n      })?.meta\n    ).toEqual(oldScope.queryMeta);\n\n    scopeRuntime.current = requestScope({\n      tenantId: 'tenant-b',\n      actorId: 'actor-b',\n      accessMode: 'ELEVATED',\n      contextScopeKey: 'scope-personal-b',\n      decisionRevision: 'revision-b',\n    });\n    await renderWorkspace();\n\n    expect(oldSignal?.aborted).toBe(true);\n    expect(nextSignal).toBeInstanceOf(AbortSignal);\n    expect(getHrisPayrollWorkspace).toHaveBeenNthCalledWith(2, 'scope-personal-b', nextSignal);\n    expect(host.textContent).not.toContain('Old tenant payroll');\n\n    await act(async () =>\n      oldResponse.resolve(\n        workspace({\n          nextCycle: { ...workspace().nextCycle!, name: 'Old tenant payroll' },\n        })\n      )\n    );\n    await settle();\n    expect(host.textContent).not.toContain('Old tenant payroll');\n    expect(host.querySelector('[data-query-state=\"loading\"]')).not.toBeNull();\n\n    await act(async () =>\n      nextResponse.resolve(\n        workspace({\n          nextCycle: { ...workspace().nextCycle!, name: 'New tenant payroll' },\n        })\n      )\n    );\n    await settle();\n\n    expect(host.textContent).toContain('New tenant payroll');\n    expect(host.textContent).not.toContain('Old tenant payroll');\n    expect(\n      queryClient.getQueryCache().find({\n        queryKey: ['hcm', 'pay', ...scopeRuntime.current!.cacheKey],\n      })?.meta\n    ).toEqual(scopeRuntime.current!.queryMeta);\n  });\n\n  it('renders permission and generic error states without retaining payroll data', async () => {\n    vi.mocked(getHrisPayrollWorkspace).mockRejectedValue(new HttpError('Denied', 403));\n    await renderWorkspace();\n    expect(host.querySelector('[data-query-state=\"permission\"]')).not.toBeNull();\n    expect(host.textContent).not.toContain('September payroll');\n\n    vi.mocked(getHrisPayrollWorkspace).mockRejectedValue(new Error('Unavailable'));\n    await act(async () => {\n      await queryClient.resetQueries({ queryKey: ['hcm', 'pay'] });\n    });\n    await settle();\n    expect(host.querySelector('[data-query-state=\"unknown\"]')).not.toBeNull();\n    expect(host.textContent).not.toContain('September payroll');\n  });\n\n  it('renders the empty state when the source supplies no cycle and no statements', async () => {\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(\n      workspace({ nextCycle: null, statements: [], monetaryDataRedacted: true })\n    );\n\n    await renderWorkspace();\n\n    expect(host.textContent).toContain('domains.pay.emptyTitle');\n    expect(host.textContent).toContain('Read-only payroll source view');\n    expect(host.textContent).toContain('NONE');\n  });\n\n  it('shows reference provenance, redaction and the non-operational boundary', async () => {\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(\n      workspace({\n        nextCycle: {\n          ...workspace().nextCycle!,\n          dataOrigin: 'REFERENCE',\n          sourceConfirmed: false,\n        },\n        monetaryDataRedacted: true,\n      })\n    );\n\n    await renderWorkspace();\n\n    expect(host.textContent).toContain('domains.reference.title');\n    expect(host.textContent).toContain('REFERENCE');\n    expect(host.textContent).toContain('Monetary data redacted by source');\n    expect(host.textContent).toContain(\n      'This page does not calculate payroll, confirm payroll results, or initiate payment.'\n    );\n  });\n\n  it('never renders an open or download action for an unavailable statement', async () => {\n    const download = vi.fn();\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(\n      workspace({\n        statements: [statement({ availabilityState: 'WITHHELD', downloadable: true })],\n      })\n    );\n\n    await renderWorkspace(download);\n\n    expect(host.textContent).toContain('WITHHELD');\n    expect(host.textContent).toContain('Not downloadable');\n    expect(host.querySelector('button[aria-label*=\"August 2026\"]')).toBeNull();\n    expect(download).not.toHaveBeenCalled();\n  });\n\n  it('does not render a dead action when secure download wiring is absent', async () => {\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace());\n\n    await renderWorkspace();\n\n    expect(host.textContent).toContain('Downloadable');\n    expect(host.textContent).toContain('secure download is not connected here yet');\n    expect(host.querySelector('button[aria-label*=\"August 2026\"]')).toBeNull();\n  });\n\n  it('offers an available statement only when a real download handler is supplied', async () => {\n    const download = vi.fn().mockResolvedValue(undefined);\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace());\n\n    await renderWorkspace(download);\n    const button = host.querySelector<HTMLButtonElement>(\n      'button[aria-label=\"Download pay statement for August 2026\"]'\n    );\n    expect(button).not.toBeNull();\n\n    await act(async () => button!.click());\n    await settle();\n\n    expect(download).toHaveBeenCalledOnce();\n    expect(download).toHaveBeenCalledWith('statement-1');\n  });\n\n  it('reports a secure-download failure without claiming success or changing source data', async () => {\n    const download = vi.fn().mockRejectedValue(new Error('Source unavailable'));\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace());\n\n    await renderWorkspace(download);\n    const button = host.querySelector<HTMLButtonElement>(\n      'button[aria-label=\"Download pay statement for August 2026\"]'\n    );\n    await act(async () => button!.click());\n    await settle();\n\n    expect(host.querySelector('[role=\"alert\"]')?.textContent).toContain(\n      'The secure statement could not be opened. Nothing was changed.'\n    );\n    expect(host.textContent).toContain('August 2026');\n  });\n\n  it('clears previous authority download state even when the next scope has a fresh cache entry', async () => {\n    const download = vi.fn().mockRejectedValue(new Error('Previous authority download denied'));\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace());\n    await renderWorkspace(download);\n    const button = host.querySelector<HTMLButtonElement>(\n      'button[aria-label=\"Download pay statement for August 2026\"]'\n    );\n    await act(async () => button!.click());\n    await settle();\n    expect(host.querySelector('[role=\"alert\"]')).not.toBeNull();\n\n    scopeRuntime.current = requestScope({\n      tenantId: 'tenant-b',\n      actorId: 'actor-b',\n      contextScopeKey: 'scope-personal-b',\n      decisionRevision: 'revision-b',\n    });\n    queryClient.setQueryData(\n      ['hcm', 'pay', ...scopeRuntime.current.cacheKey],\n      buildPayrollSelfServiceModel(workspace())\n    );\n    await renderWorkspace(download);\n\n    expect(host.querySelector('[data-testid=\"hris-payroll-workspace\"]')).not.toBeNull();\n    expect(host.querySelector('[role=\"alert\"]')).toBeNull();\n    expect(download).toHaveBeenCalledOnce();\n    expect(getHrisPayrollWorkspace).toHaveBeenCalledOnce();\n  });\n\n  it('fails closed on malformed downloadable source flags instead of offering an action', async () => {\n    const download = vi.fn();\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace({\n      statements: [{ ...statement(), downloadable: 'false' }],\n    } as unknown as Partial<HrPayWorkspace>));\n    await renderWorkspace(download);\n    expect(host.querySelector('[data-query-state=\"unknown\"]')).not.toBeNull();\n    expect(host.querySelector('[data-testid=\"hris-payroll-workspace\"]')).toBeNull();\n    expect(host.querySelector('button[aria-label*=\"August 2026\"]')).toBeNull();\n    expect(download).not.toHaveBeenCalled();\n  });\n\n  it('keeps concurrent statements independently busy and retains each failure', async () => {\n    const first = deferred<void>();\n    const second = deferred<void>();\n    const download = vi.fn((id: string) => id === 'statement-1' ? first.promise : second.promise);\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace({ statements: [\n      statement(), statement({ statementId: 'statement-2', periodLabel: 'July 2026' }),\n    ] }));\n    await renderWorkspace(download);\n    const firstButton = host.querySelector<HTMLButtonElement>('button[aria-label*=\"August 2026\"]')!;\n    const secondButton = host.querySelector<HTMLButtonElement>('button[aria-label*=\"July 2026\"]')!;\n    await act(async () => firstButton.click());\n    await act(async () => secondButton.click());\n    expect(firstButton.disabled).toBe(true);\n    expect(secondButton.disabled).toBe(true);\n    await act(async () => first.reject(new Error('First source unavailable')));\n    await settle();\n    expect(firstButton.disabled).toBe(false);\n    expect(secondButton.disabled).toBe(true);\n    expect(host.querySelectorAll('[role=\"alert\"]')).toHaveLength(1);\n    await act(async () => second.reject(new Error('Second source unavailable')));\n    await settle();\n    expect(secondButton.disabled).toBe(false);\n    expect(host.querySelectorAll('[role=\"alert\"]')).toHaveLength(2);\n    expect(download.mock.calls).toEqual([['statement-1'], ['statement-2']]);\n  });\n\n  it('guards synchronous repeat clicks on one statement before state commits', async () => {\n    const pending = deferred<void>();\n    const download = vi.fn(() => pending.promise);\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace());\n    await renderWorkspace(download);\n    const button = host.querySelector<HTMLButtonElement>('button[aria-label*=\"August 2026\"]')!;\n    await act(async () => { button.click(); button.click(); });\n    expect(download).toHaveBeenCalledOnce();\n    await act(async () => pending.resolve());\n    await settle();\n    expect(button.disabled).toBe(false);\n  });\n\n  it('does not apply late callback failures to a remounted authority', async () => {\n    const pending = deferred<void>();\n    const download = vi.fn(() => pending.promise);\n    vi.mocked(getHrisPayrollWorkspace).mockResolvedValue(workspace());\n    await renderWorkspace(download);\n    await act(async () => host.querySelector<HTMLButtonElement>(\n      'button[aria-label*=\"August 2026\"]'\n    )!.click());\n    scopeRuntime.current = requestScope({ decisionRevision: 'revision-b' });\n    queryClient.setQueryData(['hcm', 'pay', ...scopeRuntime.current.cacheKey],\n      buildPayrollSelfServiceModel(workspace()));\n    await renderWorkspace(download);\n    await act(async () => pending.reject(new Error('Stale callback failed')));\n    await settle();\n    expect(host.querySelector('[role=\"alert\"]')).toBeNull();\n    expect(host.querySelector<HTMLButtonElement>('button[aria-label*=\"August 2026\"]')!.disabled)\n      .toBe(false);\n  });\n});\n"
+      }
+    ]
+  },
+  "remainingOpen": [
+    "Current-pin browser12 independent rerun is parent-owned and pending at this report.",
+    "Parent/internal expert independent source review of implemented4 is not inherited from our earlier audit or author58 PASS.",
+    "Shared new Response-fixture TS2352 must be fixed by its owner and fresh compile collected; no source4 mutation required by this diagnostic.",
+    "Current route has no secure download callback; native owner PEP/current refetch and cancellation of old external callback side effects remain future adapter OPEN. No native bypass, automatic grant or approval claim.",
+    "Other module flat/layered readiness, canonical/Gate/source/owner publication and full product semantics are outside this scoped fix."
+  ],
+  "nextTimMinimumImplementationChunk": {
+    "status": "PROPOSED_BOUNDED_IMPLEMENTATION_NOT_SOURCE_CLOSED_OR_G3_APPROVAL",
+    "basis": {
+      "frozenContract": "tim-cross-context-boundary-successor.v4",
+      "scopeOperationIds": [
+        "tim.rule.create",
+        "tim.leave.entitlement.run",
+        "tim.leave.enrollment.cancel",
+        "tim.leave.entitlement.input.get"
+      ],
+      "remainingOperationIds": 112,
+      "sixTables": [
+        "abs_entitlement_runs",
+        "abs_entitlement_run_items",
+        "abs_entitlement_input_versions",
+        "abs_entitlement_selected_items",
+        "abs_enrollment_termination_workflows",
+        "abs_termination_settlement_intents"
+      ],
+      "bindingDeclarations": 95,
+      "ownerSemanticGuards": 18
+    },
+    "reuse": "Frozen v4 schema/fixture/source-graph/table-dependency files remain inputs; implement their planned contracts rather than copying a fifth proposal or adding tables.",
+    "firstCompileChunk": [
+      {
+        "files": [
+          "AbsOwnerResponseV4.java",
+          "AbsPolicyEvaluationReportV4.java",
+          "PublishedScheduleSnapshotResponseV4.java",
+          "AbsOwnerSnapshotRefetchPortV4.java",
+          "PublishedScheduleSnapshotQuerySpiV4.java",
+          "AbsOwnerTypedFieldAdapterV4.java"
+        ],
+        "purpose": "Closed owner DTO union and full payload/current-refetch SPI; ABS local evaluator/policy/governance provenance differs from TIME published header/segment and SYS/calendar sources. Validate tenant/native UUID tuple/business versions/asOf-window/schema/digest and opaque authority revisions; missing enabled adapter denies, optional disabled schedule calls=0. No ABS direct TIME-business repository reads."
+      },
+      {
+        "files": [
+          "EntitlementInputAssemblerV4.java",
+          "TerminationInstructionAssemblerV4.java",
+          "EntitlementSourceContextV4.java",
+          "EntitlementRowAssemblerV4.java",
+          "TimeRuleCreateAssemblerV4.java"
+        ],
+        "purpose": "Use exact body/normalized mutation, CAS-loaded ABS parents, owner responses, explicit Clock/ID allocator and RETURNING values, not tenant+actor rule labels. Construct six typed row records/all95 slots; own digest slot excluded, canonical unsigned payload recomputed, input immutable revision1/new-run correction branches, STOP_FUTURE_ONLY/PRORATE_FINAL_PERIOD/OWNER_APPROVED_SETTLEMENT and cancel blocked/no-op distinction preserved. Separate TIME rule-create assembler from ABS records."
+      },
+      {
+        "files": [
+          "TimeOwnerSemanticGuardsV4.java",
+          "AbsOwnerSemanticGuardsV4.java",
+          "planned source-context/row/adapters/guard tests and consumer compile tests"
+        ],
+        "purpose": "Implement nine TIME+nine ABS typed guard branches against independently pinned schema/parent facts, including XOR publication origin, request segment bounds, exactly-one ledger source/type/sign, reversal/release same-enrollment/unit/original-USE/uniqueness, owner schema/discriminant. A/B expected full records and95 expected field/source/type rows must be independently allocated, not computed by candidate assembler; mutations drop slots/change source owner/type/parent/digest/clock/CAS/cancel treatment and must fail."
+      }
+    ],
+    "ownership": {
+      "moduleRoot": "dwp-time-server/src/main/java/com/dwp/services/time",
+      "testRoot": "dwp-time-server/src/test/java/com/dwp/services/time",
+      "TIMEAndABSOwnersRemainDistinct": true,
+      "absenceSeparatePhysicalPublication": "Internal owner/architecture approval still required; current package scaffold does not authorize shared business DB reads or cross-context FK.",
+      "neutralReceiptOutboxInbox": "Only exact planned neutral owner tuple operations after internal expert review; no TIME business repository exception or new unnecessary internal receipt UK."
+    },
+    "limits": [
+      "Existing frozen116 catalog preserved; this chunk cannot close remaining112 operation source graphs.",
+      "All18 guard implementations/typed DTO+SPI/assembler compile and explicit mocked source tests are G3 preparation work; production source registration/current PEP/transport/atomic DML/native full EE remain separately OPEN.",
+      "WFM candidate parent is unpublished; full SQL execution remains DENIED while its producer/key contract or other source dependencies remain OPEN.",
+      "No numerical business/config revision may be copied into native opaque auth-/policy-/psc-/psr-* authority revisions; actor Auth2 and subject People4 stamps remain separate.",
+      "No whole G4 domain CRUD is a prerequisite to preparing exact G3 source/DTO/SPI/SQL constraints."
+    ],
+    "requestedApproval": "Parent internal code-owner review and narrow implementation allocation; not external customer data or a new user authority request."
+  },
+  "formatValidation": {
+    "executedAt": "2026-09-14T09:58:26.663280+00:00",
+    "checks": 35,
+    "checkNames": [
+      "frontend-payroll-remediation-initial-fail-before-2026-09-14.json source prepost stable",
+      "frontend-payroll-remediation-initial-fail-before-2026-09-14.json raw0/0",
+      "frontend-payroll-remediation-initial-fail-before-2026-09-14.json raw0/1",
+      "frontend-payroll-remediation-fail-before-2026-09-14.json source prepost stable",
+      "frontend-payroll-remediation-fail-before-2026-09-14.json raw0/0",
+      "frontend-payroll-remediation-fail-before-2026-09-14.json raw0/1",
+      "frontend-payroll-remediation-pass-after-2026-09-14.json source prepost stable",
+      "frontend-payroll-remediation-pass-after-2026-09-14.json raw0/0",
+      "frontend-payroll-remediation-pass-after-2026-09-14.json raw0/1",
+      "frontend-payroll-remediation-exports-same-budget-probe-2026-09-14.json source prepost stable",
+      "frontend-payroll-remediation-exports-same-budget-probe-2026-09-14.json raw0/0",
+      "frontend-payroll-remediation-exports-same-budget-probe-2026-09-14.json raw0/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json source prepost stable",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw0/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw0/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw1/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw1/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw2/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw2/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw3/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw3/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw4/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw4/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw5/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw5/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw6/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw6/1",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw7/0",
+      "frontend-payroll-remediation-quality-first-collected-2026-09-14.json raw7/1",
+      "actual failbefore31/passafter58",
+      "actual58 exact identities",
+      "three test SHA/ns unchanged",
+      "original25 present passed",
+      "same60 exports actual0 below60",
+      "quality seven pass one tsc fail"
+    ],
+    "savedReportPins": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-remediation-initial-fail-before-2026-09-14.json",
+        "sha256": "aa5f112242bb538935f1ccbf549a67ab77f5a265c5c140180506cf410905a78f",
+        "mtimeNs": "1789378996976798580",
+        "bytes": 40570
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-remediation-fail-before-2026-09-14.json",
+        "sha256": "6c9a3739c41b09fc78b17f1419c85eed8fe79e70bf6cdc0c91c93021a71048a7",
+        "mtimeNs": "1789379015231014435",
+        "bytes": 41071
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-remediation-pass-after-2026-09-14.json",
+        "sha256": "8c51270a435a9506b2161f53129fcc595b0a85c0e72a9cbade45d6040767d142",
+        "mtimeNs": "1789379374914507104",
+        "bytes": 39758
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-remediation-exports-same-budget-probe-2026-09-14.json",
+        "sha256": "ad0d76368e362e5d63e2536561885778845c8df196c4b74f45f223e7c8b8f5ee",
+        "mtimeNs": "1789379652289978355",
+        "bytes": 19841
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/frontend-payroll-remediation-quality-first-collected-2026-09-14.json",
+        "sha256": "be940df9d39d1a3e40fd5c5758f11358c5fbe47b64606ec1e4d08eaa20f3c52f",
+        "mtimeNs": "1789379723139921983",
+        "bytes": 26503
+      }
+    ],
+    "status": "PASS_OF_EVIDENCE_WITH_FAILURES_RETAINED_NOT_QUALITY_APPROVAL",
+    "initialHelperFailureRetained": {
+      "status": "VALIDATION_HELPER_KEYERROR_NOT_APPLICATION_FAILURE",
+      "exitCode": 1,
+      "toolReportedTracebackUtf8": "Traceback (most recent call last):\n  File \"<string>\", line 22, in <module>\n  File \"<string>\", line 22, in <genexpr>\n  File \"<string>\", line 22, in <genexpr>\nKeyError: 'fullName'\n",
+      "cause": "Legacy author's caseResults use id rather than current replay fullName; original file preserved and helper updated to actual schema."
+    },
+    "nativeOrGatePass": false
+  }
+}

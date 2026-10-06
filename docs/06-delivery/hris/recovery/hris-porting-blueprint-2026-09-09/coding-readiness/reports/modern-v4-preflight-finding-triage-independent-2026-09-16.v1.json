@@ -1,0 +1,488 @@
+{
+  "reportId": "dwp.hris.modern-v4-preflight-finding-triage-independent.2026-09-16.v1",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T11:10:00+09:00",
+  "status": "FAIL_7_TRUE_POSITIVE_P0_BLOCKERS_AND_REVIEW_ORACLE_REPAIR_REQUIRED",
+  "decision": "BLOCK_CANONICAL_PROMOTION_PHYSICAL_EMISSION_AND_G3_CODE_GATE",
+  "scope": {
+    "mode": "READ_ONLY_INDEPENDENT_TRIAGE",
+    "candidate": "/private/tmp/dwp-hris-v4-preflight.oOxBMl",
+    "reviewedFindingSets": {
+      "globalAcceptance": 40,
+      "ownerBoundary": 2,
+      "total": 42
+    },
+    "writeBoundary": "ONLY_THIS_UNIQUE_REPORT_WAS_CREATED",
+    "forbiddenMutations": [
+      "source",
+      "candidate",
+      "live canonical artifacts",
+      "Gate registers or decisions",
+      "immutable v4 policy"
+    ]
+  },
+  "classificationDefinitions": {
+    "TRUE_POSITIVE": "The candidate is not executable or complete under the active authority and must be repaired.",
+    "VALIDATOR_FALSE_POSITIVE": "The candidate satisfies the active authority, but the validator uses an invalid universal assumption, incomplete grammar, or brittle literal match.",
+    "STALE_POLICY_METADATA": "The finding is produced by an obsolete frozen requirement, vocabulary, enum, or read-consumer set. Immutable v4 evidence must remain unchanged and a successor policy/requirement source must be issued."
+  },
+  "authorityPrecedence": [
+    "The sealed active owner authority is sys-listening-stream-authority-successor.v2.",
+    "Candidate exact/operation/causal/event artifacts are evaluated against that authority and closed v4 scope.",
+    "A validator constant or v4 metadata row that contradicts the active authority is not allowed to force an authority regression.",
+    "Immutable v4 metadata is never edited in place; reviewed scope expansions require a sealed successor policy."
+  ],
+  "inputPins": [
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/global-acceptance.json",
+      "sha256": "db72640aeb8b3b08571703802addf236fefcd232c366773ecd479b768f6526c5"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/owner-boundary.json",
+      "sha256": "973d15484b7aa1aa845c30c2a162d960d83d015ee4e8195d39196a2e5916e0b4"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-closed-set-manifest.v3.json",
+      "sha256": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-operation-causal-contract-ssot.v2.json",
+      "sha256": "ff951d124c04f233c8bf2f7515012ad9a421b7162cc998ddb52c1dc4b4e56290"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-causal-state-contracts.v2.json",
+      "sha256": "07ff767f6c87a5b5b69aa387ae2691f679b7ad3b81a55259f68271d654af6090"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-event-payload-contracts.v1.json",
+      "sha256": "3e9e4c1ca92c823853fdbf0afe8b03bd66b3074b2691b0aa35acd883d90e851c"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-semantic-bindings.v1.json",
+      "sha256": "246b96c0a2dcf9945fc631f573210d82ac0a3400850a0e2617028e5663f40c34"
+    },
+    {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/sys-listening-stream-authority-successor.v2.json",
+      "sha256": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00",
+      "sealedPayloadSha256": "950217094f49e8761245e56c171948b074846beff8eb00602838d82e6138e66c"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+      "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py",
+      "sha256": "f0a893cc9f04f214822a7fb6d741e24c8375923e0f859030a1b8994b3486c5e0"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py",
+      "sha256": "a58f43fc72a8429ba5c117b48c758583b737dc39024511cc41a854a30cdd2b9d"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/global-hcm-semantic-closure-independent-audit-2026-09-16.v1.json",
+      "sha256": "af0ad56a400abd361fc8f14164f417b28d66a7daa1dd475a9f2926856ab51ba6"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v3.json",
+      "sha256": "3b007109623f521c0ff37d189baa263f81fb5472a213fefb644d458dcf45f596"
+    }
+  ],
+  "classificationSummary": {
+    "allFindings": {
+      "total": 42,
+      "P0": 35,
+      "P1": 7
+    },
+    "TRUE_POSITIVE": {
+      "total": 7,
+      "P0": 7,
+      "P1": 0
+    },
+    "VALIDATOR_FALSE_POSITIVE": {
+      "total": 27,
+      "P0": 20,
+      "P1": 7
+    },
+    "STALE_POLICY_METADATA": {
+      "total": 8,
+      "P0": 8,
+      "P1": 0
+    },
+    "candidateGateDisposition": "Seven candidate P0 defects remain. The other 35 findings must not be implemented as candidate changes; their validators or successor policy metadata must be corrected and hostile-tested."
+  },
+  "findingDisposition": [
+    {"source":"global-acceptance.json","ordinal":1,"severity":"P0","ruleId":"QUERY.FIELD_SOURCE","subject":"modern.benefits.lifeevents.query#decisionOutcome","classification":"TRUE_POSITIVE","group":"G01"},
+    {"source":"global-acceptance.json","ordinal":2,"severity":"P0","ruleId":"QUERY.FIELD_SOURCE","subject":"modern.benefits.lifeevents.query#decisionReasonCode","classification":"TRUE_POSITIVE","group":"G01"},
+    {"source":"global-acceptance.json","ordinal":3,"severity":"P0","ruleId":"QUERY.FIELD_SOURCE","subject":"modern.compplan.cycles.query#approvedProposalPublicIds","classification":"TRUE_POSITIVE","group":"G01"},
+    {"source":"global-acceptance.json","ordinal":4,"severity":"P0","ruleId":"QUERY.FIELD_SOURCE","subject":"modern.compplan.cycles.query#approvedProposalVersions","classification":"TRUE_POSITIVE","group":"G01"},
+    {"source":"global-acceptance.json","ordinal":5,"severity":"P0","ruleId":"QUERY.FIELD_SOURCE","subject":"modern.compplan.proposals.query#approvedPlanPublicIds","classification":"TRUE_POSITIVE","group":"G01"},
+    {"source":"global-acceptance.json","ordinal":6,"severity":"P0","ruleId":"QUERY.FIELD_SOURCE","subject":"modern.compplan.proposals.query#approvedPlanRevisions","classification":"TRUE_POSITIVE","group":"G01"},
+    {"source":"global-acceptance.json","ordinal":7,"severity":"P0","ruleId":"QUERY.PEP","subject":"modern.listening.active.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G02"},
+    {"source":"global-acceptance.json","ordinal":8,"severity":"P0","ruleId":"QUERY.BUSINESS_FIELDS","subject":"modern.listening.cohorts.query","classification":"STALE_POLICY_METADATA","group":"G03"},
+    {"source":"global-acceptance.json","ordinal":9,"severity":"P0","ruleId":"LISTENING.HANDLER_TRANSACTION","subject":"internal.listening.protected.erasure.process","classification":"VALIDATOR_FALSE_POSITIVE","group":"G04"},
+    {"source":"global-acceptance.json","ordinal":10,"severity":"P0","ruleId":"HANDLER.UNCLASSIFIED","subject":"internal.workforceplan.simulation-result.consume","classification":"STALE_POLICY_METADATA","group":"G05"},
+    {"source":"global-acceptance.json","ordinal":11,"severity":"P0","ruleId":"EVENT.CONDITION","subject":"EmployeeListeningSurveyClosed.v3","classification":"VALIDATOR_FALSE_POSITIVE","group":"G06"},
+    {"source":"global-acceptance.json","ordinal":12,"severity":"P0","ruleId":"EVENT.CONDITION","subject":"EmployeeListeningSurveyPublished.v3","classification":"VALIDATOR_FALSE_POSITIVE","group":"G06"},
+    {"source":"global-acceptance.json","ordinal":13,"severity":"P0","ruleId":"EVENT.CONDITION","subject":"WorkforceScenarioSimulated.v2","classification":"VALIDATOR_FALSE_POSITIVE","group":"G06"},
+    {"source":"global-acceptance.json","ordinal":14,"severity":"P0","ruleId":"EVENT.CONDITION","subject":"WorkforceScenarioSimulationFailed.v2","classification":"VALIDATOR_FALSE_POSITIVE","group":"G06"},
+    {"source":"global-acceptance.json","ordinal":15,"severity":"P0","ruleId":"DOMAIN.REQUEST","subject":"modern.contingent.engagement.revise#effectiveTo","classification":"STALE_POLICY_METADATA","group":"G07"},
+    {"source":"global-acceptance.json","ordinal":16,"severity":"P0","ruleId":"DOMAIN.REQUEST","subject":"modern.succession.plan.revise#effectiveTo","classification":"STALE_POLICY_METADATA","group":"G07"},
+    {"source":"global-acceptance.json","ordinal":17,"severity":"P0","ruleId":"DOMAIN.REQUEST","subject":"modern.listening.response.submit#participationEnvelope/admissionVersion","classification":"STALE_POLICY_METADATA","group":"G08"},
+    {"source":"global-acceptance.json","ordinal":18,"severity":"P0","ruleId":"DOMAIN.TABLE_COLUMNS","subject":"sys_hris_listening_cohort_projections#bucket/lineage","classification":"STALE_POLICY_METADATA","group":"G03"},
+    {"source":"global-acceptance.json","ordinal":19,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.recruiting.requisition.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":20,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.recruiting.requisitions.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":21,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.learning.offering.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":22,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.learning.catalog.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":23,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.onboarding.self.query","classification":"TRUE_POSITIVE","group":"G10"},
+    {"source":"global-acceptance.json","ordinal":24,"severity":"P0","ruleId":"EXPANDED_QUERY.READER_SET","subject":"ppl_bnf_life_event_decisions","classification":"STALE_POLICY_METADATA","group":"G11"},
+    {"source":"global-acceptance.json","ordinal":25,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.opportunity.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":26,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.opportunity.catalog.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":27,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.opportunity.application.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":28,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.opportunity.applications.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":29,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.contingent.engagement.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":30,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.contingent.engagements.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":31,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.succession.plan.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":32,"severity":"P0","ruleId":"EXPANDED_QUERY.FIELD_LINEAGE","subject":"modern.succession.plans.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G09"},
+    {"source":"global-acceptance.json","ordinal":33,"severity":"P0","ruleId":"EXPANDED_QUERY.READER_SET","subject":"prf_cmp_plan_proposal_refs","classification":"STALE_POLICY_METADATA","group":"G11"},
+    {"source":"global-acceptance.json","ordinal":34,"severity":"P1","ruleId":"EFFECTIVE.QUERY_RESOLUTION","subject":"modern.benefits.plan.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G12"},
+    {"source":"global-acceptance.json","ordinal":35,"severity":"P1","ruleId":"EFFECTIVE.QUERY_RESOLUTION","subject":"modern.contingent.engagement.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G12"},
+    {"source":"global-acceptance.json","ordinal":36,"severity":"P1","ruleId":"EFFECTIVE.QUERY_RESOLUTION","subject":"modern.learning.offering.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G12"},
+    {"source":"global-acceptance.json","ordinal":37,"severity":"P1","ruleId":"EFFECTIVE.QUERY_RESOLUTION","subject":"modern.onboarding.template.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G12"},
+    {"source":"global-acceptance.json","ordinal":38,"severity":"P1","ruleId":"EFFECTIVE.QUERY_RESOLUTION","subject":"modern.opportunity.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G12"},
+    {"source":"global-acceptance.json","ordinal":39,"severity":"P1","ruleId":"EFFECTIVE.QUERY_RESOLUTION","subject":"modern.recruiting.requisition.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G12"},
+    {"source":"global-acceptance.json","ordinal":40,"severity":"P1","ruleId":"EFFECTIVE.QUERY_RESOLUTION","subject":"modern.succession.plan.query","classification":"VALIDATOR_FALSE_POSITIVE","group":"G12"},
+    {"source":"owner-boundary.json","ordinal":1,"severity":"P0","ruleId":"OWNER_LOCAL_CONTROL_DML_MISSING","subject":"modern.listening.response.submit","classification":"VALIDATOR_FALSE_POSITIVE","group":"G13"},
+    {"source":"owner-boundary.json","ordinal":2,"severity":"P0","ruleId":"SCOPE_POLICY_MODE_UNRESOLVED","subject":"candidate policy/authority profile","classification":"VALIDATOR_FALSE_POSITIVE","group":"G14"}
+  ],
+  "groupedAnalysis": [
+    {
+      "groupId": "G01",
+      "priority": "P0",
+      "classification": "TRUE_POSITIVE",
+      "title": "Collection fields have lineage to child tables that the executable read plan does not read",
+      "members": [
+        "QUERY.FIELD_SOURCE modern.benefits.lifeevents.query#decisionOutcome",
+        "QUERY.FIELD_SOURCE modern.benefits.lifeevents.query#decisionReasonCode",
+        "QUERY.FIELD_SOURCE modern.compplan.cycles.query#approvedProposalPublicIds",
+        "QUERY.FIELD_SOURCE modern.compplan.cycles.query#approvedProposalVersions",
+        "QUERY.FIELD_SOURCE modern.compplan.proposals.query#approvedPlanPublicIds",
+        "QUERY.FIELD_SOURCE modern.compplan.proposals.query#approvedPlanRevisions"
+      ],
+      "evidence": "The exact lineage points to ppl_bnf_life_event_decisions or prf_cmp_plan_proposal_refs, but each affected readPlan omits that table. A declarative lineage row without an executable read and tenant-safe join cannot supply the response field.",
+      "exactCorrection": [
+        "Add ppl_bnf_life_event_decisions to modern.benefits.lifeevents.query readPlan.tables and projectionTuple.physicalSources; bind decision and reason_code through the exact tenant and parent identity join.",
+        "Add prf_cmp_plan_proposal_refs to modern.compplan.cycles.query and modern.compplan.proposals.query readPlan.tables and projectionTuple.physicalSources; bind the four approved-reference fields through exact tenant and cycle/proposal identity joins.",
+        "Keep exact per-field lineage, field policy, purpose/population filters, and keyset projection in agreement; do not satisfy this by a synthetic server-derived value."
+      ],
+      "hostileCases": [
+        "lineage references the child table but readPlan omits it",
+        "readPlan names the table but projectionTuple.physicalSources omits it",
+        "join omits tenant_id or joins by a mutable display/code field",
+        "field source is moved to the wrong table or a non-existent column",
+        "collection query falls back to mutable latest state"
+      ]
+    },
+    {
+      "groupId": "G02",
+      "priority": "P0_ORACLE",
+      "classification": "VALIDATOR_FALSE_POSITIVE",
+      "title": "Anonymous active-survey query is incorrectly forced through an authenticated-principal PEP shape",
+      "members": ["QUERY.PEP modern.listening.active.query"],
+      "evidence": "The candidate has tenant, purpose, population, fieldPolicy and denyOnUnavailable=true plus the sealed signed participation credential and offline non-revocation proof. The generic validator additionally requires authorizationCapability, which is not required by the anonymous credential authority profile and would couple the endpoint to a principal capability.",
+      "exactCorrection": "Dispatch PEP validation by authority execution class. For ANONYMOUS_CREDENTIAL_HOLDER require the exact signed-credential audience, admission and non-revocation tuple plus tenant/purpose/population/fieldPolicy deny-on-unavailable; do not require authenticated authorizationCapability.",
+      "hostileCases": [
+        "remove credential audience",
+        "remove offline non-revocation proof or its expiry",
+        "omit tenant, purpose, population, fieldPolicy or denyOnUnavailable",
+        "add principalWorkerId or authenticatedPrincipal coupling",
+        "permit unknown audience, policy, or admission version"
+      ]
+    },
+    {
+      "groupId": "G03",
+      "priority": "P0_POLICY",
+      "classification": "STALE_POLICY_METADATA",
+      "title": "Listening cohort validator still expects obsolete bucket/metric and inline-lineage vocabulary",
+      "members": [
+        "QUERY.BUSINESS_FIELDS modern.listening.cohorts.query",
+        "DOMAIN.TABLE_COLUMNS sys_hris_listening_cohort_projections"
+      ],
+      "evidence": "The active authority returns cohortPublicId, adequacyCategory, measureValues only when adequate, subjectCount only when adequate, anonymityThreshold, policyRevision and lineageReceiptPublicId. The candidate stores measure_values in sys_hris_listening_cohort_projections and keeps lineage in sys_hris_listening_lineage_receipts. The validator hardcodes bucket/metric and a lineage column on the projection table.",
+      "exactCorrection": "Issue successor requirement metadata using the authority vocabulary and validate the exact join to a sealed lineage receipt. Preserve threshold and privacy-budget receipts and conditional suppression; do not add raw buckets or duplicate lineage blobs to the projection table.",
+      "hostileCases": [
+        "subjectCount or measureValues appears when adequacyCategory is suppressed",
+        "anonymityThreshold, policyRevision or privacyBudgetReceiptPublicId is missing",
+        "lineageReceiptPublicId does not resolve to the exact sealed lineage receipt",
+        "raw respondent bucket is exposed",
+        "projection and lineage receipt use different tenant, survey, cohort, cutoff or source epoch"
+      ]
+    },
+    {
+      "groupId": "G04",
+      "priority": "P0_ORACLE",
+      "classification": "VALIDATOR_FALSE_POSITIVE",
+      "title": "Crypto erasure is a deliberate multi-phase owner-local saga, not one database transaction",
+      "members": ["LISTENING.HANDLER_TRANSACTION internal.listening.protected.erasure.process"],
+      "evidence": "The candidate explicitly declares sameTransaction=false with TX1 lease claim, an idempotent KMS destroy outside the database transaction, TX2 success tombstone/token/original-receipt/private-completion sealing, and TX2 failure release to FAILED_RETRYABLE. Requiring sameTransaction=true is impossible for external KMS destruction and would permit false atomicity claims.",
+      "exactCorrection": "Recognize the closed OWNER_LOCAL_ERASURE_PROCESSOR execution class and validate every phase, exact lease/CAS selectors, KMS destruction attestation, crash recovery, terminal tombstone, failure release, replay stability and broker/public-delivery prohibition. Keep sameTransaction=true for genuinely atomic handlers only.",
+      "hostileCases": [
+        "TX1 lease claim or bounded expiry is absent",
+        "COMPLETED or completion receipt is written before KMS destruction attestation",
+        "TX2 failure writes a tombstone, completion receipt or outbox",
+        "response status is mutated to WITHDRAWN or ANONYMIZED",
+        "retry can destroy another response key or append a second completion receipt",
+        "broker outbox or public identity-linkable event is added"
+      ]
+    },
+    {
+      "groupId": "G05",
+      "priority": "P0_POLICY",
+      "classification": "STALE_POLICY_METADATA",
+      "title": "Workforce simulation result handler is implemented but absent from the validator's closed handler enum",
+      "members": ["HANDLER.UNCLASSIFIED internal.workforceplan.simulation-result.consume"],
+      "evidence": "The candidate declares signed owner result verification, ppl_wfp_simulation_requests as aggregate root, REQUESTED to COMPLETED or FAILED terminal CAS, exact result receipt tuple, inbox idempotency, rollback and same-transaction outbox. HANDLER_REQUIREMENTS simply has no row for this handler.",
+      "exactCorrection": "Add a reviewed successor handler requirement for this exact handler/root/pre-state/post-states/result-proof tuple and validate its FORBIDDEN-refetch payload sufficiency. Do not add a wildcard exemption for unknown handlers.",
+      "hostileCases": [
+        "unsigned owner result",
+        "wrong request id, expected revision or payload digest",
+        "terminal row accepts a second result",
+        "resultReceiptId/revision/schemaVersion/digest tuple is incomplete or mismatched",
+        "refetch changes from FORBIDDEN or aggregate/latest fallback is added",
+        "outbox is written before domain and receipt completion or survives rollback"
+      ]
+    },
+    {
+      "groupId": "G06",
+      "priority": "P0_ORACLE",
+      "classification": "VALIDATOR_FALSE_POSITIVE",
+      "title": "Event condition parser only understands toState= and rejects valid closed condition forms",
+      "members": [
+        "EVENT.CONDITION EmployeeListeningSurveyClosed.v3",
+        "EVENT.CONDITION EmployeeListeningSurveyPublished.v3",
+        "EVENT.CONDITION WorkforceScenarioSimulated.v2",
+        "EVENT.CONDITION WorkforceScenarioSimulationFailed.v2"
+      ],
+      "evidence": "The validator accepts only regex toState=STATE. Workforce events use POST_STATE=COMPLETED or FAILED, both declared handler post-states. Listening events use signedMessage.status=SUCCESS AND root CAS succeeded, which binds publication to the successful signed owner receipt and exact root CAS branch.",
+      "exactCorrection": "Parse a closed structured condition grammar: resolve POST_STATE against handler postStates and resolve signed-message status plus root-CAS predicates against the exact verified input and DML branch. Unknown syntax is a failure; no substring acceptance.",
+      "hostileCases": [
+        "POST_STATE names an undeclared state",
+        "signed status predicate omits root CAS success",
+        "event emits on retry, failure or zero-row CAS branch",
+        "condition state differs from emitted toState",
+        "free-form condition or event name is accepted as a state"
+      ]
+    },
+    {
+      "groupId": "G07",
+      "priority": "P0_POLICY",
+      "classification": "STALE_POLICY_METADATA",
+      "title": "Client-supplied effectiveTo conflicts with the approved dual append-only temporal model",
+      "members": [
+        "DOMAIN.REQUEST modern.contingent.engagement.revise#effectiveTo",
+        "DOMAIN.REQUEST modern.succession.plan.revise#effectiveTo"
+      ],
+      "evidence": "Both revise contracts accept revisionMode, effectiveFrom, exact segment predecessor, changed fields and reason. Persisted effective_to is NULL-only and non-authoritative; derivedEffectiveTo is the next systemAsOf-visible base-segment boundary. The validator's OperationRequirement still requires effectiveTo.",
+      "exactCorrection": "Remove effectiveTo from the successor request minimum and validate CORRECTION versus SUPERSEDE, exact predecessor links, system-time-first arbitration and server-derived boundary. Never edit the immutable prior evidence in place.",
+      "hostileCases": [
+        "client supplies effectiveTo",
+        "effective_to is persisted non-null",
+        "overlapping base segments or prior-row mutation",
+        "correction changes effective_from or skips predecessor revision",
+        "exact history selector falls back to latest"
+      ]
+    },
+    {
+      "groupId": "G08",
+      "priority": "P0_POLICY_SECURITY",
+      "classification": "STALE_POLICY_METADATA",
+      "title": "Protected submit body is already closed by the signed credential; duplicate envelope/version fields are forbidden",
+      "members": ["DOMAIN.REQUEST modern.listening.response.submit#participationEnvelope/admissionVersion"],
+      "evidence": "The v2 authority request is closed to route surveyId plus signedParticipationCredential, responseToken and answers. The credential carries exact admissionPublicId, admissionVersionPublicId, admissionOwnerVersion, audience and offline non-revocation proof. The validator still requires participationToken or anonymousEnvelope and a separate admissionVersion body field.",
+      "exactCorrection": "Replace the stale P0-LIS-001 request requirement with the exact v2 authority request schema and reject all additional properties. Admission identity/version must be read only from the verified credential and locked owner admission row, never from an unsigned duplicate body field.",
+      "hostileCases": [
+        "participationEnvelope, anonymousEnvelope or admissionVersion is accepted in body",
+        "route surveyId differs from credential surveyPublicId",
+        "credential admission tuple differs from the locked admission row",
+        "expired/revoked proof or wrong audience is accepted",
+        "workerId, personId, principalId or employeeId claim is added"
+      ]
+    },
+    {
+      "groupId": "G09",
+      "priority": "P0_ORACLE",
+      "classification": "VALIDATOR_FALSE_POSITIVE",
+      "title": "Expanded lineage parser drops valid arbitration-qualified physical sources",
+      "members": [
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.recruiting.requisition.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.recruiting.requisitions.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.learning.offering.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.learning.catalog.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.opportunity.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.opportunity.catalog.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.opportunity.application.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.opportunity.applications.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.contingent.engagement.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.contingent.engagements.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.succession.plan.query",
+        "EXPANDED_QUERY.FIELD_LINEAGE modern.succession.plans.query"
+      ],
+      "evidence": "These queries contain many exact PHYSICAL_POST_STATE lineage rows, but sourcePath is qualified by STATE_WINNER:, CONTENT_WINNER:, SELECTED_STATE_ROW:, SELECTED_CONTENT_ROW: or CONTENT_ROW:. The validator only accepts sourcePath.startswith(table + '.'), so it reports empty source and target sets.",
+      "exactCorrection": "Parse a closed qualifier grammar, strip exactly one approved arbitration qualifier, then verify the exact table, existing column, response target, source kind and selectionModeSources consistency. Derived sources need their own closed grammar and cannot satisfy the two direct-source minimum.",
+      "hostileCases": [
+        "unknown or nested qualifier prefix",
+        "qualifier resolves to the wrong table or non-existent column",
+        "target field is absent from the response entity",
+        "fewer than two distinct direct table columns or response targets",
+        "STATE_WINNER and CONTENT_WINNER are conflated",
+        "selectionModeSources permits latest fallback"
+      ]
+    },
+    {
+      "groupId": "G10",
+      "priority": "P0",
+      "classification": "TRUE_POSITIVE",
+      "title": "Onboarding self query reads template task definitions but exposes no direct field lineage from that table",
+      "members": ["EXPANDED_QUERY.FIELD_LINEAGE modern.onboarding.self.query"],
+      "evidence": "The projection claims ppl_jny_template_task_definitions, but the self-query response entity and per-field lineage stop at assignment, task-instance and evidence fields. The sibling assignment detail/list queries already expose templateTaskKeys from task_key and templateTaskRequiredFlags from required_flag.",
+      "exactCorrection": "Add templateTaskKeys and templateTaskRequiredFlags to the self-query response item with exact restricted field policies/tokenization, and add direct PHYSICAL_POST_STATE lineage from ppl_jny_template_task_definitions.task_key and required_flag under the exact template version/task join.",
+      "hostileCases": [
+        "table remains read but neither field is projected",
+        "only aggregate EXACT_TYPED_PROJECTION is present without direct fields",
+        "template definition is joined without tenant_id and template version",
+        "task key or required flag is mapped to the wrong response target",
+        "self scope leaks another worker's template tasks"
+      ]
+    },
+    {
+      "groupId": "G11",
+      "priority": "P0_POLICY",
+      "classification": "STALE_POLICY_METADATA",
+      "title": "Frozen v4 readConsumer sets predate the collection readers required by the candidate fields",
+      "members": [
+        "EXPANDED_QUERY.READER_SET ppl_bnf_life_event_decisions",
+        "EXPANDED_QUERY.READER_SET prf_cmp_plan_proposal_refs"
+      ],
+      "evidence": "The candidate collection schemas and lineage require lifeevents.query and compplan cycles/proposals collection queries to read these child tables, while the immutable v4 policy lists only detail readers. Removing collection readers would make the six G01 fields non-executable.",
+      "exactCorrection": "Issue a sealed successor policy whose exact readConsumers are lifeevent detail plus collection for ppl_bnf_life_event_decisions, and cycle detail/list plus proposal detail/list for prf_cmp_plan_proposal_refs. Keep v4 immutable and require every declared reader to have an exact read, projection source, field policy and direct lineage.",
+      "hostileCases": [
+        "undeclared extra reader",
+        "declared reader missing from executable read plan",
+        "reader has no projection source or direct field lineage",
+        "reader uses a different tenant/purpose/population policy",
+        "successor policy silently broadens to wildcard readers"
+      ]
+    },
+    {
+      "groupId": "G12",
+      "priority": "P1_ORACLE",
+      "classification": "VALIDATOR_FALSE_POSITIVE",
+      "title": "Temporal resolution is complete; the validator rejects the qualified systemAsOf operand by brittle substring matching",
+      "members": [
+        "EFFECTIVE.QUERY_RESOLUTION modern.benefits.plan.query",
+        "EFFECTIVE.QUERY_RESOLUTION modern.contingent.engagement.query",
+        "EFFECTIVE.QUERY_RESOLUTION modern.learning.offering.query",
+        "EFFECTIVE.QUERY_RESOLUTION modern.onboarding.template.query",
+        "EFFECTIVE.QUERY_RESOLUTION modern.opportunity.query",
+        "EFFECTIVE.QUERY_RESOLUTION modern.recruiting.requisition.query",
+        "EFFECTIVE.QUERY_RESOLUTION modern.succession.plan.query"
+      ],
+      "evidence": "All seven contracts include systemAsOf, referenceEffectiveAt, revisionPublicId, contentRevisionPublicId and rootVersion; dual append-only strategy; base segment and content winner; exact historical re-entry; derived boundary; and NULL-only persisted effectiveTo. The only failed predicate is the literal 'created_at<=systemAsOf', while the contract correctly says 'created_at<=query.systemAsOf'.",
+      "exactCorrection": "Replace substring tests with a structured temporal contract comparison that accepts the exact qualified query.systemAsOf operand and proves the filter occurs before both state and content arbitration. Do not broaden to arbitrary strings containing systemAsOf.",
+      "hostileCases": [
+        "systemAsOf input is removed or optional latest is substituted",
+        "created_at filter is applied after winner selection",
+        "state and content winners are conflated",
+        "revisionPublicId and rootVersion may identify different state rows",
+        "content history selector can fall back to latest",
+        "persisted effective_to becomes authoritative"
+      ]
+    },
+    {
+      "groupId": "G13",
+      "priority": "P0_ORACLE_SECURITY",
+      "classification": "VALIDATOR_FALSE_POSITIVE",
+      "title": "Protected anonymous submit must not append a broker outbox",
+      "members": ["OWNER_LOCAL_CONTROL_DML_MISSING modern.listening.response.submit"],
+      "evidence": "The v2 authority defines a seven-step protected owner-local transaction ending in the private receipt. receiptAndOutbox.outboxTable is null, atomicity says BROKER_OUTBOX_FORBIDDEN, deliveryClass is OWNER_LOCAL_PRIVATE_BROKER_FORBIDDEN, and the public binding declares no public events. The owner validator universally requires receipt plus outbox for every command.",
+      "exactCorrection": "Drive control-DML requirements from the pinned ownerPortOperation contract. For protected.submitResponse require the exact receipt/token/response/answers sequence and reject any outbox or public event. Preserve receipt-plus-outbox requirements for commands whose authority declares broker delivery.",
+      "hostileCases": [
+        "sys_hris_listening_protected_outbox is appended by submit",
+        "public or broker event is declared for submit",
+        "private response identity or token commitment leaves the owner stream",
+        "outbox append is made optional by a broad no-outbox exemption",
+        "receipt completion occurs without token, response and answer writes"
+      ]
+    },
+    {
+      "groupId": "G14",
+      "priority": "P0_ORACLE",
+      "classification": "VALIDATOR_FALSE_POSITIVE",
+      "title": "The manifest correctly pins v2 directly; the validator incorrectly duplicates v2's transitive predecessor pin",
+      "members": ["SCOPE_POLICY_MODE_UNRESOLVED candidate policy/authority profile"],
+      "evidence": "The candidate manifest pins v2 contractId, fileSha256 and sealedPayloadSha256. The sealed v2 authority itself pins v1 through successorLineage.predecessorFileSha256=62f110f36a4d26dab7dda3051e6baf1a5872a475b8f2a83cee19f2cd950496b1. The owner validator constructs an expected manifest object with that transitive field even though it belongs inside v2 authority lineage.",
+      "exactCorrection": "Validate two separate edges: manifest -> exact sealed v2 authority, then sealed v2 successorLineage -> exact v1 predecessor hash. Do not require or trust a duplicate manifest predecessorFileSha256.",
+      "hostileCases": [
+        "manifest v2 file hash or payload seal is missing or wrong",
+        "v2 successorLineage predecessor hash is missing or wrong",
+        "manifest supplies a predecessor hash that contradicts the sealed authority",
+        "cyclic or reverse lineage is accepted",
+        "a self-asserted manifest field substitutes for reading and sealing v2"
+      ]
+    }
+  ],
+  "remediationOrder": [
+    {
+      "order": 1,
+      "priority": "P0",
+      "owner": "candidate generator",
+      "action": "Repair the six G01 executable child-table reads and the G10 onboarding self-query direct lineage, then regenerate a new temporary candidate."
+    },
+    {
+      "order": 2,
+      "priority": "P0_SECURITY",
+      "owner": "global and owner-boundary validators",
+      "action": "Repair G02, G04, G06, G09, G13 and G14 with authority-dispatched closed grammars and exact hostile tests; never add broad exemptions."
+    },
+    {
+      "order": 3,
+      "priority": "P0_POLICY",
+      "owner": "successor policy and requirement metadata",
+      "action": "Issue sealed successor metadata for G03, G05, G07, G08 and G11. Preserve immutable v4 and bind validators only to the reviewed successor profile."
+    },
+    {
+      "order": 4,
+      "priority": "P1_ORACLE",
+      "owner": "global validator",
+      "action": "Repair G12 structured temporal parsing and run all seven positive cases plus every hostile case."
+    },
+    {
+      "order": 5,
+      "priority": "P0_GATE",
+      "owner": "independent preflight",
+      "action": "Rerun generation twice, all sealed validators and hostile suites against the new temp candidate. Gate remains closed until true P0=0, validator false positives=0, stale-policy mismatches=0 and all required P1 checks pass."
+    }
+  ],
+  "antiFixWarnings": [
+    "Do not add participationEnvelope, anonymousEnvelope or admissionVersion to the protected submit body.",
+    "Do not add a broker/public outbox to modern.listening.response.submit.",
+    "Do not force crypto erasure into a fictitious one-database transaction.",
+    "Do not add client-controlled effectiveTo or make persisted effective_to authoritative.",
+    "Do not erase arbitration qualifiers from lineage merely to satisfy startswith(table+'.').",
+    "Do not edit the sealed v4 policy or duplicate its authority predecessor pin in the candidate manifest.",
+    "Do not mark the 40+2 raw findings as 42 candidate defects."
+  ],
+  "finalAssertion": {
+    "candidateReady": false,
+    "remainingCandidateP0": 7,
+    "remainingCandidateP1": 0,
+    "reviewInfrastructureRepairsRequired": true,
+    "gateMayOpen": false,
+    "reason": "The candidate has seven real P0 completeness defects. In addition, the current global and owner validators are not authority-coherent: implementing their other 35 raw findings would introduce privacy, temporal and owner-boundary regressions."
+  },
+  "sealedPayloadSha256": "e930be1e35d7987a1373c6e16133cc196a62e80fce9e50e685e81820fffbaa8e"
+}

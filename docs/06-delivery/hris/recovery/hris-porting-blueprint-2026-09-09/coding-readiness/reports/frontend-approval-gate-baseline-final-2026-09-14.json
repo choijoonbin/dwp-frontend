@@ -1,0 +1,305 @@
+{
+  "schema": "dwp.hris.frontend-approval-baseline-remediation-review.v1",
+  "evaluatedAt": "2026-09-14T14:34:08Z",
+  "status": "PASS_BOUNDED_APPROVAL_BASELINE_ONLY",
+  "authority": {
+    "gateAuthorization": "NONE",
+    "readyClaim": "NONE",
+    "g4OrG6Claim": "NONE",
+    "statement": "This report closes only the four committed frontend Approval baseline defects assigned to this work item. It does not authorize an HRIS module-session START, release, Gate, G4, or G6 transition."
+  },
+  "source": {
+    "integrationReadOnlyPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+    "requiredBaseCommit": "4e1333c66dfd9563ecbf321cfcda3b3f6b7f9778",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/prep/approval-gate/frontend",
+    "branch": "codex/hris-approval-gate-prep-20260914",
+    "commit": "31b42a6311296c4a4fcf28212f076658dce7b19e",
+    "tree": "168e7bcd176606032b4ee294bc3624bc7df09ae4",
+    "parent": "4e1333c66dfd9563ecbf321cfcda3b3f6b7f9778",
+    "cleanAfterCommit": true
+  },
+  "boundaries": {
+    "dirtyUserMainRead": false,
+    "dirtyUserMainCopied": false,
+    "dirtyUserMainModified": false,
+    "frontendIntegrationModified": false,
+    "allowlistRelaxed": false,
+    "meaninglessProductionImportAdded": false,
+    "frontendOrBackendRuntimeAuthorityClaimAdded": false
+  },
+  "findings": [
+    {
+      "id": "APPROVAL-BASELINE-001",
+      "subject": "product action disclosure shortcut contract",
+      "before": "approval-admin-overview duplicated workflow and operation route strings instead of consuming the canonical shortcut catalog objects expected by the disclosure contract.",
+      "decision": "CLOSED",
+      "change": "The overview now consumes PRODUCT_PAGE_SHORTCUT_TARGETS.approvalWorkflows and PRODUCT_PAGE_SHORTCUT_TARGETS.approvalOperations as complete product/surface/route targets. Existing current-authority revalidation, disclosure filtering, guarded navigation, and scoped-link construction remain in force.",
+      "productionFiles": [
+        "apps/dwp/src/features/approvals/approval-admin-overview.tsx"
+      ],
+      "evidenceTests": [
+        "apps/dwp/src/components/product-action-disclosure-contracts.test.ts",
+        "apps/dwp/src/features/approvals/approval-admin-overview.test.tsx"
+      ],
+      "securityDisposition": "No shortcut bypass or stale-authority fallback was introduced."
+    },
+    {
+      "id": "APPROVAL-BASELINE-002",
+      "subject": "Approval form V2 cross-runtime golden fixture",
+      "before": {
+        "frontendFixtureSha256": "ce823a73199ff6db4fc3d6eb53cc6a33c2b18be137dc337f36469cbfac25ac24",
+        "frontendFixtureBytes": 6621,
+        "expectedPinnedSha256": "5867525b45e2eee0d90f9f36d6903f8a03c74561c639a6c5169104b43e55a9a4"
+      },
+      "provenance": {
+        "frontendIntroductionCommit": "495b6192605545587685b08fd3c4c716078048e2",
+        "backendObservedCommittedHead": "fc8fbfd38103f7fb2b47adaea861e5327450a74e",
+        "backendFixtureIntroductionCommit": "315e1b27708ebee0d9a94deb568d614520094262",
+        "backendFixturePath": "dwp-approval-server/src/test/resources/approval/form-schema-v2-parity.json",
+        "backendFixtureSha256": "5867525b45e2eee0d90f9f36d6903f8a03c74561c639a6c5169104b43e55a9a4",
+        "backendFixtureBytes": 5101,
+        "schemaSha256": "0326a781da96bba19de66643543402efd3258b56e90e6ad81c9f57b38a046b7f",
+        "decisionBasis": "The committed Java resource and the pre-existing frontend expected pin agree byte-for-byte. The former frontend resource had the same parsed JSON values and schema digest but different whitespace. The Java bytes plus the already pinned digest are therefore the cross-runtime golden."
+      },
+      "decision": "CLOSED",
+      "change": "The frontend resource is now the exact 5,101-byte committed Java golden and is listed in .prettierignore so formatter runs cannot silently alter the byte contract.",
+      "productionFiles": [
+        "apps/dwp/src/features/approvals/__fixtures__/approval-form-typed-parity.json",
+        ".prettierignore"
+      ],
+      "after": {
+        "frontendFixtureSha256": "5867525b45e2eee0d90f9f36d6903f8a03c74561c639a6c5169104b43e55a9a4",
+        "frontendFixtureBytes": 5101,
+        "exactBackendByteMatch": true
+      },
+      "evidenceTests": [
+        "apps/dwp/src/features/approvals/approval-form-typed.test.ts"
+      ]
+    },
+    {
+      "id": "APPROVAL-BASELINE-003",
+      "subject": "late planning cancellation contract",
+      "before": "The Approval planning test expected legacy free-text containing 'changed', while the hardened shared HTTP layer intentionally returns HttpTransportError with reason ABORT.",
+      "decision": "CLOSED",
+      "change": "The planning assertion now pins the typed HttpTransportError/ABORT contract and still verifies that the controller clears busy state.",
+      "productionFilesModified": [],
+      "testFiles": [
+        "apps/dwp/src/features/approvals/approval-workflow-planning-controller.test.ts"
+      ],
+      "sharedHttpRegressionEvidence": [
+        "libs/shared-utils/src/axios-instance.test.ts",
+        "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+        "libs/shared-utils/src/axios-cancellation-race.test.ts"
+      ],
+      "securityDisposition": "No timeout, cancellation, response-body, retry, or request-dispatch behavior was weakened."
+    },
+    {
+      "id": "APPROVAL-BASELINE-004",
+      "subject": "thirteen production-unreachable Approval modules",
+      "before": "The production reachability check rejected exactly thirteen committed Approval modules.",
+      "decision": "CLOSED_BY_NON_PROMOTION",
+      "decisionBasis": [
+        "The eight signature diagnostics UI modules formed only an internal dead chain and had no production route or composition root.",
+        "The backend source dwp-approval-server/src/main/java/com/dwp/services/approval/signatureproviders/SignatureProviderOperation.java explicitly classifies its vocabulary as proposed, not an installed registry or authorization grant.",
+        "The four route keys embedded in the proposed retention receipt client were absent from the committed frontend route/auth registry at the required base commit.",
+        "The installed and separately governed route.approvals.work.signature-command-receipt.data implementation was not removed; its shared client and ApprovalSignatureController consumer remain intact.",
+        "Wiring the dead modules without installed owner authority and transport would fabricate authority; adding an unused import would only evade the checker. Historical Git commits retain the proposals for a later independently authorized installation."
+      ],
+      "removedProductionModules": [
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-facts.tsx",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-history.tsx",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspection.tsx",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspector.tsx",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-model.ts",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-overview.tsx",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-policy-inspector.tsx",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-provider.tsx",
+        "libs/shared-utils/src/api/approval-retention-receipt-api.ts",
+        "libs/shared-utils/src/api/approval-retention-receipt-profile.ts",
+        "libs/shared-utils/src/api/approval-signature-diagnostics-contract.ts",
+        "libs/shared-utils/src/api/approval-signature-diagnostics-primitives.ts",
+        "libs/shared-utils/src/api/approval-signature-provider-policy-contract.ts"
+      ],
+      "removedExclusiveTestArtifacts": [
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics.test.tsx",
+        "libs/shared-utils/src/api/approval-retention-receipt-api.test.ts",
+        "libs/shared-utils/src/api/approval-retention-receipt-profile.test.ts",
+        "libs/shared-utils/src/api/approval-signature-diagnostics-contract.test.ts",
+        "libs/shared-utils/src/api/approval-signature-diagnostics.test-support.ts",
+        "libs/shared-utils/src/api/__fixtures__/approval-retention-command-java-golden.json",
+        "libs/shared-utils/src/api/__fixtures__/approval-retention-command-java-golden2.json",
+        "libs/shared-utils/src/api/__fixtures__/approval-retention-command-java-golden3.json"
+      ],
+      "routeRegistryAbsenceAtBase": [
+        "route.approvals.admin.retention-policy-initialization-command.data",
+        "route.approvals.admin.retention-policy-draft-command.data",
+        "route.approvals.admin.retention-policy-publication-command.data",
+        "route.approvals.admin.retention-record-command.data"
+      ],
+      "securityDisposition": "No allowlist exception, fabricated route, authority bypass, or fake composition was added."
+    }
+  ],
+  "changeSummary": {
+    "filesChanged": 25,
+    "insertions": 57,
+    "deletions": 4398,
+    "productionUnreachableModulesResolved": 13,
+    "resolution": "REMOVE_UNINSTALLED_PROPOSALS"
+  },
+  "verification": {
+    "runtime": {
+      "node": "v24.19.0",
+      "yarn": "4.17.1",
+      "packageJsonSha256": "1cd7a5909e3e3b36a909b482785b19fb6e15ef9e290aef4497f80695cf223b72",
+      "yarnLockSha256": "5e3e06e04dc26869e1024d9fdba7e07c90cf2a54f7f6062007b6881fb875347b"
+    },
+    "dependencyInstall": {
+      "command": "corepack yarn install --immutable",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    "focusedVitest": {
+      "files": 7,
+      "testsPassed": 162,
+      "testsFailed": 0,
+      "status": "PASS",
+      "targets": [
+        "product-action-disclosure-contracts.test.ts",
+        "approval-admin-overview.test.tsx",
+        "approval-form-typed.test.ts",
+        "approval-workflow-planning-controller.test.ts",
+        "axios-instance.test.ts",
+        "axios-response-lifecycle.test.ts",
+        "axios-cancellation-race.test.ts"
+      ]
+    },
+    "eslintChangedTypeScript": {
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    "prettierChangedFiles": {
+      "exitCode": 0,
+      "status": "PASS",
+      "bytePinnedFixtureIgnored": true
+    },
+    "productionReachability": {
+      "command": "node scripts/check-production-reachability.mjs",
+      "exitCode": 0,
+      "reachableModules": 1703,
+      "totalModules": 1720,
+      "remainingGovernedVerificationRoots": 17,
+      "productionErrors": 0,
+      "allowlistModified": false,
+      "status": "PASS"
+    },
+    "reachabilityValidatorUnit": {
+      "testsPassed": 5,
+      "testsFailed": 0,
+      "status": "PASS"
+    },
+    "typecheck": {
+      "command": "tsc --noEmit",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    "architecture": {
+      "command": "corepack yarn architecture:check",
+      "exitCode": 0,
+      "status": "PASS",
+      "observations": {
+        "pageRoutes": 79,
+        "internalProductClosure": "12/12",
+        "pepClosure": "60/60",
+        "apps": 15,
+        "shells": 1,
+        "platformFeatures": 5,
+        "surfaces": 12,
+        "routeCompositions": 16,
+        "moduleGraphModules": 1725,
+        "sourceSizeModules": 2430
+      }
+    },
+    "fullVitest": {
+      "command": "corepack yarn test --maxWorkers=4 --maxConcurrency=2 --reporter=default",
+      "exitCode": 0,
+      "testFilesPassed": 692,
+      "testFilesFailed": 0,
+      "testsPassed": 6256,
+      "testsFailed": 0,
+      "durationSeconds": 147.3,
+      "status": "PASS",
+      "warnings": "Existing React act(...) test-harness warnings were emitted on stderr; no test failed. They are not suppressed or promoted as successful assertions."
+    },
+    "git": {
+      "diffCheck": "PASS",
+      "cleanAfterCommit": true
+    },
+    "discardedHarnessAttempt": {
+      "classification": "NOT_EVIDENCE",
+      "detail": "An initial combined formatting invocation used an unsupported selector. It changed no source and was replaced by direct Prettier checks, which passed."
+    }
+  },
+  "hostSemaphore": {
+    "name": "hris-verification",
+    "runs": [
+      {
+        "label": "immutable-install",
+        "requestedAt": "2026-09-14T14:26:07.987Z",
+        "acquiredAt": "2026-09-14T14:26:07.988Z",
+        "releasedAt": "2026-09-14T14:26:44.796Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      },
+      {
+        "label": "focused-tests",
+        "requestedAt": "2026-09-14T14:27:07.820Z",
+        "acquiredAt": "2026-09-14T14:27:07.820Z",
+        "releasedAt": "2026-09-14T14:27:13.717Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      },
+      {
+        "label": "quality-and-architecture",
+        "requestedAt": "2026-09-14T14:27:41.836Z",
+        "acquiredAt": "2026-09-14T14:27:41.836Z",
+        "releasedAt": "2026-09-14T14:28:36.449Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      },
+      {
+        "label": "discarded-formatting-attempt",
+        "requestedAt": "2026-09-14T14:28:58.899Z",
+        "acquiredAt": "2026-09-14T14:28:59.975Z",
+        "releasedAt": "2026-09-14T14:29:01.452Z",
+        "waitMilliseconds": 1075,
+        "status": "RELEASED_NOT_EVIDENCE"
+      },
+      {
+        "label": "full-vitest",
+        "requestedAt": "2026-09-14T14:29:21.703Z",
+        "acquiredAt": "2026-09-14T14:29:21.703Z",
+        "releasedAt": "2026-09-14T14:31:50.351Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      }
+    ]
+  },
+  "residualGlobalBlockers": [
+    {
+      "id": "GLOBAL-RELEASE-EVIDENCE",
+      "observed": "architecture:check printed the existing production-readiness evidence state BLOCKED 0/37 while explicitly treating that step as schema/integrity-only; the architecture command still completed successfully.",
+      "impact": "This bounded Approval remediation is not a release-readiness attestation and cannot close evidence that requires external owners or environments."
+    },
+    {
+      "id": "ROOT-INTEGRATION-AUTHORITY",
+      "observed": "Cross-repository provenance, canonical Gate state, and whole HRIS module-session START authority are controlled outside this branch.",
+      "impact": "The root integrator must combine this commit with the latest independently verified backend and blueprint evidence before making any overall decision."
+    }
+  ],
+  "finalVerdict": {
+    "boundedApprovalBaseline": "PASS",
+    "wholeHrisCodingReady": "NOT_ASSERTED",
+    "safeToIntegrateThisCommit": true,
+    "nextAction": "Root integration may review and merge commit 31b42a6311296c4a4fcf28212f076658dce7b19e, then rerun canonical cross-repository and Gate validation."
+  }
+}

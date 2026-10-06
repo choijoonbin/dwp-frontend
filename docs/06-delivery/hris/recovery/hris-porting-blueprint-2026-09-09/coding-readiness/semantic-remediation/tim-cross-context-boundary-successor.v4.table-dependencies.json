@@ -1,0 +1,262 @@
+{
+  "externalParents": {
+    "tme_command_receipts": {
+      "table": "tme_command_receipts",
+      "schema": "public",
+      "owner": "TIME",
+      "columns": {
+        "command_receipt_id": "BIGINT",
+        "public_id": "UUID",
+        "tenant_id": "BIGINT",
+        "command_type": "VARCHAR(100)",
+        "originating_action": "VARCHAR(120)",
+        "subject_principal_public_id": "UUID",
+        "population_scope_digest": "CHAR(64)",
+        "field_policy_revision": "BIGINT",
+        "purpose_code": "VARCHAR(120)",
+        "authorization_revision": "BIGINT",
+        "idempotency_key": "VARCHAR(160)",
+        "request_digest": "CHAR(64)",
+        "aggregate_public_id": "UUID",
+        "aggregate_revision": "BIGINT",
+        "status": "VARCHAR(24)",
+        "result_ref": "UUID",
+        "error_code": "VARCHAR(80)",
+        "correlation_id": "UUID",
+        "created_at": "TIMESTAMPTZ",
+        "completed_at": "TIMESTAMPTZ"
+      },
+      "uniqueKeys": [
+        [
+          "tenant_id",
+          "public_id"
+        ],
+        [
+          "tenant_id",
+          "subject_principal_public_id",
+          "originating_action",
+          "idempotency_key"
+        ]
+      ],
+      "sourcePath": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-physical-schema.sql",
+      "sourceSha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+      "CURRENT_PUBLISHED": true,
+      "evidenceKind": "SAVED_G2_SQL_NOT_OWN_NATIVE_REPLAY",
+      "newInternalReceiptUniqueRequired": false
+    },
+    "tme_close_periods": {
+      "table": "tme_close_periods",
+      "schema": "public",
+      "owner": "TIME",
+      "columns": {
+        "close_period_id": "BIGINT",
+        "public_id": "UUID",
+        "tenant_id": "BIGINT",
+        "close_scope": "VARCHAR(20)",
+        "scope_public_id": "UUID",
+        "period_start": "DATE",
+        "period_end": "DATE",
+        "status": "VARCHAR(24)",
+        "close_revision": "BIGINT",
+        "ledger_revision": "BIGINT",
+        "approval_case_public_id": "UUID",
+        "closed_at": "TIMESTAMPTZ",
+        "closed_by": "UUID",
+        "row_version": "BIGINT",
+        "created_at": "TIMESTAMPTZ",
+        "created_by": "UUID",
+        "updated_at": "TIMESTAMPTZ"
+      },
+      "uniqueKeys": [
+        [
+          "tenant_id",
+          "public_id"
+        ],
+        [
+          "tenant_id",
+          "close_period_id"
+        ],
+        [
+          "tenant_id",
+          "close_scope",
+          "scope_public_id",
+          "period_start",
+          "period_end"
+        ]
+      ],
+      "sourcePath": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-physical-schema.sql",
+      "sourceSha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+      "CURRENT_PUBLISHED": true,
+      "evidenceKind": "SAVED_G2_SQL_NOT_OWN_NATIVE_REPLAY",
+      "newInternalReceiptUniqueRequired": false
+    },
+    "tme_wfm_schedule_candidates": {
+      "table": "tme_wfm_schedule_candidates",
+      "schema": "public",
+      "owner": "TIME",
+      "columns": {
+        "schedule_candidate_id": "BIGINT",
+        "tenant_id": "BIGINT",
+        "public_id": "UUID",
+        "aggregate_version": "BIGINT",
+        "created_at": "TIMESTAMPTZ",
+        "created_by": "UUID",
+        "updated_at": "TIMESTAMPTZ",
+        "updated_by": "UUID",
+        "correlation_id": "UUID",
+        "demand_forecast_id": "BIGINT",
+        "forecast_revision": "BIGINT",
+        "candidate_revision": "BIGINT",
+        "planning_input_snapshot_id": "BIGINT",
+        "policy_version_public_id": "UUID",
+        "policy_revision": "BIGINT",
+        "policy_digest": "CHAR(64)",
+        "solver_strategy_key": "VARCHAR(160)",
+        "solver_version": "VARCHAR(160)",
+        "deterministic_seed": "BIGINT",
+        "status": "VARCHAR(40)",
+        "candidate_digest": "CHAR(64)",
+        "last_evaluation_id": "BIGINT",
+        "publication_ledger_id": "BIGINT",
+        "failure_code": "VARCHAR(80)",
+        "last_evaluation_revision": "BIGINT"
+      },
+      "uniqueKeys": [
+        [
+          "tenant_id",
+          "public_id"
+        ],
+        [
+          "tenant_id",
+          "schedule_candidate_id"
+        ],
+        [
+          "tenant_id",
+          "demand_forecast_id",
+          "candidate_revision"
+        ],
+        [
+          "tenant_id",
+          "schedule_candidate_id",
+          "demand_forecast_id"
+        ],
+        [
+          "tenant_id",
+          "schedule_candidate_id",
+          "candidate_revision"
+        ],
+        [
+          "tenant_id",
+          "schedule_candidate_id",
+          "planning_input_snapshot_id"
+        ]
+      ],
+      "sourcePath": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.json",
+      "sourceSha256": "d61723e26d9830ac634d2ae06ec44c758633519d80d95701d4cc30c901d52b11",
+      "CURRENT_PUBLISHED": false,
+      "evidenceKind": "UNPUBLISHED_WFM_PROPOSAL_NOT_NATIVE",
+      "commonColumnSource": {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+        "sha256": "32b3d6c4e98037c0a26df0b08e112ad9ab067f95d70f3dc3d5dedf4f53f291fb",
+        "pointer": "/commonTableContract/columns"
+      }
+    }
+  },
+  "sqlExecutionAllowed": false,
+  "neutralInfrastructurePlan": {
+    "status": "INTERNAL_EXPERT_REVIEW_PENDING",
+    "ownerTuple": [
+      "dwp-time-server",
+      "NEUTRAL_TIM_COMMAND_EVENT_INFRASTRUCTURE",
+      "public"
+    ],
+    "tables": [
+      "tme_command_receipts",
+      "tme_outbox_events",
+      "tme_inbox_receipts"
+    ],
+    "allowedReadWrite": {
+      "tme_command_receipts": [
+        "INSERT_CURRENT_AUTHORIZED_COMMAND",
+        "READ_EXACT_TENANT_RECEIPT",
+        "UPDATE_GUARDED_STATUS"
+      ],
+      "tme_outbox_events": [
+        "INSERT_SAME_TRANSACTION_MINIMAL_TYPED_EVENT",
+        "LEASE_DELIVERY_CAS"
+      ],
+      "tme_inbox_receipts": [
+        "INSERT_DEDUP_EXACT_AUTHENTICATED_OWNER_EVENT",
+        "READ_EXACT_TENANT_EVENT"
+      ]
+    },
+    "noBusinessRepositoryAccessException": true,
+    "noCrossContextFkException": true
+  },
+  "producerQueryPlan": {
+    "owner": "TIME",
+    "CURRENT_PUBLISHED": false,
+    "registered": false,
+    "query": "SELECT h.public_id,h.snapshot_revision,h.as_of,h.valid_until,h.purpose_code,h.scope_digest,h.content_digest,r.content FROM public.tme_availability_snapshots h JOIN public.tme_availability_snapshot_rows r ON r.tenant_id=h.tenant_id AND r.availability_snapshot_id=h.availability_snapshot_id WHERE h.tenant_id=:trustedTenant AND h.public_id=:snapshotPublicUuid AND h.snapshot_revision=:expectedBusinessRevision AND h.snapshot_kind='CANONICAL_SCHEDULE'",
+    "contentSchemaRef": "V4.SchedulePayload",
+    "immutableRowContentRequired": true,
+    "currentPurposePopulationFieldPolicyRefetchRequired": true,
+    "queryMaterializationAndStoredContentSourceGraph": "OPEN_G3_PLANNED_SOURCE_NOT_NATIVE"
+  },
+  "ownerAdapterPlan": {
+    "fiveRoles": {
+      "abs_owner_artifact_snapshots": "CLOSED_OWNER_RESPONSE_UNION_PLUS_LOCAL_PROVENANCE",
+      "abs_policy_evaluation_reports": "LOCAL_ABS_EVALUATOR_PLUS_CAS_LOADED_POLICY_SUBJECT",
+      "abs_policy_governance_bindings": "LOCAL_ABS_POLICY_PARENT_PLUS_SYS_GOVERNANCE_DECISION",
+      "abs_calendar_version_snapshots": "DIRECT_SYS_OR_TIME_CALENDAR_RESPONSE",
+      "abs_time_schedule_segment_snapshots": "TIME_PUBLISHED_HEADER_AND_SEGMENT_ONLY"
+    },
+    "requiredRefetchTuple": [
+      "trusted tenant",
+      "snapshot public UUID",
+      "exact business revision",
+      "full payload schema/digest",
+      "asOf/window",
+      "current purpose/population/field policy",
+      "acting Auth2 stamps separate target People4 versions"
+    ],
+    "disabledOptionalScheduleCalls": 0,
+    "enabledMissingAdapter": "DENY",
+    "HRMNativeEmploymentPublication": false,
+    "legalEmployerUuidOwner": "existing People native employer, no shadow identity journal",
+    "numericSnapshotRevisionIsNotDwpAuthorityRevision": true
+  },
+  "moduleFileOwnership": {
+    "writer": "TIM module/internal code-owner reviewed planned files only",
+    "moduleRoot": "dwp-time-server/src/main/java/com/dwp/services/time",
+    "testRoot": "dwp-time-server/src/test/java/com/dwp/services/time",
+    "schemaDtoFiles": [
+      "absence/contracts/v4/AbsOwnerResponseV4.java",
+      "absence/contracts/v4/AbsPolicyEvaluationReportV4.java",
+      "time/contracts/v4/PublishedScheduleSnapshotResponseV4.java"
+    ],
+    "spiAdapterAssemblerFiles": [
+      "absence/ports/AbsOwnerSnapshotRefetchPortV4.java",
+      "time/ports/PublishedScheduleSnapshotQuerySpiV4.java",
+      "absence/adapters/AbsOwnerTypedFieldAdapterV4.java",
+      "absence/source/EntitlementInputAssemblerV4.java",
+      "absence/source/TerminationInstructionAssemblerV4.java"
+    ],
+    "tests": [
+      "AbsOwnerTypedFieldAdapterV4Test",
+      "EntitlementInputAssemblerV4Test",
+      "TerminationInstructionAssemblerV4Test",
+      "PublishedScheduleQuerySpiV4ConsumerCompileTest"
+    ],
+    "filesImplemented": false,
+    "sharedConsumerCompile": false,
+    "businessCrudG4NotRequiredFirst": true
+  },
+  "migrationPlan": {
+    "newBusinessTablesThisChunk": 0,
+    "currentStructuralTables": 52,
+    "allocation": "NOT_ALLOCATED_INTERNAL_OWNER_SUCCESSOR_REQUIRED",
+    "nativeWfmDependency": "UNPUBLISHED_OPEN",
+    "newReceiptInternalUk": false
+  }
+}

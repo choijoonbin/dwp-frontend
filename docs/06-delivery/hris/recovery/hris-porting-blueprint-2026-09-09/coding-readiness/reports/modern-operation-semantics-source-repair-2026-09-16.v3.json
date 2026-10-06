@@ -1,0 +1,254 @@
+{
+  "reportId": "dwp.hris.modern-operation-semantics-source-repair.2026-09-16.v3",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T02:28:00Z",
+  "status": "PASS_SOURCE_ONLY_SELF_VALIDATED_REQUIRES_INDEPENDENT_REAUDIT",
+  "decision": "NO_CANDIDATE_LIVE_OR_GATE_CHANGE_UNTIL_DISTINCT_INDEPENDENT_REAUDIT",
+  "scope": {
+    "sourceOnly": true,
+    "modifiedSourceFiles": [
+      "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py"
+    ],
+    "newReportOnly": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v3.json",
+    "workspaceCandidateCreated": false,
+    "candidateModified": false,
+    "liveCanonicalModified": false,
+    "gateModified": false,
+    "existingReportModified": false,
+    "policyModified": false,
+    "temporaryEvidenceDirectory": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8"
+  },
+  "lineage": {
+    "sourceRepairV2": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v2.json",
+      "sha256": "3a70afb71563c23aade15566a4d7421a9b511ab542300d517443adeb89b989d2",
+      "sealedPayloadSha256": "cb060c4d75bd5f05c6f4d312cbefd821273c9b4b7c28caaf8bc49657965daf7d"
+    },
+    "independentAuditV2": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-independent-audit-2026-09-16.v2.json",
+      "sha256": "cd28484851267bd36e7c7209a898a4a55b5634c94c15c1be8f57979cf0249871",
+      "sealedPayloadSha256": "b24625e5d87e65041ff537bd8f026c45240752909548a3e132b4707b6992c24b",
+      "reportedEscapes": [
+        "ESCAPE-WFP-SUCCESS-PAYLOAD-SUFFICIENCY-PREFIX-BYPASS",
+        "ESCAPE-WFP-FAILURE-PAYLOAD-SUFFICIENCY-PREFIX-BYPASS"
+      ]
+    }
+  },
+  "repair": {
+    "class": "WFP_PAYLOAD_SUFFICIENCY_EXACT_CLOSURE",
+    "handlerId": "internal.workforceplan.simulation-result.consume",
+    "events": [
+      "WorkforceScenarioSimulated.v2",
+      "WorkforceScenarioSimulationFailed.v2"
+    ],
+    "authorityLiteral": "CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF",
+    "before": "str(payloadSufficiency).startswith('CLOSED_DURABLE_EVENT_ALLOWLIST')",
+    "after": "payloadSufficiency == WFP_RESULT_OWNER_PAYLOAD_SUFFICIENCY",
+    "closedSemantics": [
+      "The success and failure terminal events must carry the exact reviewed payload-sufficiency literal.",
+      "Prefix, substring, token-presence and prose-semantic equivalence are rejected.",
+      "The exact resultReceiptId+resultReceiptRevision+resultSchemaVersion+resultDigest tuple, signed-owner validation, deny-on-unavailable, forbidden aggregate lookup/latest fallback and no stale refetch hints remain required."
+    ],
+    "officialSelftestsAdded": [
+      "reject-wfp-success-payload-sufficiency-prefix-bypass",
+      "reject-wfp-failure-payload-sufficiency-prefix-bypass"
+    ]
+  },
+  "modifiedSource": {
+    "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+    "beforeSha256": "f372179772d103a819402ea66c231e96049bc84d804ed95f656dfe1e6782a487",
+    "afterSha256": "30982425e0cc769acfad4c1a64d6e3c91a72e993fb4cd68fd14d267e2724d09b",
+    "syntaxCheck": "PASS",
+    "officialMutationSelftests": {
+      "status": "PASS",
+      "testsRun": 24,
+      "testsPassed": 24,
+      "previousTestsRetained": 22,
+      "newTests": 2
+    }
+  },
+  "pinnedValidationInputs": {
+    "operationProjection": {
+      "path": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/operation-v6.json",
+      "sourceProjectionVersion": "modern-operation-causal-source-v6-2026-09-16",
+      "sha256": "2d048ddf51a7177dc76abefc6f613312cebdee0b619a7fd4f57ddbf48429e50b",
+      "counts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "publicEvents": 157,
+        "tableSpecifications": 131
+      }
+    },
+    "exactSchema": {
+      "path": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/exact.json",
+      "sha256": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88"
+    },
+    "routeAuditor": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py",
+      "sha256": "21d1e68138a3c961780d540e5fbb2c7b2bd1b2a86d872d43b934fb40eaa946ea"
+    }
+  },
+  "selfValidation": {
+    "baselineOperationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "affectedOperationCount": 0,
+      "reportPath": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/operation-audit.json",
+      "reportSha256": "20f250dc0b4f6e981811592ee43f2a6c37a4de0bc863f09ef57e908e0712a487"
+    },
+    "officialMutationSelftests": {
+      "status": "PASS",
+      "testsRun": 24,
+      "testsPassed": 24,
+      "reportPath": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/operation-selftest.json",
+      "reportSha256": "dc73efc44a12c4c61f73bea335a392c00b4932a848d8a00376b2e1852303eb58"
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "findingCount": 0,
+      "operations": 199,
+      "reportPath": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/route-audit.json",
+      "reportSha256": "da449a35d58405e7745eb3f506cf0bce29056e06c9265d19362c0db90f08de56"
+    },
+    "externalPrior94": {
+      "status": "PASS",
+      "testsRun": 94,
+      "rejected": 94,
+      "escaped": 0,
+      "expectedCodeMatched": 94,
+      "familySummary": {
+        "listeningProtectedSubmit": "67/67",
+        "learningOwnerProof": "3/3",
+        "workforcePlanningTerminalProof": "24/24"
+      }
+    },
+    "newPrefixBypassMutations": {
+      "status": "PASS",
+      "testsRun": 2,
+      "rejected": 2,
+      "escaped": 0,
+      "results": [
+        {
+          "name": "wfp-success-payload-sufficiency-prefix-bypass",
+          "auditStatus": "FAIL",
+          "findingCount": 1,
+          "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+          "expectedCodeMatched": true
+        },
+        {
+          "name": "wfp-failure-payload-sufficiency-prefix-bypass",
+          "auditStatus": "FAIL",
+          "findingCount": 1,
+          "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+          "expectedCodeMatched": true
+        }
+      ]
+    },
+    "additionalClosedSetControls": {
+      "status": "PASS",
+      "testsRun": 2,
+      "rejected": 2,
+      "cases": [
+        "learning extra owner-proof sibling",
+        "WFP extra resultOwnerContract key"
+      ]
+    },
+    "externalEvidence": {
+      "harnessPath": "/private/tmp/operation_v2_independent_reaudit.py",
+      "harnessSha256": "7447252a2bed6b170396a8b160d7790ac3ddde935346ee8dad76b94aa5b4c20f",
+      "evidencePath": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/external-hostile-94-evidence.json",
+      "evidenceSha256": "aad0bf812f452ed01d58d335014f1950e1222bc3dff943d1316ef3e370d9925b"
+    }
+  },
+  "historicalTruePositiveRetention": {
+    "candidate": "coding-readiness/modern-canonical-candidate.uaHfXj",
+    "status": "FAIL_AS_EXPECTED",
+    "findingCount": 3,
+    "affectedOperationCount": 1,
+    "findings": [
+      {
+        "code": "UNDECLARED_BODY_SOURCE_USED",
+        "operationId": "modern.learning.completion.verify",
+        "field": "body.skillEvidenceIds"
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulated.v2",
+        "table": "ppl_wfp_simulation_requests"
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulationFailed.v2",
+        "table": "ppl_wfp_simulation_requests"
+      }
+    ],
+    "reportPath": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/uahfxj-audit.json",
+    "reportSha256": "dc31a1b70b93bbcd1ebc135a6c66bacd806485be32b8b2e67a0c372c46e61f23",
+    "officialSelftests": {
+      "status": "PASS",
+      "testsRun": 24,
+      "testsPassed": 24,
+      "reportPath": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/uahfxj-selftest.json",
+      "reportSha256": "a6bf16e1458d2da2841710d869795cc4f63a109d5bdcfa2a4e0c64f0d70dd8f7"
+    }
+  },
+  "commandsExecuted": [
+    {
+      "purpose": "syntax",
+      "command": "python3 -m py_compile coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "result": "PASS"
+    },
+    {
+      "purpose": "baseline and official selftests",
+      "command": "python3 coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py --ssot /private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/operation-v6.json --exact /private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/exact.json --report <temp>/operation-audit.json --selftest --selftest-report <temp>/operation-selftest.json",
+      "result": "PASS findingCount=0 affectedOperationCount=0 selftests=24/24"
+    },
+    {
+      "purpose": "route taxonomy",
+      "command": "python3 coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py --ssot <temp>/operation-v6.json --report <temp>/route-audit.json",
+      "result": "PASS findingCount=0 operations=199"
+    },
+    {
+      "purpose": "external hostile campaign",
+      "command": "python3 /private/tmp/operation_v2_independent_reaudit.py",
+      "result": "PASS prior94=94/94 expectedCode=94/94 newPrefixBypass=2/2 controls=2/2 baseline=0 selftests=24/24 route=0 uaHfXj=3 immutability=true"
+    },
+    {
+      "purpose": "historical true-positive CLI retention",
+      "command": "python3 coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py --ssot coding-readiness/modern-canonical-candidate.uaHfXj/modern-capability-operation-causal-contract-ssot.v2.json --exact coding-readiness/modern-canonical-candidate.uaHfXj/modern-capability-exact-schema-contracts.v1.json --report <temp>/uahfxj-audit.json --selftest --selftest-report <temp>/uahfxj-selftest.json",
+      "result": "EXPECTED_EXIT_1 audit=FAIL findingCount=3 selftests=24/24"
+    }
+  ],
+  "immutabilityEvidence": {
+    "liveOperationSsotSha256BeforeAndAfter": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+    "liveManifestSha256BeforeAndAfter": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+    "g3GateDecisionSha256BeforeAndAfter": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "candidateTreeHashesBeforeAndAfter": {
+      "modern-canonical-candidate.2eZCXW": "eda199e366a750eda73a01090a359f921be252d4c4b6028d38ae266ecfe92e45",
+      "modern-canonical-candidate.Qs4ngh": "21774d838e69c3e91aab0d37f635730a3762468cafa13438a73a11ea79edaafc",
+      "modern-canonical-candidate.ZorhI5": "9df733e9186fb5a42a1c4bf1edbbf9734ff9faad97f4661072d8c80fc635e8ac",
+      "modern-canonical-candidate.q0mnJg": "c6f716618c0f17e2479efbe4ccff1357ec0b78ea550c78e2d0ed2f08c9642815",
+      "modern-canonical-candidate.uaHfXj": "24ba1a473c0d3caa398bd99864c0277dcfb54c9718b6a9007fc1cdd6db7545aa"
+    },
+    "identical": true,
+    "gateDisposition": "UNCHANGED_CLOSED_FAIL_SAFE"
+  },
+  "selfValidationConclusion": {
+    "baselineZero": true,
+    "officialSelftests24Of24": true,
+    "prior94Rejected": true,
+    "previousThreeEscapesRemainClosed": true,
+    "newTwoEscapesClosed": true,
+    "historicalThreeTruePositivesRetained": true,
+    "routeZero": true,
+    "candidateLiveGateUnchanged": true,
+    "sourceRepairSelfValidated": true,
+    "independentClearanceStillRequired": true
+  },
+  "nextAuthorizedStep": "A distinct independent reviewer must rerun baseline=0, official selftests=24/24, route=0, prior hostile 94/94, the two exact prefix-bypass mutations, and uaHfXj=3 against source SHA 30982425e0cc769acfad4c1a64d6e3c91a72e993fb4cd68fd14d267e2724d09b. No candidate, live canonical, policy or Gate change is authorized by this source-only self-validation.",
+  "sealedPayloadSha256": "12be82582e9a8b2cd6f207f7943002f608ce951ae0d55912c91b421d8a57997c"
+}

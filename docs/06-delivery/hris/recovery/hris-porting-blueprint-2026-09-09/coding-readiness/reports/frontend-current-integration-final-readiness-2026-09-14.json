@@ -1,0 +1,648 @@
+{
+  "schema": "dwp.hris.frontend-current-integration-final-readiness.v1",
+  "evaluatedAt": "2026-09-14T13:54:44Z",
+  "status": "FAIL_CLOSED_WITH_EXTERNAL_AND_CROSS_PRODUCT_BLOCKERS",
+  "scopeVerdict": {
+    "hrisFrontendModules": "PASS",
+    "wholeFrontendIntegration": "NOT_READY",
+    "startP0": "CLOSED",
+    "gateAuthorization": "NONE",
+    "reason": "The HRIS module, route, shared HTTP, i18n, type, lint, API-SoR and layer checks pass. Whole-repository Approval baseline failures, one Approval/shared-HTTP compatibility assertion, IA source-digest drift, and pending backend provenance prevent an integration-ready or Gate-open claim."
+  },
+  "constraints": {
+    "frontendSourceEdited": false,
+    "frontendCommitCreated": false,
+    "dwpDevMergePerformed": false,
+    "dirtyMainUsedAsInput": false,
+    "allowlistRelaxed": false,
+    "foreignProcessOrContainerAction": false,
+    "wholeVitestRuns": 1,
+    "officialBackendProvenanceUpdated": false
+  },
+  "frontend": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+    "branch": "codex/hris-integration-frontend-20260909",
+    "head": "4e1333c66dfd9563ecbf321cfcda3b3f6b7f9778",
+    "tree": "27390487173ba41640e01f69704740f38f0da8e0",
+    "parents": [
+      "ec4376d88f3a2fe20dc297b12e4fc0c4392d66b0",
+      "495b6192605545587685b08fd3c4c716078048e2"
+    ],
+    "configuredUpstream": null,
+    "comparisonUpstream": {
+      "localDwpDev": "495b6192605545587685b08fd3c4c716078048e2",
+      "originDwpDev": "495b6192605545587685b08fd3c4c716078048e2",
+      "expectedBaseline": "495b6192605545587685b08fd3c4c716078048e2",
+      "changedSinceExpectedBaseline": false,
+      "isAncestorOfHead": true,
+      "decision": "NO_MERGE"
+    },
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "headStable": true,
+    "treeStable": true
+  },
+  "readOnlyExternalObservations": {
+    "userMainFrontend": {
+      "path": "/Users/a10697/Work/DWP/dwp-frontend",
+      "head": "495b6192605545587685b08fd3c4c716078048e2",
+      "dirty": true,
+      "porcelainEntries": 61,
+      "trackedEntries": 34,
+      "untrackedEntries": 27,
+      "relevantArchitecturePathStatus": {
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspector.tsx": "MODIFIED",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-overview.tsx": "MODIFIED",
+        "otherElevenUnreachablePaths": "CLEAN"
+      },
+      "relevantDisclosurePathStatus": {
+        "apps/dwp/src/features/approvals/approval-admin-overview.tsx": "MODIFIED"
+      },
+      "boundary": "Only git metadata/status was used to classify committed versus dirty state. No dirty file contents were copied, referenced as a solution, or used to alter the integration worktree."
+    },
+    "backendIntegration": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+      "observedAt": "2026-09-14T22:45:55+09:00",
+      "observedHead": "b01bd03066f4e249c3463e89ba1a64e4a33146f6",
+      "observedTree": "99380e236d119c071ae18cad9ec36c0614c961e2",
+      "dirty": true,
+      "porcelainEntries": 1007,
+      "trackedEntries": 998,
+      "untrackedEntries": 9,
+      "provenance": "PENDING_NOT_OFFICIAL",
+      "reason": "The backend integration branch is still changing and dirty; this read-only observation is deliberately not promoted into canonical frontend/backend provenance."
+    }
+  },
+  "runtimePins": {
+    "node": "v20.20.2",
+    "python": "3.9.6",
+    "yarn": "4.17.1",
+    "packageJsonSha256": "1cd7a5909e3e3b36a909b482785b19fb6e15ef9e290aef4497f80695cf223b72",
+    "yarnLockSha256": "5e3e06e04dc26869e1024d9fdba7e07c90cf2a54f7f6062007b6881fb875347b"
+  },
+  "hostSemaphore": {
+    "name": "hris-verification",
+    "foreignOwnersTouched": false,
+    "runs": [
+      {
+        "label": "targeted-batches",
+        "acquiredAtUtc": "2026-09-14T13:34:11.730Z",
+        "releasedAtUtc": "2026-09-14T13:34:46.096Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      },
+      {
+        "label": "focused-disclosure-reproduction",
+        "acquiredAtUtc": "2026-09-14T13:35:00.174Z",
+        "releasedAtUtc": "2026-09-14T13:35:00.584Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      },
+      {
+        "label": "quality-layer-architecture",
+        "acquiredAtUtc": "2026-09-14T13:39:58.698Z",
+        "releasedAtUtc": "2026-09-14T13:40:17.353Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      },
+      {
+        "label": "whole-vitest-exactly-once",
+        "acquiredAtUtc": "2026-09-14T13:41:01.952Z",
+        "releasedAtUtc": "2026-09-14T13:42:47.205Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      }
+    ]
+  },
+  "apiSor": {
+    "cwd": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "pins": {
+      "register": {
+        "path": "coding-readiness/hris-api-sor-transition-register.csv",
+        "sha256": "d76e81f8e661f59e8c10c163b6170947ab5f730987e587af162ebb732d20bfb9"
+      },
+      "validator": {
+        "path": "coding-readiness/validate_hris_api_sor_transitions.py",
+        "sha256": "805f3bdff429a79184b927d25a529e849489d9ae4b2aa3c268db59f93657e9f2"
+      }
+    },
+    "layeredSourceReferences": [
+      "TIM:apps/dwp/src/features/hris/time/api/hris-time-api.ts#readHrisTimeWorkspace",
+      "PAY:apps/dwp/src/features/hris/payroll/api/payroll-api.ts#getHrisPayrollWorkspace",
+      "PER:apps/dwp/src/features/hris/performance/api/performance-talent-api.ts#getScopedPerformanceTalent"
+    ],
+    "primary": {
+      "command": "python3 coding-readiness/validate_hris_api_sor_transitions.py --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "transitionCount": 23,
+      "readVariantCount": 14,
+      "mutationCount": 9,
+      "sourceOperationCount": 23,
+      "errors": []
+    },
+    "negativeFixtures": {
+      "command": "python3 coding-readiness/validate_hris_api_sor_transitions.py --self-test --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "rejected": 18,
+      "total": 18,
+      "cases": [
+        "bensk-route-alias",
+        "bensk-state-reuse",
+        "canonical-contract-rehome",
+        "canonical-owner-rehome",
+        "dual-read",
+        "dual-write",
+        "feature-direct-source-omission",
+        "missing-absence-mutation",
+        "missing-read-surface",
+        "missing-response-composition",
+        "new-direct-legacy-callsite",
+        "new-source-operation-without-decision",
+        "operations-domain-collapse",
+        "schema-blind-direct-url-switch",
+        "silent-fallback",
+        "source-extracted-transition-valid",
+        "wrong-ia-composition",
+        "wrong-primary-slice"
+      ]
+    }
+  },
+  "targetedVitest": {
+    "commonPrefix": "node node_modules/vitest/vitest.mjs run --reporter=json --maxWorkers=4 --maxConcurrency=2",
+    "groups": [
+      {
+        "name": "HRM",
+        "arguments": ["apps/dwp/src/features/hris/people"],
+        "resultFiles": 2,
+        "jsonSuites": 6,
+        "tests": 22,
+        "passed": 22,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 2.428,
+        "status": "PASS"
+      },
+      {
+        "name": "PER",
+        "arguments": ["apps/dwp/src/features/hris/performance"],
+        "resultFiles": 3,
+        "jsonSuites": 8,
+        "tests": 62,
+        "passed": 62,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 4.001,
+        "status": "PASS"
+      },
+      {
+        "name": "TIM",
+        "arguments": ["apps/dwp/src/features/hris/time"],
+        "resultFiles": 3,
+        "jsonSuites": 8,
+        "tests": 43,
+        "passed": 43,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 1.599,
+        "status": "PASS"
+      },
+      {
+        "name": "PAY",
+        "arguments": ["apps/dwp/src/features/hris/payroll"],
+        "resultFiles": 3,
+        "jsonSuites": 8,
+        "tests": 59,
+        "passed": 59,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 1.921,
+        "status": "PASS"
+      },
+      {
+        "name": "SHELL_SHARED",
+        "arguments": ["apps/dwp/src/features/hris/shell", "apps/dwp/src/features/hris/shared"],
+        "resultFiles": 5,
+        "jsonSuites": 10,
+        "tests": 20,
+        "passed": 20,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 1.594,
+        "status": "PASS"
+      },
+      {
+        "name": "HTTP",
+        "arguments": [
+          "libs/shared-utils/src/axios-instance.test.ts",
+          "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+          "libs/shared-utils/src/axios-cancellation-race.test.ts"
+        ],
+        "resultFiles": 3,
+        "jsonSuites": 6,
+        "tests": 57,
+        "passed": 57,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 0.786,
+        "status": "PASS"
+      },
+      {
+        "name": "I18N",
+        "arguments": [
+          "libs/shared-i18n/src",
+          "apps/dwp/src/features/home/flow-home/home-contribution-provider-i18n.test.ts"
+        ],
+        "resultFiles": 7,
+        "jsonSuites": 14,
+        "tests": 58,
+        "passed": 58,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 1.825,
+        "status": "PASS"
+      },
+      {
+        "name": "ROUTES",
+        "arguments": ["apps/dwp/src/routes", "apps/dwp/src/pages/hcm.test.ts"],
+        "resultFiles": 27,
+        "jsonSuites": 62,
+        "tests": 269,
+        "passed": 269,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "durationSeconds": 4.133,
+        "status": "PASS"
+      },
+      {
+        "name": "CONTRACTS",
+        "arguments": [
+          "apps/dwp/src/features/hcm",
+          "apps/dwp/src/components/hcm-product-surface-read-cache.test.ts",
+          "apps/dwp/src/components/hcm-query-state-model.test.ts",
+          "apps/dwp/src/components/hcm-query-state.test.ts",
+          "apps/dwp/src/components/product-action-disclosure-contracts.test.ts",
+          "apps/dwp/src/components/product-surface-query-key-contracts.test.ts",
+          "apps/dwp/src/features/home-personalization/home-widget-content-contract.test.ts",
+          "libs/shared-utils/src/api",
+          "libs/shared-utils/src/auth/hcm-access.test.ts",
+          "libs/shared-utils/src/dwaion-contract.test.ts"
+        ],
+        "resultFiles": 110,
+        "jsonSuites": 227,
+        "tests": 1391,
+        "passed": 1390,
+        "failed": 1,
+        "pending": 0,
+        "todo": 0,
+        "status": "FAIL_APPROVAL_BASELINE"
+      }
+    ],
+    "aggregate": {
+      "inputAndResultFiles": 163,
+      "tests": 1981,
+      "passed": 1980,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "hrisOwnedFailures": 0
+    }
+  },
+  "focusedReproduction": {
+    "command": "node node_modules/vitest/vitest.mjs run --reporter=json --maxWorkers=1 apps/dwp/src/components/product-action-disclosure-contracts.test.ts",
+    "resultFiles": 1,
+    "tests": 14,
+    "passed": 13,
+    "failed": 1,
+    "pending": 0,
+    "todo": 0,
+    "failure": "Product action disclosure contracts > binds cross-PAGE shortcuts to their exact target PAGE decisions",
+    "location": "apps/dwp/src/components/product-action-disclosure-contracts.test.ts:183",
+    "observation": "approval-admin-overview.tsx does not contain PRODUCT_PAGE_SHORTCUT_TARGETS.approvalWorkflows"
+  },
+  "quality": {
+    "typecheck": {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 0,
+      "durationSeconds": 6.074,
+      "status": "PASS"
+    },
+    "scopedLint": {
+      "command": "node node_modules/eslint/bin/eslint.js apps/dwp/src/features/hris apps/dwp/src/features/hcm apps/dwp/src/pages/hcm.tsx apps/dwp/src/components/hcm-query-state.tsx apps/dwp/src/components/use-product-surface-request-scope.ts",
+      "exitCode": 0,
+      "durationSeconds": 1.52,
+      "status": "PASS"
+    },
+    "layerUnit": {
+      "environment": "HRIS_STRUCTURE_REGISTER=/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+      "command": "node --test --test-reporter=tap scripts/verification/hris-layer-contract-v1.test.mjs",
+      "exitCode": 0,
+      "tests": 44,
+      "passed": 44,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "durationSeconds": 0.884,
+      "status": "PASS"
+    },
+    "layerScan": {
+      "command": "node scripts/verification/hris-layer-contract-v1.mjs --mode scan --register /Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+      "exitCode": 0,
+      "structuralPass": true,
+      "readinessPass": false,
+      "g3StartAuthorized": false,
+      "sourceCount": 2458,
+      "classifiedCount": 60,
+      "layeredCount": 54,
+      "unclassifiedCount": 0,
+      "errors": [],
+      "namespaceCount": 2458,
+      "namespaceSha256": "00f33bdd142cf1142b162d5d6901610753c3cc425b691784af7423f3364c9999",
+      "diskNamespaceNsCount": 2458,
+      "diskNamespaceNsSha256": "fd6b6c7ba75985fb9d7dc2223ee0b9ce07a63e3115c787b61adc89899d439a4a",
+      "interpretation": "The current source is structurally valid. The validator intentionally does not authorize G3/readiness."
+    },
+    "pins": {
+      "layerValidatorSha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+      "layerUnitSha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+      "structureRegisterSha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf"
+    }
+  },
+  "informationArchitecture": {
+    "cwd": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "pins": {
+      "registerSha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686",
+      "generatorSha256": "6341e37bdf32b720e099d33a6da1aa82fae011401fe9e8eba7e66b1adecfad2f",
+      "targetFamilyRegisterSha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "validatorSha256": "8377ec24ce47c380e16b8aee0589db3d1c1f78be547c6c94f5df0de57d411fa4",
+      "accessValidatorSha256": "a6a5bf7f13aa78bf15ca6200c1c41048a839cb214e3485c94e349585557b0366",
+      "sharedBoundaryValidatorSha256": "d00844871736194d31ec2efefb646a3a7a6ff7c574115fb265fd3a94073d7b2c"
+    },
+    "primary": {
+      "command": "python3 coding-readiness/validate_information_architecture.py --compact",
+      "exitCode": 1,
+      "status": "FAIL_SOURCE_DIGEST_DRIFT",
+      "nodes": 98,
+      "baseNodes": 76,
+      "modernNodes": 22,
+      "uniqueRoutes": 98,
+      "baseDigestMismatches": 76,
+      "otherSemanticErrors": 0,
+      "coverage": {
+        "sourceFamilyReferences": 80,
+        "apiContractReferences": 372,
+        "authorizationReferences": 119,
+        "fixedHome": 1,
+        "sidebars": 7,
+        "explorer": 1,
+        "taskGroups": 46,
+        "groupedNodes": 97,
+        "transitionDecisions": 2
+      },
+      "checks": {
+        "exactSourceMaterialization": false,
+        "apiAndAuthorizationClosure": false,
+        "allOtherChecks": true
+      },
+      "interpretation": "All 76 BASE nodes retain stale source_digest_sha256 values after the layered frontend catalog change. Regeneration is withheld because official cross-repository provenance is pending; this is a fail-closed generated-evidence drift, not a request to bypass the check."
+    },
+    "negativeFixtures": {
+      "command": "python3 coding-readiness/validate_information_architecture.py --self-test --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "rejected": 30,
+      "total": 30
+    },
+    "accessContracts": {
+      "command": "python3 coding-readiness/validate_ia_node_access_contracts.py --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "iaNodes": 98,
+      "projections": 66,
+      "publicOperations": 66,
+      "runtimeContracts": 66,
+      "typedFieldGroups": 138,
+      "actions": 202,
+      "personas": 5,
+      "packages": 31,
+      "duties": 128
+    },
+    "accessNegativeFixtures": {
+      "command": "python3 coding-readiness/validate_ia_node_access_contracts.py --self-test --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "rejected": 54,
+      "total": 54
+    },
+    "sharedPresentationBoundary": {
+      "command": "python3 coding-readiness/validate_frontend_shared_presentation_boundary.py --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "bindings": 1
+    },
+    "sharedPresentationNegativeFixtures": {
+      "command": "python3 coding-readiness/validate_frontend_shared_presentation_boundary.py --self-test --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "rejected": 5,
+      "total": 5
+    }
+  },
+  "architecture": {
+    "command": "yarn architecture:check",
+    "exitCode": 1,
+    "durationSeconds": 7.66,
+    "status": "FAIL_APPROVAL_UNREACHABLE_BASELINE",
+    "passingPreconditions": {
+      "productSurfaceAuthorizationPageRoutes": 79,
+      "internalProductClosure": "12/12",
+      "pepClosure": "60/60",
+      "applicationArchitecture": "15 apps + 1 shell + 5 platform features + 12 surfaces",
+      "routeCompositionApps": 16,
+      "relativeImportCycleNodes": 1739,
+      "featureBoundaries": "PASS",
+      "apiBoundaries": "PASS"
+    },
+    "unreachableCount": 13,
+    "unreachableModules": [
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-facts.tsx",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-history.tsx",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspection.tsx",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspector.tsx",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-model.ts",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-overview.tsx",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-policy-inspector.tsx",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-provider.tsx",
+      "libs/shared-utils/src/api/approval-retention-receipt-api.ts",
+      "libs/shared-utils/src/api/approval-retention-receipt-profile.ts",
+      "libs/shared-utils/src/api/approval-signature-diagnostics-contract.ts",
+      "libs/shared-utils/src/api/approval-signature-diagnostics-primitives.ts",
+      "libs/shared-utils/src/api/approval-signature-provider-policy-contract.ts"
+    ],
+    "committedBlobPins": {
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-facts.tsx": "3cc565d3e597921b113543cea499d274ae45c9df",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-history.tsx": "0bf74fcdb4e856e4cabe9d8048447251965521c7",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspection.tsx": "7b42ec1804c8e5c49a8fd955b5986b8b800834ed",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspector.tsx": "fc33f5429294ec101d675e5f1abbd6d22df8d268",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-model.ts": "a69780a136dd024708d80f21c2f1a7ca9b2eaad0",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-overview.tsx": "9c89e4a09c7e7c20a8ebddac24250e7e4bf31edf",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-policy-inspector.tsx": "0e51267f1ef258b9606e8c885db299eb0f6a00d0",
+      "apps/dwp/src/features/approvals/approval-signature-diagnostics-provider.tsx": "bcc064e3c17879dc19fe48d52a571e2f0faa7475",
+      "libs/shared-utils/src/api/approval-retention-receipt-api.ts": "28493830f17059dd19fd8e8fd9847a221f37edec",
+      "libs/shared-utils/src/api/approval-retention-receipt-profile.ts": "0f809ff82422fd15af3f94fa670aa31830c4b464",
+      "libs/shared-utils/src/api/approval-signature-diagnostics-contract.ts": "4078b594bc69b3849ecd655d77eadf63d7c5f1b1",
+      "libs/shared-utils/src/api/approval-signature-diagnostics-primitives.ts": "0fa4683d829c9e8d0cc55ed5255fbd7c4fcc35c7",
+      "libs/shared-utils/src/api/approval-signature-provider-policy-contract.ts": "32e32ca2241f81904358a9e5ed5ee35c8d750cfe"
+    },
+    "committedBaselineRelationship": {
+      "identicalToDwpDevCount": 13,
+      "differentFromDwpDevCount": 0,
+      "dirtyMainModifiedAmongThesePaths": [
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-inspector.tsx",
+        "apps/dwp/src/features/approvals/approval-signature-diagnostics-overview.tsx"
+      ],
+      "classification": "LATEST_COMMITTED_DWP_DEV_APPROVAL_BASELINE",
+      "dirtyMainRemediationConsumed": false
+    }
+  },
+  "wholeVitest": {
+    "command": "yarn test --maxWorkers=4 --maxConcurrency=2 --reporter=json",
+    "runs": 1,
+    "exitCode": 1,
+    "durationSeconds": 105.252,
+    "resultFiles": 696,
+    "uniqueResultFiles": 696,
+    "jsonSuiteCounters": {
+      "total": 1475,
+      "passed": 1469,
+      "failed": 6,
+      "pending": 0
+    },
+    "tests": 6370,
+    "passed": 6367,
+    "failed": 3,
+    "pending": 0,
+    "todo": 0,
+    "skipped": 0,
+    "observedFlakyOrRetried": 0,
+    "flakinessBoundary": "A single full run observed no retries or flaky markers; it cannot prove universal non-flakiness.",
+    "sourceStable": true,
+    "failures": [
+      {
+        "id": "FE-APPROVAL-BASELINE-DISCLOSURE",
+        "file": "apps/dwp/src/components/product-action-disclosure-contracts.test.ts",
+        "test": "Product action disclosure contracts > binds cross-PAGE shortcuts to their exact target PAGE decisions",
+        "location": "apps/dwp/src/components/product-action-disclosure-contracts.test.ts:183",
+        "classification": "COMMITTED_DWP_DEV_APPROVAL_BASELINE",
+        "testBlobHeadAndDwpDev": "7b7636ccaf574ab479307babe3c0082786db8b82",
+        "overviewBlobHeadAndDwpDev": "321f50ec0f02c969ae8f4d251c87ba586cdd1c6b",
+        "hrisPremergeParentContainsOverview": false,
+        "dirtyMainOverviewModified": true,
+        "dirtyMainConsumed": false
+      },
+      {
+        "id": "FE-APPROVAL-BASELINE-V2-GOLDEN",
+        "file": "apps/dwp/src/features/approvals/approval-form-typed.test.ts",
+        "test": "typed V2 cross-runtime golden contract pins the complete shared fixture bytes and the independently compiled schema hash",
+        "classification": "COMMITTED_DWP_DEV_APPROVAL_BASELINE",
+        "expectedSha256": "5867525b45e2eee0d90f9f36d6903f8a03c74561c639a6c5169104b43e55a9a4",
+        "actualSha256": "ce823a73199ff6db4fc3d6eb53cc6a33c2b18be137dc337f36469cbfac25ac24",
+        "testBlobHeadAndDwpDev": "bdf29563fa04bf42b3ab710ba48f50b375d74de0",
+        "fixtureBlobHeadAndDwpDev": "9670fbfca11fafe92634993856f583c0b2464b89",
+        "testAndFixtureAbsentFromHrisPremergeParent": true,
+        "dirtyMainTestOrFixtureModified": false
+      },
+      {
+        "id": "FE-APPROVAL-SHARED-HTTP-ABORT-COMPATIBILITY",
+        "file": "apps/dwp/src/features/approvals/approval-workflow-planning-controller.test.ts",
+        "test": "actual planning DATA transport with current native form/policy pins late cancelled selection cannot populate a new owner",
+        "classification": "CROSS_PRODUCT_APPROVAL_ASSERTION_VS_SHARED_HTTP_SAFETY",
+        "expectedMessageContains": "changed",
+        "actualMessage": "HTTP transport failed: abort",
+        "safetyOutcome": "The promise rejects and the late cancelled selection does not populate a new owner.",
+        "testBlobHeadAndDwpDev": "5c4c33551631bc832e9d978ae43e74f40f4637d9",
+        "controllerBlobHeadAndDwpDev": "e1fde93f9fede4e3a1580bc2c2886cb99674612a",
+        "testAndControllerAbsentFromHrisPremergeParent": true,
+        "sharedAxiosBlobHead": "8c7197282d61c04c292e81f06e9f5e0d44447f76",
+        "sharedAxiosBlobDwpDev": "de9192d6665d3b4932a10837b761c8b768a85966",
+        "sharedHttpRegressionTests": "57/57 PASS",
+        "decision": "Do not revert abort/timeout ownership and response-body cancellation hardening merely to restore a stale Approval error-text assertion. Approval and shared transport owners must reconcile the typed cancellation contract."
+      }
+    ]
+  },
+  "blockers": [
+    {
+      "id": "FE-BLK-001",
+      "owner": "Approval",
+      "condition": "Committed dwp-dev product shortcut disclosure contract does not match approval-admin-overview.",
+      "closureRequired": "Land and independently verify a committed Approval source/test contract resolution; do not consume dirty main state."
+    },
+    {
+      "id": "FE-BLK-002",
+      "owner": "Approval",
+      "condition": "Committed dwp-dev typed V2 golden fixture bytes do not match the pinned expected SHA-256.",
+      "closureRequired": "Determine whether fixture or pin is canonical, update the committed Approval contract atomically, and rerun the focused plus full suite."
+    },
+    {
+      "id": "FE-BLK-003",
+      "owner": "Approval + shared HTTP",
+      "condition": "Approval planning assertion expects legacy 'changed' text while shared HTTP correctly returns typed abort semantics.",
+      "closureRequired": "Agree and pin a typed cancellation compatibility contract without weakening the 57 passing HTTP lifecycle/race tests."
+    },
+    {
+      "id": "FE-BLK-004",
+      "owner": "Approval architecture",
+      "condition": "architecture:check reports exactly 13 unreachable Approval modules, all identical to committed dwp-dev.",
+      "closureRequired": "Make the intended production modules reachable or remove/de-scope them in the owning committed Approval change; do not relax the global allowlist."
+    },
+    {
+      "id": "FE-BLK-005",
+      "owner": "HRIS IA/provenance",
+      "condition": "All 76 BASE IA nodes have stale source digest pins after the frontend catalog layer split.",
+      "closureRequired": "After source/provenance freeze, regenerate the IA register from the canonical generator, review the semantic diff, and rerun primary plus 30 negative fixtures."
+    },
+    {
+      "id": "FE-BLK-006",
+      "owner": "Integration control",
+      "condition": "Backend final HEAD/tree and official frontend/backend provenance are not frozen.",
+      "closureRequired": "Wait for a clean final backend revision, then atomically pin and independently validate cross-repository provenance."
+    }
+  ],
+  "executionSummary": {
+    "targetedVitestAssertions": 1981,
+    "focusedReproductionAssertions": 14,
+    "wholeVitestAssertions": 6370,
+    "vitestAssertionsExecutedIncludingReplays": 8365,
+    "layerUnitAssertions": 44,
+    "negativeFixtureAssertions": {
+      "apiSor": 18,
+      "informationArchitecture": 30,
+      "iaAccess": 54,
+      "sharedPresentationBoundary": 5,
+      "total": 107
+    },
+    "sourceDefectsFixed": 0,
+    "sourceFilesChanged": 0,
+    "reportFilesAdded": 2
+  },
+  "finalDecision": {
+    "hrisModuleImplementationDefectFound": false,
+    "frontendSourceChangeRequiredInThisVerifierScope": false,
+    "frontendSourceCommit": null,
+    "frontendHrisScope": "VERIFIED",
+    "frontendIntegration": "FAIL_CLOSED",
+    "officialProvenance": "PENDING",
+    "startP0": "CLOSED",
+    "gate": "CLOSED"
+  }
+}

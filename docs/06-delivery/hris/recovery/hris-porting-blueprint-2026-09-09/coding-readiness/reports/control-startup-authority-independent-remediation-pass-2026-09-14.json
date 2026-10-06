@@ -1,0 +1,2237 @@
+{
+  "schemaVersion": "1.0",
+  "status": "INDEPENDENT_BOUNDED_CONTROL_CANDIDATE_31_PASS_G3_CLOSED",
+  "scope": "author native15 + independent unit9/native7; external Control unregistered candidate; 31 is bounded, not production transport/native approved ACL or 13-stream readiness",
+  "predecessors": [
+    "control-startup-authority-independent-initial-repro-2026-09-14.json",
+    "control-startup-authority-independent-precision-before-fix-2026-09-14.json"
+  ],
+  "execution": {
+    "taskLocalRerunRequested": true,
+    "testPostgresImage": "postgres:16-alpine",
+    "status": "CONTROL_STARTUP_INDEPENDENT_FOCUSED_EXECUTION_NOT_TRANSPORT_OR_G3",
+    "argv": [
+      "./gradlew",
+      ":dwp-migration-control:verifyMigrationControlRuntimeClasspath",
+      ":dwp-migration-control:test",
+      "--rerun",
+      "--tests",
+      "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1*Test",
+      "--no-daemon",
+      "--max-workers=1",
+      "--continue"
+    ],
+    "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+    "limitSeconds": 900,
+    "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+    "preHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "preTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "preStatus": "M dwp-auth-server/build.gradle\n M dwp-migration-control/build.gradle\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/hris/\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupClockEntryRegressionTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuardTest.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/startup/\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/startup/\n?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/\n?? dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/\n?? dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql\n?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/\n?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/",
+    "lockWaitSeconds": 0.000081,
+    "preSources": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/build.gradle",
+        "sha256": "19b3ccc5afaf332d36c91f3715d9607b1da6fc843ad975c36287fc9e9e7f33ff",
+        "bytes": 2177,
+        "mtimeNs": "1789359261551255864"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+        "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+        "bytes": 4887,
+        "mtimeNs": "1789359261552529839"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V100__authorize_enterprise_video_meetings.sql",
+        "sha256": "074d15a126044b0cdba2b221656355990ff81d5165b3c3a9b4c07ab6b7d3dc84",
+        "bytes": 9787,
+        "mtimeNs": "1788935965320069563"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V101__exclude_provider_identities_from_tenant_authority.sql",
+        "sha256": "fb978b727883395eccdd944e97a6eb819dc74f280895f06b976b98a282fbe0d1",
+        "bytes": 10419,
+        "mtimeNs": "1788935965320237769"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V102__materialize_immutable_identity_plane.sql",
+        "sha256": "21d7e33cc65a2d18041b52a2e5b88c764ab3e661410feb5f13bd1a89e8c191e5",
+        "bytes": 8308,
+        "mtimeNs": "1788935965320387683"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V103__exclude_provider_access_reviewers.sql",
+        "sha256": "797a360622b7ce7b89fc810dd5cb0d0e21c1498111cf01d6396f683e839b1131",
+        "bytes": 7901,
+        "mtimeNs": "1788935965320539889"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V104__serialize_identity_authority_boundaries.sql",
+        "sha256": "c110527d8401e8267c65ed129606d2f0f89f3623fcd0d8c1cb569895c78ed953",
+        "bytes": 4276,
+        "mtimeNs": "1788935965320676929"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V105__disable_unbound_provider_activation_tokens.sql",
+        "sha256": "6d1ad218c41e6aaa6c9714b5e0a544ad5372e143a9708bfa34f8c3ed5ac5ff07",
+        "bytes": 1226,
+        "mtimeNs": "1788935965320948342"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V106__receipt_provider_tenant_commands.sql",
+        "sha256": "2fdec331be346b8ac25c9ad46ea81165a7e4c0e860129b4617c938a505898c05",
+        "bytes": 1236,
+        "mtimeNs": "1788935965321202338"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V107__authorize_navigation_governance.sql",
+        "sha256": "c7e5331d08571e946a8956cdf58e0f3c372a954d9a53c72583f51e21e1f3168d",
+        "bytes": 3973,
+        "mtimeNs": "1788935965321357669"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V108__disable_privileged_access_activation.sql",
+        "sha256": "4ca4f3c683e6b55476b02e7621afdc41668ecd10c186ae789dee7613dc8245dd",
+        "bytes": 3501,
+        "mtimeNs": "1788935965321544500"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V10__add_provider_operator_role.sql",
+        "sha256": "d7a2417de2c57e8a7d1e4523191065038b581da3e26df4fe2e049a1fa56945b6",
+        "bytes": 542,
+        "mtimeNs": "1788935965321748163"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V11__align_scim_hash_column_type.sql",
+        "sha256": "333f1cba81803f34dc687c50e00baad31e3df9e4db66be7da30d42ff35a568c3",
+        "bytes": 78,
+        "mtimeNs": "1788935965321907911"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V12__seed_default_app_access_catalog.sql",
+        "sha256": "13a4b63638b2646e6126d2fa0fa4b4c56dce20a572fb521e7e94d0a76ca5e399",
+        "bytes": 1375,
+        "mtimeNs": "1788935965322121866"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V13__add_api_monitoring_resource.sql",
+        "sha256": "918be8ef12a9cc14f825a569e18ecc442587ea241fe0fafcd02e50484710bddb",
+        "bytes": 872,
+        "mtimeNs": "1788935965322321030"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V14__add_provider_tenant_activation.sql",
+        "sha256": "199b2b3324e8b166b838cdb32481fa5fe9e795fd1bf24a22dd2aeab14cb825cd",
+        "bytes": 1842,
+        "mtimeNs": "1788935965322451653"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V15__backfill_api_monitoring_resource.sql",
+        "sha256": "c5ee869d9a1382ff7e56aa62b7b50b387cf2118abcd187d18d6d83befb897f5c",
+        "bytes": 922,
+        "mtimeNs": "1788935965322598567"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V16__adopt_company_email_identity.sql",
+        "sha256": "1a2e5d73cb2296595962ce19857894b212e264d6b97123637e26d248a99a73a5",
+        "bytes": 2705,
+        "mtimeNs": "1788935965322720190"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V17__add_enterprise_audit_outbox_and_roles.sql",
+        "sha256": "9c13e5d796337caccb38433c3500cfc932d945848c153b3e5ce159b532ea879d",
+        "bytes": 12376,
+        "mtimeNs": "1788935965322849397"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V18__align_default_provider_tenant_identity.sql",
+        "sha256": "3b1eb278400d7ea9c46544853ec14e8fbfb6d16ac5cce576ee5dead388a44bcb",
+        "bytes": 499,
+        "mtimeNs": "1788935965322945562"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V19__grant_audit_roles_control_center_access.sql",
+        "sha256": "cbea27ff46dc22ca957aa38d03ad1a660170fdf9e8a6a3a5c58e8b227405d963",
+        "bytes": 806,
+        "mtimeNs": "1788935965323039519"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V1__create_auth_foundation.sql",
+        "sha256": "f3b4223d8fcc3ede2075517a2b626b3106508b63ae5d9737dc814c8315a7bace",
+        "bytes": 8247,
+        "mtimeNs": "1788935965323236600"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V208__enforce_effective_user_app_responsibility_sod.sql",
+        "sha256": "9aad06e6aea4cfe74fcbe14c5f37dab4c168ff5d1fbb771c40998828211de860",
+        "bytes": 22016,
+        "mtimeNs": "1788935965323730550"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V209__authorize_product_predicate_owner_services.sql",
+        "sha256": "c083576b623775efc97301a232a9ac04d4848eb3783e0916246fcbe6e2f2a985",
+        "bytes": 531,
+        "mtimeNs": "1788935965325205279"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V20__correct_login_audit_event_time.sql",
+        "sha256": "bf8c35a2657e3c5541f65818b8061e56668cdf08496da131b0f5ac5328cadb8d",
+        "bytes": 3238,
+        "mtimeNs": "1788935965325481316"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V210__authorize_dwaion_personal_intelligence.sql",
+        "sha256": "2b5f38f53a81127d773c05133f5298bd053f4bd15eafbabcb74ee5b0818e1b77",
+        "bytes": 4273,
+        "mtimeNs": "1788935965326003558"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V211__harden_auth_trigger_execution_boundary.sql",
+        "sha256": "22e0f38ab7f15efed15808df97da0582774634c58e6ddb8c50d52149e526e77d",
+        "bytes": 4681,
+        "mtimeNs": "1789118526179048751"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V212__bind_uuid_defaults_to_pg_catalog.sql",
+        "sha256": "1b101a46df4e26fbf43d008c57d4c81a9d79693d81baf37ca5fdd97d9d56b9d2",
+        "bytes": 4457,
+        "mtimeNs": "1789134149078748678"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V21__seed_skax_workforce_identities.sql",
+        "sha256": "7fd789ad987e5d93e0c0b540616294b63b7df3912a34faca5b403f5a79dc2381",
+        "bytes": 8874,
+        "mtimeNs": "1788935965326601425"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V22__normalize_identity_and_access_code_catalogs.sql",
+        "sha256": "845fea389e27a52a13ea51e0ae8de4ab86cf54690267c5c02233f3d49b36b08f",
+        "bytes": 6400,
+        "mtimeNs": "1788935965326775297"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V23__seed_expanded_workforce_identities.sql",
+        "sha256": "1a5fbc42af428f111dce7eee7de779ccc4dd521db4d586f88d3acaa83d9de3ca",
+        "bytes": 5111,
+        "mtimeNs": "1788935965326902878"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V24__enforce_reference_identity_least_privilege.sql",
+        "sha256": "b5c3ed086ed2afa3ba812bfbf711f5c3a7d7e1af6f7f1533b47bb30b9af02881",
+        "bytes": 2166,
+        "mtimeNs": "1788935965327006127"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V25__govern_builtin_role_codes.sql",
+        "sha256": "8ff04059ad537cdd585e32fca81263210d463376b795d10bd77be2bd65b94663",
+        "bytes": 4889,
+        "mtimeNs": "1788935965327123417"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V26__add_workforce_application_authorization.sql",
+        "sha256": "e60b5715bf6fcfcabdcf1bd31821df96820337312c5c14a3bd9e717f42f401d2",
+        "bytes": 3101,
+        "mtimeNs": "1788935965327454662"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V27__seed_role_isolated_review_accounts.sql",
+        "sha256": "459bc8898e9bd6a8347f8ff3533b00592220f6264429ffd66b074285b81033d3",
+        "bytes": 7216,
+        "mtimeNs": "1788935965327725783"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V28__normalize_skax_member_email_domain.sql",
+        "sha256": "811dcedb5e7d66d2d488e1d1d369f6e6e8381eb711d31a019b295b11cb373373",
+        "bytes": 3163,
+        "mtimeNs": "1788935965327877989"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V29__assign_tenant_admin_to_skax_workforce_member.sql",
+        "sha256": "db48b1ab7a87456d1893a991ae4e3be38ba6945df138ec27aa1eeaee502b17ec",
+        "bytes": 7133,
+        "mtimeNs": "1788935965328015820"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V2__create_auth_sessions.sql",
+        "sha256": "279f4d4d95ce997b2089caabf89bdad1b5b088b6e50efe27e773a0d25745be13",
+        "bytes": 729,
+        "mtimeNs": "1788935965328127735"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V30__enforce_role_delegation_boundaries.sql",
+        "sha256": "ef4c2e1788f6e3992e8d964c0e7d3cf139ea91ead608f64b3279f018d9c6f2bf",
+        "bytes": 6491,
+        "mtimeNs": "1788935965328247692"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V31__separate_tenant_administration_from_audit.sql",
+        "sha256": "665449227dbcb2de075c24cc2f0d19c4b39799ea062d58d1d139fba32dcfedb0",
+        "bytes": 2447,
+        "mtimeNs": "1788935965328355565"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V32__grant_workspace_member_runtime_access.sql",
+        "sha256": "22b440e763b0468e01ca980f1557df966e47d2ef29c128c2da79e0081ee76f6d",
+        "bytes": 1869,
+        "mtimeNs": "1788935965328467022"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V33__add_access_reviews_and_identity_lifecycle.sql",
+        "sha256": "d329a424d494a45443d205ffc25f706bf0db1e3309997b0b2a738515d1d17e77",
+        "bytes": 6380,
+        "mtimeNs": "1788935965328571270"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V34__govern_productivity_connector_administration.sql",
+        "sha256": "b1f52b87f88badc9d59b42c91fcf6ce4e72a3c977c7f2bfb2f72537cc0959199",
+        "bytes": 2390,
+        "mtimeNs": "1788935965328698768"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V35__snapshot_access_review_evidence.sql",
+        "sha256": "c87222428bddc3e48d0206796a29c9e814695f92c4c1ef78d231e999fd7b7d79",
+        "bytes": 988,
+        "mtimeNs": "1788935965328822558"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V36__add_privileged_access_lifecycle.sql",
+        "sha256": "8671b5890bcf6432178ef792410ac6a91e8667c1c223e6bfcc66a0294816f9d3",
+        "bytes": 14553,
+        "mtimeNs": "1788935965329014597"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V37__authorize_workforce_access_governance.sql",
+        "sha256": "df718cd82a991079efe4b2bbfa8f02c8873c3871ca34d6957c29d32166ec53bf",
+        "bytes": 2258,
+        "mtimeNs": "1788935965329115221"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V38__authorize_saved_view_custody.sql",
+        "sha256": "3da2c5bbf73789ba5469015eff4ac56178904dbe8e14584ee730bb00a52f054d",
+        "bytes": 2313,
+        "mtimeNs": "1788935965329234386"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V39__introduce_hris_application_surface.sql",
+        "sha256": "ee77fc3399bc399af535de92116a65a11d37c53f33a704facf36a2dce54620b2",
+        "bytes": 1044,
+        "mtimeNs": "1788935965329360259"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V3__add_auth_session_lifecycle.sql",
+        "sha256": "6bb859392b1f84bea802a5d14041b514009e71ee00c36a5b9009506a21494671",
+        "bytes": 1322,
+        "mtimeNs": "1788935965329462341"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V40__add_scoped_application_administration.sql",
+        "sha256": "2546d07b89bc5fda65f8ed541b7f54fc4433ab33e498fcbeb9cd07face1b5c34",
+        "bytes": 27405,
+        "mtimeNs": "1788935965329572797"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V41__name_hris_application_surface.sql",
+        "sha256": "64d82d197ba9c584e50ea84fe340c90d480c206770f06b3b9fbd3d9e57044bc0",
+        "bytes": 148,
+        "mtimeNs": "1788935965329706462"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V42__harden_scoped_authority_and_provider_approvals.sql",
+        "sha256": "9fb043ab4bb4436c7977838af7fe0d853374dd0a297f0056719b58c9d5ec5269",
+        "bytes": 6452,
+        "mtimeNs": "1788935965329861043"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V43__repair_provider_operator_auth_roles.sql",
+        "sha256": "b6ba9256db501db9d270e60ae5b26c5082b98935f37e33f8433606f55f3a062d",
+        "bytes": 2494,
+        "mtimeNs": "1788935965330017999"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V44__add_principal_resource_entitlement_lifecycle.sql",
+        "sha256": "259cec38cb6327489b5b7ce6493d665aaf1b6dafe4b58f8e27e2f00be7004501",
+        "bytes": 3868,
+        "mtimeNs": "1788935965330188538"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V45__authorize_enterprise_communications.sql",
+        "sha256": "8ce0a309390db696786970b4ec9205157cfbfb99a68a7c926ec2a760a7652d3d",
+        "bytes": 9317,
+        "mtimeNs": "1788935965330527908"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V46__complete_enterprise_communications_read_entitlements.sql",
+        "sha256": "471d81f183fdc8c16584570532e1dae09db053b78d3092f833090c02c4622989",
+        "bytes": 1050,
+        "mtimeNs": "1788935965330739197"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V47__authorize_employee_service_center.sql",
+        "sha256": "e45a44b5b7184888588f1452de4f083fed12960cece034a8316534199cb80afa",
+        "bytes": 5748,
+        "mtimeNs": "1788935965330892278"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V48__seed_employee_service_review_personas.sql",
+        "sha256": "becb5b3b08ee6ba9123367c61eb86a659601cffe4a602f0f7526cc2c1defadf3",
+        "bytes": 2709,
+        "mtimeNs": "1788935965331011359"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+        "sha256": "6ac326bf0b59bb32ce2eb7f9e80f204bc7e986fa9f78c1d1e81939c1886a7f8c",
+        "bytes": 38156,
+        "mtimeNs": "1788935965331182190"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V4__add_identity_access_governance.sql",
+        "sha256": "b5e86459c2e8d7fe6ed1bf4ba80084960dfe9f3f0b97a8b78f7864c23fbcac65",
+        "bytes": 643,
+        "mtimeNs": "1788935965331321438"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V50__authorize_hr_domain_operations.sql",
+        "sha256": "b7fdffaf4f9fd289583cef25a4641ceb6da01df92939f68ec71f3d2c1053605a",
+        "bytes": 8918,
+        "mtimeNs": "1788935965331478144"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V51__authorize_enterprise_calendar.sql",
+        "sha256": "968ed5ac8d330bcd842a6fbad7caca843ece9664f36eda91710197beff09cdc4",
+        "bytes": 9047,
+        "mtimeNs": "1788935965331666891"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V52__authorize_enterprise_approval_hub.sql",
+        "sha256": "ba1f23819e5e5cee3e66e99cf027291857144bf98aa9fc4388eb55aeab10d7f2",
+        "bytes": 10599,
+        "mtimeNs": "1788935965331870472"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V53__activate_approval_review_personas.sql",
+        "sha256": "491bf47f81972a98a0cbaba67330050662b38a60e383bac36248cc78ad6aff97",
+        "bytes": 2728,
+        "mtimeNs": "1788935965332087427"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V54__introduce_hcm_application_permission_alias.sql",
+        "sha256": "d862487c903c20b2161bd4c1c06be59dccef66ccb6296a33d133d5aa1274d9ad",
+        "bytes": 2313,
+        "mtimeNs": "1788935965332403297"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V55__govern_new_product_application_boundaries.sql",
+        "sha256": "8c59a3fcc1fcc854e26d6bd9853a62f447c2412ce6731428a9e87530387ff358",
+        "bytes": 7867,
+        "mtimeNs": "1788935965332696959"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V56__retire_unowned_authorization_placeholders.sql",
+        "sha256": "eda8cb19b291e4cc8744ab566d7ac46631301b8ab6d1b115625da60494f02a16",
+        "bytes": 622,
+        "mtimeNs": "1788935965332932581"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V57__seed_skax_integrated_verification_account.sql",
+        "sha256": "029530015b0d37ae64898dc88a573c7c89226e466635350f04007c5dffbaf5fd",
+        "bytes": 7528,
+        "mtimeNs": "1788935965333079495"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V5__add_organization_group_directory.sql",
+        "sha256": "1a376e9844e1293490ab242250a234cfe6590f81411f68cbeeba9d1d0ae2c82d",
+        "bytes": 3779,
+        "mtimeNs": "1788935965333285951"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V60__authorize_enterprise_mail.sql",
+        "sha256": "c8d125a784acb1b5e173956ba56d70c8a2eb0e0ccb87369f91019687ee896137",
+        "bytes": 11153,
+        "mtimeNs": "1788935965333513406"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V61__authorize_enterprise_spaces.sql",
+        "sha256": "a9ddd5f656cc49ce356648d4abfa1829a3ff9750e4fbc9440358e1d89361e1f5",
+        "bytes": 12101,
+        "mtimeNs": "1788935965333765319"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V62__grant_space_roles_control_center_access.sql",
+        "sha256": "ae7e372a1c8c45a5e92b36d92924f030c8be16efd7182a8ce6ec5bd5de64a271",
+        "bytes": 2049,
+        "mtimeNs": "1788935965334007898"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V63__name_dwaion_workspace_resource.sql",
+        "sha256": "e1c59e816bdb0b5449e39eaeaad7300f34bdbb55eb04116a5967cd02210a1c3b",
+        "bytes": 292,
+        "mtimeNs": "1788935965334139980"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V64__authorize_enterprise_rooms.sql",
+        "sha256": "969c658c0bee83a367919f78bb5a9eac20252a20d82df17ef3434c090cf7be19",
+        "bytes": 3897,
+        "mtimeNs": "1788935965334284477"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V65__separate_rooms_administration.sql",
+        "sha256": "9c410e60e6d1f173c03cbb2fa5d0194020dca4760d93dcc50fbb5e4182fb8c0d",
+        "bytes": 2370,
+        "mtimeNs": "1788935965334401892"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V66__authorize_enterprise_workplace.sql",
+        "sha256": "7ebdd74e2e8953057bc1ca46cc0e7d2a8b61757c8338a3e8c48797cfa0a8aef4",
+        "bytes": 4588,
+        "mtimeNs": "1788935965334507099"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V67__authorize_enterprise_messaging.sql",
+        "sha256": "c8235721149e119a1bbbf381ec7594df0511794860c7664c833a631c4881189e",
+        "bytes": 9498,
+        "mtimeNs": "1788935965334655930"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V68__authorize_notification_platform.sql",
+        "sha256": "70fa0d90186950e8e0535ec2cf8ce0c2274a5920401c5335ad76b9bd0d13ea38",
+        "bytes": 11856,
+        "mtimeNs": "1788935965334788303"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V69__separate_workplace_and_room_administration.sql",
+        "sha256": "1f7e6cfefe0db5ea8fab6e292564b83e8f1351992f697721fa3cd1c0f3c08846",
+        "bytes": 1002,
+        "mtimeNs": "1788935965334884802"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V6__add_user_job_title.sql",
+        "sha256": "c3e4b51fd450d92d070defe68ca6ac088d49bf3f8581860239db2833026316da",
+        "bytes": 183,
+        "mtimeNs": "1788935965334963426"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V70__harden_approval_assurance_separation.sql",
+        "sha256": "3ae5f124e7ac626c9c7b6575b6d1e469245a8cbef4a7d8cef0b082d0e8350ff6",
+        "bytes": 3006,
+        "mtimeNs": "1788935965335047966"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V71__separate_approval_policy_maker_checker.sql",
+        "sha256": "58e6c4de95f1501e0902da612eac1070510d0e451379308d8440c1a389de86b1",
+        "bytes": 2467,
+        "mtimeNs": "1788935965335132840"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V72__verify_effective_role_conflicts.sql",
+        "sha256": "b28f2b5559041b951d143d4078f729748fb92fa7c356d3ca2d1c628c0d526d38",
+        "bytes": 3134,
+        "mtimeNs": "1788935965335222547"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V73__separate_messaging_administration.sql",
+        "sha256": "e190fa82ac0dfa8ae8698e8d9670d0b94c8d1d8b43f3bbbec6ea9c3455e3e478",
+        "bytes": 1442,
+        "mtimeNs": "1788935965335313962"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V74__authorize_dwaion_operations.sql",
+        "sha256": "1d2ca3228c7a2360e84ecb830d3510182f831e7d539e13ada875cd13d2c30721",
+        "bytes": 7646,
+        "mtimeNs": "1788935965335403169"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V75__harden_dwaion_privileged_assignment.sql",
+        "sha256": "3c464da1dc2f19b15c6f5cfe02cafe0d32f02a6f0875a5f7dc467b791b4b1016",
+        "bytes": 3927,
+        "mtimeNs": "1788935965335488126"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V76__separate_dwaion_governance_permissions.sql",
+        "sha256": "15e116a445ab37cbe14451dda00ed2ad3d7e83b8188a2ddc0dc466f5ff456630",
+        "bytes": 12596,
+        "mtimeNs": "1788935965335596916"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V77__authorize_dwaion_evaluation_evidence_export.sql",
+        "sha256": "db84e7e490234c92b47bd36eb41a6d21c88cd10ff3dbfbe231349ab5f2f573b4",
+        "bytes": 2032,
+        "mtimeNs": "1788935965335692248"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V78__authorize_dwaion_operational_delivery_gates.sql",
+        "sha256": "be6db603f84c80fee6e3d5c103c9f33db35a56595a91420f154ebf3bfae7f09e",
+        "bytes": 3579,
+        "mtimeNs": "1788935965335809830"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V79__repair_privileged_and_application_governance.sql",
+        "sha256": "2c092bc38713a7f9a6686f8ac102141c10cb34840cdc768900536f4a30372b0d",
+        "bytes": 10791,
+        "mtimeNs": "1788935965335973869"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V7__add_tenant_and_group_role_foundation.sql",
+        "sha256": "5c76ac483112004d38e09e83f6eb43b163fe174cd5f87a3387cf4129faf1ec97",
+        "bytes": 6263,
+        "mtimeNs": "1788935965336091242"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V80__govern_space_and_notification_app_boundaries.sql",
+        "sha256": "2d3b6c026254a034e3c88c84351e846565e8e86d5f5a440c0fe2b6189ed14f2e",
+        "bytes": 6584,
+        "mtimeNs": "1788935965336275906"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V81__retire_mail_access_package_duties.sql",
+        "sha256": "53ae49bb2c776212bee4789d1ec88a2792685a3706045fe704a136ecd0858418",
+        "bytes": 1032,
+        "mtimeNs": "1788935965336390529"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V82__reconcile_skax_all_employee_membership.sql",
+        "sha256": "e45e965648c0fc02a0fa0087b8011dbd522b696e5aa736091a065b753969db83",
+        "bytes": 1677,
+        "mtimeNs": "1788935965336503403"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V83__separate_notification_policy_and_operations_duties.sql",
+        "sha256": "8df9b5e4655f49b4cd578ffdf967c96df142636ee00fa321cac0d4713e351cd2",
+        "bytes": 3277,
+        "mtimeNs": "1788935965336623443"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V84__separate_notification_template_approval_and_central_audit.sql",
+        "sha256": "bee969ca8f3cde4ab34fc1c78bd062009d3d4bc01d3c00540df31122f2eb7b0b",
+        "bytes": 7725,
+        "mtimeNs": "1788935965336743191"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V85__harden_notification_template_approval_assignment.sql",
+        "sha256": "251cedb4d7fa0fe51e8ba66862bb14f5079ec4a20acd8f7804307e8035cb014d",
+        "bytes": 3389,
+        "mtimeNs": "1788935965336858648"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V86__authorize_home_template_management.sql",
+        "sha256": "b32344ad6f87fe9eb355355f9c58452402d53bf9971865c716367abed6816158",
+        "bytes": 3897,
+        "mtimeNs": "1788935965336960063"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V87__create_product_surface_authorization_registry.sql",
+        "sha256": "3315d056c288485affb7fc3bb519c6a259ece983e61e55e88efa8cbb55bb370e",
+        "bytes": 13498,
+        "mtimeNs": "1788935965337089061"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V88__outbox_access_review_work_items.sql",
+        "sha256": "52100bd30729a6a32550d9308ed6275a238393038e6511d6cc7bdf95679455de",
+        "bytes": 1555,
+        "mtimeNs": "1788935965337208017"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V89_1__preserve_session_assurance_and_step_up.sql",
+        "sha256": "ff24e73714f803634534deed9d4b17faef2e86de0a48d4f2ec507ce18cc9f8ae",
+        "bytes": 1367,
+        "mtimeNs": "1788935965337337599"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V89_2__require_closed_step_up_amr_allowlist.sql",
+        "sha256": "f33403500b7dea2740c94966817161de34559e45cc297c0ae2b610227a38ad17",
+        "bytes": 313,
+        "mtimeNs": "1788935965337473305"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V89_3__persist_product_authority_endpoints.sql",
+        "sha256": "0d2abe78b46645538f47cad77f1571446f12f33b8239b47c1ddcb25faea7a52e",
+        "bytes": 1003,
+        "mtimeNs": "1788935965337668094"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql",
+        "sha256": "ed9ccdfb68b01b08ff03ccd591d7d7943c5bf5a99f40cf801e79220cb678ecdc",
+        "bytes": 1788,
+        "mtimeNs": "1788935965337828133"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V8__add_user_preferred_locale.sql",
+        "sha256": "f8a584e3777fde82d0f0b1dd72e672ba3c242ce631912d6c74864ca905edd6cf",
+        "bytes": 275,
+        "mtimeNs": "1788935965337964965"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V90__normalize_product_authorization_resource_set_keys.sql",
+        "sha256": "a4aa8c0fc629ca957b842c7f7fda0a39a7e80110ca271d7e1d024f0919db1ff0",
+        "bytes": 3246,
+        "mtimeNs": "1788935965338059130"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V91__scope_approval_specialist_duties.sql",
+        "sha256": "28b4890a91eb58c4a93a7317b588adb835f1305fa829ec5065ede5be7dfc2914",
+        "bytes": 37327,
+        "mtimeNs": "1788935965338257419"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V92__govern_app_admin_presets.sql",
+        "sha256": "08b1d306a5264bf28f7baa600934443047045082922235fe857511af7e9b84ec",
+        "bytes": 28473,
+        "mtimeNs": "1788935965338424458"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V93__audit_product_authorization_operations.sql",
+        "sha256": "1d1e0d489f93e836a04dbc67832cf98ae34100c69eb5f31867af742d34a61cf1",
+        "bytes": 3670,
+        "mtimeNs": "1788935965338521790"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V94__require_single_governed_bundle_approval.sql",
+        "sha256": "ccea77ab5b03ba6106f41d145a23a92230e945d884abdc24b97573d97ff6881a",
+        "bytes": 397,
+        "mtimeNs": "1788935965338612163"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V95__require_governance_resulting_revision.sql",
+        "sha256": "d8c1f55a15d8a91f20e4828de16d6881878589bc625bb2394ce55df08d1cf39e",
+        "bytes": 911,
+        "mtimeNs": "1788935965338726328"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V96__key_governance_release_events_by_cas_revision.sql",
+        "sha256": "13efeee5d1543e8fcb4dc1c19dddef7217c495bf3a83d18eb2c957825b24ac6f",
+        "bytes": 726,
+        "mtimeNs": "1788935965338841660"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V97__bind_governance_to_activation_lineage.sql",
+        "sha256": "02acbdff33d888714f525fedfdacef4bca9c7456757f044bd58a70f3640f5bcf",
+        "bytes": 769,
+        "mtimeNs": "1788935965338955575"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V98__guard_governance_approval_evidence.sql",
+        "sha256": "ac7b25d95dbdb7f9403d05a9b40fa7fc4eaa32cc09493aa73053f20b63e656a4",
+        "bytes": 3342,
+        "mtimeNs": "1788935965339078990"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V99__separate_provider_and_tenant_identity_planes.sql",
+        "sha256": "3df16c0e099ae31c44e07aaf438ccc01bf1b0f9f165a2a39bc1f631405859368",
+        "bytes": 22209,
+        "mtimeNs": "1788935965339205530"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V9__add_scim_provisioning.sql",
+        "sha256": "516ddecf2db6e8590ac4283e910f470a0a890a04e3834b96b3bb9965eae70bc3",
+        "bytes": 2980,
+        "mtimeNs": "1788935965339345819"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1PostgresTest.java",
+        "sha256": "e090ef02f875599de38ffd9e8c4f7d32150dfbba2b51f2e691289c522d5bd8ae",
+        "bytes": 10226,
+        "mtimeNs": "1789360986697278846"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1Test.java",
+        "sha256": "b4e2fb7e53c469ce45178dc1dd9b93bde6b012aeedfc107e2677756f4bc306af",
+        "bytes": 9642,
+        "mtimeNs": "1789360986696382550"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRecorder.java",
+        "sha256": "d7003b0307c2f6d89aa5c237ac6b45bae1b7121d65a42f2fbe47b6c5c57f3d23",
+        "bytes": 2405,
+        "mtimeNs": "1788935965369529080"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRelay.java",
+        "sha256": "b5c280b6173c0e6998e6e1130fc430900581fde995c341dcf9a4aa95572039fa",
+        "bytes": 5985,
+        "mtimeNs": "1788935965369653120"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/audit/AuditOutboxRepository.java",
+        "sha256": "e0be18e6f5f9667d6eb00f1b2d64b32f92dba5f07df5ccb6fd45f89b52ecfa32",
+        "bytes": 6759,
+        "mtimeNs": "1788935965369765368"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/audit/hriscontracts/HrisAuditOutboxEventAdapter.java",
+        "sha256": "c1728fa3a54010cb01333fab2038de6a0d871bdafe123a8468ed86375cd987db",
+        "bytes": 3157,
+        "mtimeNs": "1789105924933231066"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/CoreAuditAutoConfiguration.java",
+        "sha256": "b379c1ef0adc35613db7c740f63742450ac4461cb4db526b580a8e1c09ae5dac",
+        "bytes": 4569,
+        "mtimeNs": "1788935965369939574"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/CoreDomainEventAutoConfiguration.java",
+        "sha256": "f08faf121a2aa7b693066cd19411d3fff1950933de1571a9f9c631421d9d04cd",
+        "bytes": 5131,
+        "mtimeNs": "1788935965370029073"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/CoreHttpClientAutoConfiguration.java",
+        "sha256": "69f36ada390982e816113c5ee6216a6992f2af88aea0a8fc74e884bada49e9fa",
+        "bytes": 1249,
+        "mtimeNs": "1788935965370107280"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/CoreObservabilityAutoConfiguration.java",
+        "sha256": "f1a68e948c0c4368b085e9961ec7159949154a69abb228258bcd23e3aff8ed23",
+        "bytes": 4288,
+        "mtimeNs": "1788935965370201195"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/CoreWebAutoConfiguration.java",
+        "sha256": "0a70d87bfbf8123858099f2b52ee62884d524283bfa2e9ac5fcaf5f11c5a9095",
+        "bytes": 2305,
+        "mtimeNs": "1788935965370292152"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/DwpHttpClientProperties.java",
+        "sha256": "342308c5400dfb8813d42c9e5745be5d725c574fa020cbc8dd42bdad525a6ef2",
+        "bytes": 899,
+        "mtimeNs": "1788935965370382359"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/DwpKeyManagementProperties.java",
+        "sha256": "d238a8feb42e87ae2be28b44bedc58217792ffcde9d7a538128dec94b12da0f6",
+        "bytes": 2867,
+        "mtimeNs": "1788935965370471691"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/KafkaDomainEventAutoConfiguration.java",
+        "sha256": "9e63d78e2ec95babb0ab29f265ff3656e450850784cefe1e550dd31337d0189f",
+        "bytes": 1648,
+        "mtimeNs": "1788935965370568023"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/KeyManagementAutoConfiguration.java",
+        "sha256": "5041874a1b8b8855cf3eef5a1ba7ce3393b5faeacaa2a0b1d668ed78566007e2",
+        "bytes": 7235,
+        "mtimeNs": "1789135377189619328"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/LocalBootstrapProductionEnvironmentPostProcessor.java",
+        "sha256": "00528ddeeba5586f322450a9652506c27c98a7db95cb704af61531fe5f2c2731",
+        "bytes": 1060,
+        "mtimeNs": "1788935965370769354"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/LocalBootstrapProductionGuard.java",
+        "sha256": "f8a826140348ec3b5eeac01de89a3260739cce260d959d4e948e2733cff9d77b",
+        "bytes": 2024,
+        "mtimeNs": "1788935965370859769"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/ProductionReadinessAutoConfiguration.java",
+        "sha256": "1bf6123bf36d6d34e45daeff024d41b4a18de86f3a783b21b90090056df0ba3a",
+        "bytes": 17061,
+        "mtimeNs": "1788956262759465133"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/autoconfig/ProductionReadinessChecks.java",
+        "sha256": "088d5867f2da4a290d4cd223695677ef3db0ebdce7ef2ff2de2a386969ae404d",
+        "bytes": 22322,
+        "mtimeNs": "1788956262760019394"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/common/ApiResponse.java",
+        "sha256": "8ddc120f730da2fe4b92f66a075659627ddf07e8cb3b7adbb11205a80d55f027",
+        "bytes": 2360,
+        "mtimeNs": "1788935965371225472"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/common/ErrorCode.java",
+        "sha256": "86b47b14f45db0565a3877c6e0ff442f35602f690d3070922e2cd2c0bc573085",
+        "bytes": 4037,
+        "mtimeNs": "1788935965371350595"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/config/AcceptLanguageLocaleResolver.java",
+        "sha256": "8afd615f4ac09225b2cae549a1d20af6acbca7397add10d43a7903b43dc953b4",
+        "bytes": 1925,
+        "mtimeNs": "1788935965372643492"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/constant/HeaderConstants.java",
+        "sha256": "fb0a3c58125078f700ab007e7d2d75e3b94bb5c48a538554310a836a97bbc1b8",
+        "bytes": 833,
+        "mtimeNs": "1788935965373064403"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/EnvelopeCiphertext.java",
+        "sha256": "9ce3fe564a4caafe3b71e0ebaaf1ccaf2ccfcc72a98ca0962d4f0fc6ba1e2c1e",
+        "bytes": 2092,
+        "mtimeNs": "1788935965373336024"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/EnvelopeCiphertextCodec.java",
+        "sha256": "adea98a9df63610a5568afac7549ef692cb60b7b85766c8119bd84e46b630e80",
+        "bytes": 6097,
+        "mtimeNs": "1788935965373579270"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/EnvelopeEncryptionService.java",
+        "sha256": "a2c1a7af048754cd4bd17287ab1527d194c9edcad9c636feda4fb3679cd0be34",
+        "bytes": 4903,
+        "mtimeNs": "1788935965373756434"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/KeyContext.java",
+        "sha256": "02adc23d1dbbb75d7d8d58d89fb4d65943ab89e43548c2fda6996670df201b9a",
+        "bytes": 3073,
+        "mtimeNs": "1788935965373902515"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/KeyProvider.java",
+        "sha256": "a677b3b9a49497a192513f7d5b4dc5020171e87a55ff0dc14811acb935ac1793",
+        "bytes": 969,
+        "mtimeNs": "1788935965374050013"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/KeyProviderException.java",
+        "sha256": "0db073d17381bb86536586ab474def9d382b454b4f5960280d26d032bebceef9",
+        "bytes": 423,
+        "mtimeNs": "1788935965374749753"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/KeySlot.java",
+        "sha256": "abd3cca00d7c5362aceb92332a6fad273912ecd09bf7887c5c963ee370513f20",
+        "bytes": 1378,
+        "mtimeNs": "1788935965375699656"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/LocalKeyProvider.java",
+        "sha256": "ff496f305c53f3383e1aeb7af18f014217dad38a77ff4e3b8eeeacea0396a2b1",
+        "bytes": 6771,
+        "mtimeNs": "1788935965375832862"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/crypto/LocalKeyProviderFactory.java",
+        "sha256": "ccc5690c7f0b6efd7534d62a6170d61dbfbb627559ce36787f85356cee4663b2",
+        "bytes": 7248,
+        "mtimeNs": "1788935965375950485"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/DomainEventLedgerRuntimeGuard.java",
+        "sha256": "05590ba473e4fcb843d063d7c2a311f1617494dbe92daaae1b5266c04520a848",
+        "bytes": 9091,
+        "mtimeNs": "1789123874707398061"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/FlywayHistoryRuntimeGuard.java",
+        "sha256": "6bd19251995147895951b56035f8cd1b3053f2d52a77f516b25fdfca2e6cd6b1",
+        "bytes": 6212,
+        "mtimeNs": "1789127630958962562"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/HibernateSchemaConfigurationGuard.java",
+        "sha256": "7912618c6f4f11d194c7fe2301798dbb03f4ff10e1c852fbab53ddd7c13ea48a",
+        "bytes": 1083,
+        "mtimeNs": "1789132002639154017"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ManagedRoleBoundaryGuard.java",
+        "sha256": "165c3f5cd2c58ee89ec1349710ab28e73822cf361f17ad577100077cc9eb50a5",
+        "bytes": 9508,
+        "mtimeNs": "1789128733427517840"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionEvidence.java",
+        "sha256": "f4ed31ee4df2ced93c23d9746bf1927a1649960dde37b3db5ec07da0b17efce8",
+        "bytes": 9495,
+        "mtimeNs": "1789105700116557239"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionEvidenceTypes.java",
+        "sha256": "f727205ff0ffbf88740de85d9d25f7dee13edc20265712e32f84bda670f7b45d",
+        "bytes": 1849,
+        "mtimeNs": "1789105700116251363"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java",
+        "sha256": "cc211e7c3e58373a6fd8882c5923b840949d1e1894648ec88d106dc4ab3b7951",
+        "bytes": 30933,
+        "mtimeNs": "1789108995292713746"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/MigrationControlRunReceiptGuard.java",
+        "sha256": "1452ed42df527b1ea6b679025b87312a643eb6917cd31eb138a3a6287d4c0aff",
+        "bytes": 25080,
+        "mtimeNs": "1789111769248259895"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/OwnerTriggerExecutionBoundaryGuard.java",
+        "sha256": "83824043fdffb2e686ba5084df77a3eceb3c1e0f42efd7a028aa770461d48607",
+        "bytes": 6344,
+        "mtimeNs": "1789118526178166257"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaAclGranteeGuard.java",
+        "sha256": "d6b146cc215696fc44de7e24fd099063a858ac6c03b7548bc147ee4c9edf8b51",
+        "bytes": 9465,
+        "mtimeNs": "1789122100989186329"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaDefinitionFingerprint.java",
+        "sha256": "859af0e46a6dc89e76c1d4221dc8cdfbea13b1c767a1b9b5f18faed7a840d86a",
+        "bytes": 40548,
+        "mtimeNs": "1789128194028193079"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaObjectInventory.java",
+        "sha256": "8944aceef69e216dcf601ac285bf9b6cd7d36dba60232dd0dfc5091bee0eb6d1",
+        "bytes": 21823,
+        "mtimeNs": "1789120285649498359"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaTopologyPolicy.java",
+        "sha256": "7548e4a0ffd21c25df5db9cc7a9f632f8a3e8e458f362c6fdc45cf7fa6de48d1",
+        "bytes": 3574,
+        "mtimeNs": "1789128194027501578"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ReadOnlyMetadataDatabaseGuard.java",
+        "sha256": "84c29e6a74adfaf810570ab0ca2d6de01df041e442d8edef07cd1823739c3d1d",
+        "bytes": 17085,
+        "mtimeNs": "1789128733428133507"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/RuntimeMigrationDatabaseGuard.java",
+        "sha256": "e6b39ad666f8606b4d0f48a937b399377e611c799e39fabd542728317a2551b5",
+        "bytes": 29720,
+        "mtimeNs": "1789127630959394313"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/RuntimeRoutineExecutionGuard.java",
+        "sha256": "3bc4caa8a7520a868c9b29d302ea7137a7639e31b75927d8973feacef133c268",
+        "bytes": 10874,
+        "mtimeNs": "1789116903433419780"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/RuntimeTablePrivilegeGuard.java",
+        "sha256": "e966f8c92198dd52baa16359a378348013ce4923a23ce861a6c0534ea8142675",
+        "bytes": 4930,
+        "mtimeNs": "1789114287547582004"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ServiceRoleDdlBoundaryGuard.java",
+        "sha256": "8151e09fdcd7deb5ef25fbbf0a82b9d696ab8b0d5a975d79c50f3ad7e616154d",
+        "bytes": 13710,
+        "mtimeNs": "1789128733426935839"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/StrictDatabaseSearchPathGuard.java",
+        "sha256": "cd9c9fb2acd5cc442c6f6befaec2c23b47b2aad2006b77bcaa984fe125421614",
+        "bytes": 8114,
+        "mtimeNs": "1789127937352587651"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/SystemCatalogAuthorityGuard.java",
+        "sha256": "b4ec60f3219e70d6f1fb287328f62e2574f2c668d155d061b5c6208ab1e79c87",
+        "bytes": 9146,
+        "mtimeNs": "1789128998528671413"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/SystemFlywayConfigurationGuard.java",
+        "sha256": "5227544062fccef8e5865fc25f4c27c6aab3ab2f40606022667c54159026d458",
+        "bytes": 24128,
+        "mtimeNs": "1789098870311936658"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceipt.java",
+        "sha256": "390d7b9e0c78ce876afc16cf31b5983bede48873ce5e32fbfff61299a5b6591c",
+        "bytes": 3033,
+        "mtimeNs": "1789350036609272279"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuard.java",
+        "sha256": "c47eb95d57168999fedc10dbd7f3cf4f4903ed4b630f1deaf8644210bfa4e70f",
+        "bytes": 28702,
+        "mtimeNs": "1789351588452940885"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+        "sha256": "3ae35ffdd8416955bd4373409caa48fd92770e65f7efd4dc407ba2468fe290fb",
+        "bytes": 3028,
+        "mtimeNs": "1789350694625708183"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java",
+        "sha256": "41e1e2aae659a97a14225281b18d832c9e4bc6751ab8b1ccc4930ed74aa01072",
+        "bytes": 17913,
+        "mtimeNs": "1789363505133802999"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java",
+        "sha256": "6bff3ec29240d1e89f50dcee9a819aea495436869441e77ab95d8a97a94aa2c9",
+        "bytes": 18968,
+        "mtimeNs": "1789363552540372864"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java",
+        "sha256": "122110d87e929896a6478a3583d8a3cd5d2a93b961c85d5e1b5ee6fb6e7518cc",
+        "bytes": 11150,
+        "mtimeNs": "1789361625904893880"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java",
+        "sha256": "e8274e838ec8db96e21c86525ec472cdd3b1d150a11cdce6b3b07bf4f48ebf73",
+        "bytes": 1643,
+        "mtimeNs": "1789361122539121289"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java",
+        "sha256": "4b31b7cc63b8515d17f979e9e35448d84172cfc0d0f61fbc6bf7942622a7c5df",
+        "bytes": 1195,
+        "mtimeNs": "1789361436917486779"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java",
+        "sha256": "75fbacf35b050fe0a4d7ff91ba60f1f3bacb0338ebbd8cdbfb37ae87d52b3642",
+        "bytes": 1491,
+        "mtimeNs": "1789361122538075533"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java",
+        "sha256": "7593c4549b8c94bc7feb2a351937262ee3700cea72d16acbff3fbd0edb040d95",
+        "bytes": 2627,
+        "mtimeNs": "1789361032752501870"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java",
+        "sha256": "cfbf934b016f42a503ebc6645cb3012888805a40ca29076edc0e49f55dba4e8a",
+        "bytes": 2060,
+        "mtimeNs": "1789361122538516077"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java",
+        "sha256": "cc0fbd59fd1ba6b5c2b049584d0a2858bb6a448a22f031a7f0cfbb5873db6220",
+        "bytes": 3076,
+        "mtimeNs": "1789361122538741537"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java",
+        "sha256": "e72e96409f4dbe752aa40887b1dd2d274f0ce9c6cc5d9799d05d349855f93a7a",
+        "bytes": 2925,
+        "mtimeNs": "1789361122536978653"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java",
+        "sha256": "beac0ed3725ab0a46db57cc988d1cac68a7695a636485011751f1ef6daf99140",
+        "bytes": 8709,
+        "mtimeNs": "1789361698278001440"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java",
+        "sha256": "cf9a5d83bc9b26900d885535cb39d5c4e98c78090728fb77236ddafa79e3caca",
+        "bytes": 12696,
+        "mtimeNs": "1789351232023424851"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityJson.java",
+        "sha256": "079bc72fcec53de3229860080c3339115310d53cfbe2800f0234fbf6097e22a9",
+        "bytes": 6140,
+        "mtimeNs": "1789350036609743238"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/entity/BaseEntity.java",
+        "sha256": "5e8ff32c65b1940d724ad587315dac1ab809b3dae27bf4d5c94fd3ed2f4ec830",
+        "bytes": 1116,
+        "mtimeNs": "1788935965376143441"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventConsumerFactory.java",
+        "sha256": "7b6802b29bdef8fffe1e22b8667a18c1b8b8da7220f416f9732107248ab82c1a",
+        "bytes": 1692,
+        "mtimeNs": "1788935965376359812"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventContractRegistry.java",
+        "sha256": "4a3f1a4efd8ac848a568937d6392187d39046e125024629ca57f5b65bd85f00e",
+        "bytes": 4336,
+        "mtimeNs": "1788935965376489060"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventEnvelope.java",
+        "sha256": "c7b19c0acc02a8864aefcd17040a3f7a6a5d86641df0ec072b0cbb584b7b52f9",
+        "bytes": 1786,
+        "mtimeNs": "1788935965376614434"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventInboxRepository.java",
+        "sha256": "ef1328a42ee4de6d68b65de2257cdc0ed6fbadd3464e42f967d827ed2323be42",
+        "bytes": 18740,
+        "mtimeNs": "1788935965376762265"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventJson.java",
+        "sha256": "d0c72499e8ae888e30756d4cb49c0ca18151195edc468b293f023c2bfeb48f77",
+        "bytes": 1434,
+        "mtimeNs": "1788935965376892846"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventOrderingPolicy.java",
+        "sha256": "6c44a31021c66a85133c94adae64a9784ae50c470e0d2c9af2c760fe8a951c65",
+        "bytes": 747,
+        "mtimeNs": "1788935965377002053"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventOutboxRelay.java",
+        "sha256": "b90b34b15b8f17dbd5c7692fc650737768d1c466398c531e31de28b2bde50be9",
+        "bytes": 6571,
+        "mtimeNs": "1788935965377115260"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventOutboxRepository.java",
+        "sha256": "6b040b649258a8403e5fe4777d26a9f54a5802f524aa0cf967201f031a0f0ed3",
+        "bytes": 11758,
+        "mtimeNs": "1788935965377263382"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventPublisher.java",
+        "sha256": "7736691c61bd982f1b9b629b85f937012cb88e7e179018967e3522403a8c75c6",
+        "bytes": 302,
+        "mtimeNs": "1788935965377378047"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/DomainEventRecorder.java",
+        "sha256": "6f53dc5d1c9513ce2108b61ee8c9ad9cc3dffed9d79d08326047cd493703c04f",
+        "bytes": 1459,
+        "mtimeNs": "1788935965377485004"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/IdempotentDomainEventConsumer.java",
+        "sha256": "5e8044ca75da73221066f4783f066369aa6f604946abaa503808c78b15ee704b",
+        "bytes": 4918,
+        "mtimeNs": "1788935965377594752"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/event/KafkaDomainEventPublisher.java",
+        "sha256": "0408a599e3bde8cbc0af7bef0bf9408e745dfbbc5156da7f2ea7d58a92a9d15a",
+        "bytes": 2914,
+        "mtimeNs": "1788935965377694918"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/exception/BaseException.java",
+        "sha256": "8e7b15d33b52c449d3339f1507e69892405ebe599777f3cfea64a7e6866c1483",
+        "bytes": 685,
+        "mtimeNs": "1788935965377849290"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/exception/GlobalExceptionHandler.java",
+        "sha256": "54b7884c09e5941fafd60038db05c45770ad9d293b8444388e52f08f7dbe87b0",
+        "bytes": 12328,
+        "mtimeNs": "1788935965377951706"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/filter/ApiHistoryServletFilter.java",
+        "sha256": "90d663bc3a32a8e6f98ebec6b7d4216c0143b76829789c4f1c67e096e750a8f5",
+        "bytes": 11328,
+        "mtimeNs": "1788935965378151827"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/filter/MdcCorrelationFilter.java",
+        "sha256": "67bcbf8d112e7f42cb5dca3c5fe92fbd39e3ca559b4e2046d8aa78417396866e",
+        "bytes": 3328,
+        "mtimeNs": "1788935965378267034"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/http/OutboundHttpHeaders.java",
+        "sha256": "9c34fd73cdcf2b39635b219f65982874f5844e22632624f20b3ec5ff55c44ecf",
+        "bytes": 2621,
+        "mtimeNs": "1788935965378461365"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/identity/EmailAddressNormalizer.java",
+        "sha256": "27e5fadd926feb861c0641c00a9099e38e0030bdf5e4873a30ade5a19cc1edbf",
+        "bytes": 1123,
+        "mtimeNs": "1788935965378665570"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/provisioning/ProviderTenantCommand.java",
+        "sha256": "b36f239d4f9b5cad625557633252104e7dc20dd651d54fcff3bea10f5b56c19d",
+        "bytes": 2864,
+        "mtimeNs": "1788935965378879317"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/provisioning/ProviderTenantCommandReceiptStore.java",
+        "sha256": "918666eb33b67d44c8afcfa7f09c709226f703dcdd7a1c3f849801779a199b5c",
+        "bytes": 7234,
+        "mtimeNs": "1788935965379019273"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/security/HcmEligibilityScopeKey.java",
+        "sha256": "29593c2ab215c35f800399f4260cec9eb3075369ddb20ab49f853589db418af1",
+        "bytes": 2670,
+        "mtimeNs": "1788935965379720138"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/security/ProductSurfaceScopeKey.java",
+        "sha256": "d1558a4c997915393e1b776c7d85eef0c5f1c559007406d4e2bd9f38acde0a94",
+        "bytes": 2357,
+        "mtimeNs": "1788935965379863344"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/security/ProductSurfaceStepUpChallengeContract.java",
+        "sha256": "5efb7d8cc8b490021d66356f530e7d5e00b99f2056a67b65f8c36d77160032ac",
+        "bytes": 3419,
+        "mtimeNs": "1788935965379985384"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/security/ProductSurfaceStepUpChallengeVerifier.java",
+        "sha256": "84f5927b043c49789570843a9a165d91bbe6ae4b54ce0d46da198810410a46ee",
+        "bytes": 16183,
+        "mtimeNs": "1788935965380138256"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/security/RolePlaneBoundary.java",
+        "sha256": "9f610e67c54e4da8783a435435af64908111b33014a1c13601f3ad89161baad9",
+        "bytes": 1738,
+        "mtimeNs": "1788935965380241421"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/security/ScopedAuthorityToken.java",
+        "sha256": "a7f5f12fc3bc931f11c9d23859a655de9384719bfbd41b050cf20954fe86cba2",
+        "bytes": 3860,
+        "mtimeNs": "1788935965380335253"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/util/LocaleUtil.java",
+        "sha256": "3a5df6aaaf90b980b8b3466009bb29bd8cd378b595cd2faa4d2b59069f2f6b0e",
+        "bytes": 1864,
+        "mtimeNs": "1788935965380495209"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build.gradle",
+        "sha256": "020d5836e67df0efc7ea0d61a9dc4810165949d9ddd62158b72eab237c049d07",
+        "bytes": 10624,
+        "mtimeNs": "1789362552533175079"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java",
+        "sha256": "55235d7762f92a53e7a6b42a8efb0bd08b38b3cca38c12eef173628f36b41114",
+        "bytes": 17643,
+        "mtimeNs": "1789364377490027282"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseSignerV1.java",
+        "sha256": "3e4dfc1f492da8ff2110484af9d921df5c9cf2a0100e11abc1c9dbfd85c88e99",
+        "bytes": 2764,
+        "mtimeNs": "1789362830422061207"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/test/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1IndependentPostgresTest.java",
+        "sha256": "56dcde207b981fab63eb67b646f0be15ff5025629372bdcea638462780485b80",
+        "bytes": 14510,
+        "mtimeNs": "1789364148192454657"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/test/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1IndependentRegressionTest.java",
+        "sha256": "8763c3a8aa05fd172398524cd63dac93df4dd6f736d0baf0457e12cbf908a9c0",
+        "bytes": 6445,
+        "mtimeNs": "1789363038703893683"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/test/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1PostgresTest.java",
+        "sha256": "01179a9c90999e39625ef6787b3f894a54299103902c0384dae7cf061be40daf",
+        "bytes": 16406,
+        "mtimeNs": "1789362830424064879"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+        "sha256": "8ac4766eafebc3ed5c8af67c5d97971897f055913c6a9f9e2ed8185873dc689b",
+        "bytes": 4809,
+        "mtimeNs": "1789355780489432326"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build.gradle",
+        "sha256": "808485f30f8d83851248ad0cb592fe5778b078fb90fcc027a242a2801efd03a5",
+        "bytes": 1420,
+        "mtimeNs": "1789092840191857086"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+        "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+        "bytes": 9105,
+        "mtimeNs": "1789360393439338720"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1.java",
+        "sha256": "a5a3d0fc5dde0e52c3f0c2bf47150e2a23e3b832458e7ff05afcae79de826d9c",
+        "bytes": 3983,
+        "mtimeNs": "1789361378869009090"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V10__seed_skax_org_design_reference.sql",
+        "sha256": "484a3ca1033f54f30811bc9ab49ed8b1c0da599a8ebf4680d8cf7357d389365b",
+        "bytes": 16717,
+        "mtimeNs": "1788935965794906403"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V11__strengthen_organization_scenario_integrity.sql",
+        "sha256": "aec3cd44ef96acebfcddb818c5fe48a9ce708002b0b03dc87577b86cc7873aa9",
+        "bytes": 589,
+        "mtimeNs": "1788935965795022693"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V12__reconcile_seeded_position_hierarchy.sql",
+        "sha256": "1fc30e5e6d07bad0eb876a4abe08ccdaf71cf4102d5ebcf2b736f64f3ffebc34",
+        "bytes": 4122,
+        "mtimeNs": "1788935965795126899"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V13__add_effective_position_relationships.sql",
+        "sha256": "3e2bdea8cfddbec1843fb052ab51faeeaf35b46ebe6980dfd23696f60afec757",
+        "bytes": 7896,
+        "mtimeNs": "1788935965795266897"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V14__complete_skax_position_reference_graph.sql",
+        "sha256": "911d8c77b97c5fd400de057cab57e08792008d7c00980d1163f7116ac3d40439",
+        "bytes": 4878,
+        "mtimeNs": "1788935965795399145"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V15__stabilize_skax_scenario_baseline.sql",
+        "sha256": "3cc29d0d2c1f472394ecf2c77ff194fbfdb79de16d9eb586c4cbf080052b3828",
+        "bytes": 319,
+        "mtimeNs": "1788935965795521894"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V16__close_position_relationship_coverage_gaps.sql",
+        "sha256": "a2a74439843069295b6e1ab42186e6bf526484fcaef978d1e6486b142d2e78a4",
+        "bytes": 5084,
+        "mtimeNs": "1788935965795644600"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V17__add_organization_decision_governance.sql",
+        "sha256": "af4f77fad482514dea8be1fdbbd9dbab597947a119f33dd5b401c4671734dcde",
+        "bytes": 3738,
+        "mtimeNs": "1788935965795748640"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V18__retire_unimplemented_org_change_types.sql",
+        "sha256": "b078dbfb32e55a807a46f277b02231a931fdda51307339a06e359b11d5ee1d15",
+        "bytes": 618,
+        "mtimeNs": "1788935965795872097"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V19__bind_organization_decisions_to_validation_evidence.sql",
+        "sha256": "14770364b96782960965068b1497afaebca4d3d9bacbc86ecd22f6f5364a4988",
+        "bytes": 5165,
+        "mtimeNs": "1788935965795996303"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+        "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+        "bytes": 27320,
+        "mtimeNs": "1788935965796121926"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V20__strengthen_position_scenario_integrity.sql",
+        "sha256": "055345a43a95b8192b1c6e3a05046079c60536961df8308b25bcbd04b6c91c42",
+        "bytes": 1208,
+        "mtimeNs": "1788935965796256174"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V21__add_organization_scenario_lineage.sql",
+        "sha256": "8f67f4273bf76d0dd5deb42e826bff103ee32107fd580d07d04b7f549379d4cc",
+        "bytes": 866,
+        "mtimeNs": "1788935965796415297"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V22__make_organization_types_tenant_configurable.sql",
+        "sha256": "326b85844fd44e3945c1223dfd0baf7525e977851b85a028178e0decb8b8f05f",
+        "bytes": 5297,
+        "mtimeNs": "1788935965796583544"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V23__seed_skax_organization_scenario_alternative.sql",
+        "sha256": "064aa0a1beca5e92afedd104d1a0d5e5faedb5816a57e3d59ea94febbd505fa4",
+        "bytes": 6022,
+        "mtimeNs": "1788935965796723417"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V24__expand_flexible_enterprise_org_reference.sql",
+        "sha256": "e8be22550ca398334b4ac518c2d585020149345961d4e8308a0278c66b3b6738",
+        "bytes": 35018,
+        "mtimeNs": "1788935965796886290"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V25__reconcile_expanded_reference_scenario_baselines.sql",
+        "sha256": "a0bcf156dc654041fd7c7cc12b69507688632870fdd2bef968dabd084b1347d6",
+        "bytes": 718,
+        "mtimeNs": "1788935965797086787"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V26__govern_workforce_reference_codes.sql",
+        "sha256": "ccb97236283afb140ac06a034433cedc7b399cfb837ee38e593ec933e6638efc",
+        "bytes": 12340,
+        "mtimeNs": "1788935965797233035"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V27__separate_scenario_approval_role_catalog.sql",
+        "sha256": "f2705ea67aa675216a2d352be42cbfa92bd2c99e709958526c8f8f47156dca92",
+        "bytes": 2028,
+        "mtimeNs": "1788935965797371741"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V28__localize_workforce_job_grades.sql",
+        "sha256": "1ef29c6326be83bfdb7d0db7d2cc55a77dbc13034b6480809057da5a31bd94ad",
+        "bytes": 463,
+        "mtimeNs": "1788935965797488906"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V29__restrict_organization_design_approval_roles.sql",
+        "sha256": "e5ca980c2ed9543df554894544b7c9d1a57e80b48334d09b3e662a1127273a5b",
+        "bytes": 509,
+        "mtimeNs": "1788935965797612529"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V2__add_hris_connector_control.sql",
+        "sha256": "cf01093dba3c83d0b76681b2a74ec9fbf810f60e5b40c56ad1ca2cb770485663",
+        "bytes": 4480,
+        "mtimeNs": "1788935965797751110"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V30__normalize_skax_member_email_domain.sql",
+        "sha256": "ffcd6f324c7dfa9f830fd2900cd0e098101f2ce290b3b4f09a377d5cf544888d",
+        "bytes": 2207,
+        "mtimeNs": "1788935965797896358"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V31__operationalize_hris_connectors.sql",
+        "sha256": "8b15dc4043287bc9f22ab3c0cc17ef6ab2296e633c3c29661c86fb0e56d4e6be",
+        "bytes": 6834,
+        "mtimeNs": "1788935965798026856"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V32__seed_standard_assignment_change_reasons.sql",
+        "sha256": "2b97284f2a52229c68709c872ab5489b135a21c424e8be0350d13a53b139a53f",
+        "bytes": 2821,
+        "mtimeNs": "1788935965798155480"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V33__complete_hris_assignment_reason_contract.sql",
+        "sha256": "3582bc90226267abad65c21ecb39e8ac0614c3fb4ad6ad4c9a7a5ee1e89e1cd4",
+        "bytes": 1559,
+        "mtimeNs": "1788935965798285436"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V34__add_workforce_access_boundaries.sql",
+        "sha256": "561f4a50830205c0a5347bba5d78a2577284caf3b178740ec64a1664730639ea",
+        "bytes": 3418,
+        "mtimeNs": "1788935965798428267"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V35__govern_workforce_export_requests.sql",
+        "sha256": "f1fc038e2cab5b15f3644b1b04bc6d068c0b3111e32838bb22f6524ee0577796",
+        "bytes": 8014,
+        "mtimeNs": "1788935965798582473"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V36__complete_workforce_export_retention.sql",
+        "sha256": "facfc1f5ed311a03fb6908ac61f4814f6b44aec1f2ed4bda8819521cacf3f948",
+        "bytes": 1559,
+        "mtimeNs": "1788935965798797428"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V37__restore_skax_work_email_domain_after_reference_sync.sql",
+        "sha256": "19038edbce7244d908f728c2e144e5bc6b8b51d5354055645413adfc3bc2f7a1",
+        "bytes": 2496,
+        "mtimeNs": "1788935965799121257"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V38__create_hr_domain_operations.sql",
+        "sha256": "6a3836fb630a0e8e564a4e9fe7606fd06af119a2f9a98bdb9fd123d61d741c18",
+        "bytes": 35927,
+        "mtimeNs": "1788935965799494460"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V39__prevent_overlapping_absence_requests.sql",
+        "sha256": "02b988fd44ce0304a4387390cfc2b64d15caa6a45169f7efa0c1c318e0b3bc91",
+        "bytes": 686,
+        "mtimeNs": "1788935965799646582"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V3__add_provider_tenant_registry.sql",
+        "sha256": "b832033f62e71be74c4031111e9c0dc571745232f48457a3ac9b05f9c6274a0b",
+        "bytes": 1519,
+        "mtimeNs": "1788935965799786664"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V40__harden_absence_withdrawal_and_team_coverage.sql",
+        "sha256": "737d464b8f50a46b28dc57cf2882d2a621e7b33912a38c25a0f90a15f24af4b9",
+        "bytes": 1035,
+        "mtimeNs": "1788935965799899995"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+        "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+        "bytes": 1833,
+        "mtimeNs": "1788935965800010744"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V42__seed_hcm_operator_population_boundaries.sql",
+        "sha256": "837647c2405dc91515bdb7823557aca5003b0ddd785bf403f01052bbd48e0525",
+        "bytes": 1338,
+        "mtimeNs": "1788935965800118409"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V43__retire_unowned_workforce_placeholders.sql",
+        "sha256": "8bb52d23f85c0812781048282d3712ac0a766103e49a89860a0367cee94a844a",
+        "bytes": 1028,
+        "mtimeNs": "1788935965800231490"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V44__bind_hcm_step_up_replay_and_sync_versions.sql",
+        "sha256": "f266d650d137602007845458d943f14656c21af3317067aa2f85444bffc22487",
+        "bytes": 1816,
+        "mtimeNs": "1788935965800354239"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V45__bind_local_verification_identity_to_workforce.sql",
+        "sha256": "62aeb9641322642f587ccaa10209cdbcc6da7057944130e61a7bed08a5945b6c",
+        "bytes": 23618,
+        "mtimeNs": "1788935965800489320"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V46__receipt_provider_tenant_commands.sql",
+        "sha256": "e0a6ec37ea1856015614520b3afd4d5a96f4749ec98c298eb5cb4c67f3ee4e3e",
+        "bytes": 1216,
+        "mtimeNs": "1788935965800608318"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V47__enforce_append_only_people_audit_evidence.sql",
+        "sha256": "828e7dfadf6d69791d5350bde8541b2ebe7ab0225630f50bdcb30a729a9c6e9e",
+        "bytes": 2026,
+        "mtimeNs": "1789118526181272796"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V48__bind_uuid_defaults_to_pg_catalog.sql",
+        "sha256": "1b101a46df4e26fbf43d008c57d4c81a9d79693d81baf37ca5fdd97d9d56b9d2",
+        "bytes": 4457,
+        "mtimeNs": "1789134149079732224"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+        "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+        "bytes": 918,
+        "mtimeNs": "1789360448778031618"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V4__add_identity_sync_delivery.sql",
+        "sha256": "818eb726fa678f1d7aea4cbbb658f0c813f7219a1ce7907d1c0e2a0c9fad3103",
+        "bytes": 624,
+        "mtimeNs": "1788935965800718692"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V5__add_enterprise_audit_outbox.sql",
+        "sha256": "c2ed65ac6f5cab6a8d747add0d6a9ea29ff63b85526cc8475811d4a17968db32",
+        "bytes": 5281,
+        "mtimeNs": "1788935965800830982"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V6__add_effective_organization_graph.sql",
+        "sha256": "59439dfe850f3373faa4bdec6ad8b15ece3ccd85912e5cf63d32442f92f6c100",
+        "bytes": 4868,
+        "mtimeNs": "1788935965800935438"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V7__seed_skax_workforce_demo.sql",
+        "sha256": "ead442f6c52e33ebbc3a03318bf7c0ecf997d9f3dd852b1b36772bb3e35cde3a",
+        "bytes": 36032,
+        "mtimeNs": "1788935965801060687"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V8__reconcile_skax_effective_assignment_history.sql",
+        "sha256": "6d079fc5d8952fd77e5bf6e5b849d5f5b198fbeeb7850a8de4bdd09b6a60f9bf",
+        "bytes": 1981,
+        "mtimeNs": "1788935965801154352"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V9__add_governed_organization_scenarios.sql",
+        "sha256": "0c7e5a05d9c26de11b96447ba9ef7c4488ab2657b1b560a5a4a2d79c3f371fb1",
+        "bytes": 8869,
+        "mtimeNs": "1788935965801283017"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+        "sha256": "cd537b51a8a85b36e7c1965c64778cbbcb3391513352f09e09adfb43ffb18cee",
+        "bytes": 4852,
+        "mtimeNs": "1789355780488533168"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1PostgresTest.java",
+        "sha256": "1452f1b5d4e8c6ee5fe915106db3cab4095dce9cfa556326fb59bc88a60f38d9",
+        "bytes": 25811,
+        "mtimeNs": "1789360986699198689"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1Test.java",
+        "sha256": "3b9bf7d33f7383131d0cfbcc1ebd3a7cecf8c95c3c0b9bbbbf9cc79db6c02224",
+        "bytes": 11481,
+        "mtimeNs": "1789360986698179559"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1PostgresTest.java",
+        "sha256": "ccd094d67fd0d6dc2898dbc5ffc0d06f841e4e84ba67ce1ec0e26aa0ea1168a1",
+        "bytes": 11754,
+        "mtimeNs": "1789362330132590956"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1Test.java",
+        "sha256": "62524c9e00dad3a6fcabf1aca2e4f3cefce6e8e6c8528d54aca81643de9d4a3f",
+        "bytes": 7918,
+        "mtimeNs": "1789362225838963408"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+        "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+        "bytes": 649,
+        "mtimeNs": "1789354991077290911"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java",
+        "sha256": "c665723f366527687c9e3dec55cefd4534defdc8b0aecc596ada3ab15eb40735",
+        "bytes": 12998,
+        "mtimeNs": "1789361799934737638"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfPersonPortV1.java",
+        "sha256": "fc8c01dfe60de405b37fa363b4f727ec3681dc67fda17b43daae93b82260a8b7",
+        "bytes": 7901,
+        "mtimeNs": "1789361441385963841"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+        "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+        "bytes": 1496,
+        "mtimeNs": "1789354991078381067"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfPersonSnapshotV1.java",
+        "sha256": "62378ba2bb29d6cc020b3260720ac99d65d2dedad37306f390dc0f759758b41d",
+        "bytes": 472,
+        "mtimeNs": "1789361378867411541"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextAuthorityV1.java",
+        "sha256": "df1db8b5740aee6381c46bc692d9a01dbe91a43e28d422b373237b52cdbce827",
+        "bytes": 1574,
+        "mtimeNs": "1789355199306843445"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextContractExceptionV1.java",
+        "sha256": "c1e376e7332e950d1f0b37ada3d4f106b27bcc213cc713e89982bc8080d83f47",
+        "bytes": 830,
+        "mtimeNs": "1789355488820323178"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextOwnerPortsV1.java",
+        "sha256": "ccb3c2ace5e192c01cb620c8a658df8b69599e945f07181c1ced62384e0f46c4",
+        "bytes": 2479,
+        "mtimeNs": "1789355058604417179"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPortV1.java",
+        "sha256": "556dacec7f3d49a2a2568d023d94db7d6ada0cbabfdd279dfab33902331725ff",
+        "bytes": 285,
+        "mtimeNs": "1789354991079850469"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+        "sha256": "7e3ea5978a47dbb09d752757a05806404453d0cf5f8ce7227d1e9b911acef2bd",
+        "bytes": 543,
+        "mtimeNs": "1789354991075458554"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextQueryV1.java",
+        "sha256": "8e17e7f5f5baaed2bb8479136cc2b9860232c868879978807f0d1995e35152a2",
+        "bytes": 317,
+        "mtimeNs": "1789354991076747667"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextResolutionV1.java",
+        "sha256": "61e7f0762065ba2997d387ceddd18af3399972c0c1922369ad764aba166a18e5",
+        "bytes": 2658,
+        "mtimeNs": "1789354991081169998"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextSelectorV1.java",
+        "sha256": "258846f1a4a037aae51da484fe8df1e9c06a30c64cf03caa36e2a89749e6af50",
+        "bytes": 315,
+        "mtimeNs": "1789354991076040548"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonOwnerPortsV1.java",
+        "sha256": "f6b139f187097c3f8a7255dc7730a173fd94ebaebcf37094e771d417fbbfb43a",
+        "bytes": 1332,
+        "mtimeNs": "1789361378867909626"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonPortV1.java",
+        "sha256": "da53481c004df5e8c6b2924fb5a3c632dd7752822fd18b2f372c0c7fa14e82a4",
+        "bytes": 266,
+        "mtimeNs": "1789361378866867663"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonResolutionV1.java",
+        "sha256": "40a6e0c394dd268dcc06f759ab2db2b7233d811e24ea9f578665130c17c7e98f",
+        "bytes": 1388,
+        "mtimeNs": "1789361378868214378"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/IdentitySelfContextContractTest.java",
+        "sha256": "f2b37b387cc989eb65dbb7ae4b17762c265a428390ca654dee1a91ed41ee80fd",
+        "bytes": 27027,
+        "mtimeNs": "1789362298111600276"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/IdentitySelfContextProgressClockRegressionTest.java",
+        "sha256": "ca41ea1fa960a2b87aeb722c2d7bd227681e0f5fa3f67c9b57a33de4667c19a1",
+        "bytes": 3230,
+        "mtimeNs": "1789361581045310999"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonContractV1Test.java",
+        "sha256": "65c2007673dafb86ecfde1737bd484ca573011f3c38e844fa43b61df548ae1a7",
+        "bytes": 14680,
+        "mtimeNs": "1789362188943203623"
+      }
+    ],
+    "startedAt": "2026-09-14T05:49:07.997577+00:00",
+    "exitCode": 0,
+    "timedOut": false,
+    "durationSeconds": 31.886755,
+    "finishedAt": "2026-09-14T05:49:39.886616+00:00",
+    "gradleOutputSha256": "d57ecd802c0b071e64093ea938c9ca76177f3d4a2c3e8ef70111b6b77195da9b",
+    "sourcesUnchanged": true,
+    "preManifestSha256": "74a451b49a288b098255099bf4c520f094f4fc04bdf60e51aca1ad3fc1008be8",
+    "postManifestSha256": "74a451b49a288b098255099bf4c520f094f4fc04bdf60e51aca1ad3fc1008be8",
+    "postSourcesEncoding": "IDENTICAL_TO_PRE_AFTER_FULL_CAPTURE_COMPARE",
+    "postSources": null,
+    "postHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "postTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "postStatus": "M dwp-auth-server/build.gradle\n M dwp-migration-control/build.gradle\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/hris/\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupClockEntryRegressionTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuardTest.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/startup/\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/startup/\n?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/\n?? dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/\n?? dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql\n?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/\n?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/",
+    "suites": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest.xml",
+        "sha256": "b7200074192e82329d217455d249f8e42e7a52761609e2152ce7a00ca1243703",
+        "mtimeNs": "1789364979655779700",
+        "name": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T05:49:36",
+        "cases": [
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+            "name": "activationAndDrainRaceAlwaysLeavesDurableEpochAdvancedAndOldCurrentDenied()",
+            "seconds": "0.32",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+            "name": "nanosecondClockMustRoundTripToIdenticalCanonicalNativeLease(PrecisionOperation) [1] operation=RESERVE_RETRY",
+            "seconds": "0.088",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+            "name": "nanosecondClockMustRoundTripToIdenticalCanonicalNativeLease(PrecisionOperation) [2] operation=ACTIVE_CURRENT",
+            "seconds": "0.121",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+            "name": "searchPathRoutineCannotSpoofPhysicalConfiguredControlCatalog()",
+            "seconds": "0.076",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+            "name": "persistedIssuedAtRejectsClockRegressionAcrossAuthorityCalls()",
+            "seconds": "0.112",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+            "name": "expiryDuringSigningRollsBackLeaseAndPermitChangesTogether()",
+            "seconds": "0.06",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest",
+            "name": "nativeOriginalLoginMismatchRejectsBeforeAnyLeaseMutation()",
+            "seconds": "0.05",
+            "result": "ok",
+            "failures": []
+          }
+        ]
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest.xml",
+        "sha256": "36bc8c368463f7eb70f835e2d1757d93857508de131a919ab99f92f3f1126ad6",
+        "mtimeNs": "1789364979658466549",
+        "name": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T05:49:37",
+        "cases": [
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "transportProviderFailureMustBeRedactedBeforeOpeningPool(Operation) [1] operation=RESERVE",
+            "seconds": "0.002",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "transportProviderFailureMustBeRedactedBeforeOpeningPool(Operation) [2] operation=ACTIVATE",
+            "seconds": "0.001",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "transportProviderFailureMustBeRedactedBeforeOpeningPool(Operation) [3] operation=CURRENT",
+            "seconds": "0.003",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "transportProviderFailureMustBeRedactedBeforeOpeningPool(Operation) [4] operation=RELEASE",
+            "seconds": "0.002",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "missingAuthenticatedInvocationIsAlreadyFailClosedWithZeroPoolCalls()",
+            "seconds": "0.002",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "nullTransportOptionalMustBecomeGenericDenialWithoutPool()",
+            "seconds": "0.002",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "nullClockInstantMustRejectBeforeOpeningPool()",
+            "seconds": "0.002",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "clockProviderFailureMustBeRedactedBeforeOpeningPool()",
+            "seconds": "0.002",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest",
+            "name": "invocationInstanceMismatchIsAlreadyFailClosedBeforePool()",
+            "seconds": "0.003",
+            "result": "ok",
+            "failures": []
+          }
+        ]
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest.xml",
+        "sha256": "0206999b1dfe8d3016cc31443de2eb4470ef1341d2909abb6e71f1ed4acd4483",
+        "mtimeNs": "1789364979654198656",
+        "name": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T05:49:38",
+        "cases": [
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "nativeReservedActiveCurrentAreCanonicalSignedAndCurrentDoesNotRenew()",
+            "seconds": "0.148",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "authorityCannotPublishOrRebindPermitsAndRuntimeCannotReadApprovals()",
+            "seconds": "0.043",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "native approval binding rejects service",
+            "seconds": "0.025",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "native approval binding rejects deployment",
+            "seconds": "0.023",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "native approval binding rejects instance",
+            "seconds": "0.023",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "native approval binding rejects epoch",
+            "seconds": "0.041",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "native approval binding rejects permit",
+            "seconds": "0.047",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "native approval binding rejects challenge",
+            "seconds": "0.029",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "native approval binding rejects seal",
+            "seconds": "0.052",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "missingAuthenticatedInvocationRejectsBeforeOpeningControlPool()",
+            "seconds": "0.014",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "crashRestartUsesNativeEpochAndDrainRevokesOldReservationAndActiveLease()",
+            "seconds": "0.158",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "exactExpiryRejectsAndNeverRenewsExpiredActiveLease()",
+            "seconds": "0.106",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "mismatchedSignerKeyPairAndWrongRevisionReject()",
+            "seconds": "0.052",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "releasedPermitCannotMintASecondLease()",
+            "seconds": "0.094",
+            "result": "ok",
+            "failures": []
+          },
+          {
+            "classname": "com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest",
+            "name": "concurrentReservationsLinearizeAndMintOnlyOneNativeLease()",
+            "seconds": "0.062",
+            "result": "ok",
+            "failures": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "expectedSuitesPresent": true,
+    "currentVerifier": "EXPLICIT_MOCK_ONLY",
+    "AuthGatewayEndToEnd": false,
+    "productionWiring": false,
+    "G3Approval": false,
+    "lockReleased": true
+  },
+  "allCaseIdsUnique": true,
+  "exactSame31CaseIdsAsBeforeFix": true,
+  "testFixturesUnchangedFromBeforeFix": true,
+  "changedSourcesFromBeforeFix": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java",
+      "previousSha256": "87fd4171163b0814007a3cbb6abc2497826a2ce897e5b7e57f7cc1dfa4ac3932",
+      "currentSha256": "55235d7762f92a53e7a6b42a8efb0bd08b38b3cca38c12eef173628f36b41114",
+      "mtimeNs": "1789364377490027282"
+    }
+  ],
+  "xmlArtifactArchive": {
+    "checkedAt": "2026-09-14T05:50:00.778929+00:00",
+    "xml": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentPostgresTest.xml",
+        "sha256": "b7200074192e82329d217455d249f8e42e7a52761609e2152ce7a00ca1243703",
+        "bytes": 4535,
+        "mtimeNs": "1789364979655779700",
+        "encoding": "gzip+base64",
+        "content": "H4sIAAAAAAACE8VY227iRhi+z1NMudlEKsY2PqKQFYFEYpUDAhKpiqLV4PmBWYzHnRmTcNNH6FUv+yB9nr5AX6G/bU7Zkj12k4sEM56Z7/v+c3L89nEekwVIxUXSrFiGWSGQRILxZNKs3AzPq0Hl7cnBsQalVcY1kITOoVmJxNxgD6kx5xNJNZ41IpFoKWJDaSp1lhoLy2iXS4Ny5QKoglamp0Jyvby1ugmDFPBXontC6YkENUSUCimwmhW/QtSMpymwZgVZjSmPM9xTfAEphSwfNZ/jfjpPmxXbtL2qGVYtZ2i6DSds1L0KmeLdJedLGp0KMav2pCiP4XkjcPzKyQEhx6kUKUjNQdWK7zmLCBmvBNNI80WhtJWwjqQ86dMIWvEDXSpUtgDVySQdxXCWimjaYguaRMBw73XM2pmUqLIDCQd2eFQhUUyVegFDrjTW7cpeTQlNhALEY+1YRLPLTOm+yBI2lDwdim5+IY9o3MZtSf5whQQXUMAf9iREPA+aa7RaQfyI3Fn3RKy/Nvtng7P+7dn7/tmw/8uLazaD4IVE27uiW+1hFzW3b/r9s6vhi6u2bGu/agVURtMe1VMUq3kCqC8RepAKMe5Nl6qQLJIxn2COsRWLNtU0FpNXiFjT9/brSPNKpTSwrlIZ5pfuwweItCp82Yf8ptw/rUgKpTaIbRrH6hVkWNYzmQePKZdLrBhYZgd8kuBHXyDHUxrNSpSE9UDOuW5PaTLBe8UE9BTka/jCey6R8sS4lnzCExpfCPy45GpOdTRdOeUUxkKilGWBeZnpguJrSHBXEtQSY2dexRQ4Of7prt1pDVt3llO0irrhmCa5yw+SByFnIO9J9+r8mgg5MQrpyAHLPgagwecUfWL0sjjuiZhHS1Ktkm6+SFJcI2m5+MDxeYRrINEQc2BktGyQDoxpFuvt4cOjgx0OzhdywCyOUb1RwF6hKQfZSGmuMy3klk5uY6LWb9C6nya197JDdFEqVN78xZi8WZeJwlnnPIZ9h94QmjDyBgvmmD9idO/ds6vb+lLbdzDRQbZjjt4+x64sZGH94ZNd64mmQSzDtgxnC+S63hcCsQIoKoCeoOL8sOAM5ECjDWBSwF8IytCUn7vmJuGPg3xBP3PVWIo5+a328SXb4eTn0oEaVXNNxlwqvRXne/6PEHee90dS7sLpcMGlSOa4F6noKcHKS2OSKyOqkEYOM/zSqNVqCyprMktqJZqRvz7aZRt8n89XjPIJj3R7hDKWl3/CVckpX99BC+zvQ8O4T7CqoZe1IKWiBsGiMgCJ0UZu1xFnh4Zv2Pii1etuVy2MPFxbDQ7JhAyKUtRYi+iAmmmR4pahwK5LLmGOuA3ih3WLXJ7i+gUdQawKSEKKqllalZUnjZX85tr4Nwqxa9QyvdCvXfCRpHJZa29k1navKD5qHez3K19VMTQKf20NGJp7Daijj+xXk8ts1shnEcMs7CahVLzZQrDwkKKGNsjzZ9fIDmaw823IG8BP7MNoKRoNMmwQoFHdMwMI62N7FI2pS826M/LCKASHua7tjgFMLxjVHc8yR3V7bDk+DS3PtKwgHI/olrMTWD+Oc0EYA5EnpDc0DdcPfH+wi+1/ZRPp4+V9UCKTEfSBYpDmXPLVDVa1LDxznIrzppCXd51PKDgGwMfVd+cRO86720sCj1x/C8HncnEK0SyPKZyJSNnUDcPYBfjO0vL3n3/889fv6+RUZYqvmgpRU5HFLG+iVJMYhxGN6e3tRuwz+Oj9dDWgNCyvSuMUSXw+R/57Zovkhs7XIW0A9rx/kgt10/R8ZxSFdSf/CcMo8D2wGGNuUA98E0YspPXA9tg4sNw6cyLbYnVn7EPdYeEoXHN0sXJY/x/HJ7GPrd2yA8ce7ILZ3wi2Vo+XH77rnLbJTf+iQT6wUdRYH/01xsq6aS4N13ctt8a34+f71cz6Pir/dHqLPxOQF7CAuHl9fn50cH9/clzbGUN3plKQcjuV7u7LXxwc1zb/gzk5+BfuSFyLtxEAAA=="
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1IndependentRegressionTest.xml",
+        "sha256": "36bc8c368463f7eb70f835e2d1757d93857508de131a919ab99f92f3f1126ad6",
+        "bytes": 2267,
+        "mtimeNs": "1789364979658466549",
+        "encoding": "gzip+base64",
+        "content": "H4sIAAAAAAACE82WUW/aMBDH3/kUmZ/aB0ICdB1VQhVSOiGVtQopk4Z4sJwreDh2ZF/o+PZzkrIxrS97YPAS+ey7+P+7OzsJbn/kwtmCNlzJkPiuRxyQTGVcrkLynN63P5HbYStAMGhKjuBImkNImMrd7LVwc77SFG2sy5RErYRrkGosC3fru3EzNWtmHoAaiEpcK81xN/cnMoMC7ENiAisNppKQ2n2IU+8WkgFxzIYXBWQhsbpeKBel9asN0FrpZog8t/40L0LS9bof296g7fdT7+qmP7jpXRNnrQw2qqeUjZTatJ+0asJsvOt1r8iw5ThBoVUBGjmYTm1XKpjV/IaMmkpTKI02essz0PeNnmlpcAQJZJQhZCN4URoeLZjN4JNS4sKOmxRdOgt/6ai9GSbj2TiZj4nDBDXmv+R1j+x1ydEYu4eMUZxO5lF6Gkj/eJC9Q8j4OUnGX9KTMPaOx9j/s1kfxtHsrJo159Zbrqq32XDOqCWayK1itZaJiYQGmu0q8lgoA9lXjutvoFVFGlMhzMXlOfHIUoh0X7fHohJARVMwqww+gwTN2Z0tFhUViiqxrtnZQdhss81E2v0kVvoT+A4M/262sxLOKtH/eFrOCoD/bv069Qym3OQU2fqdo9CwnBBif2+ZnUHI27aXh8GHRXwXpdFiuRwGnYOFAz/72X/fr1poBZ1f/ynD1k/mUd6I2wgAAA=="
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.control.startup.v1.ControlStartupLeaseAuthorityV1PostgresTest.xml",
+        "sha256": "0206999b1dfe8d3016cc31443de2eb4470ef1341d2909abb6e71f1ed4acd4483",
+        "bytes": 3550,
+        "mtimeNs": "1789364979654198656",
+        "encoding": "gzip+base64",
+        "content": "H4sIAAAAAAACE8WX33PaOBDH3/krdH5qHzC2scFmgAwhzUzv0sAQ0j5kMh0hL6BGlnySIOH++q5/kGbmkpsp0/reMPLufnb9lXY1PHvKBNmDNlzJkeO7nkNAMpVyuRk5t8vLduycjVtDC8aaHbdAJM1g5DCVuelj7mZ8o6lFW5cpabUSrrFU213u7n13Wv11U/1zBdTAZGe3SnN7+OzPlbEbDWaJrh1SBkCAyCHmgec5pCMHWdaUix2+VD6A1kpXPy3P0IBm+cgJvKDX9pK2Hy69aBAmg27skC06r0g/UXau1EN7rlVlhvZuEsTOuEXIMNcqB205mE75XGAw5KzTlJjbHhZgQO8hnbDiabrTGqSdaJhSqSRnVNzwjcRlmdZrFwrMtbILkPD47r1DmKDG/K7C1Sn5Yey8mgM9WiKuVHa+WwlutjO9gBWX6Rx0xq1B9sVOFr6qtxZA00mO1dlTYZpKwQu7zn98BkJrIFKAo0CJhm/ArCHF5+EMGqIMotMoU8iFOmSoj6ZATywnlxhZNlfPEzEhV2zblDL90xjzcns1Bdk/DZJtqRAgN4198OTUbU5FQ4hR8Dpixo1BpMIB7mM8+y2kH+VesTL8ogI9h7XSMMtB4qt1+LlSorFz1A9fp2eamu0CSve3BntUWfAPxT7CBnChKccU9uoBzEykVdcrwXCx6n1l/MY6WvRGR4MnyuyHp5zrQ11xBLwGnGLKjmvKJfhfkL3em7rJqGVbSMtZQf8FhznlGrm/aCU3WHVungXUmE7eUrkGUTioh4NqIvjEcea5AQydNlpSL3lLzEqyatx6oVRzxSVQzf8BLG2BPJPiMJNQKb1Z8N6xuuZgLGRttbPj4R9304vJcnLnh+Wo2neDoEvuCkvyqPQD6Hvy8fpyRixz89rtwO+1qcgxMdJuk6kGxMRTscDEDQua4GlDeEY3MCD/tmk9R+p6PxnpOcAr6xyP46IaSDIgXgTrYBUGcXfFwO+tuhHAmqWrgAZxGHtezFYhS9ZeFAPtJ3EaJ0nK6CqlLPRo0ouPjLHb7fd+HWMJCCnOM2S+9PE8CZJ+9+ZXBDtmj87f/XlxPiW3i6sB+Zau2OBo+rcYdDoCG4Mo7iKDqB/1ep1aUl9riX1d8yeL15szoTYb0Fd4hInR7PLyfev+fjzsvNDNCxnhLeiHjF6+Vyy0hp3nq9q49R1TJ8W93g0AAA=="
+      }
+    ],
+    "ownedContainers": [
+      {
+        "id": "05ef2b4283bce16b35eefcdb2a2848008cb4c9f058ea798d899dcabdac40a968",
+        "inspectExit": 1,
+        "removed": true,
+        "state": null
+      },
+      {
+        "id": "300674bc934c93499c876e1ddd583870ebd9a3826df8153d4c21d34f7e34d9b9",
+        "inspectExit": 1,
+        "removed": true,
+        "state": null
+      },
+      {
+        "id": "eac3608e93f2bcfa5a034b69c9e4d5525fee068b34610b32f147a91601189fba",
+        "inspectExit": 1,
+        "removed": true,
+        "state": null
+      }
+    ],
+    "allOwnedContainersRemoved": true,
+    "discoveryInterpretation": "owned PostgreSQL2 + one shared Ryuk in selected JVM; exact-ID read-only inspect only",
+    "mutation": "none"
+  },
+  "gradleTaskOutcomes": [
+    "> Task :dwp-migration-control:verifyMigrationControlRuntimeClasspath",
+    "> Task :dwp-audit:compileJava UP-TO-DATE",
+    "> Task :dwp-audit:processResources NO-SOURCE",
+    "> Task :dwp-audit:classes UP-TO-DATE",
+    "> Task :dwp-audit:jar UP-TO-DATE",
+    "> Task :dwp-observability:compileJava UP-TO-DATE",
+    "> Task :dwp-observability:processResources NO-SOURCE",
+    "> Task :dwp-observability:classes UP-TO-DATE",
+    "> Task :dwp-observability:jar UP-TO-DATE",
+    "> Task :dwp-platform-contracts:compileJava UP-TO-DATE",
+    "> Task :dwp-platform-contracts:processResources UP-TO-DATE",
+    "> Task :dwp-platform-contracts:classes UP-TO-DATE",
+    "> Task :dwp-platform-contracts:jar UP-TO-DATE",
+    "> Task :dwp-core:compileJava UP-TO-DATE",
+    "> Task :dwp-core:processResources UP-TO-DATE",
+    "> Task :dwp-core:classes UP-TO-DATE",
+    "> Task :dwp-core:jar UP-TO-DATE",
+    "> Task :dwp-migration-control:compileJava",
+    "> Task :dwp-migration-control:processResources NO-SOURCE",
+    "> Task :dwp-migration-control:classes",
+    "> Task :dwp-migration-control:jar",
+    "> Task :dwp-migration-control:compileTestFixturesJava UP-TO-DATE",
+    "> Task :dwp-migration-control:processTestFixturesResources NO-SOURCE",
+    "> Task :dwp-migration-control:testFixturesClasses UP-TO-DATE",
+    "> Task :dwp-migration-control:testFixturesJar UP-TO-DATE",
+    "> Task :dwp-migration-control:compileTestJava UP-TO-DATE",
+    "> Task :dwp-migration-control:processTestResources NO-SOURCE",
+    "> Task :dwp-migration-control:testClasses UP-TO-DATE",
+    "> Task :dwp-notification-server:compileJava UP-TO-DATE",
+    "> Task :dwp-notification-server:processResources UP-TO-DATE",
+    "> Task :dwp-notification-server:classes UP-TO-DATE",
+    "> Task :dwp-notification-server:jar UP-TO-DATE",
+    "> Task :dwp-migration-control:test"
+  ],
+  "classpathBoundaryTaskPassed": true,
+  "findingsRetested": [
+    {
+      "id": "CONTROL_F01",
+      "previousActualFailedCases": 7,
+      "status": "BOUNDED_REPRO_REGRESSION_PASS",
+      "negativeAcceptance": "All operation provider failures/null Optional/null initial instant normalize to generic no-cause IllegalStateException; Auth/Clock ingress errors open pool zero times.",
+      "notBroaderApproval": true
+    },
+    {
+      "id": "CONTROL_F02",
+      "previousActualFailedCases": 1,
+      "status": "BOUNDED_REPRO_REGRESSION_PASS",
+      "negativeAcceptance": "Native pg_catalog-qualified identity (or trusted normalization before inspection) rejects actual catalog mismatch; approved permit stays ISSUED and lease count remains zero.",
+      "notBroaderApproval": true
+    },
+    {
+      "id": "CONTROL_F03",
+      "previousActualFailedCases": 1,
+      "status": "BOUNDED_REPRO_REGRESSION_PASS",
+      "negativeAcceptance": "Reject now earlier than persisted lease issuedAt without renewal or mutation; retain existing consumed phase/native single lease.",
+      "notBroaderApproval": true
+    },
+    {
+      "id": "CONTROL_F04",
+      "previousActualFailedCases": 2,
+      "status": "BOUNDED_REPRO_REGRESSION_PASS",
+      "negativeAcceptance": "Explicit native precision floor before storage, without future round-up/lease expansion; claims come from canonical native row; reserve retry and active current return identical document for unchanged row. Keep raw monotonic clock checks separately from native storage precision.",
+      "notBroaderApproval": true
+    }
+  ],
+  "sourceReview": [
+    "Ingress authenticated provider/Clock/null Optional failure is converted to generic no-cause rejection before Control pool opens.",
+    "Physical catalog identity/current_setting are pg_catalog-qualified before normalizing search_path.",
+    "Now earlier than native persisted issuedAt rejects across API calls.",
+    "Raw monotonic Clock checks are preserved separately from explicit MICROS flooring; issuedAt/expiry use native floor and persisted row equality FOR UPDATE readback before signing; no lease extension from round-up."
+  ],
+  "notClosed": [
+    "approved immutable native Control schema/roles/membership/exact ACL/endpoint server identity",
+    "real authenticated invocation transport and permit/seal publication",
+    "ControlMain native offline fencing, current13 stream wiring/renewal/key lifecycle",
+    "actual domain HRIS/G3 approval"
+  ],
+  "mutation": "Independent checker added only its two test files and new reports. Root alone authored production correction. No SQL, legacy/G0, existing guards or Gates changed by checker."
+}

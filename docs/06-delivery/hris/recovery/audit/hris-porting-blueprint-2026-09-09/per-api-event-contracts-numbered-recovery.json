@@ -1,0 +1,31 @@
+{
+  "baseFileUsed": null,
+  "bytes": 47246,
+  "destination": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/api-event-contracts.yaml",
+  "inventedContent": false,
+  "lineCount": 1152,
+  "lineSourceCounts": {
+    "exec-40e4b583-ed6d-4ea5-a876-ddf8a4208644": 316,
+    "exec-78789350-b958-4e9e-a9b0-d0f99cab62a9": 264,
+    "exec-cbca84c2-f9d8-4379-88b0-b83437006df5": 172,
+    "exec-e6bcbd69-009d-450c-883f-7b410bf2e653": 221,
+    "exec-f9aa933b-68f7-42bf-9248-90663543e677": 179
+  },
+  "observedItemIds": [
+    "exec-40e4b583-ed6d-4ea5-a876-ddf8a4208644",
+    "exec-78789350-b958-4e9e-a9b0-d0f99cab62a9",
+    "exec-cbca84c2-f9d8-4379-88b0-b83437006df5",
+    "exec-e6bcbd69-009d-450c-883f-7b410bf2e653",
+    "exec-f9aa933b-68f7-42bf-9248-90663543e677"
+  ],
+  "relativePath": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+  "schema": "dwp.hris.blueprint.numbered-event-recovery.v1",
+  "selectedItemIds": [
+    "exec-40e4b583-ed6d-4ea5-a876-ddf8a4208644",
+    "exec-78789350-b958-4e9e-a9b0-d0f99cab62a9",
+    "exec-cbca84c2-f9d8-4379-88b0-b83437006df5",
+    "exec-e6bcbd69-009d-450c-883f-7b410bf2e653",
+    "exec-f9aa933b-68f7-42bf-9248-90663543e677"
+  ],
+  "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a"
+}

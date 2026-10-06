@@ -1,0 +1,133 @@
+{
+  "contractId": "dwp.hris.time.v1",
+  "status": "CODE_READY_PROPOSAL",
+  "owner": "dwp-time-server",
+  "routing": {"gatewayBasePath":"/api/time/v1","controllerBasePath":"/v1","internalBasePath":"/internal/hris-time/v1","gatewayRule":"service-key route /api/time/** with StripPrefix=2; internal paths are never gateway exposed"},
+  "baseline": {
+    "backend": "5670877de7a39e94e75021c7e23cbbb553296c90",
+    "frontend": "7635ce4223000ed83cb4965f8374d8a8433f1a62"
+  },
+  "principles": {
+    "tenantSource": "trusted-auth-context-only",
+    "externalIdentifiers": "uuid-public-id",
+    "crossContextDatabaseAccess": false,
+    "commandsRequireIdempotencyKey": true,
+    "aggregateMutationRequiresExpectedVersion": true,
+    "finalFactsAreAppendOnly": true,
+    "errors": ["400", "401", "403", "404_OPAQUE", "409_STALE_OR_STATE", "422_DOMAIN_RULE", "429", "503_RESULT_UNKNOWN"]
+  },
+  "commandHeaders": {
+    "required": ["Authorization", "Idempotency-Key", "X-Correlation-Id", "X-Purpose-Code"],
+    "conditional": ["If-Match"],
+    "forbidden": ["X-Tenant-Override", "X-Actor-Override"]
+  },
+  "receipt": {
+    "schema": "TimeCommandReceipt.v1",
+    "required": ["receiptId", "commandType", "originatingAction", "subjectPrincipalPublicId", "populationScopeDigest", "fieldPolicyRevision", "purposeCode", "authorizationRevision", "status", "correlationId", "requestDigest", "createdAt"],
+    "statuses": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"],
+    "lookup": "GET /v1/command-receipts/{receiptId}",
+    "authorization": "The receipt seals the originating command action, subject, population scope digest, field policy revision, purpose and authorization revision. Lookup re-evaluates current entitlement against that exact sealed context; the more restrictive of current and originating policy wins and lookup can never broaden access.",
+    "idempotencyScope": ["trustedTenantContext", "subjectPrincipalPublicId", "originatingAction", "Idempotency-Key"],
+    "idempotencyRule": "same scope and canonical requestDigest returns the original receipt; a different digest returns 409; another subject is an independent scope",
+    "sealedFieldsImmutable": true,
+    "opaqueNotFoundOnRevocationOrContextMismatch": true
+  },
+  "operations": [
+    {"id":"time.widget.summary","method":"GET","path":"/v1/widgets/summary","action":"TIME_WIDGET_VIEW","scope":"SELF|TEAM|TIME_GROUP","mode":"query","response":"TimeWidgetSummary.v1","notes":"field-filtered; freshness and partialFailures required"},
+    {"id":"command.receipt.query","method":"GET","path":"/v1/command-receipts/{receiptId}","action":"TIME_COMMAND_RECEIPT_READ","scope":"SEALED_ORIGINATING_COMMAND_CONTEXT","mode":"query","fieldPolicy":"SEALED_ORIGINATING_FIELD_POLICY","response":"TimeCommandReceipt.v1","notes":"tenant is trusted-context only; receipt lookup re-evaluates current app entitlement, originating action, subject, population scope, field policy and purpose; the more restrictive decision wins; opaque 404 on cross-tenant or out-of-scope receipt"},
+    {"id":"schedule.query","method":"GET","path":"/v1/schedules","action":"TIME_SCHEDULE_VIEW","scope":"SELF|TEAM|TIME_GROUP","mode":"query","response":"SchedulePage.v1"},
+    {"id":"schedule.rule.create","method":"POST","path":"/v1/work-rule-sets/versions","action":"TIME_RULE_CONFIGURE","scope":"LEGAL_ENTITY|TIME_GROUP","mode":"command","idempotent":true,"response":"TimeCommandReceipt.v1","initialState":"DRAFT"},
+    {"id":"schedule.rule.validate","method":"POST","path":"/v1/work-rule-sets/{ruleId}/validate","action":"TIME_RULE_VALIDATE","scope":"LEGAL_ENTITY|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"response":"TimeCommandReceipt.v1"},
+    {"id":"schedule.rule.simulate","method":"POST","path":"/v1/work-rule-sets/{ruleId}/simulations","action":"TIME_RULE_SIMULATE","scope":"LEGAL_ENTITY|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"response":"TimeCommandReceipt.v1"},
+    {"id":"schedule.rule.publish","method":"POST","path":"/v1/work-rule-sets/{ruleId}/publish","action":"TIME_RULE_PUBLISH","scope":"LEGAL_ENTITY|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"sod":"CONFIG_AUTHOR_NE_PUBLISH_APPROVER","response":"TimeCommandReceipt.v1","transition":"APPROVED->PUBLISHED"},
+    {"id":"clock.record","method":"POST","path":"/v1/clock-events","action":"TIME_CLOCK_RECORD","scope":"SELF|CLOCK_SOURCE","mode":"command","idempotent":true,"request":"ClockCommand.v1","response":"TimeCommandReceipt.v1","transition":"NONE->RECORDED","notes":"Canonical eventType is IN|OUT|BREAK_START|BREAK_END. Preserve occurredAt, sourceLocalDateTime, IANA timeZone, supplied/resolved UTC offset, DST resolution, instant authority, tzdb/rule version and provenance digest; reject inconsistent evidence."},
+    {"id":"clock.void","method":"POST","path":"/v1/clock-events/{eventId}/voids","action":"TIME_CLOCK_CORRECT","scope":"SELF|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":false,"stepUp":"required-for-operator","response":"TimeCommandReceipt.v1","transition":"RECORDED->VOIDED_BY_EVENT"},
+    {"id":"interpretation.run","method":"POST","path":"/v1/interpretation-runs","action":"TIME_INTERPRET_RUN","scope":"SELF|TIME_GROUP|PERIOD","mode":"command","idempotent":true,"response":"TimeCommandReceipt.v1","transition":"QUEUED->RUNNING->SUCCEEDED|FAILED|RESULT_UNKNOWN"},
+    {"id":"interpretation.trace","method":"GET","path":"/v1/interpretation-runs/{runId}/trace","action":"TIME_TRACE_VIEW","scope":"SELF|TIME_GROUP","mode":"query","fieldPolicy":"TIME_TRACE","response":"InterpretationTrace.v1"},
+    {"id":"timecard.query","method":"GET","path":"/v1/timecards/{timecardId}","action":"TIME_TIMECARD_VIEW","scope":"SELF|TEAM|TIME_GROUP","mode":"query","response":"Timecard.v1"},
+    {"id":"timecard.correct","method":"POST","path":"/v1/timecards/{timecardId}/corrections","action":"TIME_TIMECARD_CORRECT","scope":"SELF|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"response":"TimeCommandReceipt.v1"},
+    {"id":"timecard.submit","method":"POST","path":"/v1/timecards/{timecardId}/submit","action":"TIME_TIMECARD_SUBMIT","scope":"SELF","mode":"command","idempotent":true,"expectedVersion":true,"response":"TimeCommandReceipt.v1","transition":"OPEN->SUBMITTED"},
+    {"id":"timecard.decide","method":"POST","path":"/v1/timecards/{timecardId}/decisions","action":"TIME_TIMECARD_DECIDE","scope":"TEAM|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"sod":"SUBMITTER_NE_DECIDER","response":"TimeCommandReceipt.v1","transition":"SUBMITTED->APPROVED|REJECTED"},
+    {"id":"leave.plan.create","method":"POST","path":"/v1/leave/plans/versions","action":"LEAVE_PLAN_CONFIGURE","scope":"LEGAL_ENTITY|TIME_GROUP","mode":"command","idempotent":true,"response":"TimeCommandReceipt.v1"},
+    {"id":"leave.plan.publish","method":"POST","path":"/v1/leave/plans/{planId}/publish","action":"LEAVE_PLAN_PUBLISH","scope":"LEGAL_ENTITY|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"sod":"CONFIG_AUTHOR_NE_PUBLISH_APPROVER","response":"TimeCommandReceipt.v1"},
+    {"id":"leave.entitlement.run","method":"POST","path":"/v1/leave/entitlement-runs","action":"LEAVE_ENTITLEMENT_RUN","scope":"TIME_GROUP|PERIOD","mode":"command","idempotent":true,"response":"TimeCommandReceipt.v1"},
+    {"id":"leave.balance.query","method":"GET","path":"/v1/leave/balances","action":"LEAVE_BALANCE_VIEW","scope":"SELF|TEAM|TIME_GROUP","mode":"query","response":"LeaveBalancePage.v1","notes":"projection includes ledgerRevision"},
+    {"id":"leave.request.create","method":"POST","path":"/v1/leave/requests","action":"LEAVE_REQUEST_CREATE","scope":"SELF|NAMED_POPULATION","mode":"command","idempotent":true,"response":"TimeCommandReceipt.v1","transition":"NONE->DRAFT|SUBMITTED"},
+    {"id":"leave.request.decide","method":"POST","path":"/v1/leave/requests/{requestId}/decisions","action":"LEAVE_REQUEST_DECIDE","scope":"TEAM|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"sod":"REQUESTER_NE_DECIDER","response":"TimeCommandReceipt.v1","transition":"SUBMITTED->APPROVED|REJECTED"},
+    {"id":"leave.request.cancel","method":"POST","path":"/v1/leave/requests/{requestId}/cancellations","action":"LEAVE_REQUEST_CANCEL","scope":"SELF|TIME_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"response":"TimeCommandReceipt.v1","transition":"DRAFT|SUBMITTED|APPROVED->CANCELLED_WITH_REVERSAL"},
+    {"id":"close.validate","method":"POST","path":"/v1/close-periods/{periodId}/validations","action":"TIME_PERIOD_VALIDATE","scope":"TIME_GROUP|PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"response":"TimeCommandReceipt.v1"},
+    {"id":"close.close","method":"POST","path":"/v1/close-periods/{periodId}/close","action":"TIME_PERIOD_CLOSE","scope":"TIME_GROUP|PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"sod":"CORRECTION_MAKER_NE_CLOSE_APPROVER","stepUp":"required","response":"TimeCommandReceipt.v1","transition":"OPEN|REOPENED->VALIDATING->CLOSING->CLOSED"},
+    {"id":"close.reopen","method":"POST","path":"/v1/close-periods/{periodId}/reopen","action":"TIME_PERIOD_REOPEN","scope":"TIME_GROUP|PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"sod":"CLOSER_NE_REOPEN_APPROVER","stepUp":"required","response":"TimeCommandReceipt.v1","transition":"CLOSED->REOPEN_REQUESTED->REOPENED"},
+    {"id":"handoff.create","method":"POST","path":"/v1/close-periods/{periodId}/payroll-handoffs","action":"TIME_PAYROLL_HANDOFF","scope":"TIME_GROUP|PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"response":"TimeCommandReceipt.v1","transition":"CLOSED->HANDOFF_PENDING->ACKNOWLEDGED|REJECTED|RESULT_UNKNOWN"},
+    {"id":"handoff.query","method":"GET","path":"/v1/payroll-handoffs/{handoffId}","action":"TIME_PAYROLL_HANDOFF_VIEW","scope":"TIME_GROUP|PERIOD","mode":"query","response":"ClosedTimeResult.v1"},
+    {"id":"insight.export","method":"POST","path":"/v1/insights/exports","action":"TIME_EXPORT","scope":"TIME_GROUP|PERIOD","mode":"command","idempotent":true,"stepUp":"required","fieldPolicy":"TIME_EXPORT","response":"TimeCommandReceipt.v1"}
+  ],
+  "internalOperations": [
+    {
+      "id": "closed-time-result.internal.query",
+      "method": "GET",
+      "path": "/internal/hris-time/v1/closed-time-results/{closedTimeResultId}",
+      "action": "approved PAY service contract",
+      "callerWorkload": "dwp-payroll-server",
+      "purposeCode": "HRIS_CLOSED_TIME_RESULT_REFETCH",
+      "response": "ClosedTimeResult.v1",
+      "responseRequired": ["closedTimeResultId","closePeriodId","closeRevision","payrollEntityId","payPeriodId","ledgerRevisionFrom","ledgerRevisionTo","workerCount","lineCount","sourceDigest","ruleDigest","payloadDigest","supersedesResultId","lines"],
+      "lineRequired": ["workerId","assignmentId","payCode","unit","quantity","sourceEntryCount","sourceEntryDigest"],
+      "rules": ["mTLS workload identity, signed tenant claim and owner tenant grant are mandatory","only immutable CLOSED results are returned and payloadDigest must verify","browser routing and caller-selected tenant are forbidden","superseded or reopened results fail closed"]
+    },
+    {
+      "id": "home-contribution.internal.query",
+      "method": "GET",
+      "path": "/internal/hris-time/v1/home-contributions/{payloadRef}",
+      "action": "approved SYS home projection contract",
+      "callerWorkload": "dwp-platform-server",
+      "purposeCode": "HRIS_HOME_MATERIALIZATION",
+      "response": "TimeHomeContribution.v1",
+      "requestContextRequired": ["subjectPrincipalPublicId","effectivePermissionRevision","populationScopeDigest","fieldPolicyRevision","widgetKey","browserAudience","ownerPopulationScope","scopeRevision","correlationId"],
+      "responseRequired": ["module","widgetKey","widgetType","browserAudience","ownerPopulationScope","scopeRevision","populationScopeDigest","fieldPolicyRevision","purposeCode","state","generatedAt","freshUntil","staleAfter","deepLink","sourceVersion","payloadRef","payloadDigest","asOf","data","fieldDecisions","partialFailures"],
+      "typedDataProfile": "TimeLeaveHomeData",
+      "browserProjection": "dwp.hris.system.transport.v1#/$defs/HomeWidget",
+      "rules": ["mTLS workload identity, signed tenant claim and owner tenant grant are mandatory","signed on-behalf-of subject context is mandatory and cannot be overridden by request body","widget capability, effective permission revision, population scope, purpose and field projection are re-evaluated","payloadRef is opaque and tenant-bound and payloadDigest is verified","data is the closed TimeLeaveHomeData profile; arbitrary JSON, location evidence, leave reasons and browser payloadRef are forbidden","SYS removes payloadRef and revalidates the widget discriminant, audience, scope revision, field-policy revision, freshness and deep link before browser serialization","browser routing and caller-selected tenant are forbidden"]
+    }
+  ],
+  "eventEnvelope": {
+    "schemaRef": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+    "required": ["specVersion", "id", "source", "type", "schemaVersion", "time", "tenantId", "aggregateType", "aggregateId", "aggregateSequence", "correlationId", "data"],
+    "partitionKey": "tenantId:aggregateId",
+    "piiPolicy": "public IDs and required operational facts only; no free-text leave reason, medical evidence, precise location or credential"
+  },
+  "consumedSnapshots": [
+    {"name":"WorkerAssignmentSnapshot.v1","owner":"dwp-people-server","required":["snapshotVersion","asOf","personPublicId","workerPublicId","workerStatus","relationships","assignments"],"stalePolicy":"quarantine-subject-and-refetch"},
+    {"name":"WorkplaceAssignmentSnapshot.v1","owner":"dwp-people-server","required":["snapshotId","snapshotRevision","workerId","assignmentId","workplaceId","workLocationCode","timeZone","calendarId","effectiveFrom","effectiveTo","sourceVersion","payloadDigest"],"stalePolicy":"quarantine-subject-and-refetch"}
+  ],
+  "consumedEvents": [
+    {"name":"WorkerChanged.v1","type":"WorkerChanged","version":1,"owner":"dwp-people-server","payloadRequired":["workerPublicId","changeType","effectiveDate","newAggregateVersion"],"ordering":"worker revision","gapPolicy":"quarantine-and-replay"},
+    {"name":"EmploymentChanged.v1","type":"EmploymentChanged","version":1,"owner":"dwp-people-server","payloadRequired":["relationshipPublicId","changeType","effectiveDate","newAggregateVersion"],"ordering":"relationship revision","gapPolicy":"quarantine-and-replay"},
+    {"name":"AssignmentChanged.v1","type":"AssignmentChanged","version":1,"owner":"dwp-people-server","payloadRequired":["assignmentPublicId","eventPublicId","eventType","effectiveDate","changedReferences","newAggregateVersion"],"ordering":"assignment revision","gapPolicy":"quarantine-and-replay"},
+    {"name":"OrganizationChanged.v1","type":"OrganizationChanged","version":1,"owner":"dwp-people-server","payloadRequired":["revisionPublicId","effectiveDate","changedOrganizationPublicIds","snapshotDigest"],"ordering":"organization revision","gapPolicy":"quarantine-and-replay"},
+    {"type":"WorkplaceChanged","version":1,"owner":"dwp-people-server","ordering":"workplace assignment revision","gapPolicy":"quarantine-and-replay"},
+    {"type":"PolicyPublished","version":1,"owner":"dwp-platform-server","ordering":"policy revision","gapPolicy":"fail-closed"},
+    {"type":"CalendarPublished","version":1,"owner":"dwp-platform-server","ordering":"calendar revision","gapPolicy":"fail-closed"},
+    {"type":"ApprovalDecisionRecorded","version":1,"owner":"dwp-approval-server","ordering":"case revision","gapPolicy":"reject-stale-decision"}
+  ],
+  "providedSnapshots": [
+    {"name":"ClosedTimeResult.v1","operationId":"closed-time-result.internal.query","required":["closedTimeResultId","closePeriodId","closeRevision","payrollEntityId","payPeriodId","ledgerRevisionFrom","ledgerRevisionTo","workerCount","lineCount","sourceDigest","ruleDigest","payloadDigest","supersedesResultId","lines"],"lineRequired":["workerId","assignmentId","payCode","unit","quantity","currency","sourceEntryCount","sourceEntryDigest"],"lineValuePolicy":"unit MINUTE|HOUR|DAY|COUNT uses QuantityDecimal and currency=null; unit AMOUNT uses InputAmount and requires currency; exponent/JSON-number/implicit rounding forbidden","streamingTransport":{"wireVersion":"V1_JSON_ARRAY","gatewayBuffering":"FORBIDDEN_STREAM_THROUGH","backpressure":"END_TO_END_REACTIVE_PULL_WITH_BOUNDED_QUEUES","lineCeiling":1000000,"maxHeaderBytes":65536,"maxLineBytes":4096,"maxPayloadBytes":5368709120,"maxCompressedPayloadBytes":1073741824,"maxUncompressedPayloadBytes":5368709120,"maxCompressionRatio":100,"byteAccounting":"COUNT_COMPRESSED_AND_STREAMING_DECOMPRESSED_BYTES_BEFORE_ALLOCATION","sequenceValidation":"ARRAY_INDEX_CONTIGUOUS_FROM_0_AND_COUNT_EQUALS_LINE_COUNT","digest":"INCREMENTAL_CANONICAL_HEADER_THEN_ORDERED_LINES","consumerIngest":"STAGED_TEMPORARY_ROWS","finalize":"ATOMIC_AFTER_COUNT_SEQUENCE_AND_DIGEST_VALIDATION","failure":"ROLLBACK_STAGED_ROWS_AND_QUARANTINE_RECEIPT"}}
+  ],
+  "providedEvents": [
+    {"type":"ClockEventRecorded","version":1,"aggregate":"ClockStream","payloadRequired":["clockEventId","workerId","eventType","occurredAt","sourceId","sourceOffsetMinutes","payloadDigest"]},
+    {"type":"TimeInterpreted","version":1,"aggregate":"InterpretationRun","payloadRequired":["runId","periodStart","periodEnd","inputDigest","ruleDigest","outputDigest","attemptNo"]},
+    {"type":"TimecardDecisionRecorded","version":1,"aggregate":"Timecard","payloadRequired":["timecardId","workerId","status","ledgerRevision","decisionAt"]},
+    {"type":"LeaveDecisionRecorded","version":1,"aggregate":"LeaveRequest","payloadRequired":["requestId","workerId","status","quantity","unit","ledgerRevision"]},
+    {"type":"LeaveLedgerPosted","version":1,"aggregate":"LeaveEntitlement","payloadRequired":["workerId","planId","entryType","quantity","unit","effectiveDate","ledgerRevision"]},
+    {"name":"TimePeriodClosed.v1","type":"TimePeriodClosed","version":1,"aggregate":"ClosePeriod","payloadRequired":["closePeriodId","closeRevision","periodStart","periodEnd","scopeId","ledgerRevision","sourceDigest","ruleDigest"]},
+    {"name":"TimePeriodReopened.v1","type":"TimePeriodReopened","version":1,"aggregate":"ClosePeriod","payloadRequired":["closePeriodId","priorCloseRevision","newRevision","reasonCode"]},
+    {"name":"PayrollTimeHandoffReady.v1","type":"PayrollTimeHandoffReady","version":1,"aggregate":"PayrollHandoff","payloadRequired":["handoffId","closedTimeResultId","closePeriodId","closeRevision","payrollEntityId","payPeriodId","workerCount","lineCount","sourceDigest","ruleDigest","payloadDigest"]},
+    {"name":"HrisHomeContributionChanged.v1","type":"HrisHomeContributionChanged","version":1,"aggregate":"TimeLeaveHomeProjection","payloadRequired":["module","widgetKey","ownerPopulationScope","scopeRevision","state","generatedAt","freshUntil","staleAfter","payloadRef","payloadDigest"]}
+  ],
+  "activationGates": {
+    "core": ["contract-tests", "tenant-negative", "state-ledger-golden", "recovery-tests"],
+    "clockConnector": ["provider-schema", "sandbox-or-conformance-fixture", "allowlist-secret-ref", "SLA-and-operator"],
+    "countryPack": ["official-reference", "effective-date", "approved-golden", "statutory-owner"],
+    "production": ["volume-partition-test", "retention-legal-hold", "DR-restore", "observability-alert-runbook"]
+  }
+}

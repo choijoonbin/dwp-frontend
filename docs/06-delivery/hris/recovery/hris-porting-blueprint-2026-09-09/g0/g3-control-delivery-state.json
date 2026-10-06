@@ -1,0 +1,21 @@
+{
+  "bundleRef": "",
+  "bundleSha256": "",
+  "candidateReceiptRegisterSha256": "e5dd72ba30cba42e341fce3db8e94cb4c4eab295e3ce5be6b5b4112db91b421f",
+  "candidateReleaseRegisterSha256": "e388c6540cabcfda08abab617ea21c104379f41278e78cea2c6afd28e337a5bd",
+  "committedAt": null,
+  "phase": "COMMITTED",
+  "preparedAt": null,
+  "priorReceiptRegisterSha256": "e5dd72ba30cba42e341fce3db8e94cb4c4eab295e3ce5be6b5b4112db91b421f",
+  "priorReleaseRegisterSha256": "e388c6540cabcfda08abab617ea21c104379f41278e78cea2c6afd28e337a5bd",
+  "priorState": null,
+  "receiptIds": [],
+  "receiptRegisterSha256": "e5dd72ba30cba42e341fce3db8e94cb4c4eab295e3ce5be6b5b4112db91b421f",
+  "receiptSeq": 0,
+  "releaseId": "",
+  "releaseRegisterSha256": "e388c6540cabcfda08abab617ea21c104379f41278e78cea2c6afd28e337a5bd",
+  "releaseSeq": 0,
+  "schema": "dwp.hris.g3.control-delivery-transaction-state.v1",
+  "status": "HEADER_ONLY_CLOSED_GATE",
+  "transactionSeq": 0
+}

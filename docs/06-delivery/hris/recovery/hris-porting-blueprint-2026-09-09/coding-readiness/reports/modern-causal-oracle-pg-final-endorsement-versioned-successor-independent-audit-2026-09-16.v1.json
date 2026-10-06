@@ -1,0 +1,393 @@
+{
+  "reportId": "dwp.hris.modern-causal-oracle-pg-final-endorsement.versioned-successor-independent-audit.v1",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-16T03:59:28Z",
+  "reviewerBoundary": "INDEPENDENT_READ_ONLY_SOURCE_AND_WORKFLOW_AUDIT",
+  "subject": {
+    "authorReport": {
+      "path": "coding-readiness/reports/modern-causal-oracle-pg-final-endorsement-versioned-successor-source-repair-2026-09-16.v1.json",
+      "fileSha256": "ea90b449f84cbccca54212d7f882612dbf5a9f9b6fae5906d249fceb09ffbad0",
+      "sealedPayloadSha256": "63b7ac9b45e8ff517d69ce8ca62b7eb377fcf6c5b52440e4d60f9761d1dca804",
+      "sealVerified": true
+    },
+    "profile": "successor-v2",
+    "claimedCanonicalCounts": {
+      "publicOperations": 199,
+      "commands": 133,
+      "queries": 66,
+      "systemHandlers": 27,
+      "publicEvents": 157,
+      "tableSpecifications": 131,
+      "ownerPortOperationContracts": 18,
+      "ownerDependencyContracts": 1
+    }
+  },
+  "decision": {
+    "status": "FAIL_SUCCESSOR_TOOLING_NON_PROGRESSABLE",
+    "accepted": false,
+    "reason": "The successor profile is path-separated and fail-closed, but its global preflight requires each stage's own not-yet-created outputs; the only sealed reviewer inputs still produce the legacy 100/81/19/4/58 closure; downstream PG, listening-authority, receipt, trust-root, and create-only finalization contracts remain bound to the legacy chain.",
+    "eligibleNextStep": "SOURCE_REPAIR_AND_NEW_INDEPENDENT_AUDIT_ONLY",
+    "notAuthorized": [
+      "SUCCESSOR_ARTIFACT_PUBLICATION",
+      "CANONICAL_OR_LIVE_PROMOTION",
+      "FINAL_ENDORSEMENT",
+      "G3_GATE_TRANSITION",
+      "OPEN_G3_CODE",
+      "MODULE_SESSION_START",
+      "PRODUCTION_ACTIVATION_G6"
+    ]
+  },
+  "writeBoundary": {
+    "sixReviewedSourceFiles": "READ_ONLY_NO_EDIT",
+    "successorArtifacts": "NOT_CREATED_NOT_PUBLISHED",
+    "candidateCanonical": "READ_ONLY_NO_PROMOTION",
+    "liveCanonical": "READ_ONLY_NO_PROMOTION",
+    "predecessors": "READ_ONLY_NO_RESEAL_NO_REPLACE",
+    "gate": "READ_ONLY_NO_TRANSITION",
+    "workspaceReportWrites": [
+      "coding-readiness/reports/modern-causal-oracle-pg-final-endorsement-versioned-successor-independent-audit-2026-09-16.v1.json"
+    ],
+    "temporaryOutputs": "ONLY_UNDER_/tmp_AND_NOT_AUTHORITY"
+  },
+  "sourceFiles": [
+    {
+      "path": "coding-readiness/modern_causal_successor_profile.py",
+      "sha256": "d080d273c0ab8cb2c9c14e3fbf7d57a4ed5e677c516a9401b3b0b4b500257d8c",
+      "metadataBefore": {"dev": 16777234, "inode": 47599353, "mode": "0o644", "size": 17057, "mtimeNs": 1789530330923116269, "ctimeNs": 1789530330923116269},
+      "metadataAfter": {"dev": 16777234, "inode": 47599353, "mode": "0o644", "size": 17057, "mtimeNs": 1789530330923116269, "ctimeNs": 1789530330923116269},
+      "exactMetadataAndBytesUnchanged": true
+    },
+    {
+      "path": "coding-readiness/build_modern_causal_independent_oracle.py",
+      "sha256": "a5145b5d353d7de4d8a5de5a179f38189a9d9f4386c68282fe9b45fbf705453e",
+      "metadataBefore": {"dev": 16777234, "inode": 45550233, "mode": "0o644", "size": 330354, "mtimeNs": 1789530223757986643, "ctimeNs": 1789530223757986643},
+      "metadataAfter": {"dev": 16777234, "inode": 45550233, "mode": "0o644", "size": 330354, "mtimeNs": 1789530223757986643, "ctimeNs": 1789530223757986643},
+      "exactMetadataAndBytesUnchanged": true
+    },
+    {
+      "path": "coding-readiness/run_modern_causal_independent_pg_fixtures.py",
+      "sha256": "0da156bf44ac791e16243ce2c6ec66f1bc57272757b5af0f7d171cc8ec63a302",
+      "metadataBefore": {"dev": 16777234, "inode": 45737960, "mode": "0o644", "size": 197215, "mtimeNs": 1789530236993097126, "ctimeNs": 1789530236993097126},
+      "metadataAfter": {"dev": 16777234, "inode": 45737960, "mode": "0o644", "size": 197215, "mtimeNs": 1789530236993097126, "ctimeNs": 1789530236993097126},
+      "exactMetadataAndBytesUnchanged": true
+    },
+    {
+      "path": "coding-readiness/validate_modern_causal_independent_oracle.py",
+      "sha256": "8098d5a34a8d5ecc7e87b860ae339070a80d21eed5732c030c95ecbb880d2ec8",
+      "metadataBefore": {"dev": 16777234, "inode": 45563493, "mode": "0o644", "size": 238379, "mtimeNs": 1789529681979156786, "ctimeNs": 1789529681979156786},
+      "metadataAfter": {"dev": 16777234, "inode": 45563493, "mode": "0o644", "size": 238379, "mtimeNs": 1789529681979156786, "ctimeNs": 1789529681979156786},
+      "exactMetadataAndBytesUnchanged": true
+    },
+    {
+      "path": "coding-readiness/prepare_modern_causal_final_endorsement.py",
+      "sha256": "9a3ac06eee9499e686242f2ce2503ff633d1512f5a02271615f39a435c4fe766",
+      "metadataBefore": {"dev": 16777234, "inode": 46099895, "mode": "0o644", "size": 61520, "mtimeNs": 1789530373352906604, "ctimeNs": 1789530373352906604},
+      "metadataAfter": {"dev": 16777234, "inode": 46099895, "mode": "0o644", "size": 61520, "mtimeNs": 1789530373352906604, "ctimeNs": 1789530373352906604},
+      "exactMetadataAndBytesUnchanged": true
+    },
+    {
+      "path": "coding-readiness/validate_modern_causal_final_endorsement.py",
+      "sha256": "01ef96a732170fc643a9ccd659bff0a3baf411b3535b997d7443b9a12bc289ff",
+      "metadataBefore": {"dev": 16777234, "inode": 45680958, "mode": "0o644", "size": 181066, "mtimeNs": 1789529825852018551, "ctimeNs": 1789529825852018551},
+      "metadataAfter": {"dev": 16777234, "inode": 45680958, "mode": "0o644", "size": 181066, "mtimeNs": 1789529825852018551, "ctimeNs": 1789529825852018551},
+      "exactMetadataAndBytesUnchanged": true
+    }
+  ],
+  "immutability": {
+    "wholeSnapshot": {
+      "beforePath": "/tmp/oracle-source-audit-before.json",
+      "beforeSha256": "e22577828916e91fee907d6f903eccce999ed6b2803331bc12a4f5a7d9136e27",
+      "afterPath": "/tmp/oracle-source-audit-after.json",
+      "afterSha256": "ce147fd7a4639f2ae5f3260c8430eb32fd18e8c8b265a89013402909e8756dbc",
+      "semanticExactEquality": true,
+      "trackedEntries": 41
+    },
+    "groupCanonicalDigests": {
+      "changedSources": {"count": 6, "before": "d5ff41dbd830a34e3961c4cb7f88acb9bd7a49c646df95f77ab3394aef662a9f", "after": "d5ff41dbd830a34e3961c4cb7f88acb9bd7a49c646df95f77ab3394aef662a9f", "exact": true},
+      "candidateCanonical": {"count": 8, "before": "d44d31ef69d55fee77df555dcd498015267db2c61dd619abdca6db95bcd602d8", "after": "d44d31ef69d55fee77df555dcd498015267db2c61dd619abdca6db95bcd602d8", "exact": true},
+      "liveCanonical": {"count": 7, "before": "1489758474f325406bb15b9e5794d99b042ea00beb0266eeedc5ec658a545e72", "after": "1489758474f325406bb15b9e5794d99b042ea00beb0266eeedc5ec658a545e72", "exact": true},
+      "predecessors": {"count": 6, "before": "eb1a7988ca33891c9457d72dcdfd1583ae1efaeea261256ec8fb80d35c50fa5a", "after": "eb1a7988ca33891c9457d72dcdfd1583ae1efaeea261256ec8fb80d35c50fa5a", "exact": true},
+      "gate": {"count": 2, "before": "a0a8429fbfc3c2a7123ee78c91491fd63a7334d2299d20080fb5b0edc1d13025", "after": "a0a8429fbfc3c2a7123ee78c91491fd63a7334d2299d20080fb5b0edc1d13025", "exact": true},
+      "policy": {"count": 1, "before": "d3e1a775f05a50e9ec02314f037615c5167cbd787485217460b8586527e4ca57", "after": "d3e1a775f05a50e9ec02314f037615c5167cbd787485217460b8586527e4ca57", "exact": true},
+      "authorEvidence": {"count": 1, "before": "7d007936129e1339593193c32f529466d63eaa36e7b875d8831cfacf0fcbd20e", "after": "7d007936129e1339593193c32f529466d63eaa36e7b875d8831cfacf0fcbd20e", "exact": true},
+      "successorOutputs": {"count": 10, "before": "a08ba1a11f2929ffc504d04ba24d0a56794209438861917f7ef295697217842f", "after": "a08ba1a11f2929ffc504d04ba24d0a56794209438861917f7ef295697217842f", "exact": true, "allAbsent": true}
+    },
+    "candidateCanonicalFileSha256": {
+      "modern-capability-closed-set-manifest.v3.json": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+      "sys-listening-stream-authority-successor.v2.json": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+      "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+      "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+      "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+      "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+      "modern-capability-causal-state-contracts.v2.json": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe"
+    },
+    "liveCanonicalFileSha256": {
+      "modern-capability-closed-set-manifest.v3.json": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+      "modern-capability-exact-schema-contracts.v1.json": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730",
+      "modern-capability-event-payload-contracts.v1.json": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b",
+      "modern-capability-semantic-bindings.v1.json": "834cd00e20148cded2765f1f41790926a479515afd0f23f6d95a0cea4ba389dd",
+      "modern-capability-public-identity-registry.v1.json": "d3c09697221660a35b6fd405182433d1dbbe6b36c4198fa5b08db088f9d00a06",
+      "modern-capability-causal-state-contracts.v2.json": "4f604faf4593e765e3a10671a8577cfa3e43a250fc3d7f34d89759518a4d0b08"
+    },
+    "gateFiles": {
+      "g0/current-g3-gate-decision.json": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+      "g0/g3-gate-transition-register.csv": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a"
+    }
+  },
+  "predecessorPins": [
+    {"path": "coding-readiness/modern-causal-independent-oracle.v1.json", "fileSha256": "4e4164b5d0ef2e6817cf4e43593182d58335bb2ab8035a2637f2190e19b56828", "sealedPayloadSha256": "f6d933bd39591c31bab9f4d524dfef35476612746520151dba2eea7e3ec48d46"},
+    {"path": "coding-readiness/modern-causal-independent-pg-fixtures.v1.json", "fileSha256": "b2400ca2ed53b4c231653260c893cfa7227924bab7becaf09ccc806d82ffab15", "sealedPayloadSha256": "75026a60d28b4248607bce6e3551b6b9bd7add03f602239dc2a9126541442ac7"},
+    {"path": "coding-readiness/modern-causal-independent-review-inventory.v1.json", "fileSha256": "496f0f42db3106331f5631bc2094a8d25759328a4bc5f83f296df382e923b84f", "sealedPayloadSha256": "6ce5b973cdfd5d249d2831c46bac80632602590061b776335efae01fddda3b21"},
+    {"path": "coding-readiness/modern-causal-independent-reviewed-finalization.v1.json", "fileSha256": "1720100fb9f0198bfc2f911cd386f43eb349ad562ba620162079bb056071a149", "sealedPayloadSha256": "2fb9d730cffae55b569b8a14c8fa4c4d2853be2fff590ffd8807047afd5a408b"},
+    {"path": "coding-readiness/reports/modern-causal-independent-pg-evidence.v1.json", "fileSha256": "246ba77db5f4818ae4a37cdf8e69ef0e1bf4f2308327aae13f786d5e71c34fc2", "sealedPayloadSha256": "9228f1d01f76d1cb70082d2205d45ea9d1923e1f5a3711c67f611fa0ad912f19"}
+  ],
+  "successorOutputsObservedAbsent": [
+    "coding-readiness/modern-causal-independent-review-inventory.v2.json",
+    "coding-readiness/modern-causal-independent-reviewed-finalization.v2.json",
+    "coding-readiness/modern-causal-independent-oracle.v2.json",
+    "coding-readiness/modern-causal-independent-pg-fixtures.v2.json",
+    "coding-readiness/reports/modern-causal-independent-pg-evidence.v3.json",
+    "coding-readiness/reports/modern-causal-independent-design-findings.v2.json",
+    "coding-readiness/reports/modern-causal-independent-final-hostile-review.v2.json",
+    "coding-readiness/modern-causal-final-source-authority-manifest.v2.json",
+    "g0/control-evidence-intake/modern-causal-final-endorsement.v2.json",
+    "coding-readiness/sys-listening-stream-authority-successor.v2.json"
+  ],
+  "positiveControls": {
+    "profileRouting": "PASS_DISTINCT_V2_V3_PATHS_WITHOUT_PATH_FALLBACK_TO_V1",
+    "predecessorPinVerification": "PASS_ZERO_FAILURES",
+    "targetSafety": "PASS_ZERO_EXISTING_TARGET_FAILURES",
+    "pathSafety": "PASS_TRAVERSAL_ABSOLUTE_SYMLINK_HARDLINK_WRITABLE_PARENT_AND_ALIAS_CONTROLS",
+    "createOnlyPrimitive": "PASS_DUPLICATE_REJECTED_AND_ORIGINAL_BYTES_PRESERVED",
+    "gateSeparation": "PASS_STRUCTURAL_READ_ONLY; PREPARER REQUIRES EXACT CLOSED GATE AND NO REVIEWED TOOL OPENS G3",
+    "qualificationEffect": "POSITIVE CONTROLS DO NOT OVERRIDE THE P0 WORKFLOW AND CONTRACT FAILURES"
+  },
+  "checks": [
+    {
+      "checkId": "PY_COMPILE_SIX_SOURCES",
+      "command": "PYTHONPYCACHEPREFIX=/tmp/oracle-source-audit-pycache python3 -m py_compile <all-six-reviewed-source-files>",
+      "exitCode": 0,
+      "status": "PASS",
+      "stdoutSha256": "710cd703576efb710fada11f121022420a9140829c9aa12f5a18129459e2ecea"
+    },
+    {
+      "checkId": "SHARED_SUCCESSOR_PROFILE_SELF_TEST",
+      "command": "PYTHONPATH=coding-readiness python3 <read-only shared-profile hostile/pin/pending harness>",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "profile hostile controls plus exact predecessor pins",
+      "stdoutSha256": "c9f9614f5356abb17c8897c801fd5d13fa2f0d2aa6c7874643e650051d10d29b"
+    },
+    {
+      "checkId": "BUILDER_SUCCESSOR_SELF_TEST",
+      "command": "python3 coding-readiness/build_modern_causal_independent_oracle.py --self-test --profile successor-v2",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "6/6",
+      "stdoutSha256": "7e40bdb50f4df9f9b99e44347914b1f2da58979b3450a31fd18118feef19a177"
+    },
+    {
+      "checkId": "PG_RUNNER_SUCCESSOR_SELF_TEST",
+      "command": "python3 coding-readiness/run_modern_causal_independent_pg_fixtures.py --self-test --profile successor-v2 --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "6/6",
+      "stdoutSha256": "67ce830a223297455cef0f881b8236fdba8d5d6397df2ffe1adf3f89b331363a"
+    },
+    {
+      "checkId": "INDEPENDENT_ORACLE_VALIDATOR_SUCCESSOR_SELF_TEST",
+      "command": "python3 coding-readiness/validate_modern_causal_independent_oracle.py --self-test --profile successor-v2 --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "6/6",
+      "stdoutSha256": "bb6c48cbc94737531db74480b00ac017aa18bdb8c28af228a9fc911b24e5950b"
+    },
+    {
+      "checkId": "FINAL_PREPARER_SUCCESSOR_SELF_TEST",
+      "command": "python3 coding-readiness/prepare_modern_causal_final_endorsement.py --self-test --profile successor-v2 --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "8/8",
+      "stdoutSha256": "c74cfcd0af8b00d0d5c48d60479dcd4d5ff73d11ea4b7fbefb0c2eed1b05afd3"
+    },
+    {
+      "checkId": "FINAL_ENDORSEMENT_VALIDATOR_SUCCESSOR_SELF_TEST",
+      "command": "python3 coding-readiness/validate_modern_causal_final_endorsement.py --self-test --profile successor-v2 --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "6/6",
+      "stdoutSha256": "2c108ca97d8bebe01e0f933da5939707ef70f8da29b43a8692b3c171d8a0ff57"
+    },
+    {
+      "checkId": "SUCCESSOR_READ_ONLY_PENDING_CHECKS",
+      "commands": [
+        "python3 coding-readiness/build_modern_causal_independent_oracle.py --check --profile successor-v2",
+        "python3 coding-readiness/run_modern_causal_independent_pg_fixtures.py --check --profile successor-v2 --compact",
+        "python3 coding-readiness/validate_modern_causal_independent_oracle.py --oracle-only --profile successor-v2 --compact",
+        "python3 coding-readiness/validate_modern_causal_final_endorsement.py --profile successor-v2 --compact"
+      ],
+      "exitCodes": [1, 1, 1, 1],
+      "status": "EXPECTED_FAIL_CLOSED",
+      "missingInputsEach": ["reviewInventory", "reviewFinalization", "oracle", "fixture", "pgEvidence", "sourceAuthority", "controlIntake"],
+      "stdoutSha256": [
+        "e2fbe941370ef32944823c04d74e74747f44988525ccf063c39f435c9f0a170f",
+        "a081bcb5f4d782d8abc573610c986fb597372f8e55fd96e5c7777883333c22d0",
+        "301488f831fb21cee831911b138172c5373b620e82184faac7d46c12f669c7bf",
+        "1581f6a8758621bab20921e45206ec7e93a78fa3ecece9236d0cd6919a0e9d56"
+      ]
+    },
+    {
+      "checkId": "INDEPENDENT_PATH_AND_CREATE_ONLY_SAFETY",
+      "command": "PYTHONPATH=coding-readiness python3 <independent 16-case hostile safety harness>",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "16/16",
+      "stdoutSha256": "cf36c14fb17b6da3974e98e12e89dddcba94ca71d60ff1fb1e301f31e65ad618"
+    },
+    {
+      "checkId": "INDEPENDENT_SUCCESSOR_COMPATIBILITY_NEGATIVE_CONTROLS",
+      "command": "PYTHONPYCACHEPREFIX=/tmp/oracle-compat-pycache PYTHONPATH=coding-readiness python3 <independent 8-case compatibility harness>",
+      "exitCode": 0,
+      "status": "PASS_REPRODUCED_ALL_EIGHT_BLOCKERS",
+      "tests": "8/8",
+      "stdoutSha256": "242b8997e325c4ca9e537aad08463d82f2b3eb4432763f84634dab15cc692ae0"
+    }
+  ],
+  "selfTestCoverageAssessment": {
+    "status": "INSUFFICIENT_FOR_SUCCESSOR_QUALIFICATION",
+    "reason": "All declared successor self-tests pass, but they primarily assert path separation, pending state, and metadata. They do not execute a valid staged first-publication path or validate real successor 199/133/66/27/157/131 artifacts against the production contracts.",
+    "specificGap": "The tests treat a non-empty global missing-input set as expected success and therefore do not detect that every producer is blocked by its own output."
+  },
+  "findings": [
+    {
+      "id": "P0-01-GLOBAL-PREFLIGHT-STAGE-DEADLOCK",
+      "severity": "P0",
+      "status": "OPEN",
+      "files": [
+        "coding-readiness/modern_causal_successor_profile.py:294",
+        "coding-readiness/build_modern_causal_independent_oracle.py:74",
+        "coding-readiness/run_modern_causal_independent_pg_fixtures.py:107",
+        "coding-readiness/prepare_modern_causal_final_endorsement.py:1371"
+      ],
+      "evidence": "pending_successor_inputs requires reviewInventory, reviewFinalization, oracle, fixture, pgEvidence, sourceAuthority, and controlIntake. Builder is blocked by its own oracle/fixture; runner by its own pgEvidence; prepare-authority by its own sourceAuthority/controlIntake; finalize-review by pgEvidence. Compatibility harness reproduced all four self-dependencies.",
+      "impact": "No first create-only publication order exists. The successor chain is permanently non-progressable, not merely pending an accepted canonical transition.",
+      "requiredRepair": "Define stage-specific prerequisites and an acyclic state machine; each stage must require only immutable upstream inputs and must not require its own or downstream outputs. Add a clean-room end-to-end first-publication self-test."
+    },
+    {
+      "id": "P0-02-NO-SUCCESSOR-REVIEW-INPUT-PRODUCER",
+      "severity": "P0",
+      "status": "OPEN",
+      "files": [
+        "coding-readiness/modern_causal_successor_profile.py:87",
+        "coding-readiness/build_modern_causal_independent_oracle.py:5429",
+        "coding-readiness/build_modern_causal_independent_oracle.py:5444"
+      ],
+      "evidence": "Repository source search found the v2 review-inventory and reviewed-finalization names only in the shared path profile and evidence report; no producer exists. The only review-update path is explicitly rejected for successor-v2.",
+      "impact": "Even after correcting the stage matrix, the chain has no authorized way to create its first two upstream reviewer artifacts.",
+      "requiredRepair": "Specify and implement a reviewer-owned, create-only, independently sealed v2 inventory/finalization ceremony with explicit candidate pins and hostile tests."
+    },
+    {
+      "id": "P0-03-SUCCESSOR-BUILDER-SEMANTICALLY-LEGACY",
+      "severity": "P0",
+      "status": "OPEN",
+      "files": [
+        "coding-readiness/build_modern_causal_independent_oracle.py:48",
+        "coding-readiness/build_modern_causal_independent_oracle.py:98",
+        "coding-readiness/build_modern_causal_independent_oracle.py:106",
+        "coding-readiness/build_modern_causal_independent_oracle.py:3789",
+        "coding-readiness/build_modern_causal_independent_oracle.py:4221",
+        "coding-readiness/build_modern_causal_independent_oracle.py:4259"
+      ],
+      "evidence": "Profile configuration changes filenames but preserves v1 review file/seal expectations. build_oracle consumes those frozen v1 bytes and overlay. The only source-derived successor count assertion is in a review-only draft function that is unreachable from the normal successor CLI, while build_fixtures hardcodes 58 edges and 81/19/4 scenario counts. Independent execution with exact sealed reviewer bytes produced 100 operations, 81 commands, 19 queries, 4 handlers, and 58 edges.",
+      "impact": "A successor-labelled oracle/fixture would encode legacy scope and cannot qualify the accepted 199/133/66/27/157/131 canonical candidate.",
+      "requiredRepair": "Create genuinely successor-versioned reviewed inputs and make the production builder enforce all successor counts and IDs; derive fixture closure from the successor oracle without legacy constants."
+    },
+    {
+      "id": "P0-04-PG-RUNNER-REMAINS-LEGACY-AND-WRITE-RECEIPT-MISLABELS-V3",
+      "severity": "P0",
+      "status": "OPEN",
+      "files": [
+        "coding-readiness/run_modern_causal_independent_pg_fixtures.py:129",
+        "coding-readiness/run_modern_causal_independent_pg_fixtures.py:1925",
+        "coding-readiness/run_modern_causal_independent_pg_fixtures.py:2799",
+        "coding-readiness/run_modern_causal_independent_pg_fixtures.py:2814",
+        "coding-readiness/run_modern_causal_independent_pg_fixtures.py:3844"
+      ],
+      "evidence": "The runner retains frozen live-predecessor hashes and requires 100 operations, 4 handlers, 86 events, 81 commands, 19 queries, and 58 edges. Its successor write branch routes bytes to evidence v3 but emits a v2 write schema/mode and hardcoded v2 evidence path.",
+      "impact": "It must reject the accepted successor canonical closure and would issue a false/mismatched publication receipt if execution reached the write branch.",
+      "requiredRepair": "Pin the accepted successor canonical bytes, validate successor counts/contracts, version all result keys and scenario sets, and emit internally consistent v3 receipts."
+    },
+    {
+      "id": "P0-05-INDEPENDENT-VALIDATOR-REJECTS-REAL-LISTENING-V2-AND-EMITS-V2-RECEIPTS",
+      "severity": "P0",
+      "status": "OPEN",
+      "files": [
+        "coding-readiness/validate_modern_causal_independent_oracle.py:68",
+        "coding-readiness/validate_modern_causal_independent_oracle.py:309",
+        "coding-readiness/validate_modern_causal_independent_oracle.py:881",
+        "coding-readiness/validate_modern_causal_independent_oracle.py:3809"
+      ],
+      "evidence": "Successor routing changes the authority path only. Validation still requires contractId v1, schemaVersion 1, and CANONICAL_G3_START_AUTHORITY_NOT_IMPLEMENTED. The sealed A7K8Kj authority is contractId v2, schemaVersion 2, status SEALED_PRODUCT_COMPLETE_STREAM_AUTHORITY_NOT_IMPLEMENTED; the independent harness reproduced C-LISTENING-SUCCESSOR-AUTHORITY-IDENTITY. Compact evidence receipts remain hardcoded to CURRENT_V2_EVIDENCE and evidence v2.",
+      "impact": "The validator cannot accept the actual successor listening authority and cannot provide a truthful successor evidence receipt.",
+      "requiredRepair": "Introduce a complete successor-specific listening contract and v3 receipt renderer/validator, with real v2 authority positive and hostile negative controls."
+    },
+    {
+      "id": "P0-06-FINAL-VERIFIER-TRUST-ROOT-AND-RECEIPTS-ARE-LEGACY",
+      "severity": "P0",
+      "status": "OPEN",
+      "files": [
+        "coding-readiness/validate_modern_causal_final_endorsement.py:393",
+        "coding-readiness/validate_modern_causal_final_endorsement.py:408",
+        "coding-readiness/validate_modern_causal_final_endorsement.py:415",
+        "coding-readiness/validate_modern_causal_final_endorsement.py:443",
+        "coding-readiness/validate_modern_causal_final_endorsement.py:468",
+        "coding-readiness/validate_modern_causal_final_endorsement.py:2439"
+      ],
+      "evidence": "The successor subprocess argv appends --profile successor-v2, but TRUSTED_TOOL_ROOT_SPEC still pins old source hashes and exact legacy markers, including operations=100 edges=58, builder tests=3, runner tests=8, and CURRENT/CHECK_CURRENT_V2_EVIDENCE. All three current trusted-tool hashes differ from the embedded pins, and the root remains WAITING_TOOL_FREEZE.",
+      "impact": "Production final verification must fail even after successor artifacts exist; the trust root authenticates neither the reviewed source bytes nor successor receipts.",
+      "requiredRepair": "Define a separate successor trusted-tool-root contract, freeze the repaired source hashes, pin successor markers/JSON schemas and counts, and hostile-test exact argv and receipt validation."
+    },
+    {
+      "id": "P0-07-CREATE-ONLY-FINALIZATION-CANNOT-TRANSITION-UNSIGNED-EVIDENCE",
+      "severity": "P0",
+      "status": "OPEN",
+      "files": [
+        "coding-readiness/prepare_modern_causal_final_endorsement.py:205",
+        "coding-readiness/prepare_modern_causal_final_endorsement.py:248",
+        "coding-readiness/prepare_modern_causal_final_endorsement.py:816",
+        "coding-readiness/prepare_modern_causal_final_endorsement.py:848"
+      ],
+      "evidence": "The runner creates unsigned evidence at the final pgEvidence.v3 path. finalize_review_under_active_lock reads that existing file and then attempts a create-only pair containing the same evidence target. Production allow_replace_for_test is false, so the occupied evidence target is rejected. The independent harness reproduced rollback with the report absent and unsigned evidence unchanged; only self-tests use the replacement escape hatch.",
+      "impact": "Reciprocal final review cannot publish its final evidence/report pair under production semantics.",
+      "requiredRepair": "Use distinct immutable unsigned and final evidence paths or define an explicitly authorized, crash-consistent one-way transition that preserves predecessor bytes and is covered by production-equivalent tests."
+    }
+  ],
+  "gateAssessment": {
+    "observedGate": "CLOSED_FAIL_SAFE",
+    "currentDecisionSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "transitionRegisterSha256": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a",
+    "mutated": false,
+    "separation": "STRUCTURALLY_FAIL_CLOSED",
+    "effect": "REMAINS_CLOSED; THIS REPORT GRANTS NO PROMOTION OR MODULE CODE AUTHORITY"
+  },
+  "summary": {
+    "status": "FAIL_SUCCESSOR_TOOLING_NON_PROGRESSABLE",
+    "p0Open": 7,
+    "p1Open": 0,
+    "selfTestsPassed": 5,
+    "sharedProfileHarnessPassed": true,
+    "pyCompilePassed": true,
+    "independentSafetyCasesPassed": "16/16",
+    "independentCompatibilityBlockersReproduced": "8/8",
+    "predecessorPinsExact": true,
+    "sourceBytesAndMetadataUnchanged": true,
+    "candidateLiveGatePredecessorBytesAndMetadataUnchanged": true,
+    "successorOutputsAbsent": true,
+    "publicationPerformed": false,
+    "promotionPerformed": false,
+    "gateTransitionPerformed": false
+  },
+  "sealedPayloadSha256": "780c88892fb34ae4b3e5653b1a044b2fef0f7bfbf0f0db770c10178e2f84f63b"
+}

@@ -1,0 +1,1884 @@
+{
+  "reviewId": "TIM.BASE.Remediation.IndependentFollowup.2026-09-14",
+  "status": "INDEPENDENT_BOUNDED_REVIEW_COMPLETED_WITH_OPEN_FINDINGS_NOT_READY",
+  "authorApproval": false,
+  "wholeOperationSourceClosure": false,
+  "G3Gate": "CLOSED",
+  "readinessPass": false,
+  "originalPins": [
+    {
+      "path": "coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+      "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.md",
+      "sha256": "32fa6514408faf690de707ca7c585fb957df8b3cfc1145b035f87a3079d5ddbb"
+    },
+    {
+      "path": "coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.json",
+      "sha256": "7cc282ca4e116524cace6576e2b29b08f9c5c21ffd38f55b942f175abf8dcda5"
+    },
+    {
+      "path": "coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.md",
+      "sha256": "9840eb1082d3db4afc8657dd07e4133c4aabc68b7f41238730ef64e5d52e174e"
+    }
+  ],
+  "draftReadSnapshots": [
+    {
+      "validatorSha256": "2d8177f5ebd8d8bbe174f1dc1fa27243d8e48ee78a03bd43db45f4072a5b8962",
+      "proposalSha256": "60362b5592cced196bfc267070f496c6c15b008c7bc9c8059427ae3cdc38c377",
+      "executionClaim": "NONE"
+    },
+    {
+      "validatorSha256": "ce3e48be006c7fb1a7f55d74f6f0f05f764b95617d896f84ce42506c102961f7",
+      "proposalSha256": "87fcc981d17db68b94b141eb5aa4cba37552d577d5835057f9d3c58789207ea8",
+      "testSha256": "d354191e9fa51b1f11575d84469264827c8fa912860ee0f228589e67defc6f31",
+      "executionClaim": "NONE"
+    }
+  ],
+  "independentProbeCandidates": [
+    "command binding-source wrong valid node",
+    "node.type wrong actual target",
+    "query unknown response source",
+    "leaf unknown physical table/column",
+    "joint op-ID/complement clone",
+    "joint table/DDL SQL clone",
+    "FK local-target arity mismatch",
+    "FK sibling parent target mismatch",
+    "duplicate fixture/probe IDs",
+    "wrong envelope contract/version/dialect",
+    "numeric overflow nonfinite",
+    "stale outcome lease/persisted event revision"
+  ],
+  "completedAt": "2026-09-14T03:45:24Z",
+  "commonP0Status": "OPEN",
+  "authorSnapshotFrozen": true,
+  "independentSubsetReproductionPass": true,
+  "fullDomainExecutionValidated": false,
+  "canonicalReadinessPass": false,
+  "authorLocalAllowedNewOperations": [
+    "tim.leave.entitlement.input.get",
+    "tim.leave.termination.reconcile"
+  ],
+  "execution": {
+    "pre": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+        "sha256": "04a4785e199b9babc92ae71c0a35df282194bb97adccc7eb31579a602d2cc448",
+        "bytes": 961484,
+        "lines": 23268,
+        "mtimeNs": "1789356809098400292"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.md",
+        "sha256": "8289dea17e2d593882973768ea999374ef85f62d52f3cca485091b5a3274c600",
+        "bytes": 16326,
+        "lines": 122,
+        "mtimeNs": "1789357012232871367"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+        "sha256": "76d2c5b45098062def03ceaa3ad71dfa271a9160cdfc8deebc5d688f87dbc3e4",
+        "bytes": 34257,
+        "lines": 602,
+        "mtimeNs": "1789357012216608943"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_base_review_remediation.py",
+        "sha256": "3c000aafa4f6b3d8d6f85cceb0f611ea0f2473d4fd395588262bd54435cfd218",
+        "bytes": 15356,
+        "lines": 288,
+        "mtimeNs": "1789356898928404439"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/validate_modern_semantic_field_lineage.py",
+        "sha256": "30e3fe74498ba265945970b4b68ab008bbce6108fc74169edd356e8d70f3bf81",
+        "bytes": 50833,
+        "lines": 843,
+        "mtimeNs": "1789353482802124626"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+        "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+        "bytes": 10707168,
+        "lines": 260479,
+        "mtimeNs": "1789352926476163369"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.md",
+        "sha256": "32fa6514408faf690de707ca7c585fb957df8b3cfc1145b035f87a3079d5ddbb",
+        "bytes": 56445,
+        "lines": 381,
+        "mtimeNs": "1789353050333481717"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.json",
+        "sha256": "7cc282ca4e116524cace6576e2b29b08f9c5c21ffd38f55b942f175abf8dcda5",
+        "bytes": 196120,
+        "lines": 4816,
+        "mtimeNs": "1789353972319852994"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.md",
+        "sha256": "9840eb1082d3db4afc8657dd07e4133c4aabc68b7f41238730ef64e5d52e174e",
+        "bytes": 28140,
+        "lines": 241,
+        "mtimeNs": "1789353972321020207"
+      }
+    ],
+    "runs": [
+      {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation",
+          "-p",
+          "test_tim_base_review_remediation.py",
+          "-v"
+        ],
+        "cwd": "/Users/a10697/Work/DWP",
+        "startedAt": "2026-09-14T03:39:25.586429+00:00",
+        "finishedAt": "2026-09-14T03:39:34.069752+00:00",
+        "durationSeconds": 8.483253,
+        "exitCode": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "fe0d2124b4ba2749c17a9df00bae00d579e27b2ab46f9339a558b7c3872392bc",
+        "stderr": "test_actual_ajv_closed_shapes_and_controls (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_actual_xcon_decimal_aliases_and_invalid_tokens (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_boolean_is_not_number_in_rfc_test (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_canonical_oracle_still_fail_not_noop_pass (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_case_alias_uuid_duplicate_rejected_even_rehashed (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_cli_g3_cannot_open_and_original_stays_immutable (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_copied_cancel_termination_rules_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_deepcopy_rfc6902_no_original_mutation (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_distinct_registered_result_state_not_aggregate_status (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_duplicate_json_keys_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_empty_or_incomplete_column_bindings_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_empty_source_dependencies_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_event_persisted_state_result_equality (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_exact_structural_subset_and_open_scope (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_exact_terminal_count_mode_and_duplicate_denied (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_expired_unknown_not_unexpired_lease_guard (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_immutable_input_replays_and_wrong_parent_denied (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_missing_unfixed_operation_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_mixed_executable_envelope_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_nonfinite_json_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_original_and_review_pins_unchanged (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_outcome_nonselected_input_unit_or_negative_denied (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_overflow_numeric_json_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_prospective_writer_stale_expiry_owner_cancel_denied (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_query_false_field_source_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_renamed_original_id_and_scope_cannot_launder_exact_set (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_repeated_count_only_case_catalog_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_rfc_operation_field_closure (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_routing_collision_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_same_count_duplicate_fk_sql_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_same_count_wrong_ddl_correspondence_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_self_approval_or_published_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_self_cycle_source_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_tampered_input_hash_and_cardinality_denied (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_target_specific_node_mapping_and_type_rejected (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_unused_cancel_clock_effects_and_cas (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\ntest_zero_denominator_never_computed (test_tim_base_review_remediation.ReadonlyTimRemediationTest) ... ok\n\n----------------------------------------------------------------------\nRan 37 tests in 8.256s\n\nOK\n",
+        "stdout": "",
+        "cases": [
+          [
+            "test_actual_ajv_closed_shapes_and_controls",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_actual_xcon_decimal_aliases_and_invalid_tokens",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_boolean_is_not_number_in_rfc_test",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_canonical_oracle_still_fail_not_noop_pass",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_case_alias_uuid_duplicate_rejected_even_rehashed",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_cli_g3_cannot_open_and_original_stays_immutable",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_copied_cancel_termination_rules_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_deepcopy_rfc6902_no_original_mutation",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_distinct_registered_result_state_not_aggregate_status",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_duplicate_json_keys_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_empty_or_incomplete_column_bindings_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_empty_source_dependencies_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_event_persisted_state_result_equality",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_exact_structural_subset_and_open_scope",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_exact_terminal_count_mode_and_duplicate_denied",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_expired_unknown_not_unexpired_lease_guard",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_immutable_input_replays_and_wrong_parent_denied",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_missing_unfixed_operation_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_mixed_executable_envelope_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_nonfinite_json_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_original_and_review_pins_unchanged",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_outcome_nonselected_input_unit_or_negative_denied",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_overflow_numeric_json_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_prospective_writer_stale_expiry_owner_cancel_denied",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_query_false_field_source_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_renamed_original_id_and_scope_cannot_launder_exact_set",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_repeated_count_only_case_catalog_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_rfc_operation_field_closure",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_routing_collision_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_same_count_duplicate_fk_sql_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_same_count_wrong_ddl_correspondence_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_self_approval_or_published_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_self_cycle_source_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_tampered_input_hash_and_cardinality_denied",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_target_specific_node_mapping_and_type_rejected",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_unused_cancel_clock_effects_and_cas",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ],
+          [
+            "test_zero_denominator_never_computed",
+            "test_tim_base_review_remediation.ReadonlyTimRemediationTest",
+            "ok"
+          ]
+        ]
+      },
+      {
+        "argv": [
+          "python3",
+          "-B",
+          "output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+          "--compact"
+        ],
+        "cwd": "/Users/a10697/Work/DWP",
+        "startedAt": "2026-09-14T03:39:34.070502+00:00",
+        "finishedAt": "2026-09-14T03:39:36.053901+00:00",
+        "durationSeconds": 1.983456,
+        "exitCode": 0,
+        "stdoutSha256": "31e7667a17c3c841dba7057b737eefd5bf5cba61db9147312379f9c70c166d4d",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "status": "AUTHOR_DRAFT_CHECKS_ONLY_NOT_APPROVED",
+          "readinessPass": false,
+          "G3Gate": "CLOSED",
+          "independentPass": false,
+          "structural": {
+            "errors": [],
+            "counts": {
+              "operations": 116,
+              "publicOperations": 86,
+              "plannedTables": 47,
+              "plannedColumns": 642,
+              "schemas": 481,
+              "events": 83,
+              "typedSources": 5041,
+              "boundedDetailedSourceOperations": 4,
+              "unfixedSourceOperations": 112,
+              "phase2ForeignKeys": 106
+            },
+            "outsideTableFkDependencies": [
+              {
+                "table": "tme_schedule_publication_receipts",
+                "target": "tme_command_receipts"
+              },
+              {
+                "table": "tme_schedule_publication_receipts",
+                "target": "tme_wfm_schedule_candidates"
+              },
+              {
+                "table": "tme_time_cards",
+                "target": "tme_close_periods"
+              }
+            ],
+            "crossContextPolicyPass": false
+          },
+          "standardsSchema": {
+            "engine": "Ajv",
+            "version": "6.12.6",
+            "engineDialect": "DRAFT_07_COMPATIBLE_VALIDATION_KEYWORDS_ONLY; holder $defs is ref storage; whole declared2020-12 author envelope NOT_VALIDATED",
+            "compiled": 481,
+            "closedObjectSchemas": 576,
+            "annotationKeywords": 14,
+            "typedSchemaCases": 12,
+            "negativeAndCompatibilityControls": 34,
+            "failures": [],
+            "domainExecuted": false,
+            "independentPass": false,
+            "processExitCode": 0
+          },
+          "fixtureSubset": {
+            "immutableInputFingerprintChecks": 10,
+            "decimalCompatibilityConfigurations": 2,
+            "nativeApiOrDomainFixtureExecutions": 0,
+            "fixtureDefinitionsOnly": 24
+          },
+          "canonicalOracle": {
+            "validationStatus": "FAIL",
+            "readinessPass": false,
+            "counts": {},
+            "errors": [
+              {
+                "code": "UNSUPPORTED_PROPOSAL_DIALECT",
+                "where": "document",
+                "message": "proposal or mixed operation graphs require an explicit canonical successor adapter"
+              },
+              {
+                "code": "OPERATION_GRAPH_REQUIRED",
+                "where": "document",
+                "message": "operationBindings and operationFieldLineage must both be explicitly present"
+              }
+            ],
+            "interpretation": "UNSUPPORTED proposal dialect is FAIL, not zero-operation PASS"
+          },
+          "remainingOpen": [
+            {
+              "id": "TIM-REVIEW-OPEN-CROSS-CONTEXT",
+              "severity": "P0",
+              "stage": "G3",
+              "scope": "13 original abs/tme FKs and new run/calendar mirrors must not be emitted as canonical SQL until abs-local immutable mirror/ref/Time owner port or exact neutral exception architecture is reviewed; original prefix rule remains authoritative"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-SOURCE",
+              "severity": "P0",
+              "scope": "all sourceRepairScope.unfixedExactOperationIds plus actual owner response registration/canonical adapter",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-SHARED",
+              "severity": "P0",
+              "scope": "17+new HRM/PAY owner DTO/SPI, PEP action/purpose/field/SoD, 13-stream composite authority/bootstrap/DS/receipt/guards/shared compile/current pilot",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-LEGACY",
+              "severity": "P0",
+              "scope": "exact immutable legacy worker-only ledger assignment binding and historical source restoration; ambiguous BLOCK",
+              "stage": "G3_EXACT_DESIGN_G6_CUSTOMER_DATA"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-WFM",
+              "severity": "P0",
+              "scope": "canonical publication alias/root successor/heterogeneous per-worker calendar/rule exact source integration",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-SQL-PROGRAMS",
+              "severity": "P0",
+              "scope": "DDL constraint/immutability/exclusion/runtime ACL/source guards exact allocation/materializer and ownership needs review; two-phase SQL not executed",
+              "stage": "G3_DESIGN_G4_BUSINESS_SQL"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-INDEPENDENT",
+              "severity": "P0",
+              "scope": "author remediation requires root/Mendel independent re-audit, not author checks approval",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-RETAINED12",
+              "classification": "UNVERIFIED_SCOPE",
+              "scope": "12 retained historical TIM operations/BASE86 not certified"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-DOMAIN",
+              "stage": "G4",
+              "scope": "all actual proposed domain execution NOT_RUN"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-CUSTOMER",
+              "stage": "G6",
+              "scope": "country/customer/provider/deploy authority not authorized"
+            }
+          ],
+          "originalMutated": false,
+          "materializedFileWritten": false,
+          "domainExecuted": false
+        }
+      },
+      {
+        "argv": [
+          "python3",
+          "-B",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+          "--compact",
+          "--require-g3"
+        ],
+        "cwd": "/Users/a10697/Work/DWP",
+        "startedAt": "2026-09-14T03:39:36.054126+00:00",
+        "finishedAt": "2026-09-14T03:39:37.905303+00:00",
+        "durationSeconds": 1.851292,
+        "exitCode": 1,
+        "stdoutSha256": "31e7667a17c3c841dba7057b737eefd5bf5cba61db9147312379f9c70c166d4d",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "status": "AUTHOR_DRAFT_CHECKS_ONLY_NOT_APPROVED",
+          "readinessPass": false,
+          "G3Gate": "CLOSED",
+          "independentPass": false,
+          "structural": {
+            "errors": [],
+            "counts": {
+              "operations": 116,
+              "publicOperations": 86,
+              "plannedTables": 47,
+              "plannedColumns": 642,
+              "schemas": 481,
+              "events": 83,
+              "typedSources": 5041,
+              "boundedDetailedSourceOperations": 4,
+              "unfixedSourceOperations": 112,
+              "phase2ForeignKeys": 106
+            },
+            "outsideTableFkDependencies": [
+              {
+                "table": "tme_schedule_publication_receipts",
+                "target": "tme_command_receipts"
+              },
+              {
+                "table": "tme_schedule_publication_receipts",
+                "target": "tme_wfm_schedule_candidates"
+              },
+              {
+                "table": "tme_time_cards",
+                "target": "tme_close_periods"
+              }
+            ],
+            "crossContextPolicyPass": false
+          },
+          "standardsSchema": {
+            "engine": "Ajv",
+            "version": "6.12.6",
+            "engineDialect": "DRAFT_07_COMPATIBLE_VALIDATION_KEYWORDS_ONLY; holder $defs is ref storage; whole declared2020-12 author envelope NOT_VALIDATED",
+            "compiled": 481,
+            "closedObjectSchemas": 576,
+            "annotationKeywords": 14,
+            "typedSchemaCases": 12,
+            "negativeAndCompatibilityControls": 34,
+            "failures": [],
+            "domainExecuted": false,
+            "independentPass": false,
+            "processExitCode": 0
+          },
+          "fixtureSubset": {
+            "immutableInputFingerprintChecks": 10,
+            "decimalCompatibilityConfigurations": 2,
+            "nativeApiOrDomainFixtureExecutions": 0,
+            "fixtureDefinitionsOnly": 24
+          },
+          "canonicalOracle": {
+            "validationStatus": "FAIL",
+            "readinessPass": false,
+            "counts": {},
+            "errors": [
+              {
+                "code": "UNSUPPORTED_PROPOSAL_DIALECT",
+                "where": "document",
+                "message": "proposal or mixed operation graphs require an explicit canonical successor adapter"
+              },
+              {
+                "code": "OPERATION_GRAPH_REQUIRED",
+                "where": "document",
+                "message": "operationBindings and operationFieldLineage must both be explicitly present"
+              }
+            ],
+            "interpretation": "UNSUPPORTED proposal dialect is FAIL, not zero-operation PASS"
+          },
+          "remainingOpen": [
+            {
+              "id": "TIM-REVIEW-OPEN-CROSS-CONTEXT",
+              "severity": "P0",
+              "stage": "G3",
+              "scope": "13 original abs/tme FKs and new run/calendar mirrors must not be emitted as canonical SQL until abs-local immutable mirror/ref/Time owner port or exact neutral exception architecture is reviewed; original prefix rule remains authoritative"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-SOURCE",
+              "severity": "P0",
+              "scope": "all sourceRepairScope.unfixedExactOperationIds plus actual owner response registration/canonical adapter",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-SHARED",
+              "severity": "P0",
+              "scope": "17+new HRM/PAY owner DTO/SPI, PEP action/purpose/field/SoD, 13-stream composite authority/bootstrap/DS/receipt/guards/shared compile/current pilot",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-LEGACY",
+              "severity": "P0",
+              "scope": "exact immutable legacy worker-only ledger assignment binding and historical source restoration; ambiguous BLOCK",
+              "stage": "G3_EXACT_DESIGN_G6_CUSTOMER_DATA"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-WFM",
+              "severity": "P0",
+              "scope": "canonical publication alias/root successor/heterogeneous per-worker calendar/rule exact source integration",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-SQL-PROGRAMS",
+              "severity": "P0",
+              "scope": "DDL constraint/immutability/exclusion/runtime ACL/source guards exact allocation/materializer and ownership needs review; two-phase SQL not executed",
+              "stage": "G3_DESIGN_G4_BUSINESS_SQL"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-INDEPENDENT",
+              "severity": "P0",
+              "scope": "author remediation requires root/Mendel independent re-audit, not author checks approval",
+              "stage": "G3"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-RETAINED12",
+              "classification": "UNVERIFIED_SCOPE",
+              "scope": "12 retained historical TIM operations/BASE86 not certified"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-DOMAIN",
+              "stage": "G4",
+              "scope": "all actual proposed domain execution NOT_RUN"
+            },
+            {
+              "id": "TIM-REVIEW-OPEN-CUSTOMER",
+              "stage": "G6",
+              "scope": "country/customer/provider/deploy authority not authorized"
+            }
+          ],
+          "originalMutated": false,
+          "materializedFileWritten": false,
+          "domainExecuted": false
+        }
+      }
+    ],
+    "post": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+        "sha256": "04a4785e199b9babc92ae71c0a35df282194bb97adccc7eb31579a602d2cc448",
+        "bytes": 961484,
+        "lines": 23268,
+        "mtimeNs": "1789356809098400292"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.md",
+        "sha256": "8289dea17e2d593882973768ea999374ef85f62d52f3cca485091b5a3274c600",
+        "bytes": 16326,
+        "lines": 122,
+        "mtimeNs": "1789357012232871367"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+        "sha256": "76d2c5b45098062def03ceaa3ad71dfa271a9160cdfc8deebc5d688f87dbc3e4",
+        "bytes": 34257,
+        "lines": 602,
+        "mtimeNs": "1789357012216608943"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_base_review_remediation.py",
+        "sha256": "3c000aafa4f6b3d8d6f85cceb0f611ea0f2473d4fd395588262bd54435cfd218",
+        "bytes": 15356,
+        "lines": 288,
+        "mtimeNs": "1789356898928404439"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/validate_modern_semantic_field_lineage.py",
+        "sha256": "30e3fe74498ba265945970b4b68ab008bbce6108fc74169edd356e8d70f3bf81",
+        "bytes": 50833,
+        "lines": 843,
+        "mtimeNs": "1789353482802124626"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+        "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+        "bytes": 10707168,
+        "lines": 260479,
+        "mtimeNs": "1789352926476163369"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.md",
+        "sha256": "32fa6514408faf690de707ca7c585fb957df8b3cfc1145b035f87a3079d5ddbb",
+        "bytes": 56445,
+        "lines": 381,
+        "mtimeNs": "1789353050333481717"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.json",
+        "sha256": "7cc282ca4e116524cace6576e2b29b08f9c5c21ffd38f55b942f175abf8dcda5",
+        "bytes": 196120,
+        "lines": 4816,
+        "mtimeNs": "1789353972319852994"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.md",
+        "sha256": "9840eb1082d3db4afc8657dd07e4133c4aabc68b7f41238730ef64e5d52e174e",
+        "bytes": 28140,
+        "lines": 241,
+        "mtimeNs": "1789353972321020207"
+      }
+    ],
+    "byteAndMtimeUnchanged": true
+  },
+  "structuralAndHelperBoundaryProbes": {
+    "structuralCases": [
+      {
+        "caseId": "NORMAL_SUBSET_WITNESS",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "ACCEPT",
+        "observed": "ACCEPT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.426,
+        "patchSuffix": [],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "UNKNOWN_ENVELOPE_MEMBER",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 1,
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: author envelope exact key closure"
+        ],
+        "durationSeconds": 0.135788,
+        "patchSuffix": [],
+        "counts": {}
+      },
+      {
+        "caseId": "INVALID_CONTRACT_ID",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [
+          "author identity/version/delta dialect"
+        ],
+        "exceptionTail": [],
+        "durationSeconds": 0.432062,
+        "patchSuffix": [],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "INVALID_SCHEMA_VERSION_BOOL",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.429625,
+        "patchSuffix": [],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "INVALID_APPLICATION_DIALECT",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.427404,
+        "patchSuffix": [],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "JOINT_OPERATION_ID_COMPLEMENT_CLONE",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [
+          "immutable114 plus approved new2 exact operation ID scope"
+        ],
+        "exceptionTail": [],
+        "durationSeconds": 0.456487,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationDeltas/1/operationId",
+            "value": "fake.missing.query"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "BOUND_NODE_TYPE_WRONG",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [
+          "bounded target-specific source/type binding"
+        ],
+        "exceptionTail": [],
+        "durationSeconds": 0.445506,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/typedSources/0/type",
+            "value": "UUID"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "BOUND_BINDING_TO_WRONG_VALID_NODE",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [
+          "bounded target-specific source/type binding"
+        ],
+        "exceptionTail": [],
+        "durationSeconds": 0.45755,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/requiredColumnSources/0/source",
+            "value": "derived.repaired_0_tme_work_rule_set_versions_public_id"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "BUSINESS_PUBLIC_UUID_FROM_TRACE",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.430817,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/typedSources/2/inputs",
+            "value": [
+              "headers.X-Correlation-ID"
+            ]
+          },
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/typedSources/2/expression",
+            "value": "copy trace correlation UUID into business public_id"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "LEAF_UNKNOWN_ACTUAL_COLUMN",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.425997,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/sourceLeaves/11/binding/table",
+            "value": "nonexistent_table"
+          },
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/sourceLeaves/11/binding/column",
+            "value": "nonexistent_column"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "QUERY_UNKNOWN_RESPONSE_SOURCE",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [
+          "bounded query exact actual field source"
+        ],
+        "exceptionTail": [],
+        "durationSeconds": 0.451245,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/114/responseFieldSources/0/source",
+            "value": "loaded.input.nonexistent_column"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "DUPLICATE_LINEAGE_OPERATION",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.453681,
+        "patchSuffix": [
+          {
+            "op": "add",
+            "path": "/operationFieldLineage/-",
+            "value": {
+              "summaryOnly": true,
+              "sha256": "26384161522d5da105846a0d67b825ec097406783a6cff1fb39d97df125f1e5e",
+              "reconstructFrom": "pinned materialized draft graph/table indicated by case"
+            }
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5105,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "JOINT_TABLE_PHASE1_SQL_CLONE",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.467601,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/tableSpecifications/0/plannedCreateSql",
+            "value": "SELECT 1;"
+          },
+          {
+            "op": "replace",
+            "path": "/twoPhaseDdlPlan/phase1/0/sql",
+            "value": "SELECT 1;"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "DUPLICATE_TABLE_RECORD",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "processExitCode": 0,
+        "errors": [],
+        "exceptionTail": [],
+        "durationSeconds": 0.476319,
+        "patchSuffix": [
+          {
+            "op": "add",
+            "path": "/tableSpecifications/-",
+            "value": {
+              "summaryOnly": true,
+              "sha256": "0b4055a93e302c3c5c67cd3636ea6d871117ca7acacc243650be270606b0e616",
+              "reconstructFrom": "pinned materialized draft graph/table indicated by case"
+            }
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "DUPLICATE_FIXTURE_PROBE_IDS_COUNT_ONLY",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [
+          "unique concrete case identity: fixtureDefinitions",
+          "unique concrete case identity: schemaProbeCases"
+        ],
+        "exceptionTail": [],
+        "durationSeconds": 0.475004,
+        "patchSuffix": [],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      },
+      {
+        "caseId": "FK_LOCAL_TARGET_ARITY_MISMATCH",
+        "stage": "loader+structuralSubset; no Ajv/native/domain/readiness approval",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "processExitCode": 0,
+        "errors": [
+          "FK arity/column closure: abs_entitlement_selected_items"
+        ],
+        "exceptionTail": [],
+        "durationSeconds": 0.46118,
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/tableSpecifications/44/foreignKeys/0",
+            "value": {
+              "columns": [
+                "tenant_id"
+              ],
+              "targetTable": "abs_entitlement_input_versions",
+              "targetColumns": [
+                "tenant_id",
+                "input_version_id"
+              ],
+              "kind": "TENANT_LOCAL",
+              "onDelete": "RESTRICT",
+              "deferrable": false
+            }
+          },
+          {
+            "op": "replace",
+            "path": "/twoPhaseDdlPlan/phase2ForeignKeys/98/sql",
+            "value": "ALTER TABLE public.abs_entitlement_selected_items ADD CONSTRAINT abs_entitlement_selected_items_f0 FOREIGN KEY (tenant_id) REFERENCES public.abs_entitlement_input_versions (tenant_id, input_version_id) ON DELETE RESTRICT;"
+          }
+        ],
+        "counts": {
+          "operations": 116,
+          "publicOperations": 86,
+          "plannedTables": 47,
+          "plannedColumns": 642,
+          "schemas": 481,
+          "events": 83,
+          "typedSources": 5041,
+          "boundedDetailedSourceOperations": 4,
+          "unfixedSourceOperations": 112,
+          "phase2ForeignKeys": 106
+        }
+      }
+    ],
+    "apiCases": [
+      {
+        "caseId": "DUPLICATE_JSON",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "result": null,
+        "error": "ValueError: duplicate JSON key: x"
+      },
+      {
+        "caseId": "NONFINITE_JSON",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "result": null,
+        "error": "ValueError: nonfinite JSON token: NaN"
+      },
+      {
+        "caseId": "NUMERIC_OVERFLOW_JSON",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "result": null,
+        "error": "ValueError: overflowed JSON numeric token"
+      },
+      {
+        "caseId": "RFC_BOOL_NOT_NUMBER",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "result": null,
+        "error": "ValueError: RFC6902 test failed at /x"
+      },
+      {
+        "caseId": "RFC_ROUNDED_NUMBER_FALSE_EQUALITY",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "result": null,
+        "error": "ValueError: author numeric policy: integer JSON values only; quantities/rates are strings"
+      },
+      {
+        "caseId": "RFC_UNDERFLOW_FALSE_EQUALITY",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "REJECT",
+        "desiredMatched": true,
+        "result": null,
+        "error": "ValueError: author numeric policy: integer JSON values only; quantities/rates are strings"
+      },
+      {
+        "caseId": "OUTCOME_STALE_LEASE_COMPOSITION_LIMIT",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "result": "SUCCEEDED",
+        "error": null
+      },
+      {
+        "caseId": "EVENT_NO_REVISION_SOURCE_EQUALITY_LIMIT",
+        "stage": "in-memory public helper; not a composed native guard",
+        "desired": "REJECT",
+        "observed": "ACCEPT",
+        "desiredMatched": false,
+        "result": null,
+        "error": null
+      }
+    ],
+    "structuralDesiredMatches": 9,
+    "structuralTotal": 16,
+    "apiDesiredMatches": 6,
+    "apiTotal": 8,
+    "writes": 0,
+    "PG": false,
+    "servers": false,
+    "nativeDomainExecuted": false
+  },
+  "additionalSelectedCliAndTemporalProbes": {
+    "selectedCliCases": [
+      {
+        "caseId": "SCHEMA_VERSION_BOOL",
+        "argv": [
+          "python3",
+          "-B",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+          "--proposal",
+          "/dev/stdin",
+          "--compact"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 1.771294,
+        "status": "AUTHOR_DRAFT_CHECKS_ONLY_NOT_APPROVED",
+        "readinessPass": false,
+        "G3Gate": "CLOSED",
+        "structuralErrors": [],
+        "schemaFailures": [],
+        "canonicalErrors": [
+          "UNSUPPORTED_PROPOSAL_DIALECT",
+          "OPERATION_GRAPH_REQUIRED"
+        ],
+        "patchSuffix": [],
+        "stdoutSha256": "31e7667a17c3c841dba7057b737eefd5bf5cba61db9147312379f9c70c166d4d"
+      },
+      {
+        "caseId": "TRACE_AS_BUSINESS_UUID",
+        "argv": [
+          "python3",
+          "-B",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+          "--proposal",
+          "/dev/stdin",
+          "--compact"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 1.655896,
+        "status": "AUTHOR_DRAFT_CHECKS_ONLY_NOT_APPROVED",
+        "readinessPass": false,
+        "G3Gate": "CLOSED",
+        "structuralErrors": [],
+        "schemaFailures": [],
+        "canonicalErrors": [
+          "UNSUPPORTED_PROPOSAL_DIALECT",
+          "OPERATION_GRAPH_REQUIRED"
+        ],
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/typedSources/2/inputs",
+            "value": [
+              "headers.X-Correlation-ID"
+            ]
+          },
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/typedSources/2/expression",
+            "value": "copy trace UUID into business public_id"
+          }
+        ],
+        "stdoutSha256": "31e7667a17c3c841dba7057b737eefd5bf5cba61db9147312379f9c70c166d4d"
+      },
+      {
+        "caseId": "LEAF_NONEXISTENT_COLUMN",
+        "argv": [
+          "python3",
+          "-B",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+          "--proposal",
+          "/dev/stdin",
+          "--compact"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 1.752591,
+        "status": "AUTHOR_DRAFT_CHECKS_ONLY_NOT_APPROVED",
+        "readinessPass": false,
+        "G3Gate": "CLOSED",
+        "structuralErrors": [],
+        "schemaFailures": [],
+        "canonicalErrors": [
+          "UNSUPPORTED_PROPOSAL_DIALECT",
+          "OPERATION_GRAPH_REQUIRED"
+        ],
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/operationFieldLineage/0/sourceLeaves/11/binding/column",
+            "value": "nonexistent_column"
+          }
+        ],
+        "stdoutSha256": "31e7667a17c3c841dba7057b737eefd5bf5cba61db9147312379f9c70c166d4d"
+      },
+      {
+        "caseId": "JOINT_SQL_SELECT1_CLONE",
+        "argv": [
+          "python3",
+          "-B",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+          "--proposal",
+          "/dev/stdin",
+          "--compact"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 1.752141,
+        "status": "AUTHOR_DRAFT_CHECKS_ONLY_NOT_APPROVED",
+        "readinessPass": false,
+        "G3Gate": "CLOSED",
+        "structuralErrors": [],
+        "schemaFailures": [],
+        "canonicalErrors": [
+          "UNSUPPORTED_PROPOSAL_DIALECT",
+          "OPERATION_GRAPH_REQUIRED"
+        ],
+        "patchSuffix": [
+          {
+            "op": "replace",
+            "path": "/tableSpecifications/0/plannedCreateSql",
+            "value": "SELECT 1;"
+          },
+          {
+            "op": "replace",
+            "path": "/twoPhaseDdlPlan/phase1/0/sql",
+            "value": "SELECT 1;"
+          }
+        ],
+        "stdoutSha256": "31e7667a17c3c841dba7057b737eefd5bf5cba61db9147312379f9c70c166d4d"
+      }
+    ],
+    "temporalShapeProbe": {
+      "engine": "Ajv",
+      "version": "6.12.6",
+      "results": [
+        {
+          "format": "fast",
+          "caseId": "HEALTHY_INPUT",
+          "field": "periodStart",
+          "value": "2026-10-01",
+          "accepted": true,
+          "errors": null
+        },
+        {
+          "format": "fast",
+          "caseId": "INVALID_CIVIL_DATE",
+          "field": "periodStart",
+          "value": "2026-02-30",
+          "accepted": true,
+          "errors": null
+        },
+        {
+          "format": "fast",
+          "caseId": "INVALID_CIVIL_DATETIME",
+          "field": "capturedAt",
+          "value": "2026-02-30T00:00:00Z",
+          "accepted": true,
+          "errors": null
+        },
+        {
+          "format": "full",
+          "caseId": "HEALTHY_INPUT",
+          "field": "periodStart",
+          "value": "2026-10-01",
+          "accepted": true,
+          "errors": null
+        },
+        {
+          "format": "full",
+          "caseId": "INVALID_CIVIL_DATE",
+          "field": "periodStart",
+          "value": "2026-02-30",
+          "accepted": false,
+          "errors": [
+            {
+              "keyword": "format",
+              "dataPath": ".periodStart",
+              "schemaPath": "#/properties/periodStart/format",
+              "params": {
+                "format": "date"
+              },
+              "message": "should match format \"date\""
+            }
+          ]
+        },
+        {
+          "format": "full",
+          "caseId": "INVALID_CIVIL_DATETIME",
+          "field": "capturedAt",
+          "value": "2026-02-30T00:00:00Z",
+          "accepted": false,
+          "errors": [
+            {
+              "keyword": "format",
+              "dataPath": ".capturedAt",
+              "schemaPath": "#/properties/capturedAt/format",
+              "params": {
+                "format": "date-time"
+              },
+              "message": "should match format \"date-time\""
+            }
+          ]
+        }
+      ],
+      "processExitCode": 0
+    },
+    "nativeDomainExecuted": false,
+    "productionDateEngineClaim": false
+  },
+  "finalPinAndPatchProbes": {
+    "cases": [
+      {
+        "caseId": "MISSING_ORIGINAL_PIN",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: original/review pin closure"
+        ]
+      },
+      {
+        "caseId": "WRONG_EXPECTED_PIN_SHA",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: immutable expected pin changed"
+        ]
+      },
+      {
+        "caseId": "OUTSIDE_BLUEPRINT_PIN_PATH",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: pin must be regular in-blueprint file"
+        ]
+      },
+      {
+        "caseId": "EMPTY_PATCH",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: nonempty RFC6902 operations required"
+        ]
+      },
+      {
+        "caseId": "TEST_ONLY_NOOP",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: author remediation must change original in memory, not test-only/no-op"
+        ]
+      },
+      {
+        "caseId": "FAILED_PATCH_TEST",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: RFC6902 test failed at /operationDeltas/110/path"
+        ]
+      },
+      {
+        "caseId": "PROTOTYPE_PATH",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: unsafe authored-delta member name"
+        ]
+      },
+      {
+        "caseId": "INVALID_POINTER_ESCAPE",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: invalid RFC6901 escape"
+        ]
+      },
+      {
+        "caseId": "NONCANONICAL_ARRAY_INDEX",
+        "processExitCode": 1,
+        "observed": "REJECT",
+        "errors": [],
+        "exceptionTail": [
+          "ValueError: noncanonical array index"
+        ]
+      },
+      {
+        "caseId": "MIXED_MATERIALIZED_OPERATION_DIALECT",
+        "processExitCode": 0,
+        "observed": "ACCEPT",
+        "errors": [],
+        "exceptionTail": []
+      },
+      {
+        "caseId": "SIBLING_FK_WRONG_TYPED_PARENT_TARGET",
+        "processExitCode": 0,
+        "observed": "ACCEPT",
+        "errors": [],
+        "exceptionTail": []
+      }
+    ],
+    "siblingWrongTarget": {
+      "tableIndex": 12,
+      "foreignKeyIndex": 1,
+      "phase2Index": 27,
+      "injectedForeignKey": {
+        "columns": [
+          "tenant_id",
+          "schedule_period_id",
+          "schedule_assignment_id"
+        ],
+        "targetTable": "abs_entitlement_selected_items",
+        "targetColumns": [
+          "tenant_id",
+          "input_version_id",
+          "selected_item_id"
+        ],
+        "kind": "TENANT_LOCAL",
+        "onDelete": "RESTRICT",
+        "deferrable": false
+      },
+      "SQL": "ALTER TABLE public.tme_scheduled_segments ADD CONSTRAINT tme_scheduled_segments_f1 FOREIGN KEY (tenant_id, schedule_period_id, schedule_assignment_id) REFERENCES public.abs_entitlement_selected_items (tenant_id, input_version_id, selected_item_id) ON DELETE RESTRICT;"
+    },
+    "finalManifest": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+        "sha256": "76d2c5b45098062def03ceaa3ad71dfa271a9160cdfc8deebc5d688f87dbc3e4",
+        "mtimeNs": "1789357012216608943"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_base_review_remediation.py",
+        "sha256": "3c000aafa4f6b3d8d6f85cceb0f611ea0f2473d4fd395588262bd54435cfd218",
+        "mtimeNs": "1789356898928404439"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+        "sha256": "04a4785e199b9babc92ae71c0a35df282194bb97adccc7eb31579a602d2cc448",
+        "mtimeNs": "1789356809098400292"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.md",
+        "sha256": "8289dea17e2d593882973768ea999374ef85f62d52f3cca485091b5a3274c600",
+        "mtimeNs": "1789357012232871367"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+        "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+        "mtimeNs": "1789352926476163369"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.md",
+        "sha256": "32fa6514408faf690de707ca7c585fb957df8b3cfc1145b035f87a3079d5ddbb",
+        "mtimeNs": "1789353050333481717"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.json",
+        "sha256": "7cc282ca4e116524cace6576e2b29b08f9c5c21ffd38f55b942f175abf8dcda5",
+        "mtimeNs": "1789353972319852994"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.md",
+        "sha256": "9840eb1082d3db4afc8657dd07e4133c4aabc68b7f41238730ef64e5d52e174e",
+        "mtimeNs": "1789353972321020207"
+      }
+    ],
+    "readOnly": true
+  },
+  "findings": [
+    {
+      "id": "TIM-FOLLOWUP-F01",
+      "severity": "P0_CONTINUES_NOT_NEW_GATE_BYPASS",
+      "classification": "FIELD_LEAF_AND_BUSINESS_ID_TRUTH_OPEN",
+      "pointers": [
+        "/operationFieldLineage/0/typedSources/2",
+        "/operationFieldLineage/0/sourceLeaves/11"
+      ],
+      "validatorLines": [
+        400,
+        402,
+        417
+      ],
+      "cases": [
+        "BUSINESS_PUBLIC_UUID_FROM_TRACE",
+        "LEAF_UNKNOWN_ACTUAL_COLUMN"
+      ],
+      "observed": "Trace correlation UUID substituted for tme_work_rule_set_versions.public_id, or nonexistent returning leaf column, produces structural errors0/schema failures0 and full normal CLI exit0.",
+      "boundary": "Every result still states readinessPass=false/G3 CLOSED/canonical FAIL2. source4 detailed is not semantic closure; author MD acknowledges leaf/assembler OPEN.",
+      "required": "Independent owner schema/table-column/entity/ID-space oracle, projection constructors and typed derivation inputs; correlation only metadata. Close exact source4 subtargets and112 source IDs before source approval, not by self-labelled registration."
+    },
+    {
+      "id": "TIM-FOLLOWUP-F02",
+      "severity": "P1",
+      "classification": "DECLARED_SQL_CORRESPONDENCE_NOT_SQL_OR_RELATIONAL_TRUTH",
+      "pointers": [
+        "/tableSpecifications/0/plannedCreateSql",
+        "/twoPhaseDdlPlan/phase1/0/sql",
+        "/tableSpecifications/12/foreignKeys/1",
+        "/twoPhaseDdlPlan/phase2ForeignKeys/27"
+      ],
+      "validatorLines": [
+        357,
+        374,
+        384
+      ],
+      "cases": [
+        "JOINT_TABLE_PHASE1_SQL_CLONE",
+        "SIBLING_FK_WRONG_TYPED_PARENT_TARGET"
+      ],
+      "observed": "Both table SQL and phase1 SQL changed to SELECT1 yields errors0/full CLI exit0; sibling tuple points to abs_entitlement_selected_items instead of schedule assignment when matching ALTER SQL is supplied and subset remains errors0.",
+      "boundary": "Type/arity/column existence/UK and same-string correspondence are improved, not independent physical DDL or intended-parent identity.13 cross-context FK P0 remains OPEN; no PG/SQL execution was attempted.",
+      "required": "Exact planned owner/entity/parent graph, independently parsed column/PK/UK/CHECK/FK/default inventory and canonical prefix policy/materializer allocation. Native business SQL execution belongs G4; exact approved architecture/constraint allocation belongs G3."
+    },
+    {
+      "id": "TIM-FOLLOWUP-F03",
+      "severity": "P1",
+      "classification": "DUPLICATE_TABLE_AND_OPERATION_GRAPH_RECORDS_UNCHECKED",
+      "pointers": [
+        "/tableSpecifications/-",
+        "/operationFieldLineage/-"
+      ],
+      "validatorLines": [
+        352,
+        400
+      ],
+      "cases": [
+        "DUPLICATE_TABLE_RECORD",
+        "DUPLICATE_LINEAGE_OPERATION"
+      ],
+      "observed": "Duplicate table records are collapsed by dict, leaving reported plannedTables47; duplicate operationFieldLineage record is ignored by next(first). Both structural cases accept.",
+      "boundary": "Operation ID set itself is now independently compared with immutable114+author-local2 allowlist; source fixture IDs, derived node source IDs and FK SQL rows are checked. That does not establish unique complete table/lineage record scope.",
+      "required": "Unique array record IDs plus exact graph operation coverage and cardinality; no dict/first-record shadowing. 'approved new2' is author-local static allowance, NOT canonical/root/G3 approval."
+    },
+    {
+      "id": "TIM-FOLLOWUP-F04",
+      "severity": "P1",
+      "classification": "FAST_DATE_SHAPE_ACCEPTS_NONEXISTENT_CIVIL_DATES",
+      "pointers": [
+        "/$defs/TIM.EntitlementInputDocument.v2/properties/periodStart",
+        "/$defs/TIM.EntitlementInputDocument.v2/properties/capturedAt"
+      ],
+      "validatorLines": [
+        479
+      ],
+      "cases": [
+        "INVALID_CIVIL_DATE",
+        "INVALID_CIVIL_DATETIME"
+      ],
+      "observed": "Installed Ajv6.12.6 default fast accepts2026-02-30 and2026-02-30T00:00:00Z in actual declared date/date-time fields. full rejects both; healthy input passes both.",
+      "boundary": "This is actual typed shape evidence, NOT DST/calendar/tzdb/accrual engine or PG/native validation. Existing481 compiled schemas/12cases/34controls do not test these invalid civil dates.",
+      "required": "Explicit strict civil-date/date-time format profile or equivalent validated constructors, healthy/invalid/leap regressions; re-pin later successor without mutating this frozen reviewed snapshot."
+    },
+    {
+      "id": "TIM-FOLLOWUP-F05",
+      "severity": "P1",
+      "classification": "ENVELOPE_VERSION_TYPE_NOT_EXACT",
+      "pointers": [
+        "/schemaVersion",
+        "/application/fieldGraphDialect"
+      ],
+      "validatorLines": [
+        324
+      ],
+      "cases": [
+        "INVALID_SCHEMA_VERSION_BOOL",
+        "INVALID_APPLICATION_DIALECT"
+      ],
+      "observed": "schemaVersion=true passes ==1, including full CLI exit0; informational fieldGraphDialect='CANONICAL_READY' is not validated and structural accepts.",
+      "boundary": "contractId wrong is rejected, top-level mixed executable keys rejected, canonical readiness stays FAIL2 regardless of label. The application label is informational, not executable permission.",
+      "required": "Exact integral version type excluding bool and explicitly defined envelope fields/types/closed values where authoritative. Never infer dialect acceptance from caller-supplied labels."
+    },
+    {
+      "id": "TIM-FOLLOWUP-L01",
+      "severity": "LIMITATION_ALREADY_OPEN",
+      "classification": "HELPER_COMPOSITION_NOT_OWNER_ATOMICITY",
+      "pointers": [
+        "/runContract/leasePolicy",
+        "/sourceRepairScope/unfixedSubtargetsWithinDetailed"
+      ],
+      "validatorLines": [
+        237,
+        277,
+        307
+      ],
+      "cases": [
+        "OUTCOME_STALE_LEASE_COMPOSITION_LIMIT",
+        "EVENT_NO_REVISION_SOURCE_EQUALITY_LIMIT"
+      ],
+      "observed": "Standalone finalize helper returns SUCCEEDED with submitted outcome lease999 because no current lease is supplied; event helper accepts synthetic aggregateRevision0 because only persisted state strings are supplied.",
+      "boundary": "Separate prospective writer fence helper exists and tests stale/owner/cancel/expiry; MD explicitly requires actual same-owner transaction/static entity registry. These helper results are NOT proof of production bypass, revoke or actual owner acceptance.",
+      "required": "Exact registered event entity/revision/source-vector and same-transaction lease/CAS/current authorization/receipt/outbox constructors must be allocated and composed. Current native owner/lifecycle ordering remains OPEN."
+    }
+  ],
+  "originalFindingDisposition": [
+    {
+      "id": "TIM-P0-001",
+      "result": "Route/cancel-rule design improved and bounded static negative tested; not actual HTTP/domain acceptance."
+    },
+    {
+      "id": "TIM-P0-002",
+      "result": "Immutable full input/selected storage+refetch design improved; native assembler/owner source registration remains OPEN."
+    },
+    {
+      "id": "TIM-P0-003",
+      "result": "Termination workflow/corrective run/settlement intent/reconcile design improved; HRM/PAY owner DTO/SPI/PEP/canonical source allocation remains OPEN."
+    },
+    {
+      "id": "TIM-P0-004",
+      "result": "Four detailed graphs still not closed,112 explicitly OPEN; actual canonical oracle FAIL2; new F01 strengthens specific leaf/provenance gap."
+    },
+    {
+      "id": "TIM-P0-005",
+      "result": "Shared owner/PEP/composite authority/startup/native proof remains OPEN. This review does not independently approve own identity ABI."
+    },
+    {
+      "id": "TIM-P1-006",
+      "result": "Discriminated computed/error/cancel shape+positive denominator/nonnegative/zero-ledger guards improved; atomic constructor/SQL remains OPEN."
+    },
+    {
+      "id": "TIM-P1-007",
+      "result": "Four composite sibling declarations improved; actual parent semantics not proven by current subset(F02)."
+    },
+    {
+      "id": "TIM-P1-008",
+      "result": "Two-phase plan and typo correction improved; SQL/canonical context/immutability/exclusion/ACL programs not validated(F02)."
+    },
+    {
+      "id": "TIM-P1-009",
+      "result": "Closed event/receipt state schemas+same-entity distinction improved; registered producer/atomic revision/source truth remains OPEN(L01)."
+    },
+    {
+      "id": "TIM-P1-010",
+      "result": "Time grammar/interval/decimal shape improved and numeric policy negatives reject; civil date hole F04 and full DST/calendar/AST/accrual not validated."
+    },
+    {
+      "id": "TIM-P1-011",
+      "result": "24 typed invariant definitions/12schema cases+37author-unit repro, not whole116 happy/denied/duplicate/correction/native fixtures."
+    }
+  ],
+  "proofScope": {
+    "operationInventory": 116,
+    "boundedDetailedSourceDesigns": 4,
+    "unfixedOperationSourceDesigns": 112,
+    "closedSourceDesignsProven": 0,
+    "plannedTables": 47,
+    "schemasCompiled": 481,
+    "closedObjectSchemas": 576,
+    "typedSchemaCases": 12,
+    "schemaControls": 34,
+    "authorUnitTestsReproduced": 37,
+    "authorUnitFailures": 0,
+    "authorUnitErrors": 0,
+    "authorUnitSkips": 0,
+    "wholeStateMachineReachability": "NOT_VALIDATED",
+    "wholeOperationPEPAndFixtureExecution": "NOT_VALIDATED",
+    "nativeDomainOrSQLExecutions": 0,
+    "PGContainers": 0,
+    "heavyBuilds": 0
+  },
+  "safety": {
+    "directWritesOnly": [
+      "coding-readiness/reports/tim-base-remediation-independent-followup-2026-09-14.json",
+      "coding-readiness/reports/tim-base-remediation-independent-followup-2026-09-14.md"
+    ],
+    "frozenAuthorAndOriginalMutated": false,
+    "sourceControlGatesSealsChanged": false,
+    "BEFEChangedByThisReview": false,
+    "mainDBServersTouched": false,
+    "rawCredentialsUsed": false,
+    "mtimeNsEncoding": "exact decimal strings; no JS integer round-trip",
+    "initialNegativeOutputCapture": "First stdout was oversized/truncated at tool capture; no conclusion drawn from that capture. Fresh identical logical probes rerun with bulky copied graph/table values represented by hashes in output only; inputs/checks unchanged."
+  },
+  "reproduction": {
+    "mainArgvRecordedIn": "execution.runs[].argv",
+    "boundaryMethod": "Base frozen author JSON+RFC6902 suffixes supplied through /dev/stdin; loader+subset stage or full CLI explicitly separated.",
+    "negativeHarness": "import copy,hashlib,importlib.util,json,os,subprocess,sys,time\nfrom pathlib import Path\nfrom datetime import datetime,timezone\nsys.dont_write_bytecode=True\nh=Path('/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation')\nsys.path.insert(0,str(h))\nimport validate_tim_base_review_remediation as v\np,o,d=v.load_draft()\nenv=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')\nrows=[]\nthin=\"import sys,json;sys.path.insert(0,\"+repr(str(h))+\");import validate_tim_base_review_remediation as v;p,o,d=v.load_draft('/dev/stdin');print(json.dumps(v.subset_checks(p,d)))\"\ndef run_case(cid,changes=None,mutate=None,desired='REJECT'):\n q=copy.deepcopy(p)\n if changes:q['patch']+=changes\n if mutate:mutate(q)\n start=time.monotonic()\n r=subprocess.run(['python3','-B','-c',thin],input=json.dumps(q),capture_output=True,text=True,timeout=30,env=env)\n errors=[];counts={}\n if r.stdout.strip():\n  out=json.loads(r.stdout);errors=out.get('errors',[]);counts=out.get('counts',{})\n accepted=r.returncode==0 and not errors\n rows.append({'caseId':cid,'stage':'loader+structuralSubset; no Ajv/native/domain/readiness approval','desired':desired,'observed':'ACCEPT' if accepted else 'REJECT','desiredMatched':(accepted==(desired=='ACCEPT')),'processExitCode':r.returncode,'errors':errors,'exceptionTail':r.stderr.splitlines()[-1:] if r.stderr else [],'durationSeconds':round(time.monotonic()-start,6),'patchSuffix':[{**c,'value':c['value'] if len(json.dumps(c.get('value'))) < 1800 else {'summaryOnly':True,'sha256':hashlib.sha256(json.dumps(c['value'],sort_keys=True).encode()).hexdigest(),'reconstructFrom':'pinned materialized draft graph/table indicated by case'}} for c in (changes or [])],'counts':counts})\ndef replace(path,value):return {'op':'replace','path':path,'value':value}\ngidx=next(i for i,g in enumerate(d['operationFieldLineage']) if g['operationId']=='tim.rule.create')\ng=d['operationFieldLineage'][gidx]\nbase='/operationFieldLineage/'+str(gidx)\nrun_case('NORMAL_SUBSET_WITNESS',desired='ACCEPT')\nrun_case('UNKNOWN_ENVELOPE_MEMBER',mutate=lambda q:q.update({'operationBindings':[]}))\nrun_case('INVALID_CONTRACT_ID',mutate=lambda q:q.update({'contractId':'BOGUS'}))\nrun_case('INVALID_SCHEMA_VERSION_BOOL',mutate=lambda q:q.update({'schemaVersion':True}))\nrun_case('INVALID_APPLICATION_DIALECT',mutate=lambda q:q['application'].update({'fieldGraphDialect':'CANONICAL_READY'}))\nidx=next(i for i,x in enumerate(d['operationDeltas']) if x['operationId']=='tim.rule.query')\ndef rename(q):q['sourceRepairScope']['unfixedExactOperationIds'][q['sourceRepairScope']['unfixedExactOperationIds'].index('tim.rule.query')]='fake.missing.query'\nrun_case('JOINT_OPERATION_ID_COMPLEMENT_CLONE',[replace('/operationDeltas/'+str(idx)+'/operationId','fake.missing.query')],rename)\nrun_case('BOUND_NODE_TYPE_WRONG',[replace(base+'/typedSources/0/type','UUID')])\nrun_case('BOUND_BINDING_TO_WRONG_VALID_NODE',[replace(base+'/requiredColumnSources/0/source',g['typedSources'][2]['source'])])\nnid=next(i for i,n in enumerate(g['typedSources']) if n['target']=='tme_work_rule_set_versions.public_id')\nrun_case('BUSINESS_PUBLIC_UUID_FROM_TRACE',[replace(base+'/typedSources/'+str(nid)+'/inputs',['headers.X-Correlation-ID']),replace(base+'/typedSources/'+str(nid)+'/expression','copy trace correlation UUID into business public_id')])\nleaf=next(i for i,n in enumerate(g['sourceLeaves']) if n['source'].startswith('returning.tme_work_rule_set_versions.'))\nrun_case('LEAF_UNKNOWN_ACTUAL_COLUMN',[replace(base+'/sourceLeaves/'+str(leaf)+'/binding/table','nonexistent_table'),replace(base+'/sourceLeaves/'+str(leaf)+'/binding/column','nonexistent_column')])\nqi=next(i for i,gx in enumerate(d['operationFieldLineage']) if gx['operationId']=='tim.leave.entitlement.input.get')\nrun_case('QUERY_UNKNOWN_RESPONSE_SOURCE',[replace('/operationFieldLineage/'+str(qi)+'/responseFieldSources/0/source','loaded.input.nonexistent_column')])\nrun_case('DUPLICATE_LINEAGE_OPERATION',[{'op':'add','path':'/operationFieldLineage/-','value':g}])\ntabidx=0;tab=d['tableSpecifications'][tabidx]\nphase=next(i for i,x in enumerate(d['twoPhaseDdlPlan']['phase1']) if x['table']==tab['tableName'])\nrun_case('JOINT_TABLE_PHASE1_SQL_CLONE',[replace('/tableSpecifications/0/plannedCreateSql','SELECT 1;'),replace('/twoPhaseDdlPlan/phase1/'+str(phase)+'/sql','SELECT 1;')])\nrun_case('DUPLICATE_TABLE_RECORD',[{'op':'add','path':'/tableSpecifications/-','value':tab}])\ndef duplicate(q):\n q['fixtureDefinitions']=[copy.deepcopy(q['fixtureDefinitions'][0]) for _ in range(24)]\n for x in q['schemaProbeCases']:x['caseId']=q['schemaProbeCases'][0]['caseId']\nrun_case('DUPLICATE_FIXTURE_PROBE_IDS_COUNT_ONLY',mutate=duplicate)\ntidx=next(i for i,t in enumerate(d['tableSpecifications']) if t['tableName']=='abs_entitlement_selected_items')\nt=d['tableSpecifications'][tidx];fk=copy.deepcopy(t['foreignKeys'][0]);fk['columns']=fk['columns'][:-1]\npf=next(i for i,x in enumerate(d['twoPhaseDdlPlan']['phase2ForeignKeys']) if x['sql'].startswith('ALTER TABLE public.'+t['tableName']+' ADD CONSTRAINT '+t['tableName']+'_f0 '))\nsql=('ALTER TABLE public.'+t['tableName']+' ADD CONSTRAINT '+t['tableName']+'_f0 FOREIGN KEY ('+', '.join(fk['columns'])+') REFERENCES public.'+fk['targetTable']+' ('+', '.join(fk['targetColumns'])+') ON DELETE '+fk['onDelete']+(' DEFERRABLE INITIALLY DEFERRED' if fk['deferrable'] else '')+';')\nrun_case('FK_LOCAL_TARGET_ARITY_MISMATCH',[replace('/tableSpecifications/'+str(tidx)+'/foreignKeys/0',fk),replace('/twoPhaseDdlPlan/phase2ForeignKeys/'+str(pf)+'/sql',sql)])\napi=[]\ndef api_case(cid,call,expected='REJECT'):\n try:\n  result=call();observed='ACCEPT';error=None\n except Exception as e:\n  result=None;observed='REJECT';error=type(e).__name__+': '+str(e)\n api.append({'caseId':cid,'stage':'in-memory public helper; not a composed native guard','desired':expected,'observed':observed,'desiredMatched':observed==expected,'result':result,'error':error})\napi_case('DUPLICATE_JSON',lambda:v.strict_loads('{\"x\":1,\"x\":2}'))\napi_case('NONFINITE_JSON',lambda:v.strict_loads('{\"x\":NaN}'))\napi_case('NUMERIC_OVERFLOW_JSON',lambda:v.strict_loads('{\"x\":1e309}'))\napi_case('RFC_BOOL_NOT_NUMBER',lambda:v.apply_patch_in_memory({'x':True},[{'op':'test','path':'/x','value':1}]))\napi_case('RFC_ROUNDED_NUMBER_FALSE_EQUALITY',lambda:v.apply_patch_in_memory(v.strict_loads('{\"x\":1}'),v.strict_loads('[{\"op\":\"test\",\"path\":\"/x\",\"value\":1.0000000000000001}]')))\napi_case('RFC_UNDERFLOW_FALSE_EQUALITY',lambda:v.apply_patch_in_memory(v.strict_loads('{\"x\":0}'),v.strict_loads('[{\"op\":\"test\",\"path\":\"/x\",\"value\":1e-400}]')))\ndoc=copy.deepcopy(p['schemaProbeCases'][0]['payload'])\nposted=copy.deepcopy(next(x['payload'] for x in p['schemaProbeCases'] if x['payload'].get('kind')=='POSTED'))\nposted['leaseVersion']=999\napi_case('OUTCOME_STALE_LEASE_COMPOSITION_LIMIT',lambda:v.finalize_decision(doc,[posted]))\napi_case('EVENT_NO_REVISION_SOURCE_EQUALITY_LIMIT',lambda:v.event_guard({'stateBefore':'QUEUED','stateAfter':'RUNNING','aggregateRevision':0,'resultRecord':{'status':'RUNNING'}},'RUNNING','QUEUED'))\nprint(json.dumps({'structuralCases':rows,'apiCases':api,'structuralDesiredMatches':sum(r['desiredMatched'] for r in rows),'structuralTotal':len(rows),'apiDesiredMatches':sum(r['desiredMatched'] for r in api),'apiTotal':len(api),'writes':0,'PG':False,'servers':False,'nativeDomainExecuted':False},ensure_ascii=False))\n",
+    "temporalMethod": "Installed Ajv6.12.6; root stores actual frozen $defs; actual TIM.EntitlementInputDocument.v2 healthy vs invalid periodStart/capturedAt; fast/full compared without coercion/default/removal."
+  },
+  "finalCanonicalRecheck": {"path":"/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/validate_modern_semantic_field_lineage.py","sha256":"30e3fe74498ba265945970b4b68ab008bbce6108fc74169edd356e8d70f3bf81","mtimeNs":"1789353482802124626"},
+  "sources": [
+    {
+      "title": "RFC6902 §4.6",
+      "url": "https://www.rfc-editor.org/rfc/rfc6902.html",
+      "use": "typed recursive test equality; numeric mathematical equality. Integer-only authored numeric policy is narrower than generic JSON Patch."
+    },
+    {
+      "title": "RFC6901",
+      "url": "https://www.rfc-editor.org/rfc/rfc6901.html",
+      "use": "escape ordering and canonical array indices. Prototype-name/closed-field rejection is enterprise subset policy, not RFC forbidden-name rule."
+    }
+  ],
+  "conclusion": "부분 설계 개선과 작성자 한정 검사 재현은 확인했습니다. 전체116 source/DDL/context/owner/PEP/native 준비 상태는 미인증입니다. G3 CLOSED / COMMON P0 OPEN / NOT READY. 후속 개선은 별도 successor로 고정·검증하고 이 FROZEN 증거는 변경하지 않습니다."
+}

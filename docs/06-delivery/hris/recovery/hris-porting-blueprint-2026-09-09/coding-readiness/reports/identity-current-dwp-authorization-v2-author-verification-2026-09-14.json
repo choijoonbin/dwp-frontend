@@ -1,0 +1,1225 @@
+{
+  "schemaVersion": "1.0",
+  "status": "AUTHOR_ONLY_CURRENT_DWP_HRIS_V2_NEUTRAL_SCAFFOLD_60_PASS_G3_CLOSED",
+  "scope": "New5 neutral DTO/SPI/guard files +1 test; no native providers/signed transport/actual PEP/consumer wiring/DDL/RBAC/identity ledger",
+  "proposalPins": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/identity-current-dwp-authorization-owner-bridge.proposal.v2.json",
+      "sha256": "31d3f2e71fb78a8d60db563a2d99ae3cdf134fc510b7674539f07af42136de64",
+      "bytes": 20374,
+      "mtimeNs": "1789371377257273378"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/identity-current-dwp-authorization-owner-bridge.proposal.v2.md",
+      "sha256": "9fe61dd855e55395bf0135192954058661edf791a6f51b738481c522cb844657",
+      "bytes": 9636,
+      "mtimeNs": "1789371340942114389"
+    }
+  ],
+  "sourcePins": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationExceptionV2.java",
+      "sha256": "53651c8aaafe91d6540036c63ba8be414f7281fe5bcaf11cf15072a382a4b9c2",
+      "bytes": 786,
+      "mtimeNs": "1789370904365491717"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationPortsV2.java",
+      "sha256": "c7f8cf621b2b4679f65b4ca9747987caaa379c88d17b47a43f8506a66ffcd841",
+      "bytes": 2315,
+      "mtimeNs": "1789370904366254895"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2.java",
+      "sha256": "a5537ff53d88b93d9ac759d2ccfd3c5840b3b91b80a97e021ce60cf28424efdd",
+      "bytes": 4952,
+      "mtimeNs": "1789370928007662329"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/GuardedCurrentHrisAuthorizationPortV2.java",
+      "sha256": "b87b2cc6d461a8b23bbbb87596bcc2abc6d256593644b5364c67b976b771eb33",
+      "bytes": 16115,
+      "mtimeNs": "1789370927998939867"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/VerifiedCurrentHrisAuthorizationV2.java",
+      "sha256": "f6de6969a3bf65e499faa108beddd7d4b1d2924911079bfa30f2ee3f00259d05",
+      "bytes": 2548,
+      "mtimeNs": "1789370904366695734"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2Test.java",
+      "sha256": "311633497bfba7fc8f9ab54cb2cd6155dc2a647d9bc3a339572141ccd37bfdcf",
+      "bytes": 19580,
+      "mtimeNs": "1789371076502812143"
+    }
+  ],
+  "execution": {
+    "schemaVersion": "1.0",
+    "status": "AUTHOR_ONLY_MOCK_V2_SCAFFOLD_G3_CLOSED",
+    "argv": [
+      "./gradlew",
+      ":dwp-platform-contracts:test",
+      "--rerun",
+      "--tests",
+      "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+      "--no-daemon",
+      "--max-workers=1"
+    ],
+    "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+    "limitSeconds": 240,
+    "nativeProviders": false,
+    "AuthGatewayPeopleEndToEnd": false,
+    "productionWiring": false,
+    "G3Approval": false,
+    "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+    "lockWaitSeconds": 0.00003058300353586674,
+    "preHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "preTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "preStatus": "M dwp-auth-server/build.gradle\n M dwp-migration-control/build.gradle\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/hris/\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupClockEntryRegressionTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuardTest.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/startup/\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/startup/\n?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/\n?? dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/\n?? dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql\n?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/\n?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/",
+    "preSources": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/build.gradle",
+        "sha256": "7e8db78e92907338d1023bee7d3555427c1d0fa79b5c0e4af98a43b73af873d8",
+        "bytes": 8698,
+        "mtimeNs": "1789089247750201697"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityController.java",
+        "sha256": "4bd9987bc8764bdd6e66b0a5bcb344c355ea8237611b505e74b324451a37202d",
+        "bytes": 1120,
+        "mtimeNs": "1788935965279359583"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/dto/ProductSurfaceAuthorityDtos.java",
+        "sha256": "3ecb2e6ec4ed99735d365ce7074c79d3b2de48af53b793cc4bf04877337ccf9b",
+        "bytes": 6843,
+        "mtimeNs": "1788935965286321355"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+        "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+        "bytes": 4887,
+        "mtimeNs": "1789359261552529839"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+        "sha256": "4f3d2f108adc23f26637c1719acc49ad601eff8aec7fdc10fd90b71fd7bb1a24",
+        "bytes": 35761,
+        "mtimeNs": "1788935965316088539"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupport.java",
+        "sha256": "de41aa1d4b033af28135105e8b385182d6399b48b9bc40f66db4ef10706bbaf0",
+        "bytes": 18555,
+        "mtimeNs": "1788935965316315202"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+        "sha256": "7d83c62b6eab54ea7531561f4c94f35e23a1ee89c0143c86a3e362b0d3961197",
+        "bytes": 5512,
+        "mtimeNs": "1788935965317704181"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceAuthorityService.java",
+        "sha256": "91046d6dad9fb0845cf5660a66bb289728226f8a9fff5d2b2e3c6c81fc8f8e3a",
+        "bytes": 4448,
+        "mtimeNs": "1788935965318024427"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ScopedAdminDutyEvidenceService.java",
+        "sha256": "54622e2bc4583570aa339ce91161a6f5e42605cfbc6444d0a5470dcb5bda74bf",
+        "bytes": 15548,
+        "mtimeNs": "1788935965318956454"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ScopedAdminDutyPolicy.java",
+        "sha256": "ad43ced63ee044ce8c1b1b1de4edebf172c29cbedf5aae36fad815614d0a8b6d",
+        "bytes": 6560,
+        "mtimeNs": "1788935965319068453"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextAggregationSupport.java",
+        "sha256": "f179deefdde11b74ae3c1d447988fd9956a1f2eb8c5ca282745759aba56fb9f2",
+        "bytes": 3668,
+        "mtimeNs": "1788935965395882857"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+        "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+        "bytes": 9105,
+        "mtimeNs": "1789360393439338720"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+        "sha256": "4007621b17847ceac74f72644147b6fc8faeb61780fdf65d94de3bcdd80ca53e",
+        "bytes": 12074,
+        "mtimeNs": "1788935965786261823"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+        "sha256": "630dda8034e987fe36a4d43c13a6ee323a5b0557dd6dd44f2e2b918a17a92ce4",
+        "bytes": 12088,
+        "mtimeNs": "1788935965786755940"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+        "sha256": "69b339368be840bdf6948400b8b40f2975f29df2fc0628c69dbf123521608a3b",
+        "bytes": 4568,
+        "mtimeNs": "1788935965786949562"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/ProductSurfaceEligibilityDtos.java",
+        "sha256": "0fa698b19b05b479f57240da3cf5df1a19722d3336a0c9a2aa4bd54b1e35898f",
+        "bytes": 2755,
+        "mtimeNs": "1788935965789790645"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build.gradle",
+        "sha256": "c07500124b09af25c1f92412dc8dfcf38aebf8cba06c89d594acd3e7eed53af5",
+        "bytes": 514,
+        "mtimeNs": "1789093911801505322"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon001WorkerAssignmentSnapshotV1.java",
+        "sha256": "36f6385b494e2766186b2f01162a919e8fa92a2c092e46973d129ebf4f2388c0",
+        "bytes": 36160,
+        "mtimeNs": "1789105548891137902"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon002CompensationBasisSnapshotV1.java",
+        "sha256": "067547d2b828ba7481526551e3f2ddadbb7b2f07dff4855e1401f750ddcbeb40",
+        "bytes": 18405,
+        "mtimeNs": "1789105548892896363"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon003WorkerChangedV1.java",
+        "sha256": "b8019b7e1300b33fc25d58d6bd6641ac071f93646e0a51a4d41537a09cd13191",
+        "bytes": 6745,
+        "mtimeNs": "1789105548894846867"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon004EmploymentChangedV1.java",
+        "sha256": "db71f1919d741c38453ca715d3a18ac1cf54d606975c9095d9a2d83be082c8aa",
+        "bytes": 6913,
+        "mtimeNs": "1789105548896351869"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon005AssignmentChangedV1.java",
+        "sha256": "b74984cd884d440bf4b01257cbd2f6850264582ada5eda79004f3010b2224958",
+        "bytes": 10835,
+        "mtimeNs": "1789105548897681080"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon006OrganizationChangedV1.java",
+        "sha256": "f283f84ab0573276a0f8e075fff8597e5a2822a224d991aabcf87644f06c0b8b",
+        "bytes": 8989,
+        "mtimeNs": "1789105548899118457"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon007CompensationBasisChangedV1.java",
+        "sha256": "c6cb103ee80afac49cad37dac26248f902a124405f30930dd56b1c994bf991f5",
+        "bytes": 8930,
+        "mtimeNs": "1789105548900700585"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon008ClosedTimeResultV1.java",
+        "sha256": "f7fe44f2130cef73b1e06709a8f8bf068a2d307f2d372a46ed3380927c3e6204",
+        "bytes": 30417,
+        "mtimeNs": "1789105548902288880"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon009TimePeriodClosedV1.java",
+        "sha256": "6d019dbf798fe6bc18cf6acbd1a4eb17ffa9f7da951a4ec5efd224368bf53739",
+        "bytes": 10483,
+        "mtimeNs": "1789105548903556924"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon010TimePeriodReopenedV1.java",
+        "sha256": "09f50628bc3ddf4c98fd341865665eff7acd4c9ae2d121102b4a9d6345a445fe",
+        "bytes": 6745,
+        "mtimeNs": "1789105548904850968"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon011PayrollTimeHandoffReadyV1.java",
+        "sha256": "eafe69d8bf587185679a76aff8232fccecd83deb73513f2b7a8fdd4d830cd759",
+        "bytes": 14008,
+        "mtimeNs": "1789105548905983595"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon012PerformanceHomeContributionChangedV1.java",
+        "sha256": "32f10c254d02402cc22f4a4665f7254c2b4145259437f0df7450992ac1f23f06",
+        "bytes": 13357,
+        "mtimeNs": "1789105548907160097"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon013PeopleHomeContributionChangedV1.java",
+        "sha256": "bb1d943f9d0d7d5c1bfa54abb501d6c177d2ec2b63641231a3b9c1f6d1907b30",
+        "bytes": 13187,
+        "mtimeNs": "1789105548908534224"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon014TimeLeaveHomeContributionChangedV1.java",
+        "sha256": "14c154441eca1641c5e27f9da948653a3faf472b335913db9d77d2c93ee6ae76",
+        "bytes": 13286,
+        "mtimeNs": "1789105548909741726"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon015PayrollHomeContributionChangedV1.java",
+        "sha256": "ab457636026325114cfe7c7981a6bab02ef3ba5e43f395195341970910cf6a3c",
+        "bytes": 13222,
+        "mtimeNs": "1789105548910589603"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon016WorkplaceAssignmentSnapshotV1.java",
+        "sha256": "8cdcfaa2628ed94e0095e7575bae109de34304d7747460400d2142393feb5aed",
+        "bytes": 15010,
+        "mtimeNs": "1789105548911681063"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon017WorkerDependentEligibilitySnapshotV1.java",
+        "sha256": "59aee3ee7e7c5d1db46dc71c74c71acd738027e00e32cc272c68ae25b1b5b83d",
+        "bytes": 20730,
+        "mtimeNs": "1789105548912677607"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon018WorkerTaxIdentitySnapshotV1.java",
+        "sha256": "fd685020b0f86cbcf19c1075bdac0e9c32f768ea290f2868cff4d95604e504ce",
+        "bytes": 14483,
+        "mtimeNs": "1789105548913725359"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon019WorkerBankAccountTokenSnapshotV1.java",
+        "sha256": "d8dbce8fc731441922f05d71e8fb4a67a845ced1b6eb9934bee2331c96dd6bf8",
+        "bytes": 14683,
+        "mtimeNs": "1789105548915167570"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon020ApprovedCompensationPlanSnapshotV1.java",
+        "sha256": "ac0806b33b674d6abf93d12d33749bafc969cbe6a1f7e8a5c8dd4fd10542a1f4",
+        "bytes": 28724,
+        "mtimeNs": "1789105548916069946"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon021CompensationPlanApprovedV1.java",
+        "sha256": "eded3077db0f2a14192c26033a5c663363a24b28ebe9924052650a0e9a1b3b92",
+        "bytes": 8677,
+        "mtimeNs": "1789105548916765739"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/AgentRuntimePort.java",
+        "sha256": "576eab3e4f2941a81152a11f274d885493e68b839aa38d3de440adb941e41877",
+        "bytes": 2650,
+        "mtimeNs": "1788935965813482711"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/AuditEventEnvelope.java",
+        "sha256": "574e7d0274d8524bec507b6c644377f208f9d2d741c685245b9840398c0e4915",
+        "bytes": 1213,
+        "mtimeNs": "1788935965813795748"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/ConnectorPort.java",
+        "sha256": "151787741a48cc787637006d85f492629ddb6ba3b525749a183ef5c224570788",
+        "bytes": 3264,
+        "mtimeNs": "1788935965814003745"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/ContractChecks.java",
+        "sha256": "75972b4249db3e71333f3aed8ae68debc91585c03a1ebb0b7c4a2ae46e36bbe6",
+        "bytes": 821,
+        "mtimeNs": "1788935965814144743"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/DataClassification.java",
+        "sha256": "73adddda63ce6a7c2f667005829bb5038462184222ef5dd5ad7f070f107b7043",
+        "bytes": 130,
+        "mtimeNs": "1788935965814264741"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/ExecutionContext.java",
+        "sha256": "d48699a081368e96ad60acdfe69b4187de907ba855998d3ee1d0dadc61b99b1b",
+        "bytes": 506,
+        "mtimeNs": "1788935965814386906"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/KnowledgeSearchPort.java",
+        "sha256": "d2e048441ee5d8e842ac00df35918f6dac9e0cf3c4fb59af0098d9a4d5d4f57c",
+        "bytes": 1517,
+        "mtimeNs": "1788935965814517237"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/MailConnectorPort.java",
+        "sha256": "1f0c137c3313d07debdca07bea09980697fec774a1bdbfa20a4069549a42e1e6",
+        "bytes": 7173,
+        "mtimeNs": "1788935965814639319"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/RiskTier.java",
+        "sha256": "bdc7aacb7eb5d0d201728c068c8d9f493eb5ef33e3e203424995c4287f2b3920",
+        "bytes": 92,
+        "mtimeNs": "1788935965814778858"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contract/WorkflowPort.java",
+        "sha256": "e55461b09b8da25857481fff10f27b9aa82eb3bcb8a0832ed68460019899979b",
+        "bytes": 2607,
+        "mtimeNs": "1788935965814887023"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ApprovalDecisionRecordedV1.java",
+        "sha256": "4de981ed6bf47dcc0096cb23a41907295ddeb591df512983557b551981f285c4",
+        "bytes": 16276,
+        "mtimeNs": "1789105548918035366"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ApprovalRequestV1.java",
+        "sha256": "3711b9d45818410addcdd0eb290c5ba28710602b8c513016352e2b22ff597d85",
+        "bytes": 16114,
+        "mtimeNs": "1789105548919036660"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/AutomationHandlerManifestV1.java",
+        "sha256": "1e2007894844f1d2255231af083a9bf2ae5a7bc45c7501458f1607a27ea6e999",
+        "bytes": 15353,
+        "mtimeNs": "1789105548920174704"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/AutomationInvocationV1.java",
+        "sha256": "976a7ca0aa3dd4d5d00fafd31c6d8165c433552c4d06e18ffb6527f54f127d52",
+        "bytes": 17341,
+        "mtimeNs": "1789105548921567081"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/AutomationRunItemReceiptV1.java",
+        "sha256": "4b2f4825ca2acb98ce63938909e33cd4c928e9170d5d7c027af9111bf8e99f55",
+        "bytes": 17347,
+        "mtimeNs": "1789105548922707958"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/CanonicalDecimalJson.java",
+        "sha256": "02b77fe14956aee0e07642d4ac68c97d7a1059f18ade6d910a8e8856d73cd78c",
+        "bytes": 3986,
+        "mtimeNs": "1789094021978525934"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/CanonicalHrisJson.java",
+        "sha256": "3fa39d9bdd58732d8c9a36a972e6070af7022fbe4df705d26906e30a638de5d3",
+        "bytes": 7487,
+        "mtimeNs": "1789094852910615291"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ConnectorExecutionRequestV1.java",
+        "sha256": "6327d564cb4c11847bb4a3487d609c1c8e5dcdee3b8e3afd4f94adba78cae20b",
+        "bytes": 16897,
+        "mtimeNs": "1789105548924665712"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ConnectorMappingVersionV1.java",
+        "sha256": "8583203c4caf26514fe3c925863f0dfb4ea428acc8aab1adb0828e7c99a74afe",
+        "bytes": 18338,
+        "mtimeNs": "1789105548925785630"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ConnectorReconciliationReceiptV1.java",
+        "sha256": "e1502162e1e9863e014e6c6a8c0eb756a2d80799d47745c868f751d2ebb7e7e4",
+        "bytes": 18062,
+        "mtimeNs": "1789105548926836174"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisAuditOutboxEventV1.java",
+        "sha256": "c74274cc9bd959e289bd8fe58cbc23a60563b2784962b844813a40dd5c518018",
+        "bytes": 35697,
+        "mtimeNs": "1789105548927874426"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisConfigurationInvalidatedV1.java",
+        "sha256": "a126ba5d73e5c1d2e3e67a6d18ba5d92ad7d58e92f047a9b87234d8c6b07165a",
+        "bytes": 12547,
+        "mtimeNs": "1789105548929230137"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisConfigurationPublishedV1.java",
+        "sha256": "dc042a9e45a6f36fac1330942045f7dae26e12058923166de8417bd2bb25bbf6",
+        "bytes": 15171,
+        "mtimeNs": "1789105548930394138"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisConfigurationVersionV1.java",
+        "sha256": "20425d4798e62683bcb30a2ecac5221a181f73745d37805654d10240ac7e4263",
+        "bytes": 14636,
+        "mtimeNs": "1789105548931426182"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationIntentV1.java",
+        "sha256": "86f61e966ed8bbac8ffdc4088869e863e573c786e1c360ec6ee554657329ad07",
+        "bytes": 30024,
+        "mtimeNs": "1789105548932553267"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationReceiptV1.java",
+        "sha256": "052170635e85321f9c40736d8fd990a4d75a4d588fe545e626460b584f7ac20d",
+        "bytes": 26938,
+        "mtimeNs": "1789106524993308438"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+        "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+        "bytes": 649,
+        "mtimeNs": "1789354991077290911"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java",
+        "sha256": "c665723f366527687c9e3dec55cefd4534defdc8b0aecc596ada3ab15eb40735",
+        "bytes": 12998,
+        "mtimeNs": "1789361799934737638"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfPersonPortV1.java",
+        "sha256": "fc8c01dfe60de405b37fa363b4f727ec3681dc67fda17b43daae93b82260a8b7",
+        "bytes": 7901,
+        "mtimeNs": "1789361441385963841"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+        "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+        "bytes": 1496,
+        "mtimeNs": "1789354991078381067"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfPersonSnapshotV1.java",
+        "sha256": "62378ba2bb29d6cc020b3260720ac99d65d2dedad37306f390dc0f759758b41d",
+        "bytes": 472,
+        "mtimeNs": "1789361378867411541"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextAuthorityV1.java",
+        "sha256": "df1db8b5740aee6381c46bc692d9a01dbe91a43e28d422b373237b52cdbce827",
+        "bytes": 1574,
+        "mtimeNs": "1789355199306843445"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextContractExceptionV1.java",
+        "sha256": "c1e376e7332e950d1f0b37ada3d4f106b27bcc213cc713e89982bc8080d83f47",
+        "bytes": 830,
+        "mtimeNs": "1789355488820323178"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextOwnerPortsV1.java",
+        "sha256": "ccb3c2ace5e192c01cb620c8a658df8b69599e945f07181c1ced62384e0f46c4",
+        "bytes": 2479,
+        "mtimeNs": "1789355058604417179"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPortV1.java",
+        "sha256": "556dacec7f3d49a2a2568d023d94db7d6ada0cbabfdd279dfab33902331725ff",
+        "bytes": 285,
+        "mtimeNs": "1789354991079850469"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+        "sha256": "7e3ea5978a47dbb09d752757a05806404453d0cf5f8ce7227d1e9b911acef2bd",
+        "bytes": 543,
+        "mtimeNs": "1789354991075458554"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextQueryV1.java",
+        "sha256": "8e17e7f5f5baaed2bb8479136cc2b9860232c868879978807f0d1995e35152a2",
+        "bytes": 317,
+        "mtimeNs": "1789354991076747667"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextResolutionV1.java",
+        "sha256": "61e7f0762065ba2997d387ceddd18af3399972c0c1922369ad764aba166a18e5",
+        "bytes": 2658,
+        "mtimeNs": "1789354991081169998"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextSelectorV1.java",
+        "sha256": "258846f1a4a037aae51da484fe8df1e9c06a30c64cf03caa36e2a89749e6af50",
+        "bytes": 315,
+        "mtimeNs": "1789354991076040548"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonOwnerPortsV1.java",
+        "sha256": "f6b139f187097c3f8a7255dc7730a173fd94ebaebcf37094e771d417fbbfb43a",
+        "bytes": 1332,
+        "mtimeNs": "1789361378867909626"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonPortV1.java",
+        "sha256": "da53481c004df5e8c6b2924fb5a3c632dd7752822fd18b2f372c0c7fa14e82a4",
+        "bytes": 266,
+        "mtimeNs": "1789361378866867663"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonResolutionV1.java",
+        "sha256": "40a6e0c394dd268dcc06f759ab2db2b7233d811e24ea9f578665130c17c7e98f",
+        "bytes": 1388,
+        "mtimeNs": "1789361378868214378"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationExceptionV2.java",
+        "sha256": "53651c8aaafe91d6540036c63ba8be414f7281fe5bcaf11cf15072a382a4b9c2",
+        "bytes": 786,
+        "mtimeNs": "1789370904365491717"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationPortsV2.java",
+        "sha256": "c7f8cf621b2b4679f65b4ca9747987caaa379c88d17b47a43f8506a66ffcd841",
+        "bytes": 2315,
+        "mtimeNs": "1789370904366254895"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2.java",
+        "sha256": "a5537ff53d88b93d9ac759d2ccfd3c5840b3b91b80a97e021ce60cf28424efdd",
+        "bytes": 4952,
+        "mtimeNs": "1789370928007662329"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/GuardedCurrentHrisAuthorizationPortV2.java",
+        "sha256": "b87b2cc6d461a8b23bbbb87596bcc2abc6d256593644b5364c67b976b771eb33",
+        "bytes": 16115,
+        "mtimeNs": "1789370927998939867"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/VerifiedCurrentHrisAuthorizationV2.java",
+        "sha256": "f6de6969a3bf65e499faa108beddd7d4b1d2924911079bfa30f2ee3f00259d05",
+        "bytes": 2548,
+        "mtimeNs": "1789370904366695734"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contract/GeneratedHrisContractTest.java",
+        "sha256": "4faf37b3813588d155580c7c976cbb4469752ca22c0188b89ca3822ff5b5bd01",
+        "bytes": 42879,
+        "mtimeNs": "1789107171363257006"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contract/PlatformContractTest.java",
+        "sha256": "da4d1cd59ff867d42c29ba3fb61bcba0f9363748c068e4336a1415cb82fdf0a3",
+        "bytes": 4847,
+        "mtimeNs": "1788935965816181879"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/IdentitySelfContextContractTest.java",
+        "sha256": "f2b37b387cc989eb65dbb7ae4b17762c265a428390ca654dee1a91ed41ee80fd",
+        "bytes": 27027,
+        "mtimeNs": "1789362298111600276"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/IdentitySelfContextProgressClockRegressionTest.java",
+        "sha256": "ca41ea1fa960a2b87aeb722c2d7bd227681e0f5fa3f67c9b57a33de4667c19a1",
+        "bytes": 3230,
+        "mtimeNs": "1789361581045310999"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonContractV1Test.java",
+        "sha256": "65c2007673dafb86ecfde1737bd484ca573011f3c38e844fa43b61df548ae1a7",
+        "bytes": 14680,
+        "mtimeNs": "1789362188943203623"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2Test.java",
+        "sha256": "311633497bfba7fc8f9ab54cb2cd6155dc2a647d9bc3a339572141ccd37bfdcf",
+        "bytes": 19580,
+        "mtimeNs": "1789371076502812143"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/gradle/wrapper/gradle-wrapper.properties",
+        "sha256": "1b9cd6961ee86eea17b2f912bddb22030492db23fc6dff07da6c30eccaaab0c4",
+        "bytes": 340,
+        "mtimeNs": "1788935966266960659"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/settings.gradle",
+        "sha256": "bbaf19ef8cdf3894bfa06fc036f6548c2367decc0a8f447288f01bb019252683",
+        "bytes": 508,
+        "mtimeNs": "1789100377990483676"
+      }
+    ],
+    "startedAt": "2026-09-14T07:33:31.712490+00:00",
+    "exitCode": 0,
+    "timedOut": false,
+    "durationSeconds": 6.086671249999199,
+    "finishedAt": "2026-09-14T07:33:37.799811+00:00",
+    "gradleOutputSha256": "05ec59079ba9253fd8c7e6c323c63068b42734483a2f9735eb5a08bda691ee4a",
+    "gradleTaskOutcomes": [
+      "> Task :dwp-platform-contracts:compileJava",
+      "> Task :dwp-platform-contracts:processResources UP-TO-DATE",
+      "> Task :dwp-platform-contracts:classes",
+      "> Task :dwp-platform-contracts:compileTestJava",
+      "> Task :dwp-platform-contracts:processTestResources NO-SOURCE",
+      "> Task :dwp-platform-contracts:testClasses",
+      "> Task :dwp-platform-contracts:test"
+    ],
+    "sourcesUnchanged": true,
+    "postSources": null,
+    "postSourcesEncoding": "IDENTICAL_TO_PRE_AFTER_FULL_CAPTURE_COMPARE",
+    "preManifestSha256": "78f1f66d80191a6e3e41fc872a91d794646b5e6f4840809cc163e19c318c5f2c",
+    "postManifestSha256": "78f1f66d80191a6e3e41fc872a91d794646b5e6f4840809cc163e19c318c5f2c",
+    "postHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "postTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "postStatus": "M dwp-auth-server/build.gradle\n M dwp-migration-control/build.gradle\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/hris/\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupClockEntryRegressionTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuardTest.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/startup/\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/startup/\n?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/\n?? dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/\n?? dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql\n?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/\n?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/",
+    "suite": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build/test-results/test/TEST-com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test.xml",
+      "sha256": "d6ac8bdbf63c90742b960e7452a6d6c3bd486558891382b6081137227c4890f9",
+      "mtimeNs": "1789371217704160064",
+      "name": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+      "timestamp": "2026-09-14T07:33:37",
+      "tests": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "1 negative=MISSING_INVOCATION",
+          "seconds": "0.013",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "2 negative=MISSING_DWP",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "3 negative=MISSING_PEOPLE",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "4 negative=MISSING_CLOCK",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "5 negative=NULL_INVOCATION",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "6 negative=WRONG_OPERATION",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "7 negative=INVALID_USER",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "8 negative=NULL_PRINCIPAL",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "9 negative=UNBOUND_PERSON_UUID_EQUALITY_FALLBACK",
+          "seconds": "0.002",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "10 negative=WRONG_NATIVE_PERSON",
+          "seconds": "0.011",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "11 negative=USER_VERSION_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "12 negative=ACCESS_REVISION_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "13 negative=REVOKED_ACTOR",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "14 negative=PLATFORM_ACTOR",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "15 negative=INVALID_AUTH_REVISION",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "16 negative=INVALID_POLICY_REVISION",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "17 negative=INVALID_CONTEXT_REVISION",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "18 negative=INVALID_DECISION_REVISION",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "19 negative=APP_MISSING",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "20 negative=PERMISSION_MISSING",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "21 negative=DUTY_MISSING",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "22 negative=STATIC_SOD_DENIED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "23 negative=POPULATION_DENIED",
+          "seconds": "0.002",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "24 negative=PURPOSE_DENIED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "25 negative=FIELD_DENIED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "26 negative=DYNAMIC_SOD_DENIED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "27 negative=FOREIGN_TARGET_TENANT",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "28 negative=WRONG_TARGET_PERSON",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "29 negative=WRONG_EMPLOYMENT_PARENT",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "30 negative=PERSON_HAS_EMPLOYMENT",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "31 negative=SCOPE_MISMATCH",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "32 negative=WRONG_PEOPLE_REVISION_KIND",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "33 negative=AUTH_REVISION_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "34 negative=POLICY_POINTER_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "35 negative=CONTEXT_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "36 negative=DECISION_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "37 negative=TARGET_PERSON_VERSION_CHANGED",
+          "seconds": "0.002",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "38 negative=TARGET_WORKER_VERSION_CHANGED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "39 negative=TARGET_RELATIONSHIP_VERSION_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "40 negative=TARGET_ASSIGNMENT_VERSION_CHANGED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "41 negative=FIELD_POLICY_CHANGED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "42 negative=PURPOSE_POLICY_CHANGED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "43 negative=DYNAMIC_SOD_POLICY_CHANGED",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "44 negative=INVOCATION_EXPIRED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "45 negative=DWP_EXPIRED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "46 negative=PEOPLE_EXPIRED",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "47 negative=FIRST_PROOF_EXPIRES_DURING_REFETCH",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "48 negative=STALE_AUTH_CAPTURE",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "49 negative=BACKWARDS_CLOCK",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "50 negative=NULL_CLOCK",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "51 negative=THROWING_CLOCK",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "52 negative=OWNER_SECRET",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "53 negative=TYPED_OWNER_CAUSE",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "publicApiNeverAcceptsRawAuthorityAndVerifiedConstructionIsPrivate()",
+          "seconds": "0.002",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "1 positive=SELF_PERSON",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "2 positive=NONSELF_PERSON_WITHOUT_TARGET_AUTH",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "3 positive=SELF_EMPLOYMENT",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "4 positive=NONSELF_EMPLOYMENT_ACTOR_WITHOUT_PERSON",
+          "seconds": "0.001",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "5 positive=ZERO_NATIVE_VERSIONS",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        },
+        {
+          "classname": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+          "name": "6 positive=PROGRESSING_CLOCK",
+          "seconds": "0.0",
+          "result": "pass",
+          "failures": []
+        }
+      ],
+      "rawXmlGzipBase64": "H4sIAAAAAAACE82aXXOiOhjH7/spPFztudAKWmt3tDspRGWKSTYEXc/ODsPBdMtsFQawuz2f/sS3GkUuS7wDefv55OH//POE3pc/i5faK0+zKF72Nb3R1Gp8GcbzaPmzr3lsUO9qX+6vejnP8mwV5by2DBa8r4XxojH/nTSSlyB/itNFI4yXeRqEedZ4TqOsEc35Mo/yt8ar0TBXaSr2RuJ3sMqf4zT6L8jF4yYGE3fVapt797WOeHT2K0oSPu9rYvspiF5WKc82OzxN43S7mUcLcUGwSPqa0TQ69eZdXW+z5u3nVutz61arPcdZvoUcB+FDHP+qkzTeXiaubzS7be3+qlbrJWmc8DSPeHa92V9jhEG2/4d6bcl/Cs5X3h/brmujoW+jCTYBszHSauFLkGUfEIs9pd7SzmIZRSxrSj6ep6mf52kVeQjExIHqkNpFJNPB5uPHE53nuTnwIM9xKk2jshh1DkxTikWEMIFUMdPtgUmECDi25XsupKqGrXsybITayLQJcNRF6O6A5KEH7CFLvGzUxcj3PBEt+NUTUWMzfwAc5wFUkfFN4zyp3jxNMCSyawJ3vBXoZ0kIdUnX19nlTwSQSHvfHAE0hJaqbNMlYQemCV3Xp3BiXwSapPGCCT9Cywcmw8reTF1SeOIANsB0rJjopqhdwGOj9zFUBtYpghHs2OZMPdoZvTcxYvAbq5CtTGr1bpHOgub2hbwAPKkUAEL8ndFRB2RIgi80fsMjIqWeS9J7yxO1UT2RpPQuE1XR9F28Ti5kV6HxpViSyhNMPGfjBqvDKjEShqz1HiXYhepDJan9wIbOBQyeJPPWDIHxpSSVpPGiSkN7iHwG6BAyn0EEEFNVfIzuqT/dYVXlT0uw7k6x4Jg4eDaGSKABCtVFrHUs8OtJxwi4Ep/CHoSk8a4pZrJrkR8DZo4UMhmnI7ltixxc/aONlFn6liT2Rz5V9VyjJcv91qcSbAtTSJWTSaK/t6mqkWTV33tT1UyS4h9JavUT7TJL0eoWEKeYPqroBZSqx10BkcKtI3NHNrmUpkW7WcAEwl0P0aZeXQqkfurWdsKifJTbRtHbXgxb67yjvBi+9tH8fNdQ9+E3YlOFuSYVCWtKlON0ZM+2sR+qieQJgU1dUR0oxoMdlutbHl2v11A4gErtW7t7NEkXgdvYJBMQ5lGoLHpSWVj396eAWq7ixa3myTKJWhpJ69mI4mmFi39lqXQjqTyeImEzXGhSqGwidyMpO5sRaPlbKhN4rrLMTlb/vkQhSCLEX3kKwpAneUaD37t75W9gOZ/wNHqK+NyMl1mersL17e2MpNFrkPNPfytc7KolcRZttQI6g8p6CKVdlwMPEobxgORPbTbCHts3O9aapvLTgeOwVdlKKPtyoBA4qf+yWWF6D6HqQb45sP4DKd6vr+5Mt6sqhJ0DlqjsQ1HTFXyAkb1lOV/U41V+3/vru2kBBr7/+HHfu5YOSOfxND1/3vrAVe/6/eOn+6v/AfSaqyQwJQAA"
+    },
+    "lockReleased": true
+  },
+  "all60CaseIdsUnique": true,
+  "fixtureAllocation": {
+    "suite": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+    "typedCases": 60,
+    "typedPositive": 6,
+    "typedNegative": 53,
+    "privateApiBoundary": 1,
+    "actualNativeCases": 0,
+    "skipped": 0,
+    "actualExecutionStatus": "60_CASES_REAL_AUTHOR_UNIT_PASS_NOT_NATIVE_INTEGRATION",
+    "run": {
+      "argv": [
+        "./gradlew",
+        ":dwp-platform-contracts:test",
+        "--rerun",
+        "--tests",
+        "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+        "--no-daemon",
+        "--max-workers=1"
+      ],
+      "startedAt": "2026-09-14T07:33:31.712490+00:00",
+      "finishedAt": "2026-09-14T07:33:37.799811+00:00",
+      "durationSeconds": 6.086671249999199,
+      "exitCode": 0
+    }
+  },
+  "sourceOwnership": {
+    "Auth": {
+      "identity": "public.com_users: tenant_id/user_id/public_id/person_public_id/identity_plane/status/version/access_revision; native principal→person authoritative relation",
+      "rowBindingStamp": "existing user.version, conservatively; separate access_revision; never auth-SHA→long",
+      "authorization": "ProductAuthorizationIdentityEvidenceService auth-* current permission/roles/resource responsibilities/scoped-duty hash; ProductAuthorizationAuthorityAdapter exact policy-* active bundle pointer+checksum and psc-* context; no new independent RBAC"
+    },
+    "Gateway": {
+      "identity": "verified session/server invocation after external actor/person/tenant header stripping and service-token validation",
+      "decisionRevision": "psr-* composite auth/policy/relationship/population/support + rollout, never substituted with auth-*"
+    },
+    "People": {
+      "identity": "public.ppl_persons→ppl_workers→ppl_work_relationships→ppl_assignments owner-native public UUID parent links and person/worker/relationship/assignment versions",
+      "policies": "owner-derived selected population, relationship, field policy, purpose policy, dynamic maker/approver/publisher SoD; opaque native string references"
+    }
+  },
+  "registrationOrder": [
+    {
+      "phase": 1,
+      "owner": "Product/Auth/Gateway/People",
+      "work": "independently approve exact versioned owner-neutral schemas/transport source ownership and current freshness/session binding; map source revisions without numeric conversion",
+      "implemented": false
+    },
+    {
+      "phase": 2,
+      "owner": "Auth",
+      "work": "new private v2 lookup native user/person/current permissions bridge over existing Auth SoR; reevaluate through current ProductAuthorizationAuthorityAdapter; route-scoped evaluated grants and existing responsibilities/duties; registered HRIS generic scoped duty/SoD extension, not existing approvals-only default true",
+      "implemented": false
+    },
+    {
+      "phase": 3,
+      "owner": "Gateway",
+      "work": "verified invocation + current psr source delivery; no client actor/person/tenant header authority, no same-string revision substitution; exact route/purpose/audience and native session/access revalidation",
+      "implemented": false
+    },
+    {
+      "phase": 4,
+      "owner": "People",
+      "work": "explicit PERSON/EMPLOYMENT native target selector/parent/version refetch and registered population/field/purpose/dynamic SoD policy; no lateral LIMIT1/multiple-scope implicit first selection; no Auth DB join",
+      "implemented": false
+    },
+    {
+      "phase": 5,
+      "owner": "command/query service",
+      "work": "actual per-operation PEP; query projection/masking; transactional target lock/CAS/current expected psr and native versions before mutation/outbox; epoch/freshness/revocation/relocation cross-owner boundary reviewed",
+      "implemented": false
+    },
+    {
+      "phase": 6,
+      "owner": "shared registration/independent reviewers",
+      "work": "consumer compile/native PG/verified-transport forgery/lifecycle/revoke/SoD race tests, register source/operation contracts after proof; do not open Gate from author mocks",
+      "implemented": false
+    }
+  ],
+  "plannedConsumersAndTests": [
+    {
+      "owner": "Auth",
+      "source": "dwp-auth-server/.../hris/authorization/v2/AuthCurrentDwpAuthorizationBridgeV2.java",
+      "test": "dwp-auth-server/.../hris/authorization/v2/AuthCurrentDwpAuthorizationBridgeV2Test.java + isolated PostgresTest",
+      "status": "NOT_IMPLEMENTED",
+      "requiredNativeChecks": "com_users original tenant/user/principal/person+version/access/current status; actual ProductAuthorizationAuthorityAdapter route-scoped native result; HRIS generic atomic-duty/SoD registration; no People DB access"
+    },
+    {
+      "owner": "Gateway",
+      "source": "dwp-gateway/.../productsurface/HrisCurrentInvocationBridgeV2.java",
+      "test": "HrisCurrentInvocationBridgeV2ForgeryTest.java",
+      "status": "NOT_IMPLEMENTED",
+      "requiredNativeChecks": "verified session/service invocation and tenant/plane/actor binding; current native psr source; no client-minted flags/source revisions; signed freshness/transport issuer/audience"
+    },
+    {
+      "owner": "People",
+      "source": "dwp-people-server/.../hris/authorization/v2/PeopleCurrentTargetAuthorityBridgeV2.java",
+      "test": "PeopleCurrentTargetAuthorityBridgeV2Test.java + isolated PostgresTest",
+      "status": "NOT_IMPLEMENTED",
+      "requiredNativeChecks": "PERSON/no target Auth/worker-free and EMPLOYMENT selected native FK+4versions; current registered population/field/purpose/dynamic SoD; no com_users DB access"
+    },
+    {
+      "owner": "People/Payroll/HRIS consumers",
+      "source": "per-operation server PEP and transaction/query projection",
+      "test": "CurrentHrisAuthorizationV2ConsumerTest.java + revision/revoke/SoD race native tests",
+      "status": "NOT_IMPLEMENTED",
+      "requiredNativeChecks": "consume exact actor2 versus target4 stamps/string revision types; actual query field masking and mutation target locks/CAS/expected current psr; compiler/root registry allocation"
+    }
+  ],
+  "remainingP0": [
+    "ScopedAdminDutyPolicy.requiresScopedDuty currently approvals/approvals.admin only and staticSodConflict switch covers only 3 approvals capabilities; HRIS policy is not already completed.",
+    "Native production Auth/current Gateway/People providers, HTTP parser/signature/audience/freshness proof and owner relink/revoke ordering are absent from this scaffold.",
+    "People existing primary-assignment/implicit selected-scope behavior must not be inherited as comprehensive multi-employment authority.",
+    "Sequential native refetch cannot prove cross-database atomic revocation or transaction PEP; end-of-read bounded lease is not action authorization at a later time.",
+    "String namespace validation proves shape only; actual auth/policy/psc/psr/People source provenance requires trusted native/transport providers.",
+    "No source verification-root/owner registry/menu route was registered; whole current BE check/HRIS G3 approval are not claimed."
+  ],
+  "diagnosticLimits": [
+    "Public raw carriers and namespace/shape checks do not prove cryptographic current-owner source provenance.",
+    "The guard API accepts only a business selector; public raw source result construction is not authority. Configured server providers are trusted composition prerequisites, not implemented providers.",
+    "Both owner refetches and source equality are author mock assertions. They are not native Auth/Gateway/People E2E, revoke/lifecycle ordering or cross-DB atomic transaction proof.",
+    "No old native72/79/165/Control31 PASS is reused as this v2 scaffold's native result.",
+    "Current integration worktree is approved-dirty candidate development, not clean/full-HEAD/G0 readiness evidence; exact pre/post statuses captured."
+  ],
+  "mutation": "Only approved new v2 files/proposal/report authored. Existing v1/core/Control/SQL/shared registry/Gates/menu routes unchanged by this task. No commit/propagation."
+}

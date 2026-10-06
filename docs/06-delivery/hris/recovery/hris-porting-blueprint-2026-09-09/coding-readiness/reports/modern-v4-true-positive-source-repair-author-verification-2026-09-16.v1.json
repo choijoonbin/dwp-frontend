@@ -1,0 +1,185 @@
+{
+  "reportId": "dwp.hris.modern-v4-true-positive-source-repair-author-verification.2026-09-16.v1",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T11:18:47+09:00",
+  "status": "PASS_7_TRUE_POSITIVE_SOURCE_DEFECTS_REPAIRED",
+  "decision": "SOURCE_REPAIR_COMPLETE_NEW_CANDIDATE_REQUIRES_SEPARATE_G11_SUCCESSOR_METADATA",
+  "scope": {
+    "classificationAuthority": "coding-readiness/reports/modern-v4-preflight-finding-triage-independent-2026-09-16.v1.json",
+    "classificationAuthoritySha256": "03f8e2a967e052a7096b0bc837b5ccb9c7faee6a30920717a1f438647f5e953c",
+    "classificationAuthoritySealedPayloadSha256": "e930be1e35d7987a1373c6e16133cc196a62e80fce9e50e685e81820fffbaa8e",
+    "includedGroups": [
+      "G01",
+      "G10"
+    ],
+    "includedFindings": 7,
+    "writeBoundary": [
+      "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "coding-readiness/generate_modern_exact_event_successor.py",
+      "coding-readiness/reports/modern-v4-true-positive-source-repair-author-verification-2026-09-16.v1.json"
+    ],
+    "forbiddenMutationsObserved": {
+      "workspaceCandidateDirectories": 0,
+      "liveCanonicalArtifacts": 0,
+      "gateOrDecisionRegisters": 0,
+      "immutablePolicyV4": 0,
+      "reviewedClosedSetDesignMetadata": 0
+    }
+  },
+  "sourcePins": {
+    "operationGenerator": {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "preRepairSha256": "f9b3a32c7117c4bc308fc21018303e4b16c62d4c2a78ea9031b5a3371689cb0f",
+      "postRepairSha256": "7b1803b44949a259b3bb1c587d88a93477a07fd7e60e360db2415db5b0f54750",
+      "sourceProjectionVersion": "modern-operation-causal-source-v7-2026-09-16"
+    },
+    "exactGenerator": {
+      "path": "coding-readiness/generate_modern_exact_event_successor.py",
+      "preRepairSha256": "486f42e3041dc3134ebd166f3a3bc88e893cf51fd4e847bc51f0ed36c228fc12",
+      "postRepairSha256": "cab6526a2ef498b101182aefdb8d52509b2e61150ab0f6ec6b3825a14fac7ec4",
+      "sourceProjectionVersion": "modern-exact-schema-source-v5-2026-09-16"
+    },
+    "unchangedDesignInput": {
+      "path": "coding-readiness/modern_closed_set_design.py",
+      "sha256": "53282661fd973816e27c9e95ff74091d62da2982f24060d15a56fae9a16e43d6"
+    },
+    "unchangedImmutablePolicyV4": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de"
+    }
+  },
+  "repairs": [
+    {
+      "operationId": "modern.benefits.lifeevents.query",
+      "findingCount": 2,
+      "executableReadAdded": "ppl_bnf_life_event_decisions",
+      "directResponseBindings": {
+        "decisionOutcome": "ppl_bnf_life_event_decisions.decision",
+        "decisionReasonCode": "ppl_bnf_life_event_decisions.reason_code"
+      },
+      "joinClosure": "tenant plus life-event parent identity plus exact fact_revision=aggregate_version; no mutable-latest fallback"
+    },
+    {
+      "operationId": "modern.compplan.cycles.query",
+      "findingCount": 2,
+      "executableReadAdded": "prf_cmp_plan_proposal_refs",
+      "directResponseBindings": {
+        "approvedProposalPublicIds": "prf_cmp_plan_proposal_refs.proposal_public_id",
+        "approvedProposalVersions": "prf_cmp_plan_proposal_refs.proposal_version"
+      },
+      "joinClosure": "tenant plus cycle-to-plan identity plus exact plan revision; no mutable-latest fallback"
+    },
+    {
+      "operationId": "modern.compplan.proposals.query",
+      "findingCount": 2,
+      "executableReadAdded": "prf_cmp_plan_proposal_refs",
+      "directResponseBindings": {
+        "approvedPlanPublicIds": "prf_cmp_plan_proposal_refs.plan_public_id",
+        "approvedPlanRevisions": "prf_cmp_plan_proposal_refs.plan_revision"
+      },
+      "joinClosure": "tenant plus exact proposal identity and proposal version; no mutable-latest fallback"
+    },
+    {
+      "operationId": "modern.onboarding.self.query",
+      "findingCount": 1,
+      "executableReadsAdded": [
+        "ppl_jny_template_versions",
+        "ppl_jny_template_task_definitions"
+      ],
+      "directResponseBindings": {
+        "templateTaskKeys": "ppl_jny_template_task_definitions.task_key",
+        "templateTaskRequiredFlags": "ppl_jny_template_task_definitions.required_flag"
+      },
+      "joinClosure": "tenant plus caller-worker self scope plus assigned template version and assignment task_key; no mutable-latest fallback"
+    }
+  ],
+  "authorSideClosure": {
+    "operationHostileTests": {
+      "status": "PASS",
+      "testsRun": 20,
+      "testsPassed": 20,
+      "coverage": "four affected queries times missing read table, missing physicalSource, relaxed tenant join, wrong physical column, latest fallback enabled"
+    },
+    "exactHostileTests": {
+      "status": "PASS",
+      "testsRun": 5,
+      "testsPassed": 5,
+      "coverage": [
+        "missing read table",
+        "missing projectionTuple physicalSource",
+        "relaxed tenant join",
+        "wrong response source column",
+        "latest fallback enabled"
+      ]
+    },
+    "exactLineageInvariant": "each child field must exist in the physical table, appear in the closed Entity.v3 schema with restricted fail-closed field policy, and have exactly one PHYSICAL_POST_STATE response lineage row"
+  },
+  "verification": {
+    "pythonCompile": "PASS",
+    "sourceComposition": {
+      "status": "PASS",
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 27,
+      "publicEvents": 157,
+      "tables": 131,
+      "ownerPortOperationContracts": 18,
+      "ownerDependencyContracts": 1
+    },
+    "operationFixedPoint": "PASS",
+    "semanticExactFixedPoint": {
+      "status": "PASS",
+      "unregisteredRequestFallbacks": 0,
+      "genericEventFallbacks": 0,
+      "explicitBindings": 13297
+    },
+    "operationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "independentHostileTestsPassed": "22/22",
+      "ephemeralReportSha256": "471ee984415a3943ede3f28a3385881cab3cfa47b7e07f6d64d7c95249088515",
+      "ephemeralSelfTestReportSha256": "880b326956f74a41602695e3bffe4aae9209e3e426cb72faa60ff8323173ac6c"
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "findingCount": 0,
+      "ephemeralReportSha256": "6fa094616a219b781ec6a7738a6c6c4703874cd1ad2828c62b765774184c997e"
+    },
+    "globalValidatorSnapshot": {
+      "status": "EXPECTED_FAIL_OUTSIDE_THIS_REPAIR_SCOPE",
+      "ephemeralReportSha256": "2f6ee12fc7a6c7f94edd12c3a89e14ea2623f473b6fee10e55c9c00905c83772",
+      "originalSevenTruePositiveFindingsRemaining": 0,
+      "relatedStalePolicyMetadataFindingsRemaining": 2,
+      "relatedStalePolicySubjects": [
+        "ppl_bnf_life_event_decisions readConsumer set",
+        "prf_cmp_plan_proposal_refs readConsumer set"
+      ],
+      "interpretation": "G11 requires a separately reviewed sealed successor policy; immutable v4 was not edited and these two findings are not candidate source defects"
+    }
+  },
+  "sourceOnlyComposedHashes": {
+    "modern-capability-operation-causal-contract-ssot.v2.json": "a389fc9875031138a4ef1fe774c076a9a17a39f628d1595278ae92ac8055b212",
+    "modern-capability-exact-schema-contracts.v1.json": "d9b1248fd503ed06e7fbdf12b155ffc74610038bebb58e62a6f509f6a93c58d6",
+    "modern-capability-event-payload-contracts.v1.json": "0133da23317523e2352e1e2e9c39e0eabaa7aab1b2845c9e73e7a8fc232f330b",
+    "modern-capability-semantic-bindings.v1.json": "174124339c8795fce271cf369919cf74b4a492660febb925d0cc94acafde1e87",
+    "modern-capability-public-identity-registry.v1.json": "d53b31a8b10e26599fcbfcf3f9d5644767679c3a217a82e33d4f0a9c92ec0533",
+    "modern-capability-causal-state-contracts.v2.json": "11aa3d954f9d98df289a5f7183432de90707172571817483c9f5bbfc6f63c5ba"
+  },
+  "boundaryAssertions": [
+    "No validator false-positive remediation was implemented in this repair.",
+    "No stale policy metadata was edited or self-authorized in this repair.",
+    "No workspace candidate or live canonical artifact was generated, promoted, or replaced.",
+    "No Gate state was changed.",
+    "The ordinary canonical composer remains fail-closed on immutable-v4 readConsumer drift until an independently reviewed successor policy is active."
+  ],
+  "finalAssertion": {
+    "sevenTruePositiveSourceDefectsClosed": true,
+    "sourceReadyForFreshTemporaryCandidate": true,
+    "freshTemporaryCandidatePrerequisite": "activate separately reviewed G11 successor readConsumer metadata and matching closed validator profile",
+    "canonicalPromotionAuthorized": false,
+    "physicalEmissionAuthorized": false,
+    "g3GateMayOpen": false
+  },
+  "sealedPayloadSha256": "905f5504dc558cc9f422fd7e4bd71d8d956f0e098308429d3627758e77ea9884"
+}

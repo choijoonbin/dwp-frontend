@@ -1,0 +1,310 @@
+{
+  "status": "ARCHIVE_READBACK_VERIFIED_AUTHOR_SUBSET_G3_CLOSED",
+  "capturedAt": "2026-09-14T09:23:04.328675+00:00",
+  "sourceManifestSha256": "910a8401ef97e9b287b3554e525c8ce628d6462655923345ee20429b83b1cc34",
+  "ownedFiles": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v3/NativeHrisUserRolePolicyAdmissionPilotV3.java",
+      "sha256": "63eb1bc46a3d41489707b5994cbed099c34f8c78eb4bcfd0234735567d5fd72c",
+      "bytes": 23234,
+      "mtimeNs": "1789377330456843797",
+      "readbackMatch": true,
+      "lines": 285
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V50__align_workforce_policy_role_code_compatibility.sql",
+      "sha256": "6ac12cc8dc366c022e29f57d940923dda11da4909338b6afc200e093f9e00e89",
+      "bytes": 1004,
+      "mtimeNs": "1789376869501244057",
+      "readbackMatch": true,
+      "lines": 16
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v2/NativeHrisTargetPolicyQueryReaderV2PostgresTest.java",
+      "sha256": "d98c158b664c62dd99541f23e5726622851d74572cdde26dc91ac195efda7958",
+      "bytes": 17938,
+      "mtimeNs": "1789376917158854448",
+      "readbackMatch": true,
+      "lines": 198
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v3/NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest.java",
+      "sha256": "d56a547b4e518b51241242ad4f14c049ecd9a1ec0afc21bbffed49b12d3871cd",
+      "bytes": 27949,
+      "mtimeNs": "1789377392265392077",
+      "readbackMatch": true,
+      "lines": 292
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v3/NativeHrisUserRolePolicyAdmissionPilotV3Test.java",
+      "sha256": "1f09caf5fea9fbe30bc8b6d5b691ad9b9108b77540af2e08209b723b74cc45a2",
+      "bytes": 23184,
+      "mtimeNs": "1789377330457739674",
+      "readbackMatch": true,
+      "lines": 243
+    }
+  ],
+  "reportFiles": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/native-people-user-role-v3-author-verification-2026-09-14.json",
+      "sha256": "521bbc44bede107c7672ea66734fe9b354f2fce95abf0fe3450094ccfe3fde44",
+      "bytes": 257072,
+      "mtimeNs": "1789377745990052509"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/native-people-user-role-v3-author-verification-2026-09-14.md",
+      "sha256": "5c8007a7b66dfe0744cf9561e876b550f0adfdeb21be13f89adb0e912c100b17",
+      "bytes": 6393,
+      "mtimeNs": "1789377746001734412"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/workforce-policy-native-producer-minimal-plan-2026-09-14.md",
+      "sha256": "49cf8b318dddef15a4c078e100da68af99508ae8c29ebd83dd73953df354a5b7",
+      "bytes": 7731,
+      "mtimeNs": "1789377271309315248"
+    }
+  ],
+  "suites": [
+    {
+      "label": "V3_UNIT_FINAL",
+      "xmlSha256": "50881adc8333829295246072c17ac94f57b3c349edf70bb6f269d9bbb2922e12",
+      "xmlMtimeNs": "1789377440833987113",
+      "tests": 65,
+      "failure": 0,
+      "error": 0,
+      "skip": 0,
+      "caseIds": [
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[1] kind=FIELD_LIMIT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[2] kind=POPULATION_LIMIT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[3] kind=OTHER_ACTION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#1 negative=MISSING_GATEWAY",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#2 negative=MISSING_ROLES",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#3 negative=MISSING_INPUTS",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#4 negative=MISSING_CLOCK",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#5 negative=MISSING_DATE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#6 negative=WRONG_SCOPE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#7 negative=WRONG_GATEWAY_USER",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#8 negative=WRONG_GATEWAY_REVISION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#9 negative=WRONG_ROLE_AUTH_REVISION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#10 negative=INCOMPLETE_ROLES",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#11 negative=WRONG_ROLE_USER",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#12 negative=WRONG_ROLE_NATIVE_VERSION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#13 negative=ROLE_ID_COLLISION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#14 negative=GROUP_MISSING_NATIVE_VERSION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#15 negative=EXPIRED_ROLE_SOURCE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#16 negative=UNKNOWN_ROLE_POLICY_WITH_BROAD_USER",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#17 negative=WRONG_PERSON_PARENT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#18 negative=FOREIGN_TARGET_TENANT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#19 negative=MERGED_PERSON",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#20 negative=EXPIRED_RELATIONSHIP",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#21 negative=EXPIRED_ASSIGNMENT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#22 negative=FOREIGN_POLICY_TENANT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#23 negative=WRONG_POLICY_USER",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#24 negative=FOREIGN_POLICY_ORG",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#25 negative=WRONG_POLICY_ACTION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#26 negative=NO_POLICY",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#27 negative=FIELD_SCOPE_CROSS_JOIN",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#28 negative=PERSON_ORG_POLICY",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#29 negative=POLICY_VERSION_CHANGED",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#30 negative=TARGET_VERSION_CHANGED",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#31 negative=ROLE_SOURCE_CHANGED",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#32 negative=GATEWAY_CHANGED",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#33 negative=EXPIRED_FIRST_PROOF",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#34 negative=EXPIRED_POLICY_DURING_READ",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#35 negative=BACKWARDS_CLOCK",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#36 negative=PROVIDER_SECRET",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#37 negative=CLOCK_SECRET",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#38 negative=BAD_DATE_PURPOSE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#39 negative=DATE_CHANGED",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#40 negative=SECOND_GATEWAY_SHORT_LEASE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#41 negative=SECOND_ROLE_SHORT_LEASE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#42 negative=SECOND_DATE_SHORT_LEASE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#43 negative=GROUP_VALID_TO_DURING_LAST_INPUT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#44 negative=PRIVILEGED_VALID_TO_DURING_LAST_INPUT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#45 negative=ROLE_SOURCE_ID_COLLISION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#46 negative=ROLE_CODE_COLLISION",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#47 negative=DIRECT_HAS_NONEXISTENT_WINDOW",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#48 negative=ZERO_PRIVILEGED_UUID",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#49 negative=INVALID_ROLE_CODE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#50 negative=LOWERCASE_ROLE_CODE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#51 negative=PROVIDER_ROLE_CODE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#52 negative=FOREIGN_ROLE_TENANT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[1] kind=SINGLE_LETTER",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[2] kind=DOT_HYPHEN",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[3] kind=DIRECT_ZERO",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[4] kind=GROUP_ZERO",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[5] kind=PRIVILEGED_ZERO",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#[6] kind=ROLE_WITHOUT_USER",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#1 positive=PERSON_WITHOUT_EMPLOYMENT",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#2 positive=EMPLOYMENT_ALL_FOUR_ZERO_VERSIONS",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#3 positive=INCLUSIVE_END_DATE",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3Test#4 positive=PROGRESSING_CLOCK"
+      ],
+      "nativeContainerIdsFromArchivedXml": []
+    },
+    {
+      "label": "V3_NATIVE_PG16_FINAL",
+      "xmlSha256": "77ba60952b4c5e6812153ef5a5ffead52aa2d998365a890ef1554518faeba020",
+      "xmlMtimeNs": "1789377472687039522",
+      "tests": 28,
+      "failure": 0,
+      "error": 0,
+      "skip": 0,
+      "caseIds": [
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#organizationTreeAncestorsAreTenantBoundVersionedAndNotFieldUnions()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#unknownRoleReturnedBySourceIsRejectedNotDroppedForBroadUserPolicy()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#incompleteOrRevokedCurrentRoleCarrierCannotFallbackToBroadUserPolicy()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#runtimeHasNoDdlWriteHistoryOrPersonPrivatePayloadPrivileges()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#matchingNativeRoleCannotBypassAnExplicitUserFieldBoundary()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#policyExpiryIsExclusiveAndFuturePolicyDoesNotGrant()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#roleOrgAJobGradeCannotCrossJoinUserOrgBDirectory()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#policyVersionCasChangesBetweenNativeReadsAreDenied()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#missingDateAdapterCannotFallBackToCurrentDateUtcOrLocation()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#mergedNativePersonCannotBeAdmitted()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#allNativePublicUuidsAndVersionsArePreservedWithoutLocationFallback()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#personWithoutWorkerUsesTenantPolicyAndNoTargetAuthOrTim()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#nativeTargetVersionChangeRequiresRefetchAndRejectsStaleSnapshot()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#sqlFailureIsGenericWithoutNativeExceptionOrCredentialCause()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#rolePolicyRevocationAndVersionChangesCannotReuseEarlierNativeAdmission()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#overlappingDifferentDaySlicesDoNotCollapseToPrimaryLimitOne()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#missingCurrentRoleAdapterMakesZeroGatewayAndNativeCalls()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#roleOrgAJobGradeCannotCrossJoinRoleOrgBDirectory()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#singleLetterAndDotHyphenRolePoliciesBindToCompleteCurrentNativeRoleEvidence()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#orgAJobGradeCannotCrossJoinOrgBDirectoryButOrgBDirectoryIsAllowed()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#policyRevokeBetweenNativeReadsCannotReuseFirstAdmission()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#foreignTargetTenantAndWrongEmploymentParentCannotBeRelabeled()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#userOrgAPopulationCannotBeBypassedByRoleOrgBDirectory()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#inclusiveNativeDatesRequireExplicitPurposeBoundDateAdapter()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#actual49To50PreservesLegacyRowsVersionsWindowsAndRejectsInvalidWritesAndConstraintRollback()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#latestSameDayCorrectionSelectsActualNewUuidAndRejectsOldUuid()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#explicitUserOtherActionCannotFallBackToBroadRoleRead()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#globallyValidButForeignTenantPolicyOrganizationFailsClosed()"
+      ],
+      "nativeContainerIdsFromArchivedXml": [
+        {
+          "image": "testcontainers/ryuk:0.12.0",
+          "containerId": "e6226df620a74e81e70d9d17cad5911f4c2860ca6e3d56af380aa67fde3f6519"
+        },
+        {
+          "image": "postgres:16-alpine",
+          "containerId": "e4224c8a897e3ab2e7096c36b140c076b4aba21f396733400d76a3d5e109a1f9"
+        }
+      ]
+    },
+    {
+      "label": "V3_NATIVE_PG18_4_FINAL",
+      "xmlSha256": "d032a7caab02554568c030e4f03e6db80730f16778e12190954a5f0b56885968",
+      "xmlMtimeNs": "1789377538253553039",
+      "tests": 28,
+      "failure": 0,
+      "error": 0,
+      "skip": 0,
+      "caseIds": [
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#organizationTreeAncestorsAreTenantBoundVersionedAndNotFieldUnions()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#unknownRoleReturnedBySourceIsRejectedNotDroppedForBroadUserPolicy()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#incompleteOrRevokedCurrentRoleCarrierCannotFallbackToBroadUserPolicy()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#runtimeHasNoDdlWriteHistoryOrPersonPrivatePayloadPrivileges()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#matchingNativeRoleCannotBypassAnExplicitUserFieldBoundary()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#policyExpiryIsExclusiveAndFuturePolicyDoesNotGrant()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#roleOrgAJobGradeCannotCrossJoinUserOrgBDirectory()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#policyVersionCasChangesBetweenNativeReadsAreDenied()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#missingDateAdapterCannotFallBackToCurrentDateUtcOrLocation()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#mergedNativePersonCannotBeAdmitted()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#allNativePublicUuidsAndVersionsArePreservedWithoutLocationFallback()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#personWithoutWorkerUsesTenantPolicyAndNoTargetAuthOrTim()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#nativeTargetVersionChangeRequiresRefetchAndRejectsStaleSnapshot()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#sqlFailureIsGenericWithoutNativeExceptionOrCredentialCause()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#rolePolicyRevocationAndVersionChangesCannotReuseEarlierNativeAdmission()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#overlappingDifferentDaySlicesDoNotCollapseToPrimaryLimitOne()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#missingCurrentRoleAdapterMakesZeroGatewayAndNativeCalls()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#roleOrgAJobGradeCannotCrossJoinRoleOrgBDirectory()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#singleLetterAndDotHyphenRolePoliciesBindToCompleteCurrentNativeRoleEvidence()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#orgAJobGradeCannotCrossJoinOrgBDirectoryButOrgBDirectoryIsAllowed()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#policyRevokeBetweenNativeReadsCannotReuseFirstAdmission()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#foreignTargetTenantAndWrongEmploymentParentCannotBeRelabeled()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#userOrgAPopulationCannotBeBypassedByRoleOrgBDirectory()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#inclusiveNativeDatesRequireExplicitPurposeBoundDateAdapter()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#actual49To50PreservesLegacyRowsVersionsWindowsAndRejectsInvalidWritesAndConstraintRollback()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#latestSameDayCorrectionSelectsActualNewUuidAndRejectsOldUuid()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#explicitUserOtherActionCannotFallBackToBroadRoleRead()",
+        "com.dwp.services.people.hris.identity.v3.NativeHrisUserRolePolicyAdmissionPilotV3PostgresTest#globallyValidButForeignTenantPolicyOrganizationFailsClosed()"
+      ],
+      "nativeContainerIdsFromArchivedXml": [
+        {
+          "image": "testcontainers/ryuk:0.12.0",
+          "containerId": "9a4230b05bc4d00d2fa960dfd09fcd997c36859a35d2f2275a587d9f7cf16045"
+        },
+        {
+          "image": "postgres:18.4-alpine",
+          "containerId": "3a4a446a30ce24adbaa9c8e750368e80bb218160c30b22f8d470882ded75544f"
+        }
+      ]
+    },
+    {
+      "label": "V2_TARGET49_FIXTURE_NATIVE_PG18_4_FINAL",
+      "xmlSha256": "5b5f364f1a57d20dc90355530f15cd8e33d45d0af88434f7f6ff75f3887d2119",
+      "xmlMtimeNs": "1789377582607951103",
+      "tests": 19,
+      "failure": 0,
+      "error": 0,
+      "skip": 0,
+      "caseIds": [
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#organizationTreeAncestorsAreTenantBoundVersionedAndNotFieldUnions()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#runtimeHasNoDdlWriteHistoryOrPersonPrivatePayloadPrivileges()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#policyExpiryIsExclusiveAndFuturePolicyDoesNotGrant()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#policyVersionCasChangesBetweenNativeReadsAreDenied()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#missingDateAdapterCannotFallBackToCurrentDateUtcOrLocation()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#mergedNativePersonCannotBeAdmitted()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#allNativePublicUuidsAndVersionsArePreservedWithoutLocationFallback()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#personWithoutWorkerUsesTenantPolicyAndNoTargetAuthOrTim()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#nativeTargetVersionChangeRequiresRefetchAndRejectsStaleSnapshot()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#matchingRolePolicyCannotBeDiscardedInFavorOfBroadUserPolicy()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#sqlFailureIsGenericWithoutNativeExceptionOrCredentialCause()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#overlappingDifferentDaySlicesDoNotCollapseToPrimaryLimitOne()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#missingCurrentRoleAdapterMakesZeroGatewayAndNativeCalls()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#orgAJobGradeCannotCrossJoinOrgBDirectoryButOrgBDirectoryIsAllowed()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#policyRevokeBetweenNativeReadsCannotReuseFirstAdmission()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#foreignTargetTenantAndWrongEmploymentParentCannotBeRelabeled()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#inclusiveNativeDatesRequireExplicitPurposeBoundDateAdapter()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#latestSameDayCorrectionSelectsActualNewUuidAndRejectsOldUuid()",
+        "com.dwp.services.people.hris.identity.v2.NativeHrisTargetPolicyQueryReaderV2PostgresTest#globallyValidButForeignTenantPolicyOrganizationFailsClosed()"
+      ],
+      "nativeContainerIdsFromArchivedXml": [
+        {
+          "image": "testcontainers/ryuk:0.12.0",
+          "containerId": "62216110e00b2c7867458d07b58201b1a933f67ba866c82b06e592fc4b7234e3"
+        },
+        {
+          "image": "postgres:18.4-alpine",
+          "containerId": "4b2aa7f366dba70c94e519ce61e80ea2373f4fe145a3c72b085a799ca5eff520"
+        }
+      ]
+    }
+  ],
+  "uniqueCases": 112,
+  "executions": 140,
+  "target49ExactOneLineSuccessor": true,
+  "target49OriginalSha256": "f302c76457b29d9b6c151510cd29308e35d09a1eb09b0d88e1f4e4b655172485",
+  "preservedHistoricalPeopleMigrationCount": 49,
+  "ownedContainerInspect": {
+    "argv": [
+      "docker",
+      "inspect",
+      "--format",
+      "{{.Id}} {{.State.Running}}",
+      "e6226df620a74e81e70d9d17cad5911f4c2860ca6e3d56af380aa67fde3f6519",
+      "e4224c8a897e3ab2e7096c36b140c076b4aba21f396733400d76a3d5e109a1f9",
+      "9a4230b05bc4d00d2fa960dfd09fcd997c36859a35d2f2275a587d9f7cf16045",
+      "3a4a446a30ce24adbaa9c8e750368e80bb218160c30b22f8d470882ded75544f",
+      "62216110e00b2c7867458d07b58201b1a933f67ba866c82b06e592fc4b7234e3",
+      "4b2aa7f366dba70c94e519ce61e80ea2373f4fe145a3c72b085a799ca5eff520"
+    ],
+    "exitCode": 1,
+    "stdout": "\n",
+    "stderr": "error: no such object: e6226df620a74e81e70d9d17cad5911f4c2860ca6e3d56af380aa67fde3f6519\nerror: no such object: e4224c8a897e3ab2e7096c36b140c076b4aba21f396733400d76a3d5e109a1f9\nerror: no such object: 9a4230b05bc4d00d2fa960dfd09fcd997c36859a35d2f2275a587d9f7cf16045\nerror: no such object: 3a4a446a30ce24adbaa9c8e750368e80bb218160c30b22f8d470882ded75544f\nerror: no such object: 62216110e00b2c7867458d07b58201b1a933f67ba866c82b06e592fc4b7234e3\nerror: no such object: 4b2aa7f366dba70c94e519ce61e80ea2373f4fe145a3c72b085a799ca5eff520\n",
+    "allSixAbsent": true,
+    "mutation": false
+  },
+  "wholeReadiness": false,
+  "G3Approval": false
+}

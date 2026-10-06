@@ -16,6 +16,8 @@ Release별 Pilot Charter, 수용 Test 결과, 접근성·Security·License·SBOM
   승인 증거 기반 JIT 지원, 다중 Tenant Context, 안전 미리보기, Migration·Threat Test와 출시 증거
 - `generated/production-dependency-licenses.json`: 현재 Production Graph의 생성 증거
 - `R2 R3 출시 증거 실행 가이드.md`: 성능·접근성·복구·보안·운영 증거의 실행 계약
+- `hris/2026-10-06-integration-roadmap.md`: HRIS Source Pin, v35 통합 Gate와 Module 개발 위임 순서
+- `hris/recovery/README.md`: 복구된 SKKF 기반 blueprint·통제 packet, 무결성 상태와 알려진 gap
 - `release-evidence/release-readiness.json`: R2·R3·D·A Gate의 기계 검증 가능한 현행 원장
 - `release-evidence/provider-tenant-acceptance.json`: PT-A01~PT-A30의 상태, 자동 검사,
   fail-closed 근거와 immutable 외부 저장소 증거를 관리하는 실행·증적 SSOT

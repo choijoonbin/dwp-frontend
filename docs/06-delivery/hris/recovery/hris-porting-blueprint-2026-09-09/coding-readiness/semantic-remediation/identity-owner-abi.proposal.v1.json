@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "dwp-identity-owner-abi-proposal.v1",
+  "status": "UNWIRED_SCAFFOLD_G3_CLOSED_COMMON_P0_OPEN",
+  "baseline": {
+    "backend": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "backendTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "frontend": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+    "frontendTree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+    "preChangeClean": true
+  },
+  "identityOwnership": {
+    "auth": "Existing com_users tenant_id/user_id/public_id/person_public_id/identity_plane/status/version/access_revision; no new binding ledger or DDL",
+    "people": "Existing ppl_persons -> ppl_workers -> ppl_work_relationships -> ppl_assignments tenant-local parent graph with each native public UUID, version, lifecycle/effective date",
+    "rowVersionPolicy": "Existing @Version com_users.version is a conservative JPA person-binding stamp. Profile/JPA updates may invalidate it; not a person-only revision or complete lifecycle revision. Native account activation SQL changes status without incrementing version/access_revision, so current owner status must be checked independently. access_revision remains an independently checked current-access stamp. Neither proves signed freshness.",
+    "transportVersion": "Neutral Java ABI.v1 is not existing HTTP v1 or proposed signed HTTP.v2; actual HTTP wire codec, signatures and owner endpoints remain OPEN"
+  },
+  "closedRequest": {
+    "type": "SelfContextQueryV1",
+    "fields": {"purpose": "SELF_PROFILE_READ|SELF_ATTENDANCE_READ|SELF_PAY_READ", "asOf": "Instant convertible to Java UTC civil date and not after captured trusted Clock; no arbitrary business-year cutoff", "selector": "null or exact workerPublicId/workRelationshipPublicId/assignmentPublicId UUID tuple"},
+    "forbidden": ["tenant", "actor", "principal", "person", "email", "name", "headers", "correlation-derived identity"]
+  },
+  "configuredAudience": "HRIS_HRM|HRIS_TIM|HRIS_PAY (exact purpose pairing)",
+  "ownerDataCarriers": {
+    "SelfContextAuthorityV1": ["tenantId BIGINT", "userId BIGINT", "principalPublicId UUID", "personPublicId UUID", "expectedUserRowVersion", "expectedAccessRevision", "audience", "purpose", "appEntitled boolean", "separationOfDutiesAllowed boolean", "permissionDecisionRevision", "issuedAt", "expiresAt", "effectivePolicy(reference/version/allowedPersonStates/allowedWorkerStatuses/allowedAssignmentStatuses)"],
+    "AuthPersonBindingV1": ["tenantId BIGINT", "userId BIGINT", "principalPublicId UUID", "personPublicId UUID", "identityPlane TENANT|PLATFORM", "status ACTIVE|INVITED|SUSPENDED|INACTIVE", "userRowVersion", "accessRevision", "capturedAt", "expiresAt"],
+    "NativeSelfContextSetV1": ["tenantId", "personPublicId", "personVersion", "personState ACTIVE|INACTIVE", "asOf", "complete boolean", "contexts bounded <=100"],
+    "nativeContext": "Worker(publicId/personPublicId/version/status), WorkRelationship(publicId/workerPublicId/legalEmployerPublicId/version/startDate/endDate), Assignment(publicId/workRelationshipPublicId/version/status/effectiveStartDate/effectiveEndDate/workZone)",
+    "trustBoundary": "Public immutable owner-return carriers are untrusted data. Only configured guard can construct private provider lookup requests and verified selected result. Owner implementations remain able to construct public return carriers; carrier constructors do not authenticate them. Owner-composition factory is explicit, unregistered and not exposed through a Spring bean or HTTP route."
+  },
+  "guardOrder": ["all adapters present or reject with all calls zero", "one initial Clock capture and typed query/audience check", "current authority verifier result plus entitlement/SoD/expiry/purpose", "Auth lookup with guard-only typed request; exact tenant/user/principal/person/status/plane/rowVersion/accessRevision/time checks", "People lookup with guard-only owner-confirmed Auth binding; exact tenant/person/asOf/complete native graph/version/status/effective date and parent checks; same worker/relationship/assignment UUID must denote an identical immutable native record", "0 rejects; one issuance Clock reread rejects backward time or either expired proof before result issuance; 1 defaults; multiple requires explicit full native UUID tuple; selector never grants foreign context"],
+  "bounds": {"authorityAndAuthLeaseSeconds": 30, "maximumNativeContexts": 100, "maximumPolicyStateEntries": 32},
+  "response": "SelfContextResolutionV1: guard-minted verified selected context OR context-selection-required immutable candidates. Multiple candidates do not mint a selected authority. Native absence is a typed error, never synthetic worker or first-row fallback.",
+  "errors": ["ADAPTER_UNAVAILABLE", "QUERY_INVALID", "AUTHORITY_INVALID", "APP_ENTITLEMENT_REQUIRED", "SEPARATION_OF_DUTIES_DENIED", "AUTH_BINDING_INVALID", "AUTH_BINDING_REVOKED", "AUTH_BINDING_STALE", "OWNER_RESPONSE_INVALID", "OWNER_UNAVAILABLE", "SELF_SCOPE_UNRESOLVED", "SELF_CONTEXT_FORBIDDEN"],
+  "testAllocation": {
+    "neutral": "Actual fixed-clock typed Auth/People/current-policy mock fixtures, expected typed reject code and verifier/Auth/People invocation counters; includes neutral Auth owner implementation that builds public carrier",
+    "consumers": ["People raw Auth/current-scope/native mock composition consumes SELECTED person/worker/relationship/assignment UUID and version, Auth stamps and PROFILE purpose; missing adapter typed denial with zero calls", "Payroll raw Auth/current-scope/native mock composition consumes SELECTED person/worker/relationship/assignment UUID and version, Auth stamps and PAY purpose; missing adapter typed denial with zero calls"],
+    "negativeCases": ["0 native", "multiple no implicit first", "foreign selector", "foreign native tenant", "foreign native person", "revoked Auth", "expired authority", "expired Auth", "changed user rowVersion", "changed accessRevision", "principal relabel", "person mismatch", "UUID accidental equality does not repair parent edge", "missing adapter all calls zero", "current APP entitlement absent", "SoD denied", "purpose/audience mismatch", "native incomplete", "native duplicate", "stale asOf", "future asOf", "ineffective native date", "invalid native parent", "invalid native version", "mutable owner list defensive copy", "private verified construction"]
+  },
+  "ownedSourcePaths": ["dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/", "dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/", "dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/", "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/v1/"],
+  "excluded": ["Auth build dependency", "new DDL/link ledger/binding counter", "existing G2/generated/HTTP.v1", "production security guards", "Spring wiring", "Control", "new resources", "actual Auth endpoint/producer", "actual People native provider", "signed/current owner-proof transport", "lifecycle ordering/relink/outbox producer", "production integration PASS", "module coding Gate opening"]
+}

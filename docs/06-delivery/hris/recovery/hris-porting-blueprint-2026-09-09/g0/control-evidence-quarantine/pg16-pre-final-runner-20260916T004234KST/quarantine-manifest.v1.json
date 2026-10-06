@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.pre-g3-evidence-quarantine/v1",
+  "quarantinedAtUtc": "2026-09-15T15:42:34Z",
+  "reason": "The PostgreSQL 16 proof was valid for the requested image but was captured before the final runner added an explicit Notification image binding. The five files are retained byte-for-byte and excluded from intake before final-runner recapture.",
+  "backendCommit": "299336eacb52de29a85366318a08151ea691eb5e",
+  "backendTree": "d5277fabaa2315ddc28a4220fa8075875be28920",
+  "captureRunner": {
+    "sha256": "bae91f847792a56cafd86261f96259146e011a8c7883cdf4630aad4a0d877cda",
+    "byteLength": 31503
+  },
+  "entries": [
+    {
+      "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.junit.xml",
+      "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.junit.xml",
+      "mode": "0600",
+      "byteLength": 906584,
+      "sha256": "67e29fbfe0d776cb2edd8345748f45149ff496a07742dc2133a1cee804eac7ba"
+    },
+    {
+      "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification-observations.v1.json",
+      "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.notification-observations.v1.json",
+      "mode": "0600",
+      "byteLength": 722,
+      "sha256": "c3757d3e629c8b9aca9894a052f70ba901022425b54213b925824f9bd1a176be"
+    },
+    {
+      "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification.junit.xml",
+      "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.notification.junit.xml",
+      "mode": "0600",
+      "byteLength": 119445,
+      "sha256": "46fa4cf07e6ae5a79b043f27e17f84c5f069e1d8365ca104e957a86e604eb982"
+    },
+    {
+      "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.observations.v1.json",
+      "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.observations.v1.json",
+      "mode": "0600",
+      "byteLength": 1117,
+      "sha256": "d5683be1148700e4cbfeeae00f16e263c35f681bbc3bf1058723dc9ce1769420"
+    },
+    {
+      "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.v1.json",
+      "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.v1.json",
+      "mode": "0600",
+      "byteLength": 8248,
+      "sha256": "87c556398cb83112ac080d0bdc67cb5a2e83bdb3e16b68baff92f428c94b78e0"
+    }
+  ]
+}

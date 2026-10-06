@@ -1,0 +1,412 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dwp.example/contracts/hris/module-exact-business-schemas.v1.json",
+  "title": "DWP HRIS canonical exact-business P0 schemas",
+  "description": "Provider-neutral G3 design schemas. They authorize no code or production activation.",
+  "$defs": {
+    "Uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "Decimal": {
+      "type": "string",
+      "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,12})?$"
+    },
+    "CivilDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "Instant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "OwnerRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "schemaId", "publicId", "revision", "contentHash"],
+      "properties": {
+        "owner": {"enum": ["HRM", "PER", "TIM", "PAY", "SYS", "AUTH", "APPROVAL"]},
+        "schemaId": {"type": "string", "minLength": 3, "maxLength": 160},
+        "publicId": {"$ref": "#/$defs/Uuid"},
+        "revision": {"type": "integer", "minimum": 0},
+        "contentHash": {"$ref": "#/$defs/Sha256"},
+        "validFrom": {"$ref": "#/$defs/Instant"},
+        "validToExclusive": {"oneOf": [{"$ref": "#/$defs/Instant"}, {"type": "null"}]}
+      }
+    },
+    "CommandContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expectedVersion", "idempotencyKey", "purpose", "effectiveAt"],
+      "properties": {
+        "expectedVersion": {"type": "integer", "minimum": 0},
+        "idempotencyKey": {"type": "string", "minLength": 16, "maxLength": 128},
+        "purpose": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,79}$"},
+        "effectiveAt": {"$ref": "#/$defs/Instant"}
+      }
+    },
+    "AssignmentDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organizationRef", "positionRef", "jobRef", "workLocationRef", "validFrom", "validToExclusive", "primary", "fte"],
+      "properties": {
+        "organizationRef": {"$ref": "#/$defs/OwnerRef"},
+        "positionRef": {"$ref": "#/$defs/OwnerRef"},
+        "jobRef": {"$ref": "#/$defs/OwnerRef"},
+        "workLocationRef": {"$ref": "#/$defs/OwnerRef"},
+        "validFrom": {"$ref": "#/$defs/CivilDate"},
+        "validToExclusive": {"oneOf": [{"$ref": "#/$defs/CivilDate"}, {"type": "null"}]},
+        "primary": {"type": "boolean"},
+        "fte": {"$ref": "#/$defs/Decimal"}
+      }
+    },
+    "HirePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["personPublicId", "legalEmployerRef", "employmentType", "relationshipStart", "workerCreation", "assignment"],
+      "properties": {
+        "personPublicId": {"$ref": "#/$defs/Uuid"},
+        "legalEmployerRef": {"$ref": "#/$defs/OwnerRef"},
+        "employmentType": {"enum": ["EMPLOYEE", "CONTINGENT", "INTERN", "APPRENTICE"]},
+        "relationshipStart": {"$ref": "#/$defs/CivilDate"},
+        "workerCreation": {"const": "CREATE_NEW"},
+        "assignment": {"$ref": "#/$defs/AssignmentDraft"}
+      }
+    },
+    "RehirePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workerPublicId", "endedRelationshipPublicId", "expectedWorkerVersion", "expectedRelationshipVersion", "legalEmployerRef", "relationshipStart", "assignment"],
+      "properties": {
+        "workerPublicId": {"$ref": "#/$defs/Uuid"},
+        "endedRelationshipPublicId": {"$ref": "#/$defs/Uuid"},
+        "expectedWorkerVersion": {"type": "integer", "minimum": 0},
+        "expectedRelationshipVersion": {"type": "integer", "minimum": 0},
+        "legalEmployerRef": {"$ref": "#/$defs/OwnerRef"},
+        "relationshipStart": {"$ref": "#/$defs/CivilDate"},
+        "assignment": {"$ref": "#/$defs/AssignmentDraft"}
+      }
+    },
+    "AssignmentMovePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workerPublicId", "relationshipPublicId", "assignmentPublicId", "expectedAssignmentVersion", "replacement"],
+      "properties": {
+        "workerPublicId": {"$ref": "#/$defs/Uuid"},
+        "relationshipPublicId": {"$ref": "#/$defs/Uuid"},
+        "assignmentPublicId": {"$ref": "#/$defs/Uuid"},
+        "expectedAssignmentVersion": {"type": "integer", "minimum": 0},
+        "replacement": {"$ref": "#/$defs/AssignmentDraft"}
+      }
+    },
+    "ConcurrentEmploymentPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workerPublicId", "expectedWorkerVersion", "legalEmployerRef", "relationshipStart", "assignment"],
+      "properties": {
+        "workerPublicId": {"$ref": "#/$defs/Uuid"},
+        "expectedWorkerVersion": {"type": "integer", "minimum": 0},
+        "legalEmployerRef": {"$ref": "#/$defs/OwnerRef"},
+        "relationshipStart": {"$ref": "#/$defs/CivilDate"},
+        "assignment": {"$ref": "#/$defs/AssignmentDraft"}
+      }
+    },
+    "LeaveReturnPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workerPublicId", "relationshipPublicId", "assignmentPublicId", "expectedRelationshipVersion", "expectedAssignmentVersion", "reasonCode", "startsOn", "endsBefore"],
+      "properties": {
+        "workerPublicId": {"$ref": "#/$defs/Uuid"},
+        "relationshipPublicId": {"$ref": "#/$defs/Uuid"},
+        "assignmentPublicId": {"$ref": "#/$defs/Uuid"},
+        "expectedRelationshipVersion": {"type": "integer", "minimum": 0},
+        "expectedAssignmentVersion": {"type": "integer", "minimum": 0},
+        "reasonCode": {"type": "string", "pattern": "^[A-Z0-9_]{2,80}$"},
+        "startsOn": {"$ref": "#/$defs/CivilDate"},
+        "endsBefore": {"oneOf": [{"$ref": "#/$defs/CivilDate"}, {"type": "null"}]}
+      }
+    },
+    "TerminationPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workerPublicId", "relationshipPublicId", "expectedRelationshipVersion", "lastWorkingDate", "terminationDate", "reasonCode", "separationTaskSetRef"],
+      "properties": {
+        "workerPublicId": {"$ref": "#/$defs/Uuid"},
+        "relationshipPublicId": {"$ref": "#/$defs/Uuid"},
+        "expectedRelationshipVersion": {"type": "integer", "minimum": 0},
+        "lastWorkingDate": {"$ref": "#/$defs/CivilDate"},
+        "terminationDate": {"$ref": "#/$defs/CivilDate"},
+        "reasonCode": {"type": "string", "pattern": "^[A-Z0-9_]{2,80}$"},
+        "separationTaskSetRef": {"$ref": "#/$defs/OwnerRef"}
+      }
+    },
+    "CorrectionPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correctedEventPublicId", "expectedEventVersion", "correctionReasonCode", "replacementEventRef"],
+      "properties": {
+        "correctedEventPublicId": {"$ref": "#/$defs/Uuid"},
+        "expectedEventVersion": {"type": "integer", "minimum": 0},
+        "correctionReasonCode": {"type": "string", "pattern": "^[A-Z0-9_]{2,80}$"},
+        "replacementEventRef": {"$ref": "#/$defs/OwnerRef"}
+      }
+    },
+    "EmploymentEventCommand": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["context", "eventType", "payload"], "properties": {"context": {"$ref": "#/$defs/CommandContext"}, "eventType": {"const": "HIRE"}, "payload": {"$ref": "#/$defs/HirePayload"}}},
+        {"type": "object", "additionalProperties": false, "required": ["context", "eventType", "payload"], "properties": {"context": {"$ref": "#/$defs/CommandContext"}, "eventType": {"const": "REHIRE"}, "payload": {"$ref": "#/$defs/RehirePayload"}}},
+        {"type": "object", "additionalProperties": false, "required": ["context", "eventType", "payload"], "properties": {"context": {"$ref": "#/$defs/CommandContext"}, "eventType": {"enum": ["APPOINTMENT", "TRANSFER", "PROMOTION", "DEMOTION"]}, "payload": {"$ref": "#/$defs/AssignmentMovePayload"}}},
+        {"type": "object", "additionalProperties": false, "required": ["context", "eventType", "payload"], "properties": {"context": {"$ref": "#/$defs/CommandContext"}, "eventType": {"const": "CONCURRENT_EMPLOYMENT"}, "payload": {"$ref": "#/$defs/ConcurrentEmploymentPayload"}}},
+        {"type": "object", "additionalProperties": false, "required": ["context", "eventType", "payload"], "properties": {"context": {"$ref": "#/$defs/CommandContext"}, "eventType": {"enum": ["LEAVE", "RETURN"]}, "payload": {"$ref": "#/$defs/LeaveReturnPayload"}}},
+        {"type": "object", "additionalProperties": false, "required": ["context", "eventType", "payload"], "properties": {"context": {"$ref": "#/$defs/CommandContext"}, "eventType": {"const": "TERMINATION"}, "payload": {"$ref": "#/$defs/TerminationPayload"}}},
+        {"type": "object", "additionalProperties": false, "required": ["context", "eventType", "payload"], "properties": {"context": {"$ref": "#/$defs/CommandContext"}, "eventType": {"const": "CORRECTION"}, "payload": {"$ref": "#/$defs/CorrectionPayload"}}}
+      ]
+    },
+    "SelfContextSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principalPublicId", "personPublicId", "workerPublicId", "relationshipPublicId", "assignmentPublicId", "selectionReason", "asOf", "sourceRevision"],
+      "properties": {
+        "principalPublicId": {"$ref": "#/$defs/Uuid"},
+        "personPublicId": {"$ref": "#/$defs/Uuid"},
+        "workerPublicId": {"$ref": "#/$defs/Uuid"},
+        "relationshipPublicId": {"$ref": "#/$defs/Uuid"},
+        "assignmentPublicId": {"$ref": "#/$defs/Uuid"},
+        "selectionReason": {"enum": ["EXPLICIT_USER_SELECTION", "SINGLE_EFFECTIVE_CONTEXT", "TENANT_POLICY_PRIMARY"]},
+        "asOf": {"$ref": "#/$defs/Instant"},
+        "sourceRevision": {"type": "integer", "minimum": 0}
+      }
+    },
+    "FreezePopulationCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context", "cyclePublicId", "cycleVersion", "populationRuleRef", "workforceSnapshotRef", "asOf", "previewContentHash"],
+      "properties": {
+        "context": {"$ref": "#/$defs/CommandContext"},
+        "cyclePublicId": {"$ref": "#/$defs/Uuid"},
+        "cycleVersion": {"type": "integer", "minimum": 0},
+        "populationRuleRef": {"$ref": "#/$defs/OwnerRef"},
+        "workforceSnapshotRef": {"$ref": "#/$defs/OwnerRef"},
+        "asOf": {"$ref": "#/$defs/Instant"},
+        "previewContentHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "AggregateTransitionCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context", "aggregatePublicId", "expectedState", "evidenceRefs"],
+      "properties": {
+        "context": {"$ref": "#/$defs/CommandContext"},
+        "aggregatePublicId": {"$ref": "#/$defs/Uuid"},
+        "expectedState": {"type": "string", "minLength": 2, "maxLength": 40},
+        "evidenceRefs": {"type": "array", "maxItems": 50, "items": {"$ref": "#/$defs/OwnerRef"}}
+      }
+    },
+    "TypedRuleNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeId", "operator", "arguments", "returnType"],
+      "properties": {
+        "nodeId": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"},
+        "operator": {"enum": ["QUANTITY_LITERAL", "RATE_LITERAL", "BOOLEAN_LITERAL", "INPUT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "MIN", "MAX", "COMPARE_LT", "COMPARE_EQ", "AND", "OR", "IF", "ROUND"]},
+        "arguments": {"type": "array", "maxItems": 3, "items": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"}},
+        "returnType": {"enum": ["BOOLEAN", "NUMBER", "RATE", "QUANTITY_MINUTE", "QUANTITY_HOUR", "QUANTITY_DAY"]},
+        "value": {"oneOf": [{"$ref": "#/$defs/Decimal"}, {"type": "boolean"}, {"type": "null"}]},
+        "inputRef": {"oneOf": [{"$ref": "#/$defs/OwnerRef"}, {"type": "null"}]},
+        "roundingRef": {"oneOf": [{"$ref": "#/$defs/OwnerRef"}, {"type": "null"}]}
+      }
+    },
+    "TypedRuleAst": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registryId", "registryVersion", "rootNodeId", "nodes"],
+      "properties": {
+        "registryId": {"const": "TIM_RULE_AST_V1"},
+        "registryVersion": {"const": 1},
+        "rootNodeId": {"type": "string"},
+        "nodes": {"type": "array", "minItems": 1, "maxItems": 512, "items": {"$ref": "#/$defs/TypedRuleNode"}}
+      }
+    },
+    "ScheduleSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["segmentPublicId", "assignmentPublicId", "startsAt", "endsAt", "timezoneId", "dstResolution", "shiftTemplateRef", "ruleRef", "calendarRef"],
+      "properties": {
+        "segmentPublicId": {"$ref": "#/$defs/Uuid"},
+        "assignmentPublicId": {"$ref": "#/$defs/Uuid"},
+        "startsAt": {"$ref": "#/$defs/Instant"},
+        "endsAt": {"$ref": "#/$defs/Instant"},
+        "timezoneId": {"type": "string", "minLength": 3, "maxLength": 64},
+        "dstResolution": {"enum": ["EXACT_OFFSET", "EARLIER_OFFSET", "LATER_OFFSET", "REJECT_GAP"]},
+        "shiftTemplateRef": {"$ref": "#/$defs/OwnerRef"},
+        "ruleRef": {"$ref": "#/$defs/OwnerRef"},
+        "calendarRef": {"$ref": "#/$defs/OwnerRef"}
+      }
+    },
+    "ScheduleCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context", "schedulePeriodPublicId", "periodStartsAt", "periodEndsAt", "timezoneId", "workerAssignmentSnapshotRef", "segments"],
+      "properties": {
+        "context": {"$ref": "#/$defs/CommandContext"},
+        "schedulePeriodPublicId": {"$ref": "#/$defs/Uuid"},
+        "periodStartsAt": {"$ref": "#/$defs/Instant"},
+        "periodEndsAt": {"$ref": "#/$defs/Instant"},
+        "timezoneId": {"type": "string", "minLength": 3, "maxLength": 64},
+        "workerAssignmentSnapshotRef": {"$ref": "#/$defs/OwnerRef"},
+        "segments": {"type": "array", "minItems": 1, "maxItems": 100000, "items": {"$ref": "#/$defs/ScheduleSegment"}}
+      }
+    },
+    "AccrualSchedule": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["kind", "dayOfMonth"], "properties": {"kind": {"const": "MONTHLY"}, "dayOfMonth": {"type": "integer", "minimum": 1, "maximum": 28}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "month", "day"], "properties": {"kind": {"const": "YEARLY"}, "month": {"type": "integer", "minimum": 1, "maximum": 12}, "day": {"type": "integer", "minimum": 1, "maximum": 28}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "workedUnit", "grantQuantity", "grantUnit"], "properties": {"kind": {"const": "PER_WORKED_UNIT"}, "workedUnit": {"enum": ["MINUTE", "HOUR"]}, "grantQuantity": {"$ref": "#/$defs/Decimal"}, "grantUnit": {"enum": ["MINUTE", "HOUR", "DAY"]}}}
+      ]
+    },
+    "AccrualPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policyPublicId", "version", "effectiveFrom", "effectiveToExclusive", "eligibilityRule", "accrualSchedule", "proration", "roundingRef", "cap", "carryover", "expiry", "calendarRef"],
+      "properties": {
+        "policyPublicId": {"$ref": "#/$defs/Uuid"},
+        "version": {"type": "integer", "minimum": 1},
+        "effectiveFrom": {"$ref": "#/$defs/CivilDate"},
+        "effectiveToExclusive": {"oneOf": [{"$ref": "#/$defs/CivilDate"}, {"type": "null"}]},
+        "eligibilityRule": {"$ref": "#/$defs/TypedRuleAst"},
+        "accrualSchedule": {"$ref": "#/$defs/AccrualSchedule"},
+        "proration": {"enum": ["NONE", "CALENDAR_DAY", "SCHEDULED_MINUTE", "WORKED_MINUTE"]},
+        "roundingRef": {"$ref": "#/$defs/OwnerRef"},
+        "cap": {"type": "object", "additionalProperties": false, "required": ["quantity", "unit"], "properties": {"quantity": {"$ref": "#/$defs/Decimal"}, "unit": {"enum": ["MINUTE", "HOUR", "DAY"]}}},
+        "carryover": {"type": "object", "additionalProperties": false, "required": ["mode", "limit", "unit"], "properties": {"mode": {"enum": ["NONE", "LIMITED", "ALL"]}, "limit": {"oneOf": [{"$ref": "#/$defs/Decimal"}, {"type": "null"}]}, "unit": {"enum": ["MINUTE", "HOUR", "DAY"]}}},
+        "expiry": {"type": "object", "additionalProperties": false, "required": ["mode", "days"], "properties": {"mode": {"enum": ["NEVER", "AFTER_DAYS", "PERIOD_END"]}, "days": {"oneOf": [{"type": "integer", "minimum": 1, "maximum": 3660}, {"type": "null"}]}}},
+        "calendarRef": {"$ref": "#/$defs/OwnerRef"}
+      }
+    },
+    "TimecardRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timecardPublicId", "version", "state", "sourceRevision", "interpretationRef"],
+      "properties": {
+        "timecardPublicId": {"$ref": "#/$defs/Uuid"},
+        "version": {"type": "integer", "minimum": 0},
+        "state": {"enum": ["OPEN", "SUBMITTED", "APPROVED", "REJECTED", "CORRECTION_REQUIRED", "LOCKED", "CLOSED", "SUPERSEDED"]},
+        "sourceRevision": {"type": "integer", "minimum": 0},
+        "interpretationRef": {"$ref": "#/$defs/OwnerRef"}
+      }
+    },
+    "WfmPlanningInputSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenantPublicId", "asOf", "effectiveFrom", "effectiveToExclusive", "hrmAssignmentRef", "timScheduleRef", "timAbsenceRef", "skillSourceState", "sourceVectorHash"],
+      "properties": {
+        "tenantPublicId": {"$ref": "#/$defs/Uuid"},
+        "asOf": {"$ref": "#/$defs/Instant"},
+        "effectiveFrom": {"$ref": "#/$defs/Instant"},
+        "effectiveToExclusive": {"$ref": "#/$defs/Instant"},
+        "hrmAssignmentRef": {"$ref": "#/$defs/OwnerRef"},
+        "timScheduleRef": {"$ref": "#/$defs/OwnerRef"},
+        "timAbsenceRef": {"$ref": "#/$defs/OwnerRef"},
+        "skillSourceState": {"enum": ["PRESENT", "NOT_INSTALLED", "NOT_ENTITLED", "UNAVAILABLE"]},
+        "perSkillRef": {"oneOf": [{"$ref": "#/$defs/OwnerRef"}, {"type": "null"}]},
+        "sourceVectorHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "PayValueType": {
+      "enum": ["BOOLEAN", "NUMBER", "RATE", "MONEY", "QUANTITY_MINUTE", "QUANTITY_HOUR", "QUANTITY_DAY", "UNIT_PRICE_PER_MINUTE", "UNIT_PRICE_PER_HOUR", "UNIT_PRICE_PER_DAY"]
+    },
+    "PayFormulaNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeId", "operator", "arguments", "returnType"],
+      "properties": {
+        "nodeId": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"},
+        "operator": {"enum": ["LITERAL", "INPUT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "MIN", "MAX", "COMPARE_EQ", "COMPARE_LT", "AND", "OR", "IF", "ROUND", "CONVERT_MINUTE_HOUR", "LOOKUP", "SUM", "DATE_DIFFERENCE"]},
+        "arguments": {"type": "array", "maxItems": 3, "items": {"type": "string"}},
+        "returnType": {"$ref": "#/$defs/PayValueType"},
+        "value": {"oneOf": [{"$ref": "#/$defs/Decimal"}, {"type": "boolean"}, {"type": "null"}]},
+        "currency": {"oneOf": [{"type": "string", "pattern": "^[A-Z]{3}$"}, {"type": "null"}]},
+        "inputKey": {"oneOf": [{"type": "string", "pattern": "^[A-Z][A-Z0-9_.]{1,79}$"}, {"type": "null"}]},
+        "roundingRef": {"oneOf": [{"$ref": "#/$defs/OwnerRef"}, {"type": "null"}]},
+        "lookupRef": {"oneOf": [{"$ref": "#/$defs/OwnerRef"}, {"type": "null"}]},
+        "collectionInputKey": {"oneOf": [{"type": "string", "pattern": "^[A-Z][A-Z0-9_.]{1,79}$"}, {"type": "null"}]}
+      }
+    },
+    "PayFormulaAst": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registryId", "registryVersion", "declaredReturnType", "rootNodeId", "nodes"],
+      "properties": {
+        "registryId": {"const": "PAY_RULE_AST_V1"},
+        "registryVersion": {"const": 1},
+        "declaredReturnType": {"$ref": "#/$defs/PayValueType"},
+        "rootNodeId": {"type": "string"},
+        "nodes": {"type": "array", "minItems": 1, "maxItems": 2048, "items": {"$ref": "#/$defs/PayFormulaNode"}}
+      }
+    },
+    "PayrollFoundationArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["foundationPublicId", "version", "effectiveFrom", "effectiveToExclusive", "legalEmployerRef", "payGroupCode", "periodCalendarRef", "currency", "roundingPolicyRef", "elements", "contentHash"],
+      "properties": {
+        "foundationPublicId": {"$ref": "#/$defs/Uuid"},
+        "version": {"type": "integer", "minimum": 1},
+        "effectiveFrom": {"$ref": "#/$defs/CivilDate"},
+        "effectiveToExclusive": {"oneOf": [{"$ref": "#/$defs/CivilDate"}, {"type": "null"}]},
+        "legalEmployerRef": {"$ref": "#/$defs/OwnerRef"},
+        "payGroupCode": {"type": "string", "pattern": "^[A-Z0-9_-]{2,40}$"},
+        "periodCalendarRef": {"$ref": "#/$defs/OwnerRef"},
+        "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+        "roundingPolicyRef": {"$ref": "#/$defs/OwnerRef"},
+        "elements": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {"type": "object", "additionalProperties": false, "required": ["elementCode", "formulaRef", "resultType", "sequence"], "properties": {"elementCode": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,79}$"}, "formulaRef": {"$ref": "#/$defs/OwnerRef"}, "resultType": {"$ref": "#/$defs/PayValueType"}, "sequence": {"type": "integer", "minimum": 1}}}},
+        "contentHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "PayrollInputSourceVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asOf", "foundationRef", "hrmWorkerAssignmentRef", "hrmCompensationRef", "timClosedTimeRef", "manualInputBatchRefs", "sourceVectorHash"],
+      "properties": {
+        "asOf": {"$ref": "#/$defs/Instant"},
+        "foundationRef": {"$ref": "#/$defs/OwnerRef"},
+        "hrmWorkerAssignmentRef": {"$ref": "#/$defs/OwnerRef"},
+        "hrmCompensationRef": {"$ref": "#/$defs/OwnerRef"},
+        "timClosedTimeRef": {"$ref": "#/$defs/OwnerRef"},
+        "perApprovedCompensationRef": {"oneOf": [{"$ref": "#/$defs/OwnerRef"}, {"type": "null"}]},
+        "manualInputBatchRefs": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/OwnerRef"}},
+        "sourceVectorHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "PayrollRunPrepareCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context", "runPublicId", "periodPublicId", "periodVersion", "sourceVector"],
+      "properties": {
+        "context": {"$ref": "#/$defs/CommandContext"},
+        "runPublicId": {"$ref": "#/$defs/Uuid"},
+        "periodPublicId": {"$ref": "#/$defs/Uuid"},
+        "periodVersion": {"type": "integer", "minimum": 0},
+        "sourceVector": {"$ref": "#/$defs/PayrollInputSourceVector"}
+      }
+    },
+    "ProviderNeutralCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["casePublicId", "caseType", "workerPublicId", "employmentRef", "basisRefs", "status", "countryPackState"],
+      "properties": {
+        "casePublicId": {"$ref": "#/$defs/Uuid"},
+        "caseType": {"enum": ["RETIREMENT", "YEAR_END"]},
+        "workerPublicId": {"$ref": "#/$defs/Uuid"},
+        "employmentRef": {"$ref": "#/$defs/OwnerRef"},
+        "basisRefs": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"$ref": "#/$defs/OwnerRef"}},
+        "status": {"enum": ["DRAFT", "VALIDATED", "BLOCKED_PACK_REQUIRED", "CALCULATED", "APPROVED", "FINALIZED", "CORRECTED", "CANCELLED"]},
+        "countryPackState": {"enum": ["NOT_REQUIRED", "NOT_INSTALLED", "DISABLED", "ACTIVE"]},
+        "countryPackRef": {"oneOf": [{"$ref": "#/$defs/OwnerRef"}, {"type": "null"}]}
+      }
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "generatedAt": "2026-09-16T07:36:00Z",
+  "immutability": {
+    "candidateAndLiveSnapshot": "16_OF_16_DEV_INODE_MODE_SIZE_MTIME_NS_CTIME_NS_SHA256_EQUAL_TO_PRE_TASK_SNAPSHOT",
+    "canonicalCandidateWrites": 0,
+    "gateWrites": 0,
+    "liveWrites": 0,
+    "phase5RequiredSuccessorAbsence": "11_OF_11_ABSENT",
+    "predecessorInventoriesV1ToV3": "UNCHANGED_EXACT_FILE_HASHES_AND_VALID_SELF_SEALS",
+    "promotionRuns": 0
+  },
+  "inventory": {
+    "activeSourceCount": 44,
+    "dispositionCounts": {
+      "CONTROL_WRITER_SELF_GUARDED": 1,
+      "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+      "GUARDED_DIRECT_ENTRYPOINT": 39,
+      "GUARDED_LIBRARY_CALLERS_ONLY": 3
+    },
+    "fileSha256": "40d272662a574e67f16779580822d6c68ce2ceb39868825a96f19a15d58eb08c",
+    "path": "coding-readiness/modern-successor-supported-reader-inventory.v4.json",
+    "schema": "dwp.hris.modern-successor-supported-reader-inventory.v4",
+    "sealedPayloadSha256": "6d54e432c4c069338087eb9a944e7ba04da2b7ed3e587eca7a1612bab696b5dd"
+  },
+  "lineageChain": [
+    {
+      "fileSha256": "40d272662a574e67f16779580822d6c68ce2ceb39868825a96f19a15d58eb08c",
+      "predecessor": "v3",
+      "sealedPayloadSha256": "6d54e432c4c069338087eb9a944e7ba04da2b7ed3e587eca7a1612bab696b5dd",
+      "version": "v4"
+    },
+    {
+      "fileSha256": "9cec05334b345e5d6cab7ad07c2963da42cac1e7409aa881419ba72618c8d5fe",
+      "predecessor": "v2",
+      "sealedPayloadSha256": "7f9e81a6d7b809e6e7b828c0912cfce2745c166c4e1d6c4b776dbb3f5b5bf225",
+      "version": "v3"
+    },
+    {
+      "fileSha256": "81438665462b6945ae867ed6dbed78eb6cfe4aad996518652971eec74f977868",
+      "predecessor": "v1",
+      "sealedPayloadSha256": "1b8371c83be5a622ff7f556a716bc1429776a9fdfe88190516c55b02d625f132",
+      "version": "v2"
+    },
+    {
+      "fileSha256": "631adb66431d30003620f78ccdc0ad9ecc6136874728d66a8185a41a3b85d2a4",
+      "predecessor": null,
+      "sealedPayloadSha256": "309b5e68757d7c57672e67604783ec2d920deb59dd9a461e61f617b4c5bb6be1",
+      "version": "v1"
+    }
+  ],
+  "productionState": "NOT_AUTHORIZED_G6",
+  "remainingGate": {
+    "existingV3IndependentAudit": "HISTORICAL_ONLY_NOT_SUFFICIENT_FOR_V4",
+    "independentReaderFenceAuditV4": "REQUIRED_BEFORE_ANY_ACCEPTANCE_CAN_REFERENCE_V4",
+    "promotion": "FORBIDDEN_UNTIL_NEW_INDEPENDENT_AUDIT_AND_FULL_ACCEPTANCE"
+  },
+  "reportId": "DWP-HRIS-MODERN-SUCCESSOR-READER-INVENTORY-V4-AUTHOR-REFRESH-2026-09-16",
+  "schema": "dwp.hris.modern-successor-reader-inventory-v4-author-refresh.v1",
+  "scope": {
+    "activeSourceCount": 44,
+    "forbiddenActions": [
+      "NO_CANONICAL_OR_PHYSICAL_PROMOTION",
+      "NO_GATE_WRITE",
+      "NO_CANDIDATE_WRITE",
+      "NO_PREDECESSOR_INVENTORY_OVERWRITE"
+    ],
+    "reason": "FINAL_ENDORSEMENT_VERIFIER_TRUST_ROOT_REPIN_CHANGED_ONE_ACTIVE_READER"
+  },
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "900e23984460fd79b7c65860dcff40d2fd03eb5e7d0a8cea46bb178e6a7aa936",
+  "sourceChanges": [
+    {
+      "inventoryV3Sha256": "033cfc111fa0111967f4665f92c6fe76c2a35774bf97c1b263fc4e0484a8d6f5",
+      "inventoryV4Sha256": "82f2ebad95b4cc047f85d39cda6d562c0cd2a44e18f906952c124333ac3d7332",
+      "path": "coding-readiness/validate_modern_causal_final_endorsement.py",
+      "reason": "INDEPENDENT_VALIDATOR_TRUST_ROOT_REPIN_BY_OPERATION_REPAIR"
+    },
+    {
+      "afterSha256": "f1b665f4cdf3f3f22f2aae3fc4e3e42d0b467a8411711887f874b271225df17e",
+      "beforeSha256": "dfc003b8c5b64a40051ccd577db09e3da6fea52dd4d4813479506faba1a50592",
+      "path": "coding-readiness/promote_modern_successor_bundle.py",
+      "reason": "ACTIVE_INVENTORY_V4_PIN"
+    },
+    {
+      "afterSha256": "ef5213ecd699bc4b781128e6a622e85e9c72cc5f72cb76281f4a907b812fd9f2",
+      "beforeSha256": "4fd6daa023d1e510ebbb19b92bc718e4b6ed7f86a609baecf8dcd53447adf859",
+      "path": "coding-readiness/modern_successor_reader_guard.py",
+      "reason": "ACTIVE_INVENTORY_V4_PIN"
+    },
+    {
+      "afterSha256": "8b2e97c4f563885711275e2872a9472047abdf481b1851c6d4759f7a951b4cbf",
+      "beforeSha256": "daccb21fecc8d166bbc2700a46313e79f9a053c128e9381bcbe4bf17d2283167",
+      "path": "coding-readiness/validate_modern_successor_reader_coverage.py",
+      "reason": "ACTIVE_INVENTORY_V4_PIN"
+    }
+  ],
+  "status": "PASS_SOURCE_REFRESH_COMPLETE",
+  "tests": {
+    "coverageHostileSelfTest": {
+      "includes": [
+        "exact inventory",
+        "uninventoried/source drift",
+        "direct reader absent/COMMITTED admission",
+        "PREPARED/COMMITTING/FINALIZING writer-death rejection",
+        "malformed rejection"
+      ],
+      "passed": 9,
+      "status": "PASS",
+      "total": 9
+    },
+    "promotionSelfTest": {
+      "includes": [
+        "CAS drift",
+        "symlink",
+        "extra file",
+        "tamper",
+        "missing audit",
+        "receipt collision",
+        "partial crash rollback",
+        "post-receipt recovery"
+      ],
+      "passed": 14,
+      "status": "PASS",
+      "total": 14
+    },
+    "pyCompile": {
+      "files": 4,
+      "status": "PASS"
+    },
+    "readerGuardHostileSelfTest": {
+      "includes": [
+        "shared/exclusive process exclusion",
+        "nested reentrancy",
+        "writer-death rejection",
+        "terminal/absent admission"
+      ],
+      "passed": 10,
+      "status": "PASS",
+      "total": 10
+    }
+  },
+  "verdict": "GO_FOR_INDEPENDENT_REAUDIT_NOT_PROMOTION"
+}

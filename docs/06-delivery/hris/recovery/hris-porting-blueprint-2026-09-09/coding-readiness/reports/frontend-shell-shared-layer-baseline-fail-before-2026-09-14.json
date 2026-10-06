@@ -1,0 +1,512 @@
+{
+  "schema": "dwp.hris.shell-shared-layer-baseline.v1",
+  "status": "PASS_BASELINE_FAIL_BEFORE_PRESERVED",
+  "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+  "startedAt": "2026-09-14T12:26:23.826886+00:00",
+  "finishedAt": "2026-09-14T12:26:29.249329+00:00",
+  "hostLock": {
+    "schema": "dwp.hris.host-semaphore-receipt.v1",
+    "name": "hris-verification",
+    "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+    "requestedAt": "2026-09-14T12:26:07.495Z",
+    "acquiredAt": "2026-09-14T12:26:23.819Z",
+    "releasedAt": "2026-09-14T12:26:29.249Z",
+    "waitMilliseconds": 16324,
+    "status": "RELEASED"
+  },
+  "sourceCount": 22,
+  "sourceStable": true,
+  "preSources": [
+    {
+      "path": "apps/dwp/src/features/hris/shared/hris-domain-components.tsx",
+      "sha256": "cfbec4ef962204666bd37a87cf39ad6f4ce3064e6293a9804c82937fe06edcd7",
+      "mtimeNs": "1788995202074565945"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shared/index.ts",
+      "sha256": "05674dccd382b2fe36d6496c8992911f1536cf698f6500686cd0d1360aa64fee",
+      "mtimeNs": "1789388461414203687"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+      "sha256": "1dcabe50c299f2258b18389ce08ee2617645b039868dcc7f1f7603571eb48286",
+      "mtimeNs": "1789387892570755469"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-identity.test.ts",
+      "sha256": "15150dbf3ddc9854f51edaa529a059c9bd1f166fe3799d3636bd71677032aa57",
+      "mtimeNs": "1788965073955599207"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.test.ts",
+      "sha256": "6cecfec97b6100f0adfef16b70b9692cdd5019a13a57b3e72a7e7b53b0eb11c7",
+      "mtimeNs": "1788967480135767959"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.ts",
+      "sha256": "ad5c11bf8dd598f75bf8b3ac789a6e58dd1684d990561efe9e980289f53f8ff9",
+      "mtimeNs": "1788996318442540936"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map-contract.ts",
+      "sha256": "7c27a6721e33bd1859d04ee9746c3d959d2221cc4b94d7e60e7d044052de809d",
+      "mtimeNs": "1788995202079615762"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map.test.tsx",
+      "sha256": "1f39434786a069ed66fc8a623c65ec8ab130cb26e6cdba71c4becf6eb429fd3f",
+      "mtimeNs": "1788968744635962997"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map.tsx",
+      "sha256": "1aa2aa33be68298dcba5fd24494371e16cbfc52b11f75f40bdbe5973fdeb63f2",
+      "mtimeNs": "1788995201916931009"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-retained-route-registry.ts",
+      "sha256": "96c4d95ee1662595854d6b068695bca3919cfb2a459a5d707ec04590fa0bc277",
+      "mtimeNs": "1788967218156177048"
+    },
+    {
+      "path": "apps/dwp/src/pages/hcm.tsx",
+      "sha256": "27117c8a35e7d08f2f758b111bdd70f1b6ca11919e1cdf4e9b3d4aecd71c44af",
+      "mtimeNs": "1789387892570317111"
+    },
+    {
+      "path": "apps/dwp/vitest.config.ts",
+      "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+      "mtimeNs": "1788935983686664189"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "2d19a25f026fce3f09f0a1498ab791711624a2b69ea0efe400531a941bf1d7e1",
+      "mtimeNs": "1788935990192442381"
+    },
+    {
+      "path": "package.json",
+      "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+      "mtimeNs": "1789007262614952991"
+    },
+    {
+      "path": "scripts/source-size-baseline.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "mtimeNs": "1788935990533766282"
+    },
+    {
+      "path": "scripts/verification/fixtures/hris-layer-contract-v1.json",
+      "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+      "mtimeNs": "1789372734551537974"
+    },
+    {
+      "path": "scripts/verification/hris-layer-contract-v1.mjs",
+      "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+      "mtimeNs": "1789372935387532984"
+    },
+    {
+      "path": "scripts/verification/hris-layer-contract-v1.test.mjs",
+      "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+      "mtimeNs": "1789372861693015249"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+      "mtimeNs": "1788935990538496879"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+      "mtimeNs": "1788935990538631335"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+      "mtimeNs": "1788935990540016523"
+    },
+    {
+      "path": "yarn.lock",
+      "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+      "mtimeNs": "1789007297916953519"
+    }
+  ],
+  "postSources": [
+    {
+      "path": "apps/dwp/src/features/hris/shared/hris-domain-components.tsx",
+      "sha256": "cfbec4ef962204666bd37a87cf39ad6f4ce3064e6293a9804c82937fe06edcd7",
+      "mtimeNs": "1788995202074565945"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shared/index.ts",
+      "sha256": "05674dccd382b2fe36d6496c8992911f1536cf698f6500686cd0d1360aa64fee",
+      "mtimeNs": "1789388461414203687"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+      "sha256": "1dcabe50c299f2258b18389ce08ee2617645b039868dcc7f1f7603571eb48286",
+      "mtimeNs": "1789387892570755469"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-identity.test.ts",
+      "sha256": "15150dbf3ddc9854f51edaa529a059c9bd1f166fe3799d3636bd71677032aa57",
+      "mtimeNs": "1788965073955599207"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.test.ts",
+      "sha256": "6cecfec97b6100f0adfef16b70b9692cdd5019a13a57b3e72a7e7b53b0eb11c7",
+      "mtimeNs": "1788967480135767959"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.ts",
+      "sha256": "ad5c11bf8dd598f75bf8b3ac789a6e58dd1684d990561efe9e980289f53f8ff9",
+      "mtimeNs": "1788996318442540936"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map-contract.ts",
+      "sha256": "7c27a6721e33bd1859d04ee9746c3d959d2221cc4b94d7e60e7d044052de809d",
+      "mtimeNs": "1788995202079615762"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map.test.tsx",
+      "sha256": "1f39434786a069ed66fc8a623c65ec8ab130cb26e6cdba71c4becf6eb429fd3f",
+      "mtimeNs": "1788968744635962997"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map.tsx",
+      "sha256": "1aa2aa33be68298dcba5fd24494371e16cbfc52b11f75f40bdbe5973fdeb63f2",
+      "mtimeNs": "1788995201916931009"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-retained-route-registry.ts",
+      "sha256": "96c4d95ee1662595854d6b068695bca3919cfb2a459a5d707ec04590fa0bc277",
+      "mtimeNs": "1788967218156177048"
+    },
+    {
+      "path": "apps/dwp/src/pages/hcm.tsx",
+      "sha256": "27117c8a35e7d08f2f758b111bdd70f1b6ca11919e1cdf4e9b3d4aecd71c44af",
+      "mtimeNs": "1789387892570317111"
+    },
+    {
+      "path": "apps/dwp/vitest.config.ts",
+      "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+      "mtimeNs": "1788935983686664189"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "2d19a25f026fce3f09f0a1498ab791711624a2b69ea0efe400531a941bf1d7e1",
+      "mtimeNs": "1788935990192442381"
+    },
+    {
+      "path": "package.json",
+      "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+      "mtimeNs": "1789007262614952991"
+    },
+    {
+      "path": "scripts/source-size-baseline.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "mtimeNs": "1788935990533766282"
+    },
+    {
+      "path": "scripts/verification/fixtures/hris-layer-contract-v1.json",
+      "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+      "mtimeNs": "1789372734551537974"
+    },
+    {
+      "path": "scripts/verification/hris-layer-contract-v1.mjs",
+      "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+      "mtimeNs": "1789372935387532984"
+    },
+    {
+      "path": "scripts/verification/hris-layer-contract-v1.test.mjs",
+      "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+      "mtimeNs": "1789372861693015249"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+      "mtimeNs": "1788935990538496879"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+      "mtimeNs": "1788935990538631335"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+      "mtimeNs": "1788935990540016523"
+    },
+    {
+      "path": "yarn.lock",
+      "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+      "mtimeNs": "1789007297916953519"
+    }
+  ],
+  "runs": [
+    {
+      "label": "shell-tests",
+      "argv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--project",
+        "dwp-app",
+        "apps/dwp/src/features/hris/shell/",
+        "--maxWorkers=1",
+        "--reporter=json"
+      ],
+      "timeoutSeconds": 90,
+      "startedAt": "2026-09-14T12:26:23.826907+00:00",
+      "finishedAt": "2026-09-14T12:26:27.481780+00:00",
+      "durationSeconds": 3.655054500000002,
+      "exitCode": 0,
+      "timedOut": false,
+      "stdoutArchive": {
+        "encoding": "gzip+base64",
+        "sha256": "5803c022540f076c4207aea16d0471ce8c1c80b667c2309466d6b1a4df93ad2e",
+        "bytes": 7547,
+        "archiveSha256": "ac50c48685c99bf5cccb81b3f99a3056695a14f8fac7a49f9cbb1b20cede1046",
+        "payload": "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"
+      },
+      "stderrArchive": {
+        "encoding": "gzip+base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "archiveSha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "payload": "H4sIAAAAAAAC/wMAAAAAAAAAAAA="
+      },
+      "summary": {
+        "numTotalTests": 18,
+        "numPassedTests": 18,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTotalTestSuites": 8,
+        "numPassedTestSuites": 8,
+        "numFailedTestSuites": 0
+      },
+      "caseResults": [
+        {
+          "name": "HRIS home and work-explorer separation keeps the product map out of the role-based home dashboard",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS home and work-explorer separation renders home states without an injected menu catalog",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS home and work-explorer separation routes each non-SYS pilot to its governed HRIS implementation",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS visible product identity keeps canonical technical identifiers while renaming the launchpad product",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS visible product identity uses HRIS at the shell and home app entry in ko",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS visible product identity uses HRIS at the shell and home app entry in en",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog freezes the complete 76-menu target inventory by domain",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog opens exactly one honest pilot per development module",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog never turns planned, evidence-blocked, or external work into a blank route",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog assigns every external setting to an explicit non-URL DWP control owner",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog keeps delivery, availability, and authorization as independent facts",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog reconciles all 25 governed routes without folding excluded BENSK work into HRIS",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog allows only reviewed one-to-many legacy mappings and never exposes them as actions",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS target product map catalog projects work surfaces by module and persona without changing the catalog",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS product map runtime contract uses labelled navigation, filters, live results, and semantic heading/list structure",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS product map runtime contract renders only the real operations pilot as an action and keeps roadmap rows inert",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS product map runtime contract keeps a pilot visible but removes its action when route authority is absent",
+          "status": "passed"
+        },
+        {
+          "name": "HRIS product map runtime contract labels DWP control-plane items as external without offering fake destinations",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "label": "actual-layer-scan",
+      "argv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/verification/hris-layer-contract-v1.mjs",
+        "--mode",
+        "scan",
+        "--register",
+        "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv"
+      ],
+      "timeoutSeconds": 120,
+      "startedAt": "2026-09-14T12:26:27.482220+00:00",
+      "finishedAt": "2026-09-14T12:26:29.244514+00:00",
+      "durationSeconds": 1.7623929579999995,
+      "exitCode": 1,
+      "timedOut": false,
+      "stdoutArchive": {
+        "encoding": "gzip+base64",
+        "sha256": "96ecb6cf1fb0d8b8a6036fd22d13292d2d0d1d2fe86cb8d062c6fdaba98df67e",
+        "bytes": 10253,
+        "archiveSha256": "6c48e165e1567c530386b406f407dd99af1928f9dd0b23ed72514b919b7be08b",
+        "payload": "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"
+      },
+      "stderrArchive": {
+        "encoding": "gzip+base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "archiveSha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "payload": "H4sIAAAAAAAC/wMAAAAAAAAAAAA="
+      },
+      "summary": {
+        "structuralPass": false,
+        "readinessPass": false,
+        "g3StartAuthorized": false,
+        "sourceCount": 2046,
+        "classifiedCount": 40,
+        "layeredCount": 35,
+        "unclassifiedCount": 9,
+        "totalErrorCount": 10,
+        "ownedErrorCount": 10,
+        "ownedErrors": [
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shared/hris-domain-components.tsx",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_TARGET_LAYER",
+            "file": "apps/dwp/src/features/hris/shared/index.ts",
+            "line": 7,
+            "specifier": "./hris-domain-components"
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-product-identity.test.ts",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.test.ts",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.ts",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-product-map-contract.ts",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-product-map.test.tsx",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-product-map.tsx",
+            "line": 1
+          },
+          {
+            "code": "UNCLASSIFIED_FEATURE_LAYER",
+            "file": "apps/dwp/src/features/hris/shell/hris-retained-route-registry.ts",
+            "line": 1
+          }
+        ],
+        "sourceEvidence": {
+          "pins": [
+            {
+              "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+              "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+              "mtimeNs": "1789372935387532984"
+            },
+            {
+              "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+              "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+              "mtimeNs": "1789372861693015249"
+            },
+            {
+              "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+              "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+              "mtimeNs": "1789372734551537974"
+            },
+            {
+              "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+              "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+              "mtimeNs": "1789007262614952991"
+            },
+            {
+              "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+              "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+              "mtimeNs": "1788935990538631335"
+            },
+            {
+              "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+              "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+              "mtimeNs": "1788935990538496879"
+            },
+            {
+              "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+              "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+              "mtimeNs": "1789371903933227062"
+            }
+          ],
+          "namespaceCount": 2046,
+          "namespaceSha256": "3472715e6841f020d4b07d5bb7622aff819b10522f770efeae8629d5f7788ff4",
+          "diskNamespaceNsCount": 2046,
+          "diskNamespaceNsSha256": "c6426b710db4450d135d625b6bcb7ad50f526215b2632516ec88f03bdbd95755",
+          "versions": {
+            "typescript": "6.0.3",
+            "react": "19.2.8",
+            "reactQuery": "5.101.4"
+          }
+        }
+      }
+    }
+  ],
+  "limits": {
+    "behaviorChanged": false,
+    "domainRuntimeExecuted": false,
+    "browserRun": false,
+    "G3Open": false,
+    "productionActivationAuthorized": false
+  }
+}
+

@@ -1,0 +1,71 @@
+{
+  "schema": "dwp.hris.workforce-s1-native-environment-failure.v1",
+  "status": "ENVIRONMENT_BLOCKED_BEFORE_TESTCONTAINERS",
+  "readiness": false,
+  "g3": false,
+  "boundary": "AUTHOR_TEST_ONLY_NATIVE_AUTH_READ_NOT_COMMAND",
+  "productionChanges": 0,
+  "assertionExpectationChanges": 0,
+  "fixtureChange": {
+    "scope": "TEST_ONLY_IDENTIFIERS_ONLY",
+    "oldIds": [900010, 900011, 900012],
+    "newIds": [941010, 941011, 941012],
+    "actorPreserved": 900009,
+    "currentSha256": "4f6c050178a9526334d3363307fcef894a6e88e67c577a4b780a276b19efb6b4",
+    "reverseSubstitutionSha256": "3eeb48bb2e4b1b49792d786f89350ead824d8044d272b62138b4037555a7b971",
+    "matchesFirstNativeFailureCandidate": true
+  },
+  "run": {
+    "argv": ["./gradlew", ":dwp-auth-server:test", "--rerun", "--tests", "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest", "--no-daemon", "--max-workers=1"],
+    "postgresImage": "postgres:16-alpine",
+    "startedAt": "2026-09-14T11:53:07.411994+00:00",
+    "finishedAt": "2026-09-14T11:53:17.373869+00:00",
+    "durationSeconds": 9.962212208999972,
+    "exitCode": 1,
+    "timeout": false,
+    "sourceCount": 3068,
+    "sourceStable": true,
+    "counts": {"tests": 1, "unique": 1, "failure": 1, "error": 0, "skipped": 0},
+    "testcase": "initializationError",
+    "exception": "java.lang.IllegalStateException: Could not find a valid Docker environment. Please see logs and check configuration",
+    "functionalNativeCasesExecuted": 0,
+    "hostLock": {
+      "name": "hris-verification",
+      "requestedAt": "2026-09-14T11:53:06.690Z",
+      "acquiredAt": "2026-09-14T11:53:06.690Z",
+      "releasedAt": "2026-09-14T11:53:18.738Z",
+      "waitMilliseconds": 0,
+      "status": "RELEASED"
+    },
+    "receiptSha256": "78841243aa93536d58f8b36f0bd9d1fe0e0ba229c042a895f08ac7516020b3cc",
+    "receiptBytes": 1454531,
+    "archiveSha256": "7bfb6434d4f90c79baccd3a6f68829e75fd0168cd56a1ffea8d9268fe59f9639",
+    "archiveBytes": 392943,
+    "archiveChunks": 44,
+    "ackProtocolCompleted": true,
+    "localLosslessArchiveRetained": false,
+    "localArchiveNote": "The first archive chunk was truncated by the orchestration output budget; no lossless-run claim is made. The fresh XML and bounded facts below are retained."
+  },
+  "freshXml": {
+    "path": "dwp-auth-server/build/test-results/test/TEST-com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest.xml",
+    "sha256": "eb11ae0735d013f3c36fbb1c7e08ddd5103f682077ce3126f427d0ef58e1dbeb",
+    "mtimeNs": "1789386796924505633",
+    "bytes": 26377
+  },
+  "productionPins": [
+    {"path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/workforce/v1/WorkforcePolicyGovernanceV1.java", "sha256": "d943478c91b82943bc2684885da442a7f0a58d6fb0d50e25e973faf500e9ceef", "mtimeNs": "1789382630400209807"},
+    {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1.java", "sha256": "430fec043235f47f21d9546e2926b2ba2f13474442b54a451e2c09a318678cb9", "mtimeNs": "1789383338695380978"},
+    {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/WorkforcePolicyGovernanceAuthorityControllerV1.java", "sha256": "f3c66b5d5077053066369598bd965018675d0d1042aed43754ba4ad833f466a0", "mtimeNs": "1789382862522242613"},
+    {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/WorkforcePolicyGovernanceInternalSecurityConfigV1.java", "sha256": "fe04236a57c85f5921ad49fa420a20cd5f99f5b3f53419c48fb95fbf9904fcb9", "mtimeNs": "1789382862522761801"}
+  ],
+  "dockerObservation": {
+    "command": "docker version --format {{json .Server}}",
+    "exitCode": 1,
+    "server": null,
+    "message": "Cannot connect to the Docker daemon at unix:///Users/a10697/.docker/run/docker.sock. Is the docker daemon running?",
+    "manualServerOrContainerStop": 0,
+    "manualServerOrContainerStart": 0
+  },
+  "decision": "Do not change production code or expectations. Re-run the identical PG16 class after the Docker daemon is externally available; preserve any subsequent functional failure before considering a minimal TEST_ONLY fixture correction.",
+  "g3Boundary": "This environment failure proves neither native authorization correctness nor G3 readiness. S1 remains READ evidence only, not a command permit, durable consume/revoke fence, published product catalog, or whole-G3 approval."
+}

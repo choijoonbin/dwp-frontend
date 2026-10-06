@@ -1,0 +1,2669 @@
+{
+  "status": "AUTHOR_ONLY_SCHEMA_AND_NATIVE_BOUNDARY_FIXTURES_NOT_PRODUCTION_RECEIPTS",
+  "fixedNativeOwnerUuidConstants": {
+    "principal": "10000000-0000-4000-8000-000000000001",
+    "person": "10000000-0000-4000-8000-000000000002",
+    "worker": "10000000-0000-4000-8000-000000000003",
+    "relationship": "10000000-0000-4000-8000-000000000004",
+    "assignment": "10000000-0000-4000-8000-000000000005",
+    "employer": "10000000-0000-4000-8000-000000000006",
+    "secondWorker": "10000000-0000-4000-8000-000000000007",
+    "secondRelationship": "10000000-0000-4000-8000-000000000008",
+    "secondAssignment": "10000000-0000-4000-8000-000000000009",
+    "candidate": "10000000-0000-4000-8000-000000000010",
+    "admission": "10000000-0000-4000-8000-000000000011",
+    "hire": "10000000-0000-4000-8000-000000000012",
+    "template": "10000000-0000-4000-8000-000000000013",
+    "plan": "10000000-0000-4000-8000-000000000014",
+    "planVersion": "10000000-0000-4000-8000-000000000015",
+    "config": "10000000-0000-4000-8000-000000000016",
+    "evidence": "10000000-0000-4000-8000-000000000017",
+    "trace": "10000000-0000-4000-8000-000000000099"
+  },
+  "shapeWitnesses": [
+    {
+      "operationId": "modern.recruiting.requisitions.query",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "GET",
+      "path": "/api/people/v2/hris/recruiting/requisitions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.recruiting.requisition.create",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/requisitions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "positionPublicId": "10000000-0000-4000-8000-000000000017",
+          "positionSnapshotId": "10000000-0000-4000-8000-000000000017",
+          "requisitionCode": "X",
+          "title": "X",
+          "employmentType": "X",
+          "targetStartDate": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.requisition.publish",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/requisitions/{requisitionId}/publish",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "requisitionId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017",
+          "effectiveFrom": "2026-11-02",
+          "publishedContentRef": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.candidate.stage",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "PATCH",
+      "path": "/api/people/v2/hris/recruiting/candidate-cases/{candidateCaseId}/stage",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "candidateCaseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "targetStage": "SCREENING",
+          "reasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.offer.issue",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/candidate-cases/{candidateCaseId}/offers",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "candidateCaseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "offerVersion": 0,
+          "currency": "X",
+          "amount": "1.0000",
+          "expiresAt": "2026-11-02T09:59:50Z",
+          "validFrom": "2026-11-02",
+          "compensationPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "termsObjectRef": "X",
+          "humanDecisionReceiptId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.hire.record",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/candidate-cases/{candidateCaseId}/hire-decisions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "candidateCaseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "decision": "APPROVE",
+          "reasonCode": "X",
+          "humanDecisionReceiptId": "10000000-0000-4000-8000-000000000017",
+          "effectiveDate": "2026-11-02",
+          "offerId": "10000000-0000-4000-8000-000000000017",
+          "workerProposal": {
+            "personToken": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "classificationPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+            "workerType": "EMPLOYEE",
+            "positionPublicId": "10000000-0000-4000-8000-000000000017",
+            "organizationPublicId": "10000000-0000-4000-8000-000000000017",
+            "effectiveFrom": "2026-11-02",
+            "sourceSystemId": "10000000-0000-4000-8000-000000000017",
+            "sourceRecordKey": "X",
+            "personAdmissionReceiptId": "10000000-0000-4000-8000-000000000017",
+            "identityDisposition": "CREATE_NEW_WORKER",
+            "reusePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          }
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.candidate.admit",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/candidate-cases",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "requisitionId": "10000000-0000-4000-8000-000000000017",
+          "candidatePersonToken": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "consentReceiptId": "10000000-0000-4000-8000-000000000017",
+          "sourceSystemId": "10000000-0000-4000-8000-000000000017",
+          "sourceCandidateKey": "X",
+          "admissionChannel": "NATIVE",
+          "appliedAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.candidates.query",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "GET",
+      "path": "/api/people/v2/hris/recruiting/candidate-cases",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.recruiting.requisition.pause",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/requisitions/{requisitionId}/pause",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "requisitionId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.requisition.close",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/requisitions/{requisitionId}/close",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "requisitionId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.candidate.close",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/candidate-cases/{candidateCaseId}/close",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "candidateCaseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "disposition": "REJECT",
+          "reasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.offer.decide",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/offers/{offerId}/decisions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "offerId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "decision": "ACCEPT",
+          "candidateResponseReceiptId": "10000000-0000-4000-8000-000000000017",
+          "respondedAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.offer.expire",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/offers/{offerId}/expire",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "offerId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "observedAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.hire.confirm",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/hire-requests/{hireRequestId}/owner-receipts",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "hireRequestId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "hrmCommandReceiptId": "10000000-0000-4000-8000-000000000017",
+          "proposalPublicId": "10000000-0000-4000-8000-000000000017",
+          "outcome": "ACCEPTED"
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.self.query",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "GET",
+      "path": "/api/people/v2/hris/onboarding/my-journeys",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.onboarding.template.create",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/templates",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "templateKey": "X",
+          "displayName": "X",
+          "configScopePublicId": "10000000-0000-4000-8000-000000000017",
+          "version": 0,
+          "effectiveFrom": "2026-11-02",
+          "tasks": []
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.template.publish",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/templates/{templateId}/versions/{version}/publish",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "templateId": "10000000-0000-4000-8000-000000000017",
+          "version": 0
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017",
+          "effectiveFrom": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.journey.assign",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/journey-assignments",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "templateVersionId": "10000000-0000-4000-8000-000000000017",
+          "dueAt": "2026-11-02T09:59:50Z",
+          "calendarVersionId": "10000000-0000-4000-8000-000000000017",
+          "assigneeBindings": [],
+          "subject": {
+            "kind": "PREHIRE_PERSON",
+            "candidateCaseId": "10000000-0000-4000-8000-000000000017",
+            "personAdmissionReceiptId": "10000000-0000-4000-8000-000000000017"
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z",
+          "onboardingZone": "X",
+          "tzdbVersion": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.task.complete",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/journey-assignments/{assignmentId}/tasks/{taskId}/complete",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "assignmentId": "10000000-0000-4000-8000-000000000017",
+          "taskId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "completionCode": "X",
+          "evidence": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "completedAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.journey.cancel",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/journey-assignments/{assignmentId}/cancel",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "assignmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.template.version.create",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/templates/{templateId}/versions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "templateId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "version": 0,
+          "effectiveFrom": "2026-11-02",
+          "tasks": []
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.template.version.query",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "GET",
+      "path": "/api/people/v2/hris/onboarding/templates/{templateId}/versions/{version}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "templateId": "10000000-0000-4000-8000-000000000017",
+          "version": 0
+        },
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.onboarding.template.retire",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/templates/{templateId}/versions/{version}/retire",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "templateId": "10000000-0000-4000-8000-000000000017",
+          "version": 0
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.journey.query",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "GET",
+      "path": "/api/people/v2/hris/onboarding/journey-assignments/{assignmentId}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "assignmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.onboarding.task.waive",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/journey-assignments/{assignmentId}/tasks/{taskId}/waive",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "assignmentId": "10000000-0000-4000-8000-000000000017",
+          "taskId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "waiverDecisionReceiptId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenarios.query",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "GET",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.create",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "scenarioKey": "X",
+          "displayName": "X",
+          "asOfDate": "2026-11-02",
+          "effectiveDate": "2026-11-02",
+          "organizationSnapshotId": "10000000-0000-4000-8000-000000000017",
+          "positionSnapshotId": "10000000-0000-4000-8000-000000000017",
+          "costSnapshotId": "10000000-0000-4000-8000-000000000017",
+          "configVersionId": "10000000-0000-4000-8000-000000000017",
+          "lines": []
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.simulate",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}/simulations",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "inputRevision": 0,
+          "ruleVersionId": "10000000-0000-4000-8000-000000000017",
+          "deterministicSeed": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.submit",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}/submit",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "simulationRevision": 0,
+          "effectiveDate": "2026-11-02",
+          "approvalPolicyVersionId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.approve",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}/approve",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "decision": "APPROVE",
+          "reasonCode": "X",
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017",
+          "simulationRevision": 0
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.publish",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}/publish",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017",
+          "approvedRevision": 0,
+          "effectiveFrom": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.revise",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}/revisions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "displayName": "X",
+          "asOfDate": "2026-11-02",
+          "effectiveDate": "2026-11-02",
+          "organizationSnapshotId": "10000000-0000-4000-8000-000000000017",
+          "positionSnapshotId": "10000000-0000-4000-8000-000000000017",
+          "costSnapshotId": "10000000-0000-4000-8000-000000000017",
+          "configVersionId": "10000000-0000-4000-8000-000000000017",
+          "lines": []
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.query",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "GET",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.reject",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}/reject",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017",
+          "simulationRevision": 0
+        }
+      }
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.cancel",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/workforce-planning/scenarios/{scenarioId}/cancel",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "scenarioId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.self.plans.query",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "GET",
+      "path": "/api/people/v2/hris/benefits/my-eligible-plans",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.benefits.plan.create",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/plans",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "planCode": "X",
+          "displayName": "X",
+          "version": 0,
+          "eligibilityPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "enrollmentWindowPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "effectiveFrom": "2026-11-02",
+          "coverageOptions": [],
+          "deliveryMode": "NATIVE"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.plan.publish",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/plans/{planId}/versions/{version}/publish",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "planId": "10000000-0000-4000-8000-000000000017",
+          "version": 0
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017",
+          "effectiveFrom": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.enrollment.submit",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/enrollments",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "benefitPlanId": "10000000-0000-4000-8000-000000000017",
+          "benefitPlanVersionId": "10000000-0000-4000-8000-000000000017",
+          "coverageOptionCode": "X",
+          "dependentTokens": [],
+          "effectiveDate": "2026-11-02",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000017",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000017",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000017"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 0,
+            "workerVersion": 0,
+            "relationshipVersion": 0,
+            "assignmentVersion": 0,
+            "authUserRowVersion": 0,
+            "authAccessRevision": 0
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.submit",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/life-events",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "occurredOn": "2026-11-02",
+          "lifeEventType": "X",
+          "sourceRecordKey": "X",
+          "evidence": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "verificationPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000017",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000017",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000017"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 0,
+            "workerVersion": 0,
+            "relationshipVersion": 0,
+            "assignmentVersion": 0,
+            "authUserRowVersion": 0,
+            "authAccessRevision": 0
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.enrollment.decide",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/enrollments/{enrollmentId}/decisions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "enrollmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "decision": "APPROVE",
+          "reasonCode": "X",
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.plan.version.create",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/plans/{planId}/versions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "planId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "version": 0,
+          "eligibilityPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "enrollmentWindowPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "effectiveFrom": "2026-11-02",
+          "coverageOptions": [],
+          "deliveryMode": "NATIVE"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.plan.version.query",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "GET",
+      "path": "/api/people/v2/hris/benefits/plans/{planId}/versions/{version}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "planId": "10000000-0000-4000-8000-000000000017",
+          "version": 0
+        },
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.benefits.plan.retire",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/plans/{planId}/versions/{version}/retire",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "planId": "10000000-0000-4000-8000-000000000017",
+          "version": 0
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.enrollment.query",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "GET",
+      "path": "/api/people/v2/hris/benefits/enrollments/{enrollmentId}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "enrollmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.benefits.enrollment.cancel",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/enrollments/{enrollmentId}/cancel",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "enrollmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveDate": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.decide",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/life-events/{lifeEventId}/decisions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "lifeEventId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "decision": "VERIFY",
+          "reasonCode": "X",
+          "verificationReceiptId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.expire",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/life-events/{lifeEventId}/expire",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "lifeEventId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "observedAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.provider.execute",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/enrollments/{enrollmentId}/provider-executions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "enrollmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "providerConfigVersionId": "10000000-0000-4000-8000-000000000017",
+          "executionKind": "ENROLL"
+        }
+      }
+    },
+    {
+      "operationId": "modern.benefits.provider.receipt",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "method": "POST",
+      "path": "/api/people/v2/hris/benefits/enrollments/{enrollmentId}/provider-receipts",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "enrollmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "connectorExecutionId": "10000000-0000-4000-8000-000000000017",
+          "providerKey": "X",
+          "providerReference": "X",
+          "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "responseDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "executionOutcome": "ACCEPTED",
+          "providerRequestId": "10000000-0000-4000-8000-000000000017",
+          "connectorCommandId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.create",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "serviceConfigVersionId": "10000000-0000-4000-8000-000000000017",
+          "caseType": "X",
+          "subject": "X",
+          "description": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "expectedPersonVersion": 0
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.query",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "GET",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.triage",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/triage",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "caseType": "X",
+          "sensitivityClass": "X",
+          "queueKey": "X",
+          "serviceConfigVersionId": "10000000-0000-4000-8000-000000000017",
+          "reasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.assign",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/assignments",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "assigneePrincipalPublicId": "10000000-0000-4000-8000-000000000017",
+          "queueKey": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.respond",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/responses",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "content": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "citations": [],
+          "visibility": "EMPLOYEE",
+          "redactionReceiptId": "10000000-0000-4000-8000-000000000017",
+          "authorship": "HUMAN_ORIGINAL"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.resolve",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/resolve",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "resolutionCode": "X",
+          "finalResponseId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.self.query",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "GET",
+      "path": "/api/people/v2/hris/hr-services/my-cases",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.pause",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/pause",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "pauseReasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.resume",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/resume",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "resumeReasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.case.cancel",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/cancel",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.response.query",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "GET",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/responses/{responseId}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017",
+          "responseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagements.query",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "GET",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagement.create",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "engagementCode": "X",
+          "vendorPublicId": "10000000-0000-4000-8000-000000000017",
+          "sponsorWorkerPublicId": "10000000-0000-4000-8000-000000000017",
+          "classificationPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "workerClassification": "X",
+          "effectiveFrom": "2026-11-02",
+          "effectiveTo": "2026-11-02",
+          "accessExpiresAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagement.submit",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements/{engagementId}/submit",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "engagementId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "approvalPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "effectiveDate": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagement.activate",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements/{engagementId}/activate",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "engagementId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017",
+          "accessExpiresAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagement.offboard",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements/{engagementId}/offboard",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "engagementId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveAt": "2026-11-02T09:59:50Z"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagement.close",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements/{engagementId}/close",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "engagementId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "authInventoryReceiptId": "10000000-0000-4000-8000-000000000017",
+          "reasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.vendor.create",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/vendors",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "vendorCode": "X",
+          "displayName": "X",
+          "effectiveFrom": "2026-11-02",
+          "sourceSystemId": "10000000-0000-4000-8000-000000000017",
+          "sourceRecordKey": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.vendors.query",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "GET",
+      "path": "/api/people/v2/hris/contingent-workforce/vendors",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.contingent.worker.proposal.create",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/worker-proposals",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "workerProposal": {
+            "personToken": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "classificationPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+            "workerType": "EMPLOYEE",
+            "positionPublicId": "10000000-0000-4000-8000-000000000017",
+            "organizationPublicId": "10000000-0000-4000-8000-000000000017",
+            "effectiveFrom": "2026-11-02",
+            "sourceSystemId": "10000000-0000-4000-8000-000000000017",
+            "sourceRecordKey": "X",
+            "personAdmissionReceiptId": "10000000-0000-4000-8000-000000000017",
+            "identityDisposition": "CREATE_NEW_WORKER",
+            "reusePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          }
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.worker.proposal.confirm",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/worker-proposals/{proposalId}/owner-receipts",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "proposalId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "hrmCommandReceiptId": "10000000-0000-4000-8000-000000000017",
+          "outcome": "ACCEPTED"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagement.reject",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements/{engagementId}/reject",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "engagementId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.engagement.cancel",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements/{engagementId}/cancel",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "engagementId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.access.request",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/engagements/{engagementId}/access-requests",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "engagementId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "requestKind": "GRANT",
+          "grants": []
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.access.receipt",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/access-requests/{accessRequestId}/owner-receipts",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "accessRequestId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "authCommandReceiptId": "10000000-0000-4000-8000-000000000017",
+          "outcome": "ACCEPTED",
+          "grantOutcomes": [],
+          "authCommandPublicId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.recruiting.offer.withdraw",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "method": "POST",
+      "path": "/api/people/v2/hris/recruiting/offers/{offerId}/withdraw",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "offerId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "withdrawalDecisionReceiptId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.contingent.vendor.retire",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "method": "POST",
+      "path": "/api/people/v2/hris/contingent-workforce/vendors/{vendorId}/retire",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "vendorId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveDate": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.knowledge.version.create",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/knowledge-versions",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017"
+        },
+        "body": {
+          "articleKey": "X",
+          "version": 0,
+          "content": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "visibility": "EMPLOYEE",
+          "effectiveFrom": "2026-11-02",
+          "redactionPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "retentionPolicyVersionId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.knowledge.version.publish",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/knowledge-versions/{knowledgeVersionId}/publish",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "knowledgeVersionId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "approvalReceiptId": "10000000-0000-4000-8000-000000000017"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.knowledge.version.query",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "GET",
+      "path": "/api/people/v2/hris/hr-services/knowledge-versions/{knowledgeVersionId}",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "knowledgeVersionId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {},
+        "body": {}
+      }
+    },
+    {
+      "operationId": "modern.hrservice.knowledge.citation.issue",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/cases/{caseId}/knowledge-citation-receipts",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "caseId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "knowledgeVersionId": "10000000-0000-4000-8000-000000000017",
+          "sectionKey": "X",
+          "purposeCode": "X"
+        }
+      }
+    },
+    {
+      "operationId": "modern.hrservice.knowledge.version.retire",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "method": "POST",
+      "path": "/api/people/v2/hris/hr-services/knowledge-versions/{knowledgeVersionId}/retire",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "knowledgeVersionId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "reasonCode": "X",
+          "effectiveDate": "2026-11-02"
+        }
+      }
+    },
+    {
+      "operationId": "modern.onboarding.journey.employment.bind",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "method": "POST",
+      "path": "/api/people/v2/hris/onboarding/journey-assignments/{assignmentId}/native-employment-binding",
+      "scope": "REQUEST_SHAPE_ONLY_NOT_BUSINESS_VALID_JOURNEY",
+      "request": {
+        "pathParameters": {
+          "assignmentId": "10000000-0000-4000-8000-000000000017"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "X",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000017",
+          "If-Match": 0
+        },
+        "body": {
+          "hrmHireReceiptId": "10000000-0000-4000-8000-000000000017",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000017",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000017",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000017"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 0,
+            "workerVersion": 0,
+            "relationshipVersion": 0,
+            "assignmentVersion": 0,
+            "authUserRowVersion": 0,
+            "authAccessRevision": 0
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      }
+    }
+  ],
+  "concrete": [
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-A",
+      "status": "CONCRETE_AUTHOR_GUARD_FIXTURE_NOT_NATIVE_AUTH_PROOF",
+      "now": "2026-11-02T10:00:00Z",
+      "query": {
+        "purpose": "SELF_PROFILE_READ",
+        "asOf": "2026-11-02T09:59:50Z",
+        "selector": {
+          "workerPublicId": "10000000-0000-4000-8000-000000000003",
+          "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+          "assignmentPublicId": "10000000-0000-4000-8000-000000000005"
+        }
+      },
+      "binding": {
+        "tenantId": 91001,
+        "userId": 73001,
+        "principalPublicId": "10000000-0000-4000-8000-000000000001",
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 7,
+        "accessRevision": 11,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "native": {
+        "tenantId": 91001,
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "personVersion": 2,
+        "personState": "ACTIVE",
+        "asOf": "2026-11-02T09:59:50Z",
+        "complete": true,
+        "contexts": [
+          {
+            "worker": {
+              "publicId": "10000000-0000-4000-8000-000000000003",
+              "personPublicId": "10000000-0000-4000-8000-000000000002",
+              "version": 3,
+              "status": "ACTIVE"
+            },
+            "relationship": {
+              "publicId": "10000000-0000-4000-8000-000000000004",
+              "workerPublicId": "10000000-0000-4000-8000-000000000003",
+              "legalEmployerPublicId": "10000000-0000-4000-8000-000000000006",
+              "version": 4,
+              "startDate": "2026-01-01",
+              "endDate": "2026-11-02"
+            },
+            "assignment": {
+              "publicId": "10000000-0000-4000-8000-000000000005",
+              "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+              "version": 5,
+              "status": "ACTIVE",
+              "effectiveStartDate": "2026-01-01",
+              "effectiveEndDate": "2026-11-02",
+              "workZone": "UTC"
+            }
+          }
+        ]
+      },
+      "personSnapshot": {
+        "tenantId": 91001,
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "personVersion": 2,
+        "personState": "ACTIVE",
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:15Z"
+      },
+      "authority": {
+        "tenantId": 91001,
+        "userId": 73001,
+        "principalPublicId": "10000000-0000-4000-8000-000000000001",
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "expectedUserRowVersion": 7,
+        "expectedAccessRevision": 11,
+        "audience": "HRIS_HRM",
+        "purpose": "SELF_PROFILE_READ",
+        "appEntitled": true,
+        "separationOfDutiesAllowed": true,
+        "permissionDecisionRevision": 13,
+        "issuedAt": "2026-11-02T09:59:55Z",
+        "expiresAt": "2026-11-02T10:00:20Z",
+        "effectivePolicy": {
+          "reference": "fixture/native-purpose/HRM-NATIVE-IDENTITY-A",
+          "version": 2,
+          "allowedPersonStates": [
+            "ACTIVE"
+          ],
+          "allowedWorkerStatuses": [
+            "ACTIVE"
+          ],
+          "allowedAssignmentStatuses": [
+            "ACTIVE"
+          ]
+        }
+      },
+      "personAuthority": {
+        "tenantId": 91001,
+        "userId": 73001,
+        "principalPublicId": "10000000-0000-4000-8000-000000000001",
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "expectedUserRowVersion": 7,
+        "expectedAccessRevision": 11,
+        "purpose": "SELF_PERSON_HR_CASE_CREATE",
+        "personScopeAllowed": true,
+        "separationOfDutiesAllowed": true,
+        "permissionDecisionRevision": 13,
+        "issuedAt": "2026-11-02T09:59:55Z",
+        "expiresAt": "2026-11-02T10:00:20Z",
+        "allowedPersonStates": [
+          "ACTIVE"
+        ]
+      },
+      "selectedEmployment": {
+        "selector": {
+          "workerPublicId": "10000000-0000-4000-8000-000000000003",
+          "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+          "assignmentPublicId": "10000000-0000-4000-8000-000000000005"
+        },
+        "versions": {
+          "personVersion": 2,
+          "workerVersion": 3,
+          "relationshipVersion": 4,
+          "assignmentVersion": 5,
+          "authUserRowVersion": 7,
+          "authAccessRevision": 11
+        }
+      },
+      "prehire": {
+        "admission": {
+          "receiptPublicId": "10000000-0000-4000-8000-000000000011",
+          "tenantId": 91001,
+          "candidateCasePublicId": "10000000-0000-4000-8000-000000000010",
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "personVersion": 2,
+          "consentReceiptPublicId": "10000000-0000-4000-8000-000000000017",
+          "sourceSystemPublicId": "10000000-0000-4000-8000-000000000016",
+          "sourceRecordKey": "NATIVE-CANDIDATE-HRM-NATIVE-IDENTITY-A",
+          "disposition": "CREATED_NATIVE_PERSON",
+          "ownerRevision": 1,
+          "recordedAt": "2026-11-01T09:00:00Z"
+        },
+        "personOnlyNative": {
+          "tenantId": 91001,
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "personVersion": 2,
+          "personState": "ACTIVE",
+          "asOf": "2026-11-02T09:59:50Z",
+          "complete": true,
+          "contexts": []
+        },
+        "journey": {
+          "publicId": "10000000-0000-4000-8000-000000000013",
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "candidateCasePublicId": "10000000-0000-4000-8000-000000000010",
+          "personAdmissionReceiptPublicId": "10000000-0000-4000-8000-000000000011",
+          "status": "COMPLETED",
+          "nativeBindingState": "PERSON_ONLY",
+          "version": 8
+        },
+        "hire": {
+          "receiptPublicId": "10000000-0000-4000-8000-000000000012",
+          "tenantId": 91001,
+          "personAdmissionReceiptPublicId": "10000000-0000-4000-8000-000000000011",
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "personVersion": 2,
+          "workerPublicId": "10000000-0000-4000-8000-000000000003",
+          "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+          "assignmentPublicId": "10000000-0000-4000-8000-000000000005",
+          "workerVersion": 3,
+          "relationshipVersion": 4,
+          "assignmentVersion": 5,
+          "outcome": "ACCEPTED",
+          "effectiveStartDate": "2026-11-02",
+          "workZone": "UTC",
+          "ownerRevision": 1
+        }
+      },
+      "optionalConnectors": [],
+      "employeeAccountPrecondition": false,
+      "lawCompanyConstants": "Fixture values only, not core policy defaults",
+      "expected": {
+        "employmentSelection": "SELECTED_ONE_NATIVE_TUPLE",
+        "inclusiveEndDateEligible": true,
+        "personOnlyWithEmptyEmployment": true,
+        "prehireTasksMayCompleteBeforeHire": true,
+        "completedJourneyBindDoesNotReopen": true,
+        "noAuthGrantOrRelink": true
+      }
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-B",
+      "status": "CONCRETE_AUTHOR_GUARD_FIXTURE_NOT_NATIVE_AUTH_PROOF",
+      "now": "2026-11-02T10:00:00Z",
+      "query": {
+        "purpose": "SELF_PROFILE_READ",
+        "asOf": "2026-11-02T09:59:50Z",
+        "selector": {
+          "workerPublicId": "10000000-0000-4000-8000-000000000007",
+          "workRelationshipPublicId": "10000000-0000-4000-8000-000000000008",
+          "assignmentPublicId": "10000000-0000-4000-8000-000000000009"
+        }
+      },
+      "binding": {
+        "tenantId": 91001,
+        "userId": 73001,
+        "principalPublicId": "10000000-0000-4000-8000-000000000001",
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 7,
+        "accessRevision": 11,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "native": {
+        "tenantId": 91001,
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "personVersion": 2,
+        "personState": "ACTIVE",
+        "asOf": "2026-11-02T09:59:50Z",
+        "complete": true,
+        "contexts": [
+          {
+            "worker": {
+              "publicId": "10000000-0000-4000-8000-000000000003",
+              "personPublicId": "10000000-0000-4000-8000-000000000002",
+              "version": 3,
+              "status": "ACTIVE"
+            },
+            "relationship": {
+              "publicId": "10000000-0000-4000-8000-000000000004",
+              "workerPublicId": "10000000-0000-4000-8000-000000000003",
+              "legalEmployerPublicId": "10000000-0000-4000-8000-000000000006",
+              "version": 4,
+              "startDate": "2026-01-01",
+              "endDate": "2026-11-02"
+            },
+            "assignment": {
+              "publicId": "10000000-0000-4000-8000-000000000005",
+              "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+              "version": 5,
+              "status": "ACTIVE",
+              "effectiveStartDate": "2026-01-01",
+              "effectiveEndDate": "2026-11-02",
+              "workZone": "America/New_York"
+            }
+          },
+          {
+            "worker": {
+              "publicId": "10000000-0000-4000-8000-000000000007",
+              "personPublicId": "10000000-0000-4000-8000-000000000002",
+              "version": 3,
+              "status": "ACTIVE"
+            },
+            "relationship": {
+              "publicId": "10000000-0000-4000-8000-000000000008",
+              "workerPublicId": "10000000-0000-4000-8000-000000000007",
+              "legalEmployerPublicId": "10000000-0000-4000-8000-000000000006",
+              "version": 4,
+              "startDate": "2026-01-01",
+              "endDate": "2026-11-02"
+            },
+            "assignment": {
+              "publicId": "10000000-0000-4000-8000-000000000009",
+              "workRelationshipPublicId": "10000000-0000-4000-8000-000000000008",
+              "version": 5,
+              "status": "ACTIVE",
+              "effectiveStartDate": "2026-01-01",
+              "effectiveEndDate": "2026-11-02",
+              "workZone": "America/New_York"
+            }
+          }
+        ]
+      },
+      "personSnapshot": {
+        "tenantId": 91001,
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "personVersion": 2,
+        "personState": "ACTIVE",
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:15Z"
+      },
+      "authority": {
+        "tenantId": 91001,
+        "userId": 73001,
+        "principalPublicId": "10000000-0000-4000-8000-000000000001",
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "expectedUserRowVersion": 7,
+        "expectedAccessRevision": 11,
+        "audience": "HRIS_HRM",
+        "purpose": "SELF_PROFILE_READ",
+        "appEntitled": true,
+        "separationOfDutiesAllowed": true,
+        "permissionDecisionRevision": 13,
+        "issuedAt": "2026-11-02T09:59:55Z",
+        "expiresAt": "2026-11-02T10:00:20Z",
+        "effectivePolicy": {
+          "reference": "fixture/native-purpose/HRM-NATIVE-IDENTITY-B",
+          "version": 2,
+          "allowedPersonStates": [
+            "ACTIVE"
+          ],
+          "allowedWorkerStatuses": [
+            "ACTIVE"
+          ],
+          "allowedAssignmentStatuses": [
+            "ACTIVE"
+          ]
+        }
+      },
+      "personAuthority": {
+        "tenantId": 91001,
+        "userId": 73001,
+        "principalPublicId": "10000000-0000-4000-8000-000000000001",
+        "personPublicId": "10000000-0000-4000-8000-000000000002",
+        "expectedUserRowVersion": 7,
+        "expectedAccessRevision": 11,
+        "purpose": "SELF_PERSON_HR_CASE_CREATE",
+        "personScopeAllowed": true,
+        "separationOfDutiesAllowed": true,
+        "permissionDecisionRevision": 13,
+        "issuedAt": "2026-11-02T09:59:55Z",
+        "expiresAt": "2026-11-02T10:00:20Z",
+        "allowedPersonStates": [
+          "ACTIVE"
+        ]
+      },
+      "selectedEmployment": {
+        "selector": {
+          "workerPublicId": "10000000-0000-4000-8000-000000000007",
+          "workRelationshipPublicId": "10000000-0000-4000-8000-000000000008",
+          "assignmentPublicId": "10000000-0000-4000-8000-000000000009"
+        },
+        "versions": {
+          "personVersion": 2,
+          "workerVersion": 3,
+          "relationshipVersion": 4,
+          "assignmentVersion": 5,
+          "authUserRowVersion": 7,
+          "authAccessRevision": 11
+        }
+      },
+      "prehire": {
+        "admission": {
+          "receiptPublicId": "10000000-0000-4000-8000-000000000011",
+          "tenantId": 91001,
+          "candidateCasePublicId": "10000000-0000-4000-8000-000000000010",
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "personVersion": 2,
+          "consentReceiptPublicId": "10000000-0000-4000-8000-000000000017",
+          "sourceSystemPublicId": "10000000-0000-4000-8000-000000000016",
+          "sourceRecordKey": "NATIVE-CANDIDATE-HRM-NATIVE-IDENTITY-B",
+          "disposition": "REUSED_NATIVE_PERSON",
+          "ownerRevision": 1,
+          "recordedAt": "2026-11-01T09:00:00Z"
+        },
+        "personOnlyNative": {
+          "tenantId": 91001,
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "personVersion": 2,
+          "personState": "ACTIVE",
+          "asOf": "2026-11-02T09:59:50Z",
+          "complete": true,
+          "contexts": []
+        },
+        "journey": {
+          "publicId": "10000000-0000-4000-8000-000000000013",
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "candidateCasePublicId": "10000000-0000-4000-8000-000000000010",
+          "personAdmissionReceiptPublicId": "10000000-0000-4000-8000-000000000011",
+          "status": "COMPLETED",
+          "nativeBindingState": "PERSON_ONLY",
+          "version": 8
+        },
+        "hire": {
+          "receiptPublicId": "10000000-0000-4000-8000-000000000012",
+          "tenantId": 91001,
+          "personAdmissionReceiptPublicId": "10000000-0000-4000-8000-000000000011",
+          "personPublicId": "10000000-0000-4000-8000-000000000002",
+          "personVersion": 2,
+          "workerPublicId": "10000000-0000-4000-8000-000000000007",
+          "workRelationshipPublicId": "10000000-0000-4000-8000-000000000008",
+          "assignmentPublicId": "10000000-0000-4000-8000-000000000009",
+          "workerVersion": 3,
+          "relationshipVersion": 4,
+          "assignmentVersion": 5,
+          "outcome": "ACCEPTED",
+          "effectiveStartDate": "2026-11-02",
+          "workZone": "America/New_York",
+          "ownerRevision": 1
+        }
+      },
+      "optionalConnectors": [],
+      "employeeAccountPrecondition": false,
+      "lawCompanyConstants": "Fixture values only, not core policy defaults",
+      "expected": {
+        "employmentSelection": "SELECTED_SECOND_NATIVE_TUPLE",
+        "inclusiveEndDateEligible": true,
+        "personOnlyWithEmptyEmployment": true,
+        "prehireTasksMayCompleteBeforeHire": true,
+        "completedJourneyBindDoesNotReopen": true,
+        "noAuthGrantOrRelink": true
+      }
+    }
+  ],
+  "identityRequests": [
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-A",
+      "operationId": "modern.benefits.enrollment.submit",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-A:modern.benefits.enrollment.submit",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "benefitPlanId": "10000000-0000-4000-8000-000000000014",
+          "benefitPlanVersionId": "10000000-0000-4000-8000-000000000015",
+          "coverageOptionCode": "NATIVE_SINGLE",
+          "dependentTokens": [],
+          "effectiveDate": "2026-11-02",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000003",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000005"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 2,
+            "workerVersion": 3,
+            "relationshipVersion": 4,
+            "assignmentVersion": 5,
+            "authUserRowVersion": 7,
+            "authAccessRevision": 11
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-A",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published native plan/version NATIVE_SINGLE, empty dependents valid, effective policy ACTIVE employee and current window; concrete native tuple/versions owner refetch."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-A",
+      "operationId": "modern.benefits.lifeevent.submit",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-A:modern.benefits.lifeevent.submit",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "occurredOn": "2026-11-01",
+          "lifeEventType": "HOUSEHOLD_CHANGE",
+          "sourceRecordKey": "LIFE-HRM-NATIVE-IDENTITY-A",
+          "evidence": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "verificationPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000003",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000005"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 2,
+            "workerVersion": 3,
+            "relationshipVersion": 4,
+            "assignmentVersion": 5,
+            "authUserRowVersion": 7,
+            "authAccessRevision": 11
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-A",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published native plan/version NATIVE_SINGLE, empty dependents valid, effective policy ACTIVE employee and current window; concrete native tuple/versions owner refetch."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-A",
+      "operationId": "modern.hrservice.case.create",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-A:modern.hrservice.case.create",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "serviceConfigVersionId": "10000000-0000-4000-8000-000000000016",
+          "caseType": "BENEFITS_QUESTION",
+          "subject": "Native person question",
+          "description": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "expectedPersonVersion": 2
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-A",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published typed native service config, permitted case type, immutable description evidence, current person-only authority; zero employment valid."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-A",
+      "operationId": "modern.onboarding.journey.assign",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-A:modern.onboarding.journey.assign",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "templateVersionId": "10000000-0000-4000-8000-000000000013",
+          "dueAt": "2026-11-06T17:00:00Z",
+          "calendarVersionId": "10000000-0000-4000-8000-000000000016",
+          "assigneeBindings": [
+            {
+              "taskKey": "WELCOME_ACK",
+              "principalPublicId": "10000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "subject": {
+            "kind": "PREHIRE_PERSON",
+            "candidateCaseId": "10000000-0000-4000-8000-000000000010",
+            "personAdmissionReceiptId": "10000000-0000-4000-8000-000000000011"
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z",
+          "onboardingZone": "UTC",
+          "tzdbVersion": "2026a"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-A",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published one-required-task template WELCOME_ACK role SUBJECT_PERSON, pinned business calendar exact onboarding zone/tzdb; exact native person admission receipt and explicit person-bound Auth assignee, no future employment."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-A",
+      "operationId": "modern.onboarding.journey.employment.bind",
+      "request": {
+        "pathParameters": {
+          "assignmentId": "10000000-0000-4000-8000-000000000013"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-A:modern.onboarding.journey.employment.bind",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099",
+          "If-Match": 8
+        },
+        "body": {
+          "hrmHireReceiptId": "10000000-0000-4000-8000-000000000012",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000003",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000004",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000005"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 2,
+            "workerVersion": 3,
+            "relationshipVersion": 4,
+            "assignmentVersion": 5,
+            "authUserRowVersion": 7,
+            "authAccessRevision": 11
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-A",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Accepted hire native receipt refetched, existing COMPLETED prehire journey/current version 8/person admission, current eligible native tuple; no task/state reopen."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-B",
+      "operationId": "modern.benefits.enrollment.submit",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-B:modern.benefits.enrollment.submit",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "benefitPlanId": "10000000-0000-4000-8000-000000000014",
+          "benefitPlanVersionId": "10000000-0000-4000-8000-000000000015",
+          "coverageOptionCode": "NATIVE_SINGLE",
+          "dependentTokens": [],
+          "effectiveDate": "2026-11-02",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000007",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000008",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000009"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 2,
+            "workerVersion": 3,
+            "relationshipVersion": 4,
+            "assignmentVersion": 5,
+            "authUserRowVersion": 7,
+            "authAccessRevision": 11
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-B",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published native plan/version NATIVE_SINGLE, empty dependents valid, effective policy ACTIVE employee and current window; concrete native tuple/versions owner refetch."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-B",
+      "operationId": "modern.benefits.lifeevent.submit",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-B:modern.benefits.lifeevent.submit",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "occurredOn": "2026-11-01",
+          "lifeEventType": "HOUSEHOLD_CHANGE",
+          "sourceRecordKey": "LIFE-HRM-NATIVE-IDENTITY-B",
+          "evidence": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "verificationPolicyVersionId": "10000000-0000-4000-8000-000000000017",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000007",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000008",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000009"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 2,
+            "workerVersion": 3,
+            "relationshipVersion": 4,
+            "assignmentVersion": 5,
+            "authUserRowVersion": 7,
+            "authAccessRevision": 11
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-B",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published native plan/version NATIVE_SINGLE, empty dependents valid, effective policy ACTIVE employee and current window; concrete native tuple/versions owner refetch."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-B",
+      "operationId": "modern.hrservice.case.create",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-B:modern.hrservice.case.create",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "serviceConfigVersionId": "10000000-0000-4000-8000-000000000016",
+          "caseType": "BENEFITS_QUESTION",
+          "subject": "Native person question",
+          "description": {
+            "objectVersionRef": "X",
+            "objectDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "evidencePolicyVersionId": "10000000-0000-4000-8000-000000000017"
+          },
+          "expectedPersonVersion": 2
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-B",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published typed native service config, permitted case type, immutable description evidence, current person-only authority; zero employment valid."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-B",
+      "operationId": "modern.onboarding.journey.assign",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-B:modern.onboarding.journey.assign",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "templateVersionId": "10000000-0000-4000-8000-000000000013",
+          "dueAt": "2026-11-06T17:00:00Z",
+          "calendarVersionId": "10000000-0000-4000-8000-000000000016",
+          "assigneeBindings": [
+            {
+              "taskKey": "WELCOME_ACK",
+              "principalPublicId": "10000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "subject": {
+            "kind": "PREHIRE_PERSON",
+            "candidateCaseId": "10000000-0000-4000-8000-000000000010",
+            "personAdmissionReceiptId": "10000000-0000-4000-8000-000000000011"
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z",
+          "onboardingZone": "America/New_York",
+          "tzdbVersion": "2026a"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-B",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Published one-required-task template WELCOME_ACK role SUBJECT_PERSON, pinned business calendar exact onboarding zone/tzdb; exact native person admission receipt and explicit person-bound Auth assignee, no future employment."
+    },
+    {
+      "fixtureId": "HRM-NATIVE-IDENTITY-B",
+      "operationId": "modern.onboarding.journey.employment.bind",
+      "request": {
+        "pathParameters": {
+          "assignmentId": "10000000-0000-4000-8000-000000000013"
+        },
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native:HRM-NATIVE-IDENTITY-B:modern.onboarding.journey.employment.bind",
+          "X-Correlation-ID": "10000000-0000-4000-8000-000000000099",
+          "If-Match": 8
+        },
+        "body": {
+          "hrmHireReceiptId": "10000000-0000-4000-8000-000000000012",
+          "employmentSelector": {
+            "workerPublicId": "10000000-0000-4000-8000-000000000007",
+            "workRelationshipPublicId": "10000000-0000-4000-8000-000000000008",
+            "assignmentPublicId": "10000000-0000-4000-8000-000000000009"
+          },
+          "expectedNativeVersions": {
+            "personVersion": 2,
+            "workerVersion": 3,
+            "relationshipVersion": 4,
+            "assignmentVersion": 5,
+            "authUserRowVersion": 7,
+            "authAccessRevision": 11
+          },
+          "identityAsOf": "2026-11-02T09:59:50Z"
+        }
+      },
+      "sourceFixtureRef": "HRM-NATIVE-IDENTITY-B",
+      "scope": "CONCRETE_IDENTITY_BOUNDARY_REQUEST_WITH_OWNER_PREREQUISITES_NOT_HTTP_EXECUTION",
+      "prerequisites": "Accepted hire native receipt refetched, existing COMPLETED prehire journey/current version 8/person admission, current eligible native tuple; no task/state reopen."
+    }
+  ],
+  "negativeCases": [
+    "HRIS_PERSON_APP_PURPOSE_FORBIDDEN",
+    "PERSON_PURPOSE_FORBIDDEN",
+    "BODY_PERSON_SELF_CLAIM",
+    "REMOVED_JOURNAL_SELECTOR",
+    "PARTIAL_NATIVE_SELECTOR",
+    "TENANT_MISMATCH",
+    "AUTH_PERSON_BINDING_MISMATCH",
+    "AUTH_VERSION_STALE",
+    "AUTH_ACCESS_REVISION_STALE",
+    "AUTH_EXPIRED",
+    "AUTH_REVOKED",
+    "PURPOSE_MISMATCH",
+    "FUTURE_SELF_ASOF",
+    "INCOMPLETE_CONTEXT_SET",
+    "NATIVE_PERSON_PARENT_MISMATCH",
+    "NATIVE_WORKER_PARENT_MISMATCH",
+    "NATIVE_RELATIONSHIP_PARENT_MISMATCH",
+    "DUPLICATE_NATIVE_TUPLE",
+    "NATIVE_VERSION_STALE",
+    "OWNER_ZONE_MISSING",
+    "INCLUSIVE_END_DATE_AFTER_BOUNDARY",
+    "PREHIRE_WORKER_REQUIRED_REJECTED_BY_AUTHOR_ORACLE",
+    "HIRE_RECEIPT_PERSON_MISMATCH",
+    "HIRE_RECEIPT_UNACCEPTED",
+    "FUTURE_EMPLOYMENT_BIND",
+    "CANCELLED_JOURNEY_BIND",
+    "CHANGED_RECEIPT_REPLAY",
+    "WORKER_REUSE_WRONG_PERSON",
+    "WORKER_REUSE_STALE_VERSION",
+    "AUTH_RELINK_CANNOT_BE_HRM_SIDE_EFFECT"
+  ],
+  "nativeExecution": false
+}

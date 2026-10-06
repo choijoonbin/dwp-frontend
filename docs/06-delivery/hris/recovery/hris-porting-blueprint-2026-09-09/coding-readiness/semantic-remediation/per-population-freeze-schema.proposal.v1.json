@@ -1,0 +1,30 @@
+{
+  "contractId": "dwp.hris.per.population-freeze-schema.proposal.v1",
+  "status": "DESIGN_PROPOSED_NOT_CANONICAL",
+  "g3Authorization": "NONE",
+  "addresses": "BASE-P0-009",
+  "historicalSource": "../../session-evidence/per/g2-readiness/api-event-contracts.yaml#/components/schemas/FreezePopulationCommand",
+  "historicalSourceImmutable": true,
+  "successorIntegrationRequired": true,
+  "schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "FreezePopulationCommand successor input",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["populationRuleId", "workforceSnapshotId", "workforceSnapshotRevision", "previewContentHash"],
+    "properties": {
+      "populationRuleId": {"type": "string", "format": "uuid"},
+      "workforceSnapshotId": {"type": "string", "format": "uuid"},
+      "workforceSnapshotRevision": {"type": "integer", "minimum": 0},
+      "previewContentHash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    }
+  },
+  "businessGuardsUnchanged": [
+    "owner-refetch tenant-bound exact population rule and workforce snapshot/version",
+    "verify preview hash against actual immutable authorized preview content, never accept digest as content",
+    "authenticated actor/APP.HCM/duty/population/field/purpose/SoD and frozen/current policy intersection",
+    "CAS and caller/action/request-bound idempotency; mismatch409; no cross-tenant or latest fallback"
+  ],
+  "remainingG3": ["PER next successor publication and source/binding reconciliation", "generated strict producer/consumer DTO/SPI compile fixtures", "independent owner-source/business design audit"],
+  "domainExecution": "NOT_EXECUTED_G4"
+}

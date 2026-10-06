@@ -1,0 +1,294 @@
+{
+  "schema": "dwp.hris.c1-c2-transport-pre-c0-independent-audit.v1",
+  "basisDate": "2026-09-14",
+  "observedAt": "2026-09-14T14:34:06Z",
+  "status": "FAIL_CLOSED_FINDINGS_RECORDED_FINAL_C0_REEXECUTION_REQUIRED",
+  "authority": {
+    "reviewMode": "INDEPENDENT_READ_MOSTLY",
+    "integrationSourceEdited": false,
+    "canonicalBlueprintEdited": false,
+    "reportsOnlyAdded": true,
+    "gateMutationAuthorized": false,
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "moduleStartAuthorization": "NONE"
+  },
+  "observedBackend": {
+    "repository": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "head": "fc8fbfd38103f7fb2b47adaea861e5327450a74e",
+    "tree": "a1cdb7ebd07e540bad0d09914db369943f9f3a05",
+    "worktreeClean": true,
+    "headMeaning": "C2 identity five-consumer commit over C1 b6d1f23e; final C3/C0 descendant not yet sealed"
+  },
+  "verdict": {
+    "c1MigrationBytesAtCurrentC2": "PASS_INTERMEDIATE_ONLY",
+    "c1SameCheckpointLivePin": "FAIL_EXPECTED_STALE_C1_SOURCE_PIN",
+    "c2AuthoritativeCheckpointInvocation": "PASS_PROVEN_NORMAL_AND_SELF_TEST",
+    "c2ImmutableAuthoritativePin": "INCOMPLETE_BLOCKER_BEFORE_FINAL_C0",
+    "transportExplicitPinnedGitObjectResolution": "PASS",
+    "transportAllBaselineReferencesImmutable": "FAIL_THREE_UNQUALIFIED_SYS_SCHEMA_REFS_RESOLVE_LIVE",
+    "transportCanonicalClosure": "FAIL_EXPECTED_STALE_GLOBAL_BASELINE",
+    "transportSelfTestOnCanonicalFailure": "PASS_FAIL_CLOSED_NO_FALSE_PASS",
+    "overall": "NOT_READY_FOR_GATE_OR_MODULE_START"
+  },
+  "c1": {
+    "pinnedCheckpoint": {
+      "commit": "b6d1f23e54e04b86d2b068e47b8bf6c9db608b5f",
+      "tree": "84345cd81f8b113d520b0018b159f7c27b503360"
+    },
+    "currentC2Comparison": {
+      "migrationSubtreeOidMatches": 8,
+      "migrationSubtreeOidTotal": 8,
+      "migrationSqlCount": 444,
+      "migrationManifestSha256": "accbd9bf1306e3cb67fbb62922747b423587c2daff201fcc79a741b79164403b",
+      "migrationManifestMatches": true,
+      "normalValidator": "PASS_PINNED_B6_OBJECT",
+      "selfTest": "PASS_8_OF_8_REJECTED",
+      "liveValidator": "FAIL_LIVE_BACKEND_HEAD_DIFFERS_FROM_C1_PIN"
+    },
+    "mandatoryAtomicRepinLocations": [
+      {
+        "path": "g0/migration-successor-register.v1.json",
+        "fields": ["/source/commit", "/source/tree"],
+        "action": "replace with final clean C0 HEAD and HEAD^{tree} only after the eight subtree OIDs and 444 path/blob manifest remain exact"
+      },
+      {
+        "path": "g0/validate_migration_successor.py",
+        "fields": ["EXPECTED_SOURCE.commit", "EXPECTED_SOURCE.tree"],
+        "action": "replace atomically with the same final C0 commit/tree"
+      },
+      {
+        "path": "g0/migration-allocation-register.csv",
+        "fields": ["baseline_commit"],
+        "rowSelectors": [
+          "policy_id=MIGPOL-PEOPLE",
+          "policy_id=ALLOC-HRM-PEOPLE-G3",
+          "policy_id=ALLOC-PER-PERFORMANCE-G3",
+          "policy_id=MIGPOL-AUTH",
+          "policy_id=ALLOC-SYS-AUTH-G3",
+          "policy_id=MIGPOL-PLATFORM",
+          "policy_id=ALLOC-SYS-PLATFORM-G3",
+          "policy_id=MIGPOL-APPROVAL",
+          "policy_id=MIGPOL-NOTIFICATION",
+          "policy_id=MIGPOL-MEETING",
+          "policy_id=MIGPOL-PAYROLL",
+          "policy_id=ALLOC-PAY-PAYROLL-G3",
+          "policy_id=MIGPOL-TIME",
+          "policy_id=ALLOC-TIM-TIME-G3"
+        ],
+        "action": "replace b6d1f23e baseline_commit in exactly these fourteen current C1 policy/allocation rows; preserve historical G2 and EXT-WIP rows"
+      },
+      {
+        "path": "g0/validate_code_checkpoint.py",
+        "fields": ["MIGRATION_SUCCESSOR_BASELINE_SHA"],
+        "action": "set to the same final C0 commit"
+      },
+      {
+        "path": "coding-readiness/validate_full_coding_readiness.py",
+        "fields": ["MIGRATION_SUCCESSOR_BASELINE_SHA"],
+        "action": "set to the same final C0 commit"
+      },
+      {
+        "path": "coding-readiness/03-backend-service-architecture.md",
+        "fields": ["C1 canonical checkpoint prose at current line 98"],
+        "action": "replace or explicitly distinguish b6 intermediate from final C0 pin so current architecture prose is not stale"
+      },
+      {
+        "path": "coding-readiness/reports/migration-successor-c1-final-2026-09-14.json",
+        "fields": [
+          "/sourceCheckpoint/commit",
+          "/sourceCheckpoint/tree",
+          "/sourceCheckpoint inventory observation",
+          "/status",
+          "/sameCheckpointClosure/status",
+          "/sameCheckpointClosure/reason",
+          "/sameCheckpointClosure/mandatoryFinalAction"
+        ],
+        "action": "record final C0 proof and remove pending wording only after rerun succeeds; keep Gate closed/NONE"
+      },
+      {
+        "path": "coding-readiness/reports/migration-successor-c1-final-2026-09-14.md",
+        "fields": ["opening checkpoint identity", "same-checkpoint closure conclusion", "re-executed evidence"],
+        "action": "synchronize with the final C0 JSON report"
+      },
+      {
+        "path": "g0/blueprint-central-snapshot-manifest.v1.json",
+        "fields": ["files entries", "fileCount", "canonicalSetSha256"],
+        "action": "regenerate once, after every canonical C0/C1/C2/C3 and transport fix is complete; do not hand-edit individual hashes"
+      }
+    ],
+    "globalSameCheckpointDependencies": [
+      {
+        "path": "g0/integration-baseline-manifest.csv",
+        "fields": ["DWP_BACKEND.integration_head_sha", "DWP_BACKEND.integration_tree_sha", "DWP_BACKEND.integration_dirty_count", "captured_at"],
+        "reason": "authoritative live checkpoint and transport baseline_context must see final clean C0"
+      },
+      {
+        "path": "g0/code-entry-baseline-lineage.csv",
+        "fields": [
+          "DWP_BACKEND.code_entry_head_sha",
+          "DWP_BACKEND.code_entry_tree_sha",
+          "approved_commit_count",
+          "approved_commit_shas",
+          "approved_change_count",
+          "approved_diff_name_status_sha256",
+          "approved_path_allowlist"
+        ],
+        "reason": "refresh the complete approved descendant lineage while keeping characterization_head_sha 5670877d immutable"
+      }
+    ],
+    "conditionalUnchangedPins": [
+      "source.predecessorCommit",
+      "source.migrationSqlCount",
+      "source.migrationManifestSha256",
+      "source.migrationSubtreeOids",
+      "peopleCommonFoundation",
+      "exactRenameLineage",
+      "six allocation ranges and eight high-water values"
+    ],
+    "mustNotRewriteAsRepin": [
+      "coding-readiness/reports/identity-c2-all-five-consumer-final-2026-09-14.json#/backend/baseHead",
+      "coding-readiness/reports/identity-c2-all-five-consumer-final-2026-09-14.md C2 base provenance",
+      "g0/migration-allocation-register.csv historical G2 and EXT-WIP row commits",
+      "historical G2 proposal blobs/pointers",
+      "g0/checkpoint-register.csv historical entry base_sha fields without a separate approved successor operation"
+    ]
+  },
+  "c2": {
+    "validator": "coding-readiness/validate_identity_c2_consumers.py",
+    "validatorSha256": "8687bb5bd621f727efc1e5d00828a80146a66d9d3042d85568a97f9843b999c7",
+    "currentExecution": {
+      "normal": "PASS_5_CONSUMERS_7_OWNER_PINS",
+      "selfTest": "PASS_5_OF_5_REJECTED"
+    },
+    "authoritativeInvocationEvidence": [
+      "g0/validate_code_checkpoint.py:439 invokes the normal validator",
+      "g0/validate_code_checkpoint.py:440 invokes its self-test",
+      "coding-readiness/validate_full_coding_readiness.py:7090 calls the authoritative code-checkpoint validator in the full pipeline",
+      "an isolated DWP_BACKEND_C2_ROOT=/__missing__ probe caused both named C2 companion checks to fail, proving execution rather than mere artifact presence"
+    ],
+    "currentPinEvidence": {
+      "ownerNativeAndGuardExpectedShaPins": 7,
+      "consumerExpectedShaPins": 0,
+      "purposeExpectedShaPin": false,
+      "backendExpectedCommitPin": false,
+      "backendExpectedTreePin": false,
+      "backendRootCanBeRedirectedByInheritedEnvironment": true,
+      "validatorPresentInFullArtifactInventory": true,
+      "validatorPresentInCurrentCanonicalSnapshot": false,
+      "reportCommitTreeIsAuthoritative": false
+    },
+    "finding": "C2 is executed by the authoritative checkpoint, but its current immutable pin closure is incomplete. It accepts an inherited DWP_BACKEND_C2_ROOT, does not assert the final backend commit/tree, dynamically reports rather than expects the five consumer and purpose digests, and is absent from the stale canonical snapshot manifest.",
+    "requiredBeforeFinalC0Claim": [
+      "bind the C2 validator to the DWP_BACKEND worktree resolved from the authoritative final baseline, or reject a mismatched environment override",
+      "assert final C0 commit/tree/clean state either inside C2 or through an explicit inseparable authoritative context",
+      "seal expected Git blob OIDs or SHA-256 values for all five consumer witnesses and SelfContextPurposeV1, not only the seven owner files",
+      "regenerate the canonical snapshot so the C2 validator itself is immutable",
+      "rerun normal/self-test through validate_code_checkpoint.py and the full live validator"
+    ]
+  },
+  "transport": {
+    "validator": "coding-readiness/validate_transport_schema_resolution.py",
+    "validatorSha256": "5f6c606b4d899173ee9fb53925bc6d2897b2f685c9077bb73a3b5a6ed4524b2f",
+    "snapshotExpectedOldSha256": "8ddf19fbe8c3b99c4cbd42411c0cace87d82e327d2170021064cab5634fb9005",
+    "pinnedCharacterization": {
+      "commit": "5670877de7a39e94e75021c7e23cbbb553296c90",
+      "openapiPath": "contracts/openapi/gateway-public.json",
+      "expectedSha256": "bd28185de73fa6018c4293b0d2a48353b78dcf789123be7e67216fa45f7999e0",
+      "observedPinnedGitObjectSha256": "bd28185de73fa6018c4293b0d2a48353b78dcf789123be7e67216fa45f7999e0",
+      "observedLiveWorktreeSha256": "a16a3709857e3c074c6cb4cb18357b9e33fecdcbbcabdd54585e6cdffffa7482",
+      "pinnedAndLiveBytesDiffer": true
+    },
+    "explicitPinnedResolverEvidence": [
+      "load_git_blob uses git show <sha>:<path> and a virtual cache path",
+      "DWP_BACKEND@5670877d reference resolved platform_getSurface from the pinned object despite different live bytes",
+      "wrong SHA and missing pinned path probes were rejected"
+    ],
+    "remainingLiveResolutionFinding": {
+      "status": "BLOCKER_FOR_ALL_BASELINE_REFERENCES_IMMUTABLE_CLAIM",
+      "resolverBranch": "resolve_reference file_part.startswith('contracts/') joins baseline_root with the live worktree path",
+      "sourceArtifact": "session-evidence/sys/g2-transport-schemas.v1.json",
+      "unqualifiedSchemaRefOccurrences": 3,
+      "uniqueUnqualifiedSchemaRefs": [
+        "contracts/openapi/gateway-public.json#/components/schemas/platform_ApiResponseHomePreferenceResponse",
+        "contracts/openapi/gateway-public.json#/components/schemas/platform_UpdateHomePreferenceRequest"
+      ],
+      "observedResolutionPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/openapi/gateway-public.json",
+      "reachedBy": "local SYS operation request/response refs and whole-bundle walk_schema_refs",
+      "requiredFix": "qualify these references with DWP_BACKEND@5670877d or make the pinned SYS bundle context resolve contracts/ against its immutable Git object; reject accidental live fallback and add a divergent-live-bytes self-test"
+    },
+    "currentCanonicalExecution": {
+      "normalExitCode": 1,
+      "normalStatus": "FAIL",
+      "normalErrorCount": 14,
+      "primaryReason": "integration manifest/code-entry lineage still pin 6f1ed92d while backend is fc8fbfd3",
+      "selfTestExitCode": 1,
+      "selfTestStatus": "FAIL",
+      "selfTestCanonicalStatus": "FAIL",
+      "selfTestCasesExecuted": 0,
+      "falsePassObserved": false,
+      "interpretation": "correct fail-closed behavior; no normal transport PASS is claimed"
+    }
+  },
+  "otherCurrentClosureFacts": {
+    "authoritativeCheckpointStatic": {
+      "status": "FAIL",
+      "effectiveGate": "CLOSED_FAIL_SAFE",
+      "relevantKnownFailure": "canonical snapshot drift among broader unfinished C0 changes"
+    },
+    "canonicalSnapshot": {
+      "state": "STALE",
+      "transportValidatorCurrentShaMatchesSnapshot": false,
+      "c2ValidatorIncluded": false
+    }
+  },
+  "finalC0ReexecutionConditions": [
+    "C2 and C3 are committed into one clean final integration backend HEAD/tree",
+    "all eight migration subtree OIDs and the 444-entry path/blob manifest still match C1",
+    "every C1 repin location listed above is updated atomically",
+    "DWP_BACKEND integration baseline and code-entry lineage describe that same final C0 descendant",
+    "C2 root/commit/tree and all consumer/purpose bytes are immutable under the authoritative checkpoint",
+    "all SYS HomePreference baseline schema refs resolve the pinned Git object rather than live worktree bytes",
+    "canonical snapshot is regenerated after all canonical changes",
+    "transport normal and self-test both PASS only after the refreshed baseline; self-test executes and rejects every mutation case",
+    "migration validator normal/self-test/check-live, C2 normal/self-test, code checkpoint live, and full live validator are rerun",
+    "Gate remains CLOSED/NONE unless a separate authorized Gate decision is made"
+  ],
+  "commands": [
+    {
+      "command": "python3 -B g0/validate_migration_successor.py --compact",
+      "result": "PASS_PINNED_B6"
+    },
+    {
+      "command": "python3 -B g0/validate_migration_successor.py --self-test --compact",
+      "result": "PASS_8_OF_8"
+    },
+    {
+      "command": "python3 -B g0/validate_migration_successor.py --check-live --compact",
+      "result": "FAIL_EXPECTED_HEAD_MISMATCH"
+    },
+    {
+      "command": "python3 -B coding-readiness/validate_identity_c2_consumers.py --compact",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 -B coding-readiness/validate_identity_c2_consumers.py --self-test --compact",
+      "result": "PASS_5_OF_5"
+    },
+    {
+      "command": "DWP_BACKEND_C2_ROOT=/__missing__ python3 -B g0/validate_code_checkpoint.py --static",
+      "result": "FAIL_WITH_TWO_NAMED_C2_COMPANION_FAILURES"
+    },
+    {
+      "command": "python3 -B coding-readiness/validate_transport_schema_resolution.py --compact",
+      "result": "FAIL_EXPECTED_14_ERRORS_STALE_BASELINE"
+    },
+    {
+      "command": "python3 -B coding-readiness/validate_transport_schema_resolution.py --self-test --compact",
+      "result": "FAIL_EXPECTED_CANONICAL_FAIL_CASES_0_NO_FALSE_PASS"
+    },
+    {
+      "command": "python3 -B g0/validate_code_checkpoint.py --static",
+      "result": "FAIL_EXPECTED_BROADER_C0_SNAPSHOT_DRIFT_GATE_CLOSED"
+    }
+  ]
+}

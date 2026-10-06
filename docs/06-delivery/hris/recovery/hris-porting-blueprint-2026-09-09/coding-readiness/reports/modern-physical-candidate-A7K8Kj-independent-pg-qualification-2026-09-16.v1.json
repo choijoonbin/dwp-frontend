@@ -1,0 +1,362 @@
+{
+  "schema": "dwp.hris.modern-physical-candidate-independent-pg-qualification/v1",
+  "reportId": "modern-physical-candidate-A7K8Kj-independent-pg-qualification-2026-09-16.v1",
+  "recordedAt": "2026-09-16",
+  "status": "PASS_CANDIDATE_NOT_G3_AUTHORITY",
+  "authority": "INDEPENDENT_AUDITOR_ONLY_NOT_G3_NOT_G6",
+  "productionState": "NOT_AUTHORIZED_G3_OR_G6",
+  "scope": {
+    "profile": "v5-131-successor",
+    "canonicalDir": "coding-readiness/modern-canonical-candidate.A7K8Kj",
+    "physicalDir": "coding-readiness/modern-physical-candidate.A7K8Kj",
+    "policy": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+    "ownerPrefixRegister": "coding-readiness/physical-owner-prefix-register.csv",
+    "validator": "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py",
+    "workingDirectory": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "strictReadOnly": true,
+    "newCandidateCreated": false,
+    "promotionOrPublication": false,
+    "authorReportAuthority": false
+  },
+  "snapshotPolicy": {
+    "method": "single FD O_RDONLY|O_NOFOLLOW|O_CLOEXEC; lstat/fstat identity; bounded read; fstat/lstat after read; directory FD listing and closure",
+    "fields": [
+      "path",
+      "sha256",
+      "device",
+      "inode",
+      "mode",
+      "size",
+      "mtime_ns",
+      "ctime_ns"
+    ],
+    "allBeforeAfterEqual": true
+  },
+  "candidateIntegrity": {
+    "canonical": {
+      "expectedMembership": [
+        "modern-capability-causal-state-contracts.v2.json",
+        "modern-capability-closed-set-manifest.v3.json",
+        "modern-capability-event-payload-contracts.v1.json",
+        "modern-capability-exact-schema-contracts.v1.json",
+        "modern-capability-operation-causal-contract-ssot.v2.json",
+        "modern-capability-public-identity-registry.v1.json",
+        "modern-capability-semantic-bindings.v1.json",
+        "sys-listening-stream-authority-successor.v2.json"
+      ],
+      "membershipExact": true,
+      "before": {
+        "directory": {
+          "device": 16777234,
+          "inode": 47629326,
+          "mode": 448,
+          "size": 320,
+          "mtime_ns": 1789529754771598160,
+          "ctime_ns": 1789529754771598160
+        },
+        "files": {
+          "modern-capability-causal-state-contracts.v2.json": {"sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe", "device": 16777234, "inode": 47635963, "mode": 384, "size": 4790036, "mtime_ns": 1789529754770713989, "ctime_ns": 1789529754771598118},
+          "modern-capability-closed-set-manifest.v3.json": {"sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612", "device": 16777234, "inode": 47631719, "mode": 384, "size": 294333, "mtime_ns": 1789529741603144818, "ctime_ns": 1789529741613400356},
+          "modern-capability-event-payload-contracts.v1.json": {"sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4", "device": 16777234, "inode": 47635697, "mode": 420, "size": 1687439, "mtime_ns": 1789529753300605189, "ctime_ns": 1789529753312166242},
+          "modern-capability-exact-schema-contracts.v1.json": {"sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02", "device": 16777234, "inode": 47635696, "mode": 420, "size": 7912823, "mtime_ns": 1789529753291935712, "ctime_ns": 1789529753311934197},
+          "modern-capability-operation-causal-contract-ssot.v2.json": {"sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227", "device": 16777234, "inode": 47635693, "mode": 420, "size": 5279746, "mtime_ns": 1789529753285236174, "ctime_ns": 1789529753311676152},
+          "modern-capability-public-identity-registry.v1.json": {"sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e", "device": 16777234, "inode": 47635700, "mode": 420, "size": 759646, "mtime_ns": 1789529753310138009, "ctime_ns": 1789529753312616372},
+          "modern-capability-semantic-bindings.v1.json": {"sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598", "device": 16777234, "inode": 47635698, "mode": 420, "size": 5400337, "mtime_ns": 1789529753303798726, "ctime_ns": 1789529753312414328},
+          "sys-listening-stream-authority-successor.v2.json": {"sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316", "device": 16777234, "inode": 47631865, "mode": 420, "size": 298993, "mtime_ns": 1789529742246644107, "ctime_ns": 1789529742247008694}
+        },
+        "membership": [
+          "modern-capability-causal-state-contracts.v2.json",
+          "modern-capability-closed-set-manifest.v3.json",
+          "modern-capability-event-payload-contracts.v1.json",
+          "modern-capability-exact-schema-contracts.v1.json",
+          "modern-capability-operation-causal-contract-ssot.v2.json",
+          "modern-capability-public-identity-registry.v1.json",
+          "modern-capability-semantic-bindings.v1.json",
+          "sys-listening-stream-authority-successor.v2.json"
+        ]
+      },
+      "after": {
+        "directory": {
+          "device": 16777234,
+          "inode": 47629326,
+          "mode": 448,
+          "size": 320,
+          "mtime_ns": 1789529754771598160,
+          "ctime_ns": 1789529754771598160
+        },
+        "files": {
+          "modern-capability-causal-state-contracts.v2.json": {"sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe", "device": 16777234, "inode": 47635963, "mode": 384, "size": 4790036, "mtime_ns": 1789529754770713989, "ctime_ns": 1789529754771598118},
+          "modern-capability-closed-set-manifest.v3.json": {"sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612", "device": 16777234, "inode": 47631719, "mode": 384, "size": 294333, "mtime_ns": 1789529741603144818, "ctime_ns": 1789529741613400356},
+          "modern-capability-event-payload-contracts.v1.json": {"sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4", "device": 16777234, "inode": 47635697, "mode": 420, "size": 1687439, "mtime_ns": 1789529753300605189, "ctime_ns": 1789529753312166242},
+          "modern-capability-exact-schema-contracts.v1.json": {"sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02", "device": 16777234, "inode": 47635696, "mode": 420, "size": 7912823, "mtime_ns": 1789529753291935712, "ctime_ns": 1789529753311934197},
+          "modern-capability-operation-causal-contract-ssot.v2.json": {"sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227", "device": 16777234, "inode": 47635693, "mode": 420, "size": 5279746, "mtime_ns": 1789529753285236174, "ctime_ns": 1789529753311676152},
+          "modern-capability-public-identity-registry.v1.json": {"sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e", "device": 16777234, "inode": 47635700, "mode": 420, "size": 759646, "mtime_ns": 1789529753310138009, "ctime_ns": 1789529753312616372},
+          "modern-capability-semantic-bindings.v1.json": {"sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598", "device": 16777234, "inode": 47635698, "mode": 420, "size": 5400337, "mtime_ns": 1789529753303798726, "ctime_ns": 1789529753312414328},
+          "sys-listening-stream-authority-successor.v2.json": {"sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316", "device": 16777234, "inode": 47631865, "mode": 420, "size": 298993, "mtime_ns": 1789529742246644107, "ctime_ns": 1789529742247008694}
+        },
+        "membership": [
+          "modern-capability-causal-state-contracts.v2.json",
+          "modern-capability-closed-set-manifest.v3.json",
+          "modern-capability-event-payload-contracts.v1.json",
+          "modern-capability-exact-schema-contracts.v1.json",
+          "modern-capability-operation-causal-contract-ssot.v2.json",
+          "modern-capability-public-identity-registry.v1.json",
+          "modern-capability-semantic-bindings.v1.json",
+          "sys-listening-stream-authority-successor.v2.json"
+        ]
+      },
+      "beforeAfterEqual": true
+    },
+    "physical": {
+      "expectedMembership": [
+        "hrm-modern-forward-ddl.v4.sql",
+        "modern-owner-handler-physical-contracts.v4.json",
+        "modern-query-projection-physical-contracts.v4.json",
+        "per-modern-forward-ddl.v4.sql",
+        "physical-candidate-generation-report.v4.json",
+        "sys-auth-modern-forward-ddl.v4.sql",
+        "sys-platform-modern-forward-ddl.v4.sql",
+        "tim-modern-forward-ddl.v4.sql"
+      ],
+      "membershipExact": true,
+      "before": {
+        "directory": {"device": 16777234, "inode": 47668111, "mode": 448, "size": 320, "mtime_ns": 1789530192962008807, "ctime_ns": 1789530192973609077},
+        "files": {
+          "hrm-modern-forward-ddl.v4.sql": {"sha256": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975", "device": 16777234, "inode": 47668112, "mode": 420, "size": 164079, "mtime_ns": 1789530192953770846, "ctime_ns": 1789530192953770846},
+          "modern-owner-handler-physical-contracts.v4.json": {"sha256": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6", "device": 16777234, "inode": 47668117, "mode": 420, "size": 461341, "mtime_ns": 1789530192958405412, "ctime_ns": 1789530192958405412},
+          "modern-query-projection-physical-contracts.v4.json": {"sha256": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6", "device": 16777234, "inode": 47668118, "mode": 420, "size": 4047816, "mtime_ns": 1789530192959582169, "ctime_ns": 1789530192959582169},
+          "per-modern-forward-ddl.v4.sql": {"sha256": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780", "device": 16777234, "inode": 47668113, "mode": 420, "size": 160855, "mtime_ns": 1789530192954467933, "ctime_ns": 1789530192954467933},
+          "physical-candidate-generation-report.v4.json": {"sha256": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89", "device": 16777234, "inode": 47668119, "mode": 420, "size": 4512, "mtime_ns": 1789530192964069901, "ctime_ns": 1789530192964069901},
+          "sys-auth-modern-forward-ddl.v4.sql": {"sha256": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6", "device": 16777234, "inode": 47668116, "mode": 420, "size": 19585, "mtime_ns": 1789530192956541985, "ctime_ns": 1789530192956541985},
+          "sys-platform-modern-forward-ddl.v4.sql": {"sha256": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6", "device": 16777234, "inode": 47668115, "mode": 420, "size": 127841, "mtime_ns": 1789530192956049691, "ctime_ns": 1789530192956049691},
+          "tim-modern-forward-ddl.v4.sql": {"sha256": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27", "device": 16777234, "inode": 47668114, "mode": 420, "size": 52207, "mtime_ns": 1789530192954875560, "ctime_ns": 1789530192954875560}
+        },
+        "membership": [
+          "hrm-modern-forward-ddl.v4.sql",
+          "modern-owner-handler-physical-contracts.v4.json",
+          "modern-query-projection-physical-contracts.v4.json",
+          "per-modern-forward-ddl.v4.sql",
+          "physical-candidate-generation-report.v4.json",
+          "sys-auth-modern-forward-ddl.v4.sql",
+          "sys-platform-modern-forward-ddl.v4.sql",
+          "tim-modern-forward-ddl.v4.sql"
+        ]
+      },
+      "after": {
+        "directory": {"device": 16777234, "inode": 47668111, "mode": 448, "size": 320, "mtime_ns": 1789530192962008807, "ctime_ns": 1789530192973609077},
+        "files": {
+          "hrm-modern-forward-ddl.v4.sql": {"sha256": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975", "device": 16777234, "inode": 47668112, "mode": 420, "size": 164079, "mtime_ns": 1789530192953770846, "ctime_ns": 1789530192953770846},
+          "modern-owner-handler-physical-contracts.v4.json": {"sha256": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6", "device": 16777234, "inode": 47668117, "mode": 420, "size": 461341, "mtime_ns": 1789530192958405412, "ctime_ns": 1789530192958405412},
+          "modern-query-projection-physical-contracts.v4.json": {"sha256": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6", "device": 16777234, "inode": 47668118, "mode": 420, "size": 4047816, "mtime_ns": 1789530192959582169, "ctime_ns": 1789530192959582169},
+          "per-modern-forward-ddl.v4.sql": {"sha256": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780", "device": 16777234, "inode": 47668113, "mode": 420, "size": 160855, "mtime_ns": 1789530192954467933, "ctime_ns": 1789530192954467933},
+          "physical-candidate-generation-report.v4.json": {"sha256": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89", "device": 16777234, "inode": 47668119, "mode": 420, "size": 4512, "mtime_ns": 1789530192964069901, "ctime_ns": 1789530192964069901},
+          "sys-auth-modern-forward-ddl.v4.sql": {"sha256": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6", "device": 16777234, "inode": 47668116, "mode": 420, "size": 19585, "mtime_ns": 1789530192956541985, "ctime_ns": 1789530192956541985},
+          "sys-platform-modern-forward-ddl.v4.sql": {"sha256": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6", "device": 16777234, "inode": 47668115, "mode": 420, "size": 127841, "mtime_ns": 1789530192956049691, "ctime_ns": 1789530192956049691},
+          "tim-modern-forward-ddl.v4.sql": {"sha256": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27", "device": 16777234, "inode": 47668114, "mode": 420, "size": 52207, "mtime_ns": 1789530192954875560, "ctime_ns": 1789530192954875560}
+        },
+        "membership": [
+          "hrm-modern-forward-ddl.v4.sql",
+          "modern-owner-handler-physical-contracts.v4.json",
+          "modern-query-projection-physical-contracts.v4.json",
+          "per-modern-forward-ddl.v4.sql",
+          "physical-candidate-generation-report.v4.json",
+          "sys-auth-modern-forward-ddl.v4.sql",
+          "sys-platform-modern-forward-ddl.v4.sql",
+          "tim-modern-forward-ddl.v4.sql"
+        ]
+      },
+      "beforeAfterEqual": true
+    }
+  },
+  "sealsAndPins": {
+    "canonicalFileSha256": {
+      "modern-capability-causal-state-contracts.v2.json": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+      "modern-capability-closed-set-manifest.v3.json": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+      "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+      "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+      "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+      "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+      "sys-listening-stream-authority-successor.v2.json": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+    },
+    "requiredCanonicalSelfSeals": {
+      "modern-capability-closed-set-manifest.v3.json": "d0bf2a0492b3fcd0acf0b201846f4d48aeabd5f3676b0346ec10ab743d49ba1a",
+      "modern-capability-causal-state-contracts.v2.json": "7d460ba031a94fa82d870f434da5e811b466da008ae970b8e079d752a01797c0",
+      "modern-capability-public-identity-registry.v1.json": "a731c63d60ee4a90be5c3e89a1f8119114f9cabfb15d393ab17a9870272d6e53",
+      "modern-capability-semantic-bindings.v1.json": "2d02f71cfdecb51e72ca4164fc2614d4c0f16c41400fa534dcb59087a923eed7",
+      "sys-listening-stream-authority-successor.v2.json": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4"
+    },
+    "manifestListeningStreamAuthority": {
+      "contractId": "dwp.hris.sys.listening.stream-authority-successor.v2",
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v2.json",
+      "fileSha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316",
+      "sealedPayloadSha256": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4",
+      "contractIdMatchesAuthority": true,
+      "fileShaMatchesAuthorityBytes": true,
+      "sealedPayloadMatchesAuthority": true
+    },
+    "causalCanonicalSourcePins": {
+      "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+      "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+      "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+      "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598"
+    },
+    "causalSourcePinCount": 5,
+    "physicalFileSha256": {
+      "hrm-modern-forward-ddl.v4.sql": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975",
+      "modern-owner-handler-physical-contracts.v4.json": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6",
+      "modern-query-projection-physical-contracts.v4.json": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6",
+      "per-modern-forward-ddl.v4.sql": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780",
+      "physical-candidate-generation-report.v4.json": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89",
+      "sys-auth-modern-forward-ddl.v4.sql": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6",
+      "sys-platform-modern-forward-ddl.v4.sql": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6",
+      "tim-modern-forward-ddl.v4.sql": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27"
+    },
+    "physicalJsonSelfSeals": {
+      "modern-owner-handler-physical-contracts.v4.json": "5daa6c35927b8af74b418623c2ed24de2a9bed66f10d352542e5e9e2fd60dc08",
+      "modern-query-projection-physical-contracts.v4.json": "26845aabb808962b3bc640e281faad191b00efc70c6fb8bd408822dd8f4a6b69",
+      "physical-candidate-generation-report.v4.json": "17cc4a2e34c52dde1cdf21d95b2cdb74c82d16b60efc2e31e5b65c9028d1a088"
+    },
+    "scopeCounts": {"operations": 199, "commands": 133, "queries": 66, "handlers": 27, "events": 157, "tables": 131}
+  },
+  "policyAndToolPins": {
+    "policyId": "DWP-HRIS-GLOBAL-HCM-NONREPLACEABLE-TABLE-EXPANSION-V5",
+    "policyFileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+    "policySealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2",
+    "ownerPrefixRegisterSha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49",
+    "validatorSha256": "c8aef3074574e1f49976401727548579b66fb236e72e4033aa864576f88dbd4a"
+  },
+  "executions": {
+    "toolSelfTest": {
+      "command": "python3 -B output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --tool-self-test",
+      "returnCode": 0,
+      "status": "PASS",
+      "passed": 45,
+      "total": 45,
+      "sealedPayloadSha256": "7e454245d2135bd603403a87df6066ce9d0799c4a15be406cbd1e3538de41b66",
+      "stdoutSha256": "d0c8a60c8656120f416a0b96ebfd2c720b7c60997ed2b705b8c1978fa000c546",
+      "stdoutBytes": 3135
+    },
+    "fullValidation": {
+      "command": "python3 -B coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --scope-profile v5-131-successor --canonical-dir coding-readiness/modern-canonical-candidate.A7K8Kj --physical-dir coding-readiness/modern-physical-candidate.A7K8Kj --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --docker-postgres all --self-test",
+      "returnCode": 0,
+      "durationSeconds": 56.185,
+      "status": "PASS_CANDIDATE_NOT_G3_AUTHORITY",
+      "scopeProfile": "v5-131-successor",
+      "errors": [],
+      "hostileSelfTest": {
+        "status": "PASS",
+        "tool": {"status": "PASS", "passed": 45, "total": 45, "sealedPayloadSha256": "7e454245d2135bd603403a87df6066ce9d0799c4a15be406cbd1e3538de41b66"},
+        "candidate": {"status": "PASS", "passed": 23, "total": 23, "sealedPayloadSha256": "b94c88430feddb3119e46cc8b2612eff3ae5c46275718e048fa2c71d4c16041d"}
+      },
+      "summary": {
+        "canonicalFileSha256": {
+          "modern-capability-causal-state-contracts.v2.json": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+          "modern-capability-closed-set-manifest.v3.json": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+          "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+          "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+          "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+          "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+          "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+          "sys-listening-stream-authority-successor.v2.json": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+        },
+        "physicalFileSha256": {
+          "hrm-modern-forward-ddl.v4.sql": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975",
+          "modern-owner-handler-physical-contracts.v4.json": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6",
+          "modern-query-projection-physical-contracts.v4.json": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6",
+          "per-modern-forward-ddl.v4.sql": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780",
+          "physical-candidate-generation-report.v4.json": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89",
+          "sys-auth-modern-forward-ddl.v4.sql": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6",
+          "sys-platform-modern-forward-ddl.v4.sql": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6",
+          "tim-modern-forward-ddl.v4.sql": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27"
+        },
+        "counts": {"operations": 199, "commands": 133, "queries": 66, "handlers": 27, "events": 157, "tables": 131},
+        "sqlTables": 131,
+        "operations": 199,
+        "queryProjections": 66,
+        "handlers": 27,
+        "payModernOwnerTables": 0,
+        "expansionPolicySha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+        "physicalOwnerPrefixRegisterSha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49"
+      },
+      "stdoutSha256": "5afaebd73b864ccb2bac349a5498d0a01f3a1cdbe24395279eb4fc44ecc9136b",
+      "stdoutBytes": 57574,
+      "validatorReportSealedPayloadSha256": "cd28d1cb36378d4172c6653d67d54ff31f9e5fda501d39007782c1ab82d65080"
+    }
+  },
+  "postgres": {
+    "requested": "--docker-postgres all",
+    "containersUnique": true,
+    "imageIdsImmutable": true,
+    "runs": [
+      {
+        "tag": "16",
+        "requestedImage": "postgres:16",
+        "container": "dwp-hris-physical-16-0260b72286",
+        "imageId": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+        "containerImageId": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+        "repositoryDigests": ["postgres@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94"],
+        "status": "PASS",
+        "cleanup": "PASS",
+        "sealedPayloadSha256": "fd31165fe20f0320d494c23d3441ea4edcb1ae8788c442bfbfe245680b0970dd",
+        "databases": {
+          "dwp-auth": {"status": "PASS", "files": [["sys-auth-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-people": {"status": "PASS", "files": [["hrm-modern-forward-ddl.v4.sql", "PASS"], ["per-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-platform": {"status": "PASS", "files": [["sys-platform-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-time": {"status": "PASS", "files": [["tim-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"}
+        },
+        "temporalArbitration": {"status": "PASS", "cases": {"concurrentSameExpectedVersion": "PASS", "futureSupersedeBusinessAsOf": "PASS", "sameIntervalCorrectionAndSystemAsOf": "PASS"}}
+      },
+      {
+        "tag": "18",
+        "requestedImage": "postgres:18",
+        "container": "dwp-hris-physical-18-d42f2a4103",
+        "imageId": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280",
+        "containerImageId": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280",
+        "repositoryDigests": ["postgres@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280"],
+        "status": "PASS",
+        "cleanup": "PASS",
+        "sealedPayloadSha256": "712438b56e3c3be4b2d3d401a4d4c96ac7298fdfb77eb2e1a77845833963922c",
+        "databases": {
+          "dwp-auth": {"status": "PASS", "files": [["sys-auth-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-people": {"status": "PASS", "files": [["hrm-modern-forward-ddl.v4.sql", "PASS"], ["per-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-platform": {"status": "PASS", "files": [["sys-platform-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-time": {"status": "PASS", "files": [["tim-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"}
+        },
+        "temporalArbitration": {"status": "PASS", "cases": {"concurrentSameExpectedVersion": "PASS", "futureSupersedeBusinessAsOf": "PASS", "sameIntervalCorrectionAndSystemAsOf": "PASS"}}
+      }
+    ],
+    "normalizedObservationEquality": true,
+    "caseSetEquality": true,
+    "postRunMatchingContainerLines": [],
+    "postRunContainerCleanupVerified": true
+  },
+  "authorReportIndependentVerification": {
+    "path": "coding-readiness/reports/modern-physical-v5-a7k8kj-pg-author-verification-2026-09-16.v1.json",
+    "fileSha256": "9efd91f6bf622450d5a255ff65dd72f717e53cada203ec08f27aae0786f585df",
+    "declaredSealedPayloadSha256": "e4db63047c2a6224575cef6929fcfd68bdfc1ff339636b14c564e0bc0a4ec935",
+    "computedSealedPayloadSha256": "e4db63047c2a6224575cef6929fcfd68bdfc1ff339636b14c564e0bc0a4ec935",
+    "selfSealValid": true,
+    "scopeProfile": "v5-131-successor",
+    "canonicalDirectory": "modern-canonical-candidate.A7K8Kj",
+    "physicalDirectory": "modern-physical-candidate.A7K8Kj",
+    "statusField": "PASS_CANDIDATE_NOT_G3_AUTHORITY",
+    "beforeAfterStable": true,
+    "treatedAsAuthority": false
+  },
+  "readOnlyInputStability": {
+    "canonicalCandidate": true,
+    "physicalCandidate": true,
+    "policy": true,
+    "ownerPrefixRegister": true,
+    "validatorTool": true,
+    "existingAuthorReport": true,
+    "liveCanonicalOrGateWrite": false,
+    "candidateWrite": false,
+    "newFinalCandidate": false
+  },
+  "errors": [],
+  "conclusion": "Independent v5-131 successor physical qualification passed for the exact A7K8Kj canonical and physical candidates. Validator tool and hostile self-tests passed; PostgreSQL 16 and 18 both passed all four owner databases, role/RLS/ACL assertions, and temporal arbitration cases with equal normalized observations and immutable image bindings. All candidate, policy, tool, and existing author-report snapshots remained identical. The author report was independently self-seal-verified only and was not treated as authority. No candidate, live canonical, Gate, policy, or existing report was modified, and no promotion/publication occurred.",
+  "sealedPayloadSha256": "PENDING"
+}

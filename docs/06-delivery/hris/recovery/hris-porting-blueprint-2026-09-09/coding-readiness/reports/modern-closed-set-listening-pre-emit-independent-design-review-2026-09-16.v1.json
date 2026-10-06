@@ -1,0 +1,278 @@
+{
+  "reportId": "DWP-HRIS-MODERN-CLOSED-SET-LISTENING-PRE-EMIT-INDEPENDENT-DESIGN-REVIEW-2026-09-16-V1",
+  "schemaVersion": 1,
+  "status": "FINAL_SEALED_READ_ONLY_SOURCE_REVIEW",
+  "verdict": "ARCH_FINAL_PASS",
+  "reviewedAt": "2026-09-16T07:58:45+09:00",
+  "reviewer": {
+    "reviewerId": "/root/architecture_completeness_audit",
+    "reviewerRole": "INDEPENDENT_ARCHITECTURE_HOSTILE_REVIEW_AGENT",
+    "independence": "SOURCE_AUTHOR_AND_REVIEWER_TASKS_WERE_DISTINCT",
+    "externalIdentityAttestation": "EXTERNAL_IDENTITY_ATTESTATION_NOT_CLAIMED"
+  },
+  "scope": {
+    "reviewMode": "SOURCE_ONLY_NO_WRITE_PRE_EMIT",
+    "candidateOrLiveArtifactsEmitted": false,
+    "candidateOrLiveArtifactsModified": false,
+    "reviewedDomains": [
+      "A_SEVEN_DUAL_CHAIN_TEMPORAL_VERSION_FAMILIES",
+      "B_LISTENING_FOUR_STREAM_PRIVACY_AND_OWNER_BOUNDARY"
+    ],
+    "excludedClaims": [
+      "G3_OR_G4_USER_JOURNEY_IMPLEMENTATION_COMPLETE",
+      "G6_PRODUCTION_ACTIVATION",
+      "REAL_IDENTITY_OR_PROCESS_ISOLATION_PROVEN",
+      "EXTERNAL_REVIEWER_PKI_OR_IDENTITY_ATTESTED"
+    ]
+  },
+  "sourcePins": [
+    {
+      "path": "coding-readiness/modern_closed_set_design.py",
+      "sha256": "53282661fd973816e27c9e95ff74091d62da2982f24060d15a56fae9a16e43d6"
+    },
+    {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "abf27d3a4e71663b28b18a72bb7d012ec7b6e3ac4a193bd01a40047ec702be46"
+    },
+    {
+      "path": "coding-readiness/generate_sys_listening_stream_authority_successor.py",
+      "sha256": "fc4d9e69c8ad5bc2b359b8b1e8e01cd9b123523b0ced675cba80142e29c2c3c8"
+    },
+    {
+      "path": "coding-readiness/generate_modern_closed_set_manifest.py",
+      "sha256": "8e9695a69c521412dc9d7e9b6c9b1a0800847579e913e3b00b79ff69d5ae2c27"
+    },
+    {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256": "32d049194e262fab8ec99bef64ad25738ceae4757df7dc2bf286fce15a01d6e9"
+    },
+    {
+      "path": "coding-readiness/generate_modern_exact_event_successor.py",
+      "sha256": "046baafd255b9eafc4459c23a1e627c3dbe7dc61493b43e3629d762cbf98683c"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+      "sha256": "0f18d15303807c3383c761cc25de84820abb9b756361c14f86319a081a36d186",
+      "sealedPayloadSha256": "8f6e250defcf2a8a931e1cb6e583c832d6f4624377e0e66f7fd702de6beca5be"
+    },
+    {
+      "path": "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+      "sha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+      "role": "SEALED_PREDECESSOR_COMPOSITION_INPUT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730",
+      "role": "SEALED_PREDECESSOR_COMPOSITION_INPUT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+      "sha256": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b",
+      "role": "SEALED_PREDECESSOR_COMPOSITION_INPUT"
+    },
+    {
+      "path": "coding-readiness/physical-owner-prefix-register.csv",
+      "sha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49"
+    },
+    {
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v1.json",
+      "sha256": "62f110f36a4d26dab7dda3051e6baf1a5872a475b8f2a83cee19f2cd950496b1",
+      "role": "IMMUTABLE_AUTHORITY_PREDECESSOR"
+    }
+  ],
+  "derivedPins": {
+    "modernClosedSetManifest": {
+      "sealedPayloadSha256": "fa791cb05405842e0593dcb834517ebbbe0c9004fa4377e7258a8f03807c6664",
+      "materializationState": "IN_MEMORY_SOURCE_DERIVED_NOT_EMITTED"
+    },
+    "listeningStaticDesign": {
+      "sha256": "1b426275a1c191d2ebafcecf53eea5f1352e02d7a6df026ebeae556c5ba44136",
+      "sealedPayloadSha256": "1b426275a1c191d2ebafcecf53eea5f1352e02d7a6df026ebeae556c5ba44136"
+    },
+    "listeningStreamAuthorityV2": {
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v2.json",
+      "renderedFileSha256": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00",
+      "sealedPayloadSha256": "950217094f49e8761245e56c171948b074846beff8eb00602838d82e6138e66c",
+      "manifestPinExactMatch": true,
+      "materializationState": "IN_MEMORY_SOURCE_DERIVED_NOT_EMITTED"
+    }
+  },
+  "compositionInventory": {
+    "operations": 199,
+    "commands": 133,
+    "queries": 66,
+    "systemHandlers": 27,
+    "publicEvents": 157,
+    "tableSpecifications": 131,
+    "ownerPortOperationContracts": 18,
+    "ownerDependencyContracts": 1,
+    "physicalClosureMismatches": 0
+  },
+  "temporalReview": {
+    "verdict": "PASS",
+    "versionTableCount": 7,
+    "additionalTemporalTableRequired": false,
+    "versionToRootTable": {
+      "ppl_bnf_plan_versions": "ppl_bnf_plans",
+      "ppl_cwk_engagement_versions": "ppl_cwk_engagements",
+      "ppl_jny_template_versions": "ppl_jny_templates",
+      "ppl_rec_requisition_versions": "ppl_rec_requisitions",
+      "prf_lrn_offering_versions": "prf_lrn_offerings",
+      "prf_mkt_opportunity_versions": "prf_mkt_opportunities",
+      "prf_suc_plan_versions": "prf_suc_plans"
+    },
+    "writerClosedSet": {
+      "publicCreates": 7,
+      "publicRevises": 7,
+      "publicLifecycleMutations": 24,
+      "publicTotal": 38,
+      "contingentSystemHandlerMutations": 3
+    },
+    "queryClosedSet": {
+      "stableParentDetailQueries": 7,
+      "collectionQueries": 10,
+      "detailModes": [
+        "UNQUALIFIED",
+        "STATE_HISTORY",
+        "CONTENT_HISTORY"
+      ],
+      "collectionExactSelectors": "FORBIDDEN_WITHOUT_STABLE_PARENT_IDENTITY"
+    },
+    "resolutionAlgorithm": [
+      "FIRST_FILTER_created_at_LE_systemAsOf",
+      "CHOOSE_VISIBLE_BASE_SEGMENT_revision1_MAX_effectiveFrom_LE_businessAsOf",
+      "CHOOSE_CONTENT_WINNER_MAX_segmentRevision_WITHIN_CHOSEN_SEGMENT",
+      "CHOOSE_STATE_WINNER_MAX_rootVersion_ACROSS_VISIBLE_ROWS",
+      "DERIVE_effectiveTo_FROM_NEXT_VISIBLE_BASE_SEGMENT_OR_OPEN_END",
+      "STATE_HISTORY_JOINS_EXACT_contentRevisionPublicId_WITH_NO_LATEST_FALLBACK",
+      "CONTENT_HISTORY_RETURNS_EXACT_CONTENT_PLUS_INDEPENDENT_VISIBLE_STATE_WINNER"
+    ],
+    "writeAndConcurrencyContract": [
+      "CORRECTION_REUSES_EXACT_SEGMENT_AND_CURRENT_SEGMENT_TIP",
+      "SUPERSEDE_CREATES_NEW_SEGMENT_REVISION1_AND_NEVER_MUTATES_OLD_BOUNDARY",
+      "LIFECYCLE_APPENDS_TO_GLOBAL_TIP_ATTACHED_SEGMENT_AND_COPIES_CONTENT_POINTER",
+      "STABLE_ROOT_UPDATE_CAS_AND_EXACTLY_ONE_VERSION_APPEND_ARE_ONE_TRANSACTION",
+      "SAME_EXPECTED_ROOT_VERSION_HAS_EXACTLY_ONE_WINNER",
+      "ROOT_AND_SEGMENT_PREDECESSOR_CHAINS_ARE_PHYSICALLY_CONSTRAINED"
+    ],
+    "eventAggregateModel": {
+      "decision": "STABLE_ROOT_AGGREGATE_EVENT_WITH_EXACT_VERSION_IDENTITIES",
+      "aggregateIdentity": "ROOT_PUBLIC_ID_AND_POST_CAS_ROOT_VERSION",
+      "versionIdentity": "revisionPublicId+rootVersion+stateRevisionPublicId+contentRevisionPublicId+effectiveSegmentPublicId+segmentRevision",
+      "refetch": "STABLE_PARENT_DETAIL_EXACT_HISTORICAL_NO_LATEST_FALLBACK"
+    },
+    "successorReprojection": {
+      "operationSecondPassByteEquivalent": true,
+      "exactSecondPassByteEquivalent": true,
+      "eventSecondPassByteEquivalent": true
+    }
+  },
+  "listeningReview": {
+    "verdict": "PASS",
+    "exactCounts": {
+      "streams": 4,
+      "ownerServices": 2,
+      "publicOperations": 10,
+      "canonicalPublicEvents": 7,
+      "ownerPortOperations": 18,
+      "ownerDependencyContracts": 1,
+      "ownerLocalHandlers": 9,
+      "internalPortMessages": 6,
+      "plannedTables": 23,
+      "migrationReservations": 4,
+      "verificationProfiles": 5
+    },
+    "streamOwnership": {
+      "platform-hris-configuration": "dwp-platform-server/hris_configuration",
+      "platform-hris-listening-protected": "dwp-platform-server/hris_listening_protected",
+      "platform-hris-insights": "dwp-platform-server/hris_insights",
+      "auth-hris-participation-issuer": "dwp-auth-server/hris_participation_issuer"
+    },
+    "tableScopeArithmetic": {
+      "frozenBaseline": 115,
+      "addedRows": 17,
+      "removedRows": 1,
+      "netDelta": 16,
+      "activeTables": 131,
+      "listeningTables": 23,
+      "removedTableId": "sys_hris_listening_export_receipts",
+      "replacementOwnerTable": "sys_hris_analytics_export_receipts",
+      "reason": "REMOVED_ORPHAN_WITH_NO_PRODUCER_CONSUMER_OR_FOREIGN_KEY;EXISTING_ANALYTICS_OWNER_EXPORT_RECEIPT_REMAINS_AUTHORITY"
+    },
+    "privacyAndIsolation": [
+      "ANONYMOUS_ACTIVE_AND_SUBMIT_ROUTES_HAVE_NO_AUTHENTICATED_PRINCIPAL_OR_CORRELATION_ID",
+      "NO_RAW_RESPONSE_ANSWER_TOKEN_OR_ISSUER_TRACE_PUBLIC_EVENT",
+      "FOUR_STREAMS_HAVE_DISTINCT_SCHEMA_HISTORY_LOCATION_MIGRATION_AND_RUNTIME_PRINCIPALS",
+      "CROSS_SCHEMA_FOREIGN_KEYS_FOREIGN_LOCAL_IDS_AND_FOREIGN_REPOSITORY_IMPORTS_ARE_FORBIDDEN",
+      "SIX_INTERNAL_MESSAGES_HAVE_EXACT_SIGNED_ENVELOPES_OWNER_LOCAL_INBOX_OUTBOX_AND_TRANSACTION_CLOCK",
+      "ISSUER_SYNC_IS_TYPED_OWNER_PORT_NOT_FAKE_BROKER_HANDLER",
+      "COHORT_BUILD_IS_PROTECTED_OWNER_SCHEDULED_HANDLER_WITH_PRIVACY_BUDGET_AND_SUPPRESSION",
+      "ERASURE_IS_PROTECTED_OWNER_LOCAL_AND_BINDS_DURABLE_RETENTION_POLICY_PUBLIC_ID_REVISION_AND_DUE_TIME"
+    ],
+    "localForeignKeys": [
+      "sys_hris_listening_actions(tenant_id,listening_survey_version_id)->sys_hris_listening_survey_versions(tenant_id,record_id)",
+      "sys_hris_listening_admission_versions(tenant_id,admission_public_id,predecessor_version_public_id,predecessor_owner_revision)->sys_hris_listening_admission_versions(tenant_id,admission_public_id,public_id,owner_revision)",
+      "sys_hris_listening_answer_values(tenant_id,listening_response_id)->sys_hris_listening_responses(tenant_id,listening_response_id)",
+      "sys_hris_listening_cohort_budgets(tenant_id,listening_admission_version_id)->sys_hris_listening_admission_versions(tenant_id,record_id)",
+      "sys_hris_listening_cohort_packages(tenant_id,listening_cohort_budget_id)->sys_hris_listening_cohort_budgets(tenant_id,record_id)",
+      "sys_hris_listening_erasure_tickets(tenant_id,listening_response_id)->sys_hris_listening_responses(tenant_id,listening_response_id)",
+      "sys_hris_listening_lineage_receipts(tenant_id,listening_cohort_projection_id)->sys_hris_listening_cohort_projections(tenant_id,record_id)",
+      "sys_hris_listening_protected_receipts(tenant_id,listening_response_id)->sys_hris_listening_responses(tenant_id,listening_response_id)",
+      "sys_hris_listening_responses(tenant_id,listening_admission_version_id)->sys_hris_listening_admission_versions(tenant_id,record_id)",
+      "sys_hris_listening_survey_versions(tenant_id,listening_survey_id)->sys_hris_listening_surveys(tenant_id,listening_survey_id)",
+      "sys_hris_listening_survey_versions(tenant_id,listening_survey_id,predecessor_version_public_id,predecessor_owner_revision)->sys_hris_listening_survey_versions(tenant_id,listening_survey_id,public_id,owner_revision)",
+      "sys_hris_listening_token_consumptions(tenant_id,listening_admission_version_id)->sys_hris_listening_admission_versions(tenant_id,record_id)",
+      "sys_hris_listening_token_issuances(tenant_id,listening_eligibility_version_id)->sys_hris_listening_eligibility_versions(tenant_id,record_id)",
+      "sys_hris_listening_token_revocations(tenant_id,listening_token_issuance_id)->sys_hris_listening_token_issuances(tenant_id,record_id)"
+    ],
+    "foreignKeyAcceptance": "EXACT_14_SAME_STREAM_SAME_SCHEMA_SAME_OWNER_CANDIDATE_KEY_AND_SQL_TYPE_MATCH"
+  },
+  "hostileValidation": {
+    "finalPrimarySuite": {
+      "executedMutations": 177,
+      "rejected": 177,
+      "accepted": 0,
+      "sourceHashesCheckedBeforeAndAfter": true,
+      "classes": [
+        "ALL_38_PUBLIC_TEMPORAL_CHAIN_ROOT_SELECTOR_AND_EVENT_REFETCH",
+        "THREE_CONTINGENT_HANDLER_TEMPORAL_CHAINS",
+        "SEVEN_TEMPORAL_ARBITRATION_AND_PHYSICAL_CHECK_FAMILIES",
+        "SEVEN_DETAIL_AND_TEN_COLLECTION_QUERY_SEMANTICS",
+        "SEVEN_CORRECTION_SUPERSEDE_ADMISSION_CONTRACTS",
+        "SEVENTEEN_TABLE_COMPLETE_PRODUCER_SETS",
+        "LISTENING_AUTHORITY_PIN_OWNER_PORT_DEPENDENCY_SCHEMA_AND_FK"
+      ]
+    },
+    "independentListeningSuite": {
+      "exhaustiveMutationsAtSameOperationAndExactHashes": 269,
+      "rejected": 269,
+      "accepted": 0,
+      "supersedingManifestAuthorityPinRegressionMutations": 18,
+      "supersedingManifestAuthorityPinRegressionRejected": 18
+    }
+  },
+  "remediatedDuringReview": [
+    "P0_TEMPORAL_REVISION_ADMISSION_FAIL_OPEN",
+    "P0_TEMPORAL_DETAIL_AND_COLLECTION_QUERY_SEMANTICS_FAIL_OPEN",
+    "P0_TEMPORAL_WRITE_SELECTOR_AND_WHOLE_CONTRACT_FAIL_OPEN",
+    "P0_TEMPORAL_EVENT_HISTORICAL_REFETCH_FAIL_OPEN",
+    "P0_TEMPORAL_PHYSICAL_CHAIN_FK_UK_CHECK_FAIL_OPEN",
+    "P0_TEMPORAL_EVENT_ABI_FAIL_OPEN",
+    "P0_TEMPORAL_STATE_TRANSITION_AND_TENANT_AUTHORITY_FAIL_OPEN",
+    "P0_SUCCESSOR_SECOND_PASS_REPROJECTION_NOT_IDEMPOTENT",
+    "P0_LISTENING_OPERATION_FIELD_LINEAGE_AND_OWNER_FK_FAIL_OPEN",
+    "P0_LISTENING_V2_DERIVED_AUTHORITY_MANIFEST_PIN_DRIFT"
+  ],
+  "findings": {
+    "p0": [],
+    "p1": []
+  },
+  "closureDecision": {
+    "sourceDesignReadyForCandidateEmit": true,
+    "candidateEmitAuthorizedByThisReport": false,
+    "reason": "SOURCE_DESIGN_AND_VALIDATORS_ARE_LOGICALLY_CLOSED_AT_THE_PINNED_BYTES;CONTROL_OWNED_CANDIDATE_EMIT_REVIEW_AND_GATE_RESEAL_REMAIN_SEPARATE",
+    "nextBoundary": "CONTROL_MAY_CREATE_CANDIDATE_AND_RUN_INDEPENDENT_FULL_GATE_ONLY_FROM_THE_EXACT_SOURCE_PINS_IN_THIS_REPORT"
+  },
+  "sealCanonicalization": "UTF8_JSON_SORT_KEYS_TRUE_SEPARATORS_COMMA_COLON_ENSURE_ASCII_FALSE_EXCLUDING_TOP_LEVEL_sealedPayloadSha256",
+  "sealedPayloadSha256": "39a27f6c0362ca52eddfb19c8ac2b31981d98755de5d911e15ea2791b4242bcd"
+}

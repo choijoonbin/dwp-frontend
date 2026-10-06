@@ -1,0 +1,2244 @@
+{
+  "schema": "dwp.hris.dwp-identity-reuse-independent-audit.v1",
+  "capturedAtUtc": "2026-09-14T02:53:45.019Z",
+  "status": "READONLY_AUDIT_COMPLETE_REUSE_CONFIRMED_COMMON_P0_OPEN",
+  "gateAuthorization": "NONE_G3_CLOSED",
+  "scope": "현재 DWP Auth→Gateway→People principal/person/worker/employment/assignment 실제 source/DDL/contract와 HRM proposed identity authority의 독립 재사용 감사",
+  "mutations": {
+    "source": false,
+    "backend": false,
+    "frontend": false,
+    "SKKF": false,
+    "canonicalContract": false,
+    "proposal": false,
+    "gateOrSeal": false,
+    "databaseOrUserServer": false,
+    "onlyNewReports": true,
+    "commitCreated": false
+  },
+  "sourceSnapshot": {
+    "backendHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "backendTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "preStatus": "",
+    "sourceManifestFiles": 66,
+    "allComparedToPinnedHead": true,
+    "hrmProposal": {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+      "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+      "lines": 132547,
+      "identityPointer": "/identityMappingDelta",
+      "status": "G3_P0_COMMON_IDENTITY_DTO_SPI_ADAPTER_CONTRACT_OPEN",
+      "proofPointer": "/identityMappingDelta/verificationProofContract/authorityChain/0",
+      "authProofFields": [
+        "receiptId:UUID<Auth.PrincipalVerificationReceipt>",
+        "tenantId:BIGINT",
+        "principalPublicId:UUID<Auth.Principal>",
+        "status:ACTIVE|DISABLED",
+        "verifiedAt:TIMESTAMPTZ",
+        "expiresAt:TIMESTAMPTZ",
+        "principalVersion:BIGINT",
+        "issuer:SIGNED_AUTH_OWNER",
+        "provenanceDigest:SHA256"
+      ]
+    }
+  },
+  "conclusion": {
+    "default": "REUSE_AUTH_PERSON_BINDING_AND_PEOPLE_NATIVE_EMPLOYMENT_GRAPH",
+    "newAuthoritativePrincipalWorkerLedgerForNormalSelf": "NOT_JUSTIFIED_DUPLICATES_EXISTING_DWP_AUTHORITY",
+    "newVersionedOwnerIdentityDTO_SPI_Adapter": "REQUIRED_COMMON_G3_P0",
+    "existingPermissions": "REUSE_DWP_GROUPS_AND_APP_MENU_ACTION_POPULATION_PEP",
+    "actualRuntimeReadiness": "NOT_CLAIMED",
+    "key": "기존 identity relation 존재와 완성형 HRIS의 full typed/purpose-bound provider 구현 완료는 다른 상태다. 기존 관계를 재사용하고 source/adapters/lifecycle를 고도화해야 한다."
+  },
+  "actualTrustTrace": [
+    {
+      "step": 1,
+      "owner": "Auth",
+      "binding": "Verified JWT session subject BIGINT userId+tenantId→durable com_users record→person_public_id UUID; principal PUBLIC_UUID is separate com_users.public_id",
+      "evidence": [
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/JwtConfig.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/config/JwtConfig.java",
+          "sha256": "8861335e774863be2c230cd71867bd5b0395d6e9854aa6ec4215b22e77f46268",
+          "lineStart": 55,
+          "lineEnd": 66
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/security/AuthSessionJwtValidator.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/security/AuthSessionJwtValidator.java",
+          "sha256": "b0c6eb1333941e0dc513b82c358440b13bdebbe4112c9b5eff74bbb39b5c8082",
+          "lineStart": 45,
+          "lineEnd": 65
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/entity/AuthSession.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/entity/AuthSession.java",
+          "sha256": "b8912998d234d416261678c37b2f14966ee71436b5a2d6e629170e6a8fbbc058",
+          "lineStart": 90,
+          "lineEnd": 99
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+          "sha256": "b87c6bfc10a9c3c8bcf013bc89714b2ee0538423459f13de743316e287c2b573",
+          "lineStart": 79,
+          "lineEnd": 89
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+          "sha256": "7027aae4450079516a0a7abf1f5be14c12e033c99160f012d9abf7c06485dee3",
+          "lineStart": 246,
+          "lineEnd": 269
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+          "sha256": "7027aae4450079516a0a7abf1f5be14c12e033c99160f012d9abf7c06485dee3",
+          "lineStart": 294,
+          "lineEnd": 317
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "owner": "Gateway",
+      "binding": "Remove external trusted headers, call Auth /me with actual cookie/bearer and tenant assertion, mint verified user/tenant/person/permissions/group/resource-role headers",
+      "evidence": [
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "sha256": "f995186fe7ffccc5aed1af3c0c6f68064967349de3706f6db29df890e9b81a60",
+          "lineStart": 59,
+          "lineEnd": 74
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "sha256": "f995186fe7ffccc5aed1af3c0c6f68064967349de3706f6db29df890e9b81a60",
+          "lineStart": 101,
+          "lineEnd": 133
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "sha256": "11727c688bdb39bb0077f122a0fa90d7aa2835dee893dfe33549f41892563324",
+          "lineStart": 84,
+          "lineEnd": 108
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "sha256": "11727c688bdb39bb0077f122a0fa90d7aa2835dee893dfe33549f41892563324",
+          "lineStart": 119,
+          "lineEnd": 139
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "sha256": "11727c688bdb39bb0077f122a0fa90d7aa2835dee893dfe33549f41892563324",
+          "lineStart": 362,
+          "lineEnd": 370
+        }
+      ],
+      "cache": "People HR/workforce routes are permission-scoped and uncached; cache allowlist only three low-risk Platform families."
+    },
+    {
+      "step": 3,
+      "owner": "Gateway authority+service origin",
+      "binding": "Strip external rollout/context/decision/service tokens; owner-evaluate exact route scope+current decision; attach server People token. Header text is not itself native source provenance.",
+      "evidence": [
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ServiceIdentitySanitizingFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ServiceIdentitySanitizingFilter.java",
+          "sha256": "8346f0be04a1f2348ecf239f8e6557b5b7f5256a28ed2e179743d33009e0a41f",
+          "lineStart": 18,
+          "lineEnd": 31
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceRolloutHeaderFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceRolloutHeaderFilter.java",
+          "sha256": "6b7b3b1caa43261ecc3581d7e73b2b76e18e82a431dfb1805fe5bc1d3f18d9d2",
+          "lineStart": 63,
+          "lineEnd": 86
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+          "sha256": "a783255a011d863bb6739cc73f0ff77c1e88123a02a02e91b747db131a95b699",
+          "lineStart": 73,
+          "lineEnd": 79
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+          "sha256": "a783255a011d863bb6739cc73f0ff77c1e88123a02a02e91b747db131a95b699",
+          "lineStart": 141,
+          "lineEnd": 166
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+          "sha256": "a783255a011d863bb6739cc73f0ff77c1e88123a02a02e91b747db131a95b699",
+          "lineStart": 244,
+          "lineEnd": 254
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/PeopleServiceIdentityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/PeopleServiceIdentityFilter.java",
+          "sha256": "db285fdf2c570dbff5933bbdb7753b0ec934f6f031da1cce6a3dd1ce2ae9b30b",
+          "lineStart": 27,
+          "lineEnd": 41
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "owner": "People service security",
+      "binding": "Require configured constant-time service token, parse positive internal user/tenant+optional person UUID, gate APP.HRIS/HCM/workforce grants, create and finally clear request Actor. Self methods require a verified person and native worker.",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "sha256": "04265a283b5381d8a836ea5a3560322bd239873af8e3fc547d38528e33962168",
+          "lineStart": 71,
+          "lineEnd": 99
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "sha256": "04265a283b5381d8a836ea5a3560322bd239873af8e3fc547d38528e33962168",
+          "lineStart": 137,
+          "lineEnd": 159
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrService.java",
+          "sha256": "e484bd390cc383076e8c1c36f87046155820204715b42e50dca299f2f57cb771",
+          "lineStart": 471,
+          "lineEnd": 497
+        }
+      ],
+      "limits": "General request filter does not independently Auth-refetch caller user↔person pairing; internal eligibility additionally checks gateway service identity."
+    },
+    {
+      "step": 5,
+      "owner": "People native workforce",
+      "binding": "person_public_id matches tenant ppl_persons.public_id; tenant-composite FK joins resolve native worker→legal-employer work relationship→effective assignment; each own public UUID exists",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+          "lineStart": 42,
+          "lineEnd": 64
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+          "lineStart": 88,
+          "lineEnd": 102
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+          "lineStart": 287,
+          "lineEnd": 329
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+          "lineStart": 364,
+          "lineEnd": 389
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+          "lineStart": 1,
+          "lineEnd": 33
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "owner": "DWP HCM exact PEP+People owner scope",
+      "binding": "Exact rollout-selected route action/responsibility/current decision/revalidation/revision and owner-recomputed self/team/population/field boundaries, plus mutation share-lock helpers",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+          "sha256": "630dda8034e987fe36a4d43c13a6ee323a5b0557dd6dd44f2e2b918a17a92ce4",
+          "lineStart": 101,
+          "lineEnd": 120
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+          "sha256": "630dda8034e987fe36a4d43c13a6ee323a5b0557dd6dd44f2e2b918a17a92ce4",
+          "lineStart": 142,
+          "lineEnd": 198
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+          "sha256": "69b339368be840bdf6948400b8b40f2975f29df2fc0628c69dbf123521608a3b",
+          "lineStart": 41,
+          "lineEnd": 83
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationScopeService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationScopeService.java",
+          "sha256": "e07674983b134b3fd2735ab6483bf6b1ee3a2cb948b3528c14bc15ba240a2cbb",
+          "lineStart": 98,
+          "lineEnd": 141
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "sha256": "a70a4d5713bea53fc1d63b52a212d8c3bca958894198622134e8bf7fb6fdd256",
+          "lineStart": 66,
+          "lineEnd": 105
+        }
+      ],
+      "limits": "Default feature latch is false; deployed runtime configuration not inspected. Existing generated HCM route ownership cannot be assumed to include all future HRIS v2 operations."
+    },
+    {
+      "step": 7,
+      "owner": "People→Auth lifecycle sync",
+      "binding": "Import native projection and outbox in owner transaction, publish at-least-once token-protected event with canonical person UUID, Auth tenant/person/external ownership resolution and managed account lifecycle+revoke",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisImportService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisImportService.java",
+          "sha256": "9a239a2edaf7a9953de10b44358feff2c38a5ab4adc26cce96294fd3a5768761",
+          "lineStart": 151,
+          "lineEnd": 197
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationIngestionRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationIngestionRepository.java",
+          "sha256": "9c6c35fa851fe8c557a55774efa11ae087a2de9390bd692e82eb75e2e233d1a2",
+          "lineStart": 101,
+          "lineEnd": 142
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncClient.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncClient.java",
+          "sha256": "b6595a8809b733267f0c4a5f4ddb34e31ec2fc8880cca6e1326a541ddb0eb198",
+          "lineStart": 33,
+          "lineEnd": 54
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySyncSecurityConfig.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySyncSecurityConfig.java",
+          "sha256": "c5d14dd1acd558596573e0152392227d993217aff232cac8be836e5245dfe5e7",
+          "lineStart": 30,
+          "lineEnd": 42
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySyncSecurityConfig.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySyncSecurityConfig.java",
+          "sha256": "c5d14dd1acd558596573e0152392227d993217aff232cac8be836e5245dfe5e7",
+          "lineStart": 59,
+          "lineEnd": 74
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4",
+          "lineStart": 53,
+          "lineEnd": 115
+        }
+      ]
+    }
+  ],
+  "entityOwnership": [
+    {
+      "entity": "Auth.Principal",
+      "owner": "Auth",
+      "internalKey": "com_users.user_id BIGINT",
+      "publicKey": "com_users.public_id UUID",
+      "personEdge": "com_users.person_public_id UUID, tenant-scoped unique",
+      "actorCurrentShape": "Actor.userId BIGINT; current /me lacks principal public UUID"
+    },
+    {
+      "entity": "HRM.Person",
+      "owner": "People/HRM",
+      "internalKey": "ppl_persons.person_id BIGINT",
+      "publicKey": "ppl_persons.public_id UUID",
+      "relation": "worker.person_id tenant-composite FK"
+    },
+    {
+      "entity": "HRM.Worker",
+      "owner": "People/HRM",
+      "internalKey": "ppl_workers.worker_id BIGINT",
+      "publicKey": "ppl_workers.public_id UUID(V41)",
+      "relation": "one worker→one person; person may have several workers"
+    },
+    {
+      "entity": "HRM.WorkRelationship",
+      "owner": "People/HRM",
+      "internalKey": "ppl_work_relationships.work_relationship_id BIGINT",
+      "publicKey": "ppl_work_relationships.public_id UUID(V41)",
+      "relation": "worker+legal employer effective interval; rehire new relationship"
+    },
+    {
+      "entity": "HRM.Assignment",
+      "owner": "People/HRM",
+      "internalKey": "ppl_assignments.assignment_id BIGINT",
+      "publicKey": "ppl_assignments.public_id UUID(V41)",
+      "relation": "relationship effective-dated slices; assignment_key not unique public UUID"
+    },
+    {
+      "entity": "HRM.EmploymentContext",
+      "owner": "People-derived HRIS context",
+      "internalKey": "NOT_AN_EXISTING_NATIVE_ENTITY_MAPPING_DEFINED_YET",
+      "publicKey": "PROPOSED_EXACT_OWNER_CONTEXT_SELECTOR_REQUIRED",
+      "relation": "must map exact existing relationship/assignment graph with principal/person binding and purpose, not independent identity truth"
+    }
+  ],
+  "reuseAndUpgrade": [
+    {
+      "area": "Authentication/account/session",
+      "owner": "Auth",
+      "reuse": "com_users.user_id/public_id/person_public_id, tenant/identityPlane, durable session signature/expiry/revoke, exact user owner lookup",
+      "upgrade": "Typed principal public UUID/person binding revision/status/freshness/revoke-epoch projection; ordered governed relink"
+    },
+    {
+      "area": "App/menu/action permission groups",
+      "owner": "DWP Auth→Gateway→People PEP",
+      "reuse": "existing group-role assignments, effective grants/scoped duties, APP.HRIS/APP.HCM alias, generated route/resource responsibility/context/target-population PEP",
+      "upgrade": "Register every new HRIS operation/menu/caller-purpose against existing authority and owner population policies, no HRM-shadow RBAC"
+    },
+    {
+      "area": "Workforce entities",
+      "owner": "People/HRM",
+      "reuse": "ppl_persons→ppl_workers→ppl_work_relationships→ppl_assignments plus tenant-composite FKs/effective versions/native public UUIDs",
+      "upgrade": "Complete purpose-bound multiemployment owner projection and exact native source fields"
+    },
+    {
+      "area": "Self context selector",
+      "owner": "People/HRM derived from Auth pairing",
+      "reuse": "existing canonical person/workforce graph, not arbitrary user-supplied worker link",
+      "upgrade": "owner-issued context selection/snapshot with exact relationship/assignment IDs+versions and Auth pairing admission, explicit0/1/multiple rule"
+    },
+    {
+      "area": "Owner contract scaffolds",
+      "owner": "HRM common contracts",
+      "reuse": "immutable closed snapshots, guarded provider/verifier composition, page/cursor source binding",
+      "upgrade": "actual Auth+People provider/transport/adapters and strict self projection; preserve existing PER v1"
+    },
+    {
+      "area": "Evidence/history/receipts",
+      "owner": "respective Auth and People owners",
+      "reuse": "existing identity sync receipts/lifecycle audit/outbox",
+      "upgrade": "payload digest, lifecycle version/epoch, relink provenance, revocation/context invalidation; new evidence table only when actual persistence semantics require it"
+    }
+  ],
+  "newTableDecision": [
+    {
+      "scenario": "정상 직원 자신의 고용 조회",
+      "decision": "새 authoritative principal_worker_links는 불필요; existing Auth person binding+People native graph owner query/projection 재사용",
+      "futureStorage": "None required solely to claim the identity edge exists."
+    },
+    {
+      "scenario": "목적별 self context lease/immutable snapshot/approval/correction provenance",
+      "decision": "실제 retention/replay/revision/CAS 정책이 필요할 때 derived context admission/receipt/history store 가능",
+      "futureStorage": "must be explicitly DERIVED_BOUND_EVIDENCE, native owner IDs+versions/Auth binding revision, revocation invalidation; never independent writable identity ledger"
+    },
+    {
+      "scenario": "고객 레거시/SCIM/LOCAL 기존 계정의 canonical person 최초 연결 또는 재연결",
+      "decision": "기존 Auth ownership/source conflicts 보호를 유지하고 Auth-owned governed mapping/relink API 고도화",
+      "futureStorage": "versioned Auth binding history may be justified only by explicit identity-adoption/provenance requirements; not HRM shadow authority"
+    },
+    {
+      "scenario": "관리자/대리인·업무운영자 타 직원 업무 접근",
+      "decision": "기존 DWP 그룹·resource responsibility·People population delegation으로 권한 제공",
+      "futureStorage": "do not link actor as the target worker/person to grant access"
+    },
+    {
+      "scenario": "동시/다중 고용 선택",
+      "decision": "People owner-issued context selector over actual eligible relationships/assignments",
+      "futureStorage": "owner-native selectors or purpose-bound derived context; selection itself does not change Auth person identity"
+    }
+  ],
+  "findings": [
+    {
+      "id": "IDR-P0-001",
+      "severity": "P0",
+      "title": "정상 self identity의 신규 독립 링크 원장은 기존 DWP 신원 관계를 중복한다",
+      "state": "ORIGINAL_PROPOSAL_DIRECTION_SUPERSEDED_REUSE_DIRECTION_CORRECTED",
+      "rootResolution": "기존 DWP identity chain 없음이라는 진단은 정정됨. 새 독립 authoritative normal-self 원장 대신 Auth person binding+People native employment owner 재사용 방향으로 root 통합계획이 정정됨. 실제 common owner DTO/SPI/adapter 구현 P0는 별도로 OPEN.",
+      "observation": "HRM identityMappingDelta는 'G2 does not define principal→worker link'를 근거로 새 authoritative HRM PrincipalWorkerEmploymentLink를 ADD한다. 직접 principal-worker 전용 table이 없는 것은 맞지만 기존 Auth는 tenant-scoped user↔person UUID를 저장하며 People가 native person↔worker↔relationship↔assignment 관계를 소유한다. 따라서 현재 조회/DTO의 부족과 신원 관계 부재는 다르다.",
+      "risk": "Auth가 가진 user↔person과 HRM 신규 principal↔person/worker 원장이 별개로 변경·revocation·rehire를 결정하면 두 신원 진실이 생긴다. 업무 context 선택을 신원 재연결로 구현할 이유가 없다.",
+      "requiredBoundary": "Auth 소유 principal↔person 관계를 재사용하고 People owner는 이를 tenant-local native employment graph에 연결하여 purpose-bound self context를 파생한다. 링크/receipt store를 유지하더라도 derived admission/snapshot/history임을 명시하고 독립 신원 authority·shadow RBAC로 사용하지 않는다.",
+      "evidence": [
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+          "sha256": "b7be334f2a5da5e270da9cd687928cd3009297c669424534c7735dff4b3bbc13",
+          "lineStart": 18,
+          "lineEnd": 27
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+          "sha256": "b7be334f2a5da5e270da9cd687928cd3009297c669424534c7735dff4b3bbc13",
+          "lineStart": 51,
+          "lineEnd": 52
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/db/migration/V7__add_tenant_and_group_role_foundation.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V7__add_tenant_and_group_role_foundation.sql",
+          "sha256": "5c76ac483112004d38e09e83f6eb43b163fe174cd5f87a3387cf4129faf1ec97",
+          "lineStart": 12,
+          "lineEnd": 17
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+          "lineStart": 19,
+          "lineEnd": 33
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+          "lineStart": 42,
+          "lineEnd": 64
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/historicalGap"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/provisioning"
+        }
+      ]
+    },
+    {
+      "id": "IDR-P0-002",
+      "severity": "P0",
+      "title": "새 Auth principal receipt는 principal↔person ownership을 증명하지 않는다",
+      "state": "COMMON_OWNER_DTO_SPI_ADAPTER_OPEN",
+      "observation": "Auth.PrincipalVerificationReceipt.v2 authorityChain fields는 principalPublicId/status/verifiedAt/expiry/version/digest를 포함하지만 personPublicId 또는 Auth-owned person binding revision이 없다. ACTIVE principal 증명은 그 principal이 요청한 person의 소유자인지 증명하지 못한다. 기존 IdentitySubjectLookupService.Subject에는 publicId/personPublicId/status/identityPlane가 함께 있다.",
+      "risk": "서로 무관한 정상 Auth principal A와 정상 HRM person/worker B의 각 owner 존재 증명을 조합하면 관계 검증이 비어 있다. signed issuer/digest label 자체는 이 edge를 만들지 못한다.",
+      "requiredBoundary": "기존 Auth subject owner API를 기반으로 exact principal public UUID↔person public UUID↔tenant/plane/status와 principalVersion/accessRevision/personBindingRevision을 owner가 refetch·검증하는 versioned DTO/SPI를 제공한다. self는 current verified session principal과 동일해야 하며 다른 사용자를 링크하는 관리자 작업은 Auth 소유 relink 결정/SoD 증거가 필요하다. receipt freshness/revoke epoch는 명시 계약으로 닫아야 한다.",
+      "evidence": [
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySubjectLookupService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySubjectLookupService.java",
+          "sha256": "1d5780e4c4433853772f6e769cd0d08ff368b71ffcb053c45eb1bf910d202c78",
+          "lineStart": 43,
+          "lineEnd": 58
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySubjectLookupService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySubjectLookupService.java",
+          "sha256": "1d5780e4c4433853772f6e769cd0d08ff368b71ffcb053c45eb1bf910d202c78",
+          "lineStart": 85,
+          "lineEnd": 97
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncController.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncController.java",
+          "sha256": "a2204f18f57accc86b6277cbd9576a9932911124dab54519d7d6bd166769bc31",
+          "lineStart": 34,
+          "lineEnd": 38
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/verificationProofContract/authorityChain/0/fields"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/verificationProofContract/validation"
+        }
+      ]
+    },
+    {
+      "id": "IDR-P0-003",
+      "severity": "P0",
+      "title": "기존 내부 user ID와 principal/person/worker UUID의 DTO 경계를 연결해야 한다",
+      "state": "COMMON_TYPED_IDENTITY_PROJECTION_OPEN",
+      "observation": "현재 Auth /me userId, Gateway verified user header, People Actor.userId는 BIGINT이다. Auth.Principal PUBLIC_UUID는 com_users.public_id이다. HrWorkerRepository.WorkerIdentity의 UUID는 person.public_id이며 worker_id는 내부 BIGINT이다. 실제 worker/relationship/assignment PUBLIC_UUID는 V41에 각각 존재한다.",
+      "risk": "Actor.userId를 UUID로 형변환하거나 person UUID를 worker UUID로 relabel하면 기존 실제 owner 관계와 semantic ID-space가 무너진다. 현재 /me에는 Auth user publicId/version/status가 없으므로 새 principal.publicId는 아직 자동으로 전달되지 않는다.",
+      "requiredBoundary": "Auth owner가 현재 userId↔publicId↔personPublicId를 projection한다. People owner SQL은 실제 worker.public_id/relationship.public_id/assignment.public_id와 native tenant FKs를 projection한다. EmploymentContext를 기존 relationship/assignment 조합에 어떻게 대응하는지 정확히 정의하고 새 opaque 'employment' ID를 무근거 생성하지 않는다. body actor UUID/email/name/correlation 및 UUID equality fallback 금지.",
+      "evidence": [
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+          "sha256": "b7be334f2a5da5e270da9cd687928cd3009297c669424534c7735dff4b3bbc13",
+          "lineStart": 18,
+          "lineEnd": 27
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+          "sha256": "a6457427ba91bf7a2304a7a2b93aff0000376e39d2a04b8c15a6b2a17183056b",
+          "lineStart": 14,
+          "lineEnd": 23
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+          "sha256": "11727c688bdb39bb0077f122a0fa90d7aa2835dee893dfe33549f41892563324",
+          "lineStart": 123,
+          "lineEnd": 134
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleRequestContext.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleRequestContext.java",
+          "sha256": "b22d28a9f9a86d723fed24addae3960a0a7b3983e70ba150dc08c77d81599c9d",
+          "lineStart": 48,
+          "lineEnd": 53
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+          "lineStart": 93,
+          "lineEnd": 102
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+          "lineStart": 1,
+          "lineEnd": 11
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/query/inputSources"
+        }
+      ]
+    },
+    {
+      "id": "IDR-P0-004",
+      "severity": "P0",
+      "title": "대표 assignment 조회를 전체 self 고용 authorization으로 재사용할 수 없다",
+      "state": "MULTIEMPLOYMENT_SELF_CONTEXT_OWNER_PORT_OPEN",
+      "observation": "People의 기존 person는 여러 worker를 가질 수 있고 worker는 여러 legal-employer relationship/assignment를 가질 수 있다. HrWorkerRepository는 lateral primary/effective sort LIMIT1 및 outer LIMIT1을 쓰며 assignment는 LEFT JOIN이다. HcmPopulationRepository도 현재 assignment 하나를 LIMIT1로 선택한다. 현재 query는 특정 asOf/self-context/relationship selector를 받지 않는다.",
+      "risk": "다중 worker/동시 고용에서 임의 worker/대표 assignment를 모든 TIM/PAY/PER 행의 권한 증명으로 쓰거나 current assignment가 없는 worker를 strict active employment로 오인할 수 있다. primary 표시가 모든 목적의 authorization은 아니다.",
+      "requiredBoundary": "Auth person으로부터 해당 person에 속한 owner-native workers/relationships/assignments를 모두 조회하고 purpose/clock/zone/effective-state에 따라 eligible contexts를 발행한다. 0개는 fail-closed, 1개만 정책상 default, 여러 개는 명시 context selection을 요구한다. 선택 ID는 principal에 bound하고 foreign context/expired slice를 owner에서 거부한다. 프로필 조회와 급여/근태 업무 자격은 별도 목적 정책이다.",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+          "lineStart": 21,
+          "lineEnd": 26
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+          "lineStart": 271,
+          "lineEnd": 334
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+          "lineStart": 46,
+          "lineEnd": 65
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+          "lineStart": 88,
+          "lineEnd": 102
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "sha256": "a70a4d5713bea53fc1d63b52a212d8c3bca958894198622134e8bf7fb6fdd256",
+          "lineStart": 22,
+          "lineEnd": 41
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "sha256": "a70a4d5713bea53fc1d63b52a212d8c3bca958894198622134e8bf7fb6fdd256",
+          "lineStart": 89,
+          "lineEnd": 105
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/query/multiEmployment"
+        }
+      ]
+    },
+    {
+      "id": "IDR-P0-005",
+      "severity": "P0",
+      "title": "기존 sync의 stale/replay/relink 처리에는 추가 owner 안전장치가 필요하다",
+      "state": "AUTH_IDENTITY_SYNC_HARDENING_OPEN",
+      "observation": "Auth sync는 eventId receipt만 중복 판별한다. sourceVersion은 기록하지만 최신 version/CAS ordering 검증은 없다. byPerson이 없으면 HRIS externalId로 기존 사용자를 찾아 person_public_id를 다시 설정할 수 있다. person/external이 각각 서로 다른 사용자로 resolve되면 충돌을 거부하는 방어는 존재한다.",
+      "risk": "지연 ACTIVE 이벤트가 종료 이벤트 뒤 도착하면 최신 상태를 덮을 수 있다. 동일 eventId의 다른 payload를 strict replay conflict로 구별하지 않는다. 외부 ID 재사용/변경에 따라 기존 사용자 person 관계가 명시 승인 없이 바뀔 수 있다. 이는 소스에서 추론한 가능한 negative sequence이며 이번 감사에서 DB 실행한 exploit 증거는 아니다.",
+      "requiredBoundary": "existing canonical binding을 재사용하되 canonical source identity key/owner version과 monotonic lifecycle epoch, payload digest receipts, CAS/replay/conflict를 추가한다. 다른 person으로 relink는 자동 fallback이 아니라 Auth-owned maker/checker/identity ownership 검증 및 이전 session/context/cursor revoke를 요구한다. retry publisher의 at-least-once delivery를 business latest-order 보장으로 오인하지 않는다.",
+      "evidence": [
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4",
+          "lineStart": 118,
+          "lineEnd": 145
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4",
+          "lineStart": 85,
+          "lineEnd": 101
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4",
+          "lineStart": 188,
+          "lineEnd": 205
+        },
+        {
+          "path": "dwp-auth-server/src/main/resources/db/migration/V16__adopt_company_email_identity.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V16__adopt_company_email_identity.sql",
+          "sha256": "1a2e5d73cb2296595962ce19857894b212e264d6b97123637e26d248a99a73a5",
+          "lineStart": 66,
+          "lineEnd": 76
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncOutboxRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncOutboxRepository.java",
+          "sha256": "a0bd9c0e72bb030da474162bf4c95c847e62a69f13659f65c444e6380c45b8fc",
+          "lineStart": 21,
+          "lineEnd": 40
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/provisioning/rules"
+        }
+      ]
+    },
+    {
+      "id": "IDR-P1-006",
+      "severity": "P1",
+      "title": "worker 상태를 DWP 계정 전체 상태로 고정 매핑하는 legacy 패턴은 개선해야 한다",
+      "state": "CONFIGURABLE_LIFECYCLE_AGGREGATION_REQUIRED",
+      "observation": "기존 Auth sync는 LEAVE→SUSPENDED, PENDING→INVITED, TERMINATED→INACTIVE로 고정 매핑한다. SUSPENDED/INACTIVE는 세션을 revoke하고 INACTIVE는 직접 role/group membership을 제거한다. Import는 worker 하나의 상태를 person lifecycle에도 적용한다.",
+      "risk": "휴직 중 HR self-service 사용 여부가 테넌트 정책과 무관하게 차단될 수 있고, 다중 고용 중 한 relationship 종료만으로 여전히 유효한 다른 고용/계정을 종료할 수 있다. 특정 정책이 항상 틀리다는 의미가 아니라 범용 솔루션에 일괄 하드코딩하면 안 된다는 뜻이다.",
+      "requiredBoundary": "Auth 계정 access 상태, People person lifecycle, worker/relationship/assignment 상태를 독립 소유하고 canonical 전체 context를 기준으로 configurable joiner/mover/leaver/leave/reentry 정책을 평가한다. 보안 revoke는 current owner admission 조건을 만족해야 하며 active 관계가 남으면 자동 전사 계정 삭제/권한 제거하지 않는다.",
+      "evidence": [
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4",
+          "lineStart": 159,
+          "lineEnd": 178
+        },
+        {
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+          "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4",
+          "lineStart": 255,
+          "lineEnd": 261
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationProjectionRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationProjectionRepository.java",
+          "sha256": "4ac9499ba4ce4097aeb8ec6acf8ab0030345178bf77ad06990689a9b3f37b6b5",
+          "lineStart": 39,
+          "lineEnd": 46
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationIngestionRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationIngestionRepository.java",
+          "sha256": "9c6c35fa851fe8c557a55774efa11ae087a2de9390bd692e82eb75e2e233d1a2",
+          "lineStart": 117,
+          "lineEnd": 127
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+          "lineStart": 19,
+          "lineEnd": 26
+        }
+      ]
+    },
+    {
+      "id": "IDR-P1-007",
+      "severity": "P1",
+      "title": "HRM-local identity edges를 모두 cross-boundary opaque reference로 표현하면 native integrity를 잃는다",
+      "state": "NATIVE_LOCAL_RELATION_SOURCE_AND_CONSTRAINT_REQUIRED",
+      "observation": "제안된 ppl_principal_worker_links의 localForeignKeys는 비어 있고 person/worker/employment/HRM receipt까지 모두 opaque cross-boundary reference이다. uniqueKeys는 surrogate/public ID뿐이며 temporal overlap은 문장으로만 선언한다. 실제 native People graph는 tenant-local composite FKs와 effective constraints를 이미 갖고 있다.",
+      "risk": "같은 owner 내부 canonical person↔worker↔employment 관계와 mapping interval 유효성이 실질적인 FK/EXCLUDE/CAS로 연결되지 않는다. 서로 독립적으로 존재하는 UUID들만 검사해도 wrong-parent edge가 남는다.",
+      "requiredBoundary": "Auth principal만 진짜 Auth-owner opaque edge로 유지한다. People 내부 canonical 관계는 기존 internal BIGINT tenant-composite FK/owner SQL graph를 재사용한다. derived context/snapshot store가 필요하면 actual native IDs+versions과 constraint/source를 명시하고 tuple temporal overlap을 executable planned SQL/fixtures로 제공한다. 현재 새 테이블의 구현 완료를 주장하지 않는다.",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+          "lineStart": 287,
+          "lineEnd": 291
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+          "lineStart": 317,
+          "lineEnd": 334
+        },
+        {
+          "path": "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+          "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+          "lineStart": 364,
+          "lineEnd": 389
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/tableDeltas/29/localForeignKeys"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/tableDeltas/29/foreignKeys"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/tableDeltas/29/temporalConstraint"
+        }
+      ]
+    },
+    {
+      "id": "IDR-P1-008",
+      "severity": "P1",
+      "title": "People trusted service-token/header chain과 새 signed owner proof는 동일한 검증 수준이 아니다",
+      "state": "TRUSTED_ORIGIN_AND_OWNER_BINDING_ADAPTER_OPEN",
+      "observation": "Gateway는 외부 user/tenant/person/authority/service-token/identity headers를 제거하고 Auth /me 결과 및 서버 service token을 mint한다. People는 constant-time service token을 검증한 뒤 header의 user/tenant 양수와 person UUID를 parsing하여 Actor로 저장한다. 일반 People 요청은 그 시점에 Auth user↔person pairing을 refetch하거나 per-request signed assertion을 검증하지 않는다. 내부 eligibility 경로에는 gateway service identity까지 요구한다.",
+      "risk": "현재 보호는 trusted Gateway/service-token 보관과 네트워크 경계에 의존한다. 유효한 내부 People credential을 가진 호출자가 arbitrary actor/person pairing을 제출하는 경우를 새 signed principal ownership proof와 동등하게 취급할 수 없다. 외부 공격자가 service token 없이 통과한다는 주장은 아니며 현재 self의 malformed/missing person은 후속 owner 조회에서 거부한다.",
+      "requiredBoundary": "기존 Gateway sanitization/token 보호를 유지하고 신규 common adapter는 허용된 internal caller audience/purpose/route와 Auth-owned pairing/current status/revision을 검증해야 한다. signed owner proof 또는 bounded authenticated owner SPI transport의 정확 producer/verifier/freshness/revoke 계약을 정의한다. 관리자 supplied links는 candidate refs일 뿐 인증 identity가 아니며 self-provision/rebind를 허용하지 않는다.",
+      "evidence": [
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "sha256": "f995186fe7ffccc5aed1af3c0c6f68064967349de3706f6db29df890e9b81a60",
+          "lineStart": 59,
+          "lineEnd": 74
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+          "sha256": "f995186fe7ffccc5aed1af3c0c6f68064967349de3706f6db29df890e9b81a60",
+          "lineStart": 101,
+          "lineEnd": 133
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ServiceIdentitySanitizingFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ServiceIdentitySanitizingFilter.java",
+          "sha256": "8346f0be04a1f2348ecf239f8e6557b5b7f5256a28ed2e179743d33009e0a41f",
+          "lineStart": 18,
+          "lineEnd": 31
+        },
+        {
+          "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/PeopleServiceIdentityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/PeopleServiceIdentityFilter.java",
+          "sha256": "db285fdf2c570dbff5933bbdb7753b0ec934f6f031da1cce6a3dd1ce2ae9b30b",
+          "lineStart": 27,
+          "lineEnd": 41
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "sha256": "04265a283b5381d8a836ea5a3560322bd239873af8e3fc547d38528e33962168",
+          "lineStart": 71,
+          "lineEnd": 99
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "sha256": "04265a283b5381d8a836ea5a3560322bd239873af8e3fc547d38528e33962168",
+          "lineStart": 154,
+          "lineEnd": 159
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+          "sha256": "04265a283b5381d8a836ea5a3560322bd239873af8e3fc547d38528e33962168",
+          "lineStart": 210,
+          "lineEnd": 216
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+          "pointer": "/identityMappingDelta/provisioning/rules"
+        }
+      ]
+    },
+    {
+      "id": "IDR-P1-009",
+      "severity": "P1",
+      "title": "새 scope/cursor authority revision은 person·relationship·정확 context의 변경까지 bind해야 한다",
+      "state": "PURPOSE_BOUND_REVISION_FENCE_REQUIRED",
+      "observation": "기존 HCM ActorWorkforce.revision은 workerVersion/assignmentVersion/organizationVersion이며 relationship/person version 및 exact context public IDs가 없다. actor selection CURRENT_ASSIGNMENT는 ACTIVE/LEAVE worker와 ACTIVE/SUSPENDED/PENDING assignment를 사용하며 HrWorkerRepository의 ACTIVE person predicate와 동일하지 않다. mutation 용 share-lock query와 owner scope recomputation은 이미 존재한다.",
+      "risk": "기존 display/team purpose revision을 새 TIM/PAY/AI strict self context freshness로 그대로 가져오면 person merge/inactivation 또는 relationship relink/end/change가 exact revision에 표현되지 않을 수 있다. 현재 owner recomputation 방어는 장점이나 모든 신규 lifecycle edge를 이미 해결한 증거는 아니다.",
+      "requiredBoundary": "Auth pairing revision/revoke epoch+person/worker/relationship/assignment ID/version/effective window/purpose/captured clock을 bound한다. actor 및 target local state는 command transaction 안에서 refetch/lock/CAS하고 scope 재계산 결과를 receipt/outbox에 묶는다. status mapping/clock/zone이 다른 목적은 명시적으로 번역하여 일부 current query를 full authorization으로 사용하지 않는다.",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "sha256": "a70a4d5713bea53fc1d63b52a212d8c3bca958894198622134e8bf7fb6fdd256",
+          "lineStart": 22,
+          "lineEnd": 41
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "sha256": "a70a4d5713bea53fc1d63b52a212d8c3bca958894198622134e8bf7fb6fdd256",
+          "lineStart": 74,
+          "lineEnd": 105
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+          "sha256": "a70a4d5713bea53fc1d63b52a212d8c3bca958894198622134e8bf7fb6fdd256",
+          "lineStart": 575,
+          "lineEnd": 589
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationScopeService.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationScopeService.java",
+          "sha256": "e07674983b134b3fd2735ab6483bf6b1ee3a2cb948b3528c14bc15ba240a2cbb",
+          "lineStart": 98,
+          "lineEnd": 141
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+          "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+          "lineStart": 88,
+          "lineEnd": 91
+        }
+      ]
+    },
+    {
+      "id": "IDR-P1-010",
+      "severity": "P1",
+      "title": "Workforce v1 contract guard는 재사용 가능하지만 self identity production adapter는 아직 없다",
+      "state": "OWNER_PROVIDER_TRANSPORT_SELF_PROJECTION_OPEN",
+      "observation": "WorkforceSnapshotProvider/RequestVerifier는 owner SPI이고 guarded port가 verified request→provider→page/cursor를 검증한다. 그러나 main source 검색에는 actual provider/verifier implementation 또는 composition call이 없다. verified request는 caller HRIS-PER와 bootstrap purpose/projection만 허용하고 projection은 worker/assignment 중심이며 principal/person/employment context binding이 없다.",
+      "risk": "tests의 synthetic HMAC cursor verifier/record shape PASS를 실제 Auth→Gateway→People owner SQL/transport 구현 완료로 볼 수 없다. fixed PER snapshot을 self context port로 relabel하거나 fixture가 generated tenant/caller를 trusted라고 선언하면 source closure가 아니다.",
+      "requiredBoundary": "기존 immutable DTO/page/cursor/owner-composition pattern을 재사용하고 versioned AUTH_PERSON_BOUND_SELF_EMPLOYMENT 또는 caller/purpose-specific projection/SPI와 actual Auth adapter+People native query를 별도로 구현한다. 기존 v1을 약화하지 않고 consumer는 public guarded port만 사용한다. provider/transport/source/freshness 미완료는 G3 common P0로 유지한다.",
+      "evidence": [
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotProvider.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotProvider.java",
+          "sha256": "5372ba69a979b494f9f1c2c0e6a94dc921715444beb957dbead0cd967eed8f5e",
+          "lineStart": 3,
+          "lineEnd": 7
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotRequestVerifier.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotRequestVerifier.java",
+          "sha256": "d0164528206d9286441d14578914304b51d0dfbcfaf0ef50105eb0979ba82f67",
+          "lineStart": 3,
+          "lineEnd": 13
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/GuardedWorkforceSnapshotQueryPort.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/GuardedWorkforceSnapshotQueryPort.java",
+          "sha256": "22b5cfe571a7cab7cd56a4435cc4b57b4f3aaca1fae298ec110a107e8e885d4d",
+          "lineStart": 18,
+          "lineEnd": 32
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/VerifiedWorkforceSnapshotRequest.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/VerifiedWorkforceSnapshotRequest.java",
+          "sha256": "1885f914e860ccf26575ffac4147d62d93cbe66e5344973e68b7c66cc6e0a675",
+          "lineStart": 23,
+          "lineEnd": 40
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotV1.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotV1.java",
+          "sha256": "70a82081c4490eaf14c87c283069efba0a4fd0edbd0d389ebb808b3d7ddaae16",
+          "lineStart": 8,
+          "lineEnd": 15
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotQueryPorts.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotQueryPorts.java",
+          "sha256": "00b5dda2b2a42a189527f0a9300d9c883b6fd105469cda0259f1737af21321a6",
+          "lineStart": 11,
+          "lineEnd": 20
+        }
+      ],
+      "independentMainSourceSearch": "Only SPI declarations/factory/guard references found; no actual main-source implementation/composition caller."
+    },
+    {
+      "id": "IDR-P1-011",
+      "severity": "P1",
+      "title": "기존 unit/MockMvc 증거는 실제 신원 전수 migration·고용 sequence 검증이 아니다",
+      "state": "ISOLATED_NATIVE_INTEGRATION_NEGATIVE_FIXTURES_REQUIRED",
+      "observation": "선택한 13개 기존 source class의 local XML은 118 tests, zero failure/error/skip이다. 이번 READONLY 감사에서 재실행하지 않았으며 전부 Testcontainers 없이 mock/lambda/exchange stub/contract fixture 또는 MockMvc이다. Auth sync source tests는 create와 leaver 두 개뿐이다. HCM owner execution은 actual filter+scope service를 실행하지만 repository/HR service는 mock이다.",
+      "risk": "각 단위 방어가 존재해도 current-version Auth↔person↔native multiple workers/employments graph, stale/mutated events/relink/revoke/CAS와 transport bind를 함께 통과했다는 증거가 아니다. historical XML이 current global readiness PASS가 되면 안 된다.",
+      "requiredBoundary": "새 bounded isolated integration fixture는 Auth owner DTO/verified Gateway projection/People native SQL graph를 실제 disposable PG 또는 owner integration boundary로 검증하고 exact negative sequences를 실행한다. 모듈 개발 세션의 typed contract tests와 실제 domain fixtures를 분리하여 test coverage artifact와 runtime permission 적용 범위를 명시한다.",
+      "evidence": [
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+          "sha256": "c6560894d174a28c2d42ffa71415d87e9e3385d54ab415dfc22de3b77c9214ea",
+          "lineStart": 25,
+          "lineEnd": 34
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+          "sha256": "c6560894d174a28c2d42ffa71415d87e9e3385d54ab415dfc22de3b77c9214ea",
+          "lineStart": 36,
+          "lineEnd": 60
+        },
+        {
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+          "sha256": "c6560894d174a28c2d42ffa71415d87e9e3385d54ab415dfc22de3b77c9214ea",
+          "lineStart": 63,
+          "lineEnd": 105
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+          "sha256": "6e73ebe9a5131b07be73749ef5549a1bdf93ec7901d80ec0d5a93a23410a595b",
+          "lineStart": 59,
+          "lineEnd": 82
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationRepositoryTest.java",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationRepositoryTest.java",
+          "sha256": "7ac13b65f3185aa217baf8497c5acf81eec9918cdbd9520cbe2a69f99bad1c9d",
+          "lineStart": 24,
+          "lineEnd": 50
+        }
+      ],
+      "historicalTests": {
+        "tests": 118,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0
+      }
+    }
+  ],
+  "severityCounts": {
+    "P0": 5,
+    "P1": 6
+  },
+  "severityCountsMeaning": "11 findings are classifications against the pinned source/proposal snapshot (5 P0/6 P1), not a current open-ticket count. IDR-P0-001 architecture direction is corrected/superseded; implementation gaps remain separately OPEN.",
+  "diagnosisCorrection": {
+    "oldDiagnosis": "현행 DWP에 principal→person→worker 신원 연결이 없다",
+    "status": "CORRECTED_SUPERSEDED",
+    "correctedDiagnosis": "기존 Auth principal→person binding과 People native person→worker/employment 관계는 실제 존재하고 재사용 가능하다. 부족한 것은 완성형 HRIS용 exact public-identity/purpose/multiemployment/versioned DTO/SPI/provider/transport 및 lifecycle hardening이다.",
+    "rootDirection": "2026-09-14 root의 직접 source 재확인 및 통합계획 정정 통지에 따라 Auth principal→person / HRM person→worker·고용 owner 분리 재사용 방향 확정. 별도 신원·권한 원장 확정 금지.",
+    "resolutionBoundary": "Architecture direction correction only; no production source implementation/contract publication/unsafe legacy hardening or Gate closure is implied."
+  },
+  "negativeAcceptanceDefinitions": [
+    {
+      "id": "IDENTITY-NEG-01",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "정상 Auth principal A와 별도 person/worker B의 owner 존재 proof를 조합",
+      "expected": "Auth-owned pairing 불일치로 owner provider 전에 거부"
+    },
+    {
+      "id": "IDENTITY-NEG-02",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "BIGINT actor ID를 UUID로 cast/relabel 또는 person UUID를 worker UUID로 사용",
+      "expected": "typed owner projection 없으면 실패; ID equality fallback 금지"
+    },
+    {
+      "id": "IDENTITY-NEG-03",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "서로 관계 없는 principal/person/worker 값의 UUID가 우연히 같음",
+      "expected": "UUID 동일성 아닌 canonical parent ownership으로 판정"
+    },
+    {
+      "id": "IDENTITY-NEG-04",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "다른 tenant의 person/worker/relationship/assignment/selfContext ID",
+      "expected": "signed/trusted tenant+local FK+owner selector에 불일치하여 거부"
+    },
+    {
+      "id": "IDENTITY-NEG-05",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "한 person의 여러 active workers/동시 legal employments",
+      "expected": "explicit authorized context selection; 임의 first-worker/LIMIT1 fallback 금지"
+    },
+    {
+      "id": "IDENTITY-NEG-06",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "worker는 ACTIVE이나 strict TIM/PAY에 eligible current relationship/assignment 없음",
+      "expected": "목적별 업무 자격 실패; 프로필 조회 목적은 별도 정책"
+    },
+    {
+      "id": "IDENTITY-NEG-07",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "동시 고용 둘 중 하나 종료 후 다른 관계는 active",
+      "expected": "전체 DWP 계정/남은 고용 context 자동 INACTIVE/삭제 금지"
+    },
+    {
+      "id": "IDENTITY-NEG-08",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "휴직 self 허용 설정 테넌트와 차단 설정 테넌트",
+      "expected": "두 정책별 결과가 다르며 blanket LEAVE→SUSPENDED 하드코딩 없음"
+    },
+    {
+      "id": "IDENTITY-NEG-09",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "TERMINATED 이후 지연된 낮은 sourceVersion ACTIVE event",
+      "expected": "stale lifecycle CAS로 재활성화 거부"
+    },
+    {
+      "id": "IDENTITY-NEG-10",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "동일 eventId에 다른 payload/person/status",
+      "expected": "payload digest replay conflict; 조용한 UNCHANGED 반환 금지"
+    },
+    {
+      "id": "IDENTITY-NEG-11",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "기존 HRIS externalId를 다른 person으로 재사용",
+      "expected": "Auth-owned 승인/ownership/SoD 없는 자동 person rewrite 거부"
+    },
+    {
+      "id": "IDENTITY-NEG-12",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "expired/revoked/current principal-version 불일치 owner receipt",
+      "expected": "fail-closed; provider 호출0·self cursor invalidation"
+    },
+    {
+      "id": "IDENTITY-NEG-13",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "person merge/inactivation 또는 relationship end/relink가 cursor 발급 후 발생",
+      "expected": "binding/native revision fence로 continuation 및 command 거부"
+    },
+    {
+      "id": "IDENTITY-NEG-14",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "manager/actor assignment가 target command의 scope 검사와 write 사이 변경",
+      "expected": "transaction refetch/share-lock/CAS fence로 stale mutation 거부"
+    },
+    {
+      "id": "IDENTITY-NEG-15",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "잘못된 People service token에 완전 spoof user/tenant/person/PEP headers",
+      "expected": "401 및 downstream0; 현재 existing mock negative source 있으나 이번 감사 재실행 없음"
+    },
+    {
+      "id": "IDENTITY-NEG-16",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "허용하지 않은 internal caller/audience/purpose/method/path에 유효한 identity assertion/proof",
+      "expected": "정확 producer/verifier transport 경계에서 거부"
+    },
+    {
+      "id": "IDENTITY-NEG-17",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "기존 PER v1 port를 self identity/full payroll authority로 relabel 또는 provider 미구현",
+      "expected": "purpose/projection mismatch 및 unavailable provider를 fail-closed"
+    },
+    {
+      "id": "IDENTITY-NEG-18",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "email/name/correlation 값으로 principal↔worker 자동 매칭 또는 self link provisioning",
+      "expected": "명시 owner pairing 없으면 실패; 고객 데이터 자동 rebind 금지"
+    },
+    {
+      "id": "IDENTITY-NEG-19",
+      "execution": "NOT_EXECUTED_ACCEPTANCE_DEFINITION",
+      "input": "신원 링크만 존재하나 APP.HRIS/menu/action/field/population grant 없음",
+      "expected": "기존 DWP PEP로 거부; self identity가 권한 부여 수단이 아님"
+    }
+  ],
+  "existingSyntheticTests": {
+    "newTestsExecuted": false,
+    "artifactStatus": "HISTORICAL_LOCAL_XML_NOT_CURRENT_RUN_OR_CUSTOMER_PROOF",
+    "classes": [
+      {
+        "classId": "com.dwp.services.auth.identity.WorkforceIdentitySyncServiceTest",
+        "sourcePath": "dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "createsHrisUserAndNormalizesWorkEmail",
+          "leaverRevokesSessionsDirectRolesAndGroupMemberships"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": true,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/build/test-results/test/TEST-com.dwp.services.auth.identity.WorkforceIdentitySyncServiceTest.xml",
+        "xmlSha256": "2cdd0c33a3af7db5e639bb0294af5634945adcc23b9173e7dd10a2d960cd122e",
+        "timestamp": "2026-09-14T00:31:57",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.auth.identity.WorkforceIdentitySyncServiceTest#createsHrisUserAndNormalizesWorkEmail()",
+          "com.dwp.services.auth.identity.WorkforceIdentitySyncServiceTest#leaverRevokesSessionsDirectRolesAndGroupMemberships()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.auth.security.AuthSessionJwtValidatorTest",
+        "sourcePath": "dwp-auth-server/src/test/java/com/dwp/services/auth/security/AuthSessionJwtValidatorTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "acceptsAnActiveSessionWithMatchingIdentityAndFamily",
+          "rejectsAnIdleExpiredSession",
+          "acceptsASupersededTokenOnlyInsideItsGraceWindow",
+          "rejectsARegistryRowThatDoesNotMatchTheJwtTenant",
+          "rejectsAnOtherwiseMatchingSessionWithMixedEffectiveRolePlanes",
+          "rejectsAProviderRoleAssignedToATenantPlaneIdentity"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": true,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/build/test-results/test/TEST-com.dwp.services.auth.security.AuthSessionJwtValidatorTest.xml",
+        "xmlSha256": "dad23083f94e558e5df7bb593748f7c3f4b1d8c9ae27f8d5df6d38270b48ee1a",
+        "timestamp": "2026-09-14T00:32:17",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.auth.security.AuthSessionJwtValidatorTest#acceptsASupersededTokenOnlyInsideItsGraceWindow()",
+          "com.dwp.services.auth.security.AuthSessionJwtValidatorTest#rejectsAnOtherwiseMatchingSessionWithMixedEffectiveRolePlanes()",
+          "com.dwp.services.auth.security.AuthSessionJwtValidatorTest#rejectsAnIdleExpiredSession()",
+          "com.dwp.services.auth.security.AuthSessionJwtValidatorTest#rejectsARegistryRowThatDoesNotMatchTheJwtTenant()",
+          "com.dwp.services.auth.security.AuthSessionJwtValidatorTest#acceptsAnActiveSessionWithMatchingIdentityAndFamily()",
+          "com.dwp.services.auth.security.AuthSessionJwtValidatorTest#rejectsAProviderRoleAssignedToATenantPlaneIdentity()"
+        ]
+      },
+      {
+        "classId": "com.dwp.gateway.VerifiedIdentityFilterTest",
+        "sourcePath": "dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "replacesSpoofedIdentityHeadersWithVerifiedValues",
+          "rejectsMissingOrInvalidSessions",
+          "keepsHomeBackgroundSessionProtected",
+          "keepsTenantLogoSessionProtected",
+          "failsClosedWhenTheAuthServiceIsUnavailable",
+          "keepsAuthRoutesPublicAndStripsInternalHeaders",
+          "verifiesEveryProtectedAuthSurfaceBeforeForwardingIt",
+          "letsAuthValidateSessionRefreshWithoutCallingMeFirst",
+          "doesNotTreatWrongMethodOrUnknownAuthRoutesAsPublic",
+          "verifiesTheGatewayOwnedAuthContractsAndStepUpIssuer",
+          "auditsTenantAssertionMismatchBeforeCommittingForbidden",
+          "returnsServiceUnavailableWhenTenantMismatchEvidenceCannotBeWritten"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": false,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/build/test-results/test/TEST-com.dwp.gateway.VerifiedIdentityFilterTest.xml",
+        "xmlSha256": "6c9e16e939a78a1235312a946d08cd67e8b6f1ba0acff5b82c682bd28802ad74",
+        "timestamp": "2026-09-14T00:33:41",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.gateway.VerifiedIdentityFilterTest#verifiesEveryProtectedAuthSurfaceBeforeForwardingIt()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#verifiesTheGatewayOwnedAuthContractsAndStepUpIssuer()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#keepsAuthRoutesPublicAndStripsInternalHeaders()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#replacesSpoofedIdentityHeadersWithVerifiedValues()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#letsAuthValidateSessionRefreshWithoutCallingMeFirst()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#doesNotTreatWrongMethodOrUnknownAuthRoutesAsPublic()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#rejectsMissingOrInvalidSessions()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#returnsServiceUnavailableWhenTenantMismatchEvidenceCannotBeWritten()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#auditsTenantAssertionMismatchBeforeCommittingForbidden()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#keepsTenantLogoSessionProtected()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#keepsHomeBackgroundSessionProtected()",
+          "com.dwp.gateway.VerifiedIdentityFilterTest#failsClosedWhenTheAuthServiceIsUnavailable()"
+        ]
+      },
+      {
+        "classId": "com.dwp.gateway.AuthSessionVerifierTest",
+        "sourcePath": "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "cachesOnlyLowRiskIdentityReadsForTheSameSecurityContext",
+          "doesNotCachePermissionScopedReads",
+          "doesNotCacheMutatingRequests",
+          "isolatesCachedReadsByTenantAssertion",
+          "derivesTenantFromSessionWhenClientAssertionIsAbsent",
+          "rejectsClientTenantAssertionThatDoesNotMatchSession",
+          "acceptsExplicitTenantAndRolelessProviderIdentityPlanes",
+          "rejectsProviderProjectionWithCanonicalTenantResourceRoleEvidence",
+          "rejectsProviderProjectionWithMalformedRawResourceRoleEvidence",
+          "rejectsMissingBlankUnknownAndMixedRoleIdentityContracts",
+          "returnsServiceUnavailableForAnInvalidSuccessfulAuthProjection",
+          "propagatesTraceContextToSessionVerification",
+          "requestsAndReturnsOnlyAuditAuthoritiesForAuditRoutes",
+          "requestsAppAuthoritiesForWorkspaceRuntimeRoutes",
+          "requestsEverySourceAuthorityForTheIntegratedHomeOverview",
+          "projectsOnlyHomeTemplateAuthoritiesForTemplateManagementRoutes",
+          "carriesTheAuthVerifiedLegacyFallbackSignalForPeopleHrRoutes",
+          "forwardsDirectoryAuthorityEvidenceForListDetailAndOrgChartRoutes",
+          "requestsEveryHcmPepAuthorityForPeopleWorkforceRoutes",
+          "requestsAppAuthoritiesForAskRuntimeRoutes",
+          "requestsAppAuthoritiesForDwaionConversationAndActionRoutes",
+          "requestsOnlyCanonicalAuthoritiesForGovernedPlanPreview",
+          "scopesNavigationAdministrationToItsDedicatedAuthority",
+          "scopesDwaionOperationsRoutesToDedicatedAdministrationAuthority",
+          "forwardsOperationalGateAuthoritiesForIndependentApproval",
+          "includesSourceApplicationAuthoritiesForDwaionEvaluationRuns",
+          "scopesReaderAndPublisherRoutesToTheirCommunicationsResources",
+          "scopesEmployeeServiceReaderAndAdministrationRoutesSeparately",
+          "requestsHcmAndEmployeeServiceAuthoritiesOnlyForTheHcmServicesSurface",
+          "scopesMailRuntimeAndAdministrationAuthoritiesSeparately",
+          "requestsSeparatedRoomsApplicationAndAdministrationAuthorities",
+          "requestsSeparatedWorkplaceApplicationAndAdministrationAuthorities",
+          "scopesApprovalRuntimeAndControlPlaneAuthoritiesSeparately",
+          "preservesTheAuthResourceSetKeyForApprovalResponsibilityEvidence",
+          "dropsResponsibilityEvidenceWhenTheAuthResourceSetKeyIsMissingOrInvalid",
+          "requestsProductivityControlPlaneAuthoritiesForConnectorRoutes",
+          "requestsOnlySavedViewCustodyAuthoritiesForOwnershipRoutes",
+          "requestsTheCompleteHcmPepAuthorityFamilyForGovernedWorkforceRoutes",
+          "returnsOnlyVerifiedGroupReferencesFromTheSessionProfile"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": false,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/build/test-results/test/TEST-com.dwp.gateway.AuthSessionVerifierTest.xml",
+        "xmlSha256": "63b232e01f894ee3f61a26e3767c4e4ecd112adc65ea9e4b823a3d0e6e6aba15",
+        "timestamp": "2026-09-14T00:33:40",
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.gateway.AuthSessionVerifierTest#scopesReaderAndPublisherRoutesToTheirCommunicationsResources()",
+          "com.dwp.gateway.AuthSessionVerifierTest#returnsOnlyVerifiedGroupReferencesFromTheSessionProfile()",
+          "com.dwp.gateway.AuthSessionVerifierTest#carriesTheAuthVerifiedLegacyFallbackSignalForPeopleHrRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#dropsResponsibilityEvidenceWhenTheAuthResourceSetKeyIsMissingOrInvalid()",
+          "com.dwp.gateway.AuthSessionVerifierTest#rejectsProviderProjectionWithCanonicalTenantResourceRoleEvidence()",
+          "com.dwp.gateway.AuthSessionVerifierTest#propagatesTraceContextToSessionVerification()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsEverySourceAuthorityForTheIntegratedHomeOverview()",
+          "com.dwp.gateway.AuthSessionVerifierTest#rejectsClientTenantAssertionThatDoesNotMatchSession()",
+          "com.dwp.gateway.AuthSessionVerifierTest#rejectsProviderProjectionWithMalformedRawResourceRoleEvidence()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsAndReturnsOnlyAuditAuthoritiesForAuditRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#forwardsOperationalGateAuthoritiesForIndependentApproval()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsAppAuthoritiesForAskRuntimeRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#scopesMailRuntimeAndAdministrationAuthoritiesSeparately()",
+          "com.dwp.gateway.AuthSessionVerifierTest#doesNotCachePermissionScopedReads()",
+          "com.dwp.gateway.AuthSessionVerifierTest#cachesOnlyLowRiskIdentityReadsForTheSameSecurityContext()",
+          "com.dwp.gateway.AuthSessionVerifierTest#acceptsExplicitTenantAndRolelessProviderIdentityPlanes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsSeparatedRoomsApplicationAndAdministrationAuthorities()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsEveryHcmPepAuthorityForPeopleWorkforceRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#includesSourceApplicationAuthoritiesForDwaionEvaluationRuns()",
+          "com.dwp.gateway.AuthSessionVerifierTest#doesNotCacheMutatingRequests()",
+          "com.dwp.gateway.AuthSessionVerifierTest#projectsOnlyHomeTemplateAuthoritiesForTemplateManagementRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#derivesTenantFromSessionWhenClientAssertionIsAbsent()",
+          "com.dwp.gateway.AuthSessionVerifierTest#forwardsDirectoryAuthorityEvidenceForListDetailAndOrgChartRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsProductivityControlPlaneAuthoritiesForConnectorRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#returnsServiceUnavailableForAnInvalidSuccessfulAuthProjection()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsAppAuthoritiesForDwaionConversationAndActionRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsHcmAndEmployeeServiceAuthoritiesOnlyForTheHcmServicesSurface()",
+          "com.dwp.gateway.AuthSessionVerifierTest#scopesApprovalRuntimeAndControlPlaneAuthoritiesSeparately()",
+          "com.dwp.gateway.AuthSessionVerifierTest#preservesTheAuthResourceSetKeyForApprovalResponsibilityEvidence()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsOnlySavedViewCustodyAuthoritiesForOwnershipRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#scopesEmployeeServiceReaderAndAdministrationRoutesSeparately()",
+          "com.dwp.gateway.AuthSessionVerifierTest#rejectsMissingBlankUnknownAndMixedRoleIdentityContracts()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsSeparatedWorkplaceApplicationAndAdministrationAuthorities()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsTheCompleteHcmPepAuthorityFamilyForGovernedWorkforceRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#isolatesCachedReadsByTenantAssertion()",
+          "com.dwp.gateway.AuthSessionVerifierTest#scopesDwaionOperationsRoutesToDedicatedAdministrationAuthority()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsAppAuthoritiesForWorkspaceRuntimeRoutes()",
+          "com.dwp.gateway.AuthSessionVerifierTest#requestsOnlyCanonicalAuthoritiesForGovernedPlanPreview()",
+          "com.dwp.gateway.AuthSessionVerifierTest#scopesNavigationAdministrationToItsDedicatedAuthority()"
+        ]
+      },
+      {
+        "classId": "com.dwp.gateway.ServiceIdentityFilterChainTest",
+        "sourcePath": "dwp-gateway/src/test/java/com/dwp/gateway/ServiceIdentityFilterChainTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "keepsTheAgentTokenAfterThePlatformFilterRuns",
+          "keepsThePlatformTokenAfterTheAgentFilterRuns"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": false,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/build/test-results/test/TEST-com.dwp.gateway.ServiceIdentityFilterChainTest.xml",
+        "xmlSha256": "2ccc4d3692c0780a469c040dfae98c4e73194aebdbaed0bc3592c4dbeca4ed83",
+        "timestamp": "2026-09-14T00:33:41",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.gateway.ServiceIdentityFilterChainTest#keepsThePlatformTokenAfterTheAgentFilterRuns()",
+          "com.dwp.gateway.ServiceIdentityFilterChainTest#keepsTheAgentTokenAfterThePlatformFilterRuns()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.security.PeopleSecurityFilterTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "rejectsProviderWorkforceReadsUntilTheSafeProjectionIsImplemented",
+          "rejectsWorkforceMutationsAndUnrelatedPeopleAdminRoutes",
+          "separatesTenantAdministrationFromWorkforceOperations",
+          "permitsDelegatedWorkforceGovernanceOnlyForTheVerifiedAction",
+          "doesNotLetARoleOverrideAVerifiedReadOnlyWorkforcePermission",
+          "acceptsCanonicalAndLegacyHcmApplicationPermissions",
+          "rejectsHcmRoleFallbackWhenTheVerifiedPermissionModelIsNotLegacy",
+          "permitsAnExplicitlyVerifiedGenuineLegacyHcmRole",
+          "protectsProductEligibilityAsAnInternalServiceContract"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": false,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.security.PeopleSecurityFilterTest.xml",
+        "xmlSha256": "331578721339351405432a59586162045936ed15d57422892b7083cf6638a96c",
+        "timestamp": "2026-09-14T00:39:59",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#rejectsProviderWorkforceReadsUntilTheSafeProjectionIsImplemented()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#permitsDelegatedWorkforceGovernanceOnlyForTheVerifiedAction()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#permitsAnExplicitlyVerifiedGenuineLegacyHcmRole()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#rejectsHcmRoleFallbackWhenTheVerifiedPermissionModelIsNotLegacy()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#doesNotLetARoleOverrideAVerifiedReadOnlyWorkforcePermission()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#rejectsWorkforceMutationsAndUnrelatedPeopleAdminRoutes()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#separatesTenantAdministrationFromWorkforceOperations()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#acceptsCanonicalAndLegacyHcmApplicationPermissions()",
+          "com.dwp.services.people.security.PeopleSecurityFilterTest#protectsProductEligibilityAsAnInternalServiceContract()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.security.HcmProductSurfacePepFilterTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "springMatrixPathMatchesControllerInBaselineButExactPepDeniesIt",
+          "encodedPrefixRepeatedSlashAndDotSegmentsNeverReachTheController",
+          "wrongMethodOnAClaimedHcmPathIsDeniedBeforeSpring405",
+          "staleAuthorityRevisionFailsClosedBeforeTheHcmMutation",
+          "nonAllowlistedQueryOnClaimedWorkforcePathIsDeniedBeforeControllerMapping",
+          "organizationCandidatesRequireExactCapabilityAndResourceResponsibility",
+          "ownerResolverOutageReturns503AndNeverReachesController",
+          "legacyHrisAliasPassesTheExactHcmOwnerPep",
+          "providerPeopleBindingsRemainForbiddenAfterSupportScopeRetirement"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": true,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.security.HcmProductSurfacePepFilterTest.xml",
+        "xmlSha256": "544b4d107931ac6e9b8fbf76f76c9bdb32e1095231c6a9b64002616a3e9eff8a",
+        "timestamp": "2026-09-14T00:39:58",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#springMatrixPathMatchesControllerInBaselineButExactPepDeniesIt()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#encodedPrefixRepeatedSlashAndDotSegmentsNeverReachTheController()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#ownerResolverOutageReturns503AndNeverReachesController()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#wrongMethodOnAClaimedHcmPathIsDeniedBeforeSpring405()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#nonAllowlistedQueryOnClaimedWorkforcePathIsDeniedBeforeControllerMapping()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#staleAuthorityRevisionFailsClosedBeforeTheHcmMutation()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#providerPeopleBindingsRemainForbiddenAfterSupportScopeRetirement()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#organizationCandidatesRequireExactCapabilityAndResourceResponsibility()",
+          "com.dwp.services.people.security.HcmProductSurfacePepFilterTest#legacyHrisAliasPassesTheExactHcmOwnerPep()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.security.HcmOwnerPepExecutionTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "crossTenantOpaqueScopeNeverReachesThePublicHcmController",
+          "canonicalOpaqueScopeEscapeNeverReachesThePublicHcmController",
+          "staleAuthorityRevisionNeverReachesThePublicHcmAction",
+          "normalAndSupportAuthorityCannotBeMixedAcrossThePublicHcmBoundary",
+          "spoofedInternalHeadersCannotBypassPeopleIdentityOnAPublicHcmRoute",
+          "duplicateCanonicalHeaderNeverReachesThePublicHcmController",
+          "whitespacePaddedCanonicalHeaderNeverReachesThePublicHcmController",
+          "nonCanonicalContextKeyNeverReachesThePublicHcmController",
+          "pHcmPageDataAndActionBindingsReachTheirActualPublicControllers"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": true,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.security.HcmOwnerPepExecutionTest.xml",
+        "xmlSha256": "80225b1c8ad60d686252984705538849d547695ac413cf1cd7186a240cf2bd1e",
+        "timestamp": "2026-09-14T00:39:58",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#spoofedInternalHeadersCannotBypassPeopleIdentityOnAPublicHcmRoute()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#whitespacePaddedCanonicalHeaderNeverReachesThePublicHcmController()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#staleAuthorityRevisionNeverReachesThePublicHcmAction()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#nonCanonicalContextKeyNeverReachesThePublicHcmController()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#crossTenantOpaqueScopeNeverReachesThePublicHcmController()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#pHcmPageDataAndActionBindingsReachTheirActualPublicControllers()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#normalAndSupportAuthorityCannotBeMixedAcrossThePublicHcmBoundary()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#canonicalOpaqueScopeEscapeNeverReachesThePublicHcmController()",
+          "com.dwp.services.people.security.HcmOwnerPepExecutionTest#duplicateCanonicalHeaderNeverReachesThePublicHcmController()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.hr.HcmPopulationRepositoryTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationRepositoryTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "actorMutationProofLocksCurrentWorkerRelationshipAndAssignment",
+          "targetMutationProofLocksOnlyAWorkerInsideTheSelectedPopulation",
+          "actorMutationProofFailsClosedBeforeSqlWhenIdentityIsIncomplete",
+          "approvalQueuesProjectDecisionEvidenceForTimeAndAbsence"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": true,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hr.HcmPopulationRepositoryTest.xml",
+        "xmlSha256": "d0528c7109ad3e1b5de9942b1f2ca53a845e613126f101e962a7712d54634a02",
+        "timestamp": "2026-09-14T00:38:55",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.hr.HcmPopulationRepositoryTest#targetMutationProofLocksOnlyAWorkerInsideTheSelectedPopulation()",
+          "com.dwp.services.people.hr.HcmPopulationRepositoryTest#actorMutationProofFailsClosedBeforeSqlWhenIdentityIsIncomplete()",
+          "com.dwp.services.people.hr.HcmPopulationRepositoryTest#actorMutationProofLocksCurrentWorkerRelationshipAndAssignment()",
+          "com.dwp.services.people.hr.HcmPopulationRepositoryTest#approvalQueuesProjectDecisionEvidenceForTimeAndAbsence()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.hr.HrServiceTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/hr/HrServiceTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "requesterCanWithdrawSubmittedLeaveAndRestorePendingBalance",
+          "requesterCannotWithdrawAnotherWorkersLeave",
+          "homeProvidesFreshRoleAwareWorkflowSignalsWithoutAdditionalClientFanOut",
+          "homeKeepsAvailableDomainsWhenOneDomainQueryFails",
+          "homeDoesNotQueryTeamQueuesForIndividualContributors",
+          "teamWorkspaceReadsOnlyThroughTheResolvedLivePopulation",
+          "operationsMetricsNeverFallBackToWholeTenantQueries",
+          "approveCapabilityCannotMutateAWorkerOutsideTheReadPopulation",
+          "goalProgressEndpointRejectsLifecycleCompletionBeforeRepositoryMutation",
+          "goalProgressEndpointSurfacesConflictWhenStoredStatusDoesNotExactlyMatch"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": true,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hr.HrServiceTest.xml",
+        "xmlSha256": "755aef90c5d5171068e93f0925ce4a98a1c915f71a4d389629faf83869eb2c08",
+        "timestamp": "2026-09-14T00:38:55",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.hr.HrServiceTest#teamWorkspaceReadsOnlyThroughTheResolvedLivePopulation()",
+          "com.dwp.services.people.hr.HrServiceTest#operationsMetricsNeverFallBackToWholeTenantQueries()",
+          "com.dwp.services.people.hr.HrServiceTest#approveCapabilityCannotMutateAWorkerOutsideTheReadPopulation()",
+          "com.dwp.services.people.hr.HrServiceTest#goalProgressEndpointSurfacesConflictWhenStoredStatusDoesNotExactlyMatch()",
+          "com.dwp.services.people.hr.HrServiceTest#homeProvidesFreshRoleAwareWorkflowSignalsWithoutAdditionalClientFanOut()",
+          "com.dwp.services.people.hr.HrServiceTest#homeDoesNotQueryTeamQueuesForIndividualContributors()",
+          "com.dwp.services.people.hr.HrServiceTest#homeKeepsAvailableDomainsWhenOneDomainQueryFails()",
+          "com.dwp.services.people.hr.HrServiceTest#goalProgressEndpointRejectsLifecycleCompletionBeforeRepositoryMutation()",
+          "com.dwp.services.people.hr.HrServiceTest#requesterCanWithdrawSubmittedLeaveAndRestorePendingBalance()",
+          "com.dwp.services.people.hr.HrServiceTest#requesterCannotWithdrawAnotherWorkersLeave()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.identity.IdentitySyncOutboxPublisherTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/identity/IdentitySyncOutboxPublisherTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "marksSuccessfullyDeliveredEventAsPublished",
+          "recordsFailureForRetry"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": true,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.identity.IdentitySyncOutboxPublisherTest.xml",
+        "xmlSha256": "e58dea35ae6a275beb68f3fa699eb87792c0f89bbf0ae02f73b6206dc2d4be56",
+        "timestamp": "2026-09-14T00:39:52",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.identity.IdentitySyncOutboxPublisherTest#recordsFailureForRetry()",
+          "com.dwp.services.people.identity.IdentitySyncOutboxPublisherTest#marksSuccessfullyDeliveredEventAsPublished()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotContractTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "publicQueryContainsNoCallerSuppliedTenantOrCallerAuthority",
+          "queryAndVerifiedRequestFailClosedOnInvalidOrMismatchedValues",
+          "guardVerifiesAuthorityBeforeProviderAndIssuedCursorAfterPage",
+          "issuedCursorMustBindTheLastEmittedCanonicalKey",
+          "authenticatedCursorReplayOrTamperIsRejectedBeforeProviderAccess",
+          "forgedVerifierOutputIsRejectedBeforeProviderAccess",
+          "pageIsContentAddressedBoundAndDefensivelyCopied",
+          "ownerExtensionApiIsPublicButConsumerPackagesCannotUseIt",
+          "recordsAndCanonicalSchemaHaveExactlyTheRegisteredSemantics",
+          "neutralContractSourcesHaveNoFrameworkPersistenceOrDomainImports"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": false,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest.xml",
+        "xmlSha256": "9743ba3417ddfa5c62aec77f45fc1824d94abbee1a3829acff85692727831973",
+        "timestamp": "2026-09-14T00:38:55",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#forgedVerifierOutputIsRejectedBeforeProviderAccess()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#authenticatedCursorReplayOrTamperIsRejectedBeforeProviderAccess()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#neutralContractSourcesHaveNoFrameworkPersistenceOrDomainImports()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#issuedCursorMustBindTheLastEmittedCanonicalKey()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#queryAndVerifiedRequestFailClosedOnInvalidOrMismatchedValues()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#pageIsContentAddressedBoundAndDefensivelyCopied()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#publicQueryContainsNoCallerSuppliedTenantOrCallerAuthority()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#recordsAndCanonicalSchemaHaveExactlyTheRegisteredSemantics()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#ownerExtensionApiIsPublicButConsumerPackagesCannotUseIt()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#guardVerifiesAuthorityBeforeProviderAndIssuedCursorAfterPage()"
+        ]
+      },
+      {
+        "classId": "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest",
+        "sourcePath": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotPaginationContractTest.java",
+        "proofMode": "HISTORICAL_LOCAL_XML_READONLY_NOT_RERUN",
+        "sourceFixtureMethods": [
+          "canonicalOrderAndUniqueAssignmentKeysAreMandatory",
+          "requestLimitRevisionAndContinuationPositionBindEveryPage",
+          "cursorAndStatusCodesFailClosedOnNonCanonicalValues",
+          "orderingVersionIsSealedIntoTheAuthenticatedPageDigest"
+        ],
+        "usesTestcontainers": false,
+        "usesMock": false,
+        "xmlPresent": true,
+        "xmlPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest.xml",
+        "xmlSha256": "d94fc63de634281d4b1915e2903cc58b17f7918f69404d21f9a1e05c105d488b",
+        "timestamp": "2026-09-14T00:38:55",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "caseIds": [
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#orderingVersionIsSealedIntoTheAuthenticatedPageDigest()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#canonicalOrderAndUniqueAssignmentKeysAreMandatory()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#cursorAndStatusCodesFailClosedOnNonCanonicalValues()",
+          "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#requestLimitRevisionAndContinuationPositionBindEveryPage()"
+        ]
+      }
+    ],
+    "totals": {
+      "tests": 118,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    "allSelectedSourcesTestcontainersAbsent": true,
+    "coverageLimits": [
+      "No actual production Auth principal-person proof producer/verifier transport tested here.",
+      "Selected Auth lifecycle tests only create/leaver via mocked repositories/JDBC.",
+      "Actual HCM filter/scope execution exists with mocked native repository/HR service; it is not native SQL/end-to-end identity test.",
+      "Workforce synthetic signed cursor tests validate contract behavior, not real Auth/People owner provider wiring."
+    ]
+  },
+  "commonSourcePreparationRequiredBeforeModuleCodeGate": [
+    "Auth current-principal/person pairing versioned exact owner DTO/SPI/adapter and actual transport producer/verifier",
+    "People native full eligible employment-context projection and explicit mapping of current internal IDs/public UUIDs",
+    "Purpose-specific0/1/multiple context selection plus native effective clock/zone/status/freshness/revoke/CAS boundaries",
+    "Auth ordered lifecycle/replay-digest/approved relink hardening and configurable multiemployment/leave access aggregation",
+    "No local-edge pseudo cross-owner/source registration fallback; actual native FK/source/refetch closure",
+    "Existing DWP app/menu/action/groups/resource responsibilities/field/population PEP registration for every new operation",
+    "Actual bounded synthetic compile fixtures followed by isolated native owner integration negatives; no fixture-only claim of domain execution"
+  ],
+  "sourceManifest": [
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+      "sha256": "b7be334f2a5da5e270da9cd687928cd3009297c669424534c7735dff4b3bbc13",
+      "lines": 85,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/entity/AuthSession.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/entity/AuthSession.java",
+      "sha256": "b8912998d234d416261678c37b2f14966ee71436b5a2d6e629170e6a8fbbc058",
+      "lines": 101,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/JwtConfig.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/config/JwtConfig.java",
+      "sha256": "8861335e774863be2c230cd71867bd5b0395d6e9854aa6ec4215b22e77f46268",
+      "lines": 145,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/security/AuthSessionJwtValidator.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/security/AuthSessionJwtValidator.java",
+      "sha256": "b0c6eb1333941e0dc513b82c358440b13bdebbe4112c9b5eff74bbb39b5c8082",
+      "lines": 113,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/security/AuthSessionActivityFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/security/AuthSessionActivityFilter.java",
+      "sha256": "4af37518879ff5d1597d49785c874478d170ef11f3ca33d8457e278f0bceaaae",
+      "lines": 57,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/security/TenantContextResolver.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/security/TenantContextResolver.java",
+      "sha256": "4b114e4626dad9e09dd507abd27cd9c4c4dbda8effd7851df3d670ab937ddb4a",
+      "lines": 39,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+      "sha256": "b87c6bfc10a9c3c8bcf013bc89714b2ee0538423459f13de743316e287c2b573",
+      "lines": 113,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+      "sha256": "a6457427ba91bf7a2304a7a2b93aff0000376e39d2a04b8c15a6b2a17183056b",
+      "lines": 37,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+      "sha256": "7027aae4450079516a0a7abf1f5be14c12e033c99160f012d9abf7c06485dee3",
+      "lines": 641,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/UserRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/UserRepository.java",
+      "sha256": "1a35f417306118b806044ffdc83354f603959b6d157c6641fbd0ca2998faf40a",
+      "lines": 110,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/RoleMemberRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/RoleMemberRepository.java",
+      "sha256": "447aae0dcf1c345fd4805e7dca7eed032d22f4d4132dcaf35e53fdcaee6bd611",
+      "lines": 97,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+      "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4",
+      "lines": 304,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentityDtos.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentityDtos.java",
+      "sha256": "59820b11d5b95e775576df6b0195909a56de99b165f5af617ad0bc38e701bf73",
+      "lines": 38,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySubjectLookupService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySubjectLookupService.java",
+      "sha256": "1d5780e4c4433853772f6e769cd0d08ff368b71ffcb053c45eb1bf910d202c78",
+      "lines": 149,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncController.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncController.java",
+      "sha256": "a2204f18f57accc86b6277cbd9576a9932911124dab54519d7d6bd166769bc31",
+      "lines": 49,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySyncSecurityConfig.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/IdentitySyncSecurityConfig.java",
+      "sha256": "c5d14dd1acd558596573e0152392227d993217aff232cac8be836e5245dfe5e7",
+      "lines": 77,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/resources/db/migration/V7__add_tenant_and_group_role_foundation.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V7__add_tenant_and_group_role_foundation.sql",
+      "sha256": "5c76ac483112004d38e09e83f6eb43b163fe174cd5f87a3387cf4129faf1ec97",
+      "lines": 147,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/main/resources/db/migration/V16__adopt_company_email_identity.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V16__adopt_company_email_identity.sql",
+      "sha256": "1a2e5d73cb2296595962ce19857894b212e264d6b97123637e26d248a99a73a5",
+      "lines": 76,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+      "sha256": "11727c688bdb39bb0077f122a0fa90d7aa2835dee893dfe33549f41892563324",
+      "lines": 414,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/VerifiedIdentity.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/security/VerifiedIdentity.java",
+      "sha256": "5c057234ced3615d6e90778165302228ee47ddbabd24968a27f16c0f98a10ad4",
+      "lines": 83,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+      "sha256": "f995186fe7ffccc5aed1af3c0c6f68064967349de3706f6db29df890e9b81a60",
+      "lines": 225,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ServiceIdentitySanitizingFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ServiceIdentitySanitizingFilter.java",
+      "sha256": "8346f0be04a1f2348ecf239f8e6557b5b7f5256a28ed2e179743d33009e0a41f",
+      "lines": 33,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/PeopleServiceIdentityFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/PeopleServiceIdentityFilter.java",
+      "sha256": "db285fdf2c570dbff5933bbdb7753b0ec934f6f031da1cce6a3dd1ce2ae9b30b",
+      "lines": 53,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+      "sha256": "04265a283b5381d8a836ea5a3560322bd239873af8e3fc547d38528e33962168",
+      "lines": 232,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleRequestContext.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleRequestContext.java",
+      "sha256": "b22d28a9f9a86d723fed24addae3960a0a7b3983e70ba150dc08c77d81599c9d",
+      "lines": 69,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "sha256": "630dda8034e987fe36a4d43c13a6ee323a5b0557dd6dd44f2e2b918a17a92ce4",
+      "lines": 254,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "sha256": "69b339368be840bdf6948400b8b40f2975f29df2fc0628c69dbf123521608a3b",
+      "lines": 89,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrWorkerRepository.java",
+      "sha256": "b2dc1d3de2d9435e545fed8014fc0ad6d96969475bae7a50d5dcc21370145d6d",
+      "lines": 123,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrRepository.java",
+      "sha256": "1f73197083913be7cdfe7a96c494688c2b95e83365b452e4d20c970ce9a36ee5",
+      "lines": 200,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrService.java",
+      "sha256": "e484bd390cc383076e8c1c36f87046155820204715b42e50dca299f2f57cb771",
+      "lines": 663,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationRepository.java",
+      "sha256": "a70a4d5713bea53fc1d63b52a212d8c3bca958894198622134e8bf7fb6fdd256",
+      "lines": 618,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationScopeService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationScopeService.java",
+      "sha256": "e07674983b134b3fd2735ab6483bf6b1ee3a2cb948b3528c14bc15ba240a2cbb",
+      "lines": 179,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessPolicyRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessPolicyRepository.java",
+      "sha256": "3c17ab8117a4f0a68c0e8940a3d3df3f431869f0bb91c4e155f4a19368ad5865",
+      "lines": 281,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncOutboxRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncOutboxRepository.java",
+      "sha256": "a0bd9c0e72bb030da474162bf4c95c847e62a69f13659f65c444e6380c45b8fc",
+      "lines": 90,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncOutboxPublisher.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncOutboxPublisher.java",
+      "sha256": "ba6c43eb63b05ce415dec824fc8bdf0ac92ce6e4aaecb43c44ff9e96ff462605",
+      "lines": 48,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncClient.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/identity/IdentitySyncClient.java",
+      "sha256": "b6595a8809b733267f0c4a5f4ddb34e31ec2fc8880cca6e1326a541ddb0eb198",
+      "lines": 59,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisImportService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisImportService.java",
+      "sha256": "9a239a2edaf7a9953de10b44358feff2c38a5ab4adc26cce96294fd3a5768761",
+      "lines": 477,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationProjectionRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationProjectionRepository.java",
+      "sha256": "4ac9499ba4ce4097aeb8ec6acf8ab0030345178bf77ad06990689a9b3f37b6b5",
+      "lines": 568,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationIngestionRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/integration/HrisIntegrationIngestionRepository.java",
+      "sha256": "9c6c35fa851fe8c557a55774efa11ae087a2de9390bd692e82eb75e2e233d1a2",
+      "lines": 247,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+      "lines": 625,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/db/migration/V4__add_identity_sync_delivery.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V4__add_identity_sync_delivery.sql",
+      "sha256": "818eb726fa678f1d7aea4cbbb658f0c813f7219a1ce7907d1c0e2a0c9fad3103",
+      "lines": 16,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+      "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+      "lines": 33,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotProvider.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotProvider.java",
+      "sha256": "5372ba69a979b494f9f1c2c0e6a94dc921715444beb957dbead0cd967eed8f5e",
+      "lines": 8,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotV1.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotV1.java",
+      "sha256": "70a82081c4490eaf14c87c283069efba0a4fd0edbd0d389ebb808b3d7ddaae16",
+      "lines": 30,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/GuardedWorkforceSnapshotQueryPort.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/GuardedWorkforceSnapshotQueryPort.java",
+      "sha256": "22b5cfe571a7cab7cd56a4435cc4b57b4f3aaca1fae298ec110a107e8e885d4d",
+      "lines": 34,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotRequestVerifier.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotRequestVerifier.java",
+      "sha256": "d0164528206d9286441d14578914304b51d0dfbcfaf0ef50105eb0979ba82f67",
+      "lines": 14,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/VerifiedWorkforceSnapshotRequest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/VerifiedWorkforceSnapshotRequest.java",
+      "sha256": "1885f914e860ccf26575ffac4147d62d93cbe66e5344973e68b7c66cc6e0a675",
+      "lines": 74,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+      "sha256": "c6560894d174a28c2d42ffa71415d87e9e3385d54ab415dfc22de3b77c9214ea",
+      "lines": 116,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/security/AuthSessionJwtValidatorTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/security/AuthSessionJwtValidatorTest.java",
+      "sha256": "b0806b3658d85bca389044fafdc99e311d7dda624976a02f4557c377f2dc70b0",
+      "lines": 163,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+      "sha256": "5421dc412082fdabe8a9cc12287b9814d9ff6a71833bbb1f80053d79095ac9f9",
+      "lines": 336,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+      "sha256": "83038eec6a6a50fadb90d1ac2ef8a095a6c9a4b80ea552ba124316a14be34e1d",
+      "lines": 1118,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/ServiceIdentityFilterChainTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/test/java/com/dwp/gateway/ServiceIdentityFilterChainTest.java",
+      "sha256": "e0674797476bfd210d85c87be4c2e5fbe0c6926c6a74ab47bff5291ed3dd0bee",
+      "lines": 54,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+      "sha256": "bdf8ed80daefa1eed1c3bdf7cd412336a6168e44a413586d7fd0037817d84d49",
+      "lines": 216,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+      "sha256": "1c3463b49e3a4da9efe281d23a427d685285d16a5846c58893a2eb47e9a54954",
+      "lines": 260,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+      "sha256": "6e73ebe9a5131b07be73749ef5549a1bdf93ec7901d80ec0d5a93a23410a595b",
+      "lines": 375,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationRepositoryTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationRepositoryTest.java",
+      "sha256": "7ac13b65f3185aa217baf8497c5acf81eec9918cdbd9520cbe2a69f99bad1c9d",
+      "lines": 135,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/HrServiceTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hr/HrServiceTest.java",
+      "sha256": "b48fa54a7efbca3bb750cf8da10810c3ded86efb94cbd925acfaf8aadc646736",
+      "lines": 313,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/identity/IdentitySyncOutboxPublisherTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/identity/IdentitySyncOutboxPublisherTest.java",
+      "sha256": "ac7a915f59203949af4d8dbc3f7ce2bd63a1ee777b2400fb9359fbfecdec1d47",
+      "lines": 46,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotContractTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotContractTest.java",
+      "sha256": "7f8f4dd662f73cf89c9c9f1cc3e77609b49a3eed1c15ad4e9d4968ba3c81afa4",
+      "lines": 697,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotPaginationContractTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotPaginationContractTest.java",
+      "sha256": "2b073dce5c4f243be56b9863fa720eca05da952f57ceefaa91f035ff6053f9e9",
+      "lines": 136,
+      "equalsPinnedHead": true,
+      "kind": "TEST_SOURCE"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "sha256": "a783255a011d863bb6739cc73f0ff77c1e88123a02a02e91b747db131a95b699",
+      "lines": 404,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceRolloutHeaderFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceRolloutHeaderFilter.java",
+      "sha256": "6b7b3b1caa43261ecc3581d7e73b2b76e18e82a431dfb1805fe5bc1d3f18d9d2",
+      "lines": 250,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceForwardingGuardFilter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceForwardingGuardFilter.java",
+      "sha256": "8c6b98a74019b286bb1d037bbc69ad98620730b4918179c62aa3858c0d5a46cf",
+      "lines": 188,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceEligibilityClient.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceEligibilityClient.java",
+      "sha256": "f34f197888245bdc2c46420510c97fd4911c2c0f74bae4776210528e89d4762f",
+      "lines": 108,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+      "sha256": "4007621b17847ceac74f72644147b6fc8faeb61780fdf65d94de3bcdd80ca53e",
+      "lines": 257,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotQueryPorts.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotQueryPorts.java",
+      "sha256": "00b5dda2b2a42a189527f0a9300d9c883b6fd105469cda0259f1737af21321a6",
+      "lines": 22,
+      "equalsPinnedHead": true,
+      "kind": "MAIN_SOURCE_OR_DDL"
+    }
+  ],
+  "auditMethod": {
+    "readOnly": true,
+    "localPrimaryEvidence": true,
+    "backendAgendsFilePresent": false,
+    "browsing": false,
+    "gradleOrTestsReexecuted": false,
+    "databaseConnected": false,
+    "secretsCollected": false,
+    "sourcePinComparison": "All 66 recorded source/DDL/test files compared byte-for-byte with pinned backend HEAD. Local test XML only read; exact hashes/timestamps/class/case IDs preserved."
+  },
+  "finalReadOnlyIntegrity": {
+    "capturedAtUtc": "2026-09-14T02:54:58.223Z",
+    "method": "Read-only Python 3.12 SyntaxWarning-as-error: parse report JSON, validate every recorded proposal pointer and source line range/SHA, compare all 66 source hashes, proposal pin, 13 XML hashes and current backend HEAD/tree/clean status",
+    "result": "PASS",
+    "sourcePointersAndLineRanges": "PASS",
+    "sourceAndProposalUnchanged": true,
+    "backendHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "backendTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "backendPostStatus": "",
+    "historicalXmlUnchanged": true,
+    "domainTestsReexecuted": false
+  },
+  "limitations": [
+    "Findings separate existing canonical reuse capability from actual missing common source, proposed architecture and full HRIS domain execution.",
+    "No evidence that an unauthenticated external caller bypasses Gateway/service-token protection; internal credential trust limitation is an architecture boundary, not an asserted exploit.",
+    "No customer identity mapping or operational permission deployment validated.",
+    "Unsupported/new proposal source dialect and modern product lifecycle Gates remain separate; this report grants no module coding authority."
+  ]
+}

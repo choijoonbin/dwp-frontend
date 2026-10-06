@@ -1,0 +1,181 @@
+{
+  "reportId": "dwp.hris.modern-operation-semantics-source-repair.2026-09-16.v2",
+  "generatedAt": "2026-09-16T01:58:06Z",
+  "status": "PASS_SOURCE_ONLY_READY_FOR_INDEPENDENT_REAUDIT",
+  "decision": "REQUIRE_INDEPENDENT_REVIEWER_RERUN_BEFORE_ANY_DISTINCT_CANDIDATE_OR_GATE_CHANGE",
+  "scope": {
+    "sourceOnly": true,
+    "workspaceCandidateCreatedByThisRepair": false,
+    "liveCanonicalModified": false,
+    "gateModified": false,
+    "policyModified": false,
+    "historicalEvidenceModified": false,
+    "temporaryProjectionOnly": "/tmp/hris-operation-source-v6.json"
+  },
+  "lineage": {
+    "authorRepairV1": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v1.json",
+      "sha256": "ad636740594732385f7b128008a99a8432f8df20699f69d1a58a3af0a4cd894b",
+      "sealedPayloadSha256": "6841d10578f6a56ec470d6c44060efa7cfb8a56e8542dc94f0e61b3be564245a"
+    },
+    "independentAuditV1": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-independent-audit-2026-09-16.v1.json",
+      "sha256": "6d13884552f59d02e30d2f3accdb06fa2f5b6a51cd354fe0d63cdce9bdd46e73",
+      "sealedPayloadSha256": "7ca70f841578ba4d5c4ed89ff1004d39ec6ae5ef9cefedfb9331c27f7108f81c",
+      "disposition": "ALL_THREE_REPORTED_HOSTILE_ESCAPES_REPAIRED_IN_SOURCE_AND_OFFICIAL_SELFTESTS"
+    }
+  },
+  "repairs": [
+    {
+      "class": "LEARNING_OWNER_PROOF_MEMBER_CLOSURE",
+      "operationId": "modern.learning.completion.verify",
+      "table": "prf_lrn_completion_skill_evidence_refs",
+      "contract": {
+        "skill_evidence_public_id": "ownerProof.body.evidencePublicId.skillEvidenceIds[*]",
+        "worker_skill_evidence_id": "SELECTED:prf_skl_worker_evidence.worker_skill_evidence_id FROM ownerProof.body.evidencePublicId.skillEvidenceIds[*]"
+      },
+      "failClosedSemantics": "exactly one APPEND_MANY/TYPED_ORDERED_CHILD_REFERENCE step; both reviewed assignment sources required; the complete ownerProof.body.evidencePublicId member-use set must equal those two uses; renamed or additional sibling members are rejected",
+      "historicalFindingDeduplication": "legacy body.skillEvidenceIds remains rejected by UNDECLARED_BODY_SOURCE_USED and is not double-counted as a second Learning finding"
+    },
+    {
+      "class": "WFP_RESULT_OWNER_CONTRACT_CLOSURE",
+      "handlerId": "internal.workforceplan.simulation-result.consume",
+      "events": [
+        "WorkforceScenarioSimulated.v2",
+        "WorkforceScenarioSimulationFailed.v2"
+      ],
+      "contract": {
+        "requiredFields": [
+          "resultReceiptId",
+          "resultReceiptRevision",
+          "resultSchemaVersion",
+          "resultDigest"
+        ],
+        "identity": "receiptId+receiptRevision+resultSchemaVersion+resultDigest exact",
+        "validation": "SIGNED_OWNER_RESULT_MATCHES_LOCKED_REQUEST_ID_REVISION_AND_DIGEST",
+        "denyOnUnavailable": true
+      },
+      "failClosedSemantics": "the resultOwnerContract key set and every tuple member are exact; TRUST_UNVERIFIED_RESULT, any alternate validation literal, missing/extra key, identity drift, tuple drift, or deny drift is rejected; aggregate lookup and latest fallback remain forbidden"
+    }
+  ],
+  "modifiedSourceFiles": [
+    {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256": "f9b3a32c7117c4bc308fc21018303e4b16c62d4c2a78ea9031b5a3371689cb0f",
+      "projectionVersion": "modern-operation-causal-source-v6-2026-09-16",
+      "authorHostileSelftests": {
+        "status": "PASS",
+        "testsRun": 10,
+        "testsPassed": 10,
+        "newCoverage": [
+          "Learning ownerProof member rename",
+          "Learning ownerProof sibling member addition",
+          "WFP success TRUST_UNVERIFIED_RESULT",
+          "WFP failure validation literal drift"
+        ]
+      }
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256": "f372179772d103a819402ea66c231e96049bc84d804ed95f656dfe1e6782a487",
+      "officialMutationSelftests": {
+        "status": "PASS",
+        "testsRun": 22,
+        "testsPassed": 22,
+        "newTests": [
+          "reject-learning-owner-proof-member-rename",
+          "reject-learning-owner-proof-sibling-member",
+          "reject-wfp-success-unverified-result-trust",
+          "reject-wfp-failure-result-validation-drift"
+        ]
+      }
+    }
+  ],
+  "sourceProjectionVerification": {
+    "status": "PASS",
+    "path": "/tmp/hris-operation-source-v6.json",
+    "sourceProjectionVersion": "modern-operation-causal-source-v6-2026-09-16",
+    "sha256": "2d048ddf51a7177dc76abefc6f613312cebdee0b619a7fd4f57ddbf48429e50b",
+    "deterministicSecondPassSha256": "2d048ddf51a7177dc76abefc6f613312cebdee0b619a7fd4f57ddbf48429e50b",
+    "counts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 27,
+      "publicEvents": 157,
+      "tableSpecifications": 131
+    },
+    "authorValidation": "PASS",
+    "canonicalFiveSemanticExactIdentityComposition": {
+      "status": "PASS_DETERMINISTIC",
+      "sourceState": "PINNED_SUCCESSOR_REPROJECTION",
+      "operationSha256": "2d048ddf51a7177dc76abefc6f613312cebdee0b619a7fd4f57ddbf48429e50b",
+      "exactSchemaSha256": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88",
+      "eventPayloadSha256": "3e9e4c1ca92c823853fdbf0afe8b03bd66b3074b2691b0aa35acd883d90e851c",
+      "semanticBindingsSha256": "246b96c0a2dcf9945fc631f573210d82ac0a3400850a0e2617028e5663f40c34",
+      "publicIdentitySha256": "383e3ff40e655b0ef47177cc517ab122ead637a97e2c0f58de61e4c34c5df720"
+    },
+    "authorityPreservation": {
+      "listeningProtectedSubmitOutboxStepCount": 0,
+      "listeningPrivateNoBrokerContract": "PRESERVED",
+      "wfpSuccessRefetchMode": "FORBIDDEN",
+      "wfpFailureRefetchMode": "FORBIDDEN"
+    }
+  },
+  "independentValidatorVerification": {
+    "operationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "affectedOperationCount": 0,
+      "reportPath": "/tmp/hris-op-v2-v6-audit-final.json",
+      "reportSha256": "03219d63145d3f8960bb37beffb66f340510a13179b141216d3a7a3b6e255b53"
+    },
+    "officialMutationSelftests": {
+      "status": "PASS",
+      "testsRun": 22,
+      "testsPassed": 22,
+      "reportPath": "/tmp/hris-op-v2-v6-selftest-final.json",
+      "reportSha256": "2368befa48e07d978f7a3e4a91588eccdcf6cb7dde26c61b1bb5e83ea0b57008"
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "findingCount": 0,
+      "operations": 199,
+      "reportPath": "/tmp/hris-op-v2-v6-route-audit.json",
+      "reportSha256": "90dd6ebf8932b67eed68269d12cf6d38b980769100f0d8ce4f23ac93c08db832"
+    }
+  },
+  "historicalTruePositiveRetention": {
+    "candidate": "coding-readiness/modern-canonical-candidate.uaHfXj",
+    "status": "FAIL_AS_EXPECTED",
+    "findingCount": 3,
+    "affectedOperationCount": 1,
+    "findingCodes": [
+      "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+      "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+      "UNDECLARED_BODY_SOURCE_USED"
+    ],
+    "reportPath": "/tmp/hris-op-v2-ua-audit-final.json",
+    "reportSha256": "0f5ffaca5a1d927224c2878247374ec8268f94b6b9404bdc574dfd3ce8c325c7",
+    "officialMutationSelftests": {
+      "status": "PASS",
+      "testsRun": 22,
+      "testsPassed": 22,
+      "reportSha256": "1490899b732a6c041e93634e25902e9f52d44a4080b03bd9349551d48c28a254"
+    }
+  },
+  "immutabilityEvidence": {
+    "rejectedCandidateOperationSha256": "27cae6ed93c084bb5f489a3d3c0996a4eebf9b0e2faabd68839614c5343b7a2a",
+    "rejectedCandidateExactSha256": "248a40ab0fdc82b59681344f7d400a025f0d0171df43496e9011e0151893cb23",
+    "rejectedCandidateManifestSha256": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3",
+    "liveOperationSha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+    "g3GateDecisionSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "tablePolicyV4Sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+    "listeningAuthoritySha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2",
+    "closedSetDesignSha256": "53282661fd973816e27c9e95ff74091d62da2982f24060d15a56fae9a16e43d6",
+    "historicalBaselineSha256": "5b542f126474809f9123ce8424962dc0ec10a3ecbcd77c6cb3321271fca5ffdb",
+    "historicalLiveMigrationVerification": "PASS_BY_DETERMINISTIC_CANONICAL_FIVE_COMPOSER"
+  },
+  "nextAuthorizedStep": "Independent reviewer reruns the external hostile campaign against v6 source projection and the repaired reviewer oracle; no candidate generation or Gate change is authorized by this source-only report.",
+  "sealedPayloadSha256": "cb060c4d75bd5f05c6f4d312cbefd821273c9b4b7c28caaf8bc49657965daf7d"
+}

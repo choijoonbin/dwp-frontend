@@ -1,0 +1,482 @@
+{
+  "reportId": "dwp.hris.modern-operation-semantics-source-repair-independent-audit.2026-09-16.v3",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T02:32:57Z",
+  "status": "PASS_SOURCE_REPAIR_INDEPENDENTLY_CLEARED",
+  "decision": "PASS_SOURCE_REPAIR_INDEPENDENTLY_CLEARED_FOR_DISTINCT_CANDIDATE_REGENERATION_NO_LIVE_OR_GATE_CHANGE",
+  "scope": {
+    "sourceRepairUnderAudit": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v3.json",
+    "sourceOnly": true,
+    "pinnedProjectionOnly": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/operation-v6.json",
+    "temporaryVariantEvidence": "/private/tmp/hris-operation-independent-audit-v3-variants-v34i7hu5/variant-and-controls-evidence.json",
+    "workspaceCandidateCreated": false,
+    "candidateModifiedByReviewer": false,
+    "liveCanonicalModifiedByReviewer": false,
+    "gateModifiedByReviewer": false,
+    "reviewedSourceModifiedByReviewer": false,
+    "existingReportModified": false,
+    "onlyDurableArtifactWritten": "coding-readiness/reports/modern-operation-semantics-source-repair-independent-audit-2026-09-16.v3.json"
+  },
+  "postAuditWorkspaceChange": {
+    "path": "coding-readiness/sys_listening_canonical_design.py",
+    "sha256AtPinnedAuditInput": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2",
+    "sha256ObservedAfterAuditWindow": "bd96960447fcecf6670ba20b804c44e419facf69e41a6f22c87352fe93f40651",
+    "observedMtime": "2026-09-16T02:35:20Z",
+    "reviewerAuthored": false,
+    "additionalConcurrentGeneratorChange": {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256AtAuditWindow": "7b1803b44949a259b3bb1c587d88a93477a07fd7e60e360db2415db5b0f54750",
+      "sha256ObservedAfterAuditWindow": "3457c090941ab430398d99af28c9cbfc13ac050f77b82327245f708cd5fa502e",
+      "observedMtime": "2026-09-16T02:36:16Z",
+      "reviewerAuthored": false
+    },
+    "impact": "The operation audit loads the pinned projection and exact schema directly and does not import the concurrently changed authority source or generator. Candidate trees, live operation SSOT/manifest, Gate, operation/route auditors, and old reports remained byte-identical. These post-audit concurrent changes are outside the sealed operation-repair v3 validation window."
+  },
+  "independence": {
+    "reviewer": "operation_repair_independent_audit_v3",
+    "projectionMethod": "Pinned v6 operation bytes and exact-schema bytes were loaded as untrusted review inputs; the generator was not used to supply the hostile oracle.",
+    "hostileOracle": "The repaired operation auditor was exercised by the external 94-case harness plus a separately defined eight-case v3 extension (six WFP payload-sufficiency variants and two broad-exemption controls).",
+    "importSeparation": {
+      "generatorImportsOperationAuditor": false,
+      "operationAuditorImportsGenerator": false,
+      "operationAuditorImportsAuthorValidator": false,
+      "candidateFilesAreEvidenceOnly": true
+    },
+    "mutationDefinitionsOutsideAuditor": true,
+    "conclusion": "The v3 exact payload-sufficiency repair is independently fail-closed for the reconstructed prior campaign, prior escapes, prefix/substring/prose variants, and broad-exemption controls."
+  },
+  "inputs": {
+    "sourceRepairV3": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v3.json",
+      "sha256": "ff5531b02e32a10f199c4c8f78bad022af13a9861e26e65bb8733aaee2c2c0aa",
+      "sealedPayloadSha256": "12be82582e9a8b2cd6f207f7943002f608ce951ae0d55912c91b421d8a57997c",
+      "sealVerified": true
+    },
+    "sourceRepairV2": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v2.json",
+      "sha256": "3a70afb71563c23aade15566a4d7421a9b511ab542300d517443adeb89b989d2",
+      "sealedPayloadSha256": "cb060c4d75bd5f05c6f4d312cbefd821273c9b4b7c28caaf8bc49657965daf7d",
+      "sealVerified": true
+    },
+    "independentAuditV2": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-independent-audit-2026-09-16.v2.json",
+      "sha256": "cd28484851267bd36e7c7209a898a4a55b5634c94c15c1be8f57979cf0249871",
+      "sealedPayloadSha256": "b24625e5d87e65041ff537bd8f026c45240752909548a3e132b4707b6992c24b",
+      "sealVerified": true
+    },
+    "operationProjection": {
+      "path": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/operation-v6.json",
+      "sourceProjectionVersion": "modern-operation-causal-source-v6-2026-09-16",
+      "sha256": "2d048ddf51a7177dc76abefc6f613312cebdee0b619a7fd4f57ddbf48429e50b",
+      "equalsAuthorV6Bytes": true,
+      "counts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "publicEvents": 157,
+        "tableSpecifications": 131
+      }
+    },
+    "exactSchema": {
+      "path": "/private/tmp/hris-operation-source-repair-v3-hostile-fh3d28i8/exact.json",
+      "sha256": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88"
+    },
+    "operationReviewerOracle": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256": "30982425e0cc769acfad4c1a64d6e3c91a72e993fb4cd68fd14d267e2724d09b"
+    },
+    "routeReviewerOracle": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py",
+      "sha256": "21d1e68138a3c961780d540e5fbb2c7b2bd1b2a86d872d43b934fb40eaa946ea"
+    },
+    "listeningAuthoritySource": {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+    },
+    "currentGeneratorObserved": {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256AtAuditWindow": "7b1803b44949a259b3bb1c587d88a93477a07fd7e60e360db2415db5b0f54750",
+      "sha256ObservedAfterAuditWindow": "3457c090941ab430398d99af28c9cbfc13ac050f77b82327245f708cd5fa502e",
+      "use": "Observed for immutability only; audit projection remains pinned to the source-repair v3 v6 bytes."
+    },
+    "liveOperation": {
+      "path": "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+      "sha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0"
+    },
+    "liveManifest": {
+      "path": "coding-readiness/modern-capability-closed-set-manifest.v3.json",
+      "sha256": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4"
+    },
+    "g3GateDecision": {
+      "path": "g0/current-g3-gate-decision.json",
+      "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e"
+    }
+  },
+  "baselineReviewerResults": {
+    "operationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "affectedOperationCount": 0,
+      "operations": 199,
+      "reportPath": "/private/tmp/hris-operation-independent-audit-v3.E7RUcQ/operation-audit.json",
+      "reportSha256": "67cad62ae9e35cf86b2efb4e483ae994acdf8b4969133c505473ff3c90f719cc"
+    },
+    "officialMutationSelftests": {
+      "status": "PASS",
+      "testsRun": 24,
+      "testsPassed": 24,
+      "reportPath": "/private/tmp/hris-operation-independent-audit-v3.E7RUcQ/operation-selftest.json",
+      "reportSha256": "5d23bad823261518185181e8702ed37c896a10d9d145ce194b5920819cf08af7"
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "findingCount": 0,
+      "operations": 199,
+      "reportPath": "/private/tmp/hris-operation-independent-audit-v3.E7RUcQ/route-audit.json",
+      "reportSha256": "e32f9fd5bc7068e89644175af7bca577a83992bc2a77d0d292c69beb5799b389"
+    },
+    "disposition": "BASELINE_ZERO_OFFICIAL_SELFTESTS_24_OF_24_AND_ROUTE_ZERO_CONFIRMED"
+  },
+  "prior94HostileCampaign": {
+    "status": "PASS",
+    "testsRun": 94,
+    "rejected": 94,
+    "escaped": 0,
+    "expectedCodeMatched": 94,
+    "mutationChangedDocument": "94/94",
+    "familySummary": {
+      "listeningProtectedSubmit": {
+        "testsRun": 67,
+        "rejected": 67,
+        "expectedCodeMatched": 67
+      },
+      "learningOwnerProof": {
+        "testsRun": 3,
+        "rejected": 3,
+        "expectedCodeMatched": 3
+      },
+      "workforcePlanningTerminalProof": {
+        "testsRun": 24,
+        "rejected": 24,
+        "expectedCodeMatched": 24
+      }
+    },
+    "externalHarnessPath": "/private/tmp/operation_v2_independent_reaudit.py",
+    "externalHarnessSha256": "7447252a2bed6b170396a8b160d7790ac3ddde935346ee8dad76b94aa5b4c20f",
+    "evidencePath": "/private/tmp/hris-operation-source-repair-v3-hostile-jlqdj_mv/external-hostile-94-evidence.json",
+    "evidenceSha256": "234734f29bf747cb929d945f5ceb20c868b74dcffa052b14af79ead92ec9b8ed",
+    "immutability": true
+  },
+  "priorEscapeClosure": [
+    {
+      "id": "ESCAPE-LEARNING-OWNER-PROOF-MEMBER-DRIFT",
+      "mutation": "ownerProof.body.evidencePublicId.skillEvidenceIds[*] -> ownerProof.body.evidencePublicId.unreviewedSkillEvidenceIds[*]",
+      "auditStatus": "FAIL",
+      "findingCount": 1,
+      "findingCode": "LEARNING_OWNER_PROOF_DERIVATION_DRIFT",
+      "target": {
+        "operationId": "modern.learning.completion.verify",
+        "table": "prf_lrn_completion_skill_evidence_refs",
+        "field": [
+          "skill_evidence_public_id",
+          "worker_skill_evidence_id"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "id": "ESCAPE-WFP-SUCCESS-OWNER-VALIDATION-DRIFT",
+      "mutation": "WorkforceScenarioSimulated.v2 resultOwnerContract.validation -> TRUST_UNVERIFIED_RESULT",
+      "auditStatus": "FAIL",
+      "findingCount": 1,
+      "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+      "target": {
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulated.v2",
+        "table": "ppl_wfp_simulation_requests"
+      },
+      "closed": true
+    },
+    {
+      "id": "ESCAPE-WFP-FAILURE-OWNER-VALIDATION-DRIFT",
+      "mutation": "WorkforceScenarioSimulationFailed.v2 resultOwnerContract.validation -> TRUST_UNVERIFIED_RESULT",
+      "auditStatus": "FAIL",
+      "findingCount": 1,
+      "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+      "target": {
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulationFailed.v2",
+        "table": "ppl_wfp_simulation_requests"
+      },
+      "closed": true
+    }
+  ],
+  "newPayloadSufficiencyVariants": {
+    "status": "PASS",
+    "testsRun": 6,
+    "rejected": 6,
+    "escaped": 0,
+    "expectedCodeMatched": 6,
+    "requiredExactLiteral": "CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF",
+    "tests": [
+      {
+        "name": "wfp-success-payload-sufficiency-prefix-variant",
+        "variant": "prefix",
+        "mutatedValue": "CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF_BUT_UNSIGNED_AND_LATEST_ALLOWED",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulated.v2",
+          "table": "ppl_wfp_simulation_requests"
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      },
+      {
+        "name": "wfp-success-payload-sufficiency-substring-variant",
+        "variant": "substring",
+        "mutatedValue": "NOTE::CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF::UNSIGNED_AND_LATEST_ALLOWED",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulated.v2",
+          "table": "ppl_wfp_simulation_requests"
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      },
+      {
+        "name": "wfp-success-payload-sufficiency-prose-variant",
+        "variant": "prose",
+        "mutatedValue": "The payload is sufficient because a closed durable event allowlist includes the exact simulation request revision and signed result owner proof.",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulated.v2",
+          "table": "ppl_wfp_simulation_requests"
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      },
+      {
+        "name": "wfp-failure-payload-sufficiency-prefix-variant",
+        "variant": "prefix",
+        "mutatedValue": "CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF_BUT_UNSIGNED_AND_LATEST_ALLOWED",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulationFailed.v2",
+          "table": "ppl_wfp_simulation_requests"
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      },
+      {
+        "name": "wfp-failure-payload-sufficiency-substring-variant",
+        "variant": "substring",
+        "mutatedValue": "NOTE::CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF::UNSIGNED_AND_LATEST_ALLOWED",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulationFailed.v2",
+          "table": "ppl_wfp_simulation_requests"
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      },
+      {
+        "name": "wfp-failure-payload-sufficiency-prose-variant",
+        "variant": "prose",
+        "mutatedValue": "The payload is sufficient because a closed durable event allowlist includes the exact simulation request revision and signed result owner proof.",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulationFailed.v2",
+          "table": "ppl_wfp_simulation_requests"
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      }
+    ]
+  },
+  "broadExemptionControls": {
+    "status": "PASS",
+    "testsRun": 2,
+    "rejected": 2,
+    "escaped": 0,
+    "expectedCodeMatched": 2,
+    "tests": [
+      {
+        "name": "learning-extra-owner-proof-sibling-control",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "LEARNING_OWNER_PROOF_DERIVATION_DRIFT",
+        "target": {
+          "operationId": "modern.learning.completion.verify",
+          "table": "prf_lrn_completion_skill_evidence_refs",
+          "field": [
+            "skill_evidence_public_id",
+            "worker_skill_evidence_id"
+          ]
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      },
+      {
+        "name": "wfp-success-extra-result-owner-key-control",
+        "auditStatus": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulated.v2",
+          "table": "ppl_wfp_simulation_requests"
+        },
+        "rejected": true,
+        "expectedCodeMatched": true
+      }
+    ]
+  },
+  "aggregateMutationDisposition": {
+    "prior94": 94,
+    "newPayloadSufficiencyVariants": 6,
+    "broadExemptionControls": 2,
+    "totalCampaignCases": 102,
+    "rejected": 102,
+    "escaped": 0,
+    "expectedCodeAndTargetMatched": 102
+  },
+  "historicalTruePositiveRetention": {
+    "candidate": "coding-readiness/modern-canonical-candidate.uaHfXj",
+    "status": "FAIL_AS_EXPECTED",
+    "expectedExitCode": 1,
+    "findingCount": 3,
+    "affectedOperationCount": 1,
+    "reportPath": "/private/tmp/hris-operation-independent-uahfxj-v3.bKU287/uahfxj-audit.json",
+    "reportSha256": "f8d11c6df03d863eb44b5b482c7d3f142cc7f9310864f897ec8fbd1911e5f60c",
+    "findings": [
+      {
+        "code": "UNDECLARED_BODY_SOURCE_USED",
+        "target": {
+          "operationId": "modern.learning.completion.verify",
+          "field": "body.skillEvidenceIds"
+        }
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulated.v2",
+          "table": "ppl_wfp_simulation_requests"
+        }
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "target": {
+          "handlerId": "internal.workforceplan.simulation-result.consume",
+          "eventName": "WorkforceScenarioSimulationFailed.v2",
+          "table": "ppl_wfp_simulation_requests"
+        }
+      }
+    ],
+    "officialSelftests": {
+      "status": "PASS",
+      "testsRun": 24,
+      "testsPassed": 24,
+      "reportPath": "/private/tmp/hris-operation-independent-uahfxj-v3.bKU287/uahfxj-selftest.json",
+      "reportSha256": "b14dc8c4f09caaa33ed05a6d5f86217d72faed42f2783f908370a024c67cf7a7"
+    },
+    "disposition": "ALL_THREE_HISTORICAL_TRUE_POSITIVES_REMAIN_REPRODUCIBLE"
+  },
+  "commandsExecuted": [
+    {
+      "purpose": "predecessor and source-repair report seal verification",
+      "command": "canonical SHA-256 over sorted compact JSON with sealedPayloadSha256 removed for independent-audit v1/v2 and source-repair v1/v2/v3",
+      "result": "PASS all five seals"
+    },
+    {
+      "purpose": "baseline and official selftests",
+      "command": "python3 -B coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py --ssot <pinned operation-v6.json> --exact <pinned exact.json> --report <temp>/operation-audit.json --selftest --selftest-report <temp>/operation-selftest.json",
+      "result": "PASS findingCount=0 affectedOperationCount=0 selftests=24/24"
+    },
+    {
+      "purpose": "route taxonomy",
+      "command": "python3 -B coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py --ssot <pinned operation-v6.json> --report <temp>/route-audit.json",
+      "result": "PASS findingCount=0 operations=199"
+    },
+    {
+      "purpose": "reconstructed prior independent hostile campaign",
+      "command": "python3 -B /private/tmp/operation_v2_independent_reaudit.py",
+      "result": "PASS prior94=94/94 expectedCode=94/94 supplementalBroadExemption=4/4 historicalTruePositives=3 immutability=true"
+    },
+    {
+      "purpose": "direct prior-escape replay and new WFP/broad-exemption hostile extension",
+      "command": "independent v3 in-memory mutation harness with external mutation definitions",
+      "result": "PASS priorEscapes=3/3 newPayloadSufficiencyVariants=6/6 broadExemptionControls=2/2 exactCodeAndTarget=all"
+    },
+    {
+      "purpose": "historical uaHfXj true-positive retention",
+      "command": "python3 -B coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py --ssot coding-readiness/modern-canonical-candidate.uaHfXj/modern-capability-operation-causal-contract-ssot.v2.json --exact coding-readiness/modern-canonical-candidate.uaHfXj/modern-capability-exact-schema-contracts.v1.json --report <temp>/uahfxj-audit.json --selftest --selftest-report <temp>/uahfxj-selftest.json",
+      "result": "EXPECTED_EXIT_1 audit=FAIL findingCount=3 selftests=24/24"
+    }
+  ],
+  "immutabilityEvidence": {
+    "auditWindow": {
+      "operationReviewerOracleSha256BeforeAndAfter": "30982425e0cc769acfad4c1a64d6e3c91a72e993fb4cd68fd14d267e2724d09b",
+      "routeReviewerOracleSha256BeforeAndAfter": "21d1e68138a3c961780d540e5fbb2c7b2bd1b2a86d872d43b934fb40eaa946ea",
+      "generatorSha256BeforeAndAfter": "7b1803b44949a259b3bb1c587d88a93477a07fd7e60e360db2415db5b0f54750",
+      "liveOperationSsotSha256BeforeAndAfter": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+      "liveManifestSha256BeforeAndAfter": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+      "g3GateDecisionSha256BeforeAndAfter": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+      "candidateTreeSha256BeforeAndAfter": {
+        "modern-canonical-candidate.2eZCXW": "eda199e366a750eda73a01090a359f921be252d4c4b6028d38ae266ecfe92e45",
+        "modern-canonical-candidate.Qs4ngh": "21774d838e69c3e91aab0d37f635730a3762468cafa13438a73a11ea79edaafc",
+        "modern-canonical-candidate.ZorhI5": "9df733e9186fb5a42a1c4bf1edbbf9734ff9faad97f4661072d8c80fc635e8ac",
+        "modern-canonical-candidate.q0mnJg": "c6f716618c0f17e2479efbe4ccff1357ec0b78ea550c78e2d0ed2f08c9642815",
+        "modern-canonical-candidate.uaHfXj": "24ba1a473c0d3caa398bd99864c0277dcfb54c9718b6a9007fc1cdd6db7545aa"
+      },
+      "oldReportSha256BeforeAndAfter": {
+        "modern-operation-semantics-source-repair-independent-audit-2026-09-16.v1.json": "6d13884552f59d02e30d2f3accdb06fa2f5b6a51cd354fe0d63cdce9bdd46e73",
+        "modern-operation-semantics-source-repair-independent-audit-2026-09-16.v2.json": "cd28484851267bd36e7c7209a898a4a55b5634c94c15c1be8f57979cf0249871",
+        "modern-operation-semantics-source-repair-2026-09-16.v1.json": "ad636740594732385f7b128008a99a8432f8df20699f69d1a58a3af0a4cd894b",
+        "modern-operation-semantics-source-repair-2026-09-16.v2.json": "3a70afb71563c23aade15566a4d7421a9b511ab542300d517443adeb89b989d2",
+        "modern-operation-semantics-source-repair-2026-09-16.v3.json": "ff5531b02e32a10f199c4c8f78bad022af13a9861e26e65bb8733aaee2c2c0aa"
+      }
+    },
+    "candidateTreesIdentical": true,
+    "oldReportsIdentical": true,
+    "gateDisposition": "UNCHANGED_CLOSED_FAIL_SAFE",
+    "candidateLiveGateUnchanged": true
+  },
+  "finalAssertion": {
+    "baselineZero": true,
+    "officialSelftests24Of24": true,
+    "routeZero": true,
+    "prior94Rejected": true,
+    "priorThreeEscapesClosed": true,
+    "newPayloadSufficiencyVariantsRejected": true,
+    "broadExemptionControlsRejected": true,
+    "all102CampaignCasesRejected": true,
+    "allExpectedCodesAndTargetsMatched": true,
+    "historicalThreeTruePositivesRetained": true,
+    "reviewerOracleFailClosed": true,
+    "sourceRepairV3Cleared": true,
+    "candidateLiveGateUnchanged": true,
+    "candidateOrGateChangeAuthorized": false
+  },
+  "nextAuthorizedStep": "A distinct downstream workflow may regenerate and independently preflight a candidate from the repaired source. This audit made no candidate, live canonical, policy, or Gate change; any such promotion remains separately gated.",
+  "sealedPayloadSha256": "cf7c7d72453085c3b3c4eab1d4eafb80f80d307406e8ea0b2c3efc2b7cfcfdc3"
+}

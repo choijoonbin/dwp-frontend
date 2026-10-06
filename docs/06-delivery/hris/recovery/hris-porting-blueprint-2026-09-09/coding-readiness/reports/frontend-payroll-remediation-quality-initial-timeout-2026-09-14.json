@@ -1,0 +1,13 @@
+{
+  "status": "ACTUAL_WRAPPER_EXIT_1_TIMEOUT_FAILURE_NO_PARTIAL_PASS_CLAIM",
+  "exitCode": 1,
+  "argv": [
+    "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "scripts/check-unused-internal-exports.mjs"
+  ],
+  "timeoutSeconds": 60,
+  "toolReportedTracebackUtf8": "Traceback (most recent call last):\n  File \"<string>\", line 22, in <module>\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 550, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 1209, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 2116, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py\", line 1253, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node', 'scripts/check-unused-internal-exports.mjs']' timed out after 60 seconds\n",
+  "traceOrigin": "Exact observed exec tool text transcribed; child raw outputs/earlier command results/prepost manifest/lock timestamps not emitted by initial wrapper and not retrospectively reconstructed.",
+  "native": false,
+  "canonicalApproval": false
+}

@@ -39,6 +39,9 @@ Reference Seed는 `dataOrigin=REFERENCE`로 명시한다. 실제 고객 데이�
 ## 관련 결정
 
 - `R1 DWP HCM Product Shell 및 Role-Aware Experience ADR.md`
+- [HRIS 통합 Lineage, v35 Successor와 Migration Lease ADR](../../03-architecture/hris/ADR-001-lineage-v35-successor-and-migration-lease.md)
+- [2026-10-06 HRIS 통합 로드맵과 개발 Gate](../../06-delivery/hris/2026-10-06-integration-roadmap.md)
+- [복구된 HRIS 업무 정의·통제 기준선](../../06-delivery/hris/recovery/README.md)
 - `R0 멀티테넌트 Workforce Projection 및 HRIS 연계 ADR.md`
 - `R1 Effective Organization Graph 및 People Directory ADR.md`
 - `R1 Multi-Surface Personal Home Composer ADR.md`

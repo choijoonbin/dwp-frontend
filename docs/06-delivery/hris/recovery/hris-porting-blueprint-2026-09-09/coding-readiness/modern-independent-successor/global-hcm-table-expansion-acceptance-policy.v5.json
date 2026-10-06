@@ -1,0 +1,160 @@
+{
+  "policyId": "DWP-HRIS-GLOBAL-HCM-NONREPLACEABLE-TABLE-EXPANSION-V5",
+  "schemaVersion": 5,
+  "status": "INDEPENDENT_TRIAGE_REMEDIATION_AND_131_SCOPE_ACCEPTANCE_REQUIREMENT",
+  "authorityBoundary": "SUCCESSOR_TO_IMMUTABLE_131_TABLE_V4_POLICY_WITH_CLOSED_VALIDATOR_GRAMMARS;NOT_G3_AUTHORITY",
+  "predecessorPolicy": {
+    "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+    "sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+    "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+    "disposition": "IMMUTABLE_131_TABLE_ACCEPTANCE_PREDECESSOR_SUPERSEDED_NOT_REWRITTEN"
+  },
+  "preflightTriageAuthority": {
+    "path": "coding-readiness/reports/modern-v4-preflight-finding-triage-independent-2026-09-16.v1.json",
+    "sha256": "03f8e2a967e052a7096b0bc837b5ccb9c7faee6a30920717a1f438647f5e953c",
+    "sealedPayloadSha256": "e930be1e35d7987a1373c6e16133cc196a62e80fce9e50e685e81820fffbaa8e",
+    "closedGroups": ["G02", "G03", "G04", "G05", "G06", "G07", "G08", "G09", "G11", "G12", "G13", "G14"]
+  },
+  "independentReview": {
+    "path": "coding-readiness/modern-independent-successor/reports/table-scope-expansion-132-independent-review.v1.json",
+    "sha256": "da7b9a3b5adfe0246f9d53e4dd42d4275135b303033782a7c84450f822198075",
+    "requiredFindingIds": ["P0-TS132-PRODUCER-001", "P0-TS132-PRODUCER-002", "P0-TS132-CONSUMER-003"]
+  },
+  "scopeReductionReview": {
+    "path": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v1.json",
+    "sha256": "99e96abe87d7141f3d7ff6a0185db5f1820a8385e700d34d0df3b8e11a322604",
+    "sealedPayloadSha256": "39a27f6c0362ca52eddfb19c8ac2b31981d98755de5d911e15ea2791b4242bcd",
+    "decision": "REMOVE_ORPHAN_SYS_HRIS_LISTENING_EXPORT_RECEIPTS_AND_RETAIN_EXISTING_ANALYTICS_EXPORT_OWNER"
+  },
+  "requirementSource": {
+    "path": "coding-readiness/reports/global-hcm-semantic-closure-independent-audit-2026-09-16.v1.json",
+    "sha256": "af0ad56a400abd361fc8f14164f417b28d66a7daa1dd475a9f2926856ab51ba6",
+    "findingIds": ["P0-REC-001", "P0-ONB-001", "P0-WFP-001", "P0-BNF-001", "P0-CWK-001", "P0-LRN-001", "P0-MKT-001", "P0-CMP-001", "P0-WFM-001", "P1-DECISION-003", "P1-EFFECTIVE-004"]
+  },
+  "frozenBaseline": {
+    "tableCount": 115,
+    "tableSetSha256": "7a8805795efade4334baa3a6f91d6180b1a0bb4ecec118688e25e86cebd2f2cd",
+    "sourceManifestFileSha256": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+    "sourceExactSchemaFileSha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730"
+  },
+  "successorRequirementProfiles": {
+    "anonymousCredentialQueryPep": {
+      "operationId": "modern.listening.active.query",
+      "subjectAuthorizationMode": "ANONYMOUS_SIGNED_CREDENTIAL_HOLDER",
+      "requiredPepKeys": ["tenant", "purpose", "population", "fieldPolicy", "denyOnUnavailable"],
+      "forbiddenPepKeys": ["authorizationCapability"],
+      "credentialHeader": "X-Listening-Participation-Credential",
+      "requiredCredentialFields": ["tenantPublicId", "surveyPublicId", "surveyRevision", "admissionPublicId", "admissionVersionPublicId", "admissionOwnerVersion", "formVersionPublicId", "formArtifactDigest", "eligibilityVersionPublicId", "eligibilityRevision", "consentPolicyVersionPublicId", "consentEvidenceCommitment", "nonRevocationProof", "opaqueJti", "tokenCommitment", "aud", "iat", "nbf", "exp", "kid", "alg", "signature"],
+      "requiredOfflineProofFields": ["issuancePublicId", "issuanceRevision", "opaqueJtiCommitment", "tokenCommitment", "status", "proofGeneratedAt", "proofExpiresAt", "kid", "alg", "ownerSignature"],
+      "audience": "DWP.HRIS.LISTENING.PROTECTED",
+      "principalCoupling": "FORBIDDEN"
+    },
+    "listeningCohortProjection": {
+      "operationId": "modern.listening.cohorts.query",
+      "canonicalResponseFields": ["cohortPublicId", "adequacyCategory", "measureValues", "subjectCount", "anonymityThreshold", "privacyBudgetReceiptId", "lineageReceiptId"],
+      "authorityResponseFields": ["projectionPublicId", "adequacyCategory", "measureValues", "subjectCount", "anonymityThreshold", "policyRevision", "lineageReceiptPublicId"],
+      "conditionalFields": {"condition": "adequacyCategory=ADEQUATE", "requiredWhenAdequate": ["measureValues", "subjectCount"], "forbiddenWhenSuppressed": ["measureValues", "subjectCount"]},
+      "projectionTable": "sys_hris_listening_cohort_projections",
+      "projectionColumns": ["survey_public_id", "cohort_package_public_id", "policy_revision", "source_epoch", "cutoff_at", "adequacy_category", "measure_values", "subject_count", "anonymity_threshold", "privacy_budget_receipt_public_id"],
+      "lineageReceiptTable": "sys_hris_listening_lineage_receipts",
+      "lineageJoin": {"columns": ["tenant_id", "listening_cohort_projection_id"], "targetColumns": ["tenant_id", "record_id"], "mode": "LOCAL_COMPOSITE_FK"},
+      "rawRespondentBucket": "FORBIDDEN",
+      "inlineLineageBlob": "FORBIDDEN"
+    },
+    "workforceSimulationResultHandler": {
+      "handlerId": "internal.workforceplan.simulation-result.consume",
+      "rootTable": "ppl_wfp_simulation_requests",
+      "preStates": ["REQUESTED"],
+      "postStates": ["COMPLETED", "FAILED"],
+      "signedResultFields": ["requestPublicId", "expectedRevision", "outcome", "payloadDigest"],
+      "resultProofAssignments": ["result_receipt_public_id", "result_receipt_revision", "result_schema_version", "result_digest"],
+      "refetchMode": "FORBIDDEN",
+      "orderedDml": ["CLAIM_INBOX first", "LOCK aggregate tenant+public_id+version", "VALIDATE signed owner result and exact subject/version/digest", "UPDATE_CAS domain", "COMPLETE_INBOX closed result/resultDigest/post identity+version", "APPEND_OUTBOX last"],
+      "rollbackRule": "ANY_STEP_FAULT_ROLLS_BACK_INBOX_DOMAIN_ACK_AND_OUTBOX"
+    },
+    "dualAppendOnlyPublicRevisions": {
+      "operationIds": ["modern.contingent.engagement.revise", "modern.succession.plan.revise"],
+      "requiredRequestFields": ["revisionMode", "effectiveFrom", "reason", "changedFields", "segmentPredecessorVersionId", "segmentPredecessorRevision"],
+      "forbiddenRequestFields": ["effectiveTo"],
+      "storedEffectiveTo": "NULL_ONLY_NON_AUTHORITATIVE",
+      "derivedEffectiveTo": "NEXT_VISIBLE_BASE_SEGMENT_EFFECTIVE_FROM_OR_OPEN_END",
+      "priorHistoryMutation": "FORBIDDEN",
+      "latestFallback": "FORBIDDEN"
+    },
+    "protectedListeningSubmit": {
+      "operationId": "modern.listening.response.submit",
+      "ownerPortOperation": "protected.submitResponse",
+      "routeFields": ["surveyId"],
+      "bodyFields": ["signedParticipationCredential", "responseToken", "answers"],
+      "additionalProperties": false,
+      "forbiddenDuplicateFields": ["participationEnvelope", "anonymousEnvelope", "admissionVersion", "admissionVersionPublicId", "admissionOwnerVersion"],
+      "forbiddenIdentityFields": ["workerId", "personId", "principalId", "employeeId"],
+      "receiptTable": "sys_hris_listening_protected_receipts",
+      "outboxTable": null,
+      "deliveryClass": "OWNER_LOCAL_PRIVATE_BROKER_FORBIDDEN",
+      "publicEvents": []
+    },
+    "qualifiedPhysicalLineage": {
+      "qualifiers": ["STATE_WINNER", "CONTENT_WINNER", "SELECTED_STATE_ROW", "SELECTED_CONTENT_ROW", "CONTENT_ROW"],
+      "maxQualifierDepth": 1,
+      "selectionModes": ["UNQUALIFIED", "STATE_HISTORY", "CONTENT_HISTORY"],
+      "latestFallback": "FORBIDDEN"
+    },
+    "temporalQueryResolution": {
+      "systemAsOfOperand": "query.systemAsOf",
+      "filterOrder": "FIRST_FILTER_BEFORE_STATE_AND_CONTENT_ARBITRATION",
+      "stateAndContentWinners": "DISTINCT",
+      "persistedEffectiveTo": "NULL_ONLY_NON_AUTHORITATIVE",
+      "latestFallback": "FORBIDDEN"
+    },
+    "listeningAuthorityLineage": {
+      "manifestEdge": "MANIFEST_TO_EXACT_SEALED_V2_ONLY",
+      "manifestPredecessorField": "FORBIDDEN",
+      "authorityEdge": "SEALED_V2_SUCCESSOR_LINEAGE_TO_EXACT_V1",
+      "v1FileSha256": "62f110f36a4d26dab7dda3051e6baf1a5872a475b8f2a83cee19f2cd950496b1"
+    }
+  },
+  "successorScope": {
+    "tableCount": 131,
+    "deltaCount": 17,
+    "netDelta": 16,
+    "removedTableIds": ["sys_hris_listening_export_receipts"],
+    "removalDisposition": {
+      "sys_hris_listening_export_receipts": {
+        "reason": "The frozen baseline table has no producer or consumer in the exact Listening public-operation, owner-port or handler closed sets and retaining it would leave an implementer-visible orphan.",
+        "replacementOwnerTable": "sys_hris_analytics_export_receipts",
+        "replacementBoundary": "The existing same-owner analytics export receipt remains the sole export lifecycle; no Listening foreign key or repository read may target the removed table.",
+        "foreignKeyDisposition": "REMOVED_WITH_TABLE;NO_DANGLING_REFERENCE"
+      }
+    },
+    "addedRows": [
+      {"tableId":"ppl_rec_offer_decisions","ownerSession":"HRIS-HRM","producers":["modern.recruiting.offer.respond"],"requirementIds":["P0-REC-001","P1-DECISION-003"],"readConsumers":["modern.recruiting.candidate.query","modern.recruiting.candidates.query"],"nonReplaceability":"Offer acceptance or rejection actor mode, subject, delegation/source receipt and reason are immutable decision facts; mutating ppl_rec_offers status cannot preserve decision history."},
+      {"tableId":"ppl_rec_requisition_versions","ownerSession":"HRIS-HRM","producers":["modern.recruiting.requisition.create","modern.recruiting.requisition.lifecycle.change","modern.recruiting.requisition.publish","modern.recruiting.requisition.revise"],"requirementIds":["P0-REC-001","P1-EFFECTIVE-004"],"readConsumers":["modern.recruiting.requisition.query","modern.recruiting.requisitions.query"],"nonReplaceability":"Correction versus future supersession, effective interval, predecessor and reason require append-only requisition versions rather than rewriting the mutable requisition root."},
+      {"tableId":"ppl_jny_template_task_definitions","ownerSession":"HRIS-HRM","producers":["modern.onboarding.template.create","modern.onboarding.template.revise"],"requirementIds":["P0-ONB-001"],"readConsumers":["modern.onboarding.template.query","modern.onboarding.templates.query","modern.onboarding.assignment.query","modern.onboarding.assignments.query","modern.onboarding.self.query"],"nonReplaceability":"Ordered task identity, actor rule, due anchor, applicability condition and completion/evidence schema need relational keys and exact historical query lineage that a digest or untyped JSON blob cannot enforce."},
+      {"tableId":"ppl_wfp_simulation_requests","ownerSession":"HRIS-HRM","producers":["internal.workforceplan.simulation-result.consume","modern.workforceplan.scenario.cancel","modern.workforceplan.scenario.simulate"],"requirementIds":["P0-WFP-001"],"readConsumers":["modern.workforceplan.scenario.query","modern.workforceplan.scenarios.query"],"nonReplaceability":"Simulation request identity, pinned input/assumption revision and immutable result receipt lifecycle are distinct from the scenario revision and must be independently replayable."},
+      {"tableId":"ppl_bnf_enrollment_eligibility_receipts","ownerSession":"HRIS-HRM","producers":["modern.benefits.enrollment.submit"],"requirementIds":["P0-BNF-001"],"readConsumers":["modern.benefits.enrollment.query","modern.benefits.enrollments.query"],"nonReplaceability":"Eligibility policy/snapshot/decision proof must remain immutable and auditable independently of a mutable enrollment status."},
+      {"tableId":"ppl_bnf_dependent_elections","ownerSession":"HRIS-HRM","producers":["modern.benefits.enrollment.submit"],"requirementIds":["P0-BNF-001"],"readConsumers":["modern.benefits.enrollment.query","modern.benefits.enrollments.query"],"nonReplaceability":"A bounded ordered set of tokenized dependent relationship elections requires per-row uniqueness, option/version linkage and field-policy-safe query lineage; a digest cannot reproduce it."},
+      {"tableId":"ppl_bnf_life_event_decisions","ownerSession":"HRIS-HRM","producers":["modern.benefits.lifeevent.decide"],"requirementIds":["P0-BNF-001","P1-DECISION-003"],"readConsumers":["modern.benefits.lifeevent.query","modern.benefits.lifeevents.query"],"nonReplaceability":"Life-event decision actor/source/delegation and outcome are immutable facts and cannot be reconstructed from the current life-event or enrollment state."},
+      {"tableId":"ppl_cwk_access_receipts","ownerSession":"HRIS-HRM","producers":["internal.contingent.access-grant-result.consume","internal.contingent.access-revoke-result.consume"],"requirementIds":["P0-CWK-001"],"readConsumers":["modern.contingent.engagement.query","modern.contingent.engagements.query"],"nonReplaceability":"Signed access grant/revoke outcomes are immutable owner receipts on a separate access lifecycle; engagement state cannot serve as their proof."},
+      {"tableId":"ppl_cwk_engagement_versions","ownerSession":"HRIS-HRM","producers":["internal.contingent.access-expiry.initiate","internal.contingent.access-grant-result.consume","internal.contingent.access-revoke-result.consume","modern.contingent.engagement.activate","modern.contingent.engagement.create","modern.contingent.engagement.offboard","modern.contingent.engagement.reject","modern.contingent.engagement.revise","modern.contingent.engagement.submit","modern.contingent.sponsor.reassign"],"requirementIds":["P0-CWK-001","P1-EFFECTIVE-004"],"readConsumers":["modern.contingent.engagement.query","modern.contingent.engagements.query"],"nonReplaceability":"A stable engagement identity cannot also be overwritten to represent correction and future supersession; dual append-only root and effective-segment predecessor chains preserve classification/access intent and reason without prior-row mutation. Base segments define derived next-boundaries, while corrections intentionally reuse the same segment and effective_from."},
+      {"tableId":"prf_lrn_offering_versions","ownerSession":"HRIS-PER","producers":["modern.learning.offering.create","modern.learning.offering.publish","modern.learning.offering.retire","modern.learning.offering.revise"],"requirementIds":["P0-LRN-001","P1-EFFECTIVE-004"],"readConsumers":["modern.learning.offering.query","modern.learning.catalog.query"],"nonReplaceability":"Executable content, delivery/session, capacity, eligibility and skill-map revisions must be addressable as-of without rewriting the offering root."},
+      {"tableId":"prf_lrn_capacity_ledger","ownerSession":"HRIS-PER","producers":["modern.learning.assignment.cancel","modern.learning.assignment.create","modern.learning.self.enroll"],"requirementIds":["P0-LRN-001"],"readConsumers":["modern.learning.assignment.query","modern.learning.assignments.query"],"nonReplaceability":"Atomic reserve, release and waitlist ordering are ledger facts needed for concurrency-safe capacity replay and cannot be reduced to an offering counter."},
+      {"tableId":"prf_mkt_opportunity_versions","ownerSession":"HRIS-PER","producers":["modern.opportunity.cancel","modern.opportunity.close","modern.opportunity.create","modern.opportunity.publish","modern.opportunity.revise"],"requirementIds":["P0-MKT-001"],"readConsumers":["modern.opportunity.query","modern.opportunity.catalog.query","modern.opportunity.application.query","modern.opportunity.applications.query"],"nonReplaceability":"Criteria, capacity and skill requirements must be pinned to the opportunity revision seen by applicants and explanations; mutable root columns cannot preserve that historical input."},
+      {"tableId":"prf_suc_plan_versions","ownerSession":"HRIS-PER","producers":["modern.succession.nomination.add","modern.succession.nomination.withdraw","modern.succession.plan.approve","modern.succession.plan.create","modern.succession.plan.publish","modern.succession.plan.reject","modern.succession.plan.retire","modern.succession.plan.revise","modern.succession.plan.submit","modern.succession.readiness.record"],"requirementIds":["P0-SUC-001","P1-EFFECTIVE-004"],"readConsumers":["modern.succession.plan.query","modern.succession.plans.query"],"nonReplaceability":"Stable succession-plan identity must be separated from restricted audience, key-position, content and effective-time revisions; a publication receipt cannot reproduce historical plan content or authorization policy."},
+      {"tableId":"prf_cmp_proposal_versions","ownerSession":"HRIS-PER","producers":["modern.compplan.proposal.upsert"],"requirementIds":["P0-CMP-001"],"readConsumers":["modern.compplan.proposal.query","modern.compplan.proposals.query"],"nonReplaceability":"Every compensation amount/component/reason/effective-date CAS revision must remain frozen for approval and snapshot derivation rather than being overwritten in the proposal root."},
+      {"tableId":"prf_cmp_plan_proposal_refs","ownerSession":"HRIS-PER","producers":["modern.compplan.plan.approve"],"requirementIds":["P0-CMP-001"],"readConsumers":["modern.compplan.cycle.query","modern.compplan.cycles.query","modern.compplan.proposal.query","modern.compplan.proposals.query"],"nonReplaceability":"Plan approval freezes an exact ordered proposal-ID/version set; a plan digest cannot prove membership or support server-derived approved snapshot lines."},
+      {"tableId":"tme_wfm_approval_receipts","ownerSession":"HRIS-TIM","producers":["internal.wfm.approval-result.consume"],"requirementIds":["P0-WFM-001"],"readConsumers":["modern.wfm.candidate.query","modern.wfm.candidates.query"],"nonReplaceability":"Approval outcome, decision receipt and candidate version are immutable facts separate from candidate status and are required for publish admission and historical refetch."},
+      {"tableId":"sys_hris_ai_assistance_reviews","ownerSession":"HRIS-SYS","producers":["modern.ai.assist.review","modern.ai.assist.revoke"],"requirementIds":["P0-AI-001"],"readConsumers":["modern.ai.assistance.query","modern.ai.assistances.query"],"nonReplaceability":"Human actor, assistance/subject identity, confirm-or-reject decision, reason and decision/delegation receipt have a distinct audience and retention lifecycle from model-output provenance and must remain immutable."}
+    ]
+  },
+  "acceptanceRules": [
+    "The live manifest tableScopeChange must pin this exact v5 file hash and payload seal, while this policy directly pins immutable v4; activeTableSpecifications remains exactly 131.",
+    "Every added row must reproduce the exact ownerSession, complete producer set, exact declared readConsumers and non-empty nonReplaceability reason.",
+    "Every declared reader must include the table in readPlan.tables and projectionTuple.physicalSources and expose at least two exact durable direct field bindings under tenant-safe joins; qualified lineage is accepted only through the closed one-prefix grammar.",
+    "Anonymous Listening uses the exact signed-credential PEP profile without authenticated-principal capability coupling; protected submit admits no unsigned duplicate fields and no broker/public outbox.",
+    "Crypto erasure remains the exact multi-phase owner-local lease/KMS/TX2 saga; a fictitious one-database transaction is forbidden.",
+    "Contingent and succession public revisions forbid client effectiveTo; persisted effective_to is NULL-only and the response boundary is server-derived with no latest fallback.",
+    "Manifest-to-v2 and sealed-v2-to-v1 Listening authority edges are validated separately; a duplicate manifest predecessor hash is forbidden."
+  ],
+  "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2"
+}

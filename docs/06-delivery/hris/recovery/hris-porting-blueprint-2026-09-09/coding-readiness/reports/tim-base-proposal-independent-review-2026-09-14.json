@@ -1,0 +1,4816 @@
+{
+  "reportId": "TIM.BASE.INDEPENDENT.REVIEW.2026-09-14.v1",
+  "createdDate": "2026-09-14",
+  "language": "ko-KR",
+  "status": "INDEPENDENT_FINDINGS_REPORTED_NOT_APPROVED",
+  "G3Gate": "CLOSED_NOT_AUTHORIZED",
+  "independentPass": false,
+  "authorProposalNotCanonical": true,
+  "reviewedInputs": [
+    {
+      "inputId": "TIM_JSON",
+      "path": "coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+      "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+      "bytes": 10707168
+    },
+    {
+      "inputId": "TIM_MD",
+      "path": "coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.md",
+      "sha256": "32fa6514408faf690de707ca7c585fb957df8b3cfc1145b035f87a3079d5ddbb"
+    },
+    {
+      "inputId": "SOURCE_ORACLE",
+      "path": "coding-readiness/validate_modern_semantic_field_lineage.py",
+      "sha256": "30e3fe74498ba265945970b4b68ab008bbce6108fc74169edd356e8d70f3bf81"
+    }
+  ],
+  "scope": {
+    "mechanicalFullProposal": [
+      "114 operations/43 table specs/581 columns/4789 write targets+rule presence/5018 typed declarations/461 schema definitions/81 event shapes",
+      "all normalized routes/556 recursive object nodes/9 machine reachability graphs/8 input pins",
+      "2 config36 typed instances/69 strict schema negatives/hash12 owner+7 interval+4 artifact/14 Decimal+DST arithmetic checks"
+    ],
+    "semanticCriticalPaths": [
+      "all four artifact version pipelines and context-vs-published source boundary",
+      "schedule creation/assign/validate/approval/publish/amend/cancel/reconcile and WFM same-owner SPI",
+      "eligibility/enrollment/request/reservation/entitlement partial/recovery/carryover/termination/reversal",
+      "timecard LOCKED/reopened successor and historical worker-only ledger assignment",
+      "availability native arrangement ownership+tenant/source/PEP/new authority"
+    ],
+    "notCertified": [
+      "12 retained historical TIM operations outside bounded proposal",
+      "full BASE86 semantic restoration",
+      "root WFM successor independently approved semantics",
+      "actual planned business DDL/CRUD/native runtime/pinned tzdb execution",
+      "customer identity/country rules/adoption/G6"
+    ],
+    "noSourceChanges": true,
+    "noGradle": true,
+    "noPostgresExecution": true,
+    "noAttackExperiment": true,
+    "onlyNewReportFilesWritten": true
+  },
+  "stageBoundary": {
+    "G3": "exact approved complete business design+planned SQL/API/read-write/state/source/event/fixture/test allocation; actual shared owner DTO/SPI/failclosed guards/adapters/consumer compile and current common+pilot/composite bootstrap runtime. No all-business implementation circular prerequisite.",
+    "G4": "actual full proposed domain CRUD/migration/native arithmetic/state/ledger and end-to-end acceptance execution.",
+    "G6": "real customer identity/authority/adoption/live country/provider/production process-isolation approval."
+  },
+  "summary": {
+    "P0": 5,
+    "P1": 6,
+    "standardsShapePassNotDomainPass": true,
+    "canonicalSemanticOracle": "FAIL_ZERO_VALIDATED_OPERATIONS_NOT_VALIDATED",
+    "wholeProposalReadiness": "NOT_APPROVED"
+  },
+  "evidence": {
+    "Ajv": {
+      "grade": "ACTUAL_STANDARDS_SCHEMA_ONLY",
+      "sourceSha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+      "ajvVersion": "6.12.6",
+      "compiled": 461,
+      "compileErrors": [],
+      "objectNodes": 556,
+      "notClosed": [],
+      "fixtureInstances": 36,
+      "fixtureFailures": [],
+      "negativeControlCount": 69,
+      "negativeControlFailures": [],
+      "witnesses": [
+        {
+          "label": "lexical.value.-0",
+          "schemaId": "TIM.Quantity.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        },
+        {
+          "label": "lexical.value.-0.000000",
+          "schemaId": "TIM.Quantity.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        },
+        {
+          "label": "lexical.value.1.500000",
+          "schemaId": "TIM.Quantity.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        },
+        {
+          "label": "invalid.local.boundary.time.schema.accepted",
+          "schemaId": "TIM.AccrualMonthly.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        },
+        {
+          "label": "HOUR.partial.leave.date.without.interval",
+          "schemaId": "TIM.LeaveSegment.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        },
+        {
+          "label": "zero.worked.denominator.schema.accepted",
+          "schemaId": "TIM.AccrualPerWorkedUnit.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        },
+        {
+          "label": "event.wrong.state.with.DRAFT.resultRecord",
+          "schemaId": "TIM.Event.tim.rule.create.Committed.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        },
+        {
+          "label": "pending.receipt.nonnull.registered.result.condition.unspecified",
+          "schemaId": "TIM.CommandReceipt.tim.leave.entitlement.run.v1",
+          "expected": true,
+          "actual": "ACCEPTED",
+          "matched": true,
+          "errors": []
+        }
+      ]
+    },
+    "structural": {
+      "grade": "STATIC_STRUCTURE_NOT_SEMANTIC_PASS",
+      "sourceSha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+      "operationIdsUnique": true,
+      "operationLineageIdsExact": true,
+      "requiredColumnRows": 4789,
+      "requiredColumnTargetMissing": [],
+      "typedSourceDuplicate": [],
+      "derivationRuleMissing": [],
+      "kinds": {
+        "DOMAIN_DERIVATION": 4540,
+        "REFETCHED_OWNER_SNAPSHOT": 85,
+        "GENERATED_BUSINESS_ID": 330,
+        "QUERY_RESULT": 33,
+        "PAGE_CURSOR": 15,
+        "PAGE_HAS_MORE": 15
+      },
+      "ownerRefsTenantActorOnly": 85,
+      "firstOwnerRefs": [
+        [
+          0,
+          1,
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ],
+        [
+          5,
+          1,
+          "Approval.TimeDecisionSnapshot.v1"
+        ],
+        [
+          5,
+          2,
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ]
+      ],
+      "generatedWithoutGenerationContract": 330,
+      "generatedBigInt": 124,
+      "ownerClockDependencyAbsent": 212,
+      "normalizedRouteDuplicates": {
+        "('POST', '/api/time/v1/leave/enrollments/{id}/termination')": [
+          [
+            63,
+            "tim.leave.enrollment.terminate"
+          ],
+          [
+            110,
+            "tim.leave.enrollment.cancel"
+          ]
+        ]
+      },
+      "forwardCreateReferences": 19,
+      "firstForwardReferences": [
+        [
+          0,
+          0,
+          "tme_work_rule_set_versions",
+          "tme_owner_artifact_snapshots"
+        ],
+        [
+          0,
+          1,
+          "tme_work_rule_set_versions",
+          "tme_policy_evaluation_reports"
+        ],
+        [
+          0,
+          2,
+          "tme_work_rule_set_versions",
+          "tme_policy_evaluation_reports"
+        ],
+        [
+          1,
+          0,
+          "tme_shift_template_versions",
+          "tme_owner_artifact_snapshots"
+        ],
+        [
+          1,
+          1,
+          "tme_shift_template_versions",
+          "tme_policy_evaluation_reports"
+        ]
+      ],
+      "reciprocalCreateCycles": [
+        [
+          "tme_schedule_evaluations",
+          "tme_schedule_periods"
+        ],
+        [
+          "tme_schedule_periods",
+          "tme_schedule_publication_receipts"
+        ],
+        [
+          "abs_leave_approval_bindings",
+          "abs_leave_requests"
+        ]
+      ],
+      "inputManifests": [
+        {
+          "path": "session-evidence/tim/g2-physical-schema.sql",
+          "expected": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+          "actual": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+          "match": true
+        },
+        {
+          "path": "session-evidence/tim/g2-api-event-contracts.json",
+          "expected": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f",
+          "actual": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f",
+          "match": true
+        },
+        {
+          "path": "session-evidence/tim/g2-transport-schemas.v1.json",
+          "expected": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc",
+          "actual": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc",
+          "match": true
+        },
+        {
+          "path": "session-evidence/tim/synthetic-golden-fixtures.json",
+          "expected": "1c8bbc5b69c6ea96b364a8f7fbad3fccf6e7ec2c14108daf8d4a5a93637ebed0",
+          "actual": "1c8bbc5b69c6ea96b364a8f7fbad3fccf6e7ec2c14108daf8d4a5a93637ebed0",
+          "match": true
+        },
+        {
+          "path": "coding-readiness/g3-file-allocation-register.csv",
+          "expected": "adfe95e90c2df54df471ab757a1af83e5febaf4a2cd1f9c9c4dc84a763c3923d",
+          "actual": "adfe95e90c2df54df471ab757a1af83e5febaf4a2cd1f9c9c4dc84a763c3923d",
+          "match": true
+        },
+        {
+          "path": "coding-readiness/cross-module-canonical-schemas.v1.json",
+          "expected": "6221da1de36e397d5d52ac2bde1b68f3116b79a96c66a48bdefa14f261c29d71",
+          "actual": "6221da1de36e397d5d52ac2bde1b68f3116b79a96c66a48bdefa14f261c29d71",
+          "match": true
+        },
+        {
+          "path": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "expected": "b0785ae509688a3094db999b2da4c25f95b7ad86e555f72a417d42b1fdba692d",
+          "actual": "b0785ae509688a3094db999b2da4c25f95b7ad86e555f72a417d42b1fdba692d",
+          "match": true
+        },
+        {
+          "path": "coding-readiness/semantic-remediation/sys-stream-authority-decision.proposal.v1.md",
+          "expected": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1",
+          "actual": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1",
+          "match": true
+        }
+      ]
+    },
+    "sourceOracle": {
+      "grade": "REAL_CANONICAL_ORACLE_REJECTION",
+      "status": "FAIL",
+      "readiness_pass": false,
+      "validationMode": "READINESS",
+      "counts": {},
+      "errors": [
+        {
+          "code": "UNSUPPORTED_PROPOSAL_DIALECT",
+          "where": "document",
+          "message": "proposal or mixed operation graphs require an explicit canonical successor adapter"
+        },
+        {
+          "code": "OPERATION_GRAPH_REQUIRED",
+          "where": "document",
+          "message": "operationBindings and operationFieldLineage must both be explicitly present"
+        }
+      ],
+      "validatedOperations": 0
+    },
+    "hashes": {
+      "grade": "ACTUAL_HASH_RECOMPUTATION_NOT_OWNER_AUTHORITY",
+      "ownerCount": 12,
+      "ownerMismatches": [],
+      "intervalCount": 7,
+      "intervalMismatches": [],
+      "artifactCount": 4,
+      "artifactMismatches": []
+    },
+    "mathAndForeignKeys": {
+      "grade": "INDEPENDENT_MATH_AND_IN_MEMORY_DECLARED_KEYS_NOT_DOMAIN_OR_POSTGRES",
+      "mathChecks": 14,
+      "mathFailures": [],
+      "mathCases": [
+        {
+          "fixtureId": "TIM_CONFIG_A",
+          "field": "postedGrant",
+          "expected": "0.967742",
+          "actual": "0.967742",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_A",
+          "field": "balanceBeforeCarryover",
+          "expected": "2.467742",
+          "actual": "2.467742",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_A",
+          "field": "expiredExcess",
+          "expected": "1.467742",
+          "actual": "1.467742",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_A",
+          "field": "carryoverFinalBalance",
+          "expected": "1.000000",
+          "actual": "1",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_A",
+          "field": "terminationFinalGrant",
+          "expected": "0.451613",
+          "actual": "0.451613",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_A",
+          "field": "scheduleValidation",
+          "expected": "VALIDATED",
+          "actual": "VALIDATED",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_B",
+          "field": "postedGrant",
+          "expected": "1.935484",
+          "actual": "1.935484",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_B",
+          "field": "balanceBeforeCarryover",
+          "expected": "3.435484",
+          "actual": "3.435484",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_B",
+          "field": "expiredExcess",
+          "expected": "1.435484",
+          "actual": "1.435484",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_B",
+          "field": "carryoverFinalBalance",
+          "expected": "2.000000",
+          "actual": "2",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_B",
+          "field": "terminationFinalGrant",
+          "expected": "0.903226",
+          "actual": "0.903226",
+          "match": true
+        },
+        {
+          "fixtureId": "TIM_CONFIG_B",
+          "field": "scheduleValidation",
+          "expected": "VALIDATION_FAILED",
+          "actual": "VALIDATION_FAILED",
+          "match": true
+        },
+        {
+          "fixtureId": "DST_SPRING",
+          "field": "elapsedMinutes",
+          "expected": 60,
+          "actual": 60,
+          "match": true
+        },
+        {
+          "fixtureId": "DST_FOLD",
+          "field": "elapsedMinutes",
+          "expected": 60,
+          "actual": 60,
+          "match": true
+        }
+      ],
+      "fkWitnesses": [
+        {
+          "caseId": "SEGMENT_CROSS_PERIOD",
+          "table": "tme_scheduled_segments",
+          "row": {
+            "tenant_id": 1,
+            "schedule_period_id": 10,
+            "schedule_assignment_id": 201
+          },
+          "violatedRelationship": "assignment201 belongs period20, segment claims period10",
+          "foreignKeyResults": [
+            {
+              "columns": [
+                "tenant_id",
+                "schedule_period_id"
+              ],
+              "target": "tme_schedule_periods",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "schedule_assignment_id"
+              ],
+              "target": "tme_worker_schedule_assignments",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "shift_template_version_id"
+              ],
+              "target": "tme_shift_template_versions",
+              "match": true
+            }
+          ],
+          "allDeclaredFksMatch": true
+        },
+        {
+          "caseId": "APPROVAL_CROSS_EVALUATION_PERIOD",
+          "table": "tme_schedule_approval_bindings",
+          "row": {
+            "tenant_id": 1,
+            "schedule_period_id": 10,
+            "evaluation_id": 302
+          },
+          "violatedRelationship": "evaluation302 belongs period20, binding claims period10",
+          "foreignKeyResults": [
+            {
+              "columns": [
+                "tenant_id",
+                "schedule_period_id"
+              ],
+              "target": "tme_schedule_periods",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "evaluation_id"
+              ],
+              "target": "tme_schedule_evaluations",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "decision_snapshot_id"
+              ],
+              "target": "tme_owner_artifact_snapshots",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "cancellation_snapshot_id"
+              ],
+              "target": "tme_owner_artifact_snapshots",
+              "match": true
+            }
+          ],
+          "allDeclaredFksMatch": true
+        },
+        {
+          "caseId": "LEDGER_CROSS_RUN_ITEM_ENROLLMENT",
+          "table": "abs_entitlement_ledger_entries",
+          "row": {
+            "tenant_id": 1,
+            "enrollment_id": 402,
+            "source_run_item_id": 801
+          },
+          "violatedRelationship": "item801 belongs enrollment401, ledger claims402",
+          "foreignKeyResults": [
+            {
+              "columns": [
+                "tenant_id",
+                "enrollment_id"
+              ],
+              "target": "abs_worker_plan_enrollments",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "source_run_item_id"
+              ],
+              "target": "abs_entitlement_run_items",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "source_leave_request_id"
+              ],
+              "target": "abs_leave_requests",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "source_lot_event_id"
+              ],
+              "target": "abs_leave_lot_events",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "reverses_entry_id"
+              ],
+              "target": "abs_entitlement_ledger_entries",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "linked_entry_id"
+              ],
+              "target": "abs_entitlement_ledger_entries",
+              "match": true
+            }
+          ],
+          "allDeclaredFksMatch": true
+        },
+        {
+          "caseId": "GRANT_LOT_CROSS_ENROLLMENT",
+          "table": "abs_leave_grant_lots",
+          "row": {
+            "tenant_id": 1,
+            "enrollment_id": 402,
+            "grant_entry_id": 901
+          },
+          "violatedRelationship": "grant901 belongs enrollment401, lot claims402",
+          "foreignKeyResults": [
+            {
+              "columns": [
+                "tenant_id",
+                "enrollment_id"
+              ],
+              "target": "abs_worker_plan_enrollments",
+              "match": true
+            },
+            {
+              "columns": [
+                "tenant_id",
+                "grant_entry_id"
+              ],
+              "target": "abs_entitlement_ledger_entries",
+              "match": true
+            }
+          ],
+          "allDeclaredFksMatch": true
+        }
+      ],
+      "fkExecution": "IN_MEMORY_DECLARED_KEYS_ONLY_NOT_POSTGRES_NOT_PROPOSED_OWNER_GUARDS"
+    },
+    "fixtureCoverage": {
+      "uniqueRequestedOperations": 11,
+      "totalOperations": 114,
+      "concreteNegativeInputObjects": 0,
+      "stringNegativeDescriptions": 30
+    },
+    "eventShapeScope": {
+      "unboundedStateBeforeAfter": 81,
+      "totalEvents": 81
+    },
+    "sqlLexicalWitness": {
+      "tableIndex": 12,
+      "tokens": [
+        "AND50400",
+        "AND50400"
+      ],
+      "classification": "STATIC_INVALID_KEYWORD_TOKEN_NOT_EXECUTED"
+    },
+    "noCorrelationAsBusinessIdentity": {
+      "expressionCheck": "exact headers.X-Correlation-ID expressions only correlation_id sinks",
+      "badExpressionSinks": 0,
+      "limitation": "not canonical source graph identity certification"
+    }
+  },
+  "findings": [
+    {
+      "findingId": "TIM-IR-P0-001",
+      "severity": "P0",
+      "status": "OPEN",
+      "reviewClassification": "NEW_CONFIRMED",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "종료와 무효 취소의 public POST 경로가 충돌합니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/63"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/110"
+        }
+      ],
+      "observation": "114개 method+parameter-name-normalized path 전수 검사에서 중복은 정확히 1쌍입니다. 두 operation 모두 POST /api/time/v1/leave/enrollments/{enrollmentId}/termination이며 ACTIVE→ENDED와 ACTIVE→CANCELLED, request schema와 authorizationDuty/idempotent originatingAction가 다릅니다. cancel에는 terminate의 proration/settlement rules도 복사되어 있습니다.",
+      "effect": "하나의 HTTP mapping에서 서로 다른 두 업무/PEP/receipt 계약을 exact operationId로 선택할 수 없습니다. 불필요 legacy 유지가 아니라 semantic 라우팅 충돌입니다.",
+      "minimumRepairDesign": [
+        "unused zero-effect cancel은 /cancellations 등 별도 경로로 분리하거나, exact closed discriminated oneOf 하나의 command로 통합하고 정책·state·receipt action을 같이 재설계합니다.",
+        "무효 취소에서 HRM termination/proration/settlement 규칙을 제거하고, actual no-effect 조건 및 현재 rowVersion을 명시합니다."
+      ],
+      "G3ClosingEvidence": [
+        "모든 proposed+retained TIM public route의 normalized exact uniqueness 검사와 서로 다른 cancel/terminate typed body/PEP/receipt fixture를 봉인합니다."
+      ],
+      "G4ExecutionEvidence": [
+        "unused cancellation과 actual employment termination 각각의 native state/write/replay를 실행합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P0-002",
+      "severity": "P0",
+      "status": "OPEN",
+      "reviewClassification": "NEW_CONFIRMED",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "entitlement run의 frozen 선택 집합과 실행 입력이 digest만으로 남습니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/65"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/71"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/72"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/74"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.EntitlementRunCreate.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/29"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/30"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/7"
+        }
+      ],
+      "observation": "run.create는 실제 enrollment IDs/revisions+HRM/config/calendar+period/mode를 freeze하라고 규정합니다. 그러나 abs_entitlement_runs에는 input_snapshot_digest/rule_snapshot_digest 및 policy FK만 있고 선택 집합·asOf·configuration/calendar reference를 담은 immutable input payload 또는 그 payload FK/public version refetch 계약이 없습니다. run FK를 가진 별도 표는 previous_run과 완료 결과 items뿐입니다. tme_owner_artifact_snapshots.content는 'entire refetched owner response'이며 run-specific frozen selector artifact가 아닙니다.",
+      "effect": "run을 QUEUED로 commit한 뒤 JVM/queue가 재시작하면 worker가 어느 enrollment/revision을 실행해야 하는지, 누락 item이 몇 개인지, finalize에서 all selected가 맞는지 재구성할 exact 자료가 없습니다. 선택 set을 caller 재전송/현재 목록/owner snapshot으로 추측하는 것은 freeze 계약 위반입니다.",
+      "minimumRepairDesign": [
+        "TIM.EntitlementInputArtifact.v1처럼 tenant/run/public identity와 canonical ordered unique enrollment items+각 원래 revision+HRM basis/config/calendar/정책 refs+asOf+period/mode를 담은 immutable closed artifact를 정의합니다.",
+        "run이 artifact를 tenant-composite FK 또는 exact authorized owner version/refetch 계약으로 참조하고 items는 frozen selected item identity를 참조하도록 설계합니다.",
+        "lease/execute/finalize/reconcile의 read set, source graph, selected=terminal+pending cardinality, duplicate/non-selected enrollment deny, correction previousRun을 exact하게 추가합니다."
+      ],
+      "G3ClosingEvidence": [
+        "queue restart/no caller payload로 frozen set refetch, missing/extra/duplicate selected item, changed enrollment/current source, partial reconcile에 대한 concrete typed fixtures와 owner DTO/SPI/shared guard allocation을 준비합니다. 전체 business CRUD 실행은 요구하지 않습니다."
+      ],
+      "G4ExecutionEvidence": [
+        "실제 crash-after-QUEUED→recovery, item atomic posting, partial/failure/cancel finalization을 실행합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P0-003",
+      "severity": "P0",
+      "status": "OPEN",
+      "reviewClassification": "NEW_CONFIRMED",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "employment termination의 corrective run/settlement handoff가 write/event/port에 연결되지 않습니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/63"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/ownerCommandRequirements"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/23"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/29"
+        }
+      ],
+      "observation": "terminate 규칙은 PRORATE_FINAL_PERIOD에서 linked corrective entitlement run과 exact reversal+new grant, OWNER_APPROVED_SETTLEMENT에서 typed owner handoff를 요구합니다. 실제 businessWriteSet은 enrollment status/effective_to/row_version UPDATE + enrollment decision INSERT뿐이고 transitiveWriteSet도 corrective run/settlement을 포함하지 않습니다. ownerCommandRequirements 네 계약은 SYS governance/Approval decision/TIM publication/optional document이며 termination settlement contract는 없습니다.",
+      "effect": "ENDED만 저장하고 필요한 final grant 교정/닫힌 기간 settlement가 영구 미발행될 수 있습니다. 'creates/emits'라는 텍스트를 구현자가 임의 직접 call/row/event로 채워야 합니다.",
+      "minimumRepairDesign": [
+        "정책별 explicit branches를 STOP_FUTURE_ONLY, PRORATE_FINAL_PERIOD, OWNER_APPROVED_SETTLEMENT로 설계합니다. corrective run/input+original grant reference는 exact new write set/source/event를 추가합니다.",
+        "remote settlement는 durable outbox intent+typed owner request/result/reconcile/fence를 정의하고, ENDED effective employment 사실과 financial settlement pending/unknown/complete 상태를 분리합니다.",
+        "reversal/new grant 또는 closed/downstream settlement은 과거 fact mutation이나 자동 PAY 변환 없이 exact source와 SoD를 보존합니다."
+      ],
+      "G3ClosingEvidence": [
+        "동일 concrete termination input에 정책별 expected writes/no-writes, correction source refs, unknown/replay/closed-period deny fixture를 봉인하고 cross-module settlement DTO/SPI failclosed adapter를 배정합니다."
+      ],
+      "G4ExecutionEvidence": [
+        "actual proration correction, immutable old grant preservation, settlement outbox/unknown/reconcile를 실행합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P0-004",
+      "severity": "P0",
+      "status": "OPEN",
+      "reviewClassification": "NEW_CONFIRMED_AND_CANONICAL_NOT_VALIDATED",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "source graph는 count-complete이지만 실제 의존성·owner 계약과 불일치합니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/0/requiredOwnerSources"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationFieldLineage/0/typedSources/1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationFieldLineage/0/typedSources/5"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationFieldLineage/0"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/derivationRules/3"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/derivationRules/13"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/derivationRules/14"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationFieldLineage"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/ownerContractDeltas"
+        }
+      ],
+      "observation": "첫 tim.rule.create의 requiredOwnerSources/ownerSources는 SYS.TimePolicyContextSnapshot.proposal.v1로 수정됐으나 typedSources[1]는 이전 SYS.EffectiveTimeConfigurationSnapshot.v1와 sys.owner.time-configuration.effective를 요구합니다. 이는 아직 존재하지 않는 DRAFT의 published-artifact governance를 재요구하는 구버전 graph입니다. 85 owner typed sources 모두 inputs가 tenant+actor뿐이며 body ref/selector/asOf/purpose/source revision은 의존성에 없습니다. expression은 body.content/hash 또는 owner clock을 쓰는데 clock source 212개는 ownerClock dependency가 없고 ID sources 330개는 generation metadata가 없습니다(124개는 DB internal BIGINT로 UUID generation kind와 구분 필요). 4789 target rows가 존재하고 ruleId가 있는 것만으로 실제 input closure를 증명하지 않습니다.",
+      "effect": "label/표현식 prose를 신뢰하면 준비 단계 수정이 실제 canonical graph에 반영되지 않아 첫 create 불가/잘못된 source binding/누락 dependency를 숨깁니다. 현재 oracle READINESS 호출은 UNSUPPORTED_PROPOSAL_DIALECT + OPERATION_GRAPH_REQUIRED, validated operations=0, readiness_pass=false입니다. raw0/noop PASS 위험은 현재 failclosed됐지만 actual successor graph는 아직 검증되지 않았습니다.",
+      "minimumRepairDesign": [
+        "canonical successor adapter를 별도 exact dialect contract로 승인하고 operationBindings+lineage+record/event schemas를 외부 exact operation ID set에 봉인합니다. 이름만 바꾸거나 diagnostic mode를 readiness로 승격하지 않습니다.",
+        "모든 expression의 실제 body/path/aggregate/clock/owner reference 및 nested array record projection을 typedSources inputs와 같은 oracle에 연결합니다.",
+        "owner read request selector/asOf/reference/purpose, actual owner response schema/entity/idSpace를 등록합니다. context/create와 published governance/publish를 분리하고 internal DB RETURNING identity와 owner-generated UUID lifecycle를 각각 exact kind로 정의합니다."
+      ],
+      "G3ClosingEvidence": [
+        "114 exact operation scope의 실제 canonical source/FK/type/entity/dependency/array-item closure 및 laundering mutations를 검증합니다. owner DTO/SPI/consumer compile/shared failclosed registration이 필요하며 domain handlers 전체 구현은 G4입니다."
+      ],
+      "G4ExecutionEvidence": [
+        "actual body→persisted column→query/event 결과의 의미를 domain native tests로 확인합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P0-005",
+      "severity": "P0",
+      "status": "OPEN",
+      "reviewClassification": "AUTHOR_ACKNOWLEDGED_REMAINING",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "shared owner/PEP/composite authority·legacy assignment contract는 실제 G3 준비 항목으로 OPEN입니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/authority"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/ownerContractDeltas"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/ownerCommandRequirements"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/timeLedgerAdditiveDelta"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/remainingRisks"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/0/headerContract"
+        }
+      ],
+      "observation": "17 owner read DTO+command contracts는 CURRENT_PUBLISHED=false/REQUIRED_NOT_ALLOCATED입니다. 114 headerContracts purpose는 모두 EXACT_OWNER_PURPOSE placeholder이며 population/field scope도 generic, 신규 authorizationDuty 대부분 PROPOSED_ATOMIC입니다. legacy tme_legacy_ledger_assignment_bindings도 exactSchemaApproval OPEN입니다. configuration hris_configuration/13-stream purpose DS+role+manifest+receipt/guard/scaffold는 NOT_ALLOCATED이고 scalar existing8/9 proof를 사용할 수 없습니다.",
+      "effect": "SELF principal≠worker, requester/approver/publisher SoD, internal workload capability, field-limited projections 및 new protected authority를 actual current shared adapter가 failclosed로 강제한다고 승인할 수 없습니다. 이 항목은 customer migration만의 G6 문제가 아닙니다.",
+      "minimumRepairDesign": [
+        "owner read/command SPI/DTO registry, PEP action/capability/purpose/population/field/delegation/SoD policy matrix 및 exact callable boundary를 canonical successor에 배정합니다.",
+        "legacy row binding은 immutable tenant+original row+actual worker/assignment/date/provenance proof를 exact table/schema로 설계하고 ambiguous는 BLOCK합니다.",
+        "13-stream composite authority bootstrap/DS qualifiers/role ACL/seal/no scalar fallback와 common pilot runtime를 별도 actual scaffold로 구현합니다."
+      ],
+      "G3ClosingEvidence": [
+        "actual shared generated DTO/SPI/failclosed adapters+consumer compile, zero/multi/foreign/revoked self-scope/owner-ref/SoD/field-policy denial, current common/Control/pilot runtime evidence가 필요합니다. all114 business domain CRUD는 G4입니다."
+      ],
+      "G4ExecutionEvidence": [
+        "actual owner production integrations/business programs, legacy data cutover와 country/customer authority는 각각 G4/G6으로 분리합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P1-006",
+      "severity": "P1",
+      "status": "OPEN",
+      "reviewClassification": "NEW_STATIC_CONFLICT",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "failed/blocked entitlement item의 저장 가능한 결과 shape와 count 계약이 부족합니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/30"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/71"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/operationDeltas/72/rules"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/negativeCaseCatalog/17"
+        }
+      ],
+      "observation": "run item은 numerator/denominator/quantity/rounding_trace/result_digest NOT NULL 및 denominator>0를 항상 요구하면서 status는 BLOCKED/FAILED도 허용합니다. zero denominator input은 N18에서 거부해야 하고 finalizer는 failed/cancelled까지 selected cardinality에 합산합니다. 계산 불가 failure를 어떤 immutable nullable typed failure result/attempt/source identity로 기록하는지, error code/lease attempt/source 및 cancelled slot proof가 exact하게 정의되지 않았습니다.",
+      "effect": "invalid input의 denominator를 가짜1로 채우거나 실패 item을 생략하면 arithmetic provenance 또는 final cardinality가 잘못됩니다. zero-denom failure row를 현 always-positive denominator 식으로 직접 저장하는 것은 불가능합니다.",
+      "minimumRepairDesign": [
+        "computed CALCULATED/POSTED result와 BLOCKED/FAILED error result를 closed discriminated union으로 분리합니다. 계산 값 없는 실패는 explicit null/unavailable reason+error/source/attempt/fence를 보관하고 positive denominator constraint는 computed branches에만 적용합니다.",
+        "frozen selected input item과 outcome을 exact 연결하고 cancelled/unexecuted outcomes를 어느 table/state/predicate로 계산하는지 선언합니다."
+      ],
+      "G3ClosingEvidence": [
+        "zero denominator/missing owner/cap BLOCK_POST/partial cancellation의 typed failure shape와 selected cardinality fixtures를 추가합니다."
+      ],
+      "G4ExecutionEvidence": [
+        "actual failed-item persistence/restart/finalization; zero ledger/counter/lot/balance effects를 확인합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P1-007",
+      "severity": "P1",
+      "status": "OPEN",
+      "reviewClassification": "NEW_IN_MEMORY_KEY_WITNESSES",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "tenant FK가 sibling parent/assignment/enrollment 결속까지 보장하지 않습니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/12/foreignKeys"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/16/foreignKeys"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/31/foreignKeys"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/33/foreignKeys"
+        }
+      ],
+      "observation": "정확한 declared FK key만 평가한 네 반례에서 모든 FK가 일치했습니다: segment(period10, assignment201→period20), approval(period10,evaluation302→period20), ledger(enrollment402,item801→enrollment401), lot(enrollment402,grant901→enrollment401). 이는 PostgreSQL 실행/미래 trigger 전체 우회 실험이 아니라 현재 정의된 개별 key들의 관계 공백입니다. 해당 table semanticGuardRequirements는 이 parent equality를 명시하지 않습니다(ledger에는 다른 sign/reversal guard만 있음).",
+      "effect": "동일 tenant 내 unrelated source를 결속하여 다른 schedule/worker/enrollment의 결과가 부모 query/publication/ledger에 포함될 수 있습니다. tenant-safe만으로 source-safe/population-safe가 아닙니다.",
+      "minimumRepairDesign": [
+        "tenant+parent+child ID composite UK/FK 또는 exact same-owner constraint/immutable source guard로 period-assignment-evaluation-publication 및 enrollment-runItem-entry-lot closure를 보장합니다.",
+        "모든 관련 FK의 sibling equality oracle를 전수 선언하고 selector→child resolution→query source를 PEP population에 함께 묶습니다."
+      ],
+      "G3ClosingEvidence": [
+        "네 concrete wrong-parent fixtures와 positive counterpart의 expected reject/accept를 봉인하고 constructor/shared bind guard allocation을 준비합니다."
+      ],
+      "G4ExecutionEvidence": [
+        "actual PG FK/trigger/owner-transaction negatives로 wrong-parent row/query/publication/ledger를 거부함을 실행합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P1-008",
+      "severity": "P1",
+      "status": "OPEN",
+      "reviewClassification": "NEW_STATIC_SQL_DESIGN",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "planned CREATE bundle의 순환 FK와 SQL token 오류를 해결하는 materialization plan이 없습니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/0/plannedCreateSql"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/9/plannedCreateSql"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/12/plannedCreateSql"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/tableSpecifications/25/plannedCreateSql"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/migrationPlan"
+        }
+      ],
+      "observation": "43 fragment 전수 검사에서 list-order forward target reference19개, direct reciprocal CREATE cycles3개(period↔evaluation,period↔publication,leaveRequest↔approvalBinding)입니다. table0 CREATE가 아직 없는 snapshots/reports를 inline FK로 참조합니다. DEFERRABLE은 DML 검사 시점이고 referenced table 존재의 대체가 아닙니다. table12 CHECK 두 곳은 AND50400 token으로 공백이 없어 SQL keyword AND와 정수50400이 아닙니다. SQL을 실제 PG에서 실행한 결과로 과장하지 않습니다.",
+      "effect": "그대로 CONCAT하거나 단순 topological sort로 initial native DDL을 만들 수 없습니다. 'explicit CREATE SQL'을 실행 가능한 통합 instruction으로 취급하면 실패합니다.",
+      "minimumRepairDesign": [
+        "two-phase all tables+PK/UK → ordered ALTER FK/exclusions/triggers/RLS/ACL 또는 정확 reviewed migration step graph를 정의합니다. 모든 referenced UK/type/order를 검사합니다.",
+        "AND 50400로 token을 고치고 planned complete migration bytes/SQL parser check/test allocation을 successor에 봉인합니다. historical migration 수정/validator count 완화는 금지합니다."
+      ],
+      "G3ClosingEvidence": [
+        "G3는 exact planned migration dependency/token/constraint allocation 검증입니다. shared empty-stream/bootstrap 실제 scaffold는 G3, 모든 business DDL 실행은 G4입니다."
+      ],
+      "G4ExecutionEvidence": [
+        "complete business migration batch의 fresh/upgrade PG16/18 execution을 검증합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P1-009",
+      "severity": "P1",
+      "status": "OPEN",
+      "reviewClassification": "NEW_ACTUAL_AJV_WITNESSES",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "event state와 receipt result의 조건부 의미가 표준 schema에 봉인되지 않습니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/eventSchemas"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.Event.tim.rule.create.Committed.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.CommandReceipt.tim.leave.entitlement.run.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/stateMachines"
+        }
+      ],
+      "observation": "81 event 모두 stateBefore/stateAfter가 free string|null입니다. actual Ajv는 resultRecord.status=DRAFT인데 stateAfter=CLOSED_WRONG_STATE/stateBefore=UNKNOWN_UNDECLARED_STATE인 rule.create event를 ACCEPTED했습니다. RUNNING receipt+nonnull registered result도 schema ACCEPTED했습니다. 이것은 result field가 언제 durable aggregate identity이고 언제 success artifact인지 구별하는 조건부 계약이 없음의 증거이며, QUEUED run UUID의 합법적 반환 자체를 금지하자는 뜻이 아닙니다.",
+      "effect": "schema-valid private event가 실제 machine 상태와 충돌하거나 pending outcome을 success result처럼 소비할 수 있습니다. private delivery/producer가 실제 state를 복사한다는 구현 guard는 아직 제안/미실행입니다.",
+      "minimumRepairDesign": [
+        "state-bearing event는 per-operation actual from/outcome enum과 persisted aggregate state/revision/resultRecord equality를 봉인합니다. state가 없는 command만 명시적 null/no-state shape를 사용합니다.",
+        "receipt status/result/error 조합을 conditional로 정의하고 durable created aggregate ref와 final result artifact를 분리합니다. unknown/rejected/failed에서 fake success artifact 반환을 금지합니다."
+      ],
+      "G3ClosingEvidence": [
+        "wrong state/result status/revision, pending/no final artifact, opaque cross-tenant receipt/read field projections의 standard-schema/shared constructor negative tests를 준비합니다."
+      ],
+      "G4ExecutionEvidence": [
+        "actual atomic event/receipt projection이 persisted state/write result와 일치함을 실행합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P1-010",
+      "severity": "P1",
+      "status": "OPEN",
+      "reviewClassification": "NEW_ACTUAL_AJV_WITNESSES",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "closed transport가 basic time/partial-leave semantic bounds를 아직 허용합니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.AccrualMonthly.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.AccrualYearly.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.AccrualAnniversary.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.AccrualPerWorkedUnit.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.LeaveSegment.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/$defs/TIM.Quantity.v1"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/ruleRegistry"
+        }
+      ],
+      "observation": "actual Ajv는 localPeriodBoundaryTime=99:99:99, workedQuantityBasis.value=0, HOUR quantity+localDate만 있는 no-interval partial leave를 ACCEPTED했습니다. N18/N29와 registry는 이를 계산/승인 단계에서 거부하려 하지만 actual shared semantic adapter는 OPEN입니다. Quantity aliases -0/-0.000000/1.500000도 ACCEPTED합니다. fixed-scale synthetic expected 1.500000을 자동 금지하지 않으며 canonical wire/hash normalization 의도를 먼저 확정해야 합니다.",
+      "effect": "schema compile/extra-property negatives만으로 계산/시간 semantic safety가 보장되지 않습니다. 같은 숫자의 여러 lexical form은 replay digest/protocol과 정렬해야 합니다.",
+      "minimumRepairDesign": [
+        "local time lexical bounds를 HH[00..23]:mm[00..59]:ss[00..59]와 exact pinned zone/calendar parsing에 연결합니다.",
+        "HOUR/MINUTE leave는 interval-required oneOf/conditional, worked basis positive same-unit validation을 명시합니다. AST key uniqueness/type/arity/DAG/rounding stage/overflow는 exact shared validator allocation을 유지합니다.",
+        "quantity decimal canonicalization/fixed-scale display와 request hash normalization을 구분하여 XCON QuantityDecimal codec과 일관된 계약을 선택합니다."
+      ],
+      "G3ClosingEvidence": [
+        "이 concrete accepted witnesses를 intended reject 또는 documented normalization 결과로 전환하는 standard-schema/shared guard fixture가 필요합니다. 실제 leave/accrual engine 모든 구현은 G4입니다."
+      ],
+      "G4ExecutionEvidence": [
+        "pinned runtime tzdb, gap/fold/local-boundary, actual DAY calendar conversion, exact Decimal calculation을 실행합니다."
+      ]
+    },
+    {
+      "findingId": "TIM-IR-P1-011",
+      "severity": "P1",
+      "status": "OPEN",
+      "reviewClassification": "NEW_SCOPE_COVERAGE_OBSERVATION",
+      "stage": "G3_DESIGN_OR_SHARED_READINESS",
+      "title": "negative/경계/교정 acceptance 정의가 대부분 문자열 설명이고 exact executable fixture가 아닙니다",
+      "exactRefs": [
+        {
+          "input": "TIM_JSON",
+          "pointer": "/configurationFixtures"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/negativeCaseCatalog"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/testAllocation"
+        },
+        {
+          "input": "TIM_JSON",
+          "pointer": "/procedureContracts"
+        }
+      ],
+      "observation": "2 configurations의36 instances는 24 request bodies+12 owner doubles이며 unique operations는11/114입니다. A/B math/source digest는 재현되지만30 negative의 input은 전부 문자열 설명(typed object0개)입니다. shift/pattern lifecycle, run recovery/partial/cancel/failure, termination corrective writes, amendment/publication/SoD와 exact owner failure에 대해 concrete request+owner/state/clock/write/no-write expected fixture가 완성됐다고 인증할 수 없습니다.",
+      "effect": "개수/예상 한 문장만 보고5-session 전체 구현이 동일 semantics로 진행한다고 승인할 수 없습니다. author planned test classes114개는 실제 input→expected domain evidence가 아닙니다.",
+      "minimumRepairDesign": [
+        "현재 좋은 A/B baseline은 유지하고 모든 machine transition/branch/source/denied/replay/correction path를 concrete typed request+owner seed+clock+before facts+expected after/write/no-write/durable identity로 정의합니다.",
+        "부족한 owner authority/legacy binding/heterogeneous WFM source는 fixture prerequisite OPEN으로 표시하고 generic placeholder를 fake accepted evidence로 만들지 않습니다."
+      ],
+      "G3ClosingEvidence": [
+        "G3는 exact fixture/test allocation+실제 shared schema/DTO/guard mock tests입니다. all114 native CRUD 또는 every golden journey actual execution을 G3 circular prerequisite로 요구하지 않습니다."
+      ],
+      "G4ExecutionEvidence": [
+        "G4에서 실제 database/native domain journeys와 failure/replay/concurrency cases를 실행합니다."
+      ]
+    }
+  ],
+  "reviewMatrices": {
+    "schemaDefinitionCount": 461,
+    "schemaIdSetSha256": "29b4b3ca24b149957f7fdf50245f5e6c92ea075a9859f2b02c79a4d826fc09b0",
+    "operationCoverage": [
+      {
+        "index": 0,
+        "operationId": "tim.rule.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions",
+        "requestSchemaRef": "TIM.RuleVersionCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.create.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_artifact_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "TIME_RULE_CONFIGURE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 1,
+        "operationId": "tim.rule.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/rule-versions",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.rule.query.v1",
+        "responseSchemaRef": "TIM.Page.tme_work_rule_set_versions.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_RULE_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 2,
+        "operationId": "tim.rule.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/rule-versions/{versionId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.rule.get.v1",
+        "responseSchemaRef": "TIM.Record.tme_work_rule_set_versions.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_RULE_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 3,
+        "operationId": "tim.rule.validate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions/{versionId}/validate",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.validate.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "TIME_RULE_VALIDATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 4,
+        "operationId": "tim.rule.simulate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions/{versionId}/simulate",
+        "requestSchemaRef": "TIM.Simulation.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.simulate.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1",
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "TIME_RULE_SIMULATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 5,
+        "operationId": "tim.rule.submit",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions/{versionId}/submit",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.submit.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_RULE_SUBMIT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 6,
+        "operationId": "tim.rule.publish",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions/{versionId}/publish",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.publish.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "TIME_RULE_PUBLISH",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 7,
+        "operationId": "tim.rule.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions/{versionId}/cancel",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.cancel.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_RULE_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 8,
+        "operationId": "tim.rule.retire",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions/{versionId}/retire",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.retire.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_RULE_RETIRE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 9,
+        "operationId": "tim.rule.governance.receive",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/rule-versions/{versionId}/governance",
+        "requestSchemaRef": "TIM.DecisionCommand.tme_work_rule_set_versions.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.governance.receive.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_RULE_GOVERNANCE_RECEIVE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 10,
+        "operationId": "tim.shift.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions",
+        "requestSchemaRef": "TIM.ShiftVersionCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.create.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_artifact_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_CREATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 11,
+        "operationId": "tim.shift.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/shift-versions",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.shift.query.v1",
+        "responseSchemaRef": "TIM.Page.tme_shift_template_versions.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 12,
+        "operationId": "tim.shift.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/shift-versions/{versionId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.shift.get.v1",
+        "responseSchemaRef": "TIM.Record.tme_shift_template_versions.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 13,
+        "operationId": "tim.shift.validate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions/{versionId}/validate",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.validate.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_VALIDATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 14,
+        "operationId": "tim.shift.simulate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions/{versionId}/simulate",
+        "requestSchemaRef": "TIM.Simulation.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.simulate.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_SIMULATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 15,
+        "operationId": "tim.shift.submit",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions/{versionId}/submit",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.submit.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_SUBMIT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 16,
+        "operationId": "tim.shift.publish",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions/{versionId}/publish",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.publish.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_PUBLISH",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 17,
+        "operationId": "tim.shift.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions/{versionId}/cancel",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.cancel.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 18,
+        "operationId": "tim.shift.retire",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions/{versionId}/retire",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.retire.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_RETIRE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 19,
+        "operationId": "tim.shift.governance.receive",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/shift-versions/{versionId}/governance",
+        "requestSchemaRef": "TIM.DecisionCommand.tme_shift_template_versions.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.governance.receive.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_GOVERNANCE_RECEIVE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 20,
+        "operationId": "tim.pattern.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions",
+        "requestSchemaRef": "TIM.PatternVersionCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.create.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_artifact_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_CREATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 21,
+        "operationId": "tim.pattern.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/pattern-versions",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.pattern.query.v1",
+        "responseSchemaRef": "TIM.Page.tme_schedule_patterns.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 22,
+        "operationId": "tim.pattern.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/pattern-versions/{versionId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.pattern.get.v1",
+        "responseSchemaRef": "TIM.Record.tme_schedule_patterns.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 23,
+        "operationId": "tim.pattern.validate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions/{versionId}/validate",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.validate.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_VALIDATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 24,
+        "operationId": "tim.pattern.simulate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions/{versionId}/simulate",
+        "requestSchemaRef": "TIM.Simulation.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.simulate.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_SIMULATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 25,
+        "operationId": "tim.pattern.submit",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions/{versionId}/submit",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.submit.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_SUBMIT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 26,
+        "operationId": "tim.pattern.publish",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions/{versionId}/publish",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.publish.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_PUBLISH",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 27,
+        "operationId": "tim.pattern.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions/{versionId}/cancel",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.cancel.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 28,
+        "operationId": "tim.pattern.retire",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions/{versionId}/retire",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.retire.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_RETIRE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 29,
+        "operationId": "tim.pattern.governance.receive",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/pattern-versions/{versionId}/governance",
+        "requestSchemaRef": "TIM.DecisionCommand.tme_schedule_patterns.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.governance.receive.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_GOVERNANCE_RECEIVE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 30,
+        "operationId": "tim.leave-policy.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions",
+        "requestSchemaRef": "TIM.LeavePolicyVersionCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.create.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_artifact_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "LEAVE_PLAN_CONFIGURE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 31,
+        "operationId": "tim.leave-policy.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave-policy-versions",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave-policy.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_leave_plan_versions.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 32,
+        "operationId": "tim.leave-policy.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave-policy.get.v1",
+        "responseSchemaRef": "TIM.Record.abs_leave_plan_versions.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions",
+          "tme_owner_artifact_snapshots",
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 33,
+        "operationId": "tim.leave-policy.validate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}/validate",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.validate.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_VALIDATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 34,
+        "operationId": "tim.leave-policy.simulate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}/simulate",
+        "requestSchemaRef": "TIM.Simulation.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.simulate.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_evaluation_reports",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_SIMULATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 35,
+        "operationId": "tim.leave-policy.submit",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}/submit",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.submit.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_SUBMIT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 36,
+        "operationId": "tim.leave-policy.publish",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}/publish",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.publish.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ],
+        "authorizationDuty": "LEAVE_PLAN_PUBLISH",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 37,
+        "operationId": "tim.leave-policy.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}/cancel",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.cancel.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 38,
+        "operationId": "tim.leave-policy.retire",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}/retire",
+        "requestSchemaRef": "TIM.ConfigurationPublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.retire.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_RETIRE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 39,
+        "operationId": "tim.leave-policy.governance.receive",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave-policy-versions/{versionId}/governance",
+        "requestSchemaRef": "TIM.DecisionCommand.abs_leave_plan_versions.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.governance.receive.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_GOVERNANCE_RECEIVE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 40,
+        "operationId": "tim.group.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/time-groups",
+        "requestSchemaRef": "TIM.GroupCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.group.create.v1",
+        "declaredReadTables": [
+          "tme_time_groups"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_groups",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_GROUP_CREATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 41,
+        "operationId": "tim.group.members.assign",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/time-groups/{groupId}/memberships",
+        "requestSchemaRef": "TIM.GroupMembersAssign.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.group.members.assign.v1",
+        "declaredReadTables": [
+          "tme_time_groups"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_group_memberships",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_GROUP_MEMBERS_ASSIGN",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 42,
+        "operationId": "tim.group.members.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/time-groups/{groupId}/memberships",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.group.members.query.v1",
+        "responseSchemaRef": "TIM.Page.tme_time_group_memberships.v1",
+        "declaredReadTables": [
+          "tme_time_groups",
+          "tme_time_group_memberships",
+          "tme_owner_artifact_snapshots",
+          "tme_schedule_patterns",
+          "tme_calendar_version_snapshots"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_GROUP_MEMBERS_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 43,
+        "operationId": "tim.schedule.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods",
+        "requestSchemaRef": "TIM.ScheduleCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.create.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_period_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_CREATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 44,
+        "operationId": "tim.schedule.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/schedule-periods",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.schedule.query.v1",
+        "responseSchemaRef": "TIM.Page.tme_schedule_periods.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods",
+          "tme_work_rule_set_versions",
+          "tme_calendar_version_snapshots",
+          "tme_owner_artifact_snapshots",
+          "tme_schedule_evaluations",
+          "tme_schedule_publication_receipts"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "TIME_SCHEDULE_VIEW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 45,
+        "operationId": "tim.schedule.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/schedule-periods/{periodId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.schedule.get.v1",
+        "responseSchemaRef": "TIM.Record.tme_schedule_periods.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods",
+          "tme_work_rule_set_versions",
+          "tme_calendar_version_snapshots",
+          "tme_owner_artifact_snapshots",
+          "tme_schedule_evaluations",
+          "tme_schedule_publication_receipts"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 46,
+        "operationId": "tim.schedule.assign",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/assignments",
+        "requestSchemaRef": "TIM.ScheduleAssign.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.assign.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_worker_schedule_assignments",
+            "mode": "DRAFT_REPLACE"
+          },
+          {
+            "table": "tme_scheduled_segments",
+            "mode": "DRAFT_REPLACE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_ASSIGN",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 47,
+        "operationId": "tim.schedule.assignments.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/schedule-periods/{periodId}/assignments",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.schedule.assignments.query.v1",
+        "responseSchemaRef": "TIM.Page.tme_worker_schedule_assignments.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods",
+          "tme_worker_schedule_assignments",
+          "tme_owner_artifact_snapshots",
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_ASSIGNMENTS_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 48,
+        "operationId": "tim.schedule.segments.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/schedule-periods/{periodId}/segments",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.schedule.segments.query.v1",
+        "responseSchemaRef": "TIM.Page.tme_scheduled_segments.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods",
+          "tme_scheduled_segments",
+          "tme_worker_schedule_assignments",
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_SEGMENTS_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 49,
+        "operationId": "tim.schedule.validate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/validate",
+        "requestSchemaRef": "TIM.ScheduleValidate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.validate.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods",
+          "tme_scheduled_segments",
+          "tme_worker_schedule_assignments",
+          "tme_schedule_active_intervals",
+          "abs_leave_requests",
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_schedule_evaluation_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "tme_schedule_evaluations",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_violation_lines",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_VALIDATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 50,
+        "operationId": "tim.schedule.evaluation.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/schedule-evaluations/{evaluationId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.schedule.evaluation.get.v1",
+        "responseSchemaRef": "TIM.Record.tme_schedule_evaluations.v1",
+        "declaredReadTables": [
+          "tme_schedule_evaluations",
+          "tme_schedule_violation_lines",
+          "tme_schedule_periods"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_EVALUATION_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 51,
+        "operationId": "tim.schedule.submit",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/submit",
+        "requestSchemaRef": "TIM.ScheduleSubmit.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.submit.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_schedule_approval_bindings",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_SUBMIT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 52,
+        "operationId": "tim.schedule.withdraw",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/withdraw",
+        "requestSchemaRef": "TIM.ScheduleCancel.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.withdraw.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_schedule_approval_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_WITHDRAW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 53,
+        "operationId": "tim.schedule.approval.receive",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/schedule-periods/{periodId}/approval-decisions",
+        "requestSchemaRef": "TIM.DecisionCommand.tme_schedule_periods.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.approval.receive.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_schedule_approval_bindings",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_APPROVAL_RECEIVE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 54,
+        "operationId": "tim.schedule.publish",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/publish",
+        "requestSchemaRef": "TIM.SchedulePublish.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.publish.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_schedule_publication_receipts",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_assignment_events",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_active_intervals",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_PUBLISH",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 55,
+        "operationId": "tim.schedule.publication.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/schedule-publications/{publicationId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.schedule.publication.get.v1",
+        "responseSchemaRef": "TIM.Record.tme_schedule_publication_receipts.v1",
+        "declaredReadTables": [
+          "tme_schedule_publication_receipts",
+          "tme_schedule_periods",
+          "tme_owner_artifact_snapshots",
+          "tme_wfm_schedule_candidates"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_PUBLICATION_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 56,
+        "operationId": "tim.schedule.amend",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/amendments",
+        "requestSchemaRef": "TIM.ScheduleAmend.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.amend.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_period_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "tme_worker_schedule_assignments",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_scheduled_segments",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_AMEND",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 57,
+        "operationId": "tim.schedule.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/cancellations",
+        "requestSchemaRef": "TIM.ScheduleCancel.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.cancel.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_schedule_approval_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 58,
+        "operationId": "tim.schedule.approval.reconcile",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/schedule-periods/{periodId}/approval-reconciliation",
+        "requestSchemaRef": "TIM.CancellationReconcile.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.approval.reconcile.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_approval_bindings",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_schedule_periods",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeCancellationSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_APPROVAL_RECONCILE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 59,
+        "operationId": "tim.schedule.published-cancel.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/schedule-periods/{periodId}/published-cancellation-proposals",
+        "requestSchemaRef": "TIM.ScheduleCancel.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.schedule.published-cancel.create.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_period_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "tme_worker_schedule_assignments",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_PUBLISHED_CANCEL_CREATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 60,
+        "operationId": "tim.leave.enrollment.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/enrollments",
+        "requestSchemaRef": "TIM.EnrollmentCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.enrollment.create.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_worker_plan_enrollments",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_enrollment_decisions",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENROLLMENT_CREATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 61,
+        "operationId": "tim.leave.enrollment.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/enrollments",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.enrollment.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_worker_plan_enrollments.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments",
+          "abs_leave_plan_versions",
+          "abs_enrollment_decisions"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENROLLMENT_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 62,
+        "operationId": "tim.leave.enrollment.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/enrollments/{enrollmentId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.enrollment.get.v1",
+        "responseSchemaRef": "TIM.Record.abs_worker_plan_enrollments.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments",
+          "abs_leave_plan_versions",
+          "abs_enrollment_decisions"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENROLLMENT_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 63,
+        "operationId": "tim.leave.enrollment.terminate",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/enrollments/{enrollmentId}/termination",
+        "requestSchemaRef": "TIM.EnrollmentTerminate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.enrollment.terminate.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_worker_plan_enrollments",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_enrollment_decisions",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENROLLMENT_TERMINATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 64,
+        "operationId": "tim.leave.enrollment.reassess",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/enrollments/{enrollmentId}/eligibility-reassessments",
+        "requestSchemaRef": "TIM.EnrollmentTerminate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.enrollment.reassess.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_enrollment_decisions",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENROLLMENT_REASSESS",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 65,
+        "operationId": "tim.leave.entitlement.run",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/entitlement-runs",
+        "requestSchemaRef": "TIM.EntitlementRunCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.entitlement.run.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_runs",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "LEAVE_ENTITLEMENT_RUN",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 66,
+        "operationId": "tim.leave.entitlement.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/entitlement-runs",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.entitlement.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_entitlement_runs.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs",
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 67,
+        "operationId": "tim.leave.entitlement.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/entitlement-runs/{runId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.entitlement.get.v1",
+        "responseSchemaRef": "TIM.Record.abs_entitlement_runs.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs",
+          "abs_entitlement_run_items",
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 68,
+        "operationId": "tim.leave.entitlement.items.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/entitlement-runs/{runId}/items",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.entitlement.items.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_entitlement_run_items.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs",
+          "abs_entitlement_run_items",
+          "abs_worker_plan_enrollments",
+          "tme_owner_artifact_snapshots",
+          "tme_calendar_version_snapshots"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_ITEMS_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 69,
+        "operationId": "tim.leave.entitlement.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/entitlement-runs/{runId}/cancellations",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.entitlement.cancel.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_runs",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 70,
+        "operationId": "tim.leave.entitlement.lease",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/entitlement-runs/{runId}/lease",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.entitlement.lease.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_runs",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_LEASE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 71,
+        "operationId": "tim.leave.entitlement.execute-item",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/entitlement-runs/{runId}/execute-item",
+        "requestSchemaRef": "TIM.EntitlementExecuteItem.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.entitlement.execute-item.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_run_items",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_entitlement_ledger_entries",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_ledger_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "abs_leave_grant_lots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_balance_projections",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_EXECUTE_ITEM",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 72,
+        "operationId": "tim.leave.entitlement.finalize",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/entitlement-runs/{runId}/finalize",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.entitlement.finalize.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_runs",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_FINALIZE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 73,
+        "operationId": "tim.leave.entitlement.mark-unknown",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/entitlement-runs/{runId}/unknown",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.entitlement.mark-unknown.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_runs",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_MARK_UNKNOWN",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 74,
+        "operationId": "tim.leave.entitlement.reconcile",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/entitlement-runs/{runId}/reconciliation",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.entitlement.reconcile.v1",
+        "declaredReadTables": [
+          "abs_entitlement_runs"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_runs",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENTITLEMENT_RECONCILE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 75,
+        "operationId": "tim.leave.request.create",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/requests",
+        "requestSchemaRef": "TIM.LeaveRequestCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.create.v1",
+        "declaredReadTables": [
+          "abs_leave_requests",
+          "abs_worker_plan_enrollments",
+          "tme_calendar_version_snapshots"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_request_segments",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "LEAVE_REQUEST_CREATE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 76,
+        "operationId": "tim.leave.request.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/requests",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.request.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_leave_requests.v1",
+        "declaredReadTables": [
+          "abs_leave_requests",
+          "abs_worker_plan_enrollments",
+          "abs_leave_approval_bindings"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 77,
+        "operationId": "tim.leave.request.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/requests/{requestId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.request.get.v1",
+        "responseSchemaRef": "TIM.Record.abs_leave_requests.v1",
+        "declaredReadTables": [
+          "abs_leave_requests",
+          "abs_worker_plan_enrollments",
+          "abs_leave_approval_bindings"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 78,
+        "operationId": "tim.leave.request.segments.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/requests/{requestId}/segments",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.request.segments.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_leave_request_segments.v1",
+        "declaredReadTables": [
+          "abs_leave_requests",
+          "abs_leave_request_segments",
+          "tme_scheduled_segments",
+          "tme_calendar_version_snapshots"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_SEGMENTS_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 79,
+        "operationId": "tim.leave.request.submit",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/requests/{requestId}/submit",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.submit.v1",
+        "declaredReadTables": [
+          "abs_leave_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_approval_bindings",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_reservations",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_SUBMIT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 80,
+        "operationId": "tim.leave.request.decide",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/requests/{requestId}/decisions",
+        "requestSchemaRef": "TIM.LeaveDecision.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.decide.v1",
+        "declaredReadTables": [
+          "abs_leave_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_approval_bindings",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_entitlement_ledger_entries",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_ledger_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "abs_leave_reservations",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_lot_events",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_balance_projections",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "LEAVE_REQUEST_DECIDE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 81,
+        "operationId": "tim.leave.request.approval.receive",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/requests/{requestId}/approval-decisions",
+        "requestSchemaRef": "TIM.DecisionCommand.abs_leave_requests.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.approval.receive.v1",
+        "declaredReadTables": [
+          "abs_leave_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_approval_bindings",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_entitlement_ledger_entries",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_ledger_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "abs_leave_reservations",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_lot_events",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_balance_projections",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_APPROVAL_RECEIVE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 82,
+        "operationId": "tim.leave.request.withdraw",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/requests/{requestId}/withdraw",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.withdraw.v1",
+        "declaredReadTables": [
+          "abs_leave_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_approval_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_WITHDRAW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 83,
+        "operationId": "tim.leave.request.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/requests/{requestId}/cancellations",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.cancel.v1",
+        "declaredReadTables": [
+          "abs_leave_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_entitlement_ledger_entries",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_ledger_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "abs_leave_reservations",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_lot_events",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_balance_projections",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_approval_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "LEAVE_REQUEST_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 84,
+        "operationId": "tim.leave.request.cancel-reconcile",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/requests/{requestId}/cancellation-reconciliation",
+        "requestSchemaRef": "TIM.CancellationReconcile.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.cancel-reconcile.v1",
+        "declaredReadTables": [
+          "abs_leave_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_approval_bindings",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "abs_leave_reservations",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeCancellationSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_CANCEL_RECONCILE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 85,
+        "operationId": "tim.leave.request.amend",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/requests/{requestId}/amendments",
+        "requestSchemaRef": "TIM.LeaveRequestCreate.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.request.amend.v1",
+        "declaredReadTables": [
+          "abs_leave_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_requests",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_request_segments",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_REQUEST_AMEND",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 86,
+        "operationId": "tim.leave.ledger.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/ledger-entries",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.ledger.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_entitlement_ledger_entries.v1",
+        "declaredReadTables": [
+          "abs_entitlement_ledger_entries",
+          "abs_worker_plan_enrollments",
+          "abs_entitlement_run_items",
+          "abs_leave_requests",
+          "abs_leave_lot_events"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_LEDGER_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 87,
+        "operationId": "tim.leave.balance.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/leave/balances",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.leave.balance.query.v1",
+        "responseSchemaRef": "TIM.Page.abs_leave_balance_projections.v1",
+        "declaredReadTables": [
+          "abs_leave_balance_projections",
+          "abs_entitlement_ledger_entries",
+          "abs_leave_reservations",
+          "abs_worker_plan_enrollments"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "LEAVE_BALANCE_VIEW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 88,
+        "operationId": "tim.leave.ledger.reverse",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/ledger-entries/{entryId}/approved-reversals",
+        "requestSchemaRef": "TIM.LedgerReversal.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.ledger.reverse.v1",
+        "declaredReadTables": [
+          "abs_entitlement_ledger_entries"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_entitlement_ledger_entries",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_ledger_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "abs_leave_lot_events",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_balance_projections",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_LEDGER_REVERSE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 89,
+        "operationId": "tim.leave.lots.expiry-carryover",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/enrollments/{enrollmentId}/lot-boundaries",
+        "requestSchemaRef": "TIM.LotBoundary.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.lots.expiry-carryover.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_lot_events",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_entitlement_ledger_entries",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_ledger_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "abs_leave_grant_lots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "abs_leave_balance_projections",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimeCalendarSnapshot.v1",
+          "TIM.LeavePolicyArtifactSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_LOTS_EXPIRY_CARRYOVER",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 90,
+        "operationId": "tim.leave.balance.restore",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/leave/enrollments/{enrollmentId}/restore-balance",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.balance.restore.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments",
+          "abs_entitlement_ledger_entries",
+          "abs_leave_reservations",
+          "abs_leave_lot_events"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_balance_projections",
+            "mode": "UPSERT_REBUILD"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_BALANCE_RESTORE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 91,
+        "operationId": "tim.timecard.query",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/timecards/{cardId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.timecard.query.v1",
+        "responseSchemaRef": "TIM.TimecardProjection.v1",
+        "declaredReadTables": [
+          "tme_time_cards",
+          "tme_close_periods",
+          "tme_time_ledger_entries"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "TIME_TIMECARD_VIEW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 92,
+        "operationId": "tim.timecard.correct",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/timecards/{cardId}/corrections",
+        "requestSchemaRef": "TIM.TimecardCorrection.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.timecard.correct.v1",
+        "declaredReadTables": [
+          "tme_time_cards"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_cards",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_time_ledger_entries",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_time_ledger_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "TIME_TIMECARD_CORRECT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 93,
+        "operationId": "tim.timecard.submit",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/timecards/{cardId}/submit",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.timecard.submit.v1",
+        "declaredReadTables": [
+          "tme_time_cards"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_cards",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_timecard_approval_bindings",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "TIME_TIMECARD_SUBMIT",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 94,
+        "operationId": "tim.timecard.decide",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/timecards/{cardId}/decisions",
+        "requestSchemaRef": "TIM.CardDecision.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.timecard.decide.v1",
+        "declaredReadTables": [
+          "tme_time_cards"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_cards",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_timecard_approval_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "Approval.TimeDecisionSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "TIME_TIMECARD_DECIDE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 95,
+        "operationId": "tim.timecard.lock-from-close",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/timecards/{cardId}/close-lock",
+        "requestSchemaRef": "TIM.CardCloseSignal.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.timecard.lock-from-close.v1",
+        "declaredReadTables": [
+          "tme_time_cards",
+          "tme_close_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_cards",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_TIMECARD_LOCK_FROM_CLOSE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 96,
+        "operationId": "tim.timecard.reopen-successor",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/timecards/{cardId}/reopened-successors",
+        "requestSchemaRef": "TIM.CardCloseSignal.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.timecard.reopen-successor.v1",
+        "declaredReadTables": [
+          "tme_time_cards",
+          "tme_close_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_cards",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_timecard_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_TIMECARD_REOPEN_SUCCESSOR",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 97,
+        "operationId": "tim.availability.schedule.capture",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/schedule-availability-snapshots",
+        "requestSchemaRef": "TIM.AvailabilityCapture.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.availability.schedule.capture.v1",
+        "declaredReadTables": [
+          "tme_availability_snapshots",
+          "tme_schedule_assignment_events",
+          "tme_schedule_active_intervals",
+          "tme_scheduled_segments",
+          "abs_leave_requests",
+          "abs_worker_plan_enrollments",
+          "tme_time_group_memberships"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_availability_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_availability_snapshot_rows",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_snapshot_source_refs",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_availability_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_AVAILABILITY_SCHEDULE_CAPTURE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 98,
+        "operationId": "tim.availability.schedule.get",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "GET",
+        "path": "/internal/hris-time/v1/schedule-availability-snapshots/{snapshotId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.availability.schedule.get.v1",
+        "responseSchemaRef": "TIM.ScheduleAvailabilitySnapshot.v1",
+        "declaredReadTables": [
+          "tme_availability_snapshots",
+          "tme_availability_snapshot_rows",
+          "tme_snapshot_source_refs"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_AVAILABILITY_SCHEDULE_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 99,
+        "operationId": "tim.availability.absence.capture",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/absence-availability-snapshots",
+        "requestSchemaRef": "TIM.AvailabilityCapture.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.availability.absence.capture.v1",
+        "declaredReadTables": [
+          "tme_availability_snapshots",
+          "tme_schedule_assignment_events",
+          "tme_schedule_active_intervals",
+          "tme_scheduled_segments",
+          "abs_leave_requests",
+          "abs_worker_plan_enrollments",
+          "tme_time_group_memberships"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_availability_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_availability_snapshot_rows",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_snapshot_source_refs",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_availability_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_AVAILABILITY_ABSENCE_CAPTURE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 100,
+        "operationId": "tim.availability.absence.get",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "GET",
+        "path": "/internal/hris-time/v1/absence-availability-snapshots/{snapshotId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.availability.absence.get.v1",
+        "responseSchemaRef": "TIM.ScheduleAvailabilitySnapshot.v1",
+        "declaredReadTables": [
+          "tme_availability_snapshots",
+          "tme_availability_snapshot_rows",
+          "tme_snapshot_source_refs"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_AVAILABILITY_ABSENCE_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 101,
+        "operationId": "tim.availability.composed.capture",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/composed-availability-snapshots",
+        "requestSchemaRef": "TIM.AvailabilityCapture.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.availability.composed.capture.v1",
+        "declaredReadTables": [
+          "tme_availability_snapshots",
+          "tme_schedule_assignment_events",
+          "tme_schedule_active_intervals",
+          "tme_scheduled_segments",
+          "abs_leave_requests",
+          "abs_worker_plan_enrollments",
+          "tme_time_group_memberships"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_availability_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_availability_snapshot_rows",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_snapshot_source_refs",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_owner_artifact_snapshots",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_availability_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_AVAILABILITY_COMPOSED_CAPTURE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 102,
+        "operationId": "tim.availability.composed.get",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "GET",
+        "path": "/internal/hris-time/v1/composed-availability-snapshots/{snapshotId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.availability.composed.get.v1",
+        "responseSchemaRef": "TIM.ScheduleAvailabilitySnapshot.v1",
+        "declaredReadTables": [
+          "tme_availability_snapshots",
+          "tme_availability_snapshot_rows",
+          "tme_snapshot_source_refs"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_AVAILABILITY_COMPOSED_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 103,
+        "operationId": "tim.schedule.wfm-publish-transaction",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "OWNER_SPI:TIM.CanonicalSchedulePublicationPort.v1#publishApproved",
+        "requestSchemaRef": "TIM.CanonicalSchedulePublicationCommand.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CanonicalSchedulePublication.v1",
+        "declaredReadTables": [
+          "tme_schedule_periods",
+          "tme_wfm_schedule_candidates",
+          "tme_wfm_candidate_shift_lines",
+          "tme_wfm_constraint_evaluation_receipts",
+          "tme_wfm_approval_requests"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_periods",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_period_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          },
+          {
+            "table": "tme_worker_schedule_assignments",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_scheduled_segments",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_publication_receipts",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_assignment_events",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_schedule_active_intervals",
+            "mode": "INSERT"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.EffectiveTimeConfigurationSnapshot.v1",
+          "SYS.TimeCalendarSnapshot.v1",
+          "Approval.TimeDecisionSnapshot.v1",
+          "TIM.CanonicalSchedulePublicationPort.v1",
+          "TIM.WfmPlanningInputSnapshot.v1",
+          "TIM.EffectiveCalendarSnapshot.proposal.v1",
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_WFM_PUBLISH_TRANSACTION",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 104,
+        "operationId": "tim.schedule.wfm-publication.query",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "GET",
+        "path": "OWNER_SPI:TIM.CanonicalSchedulePublicationPort.v1#findByCandidate",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.schedule.wfm-publication.query.v1",
+        "responseSchemaRef": "TIM.CanonicalSchedulePublication.v1",
+        "declaredReadTables": [
+          "tme_schedule_publication_receipts",
+          "tme_schedule_periods"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SCHEDULE_WFM_PUBLICATION_QUERY",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 105,
+        "operationId": "tim.rule.withdraw",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/rule-versions/{versionId}/withdraw",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.rule.withdraw.v1",
+        "declaredReadTables": [
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_work_rule_set_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "SYS.TimePolicyContextSnapshot.proposal.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_RULE_WITHDRAW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 106,
+        "operationId": "tim.shift.withdraw",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/shift-versions/{versionId}/withdraw",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.shift.withdraw.v1",
+        "declaredReadTables": [
+          "tme_shift_template_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_shift_template_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_SHIFT_WITHDRAW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 107,
+        "operationId": "tim.pattern.withdraw",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/pattern-versions/{versionId}/withdraw",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.pattern.withdraw.v1",
+        "declaredReadTables": [
+          "tme_schedule_patterns"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_schedule_patterns",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_PATTERN_WITHDRAW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 108,
+        "operationId": "tim.leave-policy.withdraw",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave-policy-versions/{versionId}/withdraw",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave-policy.withdraw.v1",
+        "declaredReadTables": [
+          "abs_leave_plan_versions"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_leave_plan_versions",
+            "mode": "UPDATE"
+          },
+          {
+            "table": "tme_policy_governance_bindings",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_POLICY_WITHDRAW",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 109,
+        "operationId": "tim.policy.evaluation.get",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "GET",
+        "path": "/api/time/v1/policy-evaluation-reports/{reportId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.policy.evaluation.get.v1",
+        "responseSchemaRef": "TIM.Record.tme_policy_evaluation_reports.v1",
+        "declaredReadTables": [
+          "tme_policy_evaluation_reports"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_POLICY_EVALUATION_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 110,
+        "operationId": "tim.leave.enrollment.cancel",
+        "transport": "GATEWAY_AUTHENTICATED",
+        "method": "POST",
+        "path": "/api/time/v1/leave/enrollments/{enrollmentId}/termination",
+        "requestSchemaRef": "TIM.Reason.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.leave.enrollment.cancel.v1",
+        "declaredReadTables": [
+          "abs_worker_plan_enrollments"
+        ],
+        "writeModes": [
+          {
+            "table": "abs_worker_plan_enrollments",
+            "mode": "UPDATE"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_LEAVE_ENROLLMENT_CANCEL",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 111,
+        "operationId": "tim.timecard.materialize",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "POST",
+        "path": "/internal/hris-time/v1/timecards/materialize",
+        "requestSchemaRef": "TIM.TimecardMaterialize.v1",
+        "querySchemaRef": null,
+        "responseSchemaRef": "TIM.CommandReceipt.tim.timecard.materialize.v1",
+        "declaredReadTables": [
+          "tme_time_cards",
+          "tme_time_ledger_entries",
+          "tme_close_periods"
+        ],
+        "writeModes": [
+          {
+            "table": "tme_time_cards",
+            "mode": "INSERT"
+          },
+          {
+            "table": "tme_timecard_revision_counters",
+            "mode": "UPSERT_MONOTONIC"
+          }
+        ],
+        "requiredOwnerSources": [
+          "HRM.EffectiveAssignmentSnapshot.v1",
+          "HRM.VerifiedSelfScopeSnapshot.v1"
+        ],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_TIMECARD_MATERIALIZE",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 112,
+        "operationId": "tim.effective-calendar.get",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "GET",
+        "path": "/internal/hris-time/v1/calendar-snapshots/{snapshotId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.effective-calendar.get.v1",
+        "responseSchemaRef": "TIM.EffectiveCalendarSnapshot.proposal.v1",
+        "declaredReadTables": [
+          "tme_calendar_version_snapshots",
+          "tme_owner_artifact_snapshots"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_EFFECTIVE_CALENDAR_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      },
+      {
+        "index": 113,
+        "operationId": "tim.effective-work-rule.get",
+        "transport": "TIM_OWNER_WORKLOAD_ONLY",
+        "method": "GET",
+        "path": "/internal/hris-time/v1/work-rule-snapshots/{snapshotId}",
+        "requestSchemaRef": null,
+        "querySchemaRef": "TIM.Query.tim.effective-work-rule.get.v1",
+        "responseSchemaRef": "TIM.EffectiveWorkRuleSnapshot.proposal.v1",
+        "declaredReadTables": [
+          "tme_owner_artifact_snapshots",
+          "tme_work_rule_set_versions"
+        ],
+        "writeModes": [],
+        "requiredOwnerSources": [],
+        "authorizationDuty": "PROPOSED_ATOMIC_TIM_EFFECTIVE_WORK_RULE_GET",
+        "sourceReadiness": "NOT_CANONICAL_VALIDATED",
+        "domainExecution": "NOT_EXECUTED_G4"
+      }
+    ],
+    "tableCoverage": [
+      {
+        "index": 0,
+        "table": "tme_work_rule_set_versions",
+        "columnsIncludingId": 21,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 1,
+        "table": "tme_shift_template_versions",
+        "columnsIncludingId": 21,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 2,
+        "table": "tme_schedule_patterns",
+        "columnsIncludingId": 21,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 3,
+        "table": "abs_leave_plan_versions",
+        "columnsIncludingId": 21,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 4,
+        "table": "tme_artifact_revision_counters",
+        "columnsIncludingId": 8,
+        "change": "ADD",
+        "immutability": "MONOTONIC_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 5,
+        "table": "tme_time_groups",
+        "columnsIncludingId": 9,
+        "change": "ADD",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 6,
+        "table": "tme_time_group_memberships",
+        "columnsIncludingId": 14,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 7,
+        "table": "tme_owner_artifact_snapshots",
+        "columnsIncludingId": 16,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY; same identity/revision changed content digest quarantined",
+        "ddlExecuted": false
+      },
+      {
+        "index": 8,
+        "table": "tme_calendar_version_snapshots",
+        "columnsIncludingId": 13,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 9,
+        "table": "tme_schedule_periods",
+        "columnsIncludingId": 21,
+        "change": "ADD",
+        "immutability": "Published typed contents and assignments/segments immutable; amendment creates new period revision; active selection through publication/supersession ledger, never deleting history",
+        "ddlExecuted": false
+      },
+      {
+        "index": 10,
+        "table": "tme_schedule_period_revision_counters",
+        "columnsIncludingId": 7,
+        "change": "ADD",
+        "immutability": "MONOTONIC_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 11,
+        "table": "tme_worker_schedule_assignments",
+        "columnsIncludingId": 13,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT-only replace with period CAS; immutable after SUBMITTED",
+        "ddlExecuted": false
+      },
+      {
+        "index": 12,
+        "table": "tme_scheduled_segments",
+        "columnsIncludingId": 23,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT-only replace; no update/delete after period submission/publication",
+        "ddlExecuted": false
+      },
+      {
+        "index": 13,
+        "table": "tme_schedule_evaluation_counters",
+        "columnsIncludingId": 7,
+        "change": "ADD",
+        "immutability": "MONOTONIC_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 14,
+        "table": "tme_schedule_evaluations",
+        "columnsIncludingId": 14,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 15,
+        "table": "tme_schedule_violation_lines",
+        "columnsIncludingId": 11,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 16,
+        "table": "tme_schedule_approval_bindings",
+        "columnsIncludingId": 14,
+        "change": "ADD",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 17,
+        "table": "tme_schedule_publication_receipts",
+        "columnsIncludingId": 15,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 18,
+        "table": "tme_schedule_assignment_events",
+        "columnsIncludingId": 12,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY; effective publication selection derived from ordered events, old physical segments preserved",
+        "ddlExecuted": false
+      },
+      {
+        "index": 19,
+        "table": "tme_schedule_active_intervals",
+        "columnsIncludingId": 10,
+        "change": "ADD",
+        "immutability": "REBUILDABLE_PROJECTION_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 20,
+        "table": "tme_availability_snapshots",
+        "columnsIncludingId": 16,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 21,
+        "table": "tme_availability_snapshot_rows",
+        "columnsIncludingId": 10,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 22,
+        "table": "tme_snapshot_source_refs",
+        "columnsIncludingId": 9,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 23,
+        "table": "abs_worker_plan_enrollments",
+        "columnsIncludingId": 13,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 24,
+        "table": "abs_enrollment_decisions",
+        "columnsIncludingId": 16,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 25,
+        "table": "abs_leave_requests",
+        "columnsIncludingId": 13,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "SUBMITTED content immutable; amend creates successor, not original patch",
+        "ddlExecuted": false
+      },
+      {
+        "index": 26,
+        "table": "abs_leave_request_segments",
+        "columnsIncludingId": 14,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "DRAFT-only replace, submitted frozen",
+        "ddlExecuted": false
+      },
+      {
+        "index": 27,
+        "table": "abs_leave_approval_bindings",
+        "columnsIncludingId": 13,
+        "change": "ADD",
+        "immutability": "DRAFT_REPLACE_ALLOWED; submitted/published content immutable; state/version CAS only",
+        "ddlExecuted": false
+      },
+      {
+        "index": 28,
+        "table": "abs_leave_reservations",
+        "columnsIncludingId": 11,
+        "change": "ADD",
+        "immutability": "Monotonic state CAS only; no direct balance subtraction before approved ledger USE",
+        "ddlExecuted": false
+      },
+      {
+        "index": 29,
+        "table": "abs_entitlement_runs",
+        "columnsIncludingId": 16,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "Input/rule snapshot sealed; terminal receipt immutable",
+        "ddlExecuted": false
+      },
+      {
+        "index": 30,
+        "table": "abs_entitlement_run_items",
+        "columnsIncludingId": 18,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY; new attempt/result references prior, never rewrites successful posted item",
+        "ddlExecuted": false
+      },
+      {
+        "index": 31,
+        "table": "abs_entitlement_ledger_entries",
+        "columnsIncludingId": 19,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "APPEND_ONLY; REVERSE exact negative original quantity/unit, one reversal per original",
+        "ddlExecuted": false
+      },
+      {
+        "index": 32,
+        "table": "abs_ledger_revision_counters",
+        "columnsIncludingId": 7,
+        "change": "ADD",
+        "immutability": "MONOTONIC_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 33,
+        "table": "abs_leave_grant_lots",
+        "columnsIncludingId": 10,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 34,
+        "table": "abs_leave_lot_events",
+        "columnsIncludingId": 11,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY; FEFO expiry/null last +grant effective/date+entry UUID tie; lot sum reconciles ledger, carryover debit/credit pair preserves net except excess EXPIRE",
+        "ddlExecuted": false
+      },
+      {
+        "index": 35,
+        "table": "abs_leave_balance_projections",
+        "columnsIncludingId": 12,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "REBUILDABLE_PROJECTION_ONLY; value=exact ledger SUM at asOf, reserved separate; no authoritative direct balance command",
+        "ddlExecuted": false
+      },
+      {
+        "index": 36,
+        "table": "tme_time_cards",
+        "columnsIncludingId": 18,
+        "change": "REPLACE_HISTORICAL_PLANNED_SPEC",
+        "immutability": "LOCKED original immutable, reopened/corrective successor starts CORRECTION_REQUIRED; closed period state belongs tme_close_periods",
+        "ddlExecuted": false
+      },
+      {
+        "index": 37,
+        "table": "tme_timecard_revision_counters",
+        "columnsIncludingId": 9,
+        "change": "ADD",
+        "immutability": "MONOTONIC_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 38,
+        "table": "tme_policy_evaluation_reports",
+        "columnsIncludingId": 12,
+        "change": "ADD",
+        "immutability": "APPEND_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 39,
+        "table": "tme_policy_governance_bindings",
+        "columnsIncludingId": 15,
+        "change": "ADD",
+        "immutability": "request subject/id/digest/requester immutable; status/snapshot monotonicCAS",
+        "ddlExecuted": false
+      },
+      {
+        "index": 40,
+        "table": "tme_availability_revision_counters",
+        "columnsIncludingId": 9,
+        "change": "ADD",
+        "immutability": "MONOTONIC_ONLY",
+        "ddlExecuted": false
+      },
+      {
+        "index": 41,
+        "table": "tme_timecard_approval_bindings",
+        "columnsIncludingId": 12,
+        "change": "ADD",
+        "immutability": "sealed requester/subject revision/digest; mutable status/snapshot pointer onlyCAS",
+        "ddlExecuted": false
+      },
+      {
+        "index": 42,
+        "table": "tme_time_ledger_revision_counters",
+        "columnsIncludingId": 7,
+        "change": "ADD",
+        "immutability": "MONOTONIC_ONLY",
+        "ddlExecuted": false
+      }
+    ]
+  },
+  "positiveDesignObservations": [
+    "No eval/user SQL/reflection/unregistered executable formula string; explicit bounded typed rule DAG/signatures/calculation/rounding and owner input failure rules are materially stronger than historical strings.",
+    "Manual native scheduling, actual TIM-owned arrangement/intersection availability and separate PER skills avoid forced optional connector or HRM availability shadow authority.",
+    "PUBLISHED schedule immutable correction successor and append-only leave/carryover/reversal with separate reservation are sensible direction.",
+    "Card status LOCKED aligns actual storage and close-period CLOSED belongs separate aggregate; old card preserved on reopen.",
+    "SELF uses required owner-verified self context, zero/multiple/foreign/revoked handling instead of principal UUID as worker.",
+    "Author explicitly preserves historical bytes/count-independent design and OPEN G3 owner/bootstrap/source/legacy gates; no false READY claim.",
+    "Independent A/B arithmetic and canonical fixture hashes are internally consistent, but are not actual domain/owner/customer approval."
+  ],
+  "reproduction": {
+    "workingDirectory": "/Users/a10697/Work/DWP",
+    "commands": [
+      {
+        "name": "standard_schema_probes",
+        "argv": [
+          "node",
+          "--max-old-space-size=384"
+        ],
+        "stdinSource": "reproduction.sources.standardSchemaJavaScript",
+        "expected": "461 compiled/36 fixture/69 negative-control matches; accepted witnesses remain OPEN findings, not privacy/domain approval."
+      },
+      {
+        "name": "canonical_oracle_and_static_closure",
+        "argv": [
+          "python3"
+        ],
+        "stdinSource": "reproduction.sources.structuralPython",
+        "expected": "READINESS status FAIL/readiness false/2 unsupported graph errors/operations0, target closure counts reported."
+      },
+      {
+        "name": "math_and_declared_fk_keys",
+        "argv": [
+          "python3"
+        ],
+        "stdinSource": "reproduction.sources.mathFkPython",
+        "expected": "14 arithmetic checks match; 4 unrelated-parent declared-key witnesses match. NOT PG execution."
+      },
+      {
+        "name": "fixture_hash_recompute",
+        "argv": [
+          "node"
+        ],
+        "stdinSource": "reproduction.sources.hashJavaScript",
+        "expected": "12 owner/7 interval/4 artifact digest matches."
+      }
+    ],
+    "sources": {
+      "standardSchemaJavaScript": "const fs=require('fs');const crypto=require('crypto');const{createRequire}=require('module');const req=createRequire('/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json');const Ajv=req('ajv');const filename='output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json';const bytes=fs.readFileSync(filename);const p=JSON.parse(bytes);const ajv=new Ajv({allErrors:true,coerceTypes:false,useDefaults:false,removeAdditional:false});const root='urn:independent:tim-base:5fbb5b';ajv.addSchema({$id:root,$defs:p.$defs});const compiled={},compileErrors=[];for(const id of Object.keys(p.$defs)){try{compiled[id]=ajv.compile({$ref:root+'#/$defs/'+id});}catch(e){compileErrors.push({id,error:e.message});}}const instances=[];const controls=[];let objectNodes=0;const notClosed=[];function walk(s,path){if(!s||typeof s!=='object')return;if(s.type==='object'||s.properties){objectNodes++;if(s.additionalProperties!==false)notClosed.push(path);}for(const[k,v]of Object.entries(s.properties||{}))walk(v,path+'/properties/'+k);if(s.items)walk(s.items,path+'/items');for(const k of ['oneOf','anyOf','allOf'])for(const[i,v]of(s[k]||[]).entries())walk(v,path+'/'+k+'/'+i);for(const k of ['if','then','else','not'])if(s[k])walk(s[k],path+'/'+k);}for(const[id,s]of Object.entries(p.$defs))walk(s,'/$defs/'+id);function check(id,value,label,expected){const valid=!!compiled[id](value);const errors=valid?[]:JSON.parse(JSON.stringify(compiled[id].errors||[])).slice(0,3);return{label,schemaId:id,expected,actual:valid?'ACCEPTED':'REJECTED',matched:valid===expected,errors};}for(const[fidx,f]of p.configurationFixtures.entries()){for(const[ridx,r]of f.requests.entries()){const op=p.operationDeltas.find(o=>o.operationId===r.operationId);instances.push(check(op.requestBodySchemaRef,r.body,'fixture'+fidx+'.request'+ridx,true));const extra=JSON.parse(JSON.stringify(r.body));extra.unapprovedExtra='x';controls.push(check(op.requestBodySchemaRef,extra,'fixture'+fidx+'.request'+ridx+'.extra',false));const firstReq=p.$defs[op.requestBodySchemaRef].required?.[0];if(firstReq){const absent=JSON.parse(JSON.stringify(r.body));delete absent[firstReq];controls.push(check(op.requestBodySchemaRef,absent,'fixture'+fidx+'.request'+ridx+'.missing.'+firstReq,false));}}for(const[key,value]of Object.entries(f.ownerResponses)){instances.push(check(f.ownerResponseSchemaRefs[key],value,'fixture'+fidx+'.owner.'+key,true));const extra=JSON.parse(JSON.stringify(value));extra.unapprovedExtra='x';controls.push(check(f.ownerResponseSchemaRefs[key],extra,'fixture'+fidx+'.owner.'+key+'.extra',false));}}for(const value of [3.5,'1e2','+1',' 1','01','1.1234567','10000000000000'])controls.push(check('TIM.Quantity.v1',{value,unit:'HOUR'},'quantity.invalid.'+JSON.stringify(value),false));for(const unit of ['USD','UNKNOWN'])controls.push(check('TIM.Quantity.v1',{value:'1',unit},'quantity.unknown.'+unit,false));const witnesses=[];for(const value of ['-0','-0.000000','1.500000'])witnesses.push(check('TIM.Quantity.v1',{value,unit:'HOUR'},'lexical.value.'+value,true));witnesses.push(check('TIM.AccrualMonthly.v1',{kind:'MONTHLY',anchorDayOfMonth:1,invalidDayPolicy:'BLOCK',localPeriodBoundaryTime:'99:99:99'},'invalid.local.boundary.time.schema.accepted',true));witnesses.push(check('TIM.LeaveSegment.v1',{localDate:'2026-10-19',quantity:{value:'1',unit:'HOUR'}},'HOUR.partial.leave.date.without.interval',true));const quantityZero=check('TIM.AccrualPerWorkedUnit.v1',{kind:'PER_WORKED_UNIT',workedQuantityBasis:{value:'0',unit:'HOUR'},qualifyingPayCodes:['REGULAR'],source:'TIM_BOUND_ASSIGNMENT_POSTED_TIME_LEDGER',localPeriodBoundaryTime:'00:00:00'},'zero.worked.denominator.schema.accepted',true);witnesses.push(quantityZero);const rec={publicId:'90000000-0000-4000-8000-000000001011',createdAt:'2026-10-01T00:00:00Z',createdBy:'90000000-0000-4000-8000-000000001012',artifactCode:'NATIVE',versionNo:1,scopeKind:'TENANT',scopePublicId:null,effectiveFrom:'2026-10-01',effectiveTo:null,status:'DRAFT',contentSchemaId:'TIM.TimeRuleContent.v1',content:p.configurationFixtures[0].requests.find(r=>r.operationId==='tim.rule.create').body.content,contentDigest:'1'.repeat(64),validationDigest:null,simulationDigest:null,governanceSnapshotPublicId:null,rowVersion:0,validationReportPublicId:null,simulationReportPublicId:null};const ev={operationId:'tim.rule.create',aggregatePublicId:rec.publicId,aggregateRevision:0,resultPublicId:rec.publicId,commandReceiptPublicId:'90000000-0000-4000-8000-000000001013',stateBefore:'UNKNOWN_UNDECLARED_STATE',stateAfter:'CLOSED_WRONG_STATE',sourceRefs:rec.content.sourceRefs,resultRecord:rec,writtenBusinessRecords:{}};witnesses.push(check('TIM.Event.tim.rule.create.Committed.v1',ev,'event.wrong.state.with.DRAFT.resultRecord',true));const receipt={receiptPublicId:'90000000-0000-4000-8000-000000001013',status:'RUNNING',resultPublicId:rec.publicId,resultEntityType:'table:abs_entitlement_runs',aggregatePublicId:rec.publicId,aggregateRevision:0,errorCode:null};witnesses.push(check('TIM.CommandReceipt.tim.leave.entitlement.run.v1',receipt,'pending.receipt.nonnull.registered.result.condition.unspecified',true));console.log(JSON.stringify({sourceSha256:crypto.createHash('sha256').update(bytes).digest('hex'),ajvVersion:req('ajv/package.json').version,compiled:Object.keys(compiled).length,compileErrors,objectNodes,notClosed,fixtureInstances:instances.length,fixtureFailures:instances.filter(r=>!r.matched),negativeControlCount:controls.length,negativeControlFailures:controls.filter(r=>!r.matched),witnesses},null,2));\nif(compileErrors.length||notClosed.length||instances.some(x=>!x.matched)||controls.some(x=>!x.matched)||witnesses.some(x=>!x.matched))process.exitCode=1;\n",
+      "structuralPython": "import json,pathlib,hashlib,sys,collections,re\nbase=pathlib.Path('output/hris-porting-blueprint-2026-09-09'); path=base/'coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json'; raw=path.read_bytes();p=json.loads(raw)\nsys.path.insert(0,str(base/'coding-readiness'))\nfrom validate_modern_semantic_field_lineage import validate_semantic_field_lineage,load_base_tables\nv=validate_semantic_field_lineage(p,{},load_base_tables())\nprint('ORACLE',json.dumps({'status':v.validation_status,'readiness_pass':v.readiness_pass,'validationMode':v.validation_mode,'counts':v.counts,'errors':[{'code':x.code,'where':x.where,'message':x.message} for x in v.errors]},ensure_ascii=False))\ncatalog={}\nfor t in p['tableSpecifications']:catalog[t['tableName']]={c['name']:c for c in [t['idColumn']]+t['columns']}\nfor t in p['preservedInfrastructure']:catalog[t['tableName']]={c['name']:c for c in t['columns']}\nrequired=[];typedDup=[];ruleMissing=[];ruleIndex={r['ruleId']:r for r in p['derivationRules']};sourceKinds=collections.Counter();ownerOnly=[];generation=[];clock=[]\nfor i,l in enumerate(p['operationFieldLineage']):\n seen=set()\n for j,x in enumerate(l['typedSources']):\n  sourceKinds[x['kind']]+=1\n  if x['source'] in seen:typedDup.append([i,j,x['source']])\n  seen.add(x['source'])\n  if x.get('kind')=='REFETCHED_OWNER_SNAPSHOT' and set(x['inputs'])=={'principal.tenantId','principal.publicId'}:ownerOnly.append([i,j,x['ownerContractRef']])\n  if x.get('kind')=='GENERATED_BUSINESS_ID' and not x.get('generation'):generation.append([i,j,x['source'],x['type']])\n  if x['source'].endswith(('_created_at','_posted_at','_updated_at')) and not any('ownerClock.' in z for z in x['inputs']):clock.append([i,j,x['source']])\n for j,r in enumerate(l['requiredColumnSources']):\n  if r['table'] not in catalog or r['column'] not in catalog[r['table']]: required.append([i,j,r['table'],r['column']])\n  if r.get('ruleId') not in ruleIndex:ruleMissing.append([i,j,r.get('ruleId')])\nroutes=collections.defaultdict(list)\nfor i,o in enumerate(p['operationDeltas']):routes[(o['method'],re.sub(r'\\{[^}]+\\}','{id}',o['path']).rstrip('/'))].append([i,o['operationId']])\nfuture=[];targets=collections.defaultdict(list)\nfor i,t in enumerate(p['tableSpecifications']):\n for j,f in enumerate(t['foreignKeys']):\n  if f['targetTable'] in [x['tableName'] for x in p['tableSpecifications'][i+1:]]: future.append([i,j,t['tableName'],f['targetTable']])\n  targets[t['tableName']].append(f['targetTable'])\n# Concrete reciprocal CREATE-time cycle, not a DB execution.\ncycles=[]\nfor a,bs in targets.items():\n for b in bs:\n  if b!=a and a in targets.get(b,[]) and sorted([a,b]) not in cycles:cycles.append(sorted([a,b]))\nmanif=[{'path':k,'expected':h,'actual':hashlib.sha256((base/k).read_bytes()).hexdigest(),'match':h==hashlib.sha256((base/k).read_bytes()).hexdigest()} for k,h in p['inputManifest'].items()]\nprint('CLOSURE',json.dumps({'sourceSha256':hashlib.sha256(raw).hexdigest(),'operationIdsUnique':len({o['operationId'] for o in p['operationDeltas']})==len(p['operationDeltas']),'operationLineageIdsExact':[o['operationId'] for o in p['operationDeltas']]==[l['operationId'] for l in p['operationFieldLineage']],'requiredColumnRows':sum(len(l['requiredColumnSources']) for l in p['operationFieldLineage']),'requiredColumnTargetMissing':required,'typedSourceDuplicate':typedDup,'derivationRuleMissing':ruleMissing,'kinds':sourceKinds,'ownerRefsTenantActorOnly':len(ownerOnly),'firstOwnerRefs':ownerOnly[:3],'generatedWithoutGenerationContract':len(generation),'generatedBigInt':sum(t=='BIGINT' for _,_,_,t in generation),'ownerClockDependencyAbsent':len(clock),'normalizedRouteDuplicates':{str(k):v for k,v in routes.items() if len(v)>1},'forwardCreateReferences':len(future),'firstForwardReferences':future[:5],'reciprocalCreateCycles':cycles,'inputManifests':manif},ensure_ascii=False))\n",
+      "mathFkPython": "import json,pathlib,decimal,datetime,zoneinfo\np=json.loads(pathlib.Path('output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json').read_text());D=decimal.Decimal; math=[]\nfor f in p['configurationFixtures']:\n e=f['expected']; q=decimal.localcontext()\n with q as ctx:\n  ctx.prec=40\n  grant=(D(e['accrualAmount'])*D(e['eligibleCalendarDays'])/D(e['periodCalendarDays'])).quantize(D('0.000001'),rounding=decimal.ROUND_HALF_UP)\n  balance=D(e['priorUnusedGrant'])+grant\n  excess=max(balance-D(e['carryoverCap']),D(0))\n  terminate=(D(e['accrualAmount'])*D(e['terminationEligibleDays'])/D(e['periodCalendarDays'])).quantize(D('0.000001'),rounding=decimal.ROUND_HALF_UP)\n  checks={'postedGrant':grant,'balanceBeforeCarryover':balance,'expiredExcess':excess,'carryoverFinalBalance':min(balance,D(e['carryoverCap'])),'terminationFinalGrant':terminate}\n  for k,actual in checks.items():math.append({'fixtureId':f['fixtureId'],'field':k,'expected':e[k],'actual':str(actual),'match':actual==D(e[k])})\n  predicted='VALIDATED' if D(e['workMinutes'])<=D(e['maximumWorkMinutes']) else 'VALIDATION_FAILED'\n  math.append({'fixtureId':f['fixtureId'],'field':'scheduleValidation','expected':e['scheduleValidation'],'actual':predicted,'match':predicted==e['scheduleValidation']})\nny=zoneinfo.ZoneInfo('America/New_York');utc=datetime.timezone.utc\nfor label,start,end in [('SPRING',datetime.datetime(2026,3,8,1,30,tzinfo=ny),datetime.datetime(2026,3,8,3,30,tzinfo=ny)),('FOLD',datetime.datetime(2026,11,1,1,30,tzinfo=ny,fold=0),datetime.datetime(2026,11,1,1,30,tzinfo=ny,fold=1))]:\n minutes=(end.astimezone(utc)-start.astimezone(utc)).total_seconds()/60\n math.append({'fixtureId':'DST_'+label,'field':'elapsedMinutes','expected':60,'actual':minutes,'match':minutes==60})\n# Evaluate only actual declared FK key matching: not PG execution, not future trigger/PEP certification.\nrows={'tme_schedule_periods':[{'tenant_id':1,'schedule_period_id':10},{'tenant_id':1,'schedule_period_id':20}],\n'tme_worker_schedule_assignments':[{'tenant_id':1,'schedule_assignment_id':101,'schedule_period_id':10},{'tenant_id':1,'schedule_assignment_id':201,'schedule_period_id':20}],\n'tme_schedule_evaluations':[{'tenant_id':1,'schedule_evaluation_id':301,'schedule_period_id':10},{'tenant_id':1,'schedule_evaluation_id':302,'schedule_period_id':20}],\n'abs_worker_plan_enrollments':[{'tenant_id':1,'enrollment_id':401},{'tenant_id':1,'enrollment_id':402}],\n'abs_entitlement_runs':[{'tenant_id':1,'entitlement_run_id':501}],\n'tme_owner_artifact_snapshots':[{'tenant_id':1,'owner_artifact_snapshot_id':601}],\n'tme_calendar_version_snapshots':[{'tenant_id':1,'calendar_snapshot_id':701}],\n'abs_entitlement_run_items':[{'tenant_id':1,'entitlement_run_item_id':801,'entitlement_run_id':501,'enrollment_id':401}],\n'abs_entitlement_ledger_entries':[{'tenant_id':1,'entitlement_ledger_entry_id':901,'enrollment_id':401}]}\ndef fk_match(table,row):\n t=next(t for t in p['tableSpecifications'] if t['tableName']==table)\n results=[]\n for f in t['foreignKeys']:\n  keys=[row.get(c) for c in f['columns']]\n  if any(v is None for v in keys):ok=True\n  else:ok=any(all(r.get(c)==v for c,v in zip(f['targetColumns'],keys)) for r in rows.get(f['targetTable'],[]))\n  results.append({'columns':f['columns'],'target':f['targetTable'],'match':ok})\n return results\nsamples=[\n{'caseId':'SEGMENT_CROSS_PERIOD','table':'tme_scheduled_segments','row':{'tenant_id':1,'schedule_period_id':10,'schedule_assignment_id':201},'violatedRelationship':'assignment201 belongs period20, segment claims period10'},\n{'caseId':'APPROVAL_CROSS_EVALUATION_PERIOD','table':'tme_schedule_approval_bindings','row':{'tenant_id':1,'schedule_period_id':10,'evaluation_id':302},'violatedRelationship':'evaluation302 belongs period20, binding claims period10'},\n{'caseId':'LEDGER_CROSS_RUN_ITEM_ENROLLMENT','table':'abs_entitlement_ledger_entries','row':{'tenant_id':1,'enrollment_id':402,'source_run_item_id':801},'violatedRelationship':'item801 belongs enrollment401, ledger claims402'},\n{'caseId':'GRANT_LOT_CROSS_ENROLLMENT','table':'abs_leave_grant_lots','row':{'tenant_id':1,'enrollment_id':402,'grant_entry_id':901},'violatedRelationship':'grant901 belongs enrollment401, lot claims402'}]\nfor x in samples:x['foreignKeyResults']=fk_match(x['table'],x['row']);x['allDeclaredFksMatch']=all(f['match'] for f in x['foreignKeyResults'])\nprint(json.dumps({'mathChecks':len(math),'mathFailures':[x for x in math if not x['match']],'mathCases':math,'fkWitnesses':samples,'fkExecution':'IN_MEMORY_DECLARED_KEYS_ONLY_NOT_POSTGRES_NOT_PROPOSED_OWNER_GUARDS'},ensure_ascii=False,indent=2))\n\nassert len(math)==14 and all(x['match'] for x in math)\nassert len(samples)==4 and all(x['allDeclaredFksMatch'] for x in samples)\n",
+      "hashJavaScript": "const fs=require('fs'),crypto=require('crypto');const p=JSON.parse(fs.readFileSync('output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json'));function sorted(v){if(Array.isArray(v))return v.map(sorted);if(v&&typeof v==='object')return Object.fromEntries(Object.keys(v).sort().map(k=>[k,sorted(v[k])]));return v;}function hash(v,slot){const c=structuredClone(v);delete c[slot];return crypto.createHash('sha256').update(JSON.stringify(sorted(c))).digest('hex');}const owner=[],interval=[],artifact=[],references=[];for(const[fidx,f]of p.configurationFixtures.entries()){for(const[k,v]of Object.entries(f.ownerResponses)){owner.push({fixtureIndex:fidx,owner:k,expected:v.contentSha256,actual:hash(v,'contentSha256'),match:v.contentSha256===hash(v,'contentSha256')});}function walk(v,path){if(!v||typeof v!=='object')return;if(v.provenanceSha256&&v.startsAt)interval.push({fixtureIndex:fidx,path,expected:v.provenanceSha256,actual:hash(v,'provenanceSha256'),match:v.provenanceSha256===hash(v,'provenanceSha256')});for(const[k,x]of Object.entries(v))walk(x,path+'/'+k);}walk(f.requests,'/configurationFixtures/'+fidx+'/requests');for(const r of f.requests){if(r.operationId==='tim.rule.create'||r.operationId==='tim.leave-policy.create'){const expected=f.ownerResponses[r.operationId==='tim.rule.create'?'SYS.EffectiveTimeConfigurationSnapshot.v1.RULE':'SYS.EffectiveTimeConfigurationSnapshot.v1.LEAVE'].timeArtifactSha256;const actual=hash(r.body.content,'contentSha256');artifact.push({fixtureIndex:fidx,operationId:r.operationId,expected,actual,match:expected===actual});}}}console.log(JSON.stringify({ownerCount:owner.length,ownerMismatches:owner.filter(x=>!x.match),intervalCount:interval.length,intervalMismatches:interval.filter(x=>!x.match),artifactCount:artifact.length,artifactMismatches:artifact.filter(x=>!x.match)},null,2));\nif(owner.some(x=>!x.match)||interval.some(x=>!x.match)||artifact.some(x=>!x.match))process.exitCode=1;\n"
+    }
+  },
+  "primaryReferences": [
+    {
+      "url": "https://json-schema.org/understanding-json-schema/reference/object",
+      "supports": "properties/required/additionalProperties close shape, not arbitrary business source/lifecycle relationships."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/18/sql-createtable.html",
+      "supports": "FK referenced keys and DEFERRABLE row constraint-check semantics; circular referenced table CREATE needs reviewed phase graph."
+    }
+  ]
+}

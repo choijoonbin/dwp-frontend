@@ -1,0 +1,1739 @@
+{
+  "schema": "dwp.hris.tim-wfm-proposal-independent-review.v1",
+  "reviewer": "/root/semantic_lineage_validator_hardening",
+  "status": "INDEPENDENT_REVIEW_BLOCKED_G3_NOT_READY",
+  "reviewedAtUtc": "2026-09-14T02:22:26.678861+00:00",
+  "codingGateAuthorization": "NONE_G3_CLOSED",
+  "domainExecution": "NOT_EXECUTED_G4",
+  "reviewNature": "Independent local source/design review of root-authored proposal; no implementation or global HRIS readiness approval.",
+  "snapshotPins": [
+    {
+      "path": "coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.json",
+      "sha256": "5c0af043947c007c9304edb29519a8176011fd46180cfa49d2d04d2f0107bd91"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.md",
+      "sha256": "d17c150c44315d0018dc6a8ed68103ad291944729a7c6d3a59ce9bf3a0aca674"
+    }
+  ],
+  "snapshotUnchangedAtIndependentEndCheck": true,
+  "supportingSourcePins": [
+    {
+      "path": "session-evidence/tim/g2-physical-schema.sql",
+      "sha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80"
+    },
+    {
+      "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "32b3d6c4e98037c0a26df0b08e112ad9ab067f95d70f3dc3d5dedf4f53f291fb"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/per-modern-remediation.v1.json",
+      "sha256": "c84b1206a2ba2af4d2f3cf583c48b30a2d679d8755b89b4f25145b7cb92b3785"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/sys-tim-modern-remediation.v1.json",
+      "sha256": "261b9d7b987e93cfe817a32b7e20e465ba4e502cbf5ad161bd51d18f7e08e25e"
+    },
+    {
+      "path": "coding-readiness/validate_modern_semantic_field_lineage.py",
+      "sha256": "ed0deccdf362f3390d817d274c37c8c80326fcfd08f73355a9b111f15ca171a8"
+    }
+  ],
+  "mutations": {
+    "reviewerChangedOriginalProposal": false,
+    "reviewerChangedBackendOrControlOrSqlOrValidatorOrGate": false,
+    "reviewerNewFiles": [
+      "coding-readiness/reports/tim-wfm-proposal-independent-review-2026-09-14.json",
+      "coding-readiness/reports/tim-wfm-proposal-independent-review-2026-09-14.md"
+    ],
+    "reviewerCommitCreated": false,
+    "userMainDatabaseOrServersTouched": false
+  },
+  "backendObservation": {
+    "head": "76130dde620084124a9c16ff8edc731487e0a4c3",
+    "tree": "b7007b8c27cd4cfb9aadf50a034e316e7864869e",
+    "cleanAtReviewStart": true,
+    "cleanAtLaterObservation": false,
+    "concurrentExternalModifiedPaths": [
+      "scripts/devctl.py",
+      "scripts/tests/test_devctl.py"
+    ],
+    "note": "Those concurrent backend edits belong to root/other work and were not touched by this reviewer. The source scaffold commit remains historical, not proof of the concurrently modified current tree."
+  },
+  "inventory": {
+    "publicOperations": 22,
+    "commands": 13,
+    "queries": 9,
+    "ownerInternalOperations": 6,
+    "tables": 14,
+    "recordSchemas": 22,
+    "recordFields": 152,
+    "eventSchemas": 13,
+    "eventFields": 47
+  },
+  "summary": {
+    "P0": 7,
+    "P1": 7,
+    "P2": 1,
+    "findings": 15,
+    "requiredAcceptanceDefinitions": 32,
+    "newActualDomainExecutions": 0,
+    "newGradleOrDatabaseRuns": 0
+  },
+  "positiveDesignObservations": [
+    "Native and owner-snapshot demand is normalized into actual typed demand rows; forecast, candidate, solver run, immutable evaluation, Approval request and publication ledger are physically separated.",
+    "Revision family/candidate/evaluation allocators are separate from aggregate CAS version; tenant-local FK/unique constraints and cross-candidate pointer defense are explicitly proposed.",
+    "Forecast revision creates a new DRAFT public UUID and preserves the PUBLISHED/CANCELLED source aggregate; no NEW_DRAFT pseudo source-state edge.",
+    "Candidate QUEUED and solver-run RUNNING are separate, lease-claim is owner workload only; completion is not a public arbitrary success API.",
+    "Generic SUBMITTED cancel is excluded; exact owner cancellation receipt is required for withdrawal; publish rechecks authorization/input/Approval and declares one TIM transaction for canonical schedule+ledger+outbox+receipt.",
+    "Exact WORK/BREAK intervals, paidness, localWorkDate, IANA zone, both offsets, tzdbVersion, calendar/work-rule refs are stored and projected; aggregate break duration is only owner-derived.",
+    "Current real G2 receipt status enum exactly matches declared ACCEPTED/RUNNING/SUCCEEDED/REJECTED/FAILED/RESULT_UNKNOWN, and receipt/outbox field names referenced directly are real columns.",
+    "All 65 direct query projection columns exist in proposed physical columns or real G2 receipt SQL; all 18 local/deferred FK edges have existing tenant-composite columns and exact unique targets.",
+    "Task/detail/tab UX is separated from API count; DesignAI package belongs to G5 after functionality. This is consistent with the user's phased design replacement request.",
+    "Three imported schema IDs exist in the pinned PER/SYS proposal documents, but existence does not publish owner DTO/SPI authority."
+  ],
+  "performedChecks": [
+    {
+      "name": "Original JSON parse/full logical-section read",
+      "result": "PASS",
+      "note": "All top-level sections including 22 public ops, 6 internal ops, 22 records, 14 tables, 13 events and projections were read."
+    },
+    {
+      "name": "Direct query table-column existence",
+      "result": "PASS_STRUCTURAL_ONLY",
+      "count": 65,
+      "failures": 0,
+      "note": "Column-name existence uses the intended authoritative commonTableContract loaded separately plus explicit planned columns. This does not excuse the broken relative import, execute SQL, or validate type compatibility/typed projection/owner/derivation closure."
+    },
+    {
+      "name": "Local/deferred FK existence+tenant+unique-target",
+      "result": "PASS_STRUCTURAL_ONLY",
+      "count": 18,
+      "failures": 0
+    },
+    {
+      "name": "Abstract candidate transition reachability",
+      "result": "ALL_10_NAMES_REACHABLE_GUARDS_NOT_EXECUTED",
+      "detail": {
+        "method": "Declared candidate transitions only, ignoring runtime guards; NOT executed domain reachability.",
+        "edges": [
+          {
+            "from": "NONE",
+            "to": "QUEUED",
+            "operation": "modern.wfm.schedule.optimize"
+          },
+          {
+            "from": "GENERATED",
+            "to": "VALIDATED",
+            "operation": "modern.wfm.schedule.validate"
+          },
+          {
+            "from": "GENERATED",
+            "to": "VALIDATION_FAILED",
+            "operation": "modern.wfm.schedule.validate"
+          },
+          {
+            "from": "VALIDATED",
+            "to": "VALIDATED",
+            "operation": "modern.wfm.schedule.validate"
+          },
+          {
+            "from": "VALIDATED",
+            "to": "VALIDATION_FAILED",
+            "operation": "modern.wfm.schedule.validate"
+          },
+          {
+            "from": "VALIDATION_FAILED",
+            "to": "VALIDATED",
+            "operation": "modern.wfm.schedule.validate"
+          },
+          {
+            "from": "VALIDATION_FAILED",
+            "to": "VALIDATION_FAILED",
+            "operation": "modern.wfm.schedule.validate"
+          },
+          {
+            "from": "VALIDATED",
+            "to": "SUBMITTED",
+            "operation": "modern.wfm.schedule.submit"
+          },
+          {
+            "from": "SUBMITTED",
+            "to": "REJECTED",
+            "operation": "modern.wfm.schedule.reject"
+          },
+          {
+            "from": "SUBMITTED",
+            "to": "PUBLISHED",
+            "operation": "modern.wfm.schedule.publish"
+          },
+          {
+            "from": "QUEUED",
+            "to": "CANCELLED",
+            "operation": "modern.wfm.schedule.cancel"
+          },
+          {
+            "from": "GENERATED",
+            "to": "CANCELLED",
+            "operation": "modern.wfm.schedule.cancel"
+          },
+          {
+            "from": "VALIDATED",
+            "to": "CANCELLED",
+            "operation": "modern.wfm.schedule.cancel"
+          },
+          {
+            "from": "VALIDATION_FAILED",
+            "to": "CANCELLED",
+            "operation": "modern.wfm.schedule.cancel"
+          },
+          {
+            "from": "RESULT_UNKNOWN",
+            "to": "CANCELLED",
+            "operation": "modern.wfm.schedule.cancel"
+          },
+          {
+            "from": "SUBMITTED",
+            "to": "CANCELLED",
+            "operation": "modern.wfm.schedule.withdraw"
+          },
+          {
+            "from": "QUEUED",
+            "to": "GENERATED",
+            "operation": "tim.wfm.solver.complete"
+          },
+          {
+            "from": "QUEUED",
+            "to": "FAILED",
+            "operation": "tim.wfm.solver.fail"
+          },
+          {
+            "from": "QUEUED",
+            "to": "RESULT_UNKNOWN",
+            "operation": "tim.wfm.solver.mark-unknown"
+          },
+          {
+            "from": "RESULT_UNKNOWN",
+            "to": "GENERATED",
+            "operation": "tim.wfm.solver.reconcile"
+          },
+          {
+            "from": "RESULT_UNKNOWN",
+            "to": "FAILED",
+            "operation": "tim.wfm.solver.reconcile"
+          },
+          {
+            "from": "RESULT_UNKNOWN",
+            "to": "CANCELLED",
+            "operation": "tim.wfm.solver.reconcile"
+          }
+        ],
+        "declaredStates": [
+          "QUEUED",
+          "GENERATED",
+          "VALIDATED",
+          "VALIDATION_FAILED",
+          "SUBMITTED",
+          "REJECTED",
+          "PUBLISHED",
+          "CANCELLED",
+          "FAILED",
+          "RESULT_UNKNOWN"
+        ],
+        "abstractReachableStates": [
+          "QUEUED",
+          "GENERATED",
+          "VALIDATED",
+          "VALIDATION_FAILED",
+          "SUBMITTED",
+          "REJECTED",
+          "PUBLISHED",
+          "CANCELLED",
+          "FAILED",
+          "RESULT_UNKNOWN"
+        ],
+        "abstractUnreachableStates": []
+      }
+    },
+    {
+      "name": "Canonical raw semantic validator compatibility",
+      "result": "NOT_VALIDATED_ZERO_OPERATION_NOOP",
+      "rawErrorCount": 0,
+      "validatedOperationCount": 0,
+      "declaredPublicOperations": 22,
+      "declaredInternalOperations": 6,
+      "reason": "Unsupported proposal dialect lacks operationBindings/operationFieldLineage. Raw error zero is not PASS."
+    },
+    {
+      "name": "Imported schema ID existence",
+      "result": "PASS_EXISTENCE_ONLY",
+      "schemaIds": [
+        "PerArtifactRef.v1",
+        "SkillTaxonomyContent.v1",
+        "SkillRequirement.proposal.v1"
+      ]
+    },
+    {
+      "name": "commonTableContract relative import",
+      "result": "FAIL",
+      "occurrences": 14,
+      "reference": "../../modern-capability-exact-schema-contracts.v1.json#/commonTableContract",
+      "resolvedPath": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/modern-capability-exact-schema-contracts.v1.json",
+      "actualPath": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-capability-exact-schema-contracts.v1.json"
+    },
+    {
+      "name": "Closed internal schema declarations",
+      "result": "INCOMPLETE",
+      "closed": [
+        "tim.wfm.solver.lease-claim"
+      ],
+      "unclosedOrAbsent": [
+        "tim.wfm.solver.complete",
+        "tim.wfm.solver.fail",
+        "tim.wfm.solver.mark-unknown",
+        "tim.wfm.solver.reconcile",
+        "tim.wfm.outbox.approval-reconcile"
+      ]
+    },
+    {
+      "name": "Current TIM production source inventory",
+      "result": "NO_WFM_DOMAIN_IMPLEMENTATION_MATCHES_OBSERVED",
+      "command": "rg -n 'tme_wfm|modern\\.wfm|TIM\\.Wfm' dwp-time-server/src/main dwp-time-server/src/test --glob '*.java' --glob '*.sql' --glob '*.json'",
+      "exitCode": 1,
+      "note": "Read-only inventory; domain implementation/actual SQL/CRUD execution is G4 allocation, not itself a demand to implement all WFM before G3."
+    }
+  ],
+  "structuralEvidence": {
+    "directProjectionBindings": [
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "publicId",
+        "column": "public_id",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "aggregateVersion",
+        "column": "aggregate_version",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "forecastKey",
+        "column": "forecast_key",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "forecastRevision",
+        "column": "forecast_revision",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "status",
+        "column": "status",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "worksitePublicId",
+        "column": "worksite_public_id",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "sourceMode",
+        "column": "source_mode",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "sourceTimezone",
+        "column": "source_timezone",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "periodStart",
+        "column": "period_start",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "periodEnd",
+        "column": "period_end",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmForecast.v1",
+        "field": "contentSha256",
+        "column": "source_digest",
+        "table": "tme_wfm_demand_forecasts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmDemand.v1",
+        "field": "lineKey",
+        "column": "line_key",
+        "table": "tme_wfm_demand_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmDemand.v1",
+        "field": "startsAt",
+        "column": "starts_at",
+        "table": "tme_wfm_demand_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmDemand.v1",
+        "field": "endsAt",
+        "column": "ends_at",
+        "table": "tme_wfm_demand_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmDemand.v1",
+        "field": "requiredHeadcount",
+        "column": "required_headcount",
+        "table": "tme_wfm_demand_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmDemand.v1",
+        "field": "requiredSkills",
+        "column": "required_skills",
+        "table": "tme_wfm_demand_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "lineKey",
+        "column": "line_key",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "demandLineKey",
+        "column": "demand_line_key",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "workerPublicId",
+        "column": "worker_public_id",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "assignmentPublicId",
+        "column": "assignment_public_id",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "worksitePublicId",
+        "column": "worksite_public_id",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "startsAt",
+        "column": "starts_at",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "endsAt",
+        "column": "ends_at",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "requiredSkills",
+        "column": "required_skills",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "localWorkDate",
+        "column": "local_work_date",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "timeZone",
+        "column": "time_zone",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "tzdbVersion",
+        "column": "tzdb_version",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "startOffsetSeconds",
+        "column": "start_offset_seconds",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "endOffsetSeconds",
+        "column": "end_offset_seconds",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "segments",
+        "column": "segments",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "calendarSnapshotRef",
+        "column": "calendar_snapshot_ref",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmShift.v1",
+        "field": "workRuleSnapshotRef",
+        "column": "work_rule_snapshot_ref",
+        "table": "tme_wfm_candidate_shift_lines",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "publicId",
+        "column": "public_id",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "aggregateVersion",
+        "column": "aggregate_version",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "forecastRevision",
+        "column": "forecast_revision",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "candidateRevision",
+        "column": "candidate_revision",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "status",
+        "column": "status",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "solverStrategyKey",
+        "column": "solver_strategy_key",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "solverVersion",
+        "column": "solver_version",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "deterministicSeed",
+        "column": "deterministic_seed",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "candidateDigest",
+        "column": "candidate_digest",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCandidate.v1",
+        "field": "failureCode",
+        "column": "failure_code",
+        "table": "tme_wfm_schedule_candidates",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCommandResult.v1",
+        "field": "receiptPublicId",
+        "column": "public_id",
+        "table": "tme_command_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCommandResult.v1",
+        "field": "receiptStatus",
+        "column": "status",
+        "table": "tme_command_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCommandResult.v1",
+        "field": "resultPublicId",
+        "column": "result_ref",
+        "table": "tme_command_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmCommandResult.v1",
+        "field": "errorCode",
+        "column": "error_code",
+        "table": "tme_command_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPlanningInput.v1",
+        "field": "publicId",
+        "column": "public_id",
+        "table": "tme_wfm_planning_input_snapshots",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPlanningInput.v1",
+        "field": "revision",
+        "column": "snapshot_revision",
+        "table": "tme_wfm_planning_input_snapshots",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPlanningInput.v1",
+        "field": "contentSha256",
+        "column": "content_digest",
+        "table": "tme_wfm_planning_input_snapshots",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPlanningInput.v1",
+        "field": "asOf",
+        "column": "as_of",
+        "table": "tme_wfm_planning_input_snapshots",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPlanningInput.v1",
+        "field": "validUntil",
+        "column": "valid_until",
+        "table": "tme_wfm_planning_input_snapshots",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPlanningInput.v1",
+        "field": "sourceTimezone",
+        "column": "source_timezone",
+        "table": "tme_wfm_planning_input_snapshots",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPlanningInput.v1",
+        "field": "sourceRefs",
+        "column": "source_refs",
+        "table": "tme_wfm_planning_input_snapshots",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmEvaluation.v1",
+        "field": "publicId",
+        "column": "public_id",
+        "table": "tme_wfm_constraint_evaluation_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmEvaluation.v1",
+        "field": "candidateRevision",
+        "column": "candidate_revision",
+        "table": "tme_wfm_constraint_evaluation_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmEvaluation.v1",
+        "field": "candidateDigest",
+        "column": "candidate_digest",
+        "table": "tme_wfm_constraint_evaluation_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmEvaluation.v1",
+        "field": "evaluatedAt",
+        "column": "evaluated_at",
+        "table": "tme_wfm_constraint_evaluation_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmEvaluation.v1",
+        "field": "blockingViolationCount",
+        "column": "blocking_violation_count",
+        "table": "tme_wfm_constraint_evaluation_receipts",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPublication.v1",
+        "field": "publicId",
+        "column": "public_id",
+        "table": "tme_wfm_schedule_publish_ledger",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPublication.v1",
+        "field": "candidateRevision",
+        "column": "candidate_revision",
+        "table": "tme_wfm_schedule_publish_ledger",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPublication.v1",
+        "field": "candidateDigest",
+        "column": "candidate_digest",
+        "table": "tme_wfm_schedule_publish_ledger",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPublication.v1",
+        "field": "approvalReceiptPublicId",
+        "column": "approval_receipt_public_id",
+        "table": "tme_wfm_schedule_publish_ledger",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPublication.v1",
+        "field": "canonicalSchedulePeriodPublicId",
+        "column": "canonical_schedule_period_public_id",
+        "table": "tme_wfm_schedule_publish_ledger",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPublication.v1",
+        "field": "publishedAt",
+        "column": "published_at",
+        "table": "tme_wfm_schedule_publish_ledger",
+        "exists": true
+      },
+      {
+        "schema": "TIM.WfmPublication.v1",
+        "field": "publishedBy",
+        "column": "published_by",
+        "table": "tme_wfm_schedule_publish_ledger",
+        "exists": true
+      }
+    ],
+    "localForeignKeyBindings": [
+      {
+        "table": "tme_wfm_demand_forecasts",
+        "columns": [
+          "tenant_id",
+          "previous_forecast_id"
+        ],
+        "target": "tme_wfm_demand_forecasts",
+        "targetColumns": [
+          "tenant_id",
+          "demand_forecast_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_demand_lines",
+        "columns": [
+          "tenant_id",
+          "demand_forecast_id"
+        ],
+        "target": "tme_wfm_demand_forecasts",
+        "targetColumns": [
+          "tenant_id",
+          "demand_forecast_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_planning_input_workers",
+        "columns": [
+          "tenant_id",
+          "planning_input_snapshot_id"
+        ],
+        "target": "tme_wfm_planning_input_snapshots",
+        "targetColumns": [
+          "tenant_id",
+          "planning_input_snapshot_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_schedule_candidates",
+        "columns": [
+          "tenant_id",
+          "demand_forecast_id",
+          "forecast_revision"
+        ],
+        "target": "tme_wfm_demand_forecasts",
+        "targetColumns": [
+          "tenant_id",
+          "demand_forecast_id",
+          "forecast_revision"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_schedule_candidates",
+        "columns": [
+          "tenant_id",
+          "planning_input_snapshot_id"
+        ],
+        "target": "tme_wfm_planning_input_snapshots",
+        "targetColumns": [
+          "tenant_id",
+          "planning_input_snapshot_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_schedule_candidates",
+        "columns": [
+          "tenant_id",
+          "last_evaluation_id"
+        ],
+        "target": "tme_wfm_constraint_evaluation_receipts",
+        "targetColumns": [
+          "tenant_id",
+          "constraint_evaluation_receipt_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_schedule_candidates",
+        "columns": [
+          "tenant_id",
+          "publication_ledger_id"
+        ],
+        "target": "tme_wfm_schedule_publish_ledger",
+        "targetColumns": [
+          "tenant_id",
+          "schedule_publish_ledger_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_solver_runs",
+        "columns": [
+          "tenant_id",
+          "schedule_candidate_id"
+        ],
+        "target": "tme_wfm_schedule_candidates",
+        "targetColumns": [
+          "tenant_id",
+          "schedule_candidate_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_candidate_shift_lines",
+        "columns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "demand_forecast_id"
+        ],
+        "target": "tme_wfm_schedule_candidates",
+        "targetColumns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "demand_forecast_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_candidate_shift_lines",
+        "columns": [
+          "tenant_id",
+          "demand_forecast_id",
+          "demand_line_key"
+        ],
+        "target": "tme_wfm_demand_lines",
+        "targetColumns": [
+          "tenant_id",
+          "demand_forecast_id",
+          "line_key"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_constraint_evaluation_receipts",
+        "columns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "candidate_revision"
+        ],
+        "target": "tme_wfm_schedule_candidates",
+        "targetColumns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "candidate_revision"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_constraint_evaluation_receipts",
+        "columns": [
+          "tenant_id",
+          "planning_input_snapshot_id"
+        ],
+        "target": "tme_wfm_planning_input_snapshots",
+        "targetColumns": [
+          "tenant_id",
+          "planning_input_snapshot_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_constraint_violation_lines",
+        "columns": [
+          "tenant_id",
+          "constraint_evaluation_receipt_id"
+        ],
+        "target": "tme_wfm_constraint_evaluation_receipts",
+        "targetColumns": [
+          "tenant_id",
+          "constraint_evaluation_receipt_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_fairness_measure_values",
+        "columns": [
+          "tenant_id",
+          "constraint_evaluation_receipt_id"
+        ],
+        "target": "tme_wfm_constraint_evaluation_receipts",
+        "targetColumns": [
+          "tenant_id",
+          "constraint_evaluation_receipt_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_approval_requests",
+        "columns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "candidate_revision"
+        ],
+        "target": "tme_wfm_schedule_candidates",
+        "targetColumns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "candidate_revision"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_approval_requests",
+        "columns": [
+          "tenant_id",
+          "constraint_evaluation_receipt_id"
+        ],
+        "target": "tme_wfm_constraint_evaluation_receipts",
+        "targetColumns": [
+          "tenant_id",
+          "constraint_evaluation_receipt_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_schedule_publish_ledger",
+        "columns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "candidate_revision"
+        ],
+        "target": "tme_wfm_schedule_candidates",
+        "targetColumns": [
+          "tenant_id",
+          "schedule_candidate_id",
+          "candidate_revision"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      },
+      {
+        "table": "tme_wfm_candidate_revision_counters",
+        "columns": [
+          "tenant_id",
+          "demand_forecast_id"
+        ],
+        "target": "tme_wfm_demand_forecasts",
+        "targetColumns": [
+          "tenant_id",
+          "demand_forecast_id"
+        ],
+        "sourceColumnsExist": true,
+        "targetColumnsExist": true,
+        "tenantBoth": true,
+        "targetUnique": true
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "TIM-WFM-001",
+      "severity": "P0",
+      "classification": "CONTRACT_CONTRADICTION",
+      "title": "무기술 요구의 native WFM에서도 PER snapshot을 강제함",
+      "pointers": [
+        "/recordSchemas/1/fields/8",
+        "/recordSchemas/5/checks/0",
+        "/tableSpecifications/4/columns/5",
+        "/tableSpecifications/4/columns/6",
+        "/planningInputOwnerDecision/composition"
+      ],
+      "why": "requiredSkills가 absent/empty인 native 수요는 PER 없이 실행하도록 정의했지만 PlanningWorker.skillSnapshotRef는 required=true이고 planning worker의 skill/source rows도 PER owner가 무조건 소유한 값만 요구한다. source missing이면 zero snapshot + 409/503라는 create 규칙과 결합하면 선택 모듈 경계가 깨진다.",
+      "repair": "needsSkills를 frozen demand/constraint의 실제 요구로 결정하고 skill snapshot/ref/qualifications를 조건부로 정의한다. 무기술 경로는 PER 호출 0, optional ref absent/empty typed qualifications, 동일 TIM work/rest rule 적용. Skill feature가 없는데 실제 요구가 있으면 명시 capability error로 거부하며 latest/fabricated snapshot fallback 금지.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N01",
+          "given": "PER 미설치; NATIVE_INPUT demandLines의 requiredSkills absent/[]; 유효 HRM/TIM availability",
+          "expected": "planning-input 생성·조회·native optimize 성공; PER supplier 호출 0; schema-valid worker rows와 frozen TIM/HRM refs"
+        },
+        {
+          "id": "WFM-N02",
+          "given": "PER 미설치 또는 stale PER snapshot인데 frozen demand가 기술/자격을 요구",
+          "expected": "명시 capability/stale 오류; candidate/shift/publication 0; 기술 요구를 []로 치환하지 않음"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/recordSchemas/1/fields/8",
+          "excerpt": "{\"name\":\"skillSnapshotRef\",\"type\":\"OBJECT\",\"required\":true,\"schemaRef\":\"TIM.WfmExternalSnapshotRef.v1\"}"
+        },
+        {
+          "pointer": "/recordSchemas/5/checks/0",
+          "excerpt": "\"TIM computes availability from HRM effective employment + TIM absence/schedule + PER qualifications through owner ports; HRM does not own absence/scheduling\""
+        },
+        {
+          "pointer": "/tableSpecifications/4/columns/5",
+          "excerpt": "{\"name\":\"skill_qualifications\",\"sqlType\":\"JSONB\",\"nullable\":false,\"source\":\"owner PER verified qualifications with fixed taxonomy/proficiency/validity\",\"schemaRef\":\"ARRAY<TIM.WfmSkillQualification.v1>\",\"maxItems\":500}"
+        },
+        {
+          "pointer": "/tableSpecifications/4/columns/6",
+          "excerpt": "{\"name\":\"source_refs\",\"sqlType\":\"JSONB\",\"nullable\":false,\"source\":\"exact HRM employment/TIM absence/TIM schedules/PER skills refs for this worker\",\"schemaRef\":\"ARRAY<TIM.WfmExternalSnapshotRef.v1>\",\"maxItems\":1000}"
+        },
+        {
+          "pointer": "/planningInputOwnerDecision/composition",
+          "excerpt": "[\"HRM.EffectiveAssignmentSnapshot.v1\",\"TIM.AbsenceAvailabilitySnapshot.v1\",\"TIM.CanonicalScheduleSnapshot.v1\",\"PER.WfmSkillVocabularySnapshot.proposal.v1\",\"HRM.EffectiveLocationSnapshot.proposal.v1\"]"
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-002",
+      "severity": "P0",
+      "classification": "STATE_GUARD_CONTRADICTION",
+      "title": "만료된 RUNNING lease를 RESULT_UNKNOWN으로 fence할 수 없음",
+      "pointers": [
+        "/internalOperations/0/guards/2",
+        "/internalOperations/3/solverRunGuard",
+        "/internalOperations/3/guards",
+        "/tableSpecifications/6/columns/4"
+      ],
+      "why": "lease-claim은 expired external execution을 RESULT_UNKNOWN/reconcile로 처리하라고 하나 mark-unknown은 unexpired exact lease를 요구한다. owner-clock이 lease_expires_at을 지난 최초 시점에는 선언한 UNKNOWN 경로가 실행 불가능하다.",
+      "repair": "verified owner watchdog의 timeout→UNKNOWN 전이를 completion/failure의 live-lease 조건과 분리한다. 정확 current run/lease/candidate/input/cancel fence CAS로 실행하고 old delivery를 fence한다. lease 만료 자체를 안전한 신규 dispatch로 해석하지 않는다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N03",
+          "given": "RUNNING run의 owner-clock이 exact lease expiry를 지났고 외부 결과 확인 불가",
+          "expected": "watchdog가 run/candidate/원본 optimize receipt를 RESULT_UNKNOWN으로 atomic CAS; completed rows/digest/publication 0"
+        },
+        {
+          "id": "WFM-N04",
+          "given": "UNKNOWN/cancelled 이후 old lease completion callback 또는 새 leaseVersion 임의 지정",
+          "expected": "409/denial; shift/candidate/events/receipt 재성공 0; 재dispatch 없음"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/internalOperations/0/guards/2",
+          "excerpt": "\"an expired external execution is RESULT_UNKNOWN/reconcile, not silently reclaimed or dispatched twice; native deterministic rerun requires explicit registered safe-retry semantics\""
+        },
+        {
+          "pointer": "/internalOperations/3/solverRunGuard",
+          "excerpt": "\"current owned run.status=RUNNING and unexpired exact lease; completion atomically RUNNING->COMPLETED, failure RUNNING->FAILED, unknown RUNNING->RESULT_UNKNOWN; candidate transition separately from QUEUED\""
+        },
+        {
+          "pointer": "/internalOperations/3/guards",
+          "excerpt": "[\"lost external solver result is unknown, not failure/success; old lease rejected; owner reconciliation only\"]"
+        },
+        {
+          "pointer": "/tableSpecifications/6/columns/4",
+          "excerpt": "{\"name\":\"lease_expires_at\",\"sqlType\":\"TIMESTAMPTZ\",\"nullable\":true,\"source\":\"owner clock+bounded lease policy\"}"
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-003",
+      "severity": "P0",
+      "classification": "MISSING_AUTHORITATIVE_SOLVER_INPUT_BINDING",
+      "title": "solver 출력이 frozen 수요·worker membership·worksite 요구를 지울 수 있는 모호성",
+      "pointers": [
+        "/recordSchemas/8/fields/7",
+        "/recordSchemas/8/checks/4",
+        "/tableSpecifications/7/columns/9",
+        "/tableSpecifications/7/foreignKeys",
+        "/internalOperations/1/guards",
+        "/operationDeltas/14/rules"
+      ],
+      "why": "shift.requiredSkills는 solver가 보낸 verified shift 필드에서만 저장되고 absent/empty이면 skill 요구가 없다고 정의된다. demandLineKey FK는 수요행 존재만 증명한다. frozen demand.required_skills의 권위/equality, planning snapshot의 worker+assignment membership, forecast worksite binding은 exact guard/source graph에 없다. 구현 취약점이 이미 실행됐다는 주장이 아니라 검증 전 설계의 중대한 미정 경계다.",
+      "repair": "수요의 requiredSkills를 authoritative frozen demand에서 owner가 재도출하고 callback의 임의 축소/변경을 거부한다. 각 worker/assignment는 정확 planning snapshot의 허용 구성원, worksite는 해당 frozen forecast/location으로 검증한다. 공급자가 결정하는 값과 owner가 결정하는 값의 DTO·source authority를 분리한다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N05",
+          "given": "수요는 자격이 필요하지만 callback이 동일 demandLineKey + requiredSkills=[] + 미자격 worker를 전송",
+          "expected": "등록된 blocking violation 또는 callback validation 오류; VALIDATED/SUBMITTED/PUBLISHED 불가"
+        },
+        {
+          "id": "WFM-N06",
+          "given": "같은 tenant의 다른 유효 worker/assignment 또는 다른 유효 worksite UUID를 callback에 삽입",
+          "expected": "exact frozen-input membership/worksite mismatch 거부; output rows 0"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/recordSchemas/8/fields/7",
+          "excerpt": "{\"name\":\"requiredSkills\",\"type\":\"ARRAY\",\"required\":false,\"itemSchemaRef\":\"SkillRequirement.proposal.v1\",\"minItems\":0,\"maxItems\":500}"
+        },
+        {
+          "pointer": "/recordSchemas/8/checks/4",
+          "excerpt": "\"no qualification requirement when requiredSkills is absent/empty; effective work/rest limits still apply\""
+        },
+        {
+          "pointer": "/tableSpecifications/7/columns/9",
+          "excerpt": "{\"name\":\"required_skills\",\"sqlType\":\"JSONB\",\"nullable\":false,\"source\":\"verified actual shift.requiredSkills\",\"schemaRef\":\"ARRAY<SkillRequirement.proposal.v1>\",\"maxItems\":500}"
+        },
+        {
+          "pointer": "/tableSpecifications/7/foreignKeys",
+          "excerpt": "[{\"mode\":\"LOCAL_TENANT_COMPOSITE\",\"columns\":[\"tenant_id\",\"schedule_candidate_id\",\"demand_forecast_id\"],\"targetTable\":\"tme_wfm_schedule_candidates\",\"targetColumns\":[\"tenant_id\",\"schedule_candidate_id\",\"demand_forecast_id\"]},{\"mode\":\"LOCAL_TENANT_COMPOSITE\",\"columns\":[\"tenant_id\",\"demand_forecast_id\",\"demand_line_key\"],\"targetTable\":\"tme_wfm_demand_lines\",\"targetColumns\":[\"tenant_id\",\"demand_forecast_id\",\"line_key\"]}]"
+        },
+        {
+          "pointer": "/internalOperations/1/guards",
+          "excerpt": "[\"current lease+input refs+cancel fence under candidate lock\",\"actual bounded typed rows then candidate_digest owner-computed; zero result is GENERATED but validates to blockers\",\"CAS duplicate callback same run/result no-op; mismatch409; no unauthenticated client success endpoint\"]"
+        },
+        {
+          "pointer": "/operationDeltas/14/rules",
+          "excerpt": "[\"actual shift rows + frozen sources; immutable evaluation snapshot; last_evaluation_id CAS pointer\",\"closed typed rule handlers; no tenant SQL/code; effective country/tenant constraints\"]"
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-004",
+      "severity": "P0",
+      "classification": "G3_SOURCE_GRAPH_MISSING",
+      "title": "28개 operation의 쓰기·receipt·event·nested projection closure가 아직 없음",
+      "pointers": [
+        "/operationDeltas",
+        "/internalOperations",
+        "/queryProjectionBindings",
+        "/operationResultBindings",
+        "/eventContractDecision",
+        "/stillOpenG3/0"
+      ],
+      "why": "각 table.column의 source가 설명 문자열이고 per-operation reads/write variants/typedSources/requiredColumnSources/receiptContracts/inputMappings/responseFieldSources/eventFieldSources는 정의되지 않았다. actual receipt/outbox 컬럼을 정확히 이름붙인 개선은 확인했으나 callback의 원본 optimize receipt resolution, 원자적 finalization, public vs internal ID provenance 및 nested projection을 완전 검증할 수 없다.",
+      "repair": "수정·생성·no-op·실패·internal outcome별 exact successor graph를 생성한다. FK/entity oracle·actual G2 receipt/outbox SQL·등록 derivation inputs·closed owner DTO에 대조하고 source missing이면 실패한다. run→candidate→원본 receipt의 exact sealed action/tenant/caller/request relation도 지정한다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N07",
+          "given": "business UUID를 correlation 또는 다른 entity UUID로 바꾸거나 실제없는 column/projection alias만 추가",
+          "expected": "independent source/entity validator FAIL"
+        },
+        {
+          "id": "WFM-N08",
+          "given": "callback을 다른 originating_action/tenant/caller의 receipt에 연결하거나 accepted optimize를 final publication으로 오인",
+          "expected": "binding 거부; 잘못된 receipt/event 갱신 0"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/operationDeltas",
+          "excerpt": "[{\"operationId\":\"modern.wfm.forecasts.query\",\"mode\":\"QUERY\",\"method\":\"GET\",\"path\":\"/api/time/v1/workforce-management/demand-forecasts\",\"transport\":\"GATEWAY_AUTHENTICATED\",\"querySchema\":{\"additionalProperties\":false,\"fields\":[{\"name\":\"asOf\",\"type\":\"TIMESTAMPTZ\",\"required\":true},{\"name\":\"pageSize\",\"type\":\"INTEGER\",\"required\":false,\"minimum\":1,\"maximum\":200},{\"name\":\"cursor\",\"type\":\"SIGNED_CURSOR\",\"required\":false,\"binds\":[\"tenant\",\"caller\",\"authorizationRevision\",\"purpose\",\"population\",\"fields\",\"asOf\",\"filters\",\"stableSort\"]},{\"name\":\"worksitePublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"HRM.Location\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"HRM.EffectiveLocationSnapshot.proposal.v1\"}},{\"name\":\"periodStart\",\"type\":\"TIMESTAMPTZ\",\"required\":true},{\"name\":\"periodEnd\",\"type\":\"TIMESTAMPTZ\",\"required\":true},{\"name\":\"statuses\",\"type\":\"ENUM[]\",\"required\":false,\"enum\":[\"DRAFT\",\"PUBLISHED\",\"CANCELLED\"]}]},\"requiredHeade…"
+        },
+        {
+          "pointer": "/internalOperations",
+          "excerpt": "[{\"operationId\":\"tim.wfm.solver.lease-claim\",\"transport\":\"OWNER_WORKLOAD_ONLY_NOT_PUBLIC_API\",\"aggregate\":\"SolverRun\",\"from\":[\"QUEUED\"],\"to\":\"RUNNING\",\"inputSchema\":{\"additionalProperties\":false,\"fields\":[{\"name\":\"runPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.SolverRun\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmSolverRun.v1\"}},{\"name\":\"expectedLeaseVersion\",\"type\":\"BIGINT\",\"required\":true,\"minimum\":0},{\"name\":\"inputDigest\",\"type\":\"SHA256\",\"required\":true}]},\"writes\":[\"tme_wfm_solver_runs\"],\"guards\":[\"verified owner workload identity, runnable job allowlist, exact persisted inputDigest and current candidate QUEUED/cancel_fence=false\",\"CAS current run.status=QUEUED and lease_version; increment checked lease_version/attempt_count; record actual workload principal and owner-clock bounded expiry in same row transaction\",\"an expired external execution is RESULT_UNKNOWN/reconcile, not silently reclaime…"
+        },
+        {
+          "pointer": "/queryProjectionBindings",
+          "excerpt": "{\"TIM.WfmForecast.v1\":{\"row\":\"tme_wfm_demand_forecasts\",\"columns\":{\"publicId\":\"public_id\",\"aggregateVersion\":\"aggregate_version\",\"forecastKey\":\"forecast_key\",\"forecastRevision\":\"forecast_revision\",\"status\":\"status\",\"worksitePublicId\":\"worksite_public_id\",\"sourceMode\":\"source_mode\",\"sourceTimezone\":\"source_timezone\",\"periodStart\":\"period_start\",\"periodEnd\":\"period_end\",\"contentSha256\":\"source_digest\"},\"derivations\":{\"demandSnapshotRef\":\"exact nullable snapshot contract/schema/publicId/revision/digest fields; all-or-none source_mode\",\"asOf\":\"validated request.asOf, not implicit fictitious column\",\"scopeRevision\":\"owner authorization effective revision, not table.scope_revision\"}},\"TIM.WfmDemand.v1\":{\"row\":\"tme_wfm_demand_lines\",\"columns\":{\"lineKey\":\"line_key\",\"startsAt\":\"starts_at\",\"endsAt\":\"ends_at\",\"requiredHeadcount\":\"required_headcount\",\"requiredSkills\":\"required_skills\"}},\"TIM.WfmShift.v1\":{\"row\":\"tme_wfm_candidate_shift_lines\",\"colu…"
+        },
+        {
+          "pointer": "/operationResultBindings",
+          "excerpt": "[{\"operationId\":\"modern.wfm.forecast.create\",\"resultEntityType\":\"TIM.DemandForecast\",\"resultTable\":\"tme_wfm_demand_forecasts\",\"publicIdColumn\":\"public_id\",\"revisionColumn\":\"forecast_revision\",\"receiptResultSource\":\"persist resulting owner public UUID into actual tme_command_receipts.result_ref; refetch through tenant+exact operation-bound entity type\",\"acceptedVsSucceeded\":\"immediate owner transaction SUCCEEDED or typed failure; no pseudo pending\"},{\"operationId\":\"modern.wfm.forecast.draft.replace\",\"resultEntityType\":\"TIM.DemandForecast\",\"resultTable\":\"tme_wfm_demand_forecasts\",\"publicIdColumn\":\"public_id\",\"revisionColumn\":\"forecast_revision\",\"receiptResultSource\":\"persist resulting owner public UUID into actual tme_command_receipts.result_ref; refetch through tenant+exact operation-bound entity type\",\"acceptedVsSucceeded\":\"immediate owner transaction SUCCEEDED or typed failure; no pseudo pending\"},{\"operationId\":\"modern.wfm.forecast.re…"
+        },
+        {
+          "pointer": "/eventContractDecision",
+          "excerpt": "{\"envelopeRef\":\"DWP_BACKEND/contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope\",\"eventKinds\":[\"WfmForecastCreated\",\"WfmForecastChanged\",\"WfmForecastPublished\",\"WfmForecastCancelled\",\"WfmPlanningInputFrozen\",\"WfmCandidateQueued\",\"WfmCandidateGenerated\",\"WfmCandidateFailed\",\"WfmCandidateCancelled\",\"WfmCandidateValidated\",\"WfmCandidateSubmitted\",\"WfmCandidateRejected\",\"WfmSchedulePublished\"],\"exactPayloadStatus\":\"PROPOSED_EXACT_MINIMIZED_FIELDS_NOT_INDEPENDENTLY_APPROVED\",\"forbidden\":[\"raw PII\",\"availability/skill worker inventory\",\"shift lines in public broad topics\",\"credential/raw solver request\",\"correlation as business reference\"],\"allowedFacts\":[\"tenant envelope\",\"owner aggregate UUID/sequence\",\"schemaVersion\",\"frozen version/digest refs\",\"bounded state/error codes\"],\"outboxSource\":\"actual G2 tme_outbox_events; transaction same owner writes, not invented tme_domain_event_outbox\"}"
+        },
+        {
+          "pointer": "/stillOpenG3/0",
+          "excerpt": "\"complete operation-specific source dependency graphs/table write-set and event payload closure + independent design approval; physical specifications proposed but NOT_SQL_EXECUTION\""
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-005",
+      "severity": "P0",
+      "classification": "G3_RECONCILIATION_CONTRACT_MISSING",
+      "title": "solver/Approval reconcile은 typed 실행 계약이 아닌 skeleton",
+      "pointers": [
+        "/internalOperations/4",
+        "/internalOperations/5"
+      ],
+      "why": "solver reconcile에 inputSchema/writes/actor/lease fences/outcome-specific run+candidate+receipt+outbox transition이 없고 Approval reconcile에도 exact submission request ID/input/outcomes/write graph가 없다. 선언된 abstract candidate 상태는 모두 도달 가능하지만 실제 UNKNOWN/approval/cancellation 과정의 원자적 실행·재전송·대사 경로는 증명되지 않는다.",
+      "repair": "각 outcome의 closed owner input/verified evidence receipt, current lease/candidate/submission CAS, canonical error/outbox/receipt 결과를 게시한다. 외부 UNKNOWN을 임의 실패/성공으로 변환하거나 generic retry로 새 run을 만들지 않는다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N09",
+          "given": "중복 또는 다른 candidate/input digest의 external reconcile result",
+          "expected": "동일 결과 no-op 또는 mismatch409; 신규 run/다른 rows 변경 0"
+        },
+        {
+          "id": "WFM-N10",
+          "given": "Approval DENIED/cancelled/APPROVED reply가 duplicate/out-of-order/다른 submission revision으로 도착",
+          "expected": "exact current submission의 허용 결과만 CAS 적용; 잘못된 publish/cancel 0"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/internalOperations/4",
+          "excerpt": "{\"operationId\":\"tim.wfm.solver.reconcile\",\"transport\":\"OWNER_WORKLOAD_ONLY_NOT_PUBLIC_API\",\"from\":[\"RESULT_UNKNOWN\"],\"outcomes\":[\"GENERATED\",\"FAILED\",\"CANCELLED\"],\"guards\":[\"same persisted run/candidate/input versions; verified external result or explicit cancellation receipt; never new run by replay\",\"new attempt/re-optimize creates new candidate after old run resolved/cancelled; stale source requires fresh planning input\"]}"
+        },
+        {
+          "pointer": "/internalOperations/5",
+          "excerpt": "{\"operationId\":\"tim.wfm.outbox.approval-reconcile\",\"transport\":\"OWNER_WORKLOAD_ONLY_NOT_PUBLIC_API\",\"guards\":[\"Approval requestKey + entity/version/digest exact; duplicate deliver/reply no duplicate request\",\"SUBMITTED stays until actual approval/denial/cancellation; unavailable route exposed as pending receipt and operational retry\"]}"
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-006",
+      "severity": "P0",
+      "classification": "G3_PEP_AND_FIXTURE_CONTRACT_MISSING",
+      "title": "operation별 DWP 권한·owner PEP·두 설정 fixture는 아직 검증 불가",
+      "pointers": [
+        "/operationDeltas/0/requiredHeaders",
+        "/internalOperations/1",
+        "/tableSpecifications/5/rowSecurity",
+        "/testAllocation",
+        "/stillOpenG3/3"
+      ],
+      "why": "모든 public API는 APP.HCM/atomic duty/purpose/population/field/asOf라는 공통 문구만 있고 exact DWP action/group resource binding, owner read/refetch/callback PEP, workload lease owner equality와 denials는 없다. G3/G4 A/B settings는 배정 문자열이며 API-valid 정책/solver fixture의 실제 입력→행/event/receipt/오류 oracle가 없다.",
+      "repair": "DWP 앱 하위 권한 그룹·atomic action을 재사용하여 22 public과 6 workload entry 각각 entitlement/duty/scope/mask/asOf/SoD/owner validation 규칙을 등록한다. 검증된 workload principal과 lease_owner_public_id를 정확히 묶는다. 법정값은 pinned country/work-rule policy로 설정하고 최소 두 실제 API-valid config + 결과 fixture를 정의한다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N11",
+          "given": "직원/설정관리자/전사감사자에게 duty 없는 optimize/publish, 승인 요청자 자기 최종 승인, 다른 workload의 lease callback",
+          "expected": "DWP owner PEP denial; rows/outbox 0; 감사자는 field/purpose 허용 read만"
+        },
+        {
+          "id": "WFM-N12",
+          "given": "narrowed permission replay, forged cursor, cross-tenant FK/request, stale work-rule/country pack",
+          "expected": "replay/cursor/owner refetch FAIL; 기존 넓은 권한 결과를 재노출하지 않음"
+        },
+        {
+          "id": "WFM-N13",
+          "given": "동일 WFM request에 서로 다른 유효 config A/B의 work/rest/paidness/solver 정책",
+          "expected": "서로 구별되는 정확 typed rows·violation/event/receipt oracle; core 숫자 하드코딩 없음"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/operationDeltas/0/requiredHeaders",
+          "excerpt": "[\"signed tenant via principal.tenantId\",\"authenticated principal.publicId\",\"APP.HCM entitlement\",\"atomic action duty\",\"purpose/population/field/asOf authorization\",\"X-Correlation-ID trace metadata only\"]"
+        },
+        {
+          "pointer": "/internalOperations/1",
+          "excerpt": "{\"operationId\":\"tim.wfm.solver.complete\",\"transport\":\"OWNER_WORKLOAD_ONLY_NOT_PUBLIC_API\",\"from\":[\"QUEUED\"],\"to\":\"GENERATED\",\"inputSchema\":{\"fields\":[{\"name\":\"runPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.SolverRun\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmSolverRun.v1\"}},{\"name\":\"leaseVersion\",\"type\":\"BIGINT\",\"required\":true},{\"name\":\"inputDigest\",\"type\":\"SHA256\",\"required\":true},{\"name\":\"shiftLines\",\"type\":\"ARRAY\",\"required\":true,\"itemSchemaRef\":\"TIM.WfmShift.v1\",\"minItems\":0,\"maxItems\":50000}]},\"writes\":[\"tme_wfm_solver_runs\",\"tme_wfm_schedule_candidates\",\"tme_wfm_candidate_shift_lines\",\"tme_command_receipts\",\"tme_outbox_events\"],\"guards\":[\"current lease+input refs+cancel fence under candidate lock\",\"actual bounded typed rows then candidate_digest owner-computed; zero result is GENERATED but validates to blockers\",\"CAS duplicate callback same run/result no-op; mismatch409; no unauthenticated…"
+        },
+        {
+          "pointer": "/tableSpecifications/5/rowSecurity",
+          "excerpt": "\"ENABLE_FORCE_TENANT_BIGINT_NOBYPASSRLS\""
+        },
+        {
+          "pointer": "/testAllocation",
+          "excerpt": "{\"G3\":\"independent exact design/schema/owner/source/enum/fixture and common scaffolds\",\"G4\":\"all declared public/internal operations actual requests→rows→events/receipts→typed refetch, A/B settings, denial/tenant/CAS/replay/cancel/unknown/DST/retention execution\",\"G5\":\"all task/detail/tabs/dialogs/states/personas DesignAI prompt+ZIP after functionality\"}"
+        },
+        {
+          "pointer": "/stillOpenG3/3",
+          "excerpt": "\"core rule/solver registries and effective configuration/country policy schema\""
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-007",
+      "severity": "P0",
+      "classification": "VALIDATION_DIALECT_BOUNDARY",
+      "title": "현 source validator에 직접 넣으면 0 operation noop",
+      "pointers": [
+        "/contractId",
+        "/operationDeltas",
+        "/internalOperations",
+        "/stillOpenG3/0"
+      ],
+      "why": "독립 read-only 호출에서 raw errors=0, validated operations=0이었다. proposal에는 operationBindings/operationFieldLineage가 없어 validator가 22+6 작업을 읽지 않는다. 원본의 NOT_CANONICAL/G3_NONE 표기는 맞지만 오류 0을 readiness PASS로 인용하면 안 된다.",
+      "repair": "명시적 proposal dialect/schema 검증과 lossless successor 변환 뒤 operation closure=실제 28개(정당한 설계 변경 시 수량 갱신)를 검증한다. dialect/zero operations를 readiness runner가 reject해야 한다. 본 검토는 기존 validator를 변경하지 않는다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N14",
+          "given": "raw WFM proposal 또는 모든 canonical operation/lineage keys를 삭제한 문서",
+          "expected": "UNSUPPORTED_DIALECT/EMPTY_OPERATION_CLOSURE FAIL; 0-operation PASS 금지"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/contractId",
+          "excerpt": "\"dwp.hris.tim.wfm.exact-remediation.proposal.v1\""
+        },
+        {
+          "pointer": "/operationDeltas",
+          "excerpt": "[{\"operationId\":\"modern.wfm.forecasts.query\",\"mode\":\"QUERY\",\"method\":\"GET\",\"path\":\"/api/time/v1/workforce-management/demand-forecasts\",\"transport\":\"GATEWAY_AUTHENTICATED\",\"querySchema\":{\"additionalProperties\":false,\"fields\":[{\"name\":\"asOf\",\"type\":\"TIMESTAMPTZ\",\"required\":true},{\"name\":\"pageSize\",\"type\":\"INTEGER\",\"required\":false,\"minimum\":1,\"maximum\":200},{\"name\":\"cursor\",\"type\":\"SIGNED_CURSOR\",\"required\":false,\"binds\":[\"tenant\",\"caller\",\"authorizationRevision\",\"purpose\",\"population\",\"fields\",\"asOf\",\"filters\",\"stableSort\"]},{\"name\":\"worksitePublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"HRM.Location\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"HRM.EffectiveLocationSnapshot.proposal.v1\"}},{\"name\":\"periodStart\",\"type\":\"TIMESTAMPTZ\",\"required\":true},{\"name\":\"periodEnd\",\"type\":\"TIMESTAMPTZ\",\"required\":true},{\"name\":\"statuses\",\"type\":\"ENUM[]\",\"required\":false,\"enum\":[\"DRAFT\",\"PUBLISHED\",\"CANCELLED\"]}]},\"requiredHeade…"
+        },
+        {
+          "pointer": "/internalOperations",
+          "excerpt": "[{\"operationId\":\"tim.wfm.solver.lease-claim\",\"transport\":\"OWNER_WORKLOAD_ONLY_NOT_PUBLIC_API\",\"aggregate\":\"SolverRun\",\"from\":[\"QUEUED\"],\"to\":\"RUNNING\",\"inputSchema\":{\"additionalProperties\":false,\"fields\":[{\"name\":\"runPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.SolverRun\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmSolverRun.v1\"}},{\"name\":\"expectedLeaseVersion\",\"type\":\"BIGINT\",\"required\":true,\"minimum\":0},{\"name\":\"inputDigest\",\"type\":\"SHA256\",\"required\":true}]},\"writes\":[\"tme_wfm_solver_runs\"],\"guards\":[\"verified owner workload identity, runnable job allowlist, exact persisted inputDigest and current candidate QUEUED/cancel_fence=false\",\"CAS current run.status=QUEUED and lease_version; increment checked lease_version/attempt_count; record actual workload principal and owner-clock bounded expiry in same row transaction\",\"an expired external execution is RESULT_UNKNOWN/reconcile, not silently reclaime…"
+        },
+        {
+          "pointer": "/stillOpenG3/0",
+          "excerpt": "\"complete operation-specific source dependency graphs/table write-set and event payload closure + independent design approval; physical specifications proposed but NOT_SQL_EXECUTION\""
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-008",
+      "severity": "P1",
+      "classification": "BROKEN_SCHEMA_REFERENCE",
+      "title": "14개 commonTableContract 상대 경로가 존재하지 않음",
+      "pointers": [
+        "/tableSpecifications/0/commonColumns/contractRef"
+      ],
+      "why": "semantic-remediation 파일 기준 ../../modern-capability-exact-schema-contracts.v1.json은 blueprint root로 resolve되며 그 파일은 없다. 실제 정본은 coding-readiness/modern-capability-exact-schema-contracts.v1.json이다. 동일 ref가 14 tables에 복제되어 있다.",
+      "repair": "파일 기준 resolvable ref 또는 등록된 exact contract URI를 사용하고 import digest/version을 검증한다. 공통 컬럼을 암묵 상수로 채워 잘못된 ref를 숨기지 않는다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N15",
+          "given": "common/import ref가 absent/moved/schemaId unknown/digest stale",
+          "expected": "schema/import closure FAIL; 기본 common columns fallback 없음"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/tableSpecifications/0/commonColumns/contractRef",
+          "excerpt": "\"../../modern-capability-exact-schema-contracts.v1.json#/commonTableContract\""
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-009",
+      "severity": "P1",
+      "classification": "PRODUCT_AVAILABILITY_EDGE_CASE",
+      "title": "가용 구간 0개인 정상 worker를 표현할 수 없음",
+      "pointers": [
+        "/recordSchemas/1/fields/3",
+        "/tableSpecifications/4/columns/4",
+        "/operationDeltas/8/rules"
+      ],
+      "why": "approved absence/current schedule를 빼면 availableIntervals=[]인 정상 worker가 생기지만 DTO minItems=1이다. 전체 기간 휴가자가 포함된 selector 한 명 때문에 valid planning snapshot을 실패시킬 수 있다.",
+      "repair": "빈 availability를 사실로 저장/조회하고 solver가 배정하지 않도록 하거나, 명시된 deterministic exclusion reason/count를 typed snapshot에 보존한다. 조용한 누락/제외나 전체 요청 오류로 사용자가 후보를 수작업 정리하도록 만들지 않는다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N16",
+          "given": "전기간 승인 휴가의 정상 고용 worker + 일부 가용 worker",
+          "expected": "schema-valid snapshot 성공; unavailable worker에는 shift 0; shortage는 실제 positive demand 기반 blocking 결과"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/recordSchemas/1/fields/3",
+          "excerpt": "{\"name\":\"availableIntervals\",\"type\":\"ARRAY\",\"required\":true,\"itemSchemaRef\":\"TIM.WfmInterval.v1\",\"minItems\":1,\"maxItems\":2000}"
+        },
+        {
+          "pointer": "/tableSpecifications/4/columns/4",
+          "excerpt": "{\"name\":\"available_intervals\",\"sqlType\":\"JSONB\",\"nullable\":false,\"source\":\"TIM_SUBTRACT_APPROVED_ABSENCE_AND_CURRENT_SCHEDULE_FROM_EFFECTIVE_ASSIGNMENT_INTERVALS_V1\",\"schemaRef\":\"ARRAY<TIM.WfmInterval.v1>\",\"maxItems\":2000}"
+        },
+        {
+          "pointer": "/operationDeltas/8/rules",
+          "excerpt": "[\"all workers owner-authorized; compose TIM availability, never trust client availability/skill scores\",\"source missing/stale yields 409/503 and zero snapshot rows; digest computed over normalized ordered actual typed content\"]"
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-010",
+      "severity": "P1",
+      "classification": "CANCEL_STATE_INVARIANT_UNSPECIFIED",
+      "title": "이미 COMPLETED인 run과 취소 candidate의 상태·digest를 구분해야 함",
+      "pointers": [
+        "/operationDeltas/20/writes",
+        "/operationDeltas/20/rules",
+        "/tableSpecifications/6/checks/2"
+      ],
+      "why": "generic cancel은 GENERATED/VALIDATED candidate에서도 solver_runs를 쓰지만 run result_digest NOT NULL iff COMPLETED invariant가 있다. 성공 run을 무조건 CANCELLED로 바꾸면 invariant 위반이고 result_digest를 지우면 보존된 생성 사실을 잃는다. 현재 실제 assignment가 없어 실패가 실행됐다는 주장은 아니다.",
+      "repair": "QUEUED/RUNNING/UNKNOWN run의 cancel edge와 COMPLETED run의 완료 사실 보존 + delivery fence를 outcome별로 구분한다. candidate CANCELLED와 run COMPLETED는 합법적 조합이며 기존 shifts/digests는 audit 사실로 보존한다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N17",
+          "given": "GENERATED candidate/COMPLETED run에 cancel, 또는 running callback과 cancel 동시 진행",
+          "expected": "완료 사실/digest 유지 혹은 아직 미완료 run의 fenced CANCELLED; candidate cancel 이후 callback 새 rows/events 0"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/operationDeltas/20/writes",
+          "excerpt": "[\"tme_wfm_schedule_candidates\",\"tme_wfm_solver_runs\"]"
+        },
+        {
+          "pointer": "/operationDeltas/20/rules",
+          "excerpt": "[\"durable lease/final-delivery cancellation fence; callback CAS prevents post-cancel rows/events\",\"SUBMITTED withdrawal needs Approval-owner cancellation receipt; excluded from generic cancel, use explicit withdrawal\"]"
+        },
+        {
+          "pointer": "/tableSpecifications/6/checks/2",
+          "excerpt": "\"result_digest NOT NULL iff status=COMPLETED\""
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-011",
+      "severity": "P1",
+      "classification": "OWNER_SNAPSHOT_REVISION_INPUT_GAP",
+      "title": "OWNER_SNAPSHOT revision의 새 owner snapshot 입력 경로가 없음",
+      "pointers": [
+        "/operationDeltas/4/rules/0",
+        "/operationDeltas/5/bodySchema",
+        "/operationDeltas/5/rules/0"
+      ],
+      "why": "snapshot forecast는 draft replace를 할 수 없고 revise는 새 owner ref refresh를 말하지만 body에는 source ID/version/reason만 있다. 22 ops 안에는 새 demandSnapshotRef를 전달하는 refresh/revision 명세가 없으며 copy한 snapshot DRAFT를 실제 갱신할 경로가 불명확하다.",
+      "repair": "명시적인 revision source-mode one-of/new snapshot ref 입력을 제공하고 이전 forecast 불변·새 public ID/family revision/source provenance를 owner가 검증한다. 별도 create로 revision을 우회할 경우 lineage/previous FK/allocator 의미를 정확히 정의한다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N18",
+          "given": "PUBLISHED OWNER_SNAPSHOT forecast에서 새 유효 owner demand revision으로 revise",
+          "expected": "이전 rows/state 불변; 새 frozen ref와 실제 demand rows를 가진 새 DRAFT; stale/unrelated ref 거부"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/operationDeltas/4/rules/0",
+          "excerpt": "\"NATIVE_INPUT only; source snapshot forecast immutable content uses revise with new owner ref\""
+        },
+        {
+          "pointer": "/operationDeltas/5/bodySchema",
+          "excerpt": "{\"additionalProperties\":false,\"fields\":[{\"name\":\"forecastPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.DemandForecast\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmForecastOwner.v1\"}},{\"name\":\"expectedVersion\",\"type\":\"BIGINT\",\"required\":true,\"minimum\":0},{\"name\":\"reasonCode\",\"type\":\"REGISTERED_TENANT_REASON_CODE\",\"required\":true}]}"
+        },
+        {
+          "pointer": "/operationDeltas/5/rules/0",
+          "excerpt": "\"source forecast stays unchanged; create new owner-generated public UUID/revision in same forecastKey lineage; freeze source revision; copy typed demand then draft replace/owner snapshot refresh\""
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-012",
+      "severity": "P1",
+      "classification": "CLOSED_PAYLOAD_DIALECT_GAP",
+      "title": "internal payload 폐쇄와 segment enum dialect가 일관되지 않음",
+      "pointers": [
+        "/internalOperations/1/inputSchema",
+        "/internalOperations/2/inputSchema",
+        "/internalOperations/3/inputSchema",
+        "/recordSchemas/21/fields/1"
+      ],
+      "why": "lease-claim만 additionalProperties=false이고 complete/fail/unknown은 그 설정이 없다. 두 reconcile은 입력 schema 자체가 없다. canonical segment kind만 values를 쓰고 다른 ENUM fields는 enum을 써 generated parser의 폐쇄 의미가 아직 통일되지 않았다.",
+      "repair": "proposal dialect/schema를 version하고 모든 내부 entry의 unknown/coercion/duplicate/null/oversize rejection을 정의한다. segment enum은 successor의 정식 syntax로 표준화하며 등록된 tzdb/rule/version 검사도 parser→owner graph에서 닫는다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N19",
+          "given": "internal callback에 unknown success/caller/tenant field, BREAK 대신 임의 kind, oversized shift/segment array",
+          "expected": "closed parser FAIL; 임의 상태/actor/body 확장 금지"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/internalOperations/1/inputSchema",
+          "excerpt": "{\"fields\":[{\"name\":\"runPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.SolverRun\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmSolverRun.v1\"}},{\"name\":\"leaseVersion\",\"type\":\"BIGINT\",\"required\":true},{\"name\":\"inputDigest\",\"type\":\"SHA256\",\"required\":true},{\"name\":\"shiftLines\",\"type\":\"ARRAY\",\"required\":true,\"itemSchemaRef\":\"TIM.WfmShift.v1\",\"minItems\":0,\"maxItems\":50000}]}"
+        },
+        {
+          "pointer": "/internalOperations/2/inputSchema",
+          "excerpt": "{\"fields\":[{\"name\":\"runPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.SolverRun\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmSolverRun.v1\"}},{\"name\":\"leaseVersion\",\"type\":\"BIGINT\",\"required\":true},{\"name\":\"errorCode\",\"type\":\"REGISTERED_ERROR_CODE\",\"required\":true}]}"
+        },
+        {
+          "pointer": "/internalOperations/3/inputSchema",
+          "excerpt": "{\"fields\":[{\"name\":\"runPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.SolverRun\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmSolverRun.v1\"}},{\"name\":\"leaseVersion\",\"type\":\"BIGINT\",\"required\":true},{\"name\":\"errorCode\",\"type\":\"REGISTERED_ERROR_CODE\",\"required\":true}]}"
+        },
+        {
+          "pointer": "/recordSchemas/21/fields/1",
+          "excerpt": "{\"name\":\"kind\",\"type\":\"ENUM\",\"required\":true,\"values\":[\"WORK\",\"BREAK\"]}"
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-013",
+      "severity": "P1",
+      "classification": "EVENT_SEQUENCE_AND_STATE_BINDING_GAP",
+      "title": "state event의 허용 상태와 outbox aggregate sequence를 확정해야 함",
+      "pointers": [
+        "/eventSchemas/9/fields/2",
+        "/eventSchemas/9/emission",
+        "/eventContractDecision/outboxSource",
+        "/revisionAndPointerInvariant"
+      ],
+      "why": "WfmCandidateValidated는 전체 10개 candidate 상태를 허용하고 per-operation event emission mapping이 없다. G2 outbox.aggregate_revision은 존재하지만 변경마다 증가하는 aggregate_version인지 고정 candidate_revision인지 source가 정해지지 않았다. 잘못된 ordinal 사용은 state event 순서/중복 적용을 깨뜨린다.",
+      "repair": "event별 상태/outcome 및 aggregate sequence source를 닫고 family/candidate/evaluation domain revision과 CAS aggregate_version을 분리한다. outbox replay/no-op/rollback의 event identity·causation·payload digest를 등록한다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N20",
+          "given": "GENERATED→VALIDATED→SUBMITTED event가 같은 candidateRevision, 반복 callback/no-op validate",
+          "expected": "owner aggregate sequence는 각 semantic change에 증가; 재전송 same event ID; no-op 새 event 0; validated event에는 허용 validation outcome만"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/eventSchemas/9/fields/2",
+          "excerpt": "{\"name\":\"state\",\"type\":\"ENUM\",\"source\":\"tme_wfm_schedule_candidates.status\",\"enum\":[\"QUEUED\",\"GENERATED\",\"VALIDATED\",\"VALIDATION_FAILED\",\"SUBMITTED\",\"REJECTED\",\"PUBLISHED\",\"CANCELLED\",\"FAILED\",\"RESULT_UNKNOWN\"]}"
+        },
+        {
+          "pointer": "/eventSchemas/9/emission",
+          "excerpt": "\"only committed semantic change; outbox same owner transaction; no duplicate replay/no-op emission\""
+        },
+        {
+          "pointer": "/eventContractDecision/outboxSource",
+          "excerpt": "\"actual G2 tme_outbox_events; transaction same owner writes, not invented tme_domain_event_outbox\""
+        },
+        {
+          "pointer": "/revisionAndPointerInvariant",
+          "excerpt": "{\"forecastRevision\":\"tenant+forecastKey protected counter; unique family revision; original row remains unchanged\",\"candidateRevision\":\"per forecast candidate counter initialized0; unique tenant/forecast/candidateRevision; optimize receipt/counter/run/candidate atomic\",\"evaluationRevision\":\"candidate.last_evaluation_revision checked increment + immutable evaluation row + last_evaluation_id CAS pointer same transaction\",\"crossCandidatePointerDefense\":\"last_evaluation_id/publication_ledger_id additionally verified candidate local ID/revision/digest in owner transaction; simple local FK alone is NOT sufficient\"}"
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-014",
+      "severity": "P1",
+      "classification": "ZERO_DEMAND_RESULT_CONTRADICTION",
+      "title": "0 headcount 수요의 빈 정상 결과를 무조건 blocker로 처리함",
+      "pointers": [
+        "/recordSchemas/6/fields/3",
+        "/operationDeltas/6/rules/0",
+        "/internalOperations/1/guards/1"
+      ],
+      "why": "requiredHeadcount 최소값은 0이고 nonempty forecast만 publish에 필요하다. 그러나 empty solver result를 항상 GENERATED-but-blocking으로 정의해 전 수요행 headcount=0인 합법 입력까지 부당하게 막을 수 있다.",
+      "repair": "coverage/blocking 여부는 실제 positive requiredHeadcount와 pinned demand grouping/coverage policy로 계산한다. 0 staffing이 허용되지 않는 상품 정책이면 입력 단계에서 explicit rule로 제한한다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N21",
+          "given": "유효 수요행의 requiredHeadcount가 전부 0인 forecast와 빈 solver result",
+          "expected": "정의된 상품 정책에 따라 입력 명시 거부 또는 0 shortage의 정상 evaluation; 빈 결과 자체를 가짜 blocker로 만들지 않음"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/recordSchemas/6/fields/3",
+          "excerpt": "{\"name\":\"requiredHeadcount\",\"type\":\"INTEGER\",\"required\":true,\"minimum\":0}"
+        },
+        {
+          "pointer": "/operationDeltas/6/rules/0",
+          "excerpt": "\"validate actual nonempty bounded demand and worksite/skill/timezone policy in same transaction; no phantom preexisting validation receipt\""
+        },
+        {
+          "pointer": "/internalOperations/1/guards/1",
+          "excerpt": "\"actual bounded typed rows then candidate_digest owner-computed; zero result is GENERATED but validates to blockers\""
+        }
+      ]
+    },
+    {
+      "id": "TIM-WFM-015",
+      "severity": "P2",
+      "classification": "PROCESS_OPTIMIZATION_RECOMMENDATION",
+      "title": "Approval 결정을 사용자 수동 reject/withdraw 후처리에 의존하지 않게 설계",
+      "pointers": [
+        "/operationDeltas/17",
+        "/operationDeltas/21",
+        "/internalOperations/5"
+      ],
+      "why": "DENIED decision receipt 이후 별도의 public reject를 요구하는 흐름과 이미 발급된 cancellation receipt를 사용자가 submit하는 withdrawal은 사용자 작업을 늘릴 수 있다. common Approval UI/owner workflow가 이를 자동 수행하는지는 미게시다.",
+      "repair": "owner reconcile이 DENIED/cancellation을 자동·idempotent 반영하고 public endpoints는 authorized retry/확인용으로 유지한다. withdrawal은 common Approval cancellation request/receipt pending journey를 한 문맥 행동으로 보여준다. 추가 사이드바 메뉴나 불필요한 이중승인 단계는 만들지 않는다.",
+      "negativeAcceptance": [
+        {
+          "id": "WFM-N22",
+          "given": "승인 owner의 DENIED/cancellation receipt가 도착했으나 planner가 추가 버튼을 누르지 않음",
+          "expected": "정확 current submission 상태가 자동 갱신되고 pending/unavailable 상태는 명확히 조회됨; manual redundant finalization 불필요"
+        }
+      ],
+      "evidence": [
+        {
+          "pointer": "/operationDeltas/17",
+          "excerpt": "{\"operationId\":\"modern.wfm.schedule.reject\",\"mode\":\"COMMAND\",\"method\":\"POST\",\"path\":\"/api/time/v1/workforce-management/schedule-candidates/{candidateId}/reject\",\"transport\":\"GATEWAY_AUTHENTICATED\",\"aggregate\":\"ScheduleCandidate\",\"bodySchema\":{\"additionalProperties\":false,\"fields\":[{\"name\":\"candidatePublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.ScheduleCandidate\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmCandidateOwner.v1\"}},{\"name\":\"expectedVersion\",\"type\":\"BIGINT\",\"required\":true,\"minimum\":0},{\"name\":\"approvalReceiptPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"Approval.Receipt\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"Approval.DecisionSnapshot\"}}]},\"requiredHeaders\":[\"signed tenant via principal.tenantId\",\"authenticated principal.publicId\",\"APP.HCM entitlement\",\"atomic action duty\",\"purpose/population/field/asOf authorization\",\"X-Correlation-ID trace metadata only\",\"I…"
+        },
+        {
+          "pointer": "/operationDeltas/21",
+          "excerpt": "{\"operationId\":\"modern.wfm.schedule.withdraw\",\"mode\":\"COMMAND\",\"method\":\"POST\",\"path\":\"/api/time/v1/workforce-management/schedule-candidates/{candidateId}/withdraw\",\"transport\":\"GATEWAY_AUTHENTICATED\",\"aggregate\":\"ScheduleCandidate\",\"bodySchema\":{\"additionalProperties\":false,\"fields\":[{\"name\":\"candidatePublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"TIM.ScheduleCandidate\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"TIM.WfmCandidateOwner.v1\"}},{\"name\":\"expectedVersion\",\"type\":\"BIGINT\",\"required\":true,\"minimum\":0},{\"name\":\"approvalCancellationReceiptPublicId\",\"type\":\"UUID\",\"required\":true,\"referenceContract\":{\"entityType\":\"Approval.CancellationReceipt\",\"idSpace\":\"PUBLIC_UUID\",\"ownerContract\":\"Approval.DecisionSnapshot\"}},{\"name\":\"reasonCode\",\"type\":\"REGISTERED_TENANT_REASON_CODE\",\"required\":true}]},\"requiredHeaders\":[\"signed tenant via principal.tenantId\",\"authenticated principal.publicId\",\"APP.HCM entitlement\",\"at…"
+        },
+        {
+          "pointer": "/internalOperations/5",
+          "excerpt": "{\"operationId\":\"tim.wfm.outbox.approval-reconcile\",\"transport\":\"OWNER_WORKLOAD_ONLY_NOT_PUBLIC_API\",\"guards\":[\"Approval requestKey + entity/version/digest exact; duplicate deliver/reply no duplicate request\",\"SUBMITTED stays until actual approval/denial/cancellation; unavailable route exposed as pending receipt and operational retry\"]}"
+        }
+      ]
+    }
+  ],
+  "additionalRequiredAcceptance": [
+    {
+      "id": "WFM-N23",
+      "focus": "Exact segments",
+      "given": "WORK/BREAK segments overlap/gap/out-of-order or paidness contradicts pinned work-rule",
+      "expected": "callback/owner validation rejects; no arbitrary breakMinutes expansion"
+    },
+    {
+      "id": "WFM-N24",
+      "focus": "Configurable paidness",
+      "given": "same exact positive WORK/BREAK interval input under two API-valid policy A/B configurations",
+      "expected": "exact owner verified paidness and duration measures differ as configured; break_duration_seconds is actual BREAK seconds with no rounding"
+    },
+    {
+      "id": "WFM-N25",
+      "focus": "Timezone / DST",
+      "given": "offset disagrees with pinned UTC instant+IANA tzdb; missing/stale timezone version or calendar/rule refs; ambiguous wall time if any future adapter accepts it",
+      "expected": "explicit failure before publish; no implicit local-time/offset/latest-version guessing"
+    },
+    {
+      "id": "WFM-N26",
+      "focus": "Overnight attribution",
+      "given": "same overnight shift under two approved pinned localWorkDate attribution policies",
+      "expected": "localWorkDate agrees with effective selected rule, not server date/timezone; exact pinned refs survive shift query and canonical publication"
+    },
+    {
+      "id": "WFM-N27",
+      "focus": "Owner transaction",
+      "given": "canonical TIM period/shift write, ledger, receipt or outbox insertion fails at each boundary",
+      "expected": "one owner transaction rolls back all rows; no published candidate/ledger without canonical schedule and sealed result"
+    },
+    {
+      "id": "WFM-N28",
+      "focus": "Counters / CAS / replay",
+      "given": "concurrent forecast revise/optimize/evaluation, same/different idempotency keys, revision integer overflow, stale expectedVersion",
+      "expected": "protected allocator produces unique family/candidate/evaluation ordinals; same replay same UUID/no event; overflow/stale rolls back"
+    },
+    {
+      "id": "WFM-N29",
+      "focus": "Pointer ownership",
+      "given": "valid local evaluation/publication FK from another candidate/digest/revision is substituted",
+      "expected": "owner candidate-bound pointer check rejects even if simple tenant-local FK passes"
+    },
+    {
+      "id": "WFM-N30",
+      "focus": "Approval cancellation race",
+      "given": "SUBMITTED generic cancel, fake/stale/unrelated cancellation receipt, withdraw racing final APPROVED/publish",
+      "expected": "generic cancel denied; exact owner cancellation and submission binding required; incompatible race409; no fabricated cancellation"
+    },
+    {
+      "id": "WFM-N31",
+      "focus": "Real demand source mode",
+      "given": "OWNER_SNAPSHOT digest with no normalized actual demand rows, NATIVE_INPUT plus owner snapshot ref, duplicate lineKey or out-of-period line",
+      "expected": "input/source mode reject; real ordered demand rows always required; no digest-only success"
+    },
+    {
+      "id": "WFM-N32",
+      "focus": "Privacy / events",
+      "given": "raw individual availability/skill/shift payload or credential text is inserted into broad event contract, or event business ref comes from correlation",
+      "expected": "event schema/purpose/minimization/source validator rejects; bounded safe facts only"
+    }
+  ],
+  "acceptanceExecutionBoundary": "WFM-N01–N32 are exact required acceptance definitions/counterexamples for successor G3 fixtures and G4 native execution. They were NOT run as actual HTTP→DB→event/receipt journeys in this review. Structural/dialect observations above were actually performed read-only.",
+  "requiredNextSteps": [
+    "Close concrete optional-skill, lease-expiry and authoritative-output contradictions first; publish updated snapshot SHA and independently recheck.",
+    "Resolve successor dialect/imports and all per-operation source, PEP, owner port, policy/solver/fixture and outbox/receipt closure; exact pointer and version identity must fail closed.",
+    "Compile common owner producer/consumer/adapters and exercise the authorized isolated common pilot before opening module coding Gate.",
+    "Do not substitute abstract state names, table counts, raw validator error zero, scaffold unit tests or historical backend diagnostics for complete coding readiness.",
+    "Keep full native module CRUD, real migration/HTTP/DB/outbox/receipt execution in G4, design AI all-screen package in G5, and customer authority/provider/country activation in G6."
+  ]
+}

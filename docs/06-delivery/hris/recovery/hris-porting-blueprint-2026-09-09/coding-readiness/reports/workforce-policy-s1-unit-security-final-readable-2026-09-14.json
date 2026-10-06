@@ -1,0 +1,439 @@
+{
+  "schema": "dwp.hris.workforce-s1-unit-security-readable.v1",
+  "readiness": false,
+  "g3": false,
+  "boundary": "AUTHOR_UNIT_SECURITY_ONLY_READ_NOT_COMMAND",
+  "nativeTests": 0,
+  "productionTransport": false,
+  "unmodifiedExpectations": true,
+  "sourceFullTuplesInArchive": "workforce-policy-s1-unit-security-final-2026-09-14.json",
+  "fullReadback": {
+    "artifactSHA": "1e1214edbda5a1ea037b7a979836d955763a73a36e069b1da134586863f87085",
+    "artifactNs": "1789385534835790847",
+    "head": {
+      "status": "PASS",
+      "counts": {
+        "tests": 58,
+        "unique": 58,
+        "failure": 0,
+        "error": 0,
+        "skipped": 0
+      },
+      "sourceCount": 3066,
+      "sourceStable": true,
+      "startedAt": "2026-09-14T11:30:31.053482+00:00",
+      "finishedAt": "2026-09-14T11:30:47.888774+00:00",
+      "durationSeconds": 16.835772624999997,
+      "exitCode": 0,
+      "timeout": false,
+      "hostLock": {
+        "schema": "dwp.hris.host-semaphore-receipt.v1",
+        "name": "hris-verification",
+        "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+        "requestedAt": "2026-09-14T11:30:29.377Z",
+        "acquiredAt": "2026-09-14T11:30:29.377Z",
+        "releasedAt": "2026-09-14T11:30:48.964Z",
+        "waitMilliseconds": 0,
+        "status": "RELEASED"
+      },
+      "receiptSha256": "b773cffbb797e378df061bdbf830e34b25041ccaa2487e03f3e8b79699bcd124",
+      "receiptBytes": 1474832,
+      "archiveSha256": "7f7a04d02a37f95ab090f39a3a5a661788139b725ac56973571e01aeaac50279",
+      "archiveBytes": 394417,
+      "chunks": 44
+    },
+    "candidatePins": [
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/workforce/v1/WorkforcePolicyGovernanceV1.java",
+        "sha256": "d943478c91b82943bc2684885da442a7f0a58d6fb0d50e25e973faf500e9ceef",
+        "mtimeNs": "1789382630400209807",
+        "bytes": 7258,
+        "lines": 106
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1.java",
+        "sha256": "430fec043235f47f21d9546e2926b2ba2f13474442b54a451e2c09a318678cb9",
+        "mtimeNs": "1789383338695380978",
+        "bytes": 68417,
+        "lines": 638
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/WorkforcePolicyGovernanceAuthorityControllerV1.java",
+        "sha256": "f3c66b5d5077053066369598bd965018675d0d1042aed43754ba4ad833f466a0",
+        "mtimeNs": "1789382862522242613",
+        "bytes": 2440,
+        "lines": 45
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/WorkforcePolicyGovernanceInternalSecurityConfigV1.java",
+        "sha256": "fe04236a57c85f5921ad49fa420a20cd5f99f5b3f53419c48fb95fbf9904fcb9",
+        "mtimeNs": "1789382862522761801",
+        "bytes": 5286,
+        "lines": 81
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1Test.java",
+        "sha256": "53ed4c33424ad015f0881043709a4dbdcabe59961c0aba1fe159ccb76929aa79",
+        "mtimeNs": "1789383149735094797",
+        "bytes": 11831,
+        "lines": 138
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest.java",
+        "sha256": "3eeb48bb2e4b1b49792d786f89350ead824d8044d272b62138b4037555a7b971",
+        "mtimeNs": "1789384657704200243",
+        "bytes": 34025,
+        "lines": 366
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/WorkforcePolicyGovernanceInternalSecurityConfigV1Test.java",
+        "sha256": "1e52e54ddfd03366f45f1d84750e5f793a64377e22c89f7a27c0d9a41917c8cf",
+        "mtimeNs": "1789385308977566465",
+        "bytes": 9236,
+        "lines": 120,
+        "exactThreeLineInverse": true
+      }
+    ],
+    "xmls": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/build/test-results/test/TEST-com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test.xml",
+        "sha256": "1c0af2c125a0508b7fa96523fbb13e608927c270822fbfae319187ce3394751e",
+        "mtimeNs": "1789385447468467306",
+        "freshAfterStart": true,
+        "attributes": {
+          "name": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+          "tests": "34",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T11:30:47",
+          "hostname": "MacBook-Pro",
+          "time": "0.285"
+        },
+        "cases": [
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[1] row=Invalid[id=boolean-schema, body={\"schemaVersion\":true,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=UNSUPPORTED_SCHEMA]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[2] row=Invalid[id=unknown-schema, body={\"schemaVersion\":2,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=UNSUPPORTED_SCHEMA]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[3] row=Invalid[id=missing-schema, body={\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=UNSUPPORTED_SCHEMA]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[4] row=Invalid[id=unknown-operation, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=OPERATION_UNREGISTERED]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[5] row=Invalid[id=padded-operation, body={\"schemaVersion\":1,\"operationId\":\" POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=OPERATION_UNREGISTERED]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[6] row=Invalid[id=client-entitlement, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null,\"entitled\":true}, code=MALFORMED_REQUEST]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[7] row=Invalid[id=missing-nullable-key, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=MALFORMED_REQUEST]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[8] row=Invalid[id=zero-uuid, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"00000000-0000-0000-0000-000000000000\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=MALFORMED_REQUEST]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[9] row=Invalid[id=uuid-noncanonical, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111x\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=MALFORMED_REQUEST]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[10] row=Invalid[id=numeric-native-bigint, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":0},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=MALFORMED_REQUEST]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[11] row=Invalid[id=bigint-overflow, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"9223372036854775808\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=MALFORMED_REQUEST]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[12] row=Invalid[id=padded-bigint, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"00\"},\"candidate\":{\"kind\":\"NONE\"},\"expectedRequestDigest\":null}, code=MALFORMED_REQUEST]",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[13] row=Invalid[id=lowercase-role, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"a.b\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organization…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[14] row=Invalid[id=create-legacy80, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"ABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\",\"expectedRoleId\":null,\"expectedRoleVersion\":…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[15] row=Invalid[id=directory-required, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organizati…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[16] row=Invalid[id=duplicate-field, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organizationP…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[17] row=Invalid[id=candidate-manage, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organization…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[18] row=Invalid[id=invalid-civil-date, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organizati…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[19] row=Invalid[id=noncanonical-instant, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organiza…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[20] row=Invalid[id=empty-window, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organizationPubl…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[21] row=Invalid[id=trim-empty-reason, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organizatio…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[22] row=Invalid[id=org-without-owner-uuid, body={\"schemaVersion\":1,\"operationId\":\"POLICY_CREATE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"ORG_TREE\",\"orga…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[23] row=Invalid[id=operation-candidate-discriminator, body={\"schemaVersion\":1,\"operationId\":\"POLICY_LIST_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"CREATE_POLICY\",\"subject\":{\"kind\":\"ROLE\",\"code\":\"A\",\"expectedRoleId\":null,\"expectedRoleVersion\":null},\"population\":{\"kind\":\"TENANT\",\"organiz…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[24] row=Invalid[id=policy-owner-relabel, body={\"schemaVersion\":1,\"operationId\":\"POLICY_REVOKE_PREFLIGHT_AUTH_READ\",\"requestNonce\":\"11111111-1111-4111-8111-111111111111\",\"expectedActor\":null,\"expectedAuthContext\":null,\"governanceScope\":{\"selectedScopeKey\":\"scope-owner-fixture\",\"resourceSetId\":\"22222222-2222-4222-8222-222222222222\",\"resourceSetVersion\":\"0\"},\"candidate\":{\"kind\":\"REVOKE_POLICY\",\"policy\":{\"owner\":\"AUTH\",\"kind\":\"WORKFORCE_ACCESS_POLICY_EXPECTATION\",\"policyId\":\"33333333-3333-4333-8333-333333333333\",\"expe…",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "allFourServerOperationsHaveAnExactTypedCandidate()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "nativeStringRevisionsAndNullableActorPersonAreNotCoerced()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "duplicateKeysTrailingTokensOversizeAndDeepInputAreNotAccepted()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "missingAdapterIsUnavailableWithoutCallingAnyAvailableProvider()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "normalizationAndFieldOrderHaveOneDigestButSemanticChangesDoNot()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[1] role=A",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[2] role=A.B",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[3] role=A-B",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[4] role=HR_ADMIN",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1Test",
+            "name": "[5] role=ABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/build/test-results/test/TEST-com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test.xml",
+        "sha256": "f44fd4dcf3a0d1981e5b52ac0d62f3a4da653bd162d4650b0797cde245663e94",
+        "mtimeNs": "1789385447470352462",
+        "freshAfterStart": true,
+        "attributes": {
+          "name": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+          "tests": "24",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T11:30:46",
+          "hostname": "MacBook-Pro",
+          "time": "0.316"
+        },
+        "cases": [
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "cookieDoesNotReplaceSingleBearerHeader()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "endpointOnlyPathAndMethodCannotFallThroughAnotherSecurityChain()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "wrongServiceIdentityOrTokenRejectsBeforeJwtAndAdapter()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[1] header=X-DWP-Product-Surface-Token",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[2] header=X-DWP-Meeting-Followup-Authority-Token",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[3] header=X-User-Id",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[4] header=X-Tenant-Id",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[5] header=X-DWP-User-Id",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[6] header=X-DWP-Tenant-Id",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[7] header=X-DWP-Person-Public-Id",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[8] header=X-DWP-Roles",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[9] header=X-Roles",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[10] header=X-DWP-Permissions",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[11] header=X-Permissions",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "[12] header=X-DWP-Resource-Roles",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "duplicateOrCommaCombinedAuthorityHeadersReject(String) [1] X-DWP-Workforce-Policy-Governance-Token",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "duplicateOrCommaCombinedAuthorityHeadersReject(String) [2] X-DWP-Service-Identity",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "duplicateOrCommaCombinedAuthorityHeadersReject(String) [3] Authorization",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "expiredOrTamperedJwtIsNotAServiceOnlyRead()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "eachMissingHeaderRejectsBeforeAdapter(String) [1] X-DWP-Workforce-Policy-Governance-Token",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "eachMissingHeaderRejectsBeforeAdapter(String) [2] X-DWP-Service-Identity",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "eachMissingHeaderRejectsBeforeAdapter(String) [3] Authorization",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "bodyLimitAppliesBeforeAdapterEvenAfterValidAuthentication()",
+            "status": "passed"
+          },
+          {
+            "classname": "com.dwp.services.auth.config.WorkforcePolicyGovernanceInternalSecurityConfigV1Test",
+            "name": "exactDualAuthorityHeadersAndSignedActorJwtReachOnlyReadAdapter()",
+            "status": "passed"
+          }
+        ]
+      }
+    ],
+    "stdoutSHA": "ecf2f74a56fdcc56b7a5bf354b153ae3bbddfaf4c51171fb25593ebb044962ed",
+    "stderrSHA": "39d8379348d8979039373859622f7ad14e5b5735ed70bc8b368d199a1ee3e3b0",
+    "preSourceManifestCanonicalSha256": "b967f76be7ab4f07316a5d9e550701e76adef89c9cc7bdbd4b350d4aec5fa552",
+    "postSourceManifestCanonicalSha256": "b967f76be7ab4f07316a5d9e550701e76adef89c9cc7bdbd4b350d4aec5fa552",
+    "sourceCount": 3066,
+    "sourceStable": true,
+    "preGitStatus": " M dwp-auth-server/build.gradle\n M dwp-migration-control/build.gradle\n M dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/config/WorkforcePolicyGovernanceInternalSecurityConfigV1.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/controller/WorkforcePolicyGovernanceAuthorityControllerV1.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/service/NativeHrisAuthIdentityEvidenceTruthV2.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/service/NativeHrisCurrentRoleEvidenceReaderV2.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/config/WorkforcePolicyGovernanceInternalSecurityConfigV1Test.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/NativeHrisCurrentRoleEvidenceReaderV2PostgresTest.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/NativeHrisCurrentRoleEvidenceReaderV2Test.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1Test.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2Json.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceJsonV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceVerifierV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataPoolInspectionPortV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryAdapterV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryContract.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceJsonTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceVerifierTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupClockEntryRegressionTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuardTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryContractTest.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/startup/\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1PostgresTest.java\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/ControlMetadataInspectionCompositionV1PostgresTest.java\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/startup/\n?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/\n?? dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/\n?? dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql\n?? dwp-people-server/src/main/resources/db/migration/V50__align_workforce_policy_role_code_compatibility.sql\n?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/workforce/\n?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/\n?? dwp-time-server/src/main/java/com/dwp/services/time/absence/\n?? dwp-time-server/src/test/java/com/dwp/services/time/absence/\n",
+    "postGitStatus": " M dwp-auth-server/build.gradle\n M dwp-migration-control/build.gradle\n M dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/config/WorkforcePolicyGovernanceInternalSecurityConfigV1.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/controller/WorkforcePolicyGovernanceAuthorityControllerV1.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/service/NativeHrisAuthIdentityEvidenceTruthV2.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/service/NativeHrisCurrentRoleEvidenceReaderV2.java\n?? dwp-auth-server/src/main/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/config/WorkforcePolicyGovernanceInternalSecurityConfigV1Test.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/hris/\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/NativeHrisCurrentRoleEvidenceReaderV2PostgresTest.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/NativeHrisCurrentRoleEvidenceReaderV2Test.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest.java\n?? dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1Test.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2Json.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceJsonV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceVerifierV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataPoolInspectionPortV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryAdapterV1.java\n?? dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryContract.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1PostgresTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1Test.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceJsonTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceVerifierTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupClockEntryRegressionTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuardTest.java\n?? dwp-core/src/test/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryContractTest.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1.java\n?? dwp-migration-control/src/main/java/com/dwp/migration/control/startup/\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1PostgresTest.java\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/ControlMetadataInspectionCompositionV1PostgresTest.java\n?? dwp-migration-control/src/test/java/com/dwp/migration/control/startup/\n?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/\n?? dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/\n?? dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql\n?? dwp-people-server/src/main/resources/db/migration/V50__align_workforce_policy_role_code_compatibility.sql\n?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/\n?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/workforce/\n?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/\n?? dwp-time-server/src/main/java/com/dwp/services/time/absence/\n?? dwp-time-server/src/test/java/com/dwp/services/time/absence/\n",
+    "dockerPost": {
+      "exitCode": 0,
+      "stdout": "207827467c0b elegant_mcnulty Up 5 seconds\n5a5197139bda testcontainers-ryuk-a86b88f8-a3ca-4c91-8606-ec9249da27b0 Up 41 seconds\n85cf4d277c01 dwp-approval-source10-capture-20260914 Up 3 hours\nf3334230e2b5 dwp-postgres Up 6 hours (healthy)\n01527469d628 dwp-redis Up 6 hours (healthy)\n2a064dbbbe12 dwp-kafka Up 6 hours (healthy)\n",
+      "stderr": ""
+    }
+  }
+}

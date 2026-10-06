@@ -45,6 +45,7 @@
 - `03-architecture/R0 API 이력 및 운영 관측 ADR.md`
 - `03-architecture/R1 권한 계층 및 앱 접근 거버넌스 ADR.md`
 - `03-architecture/R1 DWP HCM Product Shell 및 Role-Aware Experience ADR.md`
+- `03-architecture/hris/ADR-001-lineage-v35-successor-and-migration-lease.md`: HRIS 복구 통합 Lineage와 Migration Lease 결정
 - `03-architecture/DWP HCM 용어 사전 및 호환 전환 규칙.md`
 - `03-architecture/R1 Multi-Surface Personal Home Composer ADR.md`
 - `03-architecture/R1 Flow Home 및 Bounded Personalization ADR.md`
@@ -87,6 +88,8 @@
 - `06-delivery/로컬 권한별 로그인 검증 계정.md`
 - `06-delivery/R2 R3 출시 증거 실행 가이드.md`
 - `06-delivery/release-evidence/release-readiness.json`
+- `06-delivery/hris/2026-10-06-integration-roadmap.md`: HRIS 복구·통합 Gate와 Module 개발 순서
+- `06-delivery/hris/recovery/README.md`: 복구된 업무 정의·통제 packet의 versioned 기준선과 gap
 
 ## Feature 문서 규칙
 

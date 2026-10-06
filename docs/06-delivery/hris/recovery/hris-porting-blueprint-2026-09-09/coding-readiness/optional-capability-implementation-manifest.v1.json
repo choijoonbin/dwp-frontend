@@ -1,0 +1,162 @@
+{
+  "schema": "dwp.hris.optional-capability-implementation-manifest.v1",
+  "status": "START_IMPLEMENTATION_EVIDENCE_PASS_G4_G6_NOT_AUTHORIZED",
+  "contract": {
+    "path": "optional-capability-admission-contract.v1.json",
+    "sha256": "e59ea890260b01a0b6ccc6c6168b38a3f6fed4d1e7af2b4878c5fb74681fd8a5"
+  },
+  "productionPackage": "com.dwp.platform.contracts.hris.capability.v1",
+  "productionSources": [
+    {
+      "role": "decision",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityAdmissionDecisionV1.java",
+      "sha256": "88c40c044ba87a309690ec3f24f80da30b445ae191249cc3e14802f64e3560cb",
+      "publicType": "OptionalCapabilityAdmissionDecisionV1"
+    },
+    {
+      "role": "error",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityAdmissionErrorV1.java",
+      "sha256": "9bfaed3e1d81192111849ef5b5f6deed0211073c03f593036af82cecaf5be1ab",
+      "publicType": "OptionalCapabilityAdmissionErrorV1"
+    },
+    {
+      "role": "exception",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityAdmissionExceptionV1.java",
+      "sha256": "6e1b048f181124c9e74b2a66ca32186781c8a0846d0bcca620f53cf83cc2fb3a",
+      "publicType": "OptionalCapabilityAdmissionExceptionV1"
+    },
+    {
+      "role": "guard",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityAdmissionGuardV1.java",
+      "sha256": "8ac2ddb5fd469fc2268848bd0e796a8aefe4ff860c547d5fb3977972d3c83b99",
+      "publicType": "OptionalCapabilityAdmissionGuardV1"
+    },
+    {
+      "role": "request",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityAdmissionRequestV1.java",
+      "sha256": "1805e996b17288b33d76b034e647b800c6f4c0c6205a5eff5b29ec55f7bc50b8",
+      "publicType": "OptionalCapabilityAdmissionRequestV1"
+    },
+    {
+      "role": "authorized-binding",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityAuthorizedBindingV1.java",
+      "sha256": "18f9a63da229769b49535f72f2790bf09567833218cbd3b3bbff3ce0240881b6",
+      "publicType": "OptionalCapabilityAuthorizedBindingV1"
+    },
+    {
+      "role": "descriptor",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityDescriptorV1.java",
+      "sha256": "2977a22d8502a11386918741bcb667830379136ad20c55465f844a4bb6963453",
+      "publicType": "OptionalCapabilityDescriptorV1"
+    },
+    {
+      "role": "install-state",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityInstallStateV1.java",
+      "sha256": "adca7fef12429dfdc81ae96a4ca8104307f3f8746b3641e870ec299fa3588df9",
+      "publicType": "OptionalCapabilityInstallStateV1"
+    },
+    {
+      "role": "operation",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityOperationV1.java",
+      "sha256": "3831009258226578d5c7b68549cc8c1c0af3eb8d38ddc9702f3af2d0baf35f27",
+      "publicType": "OptionalCapabilityOperationV1"
+    },
+    {
+      "role": "types",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityTypesV1.java",
+      "sha256": "603d4af630168b583a7bdd5b4bcd85c70672df7766dcbdbec221e64d06f48520",
+      "publicType": "OptionalCapabilityTypesV1"
+    },
+    {
+      "role": "version",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityVersionV1.java",
+      "sha256": "b2f354803b5272d31e3a12a9bd15f9e43c8dd8b5e3cc03c448bab239c3008cf9",
+      "publicType": "OptionalCapabilityVersionV1"
+    }
+  ],
+  "sharedGuardTest": {
+    "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/capability/v1/OptionalCapabilityAdmissionGuardV1Test.java",
+    "sha256": "3077844990fb5f3493ab890d626a450c8b1c801e9a8b8d5a4eea0775f8da16b3",
+    "className": "OptionalCapabilityAdmissionGuardV1Test",
+    "requiredMarkers": [
+      "CAPABILITY_UNINSTALLED",
+      "CAPABILITY_DISABLED",
+      "REQUIRED_BINDING_MISSING",
+      "VERSION_INCOMPATIBLE",
+      "PREREQUISITE_NOT_READY",
+      "UNKNOWN_CAPABILITY",
+      "UNKNOWN_OPERATION",
+      "UNAUTHORIZED_CONSUMER",
+      "DUPLICATE_CAPABILITY",
+      "UNKNOWN_PREREQUISITE",
+      "OPERATION_COLLISION",
+      "FORBIDDEN_BINDING_DEPENDENCY",
+      "DEPENDENCY_CYCLE",
+      "PAY.PAYROLL.GENERIC_AUTHOR",
+      "TIM.WFM.SKILL_MATCH",
+      "SYS.CONNECTOR.MANUAL_EXPORT",
+      "SYS.ANALYTICS.AGGREGATE",
+      "SYS.LISTENING.COLLECT",
+      "BindingKind.PROTECTED_STORE",
+      "BindingKind.CURRENT_ISSUER"
+    ]
+  },
+  "consumerTests": [
+    {
+      "module": "HRIS-HRM",
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/capability/hrm/HrmOptionalCapabilityConsumerV1Test.java",
+      "sha256": "d60e2a20cdbca026c8b0fda1439ae1078775ff89420f6bcb4a4571efe6901827",
+      "className": "HrmOptionalCapabilityConsumerV1Test",
+      "zeroCallCounter": "atsCalls",
+      "requiredMarkers": ["HRM.RECRUITING.REQUISITION", "HRM.WORKER.CORE_UPDATE", "InstallStatus.DISABLED"]
+    },
+    {
+      "module": "HRIS-PER",
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/capability/per/PerOptionalCapabilityConsumerV1Test.java",
+      "sha256": "5d4ca51fa90be8f16e2a2cde67824ea49f18d6b133f9cd8dd996fadc66f5ccc1",
+      "className": "PerOptionalCapabilityConsumerV1Test",
+      "zeroCallCounter": "lmsCalls",
+      "requiredMarkers": ["PER.LEARNING.ASSIGN", "PER.GOAL.CORE_UPDATE", "uninstalled"]
+    },
+    {
+      "module": "HRIS-PAY",
+      "path": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/capability/PayOptionalCapabilityConsumerV1Test.java",
+      "sha256": "ee6fcae4695975d600b5d71857a71b2640b7bb8342c16498ba54c3e2ef7d17c5",
+      "className": "PayOptionalCapabilityConsumerV1Test",
+      "zeroCallCounter": "countryPackCalls",
+      "requiredMarkers": ["PAY.STATUTORY.CALCULATE", "PAY.PAYROLL.GENERIC_AUTHOR", "COUNTRY_RULE_PROVIDER"]
+    },
+    {
+      "module": "HRIS-TIM",
+      "path": "dwp-time-server/src/test/java/com/dwp/services/time/hris/capability/TimOptionalCapabilityConsumerV1Test.java",
+      "sha256": "cb5e0ecac5dfe884423ba38211ef1845689ef175e881b622645b9e39e5100e1d",
+      "className": "TimOptionalCapabilityConsumerV1Test",
+      "zeroCallCounter": "skillsCalls",
+      "requiredMarkers": ["TIM.WFM.SKILL_MATCH", "TIM.TIME.CORE_RECORD", "CAP.SKILLS_GRAPH", "CAP.WFM_OPTIMIZATION"]
+    },
+    {
+      "module": "HRIS-SYS",
+      "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hris/capability/SysOptionalCapabilityConsumerV1Test.java",
+      "sha256": "753d29409b46813ac1b044ece384f2a1c870873d9847ad048db2f6be790b2393",
+      "className": "SysOptionalCapabilityConsumerV1Test",
+      "zeroCallCounter": "connectorCalls",
+      "requiredMarkers": ["SYS.CONNECTOR.ERP.RUN", "SYS.CONNECTOR.MANUAL_EXPORT", "SYS.ANALYTICS.AGGREGATE", "BindingKind.PROTECTED_STORE", "BindingKind.CURRENT_ISSUER"]
+    }
+  ],
+  "forbiddenProductionMarkers": [
+    "org.springframework",
+    "java.net.http",
+    "javax.sql",
+    "jakarta.persistence",
+    "DataSource",
+    "@Component",
+    "@Service",
+    "@Bean"
+  ],
+  "implementationBoundary": {
+    "START": "typed machine contract, shared pure pre-call guard and all-five mock consumer evidence only",
+    "G4": "provider adapters, retries, idempotency, reconciliation and integrated feature acceptance remain unimplemented",
+    "G6": "tenant entitlement, credentials, certified country/provider activation, SLO and production enablement remain unauthorized"
+  },
+  "gateEffect": "NONE"
+}

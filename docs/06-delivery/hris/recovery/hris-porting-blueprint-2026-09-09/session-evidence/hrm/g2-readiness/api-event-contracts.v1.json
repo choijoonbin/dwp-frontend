@@ -1,0 +1,814 @@
+{
+  "contractId": "dwp.hris.hrm.v1",
+  "status": "READY_FOR_G2_REVIEW",
+  "owner": "dwp-people-server",
+  "basePath": "/api/hris/v1",
+  "compatibility": {
+    "canonicalAppEntitlement": "APP.HCM:VIEW",
+    "acceptedAlias": "APP.HRIS:VIEW",
+    "tenantSource": "authenticated_context_only",
+    "identifierPolicy": "public_uuid_only",
+    "timePolicy": "occurredAt is RFC3339 instant; effectiveDate is ISO-8601 local business date",
+    "effectivePeriod": "half_open_[from,to)",
+    "unknownFieldPolicy": "reject_commands_ignore_query_extensions_only_when_schema_declares_them",
+    "breakingChangePolicy": "new_major_path_or_event_type",
+    "piiPolicy": "payload_minimized_and_field_projected"
+  },
+  "commonHeaders": {
+    "requiredForCommands": [
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID"
+    ],
+    "optionalForQueries": [
+      "If-None-Match",
+      "X-Purpose-Code"
+    ],
+    "response": [
+      "ETag",
+      "X-Correlation-ID",
+      "X-Authorization-Decision-Revision",
+      "Cache-Control"
+    ]
+  },
+  "authorizationDecision": {
+    "inputs": [
+      "app_entitlement",
+      "atomic_capability_action",
+      "tenant",
+      "target_population",
+      "field_group",
+      "purpose",
+      "effective_grant",
+      "step_up",
+      "sod"
+    ],
+    "denyPrecedence": true,
+    "repositoryPepRequired": true,
+    "nonDisclosingNotFound": true,
+    "fieldModes": [
+      "VIEW",
+      "MASK",
+      "OMIT"
+    ]
+  },
+  "errors": {
+    "schema": {
+      "required": [
+        "type",
+        "title",
+        "status",
+        "code",
+        "correlationId",
+        "retryable"
+      ],
+      "optional": [
+        "safeDetail",
+        "fieldErrors",
+        "currentVersion",
+        "receiptId"
+      ],
+      "forbidden": [
+        "stackTrace",
+        "sql",
+        "secret",
+        "restrictedValue",
+        "crossTenantExistence"
+      ]
+    },
+    "codes": {
+      "400": "SCHEMA_INVALID",
+      "401": "AUTHENTICATION_REQUIRED",
+      "403": "CAPABILITY_SCOPE_FIELD_OR_PURPOSE_DENIED",
+      "404": "TARGET_NOT_DISCLOSED",
+      "409": "STALE_VERSION_EFFECTIVE_OVERLAP_OR_IDEMPOTENCY_MISMATCH",
+      "422": "DOMAIN_RULE_REJECTED",
+      "423": "AGGREGATE_LOCKED",
+      "429": "RATE_LIMITED",
+      "500": "RESULT_UNKNOWN_USE_RECEIPT"
+    }
+  },
+  "receipt": {
+    "schemaVersion": 1,
+    "required": [
+      "receiptId",
+      "commandType",
+      "status",
+      "requestHash",
+      "correlationId",
+      "receivedAt",
+      "originatingAction",
+      "subjectPrincipalPublicId",
+      "populationScopeDigest",
+      "fieldPolicyRevision",
+      "purposeCode",
+      "authorizationRevision",
+      "links"
+    ],
+    "statuses": [
+      "RECEIVED",
+      "VALIDATING",
+      "RUNNING",
+      "SUCCEEDED",
+      "REJECTED",
+      "FAILED_RETRYABLE",
+      "DEAD",
+      "CANCELLED"
+    ],
+    "links": [
+      "self",
+      "result",
+      "target"
+    ],
+      "replay": "same key plus same canonical request hash returns the original receipt",
+    "mismatch": "same key plus different canonical request hash returns 409",
+    "authorizationContext": "SEALED_ORIGINATING_COMMAND_CONTEXT",
+    "authorizationRule": "MORE_RESTRICTIVE_OF_CURRENT_AND_ORIGINATING",
+    "opaqueNotFoundOnContextMismatch": true
+  },
+  "endpoints": [
+    {
+      "operationId": "searchPeople",
+      "method": "GET",
+      "path": "/people",
+      "capability": "hcm.operations.people.view",
+      "query": [
+        "asOf",
+        "query",
+        "organizationPublicId",
+        "legalEntityPublicId",
+        "status",
+        "cursor",
+        "limit",
+        "fields"
+      ],
+      "response": "CursorPage<PersonSummaryV1>",
+      "rules": [
+        "authorized fields only may be searched or sorted",
+        "cursor binds tenant, policy revision, filters, field projection and asOf",
+        "limit range 1..100",
+        "masked and omitted values cannot affect visible counts"
+      ]
+    },
+    {
+      "operationId": "getPerson360",
+      "method": "GET",
+      "path": "/people/{personPublicId}",
+      "capability": "hcm.operations.people.view",
+      "query": [
+        "asOf",
+        "sections"
+      ],
+      "response": "Person360V1",
+      "rules": [
+        "section response is field-policy projected",
+        "historical and future access is separately authorized",
+        "ETag represents aggregate and policy projection revision"
+      ]
+    },
+    {
+      "operationId": "createEmployeeChangeRequest",
+      "method": "POST",
+      "path": "/employee-change-requests",
+      "capability": "hcm.personal.profile.update or hcm.team.people-change.request or hcm.operations.people.update",
+      "request": "EmployeeChangeRequestCreateV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "typed patch schema must be published for tenant and effective date",
+        "before value is read by server and never trusted from client",
+        "evidence object references must be tenant-bound and malware-scanned",
+        "direct sensitive-value echo is forbidden"
+      ]
+    },
+    {
+      "operationId": "submitEmployeeChangeRequest",
+      "method": "POST",
+      "path": "/employee-change-requests/{requestPublicId}/submit",
+      "capability": "matching change request create capability",
+      "request": "EmptyCommandV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "DRAFT only",
+        "requester remains maker",
+        "approval case version and business correlation are persisted atomically"
+      ]
+    },
+    {
+      "operationId": "recordEmployeeChangeDecision",
+      "method": "POST",
+      "path": "/internal/employee-change-requests/{requestPublicId}/approval-decisions",
+      "capability": "service-to-service approval callback",
+      "request": "ApprovalDecisionCallbackV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "signed DWP Approval service identity only",
+        "decision event id is inbox-idempotent",
+        "maker cannot be approver",
+        "callback does not bypass current target version revalidation"
+      ]
+    },
+    {
+      "operationId": "applyEmployeeChangeRequest",
+      "method": "POST",
+      "path": "/employee-change-requests/{requestPublicId}/apply",
+      "capability": "hcm.operations.people-change.approve",
+      "request": "EmptyCommandV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "APPROVED only",
+        "target expected version and effective period are revalidated",
+        "target, request, audit and outbox commit in one transaction"
+      ]
+    },
+    {
+      "operationId": "createAssignmentEvent",
+      "method": "POST",
+      "path": "/assignment-events",
+      "capability": "hcm.operations.assignment.manage",
+      "request": "AssignmentEventCreateV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "references resolve inside tenant and on effective date",
+        "assignment period stays inside relationship period",
+        "primary period overlap is rejected"
+      ]
+    },
+    {
+      "operationId": "validateAssignmentEvent",
+      "method": "POST",
+      "path": "/assignment-events/{eventPublicId}/validate",
+      "capability": "hcm.operations.assignment.manage",
+      "request": "EmptyCommandV1",
+      "response": "AssignmentImpactV1",
+      "rules": [
+        "DRAFT only",
+        "impact snapshot hash binds worker, relationship, assignment, organization and downstream warnings",
+        "validation never mutates the current assignment"
+      ]
+    },
+    {
+      "operationId": "submitAssignmentEvent",
+      "method": "POST",
+      "path": "/assignment-events/{eventPublicId}/submit",
+      "capability": "hcm.operations.assignment.manage",
+      "request": "EmptyCommandV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "VALIDATED only",
+        "impact snapshot must still match current versions"
+      ]
+    },
+    {
+      "operationId": "publishAssignmentEvent",
+      "method": "POST",
+      "path": "/assignment-events/{eventPublicId}/publish",
+      "capability": "hcm.operations.people-change.approve",
+      "request": "EmptyCommandV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "APPROVED only",
+        "publisher is not maker and has fresh step-up",
+        "assignment slice, immutable event, audit and outbox commit atomically",
+        "correction is a new linked event"
+      ]
+    },
+    {
+      "operationId": "queryOrganizationGraph",
+      "method": "GET",
+      "path": "/organizations/graph",
+      "capability": "hcm.operations.organization.view",
+      "query": [
+        "asOf",
+        "rootPublicId",
+        "depth",
+        "relationshipType",
+        "includePositions"
+      ],
+      "response": "OrganizationGraphV1",
+      "rules": [
+        "cycle impossible",
+        "depth range 0..12",
+        "every returned node is population-authorized"
+      ]
+    },
+    {
+      "operationId": "issueEmploymentContract",
+      "method": "POST",
+      "path": "/employment-contracts",
+      "capability": "hcm.operations.contract.issue",
+      "request": "EmploymentContractIssueV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "template is published and effective",
+        "generation snapshot and digest are immutable",
+        "contract dates fit relationship unless approved exception policy exists"
+      ]
+    },
+    {
+      "operationId": "requestCertificate",
+      "method": "POST",
+      "path": "/certificates",
+      "capability": "hcm.personal.certificate.request or hcm.operations.certificate.issue",
+      "request": "CertificateRequestV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "purpose and locale required",
+        "template and seal/signature policy are published",
+        "download is a separately authorized audited operation"
+      ]
+    },
+    {
+      "operationId": "createSeparationCase",
+      "method": "POST",
+      "path": "/separation-cases",
+      "capability": "hcm.operations.separation.manage",
+      "request": "SeparationCaseCreateV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "active relationship and assignments are snapshotted",
+        "TIM/PAY/Identity handoffs are tasks with receipts",
+        "completion is blocked while mandatory tasks fail"
+      ]
+    },
+    {
+      "operationId": "getCommandReceipt",
+      "method": "GET",
+      "path": "/command-receipts/{receiptId}",
+      "capability": "same capability and population as originating command",
+      "response": "CommandReceiptV1",
+      "authorizationContext": "SEALED_ORIGINATING_COMMAND_CONTEXT",
+      "authorizationRule": "MORE_RESTRICTIVE_OF_CURRENT_AND_ORIGINATING",
+      "opaqueNotFoundOnContextMismatch": true,
+      "rules": [
+        "current app entitlement and the sealed originating action, subject, population digest, field-policy revision, purpose and authorization revision are re-evaluated",
+        "the more restrictive of current and originating decisions is applied; revocation denies the receipt",
+        "tenant, subject or population mismatch returns opaque 404",
+        "result link is omitted when no longer authorized"
+      ]
+    },
+    {
+      "operationId": "bootstrapWorkforceSnapshots",
+      "method": "GET",
+      "path": "/internal/workforce-snapshots",
+      "capability": "approved downstream service contract",
+      "query": [
+        "asOf",
+        "cursor",
+        "limit",
+        "projection"
+      ],
+      "response": "CursorPage<WorkforceSnapshotV1>",
+      "rules": [
+        "mTLS service identity and tenant grant for TIM or PAY network consumer",
+        "PER uses WorkforceSnapshotQueryPort.v1 in-process with no self HTTP",
+        "tenant purpose and consumer-specific field projection are revalidated at both network and in-process boundaries",
+        "cursor binds owner revision and asOf",
+        "no private fields outside the registered projection"
+      ]
+    },
+    {
+      "operationId": "initiateWorkforceIngestion",
+      "method": "POST",
+      "path": "/integrations/workforce-ingestions",
+      "capability": "hcm.integration.execute",
+      "request": "WorkforceIngestionRequestV1",
+      "response": "CommandReceiptV1",
+      "rules": [
+        "connector and mapping versions are published and tenant-scoped",
+        "transport secret values remain in Integration Control",
+        "input envelope is schema-validated before staging",
+        "cursor advances only after idempotent domain commit and reconciliation"
+      ]
+    },
+    {
+      "operationId": "getWorkforceHomeWidgets",
+      "method": "GET",
+      "path": "/home/widgets/workforce",
+      "capability": "hcm.personal.profile.view or hcm.operations.people.view",
+      "query": [
+        "asOf",
+        "widgetKeys"
+      ],
+      "response": "WorkforceWidgetSetV1",
+      "rules": [
+        "widgets are task and summary projections rather than navigation catalogs",
+        "population and field policy are applied before aggregation",
+        "every value exposes asOf and freshness metadata",
+        "restricted small-cell counts are suppressed"
+      ]
+    }
+  ],
+  "schemas": {
+    "EmployeeChangeRequestCreateV1": {
+      "required": [
+        "targetPersonPublicId",
+        "targetAggregateType",
+        "targetAggregatePublicId",
+        "changeType",
+        "effectiveDate",
+        "patchSchemaKey",
+        "patchSchemaVersion",
+        "patch",
+        "evidence"
+      ],
+      "forbidden": [
+        "tenantId",
+        "beforeValue",
+        "approvalDecision"
+      ]
+    },
+    "AssignmentEventCreateV1": {
+      "required": [
+        "assignmentPublicId",
+        "eventType",
+        "reasonCode",
+        "effectiveDate",
+        "changes"
+      ],
+      "eventTypes": [
+        "HIRE",
+        "REHIRE",
+        "TRANSFER",
+        "PROMOTION",
+        "DEMOTION",
+        "CONCURRENT_ASSIGNMENT",
+        "CHANGE_MANAGER",
+        "CHANGE_LOCATION",
+        "LEAVE",
+        "RETURN",
+        "TERMINATION",
+        "CORRECTION"
+      ]
+    },
+    "WorkforceSnapshotV1": {
+      "required": [
+        "snapshotVersion",
+        "asOf",
+        "personPublicId",
+        "workerPublicId",
+        "workerStatus",
+        "relationships",
+        "assignments"
+      ],
+      "consumerProjections": {
+        "TIM": [
+          "workerPublicId",
+          "assignmentPublicId",
+          "status",
+          "legalEntityPublicId",
+          "organizationPublicId",
+          "locationPublicId",
+          "timeZone",
+          "employmentTerms"
+        ],
+        "PAY": [
+          "workerPublicId",
+          "assignmentPublicId",
+          "status",
+          "legalEntityPublicId",
+          "organizationPublicId",
+          "costCenterKey",
+          "payGroupPublicId",
+          "compensationBasisPublicId"
+        ],
+        "PER": [
+          "workerPublicId",
+          "assignmentPublicId",
+          "status",
+          "organizationPublicId",
+          "managerAssignmentPublicId",
+          "jobProfilePublicId",
+          "gradePublicId"
+        ]
+      }
+    }
+  },
+  "eventEnvelope": {
+    "required": [
+      "eventId",
+      "eventType",
+      "schemaVersion",
+      "tenantId",
+      "aggregateType",
+      "aggregatePublicId",
+      "aggregateVersion",
+      "occurredAt",
+      "effectiveAt",
+      "causationId",
+      "correlationId",
+      "producer",
+      "payload"
+    ],
+    "producer": "dwp-people-server",
+    "partitionKey": "tenantId:aggregatePublicId",
+    "ordering": "aggregateVersion strictly increases per aggregate",
+    "delivery": "at_least_once",
+    "consumerRequirement": "inbox idempotency by tenant, consumer and eventId; reject unsupported major schema",
+    "forbidden": [
+      "internalDatabaseId",
+      "clearPersonalIdentifier",
+      "clearBankAccount",
+      "documentBytes",
+      "accessToken",
+      "secretReferenceValue"
+    ]
+  },
+  "events": [
+    {
+      "eventType": "PersonChanged.v1",
+      "aggregate": "Person",
+      "payloadRequired": [
+        "changedFieldGroups",
+        "effectiveFrom"
+      ],
+      "note": "Consumers refetch their approved projection; restricted values are not broadcast."
+    },
+    {
+      "eventType": "WorkerHired.v1",
+      "aggregate": "Worker",
+      "payloadRequired": [
+        "workerPublicId",
+        "relationshipPublicId",
+        "assignmentPublicId",
+        "legalEntityPublicId",
+        "effectiveDate"
+      ]
+    },
+    {
+      "eventType": "EmploymentChanged.v1",
+      "aggregate": "WorkRelationship",
+      "payloadRequired": [
+        "relationshipPublicId",
+        "changeType",
+        "effectiveDate",
+        "newAggregateVersion"
+      ]
+    },
+    {
+      "eventType": "AssignmentChanged.v1",
+      "aggregate": "Assignment",
+      "payloadRequired": [
+        "assignmentPublicId",
+        "eventPublicId",
+        "eventType",
+        "effectiveDate",
+        "changedReferences",
+        "newAggregateVersion"
+      ]
+    },
+    {
+      "eventType": "OrganizationChanged.v1",
+      "aggregate": "OrganizationRevision",
+      "payloadRequired": [
+        "revisionPublicId",
+        "effectiveDate",
+        "changedOrganizationPublicIds",
+        "snapshotDigest"
+      ]
+    },
+    {
+      "eventType": "CompensationBasisChanged.v1",
+      "aggregate": "CompensationBasis",
+      "payloadRequired": [
+        "compensationBasisPublicId",
+        "assignmentPublicId",
+        "basisType",
+        "validFrom",
+        "validTo",
+        "newAggregateVersion"
+      ],
+      "note": "Amount is obtained through the PAY-approved projection, not included in a broad event."
+    },
+    {
+      "eventType": "EmploymentContractIssued.v1",
+      "aggregate": "EmploymentContract",
+      "payloadRequired": [
+        "contractPublicId",
+        "workerPublicId",
+        "contractType",
+        "validFrom",
+        "validTo",
+        "documentReference"
+      ],
+      "note": "Document bytes and unrestricted URLs are never in the event."
+    },
+    {
+      "eventType": "EmployeeChangeApplied.v1",
+      "aggregate": "EmployeeChangeRequest",
+      "payloadRequired": [
+        "requestPublicId",
+        "targetAggregateType",
+        "targetAggregatePublicId",
+        "changedFieldGroups",
+        "effectiveDate",
+        "appliedTargetVersion"
+      ]
+    },
+    {
+      "eventType": "WorkerSeparated.v1",
+      "aggregate": "SeparationCase",
+      "payloadRequired": [
+        "casePublicId",
+        "workerPublicId",
+        "relationshipPublicId",
+        "separationType",
+        "effectiveDate"
+      ]
+    },
+    {
+      "eventType": "CertificateIssued.v1",
+      "aggregate": "CertificateRequest",
+      "payloadRequired": [
+        "requestPublicId",
+        "certificatePublicId",
+        "subjectPersonPublicId",
+        "certificateType",
+        "issuedAt",
+        "expiresAt"
+      ],
+      "note": "No document content or verification token is published."
+    },
+    {
+      "eventType": "WorkforceIngestionReconciled.v1",
+      "aggregate": "WorkforceIngestionRun",
+      "payloadRequired": [
+        "runPublicId",
+        "connectorPublicId",
+        "mappingVersion",
+        "sourceCount",
+        "acceptedCount",
+        "rejectedCount",
+        "duplicateCount",
+        "quarantinedCount",
+        "appliedCount",
+        "resultDigest"
+      ],
+      "note": "No raw source payload, credential, or rejected restricted value is published."
+    },
+    {
+      "eventType": "WorkforceWidgetSnapshot.v1",
+      "aggregate": "WorkforceWidgetProjection",
+      "payloadRequired": [
+        "projectionPublicId",
+        "asOf",
+        "freshnessAt",
+        "changedWidgetKeys"
+      ],
+      "note": "This is an invalidation/freshness event; clients refetch an authorized projection."
+    }
+  ],
+  "coverageTargetBindings": [
+    {
+      "coverageTarget": "GET /api/hris/v1/people{?asOf,cursor,query}|PersonChanged.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/people",
+      "operations": ["searchPeople", "getPerson360"],
+      "events": ["PersonChanged.v1"]
+    },
+    {
+      "coverageTarget": "POST /api/hris/v1/employee-change-requests|EmployeeChangeApplied.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/employeeservice",
+      "operations": ["createEmployeeChangeRequest", "submitEmployeeChangeRequest", "recordEmployeeChangeDecision", "applyEmployeeChangeRequest"],
+      "events": ["EmployeeChangeApplied.v1"]
+    },
+    {
+      "coverageTarget": "POST /api/admin/hris/v1/reference-versions{/:id/validate,/:id/publish}|HrisReferenceDataPublished.v1",
+      "bindingKind": "SHARED_PLATFORM",
+      "owner": "dwp-platform-server/hrisconfiguration",
+      "contractRef": "central HRIS configuration contract proposal"
+    },
+    {
+      "coverageTarget": "POST /api/hris/v1/integrations/workforce-ingestions|WorkforceIngestionReconciled.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/compatibility",
+      "operations": ["initiateWorkforceIngestion"],
+      "events": ["WorkforceIngestionReconciled.v1"]
+    },
+    {
+      "coverageTarget": "GET/POST /api/hris/v1/organizations|OrganizationChanged.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/organization",
+      "operations": ["queryOrganizationGraph"],
+      "events": ["OrganizationChanged.v1"]
+    },
+    {
+      "coverageTarget": "DWP Approval versioned workflow API|ApprovalDecisionRecorded.v1",
+      "bindingKind": "SHARED_PLATFORM",
+      "owner": "dwp-approval-server",
+      "contractRef": "DWP Approval versioned workflow and receipt contract"
+    },
+    {
+      "coverageTarget": "POST /api/hris/v1/assignment-events{/:id/validate,/:id/submit,/:id/publish}|AssignmentChanged.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/employment",
+      "operations": ["createAssignmentEvent", "validateAssignmentEvent", "submitAssignmentEvent", "publishAssignmentEvent"],
+      "events": ["AssignmentChanged.v1"]
+    },
+    {
+      "coverageTarget": "POST /api/hris/v1/employment-contracts|EmploymentContractIssued.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/employment",
+      "operations": ["issueEmploymentContract"],
+      "events": ["EmploymentContractIssued.v1"]
+    },
+    {
+      "coverageTarget": "POST /api/hris/v1/separation-cases|WorkerSeparated.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/employment",
+      "operations": ["createSeparationCase"],
+      "events": ["WorkerSeparated.v1"]
+    },
+    {
+      "coverageTarget": "NONE",
+      "bindingKind": "RETIRED_OR_EXCLUDED",
+      "owner": "NONE",
+      "contractRef": "absence test; no target route, API, event, table, package or asset"
+    },
+    {
+      "coverageTarget": "POST /api/hris/v1/certificates|CertificateIssued.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/employeeservice",
+      "operations": ["requestCertificate"],
+      "events": ["CertificateIssued.v1"]
+    },
+    {
+      "coverageTarget": "GET /api/hris/v1/home/widgets/workforce|WorkforceWidgetSnapshot.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/people",
+      "operations": ["getWorkforceHomeWidgets"],
+      "events": ["WorkforceWidgetSnapshot.v1"]
+    },
+    {
+      "coverageTarget": "POST /api/hris/v1/assignment-events|AssignmentChanged.v1",
+      "bindingKind": "LOCAL_HRM",
+      "owner": "dwp-people-server/hris/employment",
+      "operations": ["createAssignmentEvent"],
+      "events": ["AssignmentChanged.v1"]
+    },
+    {
+      "coverageTarget": "DWP shell, task, notification and object-reference contracts",
+      "bindingKind": "SHARED_PLATFORM",
+      "owner": "dwp-platform-server",
+      "contractRef": "DWP shell/task/notification/object-reference contracts"
+    },
+    {
+      "coverageTarget": "POST /api/admin/hris/v1/document-template-versions|DocumentTemplatePublished.v1",
+      "bindingKind": "SHARED_PLATFORM",
+      "owner": "dwp-platform-server/hrisconfiguration",
+      "contractRef": "central HRIS schema-validated document-template contract proposal"
+    },
+    {
+      "coverageTarget": "POST /api/admin/hris/v1/extensions/installs|ExtensionInstalled.v1",
+      "bindingKind": "SHARED_PLATFORM",
+      "owner": "dwp-platform-server/hrisconfiguration",
+      "contractRef": "signed tenant-extension registry and installation contract proposal"
+    },
+    {
+      "coverageTarget": "POST /api/admin/hris/v1/retention-policy-versions|HrisRetentionPolicyPublished.v1",
+      "bindingKind": "SHARED_PLATFORM",
+      "owner": "dwp-platform-server/hrisconfiguration",
+      "contractRef": "central retention-policy lifecycle contract proposal"
+    }
+  ],
+  "reconciliation": {
+    "perRunRequired": [
+      "sourceCount",
+      "acceptedCount",
+      "rejectedCount",
+      "duplicateCount",
+      "quarantinedCount",
+      "appliedCount",
+      "cursorBefore",
+      "cursorAfter",
+      "inputDigest",
+      "resultDigest"
+    ],
+    "invariant": "acceptedCount plus rejectedCount plus duplicateCount equals sourceCount; cursor advances only after applied commit",
+    "payloadRetention": "redacted errors and opaque evidence references only"
+  },
+  "activationEvidence": {
+    "requiredForCore": [
+      "synthetic golden fixtures",
+      "contract tests",
+      "tenant and authorization negative tests",
+      "range and lifecycle database tests",
+      "outbox/inbox replay tests"
+    ],
+    "requiredPerProviderAdapter": [
+      "signed interface specification",
+      "sandbox or conformance double",
+      "mapping owner",
+      "sample envelopes without production PII",
+      "SLA and retry classification",
+      "reconciliation and cutover plan"
+    ],
+    "requiredPerCustomerCutover": [
+      "approved data mapping",
+      "anonymized parallel-run dataset",
+      "volume and retention profile",
+      "zero unexplained reconciliation difference",
+      "rollback or forward-correction rehearsal"
+    ]
+  }
+}

@@ -1,0 +1,728 @@
+{
+  "contractId": "RuntimeOnlyWiringProducerImplementationPlan.v1",
+  "schemaVersion": "1.0",
+  "status": "DESIGN_PROPOSED_SOURCE_BASED_NOT_INDEPENDENT_APPROVAL",
+  "readinessPass": false,
+  "g3StartAuthorized": false,
+  "g4DomainExecution": false,
+  "g6ProductionActivation": false,
+  "productionEditsByPlan": 0,
+  "sourceReadingScope": "Targeted native catalog, protocol and eight-service lifecycle source analysis; not whole-code certification.",
+  "sourceCapture": {
+    "capturedAtUtc": "2026-09-14T07:35:12.986920+00:00",
+    "sourcePins": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java",
+        "sha256": "5a4f2d5470e5cbe820fc7489c9a488ed1507d061be557de299de3be1f2257083"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java",
+        "sha256": "beac0ed3725ab0a46db57cc988d1cac68a7695a636485011751f1ef6daf99140"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java",
+        "sha256": "4b31b7cc63b8515d17f979e9e35448d84172cfc0d0f61fbc6bf7942622a7c5df"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java",
+        "sha256": "41e1e2aae659a97a14225281b18d832c9e4bc6751ab8b1ccc4930ed74aa01072"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java",
+        "sha256": "6bff3ec29240d1e89f50dcee9a819aea495436869441e77ab95d8a97a94aa2c9"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+        "sha256": "3ae35ffdd8416955bd4373409caa48fd92770e65f7efd4dc407ba2468fe290fb"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java",
+        "sha256": "cf9a5d83bc9b26900d885535cb39d5c4e98c78090728fb77236ddafa79e3caca"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceipt.java",
+        "sha256": "390d7b9e0c78ce876afc16cf31b5983bede48873ce5e32fbfff61299a5b6591c"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuard.java",
+        "sha256": "c47eb95d57168999fedc10dbd7f3cf4f4903ed4b630f1deaf8644210bfa4e70f"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ReadOnlyMetadataDatabaseGuard.java",
+        "sha256": "84c29e6a74adfaf810570ab0ca2d6de01df041e442d8edef07cd1823739c3d1d"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java",
+        "sha256": "e9bce1e7a69874ffc4f67ef09d0b5c7ea11da7bad15fe222d7003f99bc2b0214"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+        "sha256": "a1cb0f34a0ae0d968c8acc28953430615b228569cc9693c86fcd32d9c7291587"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java",
+        "sha256": "17af67195e81be0e1e5a2adea85cfae804c353b2deeec5901d3f0595ac34805c"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java",
+        "sha256": "ff1449cf6fd7837e94176a40d0d95d3db7b6b752242523071b0c29093b9b69db"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java",
+        "sha256": "980836e73bbe5862f6aabd88e53f58db4e926a6cdad6c4020cd7233bf8ab5de3"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java",
+        "sha256": "55235d7762f92a53e7a6b42a8efb0bd08b38b3cca38c12eef173628f36b41114"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseSignerV1.java",
+        "sha256": "3e4dfc1f492da8ff2110484af9d921df5c9cf2a0100e11abc1c9dbfd85c88e99"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/scripts/devctl.py",
+        "sha256": "797c34023407ce74588ff98244f264fd23f5320d40b4ad217b5cf44b3cb6a572"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/application.yml",
+        "sha256": "c8aa4834f40aa9743aa5fc735e0663a78b1ffa83a5996e60b5df5f7c4b1644b2"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-server/src/main/resources/application.yml",
+        "sha256": "e79884e537b4662ee19214cab22c7be7c04eb750eb35f54a24fd8ed2d8d067e0"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/application.yml",
+        "sha256": "17e0d5d1b4ab40bde6c80e5c2f146ccbc6ebdc38958a56e74e46af27a7042f56"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-time-server/src/main/resources/application.yml",
+        "sha256": "4614b77ba8d3da74da7f3862e05ddd154a6a8799fba1352729b56a2417df1211"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/main/resources/application.yml",
+        "sha256": "9e0c14289d1e45c43d42eb002a0fa5e319356e422df3ddf966a105675f78011f"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-approval-server/src/main/resources/application.yml",
+        "sha256": "98f116171df0e71bc4751677b40aeeb52c8092a5df0bb05fbf8e08ce6769c5c5"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-notification-server/src/main/resources/application.yml",
+        "sha256": "d2e4a0d86fd4036ff4d8149858c358a878e4de09603e4ab070f99f792cfd386e"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-provider-server/src/main/resources/application.yml",
+        "sha256": "c2cceaaf9dd5d224fa02a13d35acb73f9cb38f6978959d3b7691e4b7e87c4e9f"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/config/AuthDatabaseMigrationConfiguration.java",
+        "sha256": "c245db5ec1994e93b4640f3a432f90895be195d296ee24a2ddf27ed4b2bee213"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-server/src/main/java/com/dwp/services/platform/config/PlatformDatabaseMigrationConfiguration.java",
+        "sha256": "80c4cbaf9266bb924f6e51be95255e37d40585fa00cd2d82fb1acf265117fea8"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/migrationstream/PerformanceMigrationStreamConfiguration.java",
+        "sha256": "5d76628f55ad4d101bcae68bd4b8b78a797cb119459911a3498436a020110253"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+        "sha256": "f6a2d35e936d30879051c667e41dfd4622a635a1d709b3efe125cdae944a82a8"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/main/java/com/dwp/services/payroll/PayrollDatabaseMigrationConfiguration.java",
+        "sha256": "7efaa893d27391c95184780eec98e6a03c42a707f872a62b647379917b54e868"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-approval-server/src/main/java/com/dwp/services/approval/config/ApprovalDatabaseMigrationConfiguration.java",
+        "sha256": "5457826d148b6baf6a608d6c01935c1220d87dbc2035ab0844e494ec1252c8aa"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-notification-server/src/main/java/com/dwp/services/notification/migration/NotificationDatabaseMigrationConfiguration.java",
+        "sha256": "822e9126347549c4f21f281f3a2e1f78f3691797b3544d81993313c6f0cdf306"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-provider-server/src/main/java/com/dwp/services/provider/config/ProviderDatabaseMigrationConfiguration.java",
+        "sha256": "79266436591d1f7af3614ca6a697a7b2ccd88b704f336782e9d6b5c88d0ee986"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/migrationstream/PerformanceMigrationStreamBootstrap.java",
+        "sha256": "1f0566cd3107288e1a205c04b5315dd298f2c1bcfaa7913394779cdc8e6bb806"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-provider-server/src/main/java/com/dwp/services/provider/config/ProviderMetadataDatabaseConfiguration.java",
+        "sha256": "c97a453254a6dcba24b24eb5482cf97ea057a343d766cc89318b189d318b5d0e"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/runtime-only-startup-authority-boundary.proposal.v1.md",
+        "sha256": "6f762dd8c8ec49fab7803238e3667a1e226577dbe0057d7a81a266f0892a9930"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-stream-authority-decision.proposal.v1.md",
+        "sha256": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1"
+      }
+    ]
+  },
+  "currentTopology": {
+    "services": 8,
+    "streams": 9,
+    "migrationPrincipals": 8,
+    "runtimePrimaryPrincipals": 8,
+    "peopleScalarAliasPreserved": true,
+    "providerMetadataPrincipals": 4,
+    "metadataReadersAreNotAdditionalMigrationStreams": true,
+    "streamsInventory": [
+      {
+        "service": "approval",
+        "streamKey": "approval-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PRIMARY_SCALAR",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "auth",
+        "streamKey": "auth-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PRIMARY_SCALAR",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "notification",
+        "streamKey": "notification-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PRIMARY_SCALAR",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "payroll",
+        "streamKey": "payroll-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PRIMARY_SCALAR",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "people",
+        "streamKey": "people-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PEOPLE_SCALAR_PRIMARY_PERFORMANCE_ALIAS",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "people",
+        "streamKey": "people-performance",
+        "schema": "hris_performance",
+        "historyTable": "flyway_performance_schema_history",
+        "migrationLocation": "classpath:db/performance-migration",
+        "runtimePurpose": "PERFORMANCE",
+        "currentRuntimeBinding": "PEOPLE_SCALAR_PRIMARY_PERFORMANCE_ALIAS",
+        "approvedZeroHistoryPermitted": true,
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "platform",
+        "streamKey": "platform-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PRIMARY_SCALAR",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "provider",
+        "streamKey": "provider-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PRIMARY_SCALAR",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      },
+      {
+        "service": "time",
+        "streamKey": "time-main",
+        "schema": "public",
+        "historyTable": "flyway_schema_history",
+        "migrationLocation": "classpath:db/migration",
+        "runtimePurpose": "PRIMARY",
+        "currentRuntimeBinding": "PRIMARY_SCALAR",
+        "implementationStatus": "CURRENT_SCALAR_CONTROL_SOURCE_NOT_RUNTIME_ONLY_WIRING"
+      }
+    ]
+  },
+  "successorTopology": {
+    "services": 8,
+    "registeredStreams": 13,
+    "migrationPrincipalsRequiredIfAllEnabled": 13,
+    "runtimePurposePrincipalsRequiredIfAllEnabled": 14,
+    "implementationStatus": "UNWIRED_DISABLED_SCAFFOLD",
+    "fourSupplementalStreams": [
+      {
+        "service": "auth",
+        "streamKey": "auth-hris-participation-issuer",
+        "schema": "hris_participation_issuer",
+        "historyTable": "flyway_hris_participation_issuer_history",
+        "migrationLocation": "classpath:db/hris-participation-issuer-migration",
+        "runtimePurposes": [
+          "PARTICIPATION_ISSUER"
+        ],
+        "enabledWhen": [
+          "EMPLOYEE_LISTENING"
+        ],
+        "implementationStatus": "REGISTERED_PROPOSED_NOT_BOOTSTRAPPED_NOT_RUNTIME_WIRED",
+        "runtimeAndMigrationRolesCreatedByThisPlan": false
+      },
+      {
+        "service": "platform",
+        "streamKey": "platform-hris-configuration",
+        "schema": "hris_configuration",
+        "historyTable": "flyway_hris_configuration_history",
+        "migrationLocation": "classpath:db/hris-configuration-migration",
+        "runtimePurposes": [
+          "CONFIGURATION"
+        ],
+        "enabledWhen": [
+          "HRIS_CONFIGURATION",
+          "PEOPLE_ANALYTICS",
+          "GOVERNED_AI",
+          "EMPLOYEE_LISTENING"
+        ],
+        "implementationStatus": "REGISTERED_PROPOSED_NOT_BOOTSTRAPPED_NOT_RUNTIME_WIRED",
+        "runtimeAndMigrationRolesCreatedByThisPlan": false
+      },
+      {
+        "service": "platform",
+        "streamKey": "platform-hris-insights",
+        "schema": "hris_insights",
+        "historyTable": "flyway_hris_insights_history",
+        "migrationLocation": "classpath:db/hris-insights-migration",
+        "runtimePurposes": [
+          "INSIGHTS_EXECUTION_WRITE",
+          "INSIGHTS_QUERY"
+        ],
+        "enabledWhen": [
+          "PEOPLE_ANALYTICS",
+          "GOVERNED_AI",
+          "EMPLOYEE_LISTENING"
+        ],
+        "implementationStatus": "REGISTERED_PROPOSED_NOT_BOOTSTRAPPED_NOT_RUNTIME_WIRED",
+        "runtimeAndMigrationRolesCreatedByThisPlan": false
+      },
+      {
+        "service": "platform",
+        "streamKey": "platform-hris-protected",
+        "schema": "hris_listening_protected",
+        "historyTable": "flyway_hris_listening_protected_history",
+        "migrationLocation": "classpath:db/hris-listening-protected-migration",
+        "runtimePurposes": [
+          "LISTENING_ADMISSION"
+        ],
+        "enabledWhen": [
+          "EMPLOYEE_LISTENING"
+        ],
+        "implementationStatus": "REGISTERED_PROPOSED_NOT_BOOTSTRAPPED_NOT_RUNTIME_WIRED",
+        "runtimeAndMigrationRolesCreatedByThisPlan": false
+      }
+    ],
+    "scalarApprovalNotCompositeApproval": true
+  },
+  "invariants": [
+    "No app migration credentials, suppliers, Flyway execution, owner pools or arbitrary endpoint factory",
+    "No runtime history SELECT/DML/DDL",
+    "Independent deployment trust anchor, exact source artifact/manifest/control reference and compiler policy",
+    "Native/adopted provenance mutually exclusive; never rewrite installed_by/checksum",
+    "Disabled optional zero-open; enabled required missing fail-closed",
+    "No implicit autogrant, resource activation, G6 customer authority or privilege guard weakening",
+    "Notification approved managed roles remain exact non-elevated purpose-bound surface, not blanket banned",
+    "Normal Control fencing is not privileged DBA/host-compromise defense"
+  ],
+  "openGaps": [
+    {
+      "id": "RW-P0-01",
+      "title": "Eight apps still hold Flyway migration authority",
+      "source": [
+        "dwp-auth-server/src/main/resources/application.yml",
+        "dwp-platform-server/src/main/resources/application.yml",
+        "dwp-people-server/src/main/resources/application.yml",
+        "dwp-time-server/src/main/resources/application.yml",
+        "dwp-payroll-server/src/main/resources/application.yml",
+        "dwp-approval-server/src/main/resources/application.yml",
+        "dwp-notification-server/src/main/resources/application.yml",
+        "dwp-provider-server/src/main/resources/application.yml",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/config/AuthDatabaseMigrationConfiguration.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/config/PlatformDatabaseMigrationConfiguration.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/migrationstream/PerformanceMigrationStreamConfiguration.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/PayrollDatabaseMigrationConfiguration.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/config/ApprovalDatabaseMigrationConfiguration.java",
+        "dwp-notification-server/src/main/java/com/dwp/services/notification/migration/NotificationDatabaseMigrationConfiguration.java",
+        "dwp-provider-server/src/main/java/com/dwp/services/provider/config/ProviderDatabaseMigrationConfiguration.java"
+      ],
+      "repair": "Disable/exclude application Flyway and migration configurations; remove every app migration credential/factory; replace initializer barrier before JPA/domain initialization.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-02",
+      "title": "Independent native seal/approved permit producer missing",
+      "source": [
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java"
+      ],
+      "repair": "External approval-bound producer verifies current scalar/native/adopted evidence under a real fence, compares independently approved compiler policy/surface, persists exact permit then signs seal; never approves self-discovered live expectations.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-03",
+      "title": "Durable epoch/lease authority not joined to current native offline fence",
+      "source": [
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java"
+      ],
+      "repair": "Drain/revoke first, actual runtime and metadata service sessions offline, exclusive native fence before DDL, reseal and publication before new permits; beginDrain alone is not offline proof.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-04",
+      "title": "Current pool and Spring startup posture incompatibility",
+      "source": [
+        "dwp-time-server/src/main/resources/application.yml",
+        "dwp-payroll-server/src/main/resources/application.yml",
+        "dwp-notification-server/src/main/resources/application.yml",
+        "dwp-provider-server/src/main/java/com/dwp/services/provider/config/ProviderDatabaseMigrationConfiguration.java"
+      ],
+      "repair": "Set strict runtime Hikari autoCommit=true with correctly tested Spring transaction management; explicit runtime-only barrier must precede JPA, runners, schedulers, consumers and readiness.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-05",
+      "title": "Provider's four metadata readers lack exact signed catalog-read binding",
+      "source": [
+        "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java",
+        "dwp-provider-server/src/main/java/com/dwp/services/provider/config/ProviderMetadataDatabaseConfiguration.java"
+      ],
+      "repair": "Independently reviewed versioned metadata catalog-read evidence/purpose binding, not PRIMARY disguise or registry exclusion; remove Flyway user/infrastructure dependency, retain exact source-specific read-only/no-domain authority and approved enablement.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-06",
+      "title": "Long-running admission, renewal and drain transport missing",
+      "source": [
+        "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java",
+        "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java"
+      ],
+      "repair": "Authenticated current/refetch and explicit reviewed renewal protocol; atomic request/task gate closes on unavailable authority, stale epoch or expiry. Current never extends the stored lease.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-07",
+      "title": "Composite receipt cannot represent empty performance or adopted legacy proof",
+      "source": [
+        "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceipt.java",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java"
+      ],
+      "repair": "Reviewed successor version permits exact zero-row/zero-max materialized history and preserves legacy installed_by/full history/adoption receipt provenance; no fake migrations or history rewrite.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-08",
+      "title": "Nine scalar aliases and thirteen unique authorities are not interchangeable",
+      "source": [
+        "dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java",
+        "dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java"
+      ],
+      "repair": "Separate explicit deployment profiles and trust anchors; preserve existing People alias, require reviewed distinct-role/pool/ownership cutover for successor, no relabeling existing proof.",
+      "status": "OPEN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "RW-P0-09",
+      "title": "Four supplemental stream bootstrap and disabled optional zero-open",
+      "source": [
+        "dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+        "dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java"
+      ],
+      "repair": "Approved capability-dependent schema/history/role/bootstrap only; inactive streams have no pool construction/connection/schema probes, enabled missing authority rejects; existing scalar receipt never authorizes protected access.",
+      "status": "OPEN_REGISTERED_NOT_IMPLEMENTED"
+    }
+  ],
+  "implementationOrder": [
+    {
+      "id": "P0",
+      "dependsOn": [],
+      "work": "Freeze source-based plan and agree individual writers/versions; keep all historical scalar policy and G2 blobs unchanged.",
+      "verification": "No source implementation approval or readiness by this plan."
+    },
+    {
+      "id": "P1",
+      "dependsOn": [
+        "P0"
+      ],
+      "work": "Define independent scalar-nine source/permit/surface policy, metadata reader evidence and composite empty/adoption successor compatibility; publish shared contracts first.",
+      "verification": "Typed producer/consumer compile and mutation tests; historical receipt identity/provenance unchanged."
+    },
+    {
+      "id": "P2",
+      "dependsOn": [
+        "P1"
+      ],
+      "work": "Implement external seal/permit producer plus authenticated freshness transport and native fence/drain integration.",
+      "verification": "Actual independent PG16/18 native signature, missing/stale/tampered/extra history/object/body/ACL, concurrent drain/activate and crash recovery negatives."
+    },
+    {
+      "id": "P3",
+      "dependsOn": [
+        "P2"
+      ],
+      "work": "Implement one runtime-only app slice, then all eight apps using only active trusted runtime/read-only pools; remove Flyway/owner credentials and replace startup barriers.",
+      "verification": "Each app context and direct artifact boots; exact credential absence, zero optional opens and required missing fail-closed. No force-through memory doctor."
+    },
+    {
+      "id": "P4",
+      "dependsOn": [
+        "P3"
+      ],
+      "work": "Reviewed optional thirteen-stream bootstrap/cutover with four private streams and separate Insights query/execution roles.",
+      "verification": "Current common scaffold and enabled empty streams positive plus wrong-purpose/private cross-role/history/foreign DB negatives; not all G4 domain CRUD."
+    },
+    {
+      "id": "P5",
+      "dependsOn": [
+        "P3",
+        "P4"
+      ],
+      "work": "Independently review evidence and activation conditions; G3 authorizes development only after complete shared preparation, G4 domain execution and G6 customer/production activation remain separate.",
+      "verification": "No author-only PASS, no numerical count gate weakening."
+    }
+  ],
+  "fileAllocation": {
+    "existingApplicationConfigurations": {
+      "auth": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/AuthDatabaseMigrationConfiguration.java",
+      "platform": "dwp-platform-server/src/main/java/com/dwp/services/platform/config/PlatformDatabaseMigrationConfiguration.java",
+      "people": "dwp-people-server/src/main/java/com/dwp/services/people/hris/migrationstream/PerformanceMigrationStreamConfiguration.java",
+      "time": "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+      "payroll": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/PayrollDatabaseMigrationConfiguration.java",
+      "approval": "dwp-approval-server/src/main/java/com/dwp/services/approval/config/ApprovalDatabaseMigrationConfiguration.java",
+      "notification": "dwp-notification-server/src/main/java/com/dwp/services/notification/migration/NotificationDatabaseMigrationConfiguration.java",
+      "provider": "dwp-provider-server/src/main/java/com/dwp/services/provider/config/ProviderDatabaseMigrationConfiguration.java"
+    },
+    "applicationYamlFiles": [
+      "dwp-auth-server/src/main/resources/application.yml",
+      "dwp-platform-server/src/main/resources/application.yml",
+      "dwp-people-server/src/main/resources/application.yml",
+      "dwp-time-server/src/main/resources/application.yml",
+      "dwp-payroll-server/src/main/resources/application.yml",
+      "dwp-approval-server/src/main/resources/application.yml",
+      "dwp-notification-server/src/main/resources/application.yml",
+      "dwp-provider-server/src/main/resources/application.yml"
+    ],
+    "proposedRuntimeConfigurationNames": [
+      "AuthRuntimeOnlyStartupConfiguration.java",
+      "PlatformRuntimeOnlyStartupConfiguration.java",
+      "PeopleRuntimeOnlyStartupConfiguration.java",
+      "TimeRuntimeOnlyStartupConfiguration.java",
+      "PayrollRuntimeOnlyStartupConfiguration.java",
+      "ApprovalRuntimeOnlyStartupConfiguration.java",
+      "NotificationRuntimeOnlyStartupConfiguration.java",
+      "ProviderRuntimeOnlyStartupConfiguration.java"
+    ],
+    "externalControlNewPackage": "com.dwp.migration.control.startup.v1",
+    "coreNewContractsRequirePriorWriterAgreement": true,
+    "devctlWriterSeparate": true
+  },
+  "testAllocation": [
+    {
+      "scope": "core",
+      "newTests": [
+        "RuntimeOnlyApplicationRegistryContractTest",
+        "RuntimeMetadataCatalogReadEvidenceV1Test",
+        "RuntimeStartupLeaseAdmissionLifecycleTest"
+      ],
+      "coverage": [
+        "No migration supplier/credential/endpoint factory",
+        "disabled optional no construction/open/query",
+        "required missing and wrong qualifier/instance/endpoint denied",
+        "metadata exact catalog-read proof",
+        "expiry/current/renewal/outage fail-closed"
+      ]
+    },
+    {
+      "scope": "external Control",
+      "newTests": [
+        "ControlRuntimeStartupSealProducerV1PostgresTest",
+        "ControlStartupMigrationFenceIntegrationV1PostgresTest"
+      ],
+      "coverage": [
+        "independent approval and same compiler version",
+        "native and adopted provenance",
+        "empty approved history",
+        "drain/inspection/activation race",
+        "runtime and metadata sessions offline before DDL",
+        "crash before publication"
+      ]
+    },
+    {
+      "scope": "auth",
+      "newTests": [
+        "AuthRuntimeOnlyStartupConfigurationTest",
+        "AuthRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "platform",
+      "newTests": [
+        "PlatformRuntimeOnlyStartupConfigurationTest",
+        "PlatformRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "people",
+      "newTests": [
+        "PeopleRuntimeOnlyStartupConfigurationTest",
+        "PeopleRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "time",
+      "newTests": [
+        "TimeRuntimeOnlyStartupConfigurationTest",
+        "TimeRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "payroll",
+      "newTests": [
+        "PayrollRuntimeOnlyStartupConfigurationTest",
+        "PayrollRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "approval",
+      "newTests": [
+        "ApprovalRuntimeOnlyStartupConfigurationTest",
+        "ApprovalRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "notification",
+      "newTests": [
+        "NotificationRuntimeOnlyStartupConfigurationTest",
+        "NotificationRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "provider",
+      "newTests": [
+        "ProviderRuntimeOnlyStartupConfigurationTest",
+        "ProviderRuntimeOnlyStartupPostgresTest"
+      ],
+      "coverage": [
+        "Flyway and migration datasource bean absent",
+        "migration owner credentials absent/rejected",
+        "JPA/runner/scheduler/readiness barrier",
+        "direct artifact missing/tampered/stale signature denies",
+        "positive native/adopted restart in actual approved topology"
+      ]
+    },
+    {
+      "scope": "devctl/deployment",
+      "newTests": [
+        "test_runtime_only_application_environment",
+        "runtime_only_startup_topology_evidence"
+      ],
+      "coverage": [
+        "separate Control/app secret bundles",
+        "no inherited foreign/admin/Flyway override",
+        "8 services/9 streams and explicit successor profile",
+        "doctor bound/serialized native evidence/exact cleanup IDs"
+      ]
+    }
+  ],
+  "evidenceBoundary": {
+    "historicalAuthorNativeTests": {
+      "engines": [
+        "postgres:16-alpine",
+        "postgres:18.4-alpine"
+      ],
+      "uniqueCases": 93,
+      "newNativeAndCompilerCases": 65,
+      "oldGuardCases": 28,
+      "currentWholeSourcePass": false
+    },
+    "rootIndependentClockRepair": {
+      "uniqueCases": 29,
+      "status": "ROOT_REPORTED_FRESH_PASS_SEPARATE_EVIDENCE_NOT_SUMMED",
+      "guardSha256": "5a4f2d5470e5cbe820fc7489c9a488ed1507d061be557de299de3be1f2257083"
+    },
+    "rootJoint166TimeoutIncluded": false,
+    "existingNativeFixtureDoesNotCertifyActualNineStreamNames": true,
+    "planTestsExecuted": false
+  }
+}

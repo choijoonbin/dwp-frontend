@@ -1,0 +1,423 @@
+{
+  "contractId": "dwp.hris.modern.tim.v1",
+  "schemaVersion": 1,
+  "status": "G3_CONTRACT_READY_NOT_IMPLEMENTED",
+  "session": "HRIS-TIM",
+  "runtimeOwners": [
+    "dwp-time-server"
+  ],
+  "eventEnvelope": {
+    "schemaRef": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+    "required": [
+      "specVersion",
+      "id",
+      "source",
+      "type",
+      "schemaVersion",
+      "time",
+      "tenantId",
+      "aggregateType",
+      "aggregateId",
+      "aggregateSequence",
+      "correlationId",
+      "data"
+    ],
+    "partitionKey": "tenantId:aggregateId",
+    "outbox": "same_transaction",
+    "consumerRule": "inbox_dedupe_by_tenantId_and_event_id_then_aggregateSequence_gap_detection"
+  },
+  "physicalTableDefaults": {
+    "tenantColumn": "tenant_id BIGINT NOT NULL",
+    "internalId": "module-specific BIGSERIAL PRIMARY KEY; never exposed outside owning runtime",
+    "publicId": "public_id UUID NOT NULL; UNIQUE(tenant_id,public_id)",
+    "aggregateVersion": "aggregate_version BIGINT NOT NULL DEFAULT 0 CHECK (aggregate_version >= 0)",
+    "auditColumns": "created_at TIMESTAMPTZ NOT NULL; created_by UUID NOT NULL; updated_at TIMESTAMPTZ; updated_by UUID; correlation_id UUID NOT NULL",
+    "rowSecurity": "ENABLE ROW LEVEL SECURITY; FORCE ROW LEVEL SECURITY; tenant predicate current_setting('dwp.tenant_id',true)::bigint; application role NOBYPASSRLS",
+    "foreignKeyBoundary": "composite (tenant_id,id) FK only inside dwp-time-server; HRM/PER references are tenant-bound opaque public UUIDs or consumed snapshots with no DB FK",
+    "deletionRule": "forecasts/candidates supersede; evaluation and publish ledgers are append-only",
+    "indexRule": "every work queue or time-window query begins with tenant_id; retain timezone and source offset"
+  },
+  "capabilities": [
+    {
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "session": "HRIS-TIM",
+      "boundedContext": "DWP_TIME_WORKFORCE_MANAGEMENT",
+      "runtimeOwner": "dwp-time-server",
+      "contextModule": "workforcemanagement",
+      "backendRoot": "dwp-time-server/src/main/java/com/dwp/services/time/workforcemanagement",
+      "backendTestRoot": "dwp-time-server/src/test/java/com/dwp/services/time/workforcemanagement",
+      "frontendRoot": "apps/dwp/src/features/hris/time/workforce-management",
+      "frontendTestRoot": "apps/dwp/src/features/hris/time/workforce-management/__tests__",
+      "migrationFile": "dwp-time-server/src/main/resources/db/migration/V39__tim_modern_advanced_wfm.sql",
+      "openapiFile": "contracts/openapi/hris/tim/advanced-wfm.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/tim/advanced-wfm.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.operations.workforce-management"
+      ],
+      "authorizationCapabilities": [
+        "hcm.wfm.view",
+        "hcm.wfm.optimize",
+        "hcm.wfm.publish"
+      ],
+      "dataContracts": [
+        "DemandForecast.v1",
+        "ScheduleCandidate.v1",
+        "SchedulePublishLedger.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.wfm.forecasts.query",
+          "method": "GET",
+          "path": "/api/time/v1/workforce-management/demand-forecasts",
+          "action": "WFM_FORECAST_QUERY",
+          "authorizationCapability": "hcm.wfm.view",
+          "scope": [
+            "LEGAL_ENTITY",
+            "WORKSITE",
+            "TIME_GROUP"
+          ],
+          "mode": "QUERY",
+          "response": "DemandForecastPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.wfm.forecast.create",
+          "method": "POST",
+          "path": "/api/time/v1/workforce-management/demand-forecasts",
+          "action": "WFM_FORECAST_CREATE",
+          "authorizationCapability": "hcm.wfm.optimize",
+          "scope": [
+            "LEGAL_ENTITY",
+            "WORKSITE",
+            "TIME_GROUP"
+          ],
+          "mode": "COMMAND",
+          "response": "TimeCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-TIM-WFM-TR-001"
+          ],
+          "emits": [
+            "WorkforceScheduleCandidateGenerated.v1"
+          ]
+        },
+        {
+          "operationId": "modern.wfm.schedule.optimize",
+          "method": "POST",
+          "path": "/api/time/v1/workforce-management/demand-forecasts/{forecastId}/schedule-optimizations",
+          "action": "WFM_SCHEDULE_OPTIMIZE",
+          "authorizationCapability": "hcm.wfm.optimize",
+          "scope": [
+            "WORKSITE",
+            "TIME_GROUP"
+          ],
+          "mode": "COMMAND",
+          "response": "ScheduleOptimizationReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-TIM-WFM-TR-002"
+          ],
+          "emits": [
+            "WorkforceScheduleCandidateGenerated.v1"
+          ]
+        },
+        {
+          "operationId": "modern.wfm.schedule.validate",
+          "method": "POST",
+          "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/validations",
+          "action": "WFM_SCHEDULE_VALIDATE",
+          "authorizationCapability": "hcm.wfm.optimize",
+          "scope": [
+            "WORKSITE",
+            "TIME_GROUP"
+          ],
+          "mode": "COMMAND",
+          "response": "ScheduleValidationReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-TIM-WFM-TR-003"
+          ],
+          "emits": [
+            "WorkforceScheduleCandidateGenerated.v1"
+          ]
+        },
+        {
+          "operationId": "modern.wfm.schedule.submit",
+          "method": "POST",
+          "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/submit",
+          "action": "WFM_SCHEDULE_SUBMIT",
+          "authorizationCapability": "hcm.wfm.optimize",
+          "scope": [
+            "WORKSITE",
+            "TIME_GROUP"
+          ],
+          "mode": "COMMAND",
+          "response": "TimeCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-TIM-WFM-TR-004"
+          ],
+          "emits": [
+            "WorkforceScheduleCandidateGenerated.v1"
+          ]
+        },
+        {
+          "operationId": "modern.wfm.schedule.publish",
+          "method": "POST",
+          "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/publish",
+          "action": "WFM_SCHEDULE_PUBLISH",
+          "authorizationCapability": "hcm.wfm.publish",
+          "scope": [
+            "WORKSITE",
+            "TIME_GROUP"
+          ],
+          "mode": "COMMAND",
+          "response": "SchedulePublishLedger.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-TIM-WFM-TR-005"
+          ],
+          "emits": [
+            "WorkforceSchedulePublished.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-TIM-WFM-SM-001",
+          "aggregate": "WorkforceScheduleScenario",
+          "initialState": "NONE",
+          "terminalStates": [
+            "PUBLISHED",
+            "REJECTED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-TIM-WFM-TR-001",
+              "from": "NONE",
+              "to": "FORECAST_DRAFT",
+              "operationId": "modern.wfm.forecast.create",
+              "guard": "demand source range timezone and source digest present"
+            },
+            {
+              "transitionId": "MOD-TIM-WFM-TR-002",
+              "from": "FORECAST_DRAFT|CANDIDATE_GENERATED",
+              "to": "CANDIDATE_GENERATED",
+              "operationId": "modern.wfm.schedule.optimize",
+              "guard": "pinned demand availability skill and time-policy revisions; deterministic seed"
+            },
+            {
+              "transitionId": "MOD-TIM-WFM-TR-003",
+              "from": "CANDIDATE_GENERATED",
+              "to": "VALIDATED",
+              "operationId": "modern.wfm.schedule.validate",
+              "guard": "coverage labor-rule and fairness constraints pass or explained exceptions recorded"
+            },
+            {
+              "transitionId": "MOD-TIM-WFM-TR-004",
+              "from": "VALIDATED",
+              "to": "PENDING_APPROVAL",
+              "operationId": "modern.wfm.schedule.submit",
+              "guard": "candidate digest frozen and no blocking exception"
+            },
+            {
+              "transitionId": "MOD-TIM-WFM-TR-005",
+              "from": "PENDING_APPROVAL",
+              "to": "PUBLISHED",
+              "operationId": "modern.wfm.schedule.publish",
+              "guard": "human approval receipt and current input revisions"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "WorkforceScheduleCandidateGenerated.v1",
+          "type": "WorkforceScheduleCandidateGenerated",
+          "version": 1,
+          "topic": "dwp.hris.wfm.schedule-candidate.generated.v1",
+          "aggregate": "WorkforceScheduleScenario",
+          "payloadRequired": [
+            "forecastId",
+            "candidateId",
+            "inputSnapshotId",
+            "constraintPolicyVersion",
+            "coverageScore",
+            "fairnessEvaluationId",
+            "candidateDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-TIM-WFM-TR-001",
+            "MOD-TIM-WFM-TR-002",
+            "MOD-TIM-WFM-TR-003",
+            "MOD-TIM-WFM-TR-004"
+          ]
+        },
+        {
+          "name": "WorkforceSchedulePublished.v1",
+          "type": "WorkforceSchedulePublished",
+          "version": 1,
+          "topic": "dwp.hris.wfm.schedule.published.v1",
+          "aggregate": "WorkforceScheduleScenario",
+          "payloadRequired": [
+            "candidateId",
+            "publishLedgerId",
+            "schedulePeriodStart",
+            "schedulePeriodEnd",
+            "timeGroupIds",
+            "approvalReceiptId",
+            "payloadDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-TIM-WFM-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "tme_wfm_demand_forecasts",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "demand_forecast_id",
+          "effectiveTime": "period_start TIMESTAMPTZ NOT NULL; period_end TIMESTAMPTZ NOT NULL; source_timezone VARCHAR(64) NOT NULL",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_SUPERSEDED",
+          "foreignKeyBoundaries": [
+            "OPAQUE:worksite_public_id->HRM.Location",
+            "OPAQUE:demand_source_id->SYS.Connector"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,forecast_key,forecast_revision)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "period_end > period_start",
+            "source_digest <> ''",
+            "forecast_revision > 0"
+          ],
+          "indexes": [
+            "(tenant_id,worksite_public_id,period_start,period_end)"
+          ],
+          "retentionClass": "WFM_PLANNING_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "tme_wfm_schedule_candidates",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "schedule_candidate_id",
+          "effectiveTime": "period_start TIMESTAMPTZ NOT NULL; period_end TIMESTAMPTZ NOT NULL",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,demand_forecast_id)->tme_wfm_demand_forecasts",
+            "OPAQUE:availability_snapshot_id->HRM/PER snapshot"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,demand_forecast_id,candidate_revision)",
+            "(tenant_id,candidate_digest)"
+          ],
+          "checks": [
+            "status IN (CANDIDATE_GENERATED,VALIDATED,PENDING_APPROVAL,PUBLISHED,REJECTED)",
+            "candidate_revision > 0",
+            "candidate_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,status,period_start)",
+            "(tenant_id,demand_forecast_id,candidate_revision DESC)"
+          ],
+          "retentionClass": "WFM_PLANNING_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "tme_wfm_constraint_evaluation_receipts",
+          "kind": "EVALUATION_LEDGER",
+          "idColumn": "constraint_evaluation_receipt_id",
+          "effectiveTime": "evaluated_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,schedule_candidate_id)->tme_wfm_schedule_candidates",
+            "OPAQUE:policy_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,schedule_candidate_id,evaluation_revision)",
+            "(tenant_id,result_digest)"
+          ],
+          "checks": [
+            "blocking_violation_count >= 0",
+            "fairness_metric_count >= 0",
+            "result_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,schedule_candidate_id,evaluated_at DESC)"
+          ],
+          "retentionClass": "WFM_FAIRNESS_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "tme_wfm_schedule_publish_ledger",
+          "kind": "PUBLISH_LEDGER",
+          "idColumn": "schedule_publish_ledger_id",
+          "effectiveTime": "published_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,schedule_candidate_id)->tme_wfm_schedule_candidates",
+            "OPAQUE:approval_receipt_id->Approval"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,schedule_candidate_id,candidate_revision)",
+            "(tenant_id,payload_digest)"
+          ],
+          "checks": [
+            "candidate_revision > 0",
+            "payload_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,published_at DESC)",
+            "(tenant_id,schedule_period_public_id)"
+          ],
+          "retentionClass": "TIME_SCHEDULE_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-TIM-WFM-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/tim/g4/modern/advanced-wfm/constraint-property-test.json",
+          "assertion": "coverage time-law availability and skill constraints hold for generated schedules"
+        },
+        {
+          "testId": "MOD-TIM-WFM-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/tim/g4/modern/advanced-wfm/fairness-evaluation.json",
+          "assertion": "prohibited attributes excluded and group fairness metrics plus explanations recorded"
+        },
+        {
+          "testId": "MOD-TIM-WFM-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/tim/g4/modern/advanced-wfm/acceptance.json",
+          "assertion": "only human-approved current candidate publishes once and reconciles schedule ledger"
+        }
+      ],
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "COUNTRY_PACK",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "countryOrExternalActivation": [
+        "country labor constraints",
+        "real demand connector",
+        "tenant fairness threshold approval"
+      ]
+    }
+  ]
+}

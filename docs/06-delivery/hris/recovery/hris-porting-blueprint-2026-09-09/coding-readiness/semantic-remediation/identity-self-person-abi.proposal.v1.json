@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "contractId": "DWP.Identity.SelfPerson.ABI.v1",
+  "status": "AUTHOR_PROPOSED_UNWIRED_SCAFFOLD_G3_CLOSED",
+  "sourceBasis": {
+    "existingAuthAuthority": "com_users tenant/user/principal UUID→person UUID/native version/access_revision; existing AuthBindingProvider reused",
+    "existingPeopleAuthority": "public.ppl_persons tenant/public_id/version/lifecycle_state; no new principal/person/worker ledger",
+    "frozenEmploymentAbiAndReader79Unchanged": true
+  },
+  "request": {
+    "method": "SelfPersonPortV1.resolve()",
+    "callerFields": [],
+    "historicalPersonAsOfSupported": false,
+    "purpose": "SELF_PROFILE_READ",
+    "audience": "HRIS_HRM",
+    "capture": "trusted guard Clock instant becomes SelfContextQueryV1(SELF_PROFILE_READ,now,null) for existing AuthorityVerifier",
+    "forbidden": [
+      "caller tenant/user/principal/person",
+      "email/name/correlation equality fallback",
+      "worker/relationship/assignment selector",
+      "display/UTC/location/schedule timezone fallback",
+      "TIM/PER installation dependency"
+    ]
+  },
+  "rawOwnerCarrier": {
+    "name": "NativeSelfPersonSnapshotV1",
+    "verified": false,
+    "fields": {
+      "tenantId": "positive native tenant LONG",
+      "personPublicId": "native opaque nonzero UUID",
+      "personVersion": "native ppl_persons.version LONG>=0",
+      "personState": "ACTIVE|INACTIVE; MERGED/unknown rejected",
+      "capturedAt": "People-owned Clock current instant at native read",
+      "expiresAt": "bounded positive lease<=30sec and<=Auth binding/current authority expiry"
+    }
+  },
+  "privateOwnerLookup": {
+    "factory": "SelfPersonOwnerPortsV1.lookup; package-private, guard sole production callsite",
+    "constructor": "private",
+    "fields": [
+      "verified-by-guard AuthPersonBindingV1 raw binding",
+      "SelfContextAuthorityV1 raw current owner response",
+      "capturedNow trusted initial guard instant"
+    ]
+  },
+  "guard": {
+    "factory": "GuardedSelfPersonPortV1.guarded(Clock,AuthorityVerifier,AuthBindingProvider,PersonSnapshotProvider)",
+    "currentVerifier": "explicit composition; no Spring autowiring or current native PEP claimed",
+    "missingAdapter": "ADAPTER_UNAVAILABLE before Clock/provider calls",
+    "authorityChecks": [
+      "positive exact native tenant/user IDs and nonzero principal/person UUID",
+      "expectedUserRowVersion/accessRevision and permissionDecisionRevision>=0",
+      "SELF_PROFILE_READ/HRIS_HRM exact purpose/audience",
+      "APP entitlement and separation-of-duties allowed",
+      "issued/expires current and<=30sec",
+      "effectivePolicy reference/version + nonempty allowedPersonStates only; worker/assignment policies irrelevant"
+    ],
+    "authBindingChecks": [
+      "same tenant/user/principal/person as authority",
+      "TENANT plane, ACTIVE Auth account",
+      "exact expected native version/accessRevision",
+      "bounded capture/expiry current"
+    ],
+    "personChecks": [
+      "same tenant and native person UUID as Auth binding",
+      "native version>=0; valid person state",
+      "allowedPersonStates purpose policy only",
+      "bounded current capture/expiry no later than authority/auth expiry"
+    ],
+    "finalIssuanceChecks": [
+      "trusted Clock re-read after owner calls",
+      "no clock regression",
+      "authority/auth/person proofs still unexpired",
+      "no person/worker UUID equality substitution"
+    ]
+  },
+  "verifiedResult": {
+    "name": "SelfPersonResolutionV1",
+    "constructor": "private; package-private sole guard mint",
+    "fields": [
+      "AuthPersonBindingV1 binding",
+      "SelfContextAuthorityV1 authority",
+      "NativeSelfPersonSnapshotV1 person",
+      "Instant verifiedAt"
+    ],
+    "externalCallerMintSupported": false,
+    "signedProof": false,
+    "PIIFields": []
+  },
+  "nativeReader": {
+    "name": "People.NativeSelfPersonQueryReaderV1",
+    "registration": "UNWIRED_NOT_SPRING",
+    "sql": "SELECT tenant_id,public_id,version,lifecycle_state FROM public.ppl_persons WHERE tenant_id=? AND public_id=?",
+    "DataSource": "People runtime-only explicit composition; no arbitrary endpoint authorization claim",
+    "clockLease": "positive Duration<=30sec; query timeout5sec",
+    "noReads": [
+      "ppl_workers",
+      "ppl_work_relationships",
+      "ppl_assignments",
+      "ppl_locations",
+      "TIM schedules",
+      "Auth DB"
+    ],
+    "errorRedaction": "typed generic SelfContextContractExceptionV1 without SQL/native detail/cause"
+  },
+  "errors": [
+    "ADAPTER_UNAVAILABLE",
+    "AUTHORITY_INVALID",
+    "APP_ENTITLEMENT_REQUIRED",
+    "SEPARATION_OF_DUTIES_DENIED",
+    "AUTH_BINDING_INVALID",
+    "AUTH_BINDING_REVOKED",
+    "AUTH_BINDING_STALE",
+    "OWNER_RESPONSE_INVALID",
+    "OWNER_UNAVAILABLE",
+    "SELF_SCOPE_UNRESOLVED"
+  ],
+  "newOwnedProductionFiles": [
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonPortV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfPersonSnapshotV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonOwnerPortsV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonResolutionV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfPersonPortV1.java",
+    "dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1.java"
+  ],
+  "newOwnedTests": [
+    "dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonContractV1Test.java",
+    "dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1Test.java",
+    "dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1PostgresTest.java"
+  ],
+  "actualTestPlan": {
+    "neutralTypedFixtures": [
+      "person without any employment constraints selected",
+      "policy ACTIVE-only vs INACTIVE deny/explicitallow",
+      "foreign tenant/person/principal mismatch",
+      "stale Auth row/access revision",
+      "Auth account revoke/null person",
+      "missing current APP entitlement/SoD",
+      "missing any adapter zero provider calls",
+      "expiry during reads/final issuance and backward Clock",
+      "native person version<0/UUID0/nullstate",
+      "native capture/expiry stale or outlives binding"
+    ],
+    "PeopleJdbc": [
+      "private lookup minted via guard only",
+      "fixed parameterized SELECT/readOnly/querytimeout",
+      "null/duplicate/native unknown enum/nullversion rejection",
+      "SQL detail and cause redaction"
+    ],
+    "PeoplePostgres": [
+      "actual unchanged native migrations incl forward49",
+      "person without worker/relationship/assignment exists and selected",
+      "person with employment but missing location selected without employment query",
+      "runtime exact4column SELECT-only role/no Auth DB",
+      "native person revision/status changes read fresh",
+      "MERGED/missing/foreigntenant native deny",
+      "explicit mock current verifier/Auth binding only"
+    ]
+  },
+  "open": [
+    "Auth endpoint/real current permission PEP/verified current transport",
+    "cross-owner lifecycle/relink version producer ordering and revoke fencing",
+    "production DataSource qualifier/login authority admission and wiring",
+    "actual signature/freshness/deployment proof transport",
+    "employment physical date-zone policy remains separate OPEN",
+    "full HRIS menu/domain/source graph/G3 readiness"
+  ],
+  "constraints": {
+    "editExistingEmploymentAbi": false,
+    "editReader79": false,
+    "editHistoricalSQLOrGates": false,
+    "editAuthEndpoint": false,
+    "addIndependentIdentityLedger": false,
+    "addDDL": false,
+    "commitBeforeRootReview": false
+  }
+}

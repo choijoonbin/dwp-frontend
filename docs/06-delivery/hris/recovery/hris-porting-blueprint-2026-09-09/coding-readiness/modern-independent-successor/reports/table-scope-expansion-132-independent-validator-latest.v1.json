@@ -1,0 +1,39 @@
+{
+  "findingCount": 3,
+  "findings": [
+    {
+      "evidence": {
+        "actual": ["modern.workforceplan.scenario.simulate"],
+        "expected": ["internal.workforceplan.simulation-result.consume", "modern.workforceplan.scenario.cancel", "modern.workforceplan.scenario.simulate"],
+        "extra": [],
+        "missing": ["internal.workforceplan.simulation-result.consume", "modern.workforceplan.scenario.cancel"]
+      },
+      "id": "TS132-PRODUCER-001",
+      "message": "ppl_wfp_simulation_requests producer set is incomplete"
+    },
+    {
+      "evidence": {
+        "actual": ["modern.ai.assist.review"],
+        "expected": ["modern.ai.assist.review", "modern.ai.assist.revoke"],
+        "extra": [],
+        "missing": ["modern.ai.assist.revoke"]
+      },
+      "id": "TS132-PRODUCER-001",
+      "message": "sys_hris_ai_assistance_reviews producer set is incomplete"
+    },
+    {
+      "evidence": {"coveredByRule": 10, "declaredRows": 17},
+      "id": "TS132-CONSUMER-001",
+      "message": "acceptance policy checks only ten query-bearing additions although all 17 rows declare durable read consumers"
+    }
+  ],
+  "selfTestStatus": "PASS",
+  "selfTests": [
+    {"name": "remove-added-table", "passed": true},
+    {"name": "add-removal", "passed": true},
+    {"name": "wrong-owner", "passed": true},
+    {"name": "drop-producer", "passed": true},
+    {"name": "duplicate-baseline", "passed": true}
+  ],
+  "status": "FAIL"
+}

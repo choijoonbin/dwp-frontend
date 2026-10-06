@@ -1,0 +1,25 @@
+{
+  "schema": "dwp.hris.g3.contract-publication-bootstrap-contract.v1",
+  "publicHttpOperationCount": 175,
+  "asyncPrimaryEventCount": 134,
+  "xconEventAliasCount": 13,
+  "xconSnapshotAliasCount": 8,
+  "eventAliasRule": "EVENT_ONLY_TOPIC_TYPE_VERSION_PAYLOAD_DIGEST_EXACT",
+  "snapshotPublicationRule": "SNAPSHOT_XCON_EXCLUDED_FROM_ASYNCAPI",
+  "verifierAllocationId": "G3-CTL-BE-CONTRACT-VERIFIER",
+  "contractAllocationId": "G3-CTL-BE-CONTRACTS",
+  "verifierSourcePath": "scripts/verify-hris-contract-publication.py",
+  "verifierTestPath": "scripts/tests/test_verify_hris_contract_publication.py",
+  "sourceIdentityRule": "CURRENT_CHECKOUT_SHA_TREE_CLEAN_ISOLATED_RUNTIME_AND_FINALLY_CLEANUP",
+  "requiredControlCommandKeys": [
+    "authorization-contract-gates",
+    "contract-publication-source-bound",
+    "contract-publication-verifier-unit",
+    "domain-event-runtime-contracts",
+    "openapi-exporter-unit",
+    "root-check"
+  ],
+  "bootstrapOrder": "VERIFIER_CHECKPOINT_BEFORE_ANY_CENTRAL_CONTRACT_TOUCH",
+  "implementationState": "FIRST_CONTROL_DELIVERABLE_REQUIRED",
+  "productionState": "NOT_AUTHORIZED_G6"
+}

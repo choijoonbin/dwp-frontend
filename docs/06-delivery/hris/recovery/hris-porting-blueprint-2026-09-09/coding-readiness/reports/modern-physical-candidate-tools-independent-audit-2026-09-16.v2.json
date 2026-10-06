@@ -1,0 +1,188 @@
+{
+  "schema": "dwp.hris.modern-physical-candidate-tools-independent-audit/v2",
+  "status": "PASS_TOOL_HARDENING_CANONICAL_SOURCE_REMAINS_BLOCKED",
+  "recordedAtUtc": "2026-09-16T00:16:32Z",
+  "authority": "INDEPENDENT_REVIEWER_TOOL_QUALITY_ONLY_NOT_G3_NOT_G6",
+  "scope": {
+    "toolDirectory": "coding-readiness/modern-physical-candidate-tools",
+    "canonicalCandidate": "coding-readiness/modern-canonical-candidate.q0mnJg",
+    "reviewedFiles": [
+      "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py",
+      "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py",
+      "coding-readiness/modern-physical-candidate-tools/README.md"
+    ],
+    "allowedWrites": "THIS_DISTINCT_V2_INDEPENDENT_REPORT_ONLY",
+    "canonicalCandidateMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "liveCanonicalPhysicalGateWorktreePolicyMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "candidatePublication": "NOT_PERFORMED"
+  },
+  "predecessorReport": {
+    "path": "coding-readiness/reports/modern-physical-candidate-tools-independent-audit-2026-09-16.v1.json",
+    "sha256": "f38ac36959c9a618a2ec97423781a57baf28ac4f59721064e133180b9954d247",
+    "declaredSealedPayloadSha256": "PENDING",
+    "disposition": "INCOMPLETE_UNSEALED_SUPERSEDED_DO_NOT_TREAT_AS_AUDIT_AUTHORITY",
+    "mutatedByThisReview": false
+  },
+  "failBeforeEvidence": {
+    "path": "coding-readiness/reports/modern-physical-candidate-tools-independent-fail-before-2026-09-16.v1.json",
+    "sha256": "dc0341b10124c6c675ab69b1e43dbcd3a5c283602fa651966d05afcc3ac0f5f4",
+    "sealedPayloadSha256": "5396f5d3bbc0b3faecea286e2534f07c08768c8806517813a5a92cf9c4e98854",
+    "selfSealValid": true,
+    "status": "FAIL_TOOL_HARDENING_REQUIRED",
+    "preservedBeforeToolModification": true
+  },
+  "toolPins": {
+    "generatorSha256": "c6a5936c63a9fe8cb5e45e57433fed83501bed1eb55f0130b19007c2de5bbd43",
+    "validatorSha256": "80ac7a31b7b1a34aa8d80ffcd4da9f3231c7b8c8a9e222b9e3c4d531bfbc151f",
+    "readmeSha256": "b3260fe9a78ff240b28cd8310f0eb06b915f769cb4acf972f348752e6c960599",
+    "modes": {
+      "generate_modern_physical_candidate.py": "0755",
+      "validate_modern_physical_candidate.py": "0755",
+      "README.md": "0644"
+    }
+  },
+  "protectedInputPins": {
+    "storedQ0V5Report": {
+      "path": "coding-readiness/reports/modern-physical-q0mnJg-rejected-preflight-2026-09-16.v5.json",
+      "sha256": "01e3d81bf2e1a58589fd6f9f1c24c5b8a88aea0e12f95debc6f4242bd1a4bcaa",
+      "sealedPayloadSha256": "87b6823e335d2b50a1b412cef9bcb4579bf2ec07ff094136cfca0d3097418f47",
+      "selfSealValid": true
+    },
+    "expansionPolicyV3": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+      "sha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+      "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+      "scope": "132_TABLES_DELTA_17_NO_REMOVALS",
+      "selfSealValid": true
+    },
+    "ownerPrefixRegisterSha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49",
+    "canonicalFileSha256": {
+      "modern-capability-causal-state-contracts.v2.json": "1bf81301c577ab35a39971fa4518464b92353f8aca1dc5a276872df636cde20a",
+      "modern-capability-closed-set-manifest.v3.json": "cd1305145a41217f73e5aebf66833a4077279a231712aaccdcab6e661fc94a94",
+      "modern-capability-event-payload-contracts.v1.json": "2a69ac195f4e2e9795a8efb52a31d93dc85e8816a318b5263c9033f2a03023a8",
+      "modern-capability-exact-schema-contracts.v1.json": "9de24132f582ee2ac9d3564f1d2c87425b9a507a6a1f19bcdb57390c102c9e10",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "46ee398c3b0fca0e6cc39d966ea3c7ff7c427d954d0d4b5851695604f8ae31ce",
+      "modern-capability-public-identity-registry.v1.json": "6bf72a0cd7a7982d445baeb27afefedf23e3e6ea7126e8e6c03c2815116b9d8c",
+      "modern-capability-semantic-bindings.v1.json": "39d32729ff6ab3046407b38ee53a7c778bd72abe11ffb83709bd05677fa1fc01"
+    }
+  },
+  "inputIntegrityIncident": {
+    "status": "RESOLVED_BEFORE_V2_SEAL",
+    "detected": {
+      "policyV3Sha256": "0f18d15303807c3383c761cc25de84820abb9b756361c14f86319a081a36d186",
+      "policyV3SealedPayloadSha256": "8f6e250defcf2a8a931e1cb6e583c832d6f4624377e0e66f7fd702de6beca5be",
+      "scope": "131_TABLES_DELTA_17_NET_16_ONE_REMOVAL",
+      "q0FindingCount": 51,
+      "reason": "AN_ALREADY_SEALED_V3_PREDECESSOR_WAS_OVERWRITTEN_WITH_A_DIFFERENT_131_TABLE_POLICY"
+    },
+    "recoveryProvenance": {
+      "sessionLog": "/Users/a10697/.codex/sessions/2026/09/15/rollout-2026-09-15T22-38-58-01a0a54a-cf9b-7632-9bb3-ec544ab20a8d.jsonl",
+      "originalFileChangeLine": 5085,
+      "originalSealPatchLine": 5097,
+      "reconstructedSha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+      "reconstructedSealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+      "reconstructionSelfSealValid": true
+    },
+    "workspaceRestoration": {
+      "sha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+      "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+      "exactBytesRestored": true,
+      "verifiedBeforeFinalQ0CliRun": true
+    },
+    "governanceDisposition": "THE_131_TABLE_POLICY_MUST_BE_ISSUED_AS_A_DISTINCT_SUCCESSOR_VERSION_AND_MUST_NOT_REWRITE_V3"
+  },
+  "q0Reproduction": {
+    "command": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --canonical-dir coding-readiness/modern-canonical-candidate.q0mnJg --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --preflight-only",
+    "exitCode": 3,
+    "expectedExitCode": 3,
+    "status": "PASS_EXPECTED_BLOCK",
+    "findingCount": 38,
+    "storedV5SortedCategoryCodeSubjectTupleEquality": true,
+    "livePreflightSealedPayloadSha256": "5ba860a5713e07730afdb37c2d7dd53d99040ec04ef679a1a9531ff0dfa0e2da",
+    "categories": {
+      "PHYSICAL_OWNER_BOUNDARY": 4,
+      "PHYSICAL_SCHEMA_DDL": 4,
+      "TABLE_EXPANSION_PRODUCER_READER_CLOSURE": 16,
+      "TEMPORAL_REVISION_ARBITRATION": 14
+    },
+    "observedCounts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 25,
+      "events": 155,
+      "tables": 132
+    },
+    "canonicalHashesEqualStoredV5": true,
+    "postgresExecution": "CORRECTLY_NOT_RUN_STATIC_FINDINGS_NONZERO"
+  },
+  "checks": [
+    {
+      "id": "PY_COMPILE",
+      "status": "PASS",
+      "exitCode": 0,
+      "pycacheOutsideWorkspace": true
+    },
+    {
+      "id": "GENERATOR_TOOL_HOSTILE_SELF_TEST",
+      "status": "PASS",
+      "exitCode": 0,
+      "passed": 8,
+      "total": 8,
+      "sealedPayloadSha256": "c6040fc4a5e27be698b2d30e05680dca7fa0d5bf4f52d4c7ecad5ec000cc8ccd",
+      "selfSealValid": true
+    },
+    {
+      "id": "VALIDATOR_TOOL_HOSTILE_SELF_TEST",
+      "status": "PASS",
+      "exitCode": 0,
+      "passed": 9,
+      "total": 9,
+      "sealedPayloadSha256": "37f6824638d37bf9bb84c72f721e0025c44a009033d2499c69af778101889409",
+      "selfSealValid": true
+    },
+    {
+      "id": "Q0_EXACT_38_REPRODUCTION_AFTER_V3_EXACT_RESTORATION",
+      "status": "PASS_EXPECTED_BLOCK",
+      "exitCode": 3,
+      "expectedExitCode": 3,
+      "findingCount": 38,
+      "tupleEquality": true
+    },
+    {
+      "id": "INDEPENDENCE_AND_NO_IMPLICIT_LIVE_PATH_STATIC_AUDIT",
+      "status": "PASS",
+      "exitCode": 0,
+      "validatorImportsAuthorGenerator": false,
+      "pathResolveCalls": 0,
+      "generatorOsReplaceCalls": 0,
+      "implicitQ0OrLivePhysicalPathDefaults": 0
+    },
+    {
+      "id": "TOOL_BYTE_AND_MODE_PINS",
+      "status": "PASS",
+      "allThreeHashesEqualReviewedPins": true,
+      "allThreeModesEqualReviewedPins": true
+    },
+    {
+      "id": "FAIL_BEFORE_AND_Q0_V5_IMMUTABILITY",
+      "status": "PASS",
+      "failBeforeByteHashAndSelfSealValid": true,
+      "q0V5ByteHashAndSelfSealValid": true
+    }
+  ],
+  "residualBlockers": [
+    {
+      "type": "CANONICAL_SOURCE",
+      "candidate": "modern-canonical-candidate.q0mnJg",
+      "count": 38,
+      "disposition": "UNCHANGED_CANONICAL_AUTHOR_MUST_REPAIR_AND_SUBMIT_A_NEW_CANDIDATE",
+      "toolDefect": false,
+      "g3CodeGate": "CLOSED"
+    }
+  ],
+  "toolBlockers": [],
+  "conclusion": "THE_THREE_PHYSICAL_CANDIDATE_TOOL_FILES_RETAIN_THE_REVIEWED_HARDENED_BYTES_AND_PASS_INDEPENDENT_REEXECUTION;THE_SEALED_V3_POLICY_WAS_EXACTLY_RESTORED;Q0_IS_CORRECTLY_REJECTED_AT_38;NO_PHYSICAL_CANDIDATE_WAS_PUBLISHED",
+  "productionState": "NOT_AUTHORIZED_G6",
+  "sealedPayloadSha256": "1169c800b4005391563aafbc6b90c583fbbdd2b947503f91a4e2a462f0945870"
+}

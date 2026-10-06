@@ -1,0 +1,1218 @@
+{
+  "status": "DESIGN_PROPOSED_G3_NONE",
+  "currentPublished": false,
+  "targetAuthLookup": false,
+  "subjectUsesActingAuthStamps": false,
+  "commonReceiptCandidateRequired": false,
+  "atsFkBranchOnly": true,
+  "schemaRootForTarget": {
+    "actor": {
+      "definition": "ActorAuthVersionStamp",
+      "path": []
+    },
+    "person": {
+      "definition": "SubjectPopulation",
+      "path": [
+        "subject",
+        "oneOf:0"
+      ]
+    },
+    "employment": {
+      "definition": "SubjectPopulation",
+      "path": [
+        "subject",
+        "oneOf:1"
+      ]
+    }
+  },
+  "nativeColumnBindings": [
+    {
+      "root": "actor",
+      "target": "actor.userRowVersion",
+      "table": "com_users",
+      "column": "version",
+      "sqlType": "BIGINT",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_ACTING_AUTH_AND_PERMISSION_PROOF",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "verifiedActor.userId",
+        "ownerRaw.AuthPersonBindingV1",
+        "ownerPEP.currentActingPurposeDecision"
+      ]
+    },
+    {
+      "root": "actor",
+      "target": "actor.accessRevision",
+      "table": "com_users",
+      "column": "access_revision",
+      "sqlType": "BIGINT",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_ACTING_AUTH_AND_PERMISSION_PROOF",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "verifiedActor.userId",
+        "ownerRaw.AuthPersonBindingV1",
+        "ownerPEP.currentActingPurposeDecision"
+      ]
+    },
+    {
+      "root": "person",
+      "target": "person.personPublicId",
+      "table": "ppl_persons",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "jsonType": "string",
+      "jsonFormat": "uuid",
+      "entityType": "HRM.Person",
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "person",
+      "target": "person.personVersion",
+      "table": "ppl_persons",
+      "column": "version",
+      "sqlType": "BIGINT",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "person",
+      "target": "person.personState",
+      "table": "ppl_persons",
+      "column": "lifecycle_state",
+      "sqlType": "VARCHAR(20)",
+      "jsonType": "string",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.personPublicId",
+      "table": "ppl_persons",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "jsonType": "string",
+      "jsonFormat": "uuid",
+      "entityType": "HRM.Person",
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.versions.personVersion",
+      "table": "ppl_persons",
+      "column": "version",
+      "sqlType": "BIGINT",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.selector.workerPublicId",
+      "table": "ppl_workers",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "jsonType": "string",
+      "jsonFormat": "uuid",
+      "entityType": "HRM.Worker",
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.versions.workerVersion",
+      "table": "ppl_workers",
+      "column": "version",
+      "sqlType": "BIGINT",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.selector.workRelationshipPublicId",
+      "table": "ppl_work_relationships",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "jsonType": "string",
+      "jsonFormat": "uuid",
+      "entityType": "HRM.WorkRelationship",
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.versions.relationshipVersion",
+      "table": "ppl_work_relationships",
+      "column": "version",
+      "sqlType": "BIGINT",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.selector.assignmentPublicId",
+      "table": "ppl_assignments",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "jsonType": "string",
+      "jsonFormat": "uuid",
+      "entityType": "HRM.Assignment",
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.versions.assignmentVersion",
+      "table": "ppl_assignments",
+      "column": "version",
+      "sqlType": "BIGINT",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.legalEmployerPublicId",
+      "table": "ppl_legal_employers",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "jsonType": "string",
+      "jsonFormat": "uuid",
+      "entityType": "HRM.LegalEmployer",
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.relationshipStartDate",
+      "table": "ppl_work_relationships",
+      "column": "start_date",
+      "sqlType": "DATE",
+      "jsonType": "string",
+      "jsonFormat": "date",
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.relationshipEndDate",
+      "table": "ppl_work_relationships",
+      "column": "end_date",
+      "sqlType": "DATE",
+      "jsonType": "string",
+      "jsonFormat": "date",
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.assignmentStartDate",
+      "table": "ppl_assignments",
+      "column": "effective_start_date",
+      "sqlType": "DATE",
+      "jsonType": "string",
+      "jsonFormat": "date",
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.assignmentEndDate",
+      "table": "ppl_assignments",
+      "column": "effective_end_date",
+      "sqlType": "DATE",
+      "jsonType": "string",
+      "jsonFormat": "date",
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.effectiveSequence",
+      "table": "ppl_assignments",
+      "column": "effective_sequence",
+      "sqlType": "INTEGER",
+      "jsonType": "integer",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    },
+    {
+      "root": "employment",
+      "target": "employment.workZone",
+      "table": "ppl_locations",
+      "column": "time_zone",
+      "sqlType": "VARCHAR(80)",
+      "jsonType": "string",
+      "jsonFormat": null,
+      "entityType": null,
+      "kind": "OWNER_RESPONSE_FIELD_ADAPTER",
+      "currentPublished": false,
+      "phase": "AFTER_CURRENT_PEOPLE_TARGET_PEP_AND_NATIVE_PARENT_TUPLE",
+      "inputs": [
+        "verifiedActor.tenantId",
+        "validated.targetQuery",
+        "ownerRaw.PeopleNativeRowsV2",
+        "ownerPEP.currentSubjectPopulationDecision",
+        "ownerClock.instant"
+      ]
+    }
+  ],
+  "parentJoins": [
+    [
+      "ppl_workers",
+      "person_id",
+      "ppl_persons",
+      "person_id"
+    ],
+    [
+      "ppl_work_relationships",
+      "worker_id",
+      "ppl_workers",
+      "worker_id"
+    ],
+    [
+      "ppl_assignments",
+      "work_relationship_id",
+      "ppl_work_relationships",
+      "work_relationship_id"
+    ]
+  ],
+  "subjectEventBindings": [
+    {
+      "schemaId": "HRM.CandidateCaseChanged.Payload.v2",
+      "businessTable": "ppl_rec_candidate_cases",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_rec_candidate_cases.public_id",
+      "businessVersionSource": "RETURNING.ppl_rec_candidate_cases.aggregate_version",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "ABSENT_VALID_PRE_ADMISSION; Candidate/Offer token/source consent is not native Person.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.RecruitingOfferChanged.Payload.v2",
+      "businessTable": "ppl_rec_offers",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_rec_offers.public_id",
+      "businessVersionSource": "RETURNING.ppl_rec_offers.aggregate_version",
+      "sourceParent": "offer.candidate_case_id resolves tenant candidate public UUID/version, candidate.requisition_id exact native planned requisition parent.",
+      "nativeAdmissionBinding": "ABSENT_VALID_PRE_ADMISSION; Candidate/Offer token/source consent is not native Person.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.HireHandoffChanged.Payload.v2",
+      "businessTable": "ppl_rec_hire_requests",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_rec_hire_requests.public_id",
+      "businessVersionSource": "RETURNING.ppl_rec_hire_requests.aggregate_version",
+      "sourceParent": "Confirmation receipt hire_request_id resolves tenant hire-request public UUID/version; event is parent handoff lifecycle, not receipt UUID.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.JourneyAssignmentChanged.Payload.v2",
+      "businessTable": "ppl_jny_assignments",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_jny_assignments.public_id",
+      "businessVersionSource": "RETURNING.ppl_jny_assignments.aggregate_version",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.JourneyAssignmentTaskChanged.Payload.v2",
+      "businessTable": "ppl_jny_assignment_tasks",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_jny_assignment_tasks.public_id",
+      "businessVersionSource": "RETURNING.ppl_jny_assignment_tasks.aggregate_version",
+      "sourceParent": "task.journey_assignment_id resolves tenant journey_assignment.public_id/version; subject admitted Person resides in parent.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.BenefitEnrollmentChanged.Payload.v2",
+      "businessTable": "ppl_bnf_enrollments",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_bnf_enrollments.public_id",
+      "businessVersionSource": "RETURNING.ppl_bnf_enrollments.aggregate_version",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.BenefitLifeEventChanged.Payload.v2",
+      "businessTable": "ppl_bnf_life_events",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_bnf_life_events.public_id",
+      "businessVersionSource": "RETURNING.ppl_bnf_life_events.aggregate_version",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.HrCaseChanged.Payload.v2",
+      "businessTable": "ppl_hrs_cases",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_hrs_cases.public_id",
+      "businessVersionSource": "RETURNING.ppl_hrs_cases.aggregate_version",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.ContingentWorkerProposalChanged.Payload.v2",
+      "businessTable": "ppl_cwk_worker_proposals",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_cwk_worker_proposals.public_id",
+      "businessVersionSource": "RETURNING.ppl_cwk_worker_proposals.aggregate_version",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.ContingentEngagementChanged.Payload.v2",
+      "businessTable": "ppl_cwk_engagements",
+      "aggregateOrRecordField": "aggregatePublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_cwk_engagements.public_id",
+      "businessVersionSource": "RETURNING.ppl_cwk_engagements.aggregate_version",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.CandidateHired.v2.Payload",
+      "businessTable": "ppl_rec_hire_handoff_receipts",
+      "aggregateOrRecordField": "recordPublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_rec_hire_handoff_receipts.public_id",
+      "businessVersionSource": "RETURNING.ppl_rec_hire_handoff_receipts.decision_revision",
+      "sourceParent": "Receipt candidate_case_id resolves tenant candidate_case.public_id; hire_request_id resolves same candidate and proposal/actual HRM receipt; NEVER first path UUID copy.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    },
+    {
+      "schemaId": "HRM.OnboardingJourneyCompleted.v2.Payload",
+      "businessTable": "ppl_jny_assignments",
+      "aggregateOrRecordField": "recordPublicId",
+      "businessIdSource": "tenant-bound same-owner RETURNING.ppl_jny_assignments.public_id",
+      "businessVersionSource": "RETURNING.ppl_jny_assignments.assignment_revision",
+      "sourceParent": "Exact loaded business row and documented local tenant parents, preserve own public UUID; native person projection must be stored/refetched exact owner result.",
+      "nativeAdmissionBinding": "Only refetched People common receipt/person result where business subject actually binds it; PREHIRE_PERSON may have Person only. Benefit/HRcase existing native subject need not have admission receipt.",
+      "actorBinding": "Envelope actorAuthorityReceiptPublicId from current ACTING authority; Auth2 never stored as subject People versions.",
+      "eventFieldCompatibility": "Original event schema fields retained; optional least-PII native binding belongs versioned HrmEventIdentityBinding envelope sidecar. Independent canonical event-version registration OPEN.",
+      "currentPublished": false
+    }
+  ],
+  "operations": [
+    {
+      "id": "people.native.personadmission.prepare.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/native-person-admissions",
+      "request": {
+        "$ref": "urn:hrm-native-v2:AdmissionRequest"
+      },
+      "response": {
+        "$ref": "urn:hrm-native-v2:AdmissionReceipt"
+      },
+      "writes": [
+        "ppl_persons CREATE only",
+        "ppl_person_admission_receipts",
+        "ATS branch only ppl_person_admission_ats_bindings",
+        "native workspace/item CAS consume",
+        "sys_people_outbox_events"
+      ],
+      "state": "AUTHORIZED source→CONSUMED only after Person/receipt RETURNING; reused Person state/version preserved",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "Idempotency-Key/header requestPublicId owner business identity, full stored normalized request compare; If-Match/explicit expectedVersion CAS, RETURNING receipt once",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/NativePersonAdmissionContractsV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    },
+    {
+      "id": "people.native.personadmission.receipt.query.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/native-person-admission-receipts/query",
+      "request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "receiptPublicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedOwnerRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "purpose": {
+            "enum": [
+              "PERSON_ADMIT",
+              "WORKER_HIRE",
+              "CONTINGENT_WORKER_CREATE",
+              "ONBOARDING_ASSIGN",
+              "ONBOARDING_BIND",
+              "HRM_POPULATION_QUERY"
+            ]
+          }
+        },
+        "required": [
+          "receiptPublicId",
+          "expectedOwnerRevision",
+          "purpose"
+        ]
+      },
+      "response": {
+        "$ref": "urn:hrm-native-v2:AdmissionReceipt"
+      },
+      "writes": [],
+      "state": "Immutable receipt owner refetch; current target/actor PEP required",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "No mutation; current owner field/purpose/expiry/version recheck",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/NativePersonAdmissionContractsV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    },
+    {
+      "id": "people.authorizedsubject.snapshot.query.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/authorized-subject-snapshots/query",
+      "request": {
+        "$ref": "urn:hrm-native-v2:TargetQuery"
+      },
+      "response": {
+        "$ref": "urn:hrm-native-v2:SubjectPopulation"
+      },
+      "writes": [],
+      "state": "Owner current actor2 purpose/population/field + target People tuple1/4 guard; no target Auth lookup",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "No mutation; current owner field/purpose/expiry/version recheck",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/AuthorizedSubjectPortV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/AuthorizedSubjectSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    },
+    {
+      "id": "people.native.admissionworkspace.create.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/native-admission-workspaces",
+      "request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "requestPublicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "businessPurpose": {
+            "enum": [
+              "MANUAL_HIRE",
+              "CONTINGENT_CREATE",
+              "PREHIRE_ONBOARDING"
+            ]
+          },
+          "personMutation": {
+            "$ref": "urn:hrm-native-v2:PersonMutation"
+          }
+        },
+        "required": [
+          "requestPublicId",
+          "businessPurpose",
+          "personMutation"
+        ]
+      },
+      "response": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "AUTHORIZED",
+              "CONSUMED",
+              "CANCELLED"
+            ]
+          },
+          "businessPurpose": {
+            "enum": [
+              "MANUAL_HIRE",
+              "CONTINGENT_CREATE",
+              "PREHIRE_ONBOARDING"
+            ]
+          },
+          "personMutation": {
+            "$ref": "urn:hrm-native-v2:PersonMutation"
+          }
+        },
+        "required": [
+          "publicId",
+          "version",
+          "status",
+          "businessPurpose",
+          "personMutation"
+        ]
+      },
+      "writes": [
+        "ppl_native_admission_workspaces"
+      ],
+      "state": "NONE→DRAFT; body facts retained exact, no ATS calls",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "Idempotency-Key/header requestPublicId owner business identity, full stored normalized request compare; If-Match/explicit expectedVersion CAS, RETURNING receipt once",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/NativePersonAdmissionContractsV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    },
+    {
+      "id": "people.native.admissionworkspace.authorize.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/native-admission-workspaces/{workspaceId}/authorize",
+      "request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workspacePublicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "decisionReceipt": {
+            "$ref": "urn:hrm-native-v2:ArtifactReference"
+          }
+        },
+        "required": [
+          "workspacePublicId",
+          "expectedVersion",
+          "decisionReceipt"
+        ]
+      },
+      "response": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "AUTHORIZED",
+              "CONSUMED",
+              "CANCELLED"
+            ]
+          },
+          "businessPurpose": {
+            "enum": [
+              "MANUAL_HIRE",
+              "CONTINGENT_CREATE",
+              "PREHIRE_ONBOARDING"
+            ]
+          },
+          "personMutation": {
+            "$ref": "urn:hrm-native-v2:PersonMutation"
+          }
+        },
+        "required": [
+          "publicId",
+          "version",
+          "status",
+          "businessPurpose",
+          "personMutation"
+        ]
+      },
+      "writes": [
+        "ppl_native_admission_workspaces CAS"
+      ],
+      "state": "DRAFT→AUTHORIZED; approved exact workspace/person mutation/population purpose/refetch/SoD",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "Idempotency-Key/header requestPublicId owner business identity, full stored normalized request compare; If-Match/explicit expectedVersion CAS, RETURNING receipt once",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/NativePersonAdmissionContractsV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    },
+    {
+      "id": "people.native.admissionworkspace.cancel.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/native-admission-workspaces/{workspaceId}/cancel",
+      "request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workspacePublicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "reasonCode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "workspacePublicId",
+          "expectedVersion",
+          "reasonCode"
+        ]
+      },
+      "response": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "AUTHORIZED",
+              "CONSUMED",
+              "CANCELLED"
+            ]
+          },
+          "businessPurpose": {
+            "enum": [
+              "MANUAL_HIRE",
+              "CONTINGENT_CREATE",
+              "PREHIRE_ONBOARDING"
+            ]
+          },
+          "personMutation": {
+            "$ref": "urn:hrm-native-v2:PersonMutation"
+          }
+        },
+        "required": [
+          "publicId",
+          "version",
+          "status",
+          "businessPurpose",
+          "personMutation"
+        ]
+      },
+      "writes": [
+        "ppl_native_admission_workspaces CAS"
+      ],
+      "state": "DRAFT|AUTHORIZED→CANCELLED; CONSUMED reject; unknown UUID NOT_FOUND and changed replay conflict",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "Idempotency-Key/header requestPublicId owner business identity, full stored normalized request compare; If-Match/explicit expectedVersion CAS, RETURNING receipt once",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/NativePersonAdmissionContractsV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    },
+    {
+      "id": "people.native.admissionimport.batch.stage.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/native-person-import-batches",
+      "request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "requestPublicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mapping": {
+            "$ref": "urn:hrm-native-v2:ArtifactReference"
+          },
+          "importMode": {
+            "enum": [
+              "NATIVE_STAGED",
+              "OPTIONAL_CONNECTOR"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "sourceRecordKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "personMutation": {
+                  "$ref": "urn:hrm-native-v2:PersonMutation"
+                }
+              },
+              "required": [
+                "sourceRecordKey",
+                "personMutation"
+              ]
+            }
+          }
+        },
+        "required": [
+          "requestPublicId",
+          "mapping",
+          "importMode",
+          "items"
+        ]
+      },
+      "response": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "VALIDATED",
+              "ACCEPTED",
+              "CANCELLED"
+            ]
+          },
+          "mapping": {
+            "$ref": "urn:hrm-native-v2:ArtifactReference"
+          },
+          "importMode": {
+            "enum": [
+              "NATIVE_STAGED",
+              "OPTIONAL_CONNECTOR"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "itemPublicId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "itemVersion": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "sourceRecordKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "personMutation": {
+                  "$ref": "urn:hrm-native-v2:PersonMutation"
+                }
+              },
+              "required": [
+                "itemPublicId",
+                "itemVersion",
+                "sourceRecordKey",
+                "personMutation"
+              ]
+            }
+          }
+        },
+        "required": [
+          "publicId",
+          "version",
+          "status",
+          "mapping",
+          "importMode",
+          "items"
+        ]
+      },
+      "writes": [
+        "ppl_native_admission_import_batches",
+        "ppl_native_admission_import_items"
+      ],
+      "state": "NONE→DRAFT; schema/mapping/facts owner validates DRAFT→VALIDATED on same explicit stage result, no Person DML",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "Idempotency-Key/header requestPublicId owner business identity, full stored normalized request compare; If-Match/explicit expectedVersion CAS, RETURNING receipt once",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/NativePersonAdmissionContractsV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    },
+    {
+      "id": "people.native.admissionimport.batch.accept.proposal.v2",
+      "method": "POST",
+      "route": "/internal/people/v2/native-person-import-batches/{batchId}/accept",
+      "request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "batchPublicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedBatchVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "decisionReceipt": {
+            "$ref": "urn:hrm-native-v2:ArtifactReference"
+          }
+        },
+        "required": [
+          "batchPublicId",
+          "expectedBatchVersion",
+          "decisionReceipt"
+        ]
+      },
+      "response": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "VALIDATED",
+              "ACCEPTED",
+              "CANCELLED"
+            ]
+          },
+          "mapping": {
+            "$ref": "urn:hrm-native-v2:ArtifactReference"
+          },
+          "importMode": {
+            "enum": [
+              "NATIVE_STAGED",
+              "OPTIONAL_CONNECTOR"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "itemPublicId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "itemVersion": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "sourceRecordKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "personMutation": {
+                  "$ref": "urn:hrm-native-v2:PersonMutation"
+                }
+              },
+              "required": [
+                "itemPublicId",
+                "itemVersion",
+                "sourceRecordKey",
+                "personMutation"
+              ]
+            }
+          }
+        },
+        "required": [
+          "publicId",
+          "version",
+          "status",
+          "mapping",
+          "importMode",
+          "items"
+        ]
+      },
+      "writes": [
+        "ppl_native_admission_import_batches CAS",
+        "items ACCEPTED"
+      ],
+      "state": "VALIDATED→ACCEPTED only current mapping/immutable item vector/human decision; native staged provider calls0",
+      "currentPublished": false,
+      "authority": "Trusted current transport identity verified server side, never body ActorAuthority; actual producer/PEP registration OPEN",
+      "idempotency": "Idempotency-Key/header requestPublicId owner business identity, full stored normalized request compare; If-Match/explicit expectedVersion CAS, RETURNING receipt once",
+      "files": {
+        "dto": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/NativePersonAdmissionContractsV2.java",
+        "producer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceServiceV2.java",
+        "consumer": "dwp-people-server/src/main/java/com/dwp/services/people/hris/modern/v2/NativeAdmissionOwnerAdapterV2.java",
+        "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/admission/v2/NativeAdmissionSourceV2Test.java"
+      },
+      "fileStatus": "PLANNED_NOT_CREATED_BY_THIS_TASK"
+    }
+  ],
+  "sqlConflictGuard": "Owner query all eligible same assignment_key slices for selected worker/relationship in trusted tenant at exact timezone(location.time_zone,:asOf)::DATE; reject COUNT>1 after selecting max effective_sequence per effective_start_date. Selected UUID must equal remaining tuple; no LIMIT1/actor bound self query reuse.",
+  "sourceTruthBoundary": "Native leaf column checks use observed V1/V41/V49 and AuthV1/V4/V7. Workspace/import/People current target PEP/config/privacy receipt producer remain new planned contracts, not current source materialization.",
+  "codecBoundary": "Java BIGINT→JSON safe integer subset in author schemas only; exact signed transport lossless BIGINT codec/field visibility still internal owner review OPEN.",
+  "sourceWriteInvariants": [
+    "All actor Auth2 fields loaded from ACTING Auth native row, never target identity.",
+    "All target People1/4 native versions loaded from exact owner tuple, no target Auth binding or version0 for nonexistent person.",
+    "Native Person CREATE exact body/normalized facts + field/policy/vault owner evidence; UUID/version/internal ID actual INSERT RETURNING; reuse tenant query native UUID/version lock.",
+    "Request/source full normalized objects retained/refetched and canonical digest compared; receipt/outbox result actual RETURNING and owner clock/IDallocator.",
+    "ATS candidate internal FK only optional branch binding table. Native/import path never invokes ATS provider; missing adapters before source calls.",
+    "Every mismatch sourceIssues is fatal; author output not independent approval."
+  ]
+}

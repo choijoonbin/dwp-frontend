@@ -1,0 +1,233 @@
+{
+  "fixtureSetId": "dwp.hris.module-exact-business-fixtures.v1",
+  "schemaVersion": 1,
+  "validCases": [
+    {
+      "caseId": "HRM-P-HIRE",
+      "schema": "EmploymentEventCommand",
+      "value": {
+        "context": {"expectedVersion": 0, "idempotencyKey": "hire-tenant-100-0001", "purpose": "HRM_EMPLOYMENT_WRITE", "effectiveAt": "2026-10-01T00:00:00Z"},
+        "eventType": "HIRE",
+        "payload": {
+          "personPublicId": "10000000-0000-4000-8000-000000000001",
+          "legalEmployerRef": {"owner": "HRM", "schemaId": "HRM.LegalEmployer.v1", "publicId": "10000000-0000-4000-8000-000000000002", "revision": 7, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+          "employmentType": "EMPLOYEE",
+          "relationshipStart": "2026-10-01",
+          "workerCreation": "CREATE_NEW",
+          "assignment": {
+            "organizationRef": {"owner": "HRM", "schemaId": "HRM.Organization.v1", "publicId": "10000000-0000-4000-8000-000000000003", "revision": 4, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+            "positionRef": {"owner": "HRM", "schemaId": "HRM.Position.v1", "publicId": "10000000-0000-4000-8000-000000000004", "revision": 2, "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+            "jobRef": {"owner": "HRM", "schemaId": "HRM.Job.v1", "publicId": "10000000-0000-4000-8000-000000000005", "revision": 3, "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+            "workLocationRef": {"owner": "HRM", "schemaId": "HRM.WorkLocation.v1", "publicId": "10000000-0000-4000-8000-000000000006", "revision": 5, "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},
+            "validFrom": "2026-10-01", "validToExclusive": null, "primary": true, "fte": "1.0"
+          }
+        }
+      }
+    },
+    {
+      "caseId": "HRM-P-CONCURRENT",
+      "schema": "EmploymentEventCommand",
+      "value": {
+        "context": {"expectedVersion": 8, "idempotencyKey": "concurrent-tenant-100-01", "purpose": "HRM_EMPLOYMENT_WRITE", "effectiveAt": "2026-11-01T00:00:00Z"},
+        "eventType": "CONCURRENT_EMPLOYMENT",
+        "payload": {
+          "workerPublicId": "10000000-0000-4000-8000-000000000011", "expectedWorkerVersion": 8,
+          "legalEmployerRef": {"owner": "HRM", "schemaId": "HRM.LegalEmployer.v1", "publicId": "10000000-0000-4000-8000-000000000012", "revision": 2, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+          "relationshipStart": "2026-11-01",
+          "assignment": {
+            "organizationRef": {"owner": "HRM", "schemaId": "HRM.Organization.v1", "publicId": "10000000-0000-4000-8000-000000000013", "revision": 1, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+            "positionRef": {"owner": "HRM", "schemaId": "HRM.Position.v1", "publicId": "10000000-0000-4000-8000-000000000014", "revision": 1, "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+            "jobRef": {"owner": "HRM", "schemaId": "HRM.Job.v1", "publicId": "10000000-0000-4000-8000-000000000015", "revision": 1, "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+            "workLocationRef": {"owner": "HRM", "schemaId": "HRM.WorkLocation.v1", "publicId": "10000000-0000-4000-8000-000000000016", "revision": 1, "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},
+            "validFrom": "2026-11-01", "validToExclusive": "2027-05-01", "primary": false, "fte": "0.4"
+          }
+        }
+      }
+    },
+    {
+      "caseId": "PER-P-FREEZE",
+      "schema": "FreezePopulationCommand",
+      "value": {
+        "context": {"expectedVersion": 3, "idempotencyKey": "freeze-cycle-2027-001", "purpose": "PER_POPULATION_FREEZE", "effectiveAt": "2027-01-02T00:00:00Z"},
+        "cyclePublicId": "20000000-0000-4000-8000-000000000001", "cycleVersion": 3,
+        "populationRuleRef": {"owner": "PER", "schemaId": "PER.PopulationRule.v1", "publicId": "20000000-0000-4000-8000-000000000002", "revision": 4, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "workforceSnapshotRef": {"owner": "HRM", "schemaId": "HRM.WorkforcePopulation.v1", "publicId": "20000000-0000-4000-8000-000000000003", "revision": 19, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+        "asOf": "2027-01-01T00:00:00Z", "previewContentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "caseId": "TIM-P-RULE",
+      "schema": "TypedRuleAst",
+      "value": {
+        "registryId": "TIM_RULE_AST_V1", "registryVersion": 1, "rootNodeId": "isOvertime",
+        "nodes": [
+          {"nodeId": "worked", "operator": "INPUT", "arguments": [], "returnType": "QUANTITY_MINUTE", "value": null, "inputRef": {"owner": "TIM", "schemaId": "TIM.WorkedMinutes.v1", "publicId": "30000000-0000-4000-8000-000000000001", "revision": 7, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}, "roundingRef": null},
+          {"nodeId": "threshold", "operator": "QUANTITY_LITERAL", "arguments": [], "returnType": "QUANTITY_MINUTE", "value": "480", "inputRef": null, "roundingRef": null},
+          {"nodeId": "isOvertime", "operator": "COMPARE_LT", "arguments": ["threshold", "worked"], "returnType": "BOOLEAN", "value": null, "inputRef": null, "roundingRef": null}
+        ]
+      }
+    },
+    {
+      "caseId": "TIM-P-SCHEDULE-DST",
+      "schema": "ScheduleCommand",
+      "value": {
+        "context": {"expectedVersion": 4, "idempotencyKey": "schedule-dst-2027-0001", "purpose": "TIM_SCHEDULE_WRITE", "effectiveAt": "2027-11-01T00:00:00Z"},
+        "schedulePeriodPublicId": "30000000-0000-4000-8000-000000000010", "periodStartsAt": "2027-11-01T00:00:00Z", "periodEndsAt": "2027-12-01T00:00:00Z", "timezoneId": "America/New_York",
+        "workerAssignmentSnapshotRef": {"owner": "HRM", "schemaId": "HRM.WorkerAssignmentSnapshot.v1", "publicId": "30000000-0000-4000-8000-000000000011", "revision": 12, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "segments": [{
+          "segmentPublicId": "30000000-0000-4000-8000-000000000012", "assignmentPublicId": "30000000-0000-4000-8000-000000000013", "startsAt": "2027-11-07T05:30:00Z", "endsAt": "2027-11-07T07:30:00Z", "timezoneId": "America/New_York", "dstResolution": "EARLIER_OFFSET",
+          "shiftTemplateRef": {"owner": "TIM", "schemaId": "TIM.ShiftTemplate.v1", "publicId": "30000000-0000-4000-8000-000000000014", "revision": 2, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+          "ruleRef": {"owner": "TIM", "schemaId": "TIM.WorkRule.v1", "publicId": "30000000-0000-4000-8000-000000000015", "revision": 5, "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+          "calendarRef": {"owner": "SYS", "schemaId": "SYS.Calendar.v1", "publicId": "30000000-0000-4000-8000-000000000016", "revision": 9, "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}
+        }]
+      }
+    },
+    {
+      "caseId": "TIM-P-ACCRUAL",
+      "schema": "AccrualPolicy",
+      "value": {
+        "policyPublicId": "30000000-0000-4000-8000-000000000020", "version": 2, "effectiveFrom": "2027-01-01", "effectiveToExclusive": null,
+        "eligibilityRule": {"registryId": "TIM_RULE_AST_V1", "registryVersion": 1, "rootNodeId": "eligible", "nodes": [{"nodeId": "eligible", "operator": "BOOLEAN_LITERAL", "arguments": [], "returnType": "BOOLEAN", "value": true, "inputRef": null, "roundingRef": null}]},
+        "accrualSchedule": {"kind": "MONTHLY", "dayOfMonth": 1}, "proration": "CALENDAR_DAY",
+        "roundingRef": {"owner": "SYS", "schemaId": "SYS.RoundingPolicy.v1", "publicId": "30000000-0000-4000-8000-000000000021", "revision": 1, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "cap": {"quantity": "160", "unit": "HOUR"}, "carryover": {"mode": "LIMITED", "limit": "40", "unit": "HOUR"}, "expiry": {"mode": "AFTER_DAYS", "days": 365},
+        "calendarRef": {"owner": "SYS", "schemaId": "SYS.Calendar.v1", "publicId": "30000000-0000-4000-8000-000000000022", "revision": 4, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+      }
+    },
+    {
+      "caseId": "TIM-P-TIMECARD-CLOSE",
+      "schema": "TimecardRecord",
+      "value": {"timecardPublicId": "30000000-0000-4000-8000-000000000030", "version": 11, "state": "CLOSED", "sourceRevision": 17, "interpretationRef": {"owner": "TIM", "schemaId": "TIM.Interpretation.v1", "publicId": "30000000-0000-4000-8000-000000000031", "revision": 17, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}
+    },
+    {
+      "caseId": "TIM-P-WFM-NO-SKILL",
+      "schema": "WfmPlanningInputSnapshot",
+      "value": {
+        "tenantPublicId": "30000000-0000-4000-8000-000000000040", "asOf": "2027-04-01T00:00:00Z", "effectiveFrom": "2027-04-01T00:00:00Z", "effectiveToExclusive": "2027-05-01T00:00:00Z",
+        "hrmAssignmentRef": {"owner": "HRM", "schemaId": "HRM.WorkerAssignmentSnapshot.v1", "publicId": "30000000-0000-4000-8000-000000000041", "revision": 8, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "timScheduleRef": {"owner": "TIM", "schemaId": "TIM.CanonicalSchedule.v1", "publicId": "30000000-0000-4000-8000-000000000042", "revision": 3, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+        "timAbsenceRef": {"owner": "TIM", "schemaId": "TIM.AbsenceAvailability.v1", "publicId": "30000000-0000-4000-8000-000000000043", "revision": 5, "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+        "skillSourceState": "NOT_INSTALLED", "perSkillRef": null, "sourceVectorHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "expectedMetrics": {"perCalls": 0, "writes": 1}
+    },
+    {
+      "caseId": "PAY-P-FORMULA",
+      "schema": "PayFormulaAst",
+      "value": {
+        "registryId": "PAY_RULE_AST_V1", "registryVersion": 1, "declaredReturnType": "MONEY", "rootNodeId": "gross",
+        "nodes": [
+          {"nodeId": "hours", "operator": "INPUT", "arguments": [], "returnType": "QUANTITY_HOUR", "value": null, "currency": null, "inputKey": "TIM.REGULAR_HOURS", "roundingRef": null},
+          {"nodeId": "rate", "operator": "INPUT", "arguments": [], "returnType": "UNIT_PRICE_PER_HOUR", "value": null, "currency": "USD", "inputKey": "HRM.HOURLY_RATE", "roundingRef": null},
+          {"nodeId": "gross", "operator": "MULTIPLY", "arguments": ["hours", "rate"], "returnType": "MONEY", "value": null, "currency": "USD", "inputKey": null, "roundingRef": null}
+        ]
+      }
+    },
+    {
+      "caseId": "PAY-P-FOUNDATION",
+      "schema": "PayrollFoundationArtifact",
+      "value": {
+        "foundationPublicId": "40000000-0000-4000-8000-000000000001", "version": 3, "effectiveFrom": "2027-01-01", "effectiveToExclusive": null,
+        "legalEmployerRef": {"owner": "HRM", "schemaId": "HRM.LegalEmployer.v1", "publicId": "40000000-0000-4000-8000-000000000002", "revision": 4, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "payGroupCode": "MONTHLY_US_01",
+        "periodCalendarRef": {"owner": "SYS", "schemaId": "SYS.PayrollCalendar.v1", "publicId": "40000000-0000-4000-8000-000000000003", "revision": 2, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+        "currency": "USD",
+        "roundingPolicyRef": {"owner": "SYS", "schemaId": "SYS.RoundingPolicy.v1", "publicId": "40000000-0000-4000-8000-000000000004", "revision": 1, "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+        "elements": [{"elementCode": "GROSS_PAY", "formulaRef": {"owner": "PAY", "schemaId": "PAY.Formula.v1", "publicId": "40000000-0000-4000-8000-000000000005", "revision": 3, "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}, "resultType": "MONEY", "sequence": 1}],
+        "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    },
+    {
+      "caseId": "PAY-P-RUN-REGULAR",
+      "schema": "PayrollRunPrepareCommand",
+      "value": {
+        "context": {"expectedVersion": 1, "idempotencyKey": "pay-run-regular-2027-01", "purpose": "PAY_RUN_PREPARE", "effectiveAt": "2027-01-31T00:00:00Z"},
+        "runPublicId": "40000000-0000-4000-8000-000000000010", "periodPublicId": "40000000-0000-4000-8000-000000000011", "periodVersion": 2,
+        "sourceVector": {
+          "asOf": "2027-01-31T00:00:00Z",
+          "foundationRef": {"owner": "PAY", "schemaId": "PAY.Foundation.v1", "publicId": "40000000-0000-4000-8000-000000000012", "revision": 3, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+          "hrmWorkerAssignmentRef": {"owner": "HRM", "schemaId": "HRM.WorkerAssignmentSnapshot.v1", "publicId": "40000000-0000-4000-8000-000000000013", "revision": 18, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+          "hrmCompensationRef": {"owner": "HRM", "schemaId": "HRM.CompensationBasisSnapshot.v1", "publicId": "40000000-0000-4000-8000-000000000014", "revision": 6, "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+          "timClosedTimeRef": {"owner": "TIM", "schemaId": "TIM.ClosedTimeResult.v1", "publicId": "40000000-0000-4000-8000-000000000015", "revision": 9, "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+          "perApprovedCompensationRef": null, "manualInputBatchRefs": [], "sourceVectorHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      }
+    },
+    {
+      "caseId": "PAY-P-CASE-NO-PACK",
+      "schema": "ProviderNeutralCase",
+      "value": {
+        "casePublicId": "40000000-0000-4000-8000-000000000020", "caseType": "RETIREMENT", "workerPublicId": "40000000-0000-4000-8000-000000000021",
+        "employmentRef": {"owner": "HRM", "schemaId": "HRM.EmploymentTermination.v2", "publicId": "40000000-0000-4000-8000-000000000022", "revision": 5, "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "basisRefs": [{"owner": "PAY", "schemaId": "PAY.RetirementBasis.v1", "publicId": "40000000-0000-4000-8000-000000000023", "revision": 1, "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}],
+        "status": "DRAFT", "countryPackState": "NOT_REQUIRED", "countryPackRef": null
+      }
+    }
+  ],
+  "journeyCases": [
+    {"caseId": "HRM-P-SEPARATION", "aggregate": "SeparationCase", "steps": ["create", "activate", "task.receive", "publish"], "expectedState": "PUBLISHED", "expectedWriteRule": "task completion and event publication are atomic; irreversible facts are corrected by successor"},
+    {"caseId": "HRM-P-HIRE-HANDOFF", "aggregate": "Recruiting", "steps": ["requisition.create", "requisition.publish", "candidate.admit", "candidate.screen", "candidate.interview", "offer.issue", "offer.accept", "handoff.prepare", "handoff.receive"], "expectedState": "HANDOFF_RECEIVED", "expectedWriteRule": "human decision evidence and candidate consent are retained; handoff does not auto-create employment"},
+    {"caseId": "PER-P-CYCLE", "aggregate": "Cycle", "steps": ["create", "validate", "publish", "activate", "close", "retire"], "expectedState": "RETIRED", "expectedWriteRule": "cycle close uses owner-derived submission/waiver counts"},
+    {"caseId": "PER-P-CALIBRATION", "aggregate": "Calibration", "steps": ["create", "baseline.validate", "start", "adjust", "submit", "approve", "lock"], "expectedState": "LOCKED", "expectedWriteRule": "adjustment baseline and distribution are owner-computed"},
+    {"caseId": "PER-P-APPEAL", "aggregate": "Appeal", "steps": ["open", "review", "resolve", "close"], "expectedState": "CLOSED", "expectedWriteRule": "resolution evidence and result revision remain immutable"},
+    {"caseId": "PER-P-COMPENSATION-SNAPSHOT", "aggregate": "TalentGrowth", "steps": ["create", "validate", "publish", "assign", "complete"], "expectedState": "COMPLETED", "expectedWriteRule": "header lineCount and ordered line digest exactly match immutable lines"},
+    {"caseId": "TIM-P-SCHEDULE-AMEND", "aggregate": "Schedule", "steps": ["create", "validate", "submit", "approval.receive", "publish", "amend", "validate", "submit", "approval.receive", "amend.publish"], "expectedState": "SUPERSEDED", "expectedWriteRule": "published version remains immutable and successor preserves correction lineage"},
+    {"caseId": "TIM-P-LEAVE-REQUEST", "aggregate": "LeaveRequest", "steps": ["create", "submit", "approval.receive", "cancel.request", "cancel.reconcile"], "expectedState": "CANCELLED", "expectedWriteRule": "approved leave cancellation preserves decision and posts an exact reversing ledger event"},
+    {"caseId": "PAY-P-RUN-RETRO", "aggregate": "PayrollRun", "steps": ["create", "input.prepare", "input.freeze", "calculate", "calculate.complete", "validate", "approve", "finalize", "retro-or-offcycle"], "expectedState": "SUPERSEDED", "expectedWriteRule": "original final result is immutable; retro creates linked corrective run/result lines"},
+    {"caseId": "PAY-P-PAYMENT", "aggregate": "PaymentAccounting", "steps": ["create", "validate", "approve", "release", "acknowledge", "post", "reconcile", "reverse"], "expectedState": "REVERSED", "expectedWriteRule": "provider result-unknown is reconciled; payment and GL corrections are append-only reversals"},
+    {"caseId": "PAY-P-PAYSLIP", "aggregate": "Payslip", "steps": ["materialize", "publish", "correct"], "expectedState": "SUPERSEDED", "expectedWriteRule": "published document is immutable and download grants are field/purpose scoped"}
+  ],
+  "negativeCases": [
+    {"caseId": "HRM-N-GENERIC-PATCH", "baseCaseId": "HRM-P-HIRE", "layer": "SCHEMA", "mutation": {"op": "set", "path": "/value/patch", "value": {"anything": true}}, "expectedError": "ADDITIONAL_PROPERTY"},
+    {"caseId": "HRM-N-FIRST-UUID", "baseCaseId": "HRM-P-CONCURRENT", "layer": "SEMANTIC", "mutation": {"op": "delete", "path": "/value/payload/workerPublicId"}, "expectedError": "EXPLICIT_WORKER_REQUIRED"},
+    {"caseId": "HRM-N-PRIMARY-OVERLAP", "baseCaseId": "HRM-P-HIRE", "layer": "SEMANTIC", "seed": {"overlappingPrimaryAssignments": 1}, "expectedError": "PRIMARY_ASSIGNMENT_OVERLAP"},
+    {"caseId": "HRM-N-STALE-ASSIGNMENT", "baseCaseId": "HRM-P-CONCURRENT", "layer": "SEMANTIC", "seed": {"currentWorkerVersion": 9}, "expectedError": "STALE_OWNER_VERSION"},
+    {"caseId": "HRM-N-SEPARATION-INCOMPLETE", "baseCaseId": "HRM-P-HIRE", "layer": "TRANSITION", "transition": {"aggregate": "SeparationCase", "from": "TASKS_ACTIVE", "operation": "publish", "incompleteTasks": 1}, "expectedError": "SEPARATION_TASKS_INCOMPLETE"},
+    {"caseId": "HRM-N-STALE-CALLBACK", "baseCaseId": "HRM-P-HIRE", "layer": "SEMANTIC", "seed": {"callbackExpectedVersion": 3, "callbackActualVersion": 4}, "expectedError": "STALE_CALLBACK"},
+    {"caseId": "HRM-N-INVALID-CIVIL-DATE", "baseCaseId": "HRM-P-HIRE", "layer": "SCHEMA", "mutation": {"op": "set", "path": "/value/payload/relationshipStart", "value": "2026-02-30"}, "expectedError": "FORMAT"},
+    {"caseId": "HRM-N-FTE-RANGE", "baseCaseId": "HRM-P-HIRE", "layer": "SEMANTIC", "mutation": {"op": "set", "path": "/value/payload/assignment/fte", "value": "1.1"}, "expectedError": "FTE_OUT_OF_RANGE"},
+    {"caseId": "HRM-N-NEGATIVE-ZERO", "baseCaseId": "HRM-P-HIRE", "layer": "SCHEMA", "mutation": {"op": "set", "path": "/value/payload/assignment/fte", "value": "-0.0"}, "expectedError": "CANONICAL_DECIMAL"},
+    {"caseId": "HRM-N-AUTO-HIRE", "layer": "SEMANTIC", "input": {"operation": "handoff.receive", "sideEffect": "create employment without explicit HR command"}, "expectedError": "AUTOMATED_FINAL_EMPLOYMENT_DECISION_FORBIDDEN"},
+    {"caseId": "HRM-N-CANDIDATE-RETENTION", "layer": "SEMANTIC", "input": {"candidateConsent": "REVOKED", "retentionExpired": true, "requestedAction": "reuse profile"}, "expectedError": "CANDIDATE_RETENTION_DENIED"},
+    {"caseId": "HRM-N-WRONG-LIFECYCLE", "layer": "TRANSITION", "transition": {"aggregate": "Onboarding", "from": "TEMPLATE_DRAFT", "operation": "assign"}, "expectedError": "PUBLISHED_TEMPLATE_REQUIRED"},
+    {"caseId": "PER-N-FREEZE-MISSING", "baseCaseId": "PER-P-FREEZE", "layer": "SCHEMA", "mutation": {"op": "delete", "path": "/value/previewContentHash"}, "expectedError": "REQUIRED"},
+    {"caseId": "PER-N-FREEZE-UNKNOWN", "baseCaseId": "PER-P-FREEZE", "layer": "SCHEMA", "mutation": {"op": "set", "path": "/value/memberIds", "value": []}, "expectedError": "ADDITIONAL_PROPERTY"},
+    {"caseId": "PER-N-FREEZE-HASH", "baseCaseId": "PER-P-FREEZE", "layer": "SEMANTIC", "seed": {"recomputedPreviewHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}, "expectedError": "PREVIEW_HASH_MISMATCH"},
+    {"caseId": "PER-N-FREEZE-STALE-WORKFORCE", "baseCaseId": "PER-P-FREEZE", "layer": "SEMANTIC", "seed": {"currentWorkforceRevision": 20}, "expectedError": "STALE_WORKFORCE_SNAPSHOT"},
+    {"caseId": "PER-N-CALLER-DISTRIBUTION", "layer": "SEMANTIC", "input": {"operation": "calibration.adjust", "callerFields": ["distributionImpact"]}, "expectedError": "CALLER_BASELINE_FORBIDDEN"},
+    {"caseId": "PER-N-AFTER-LOCK", "layer": "TRANSITION", "transition": {"aggregate": "Calibration", "from": "LOCKED", "operation": "adjust"}, "expectedError": "ILLEGAL_TRANSITION"},
+    {"caseId": "PER-N-UNREACHABLE", "layer": "TRANSITION", "transition": {"aggregate": "Appeal", "from": "OPEN", "operation": "close"}, "expectedError": "ILLEGAL_TRANSITION"},
+    {"caseId": "PER-N-STALE-BASELINE", "layer": "SEMANTIC", "input": {"expectedBaselineRevision": 7, "actualBaselineRevision": 8}, "expectedError": "STALE_BASELINE"},
+    {"caseId": "PER-N-OPTIONAL-SKILL", "layer": "SEMANTIC", "input": {"skillModuleState": "NOT_INSTALLED", "unrelatedCycleOperation": "create"}, "expectedError": "NONE_UNRELATED_CORE_CONTINUES"},
+    {"caseId": "PER-N-COMP-LINE-GAP", "layer": "SEMANTIC", "input": {"lineCount": 3, "lineSequences": [1, 3]}, "expectedError": "COMPENSATION_LINE_CARDINALITY_MISMATCH"},
+    {"caseId": "PER-N-CONSENT", "layer": "SEMANTIC", "input": {"growthProfileConsent": "WITHDRAWN", "requestedField": "privateAspiration"}, "expectedError": "FIELD_CONSENT_REQUIRED"},
+    {"caseId": "TIM-N-RULE-UNKNOWN-OP", "baseCaseId": "TIM-P-RULE", "layer": "SCHEMA", "mutation": {"op": "set", "path": "/value/nodes/2/operator", "value": "EXECUTE_SCRIPT"}, "expectedError": "ENUM"},
+    {"caseId": "TIM-N-RULE-ARITY", "baseCaseId": "TIM-P-RULE", "layer": "SEMANTIC", "mutation": {"op": "set", "path": "/value/nodes/2/arguments", "value": ["worked"]}, "expectedError": "ARITY_MISMATCH"},
+    {"caseId": "TIM-N-RULE-CYCLE", "baseCaseId": "TIM-P-RULE", "layer": "SEMANTIC", "mutation": {"op": "set", "path": "/value/nodes/0/arguments", "value": ["isOvertime"]}, "expectedError": "CYCLE"},
+    {"caseId": "TIM-N-SCHEDULE-OVERLAP", "baseCaseId": "TIM-P-SCHEDULE-DST", "layer": "SEMANTIC", "seed": {"duplicateOverlappingSegment": true}, "expectedError": "ASSIGNMENT_SEGMENT_OVERLAP"},
+    {"caseId": "TIM-N-SCHEDULE-STALE", "baseCaseId": "TIM-P-SCHEDULE-DST", "layer": "SEMANTIC", "seed": {"currentAssignmentSnapshotRevision": 13}, "expectedError": "STALE_ASSIGNMENT_SNAPSHOT"},
+    {"caseId": "TIM-N-SCHEDULE-CROSS-TENANT", "baseCaseId": "TIM-P-SCHEDULE-DST", "layer": "SEMANTIC", "seed": {"ownerTenantMatches": false}, "expectedError": "CROSS_TENANT_OWNER_REF"},
+    {"caseId": "TIM-N-SCHEDULE-DST-GAP", "baseCaseId": "TIM-P-SCHEDULE-DST", "layer": "SEMANTIC", "seed": {"localTimeInGap": true, "dstResolution": "REJECT_GAP"}, "expectedError": "LOCAL_TIME_GAP"},
+    {"caseId": "TIM-N-ACCRUAL-UNIT", "baseCaseId": "TIM-P-ACCRUAL", "layer": "SEMANTIC", "mutation": {"op": "set", "path": "/value/carryover/unit", "value": "DAY"}, "expectedError": "UNIT_MISMATCH"},
+    {"caseId": "TIM-N-ACCRUAL-EXPIRY", "baseCaseId": "TIM-P-ACCRUAL", "layer": "SEMANTIC", "mutation": {"op": "set", "path": "/value/expiry/days", "value": null}, "expectedError": "EXPIRY_DAYS_REQUIRED"},
+    {"caseId": "TIM-N-NEGATIVE-CAP", "baseCaseId": "TIM-P-ACCRUAL", "layer": "SEMANTIC", "mutation": {"op": "set", "path": "/value/cap/quantity", "value": "-1"}, "expectedError": "NEGATIVE_ACCRUAL_BOUND"},
+    {"caseId": "TIM-N-TIMECARD-LOCK-COLLAPSE", "layer": "TRANSITION", "transition": {"aggregate": "Timecard", "from": "APPROVED", "operation": "close"}, "expectedError": "LOCK_REQUIRED_BEFORE_CLOSE"},
+    {"caseId": "TIM-N-TIMECARD-ILLEGAL-TRANSITION", "layer": "TRANSITION", "transition": {"aggregate": "Timecard", "from": "REJECTED", "operation": "lock"}, "expectedError": "ILLEGAL_TRANSITION"},
+    {"caseId": "TIM-N-WFM-HRM-OWNER-MISSING", "baseCaseId": "TIM-P-WFM-NO-SKILL", "layer": "SEMANTIC", "seed": {"hrmOwnerAvailable": false}, "expectedError": "REQUIRED_OWNER_UNAVAILABLE"},
+    {"caseId": "TIM-N-WFM-INTERVAL", "baseCaseId": "TIM-P-WFM-NO-SKILL", "layer": "SEMANTIC", "seed": {"intervalIntersectionEmpty": true}, "expectedError": "NO_EFFECTIVE_INTERSECTION"},
+    {"caseId": "TIM-N-WFM-SOURCE-STALE", "baseCaseId": "TIM-P-WFM-NO-SKILL", "layer": "SEMANTIC", "seed": {"sourceVectorMatches": false}, "expectedError": "STALE_SOURCE_VECTOR"},
+    {"caseId": "TIM-N-WFM-OPTIONAL-PER-CALL", "baseCaseId": "TIM-P-WFM-NO-SKILL", "layer": "SEMANTIC", "seed": {"perCalls": 1}, "expectedError": "OPTIONAL_OWNER_MUST_NOT_BE_CALLED"},
+    {"caseId": "TIM-N-LEAVE-SOURCE-STALE", "layer": "SEMANTIC", "input": {"policyRevision": 7, "currentPolicyRevision": 8, "requestedWrites": 1}, "expectedError": "STALE_LEAVE_SOURCE"},
+    {"caseId": "PAY-N-DIGEST-ONLY", "baseCaseId": "PAY-P-FOUNDATION", "layer": "SCHEMA", "mutation": {"op": "delete", "path": "/value/elements"}, "expectedError": "REQUIRED"},
+    {"caseId": "PAY-N-FORMULA-STRING", "baseCaseId": "PAY-P-FORMULA", "layer": "SCHEMA", "mutation": {"op": "replace-root", "path": "/value", "value": "gross = hours * rate"}, "expectedError": "TYPE"},
+    {"caseId": "PAY-N-FORMULA-CYCLE", "baseCaseId": "PAY-P-FORMULA", "layer": "SEMANTIC", "mutation": {"op": "set", "path": "/value/nodes/0/arguments", "value": ["gross"]}, "expectedError": "CYCLE"},
+    {"caseId": "PAY-N-CURRENCY", "baseCaseId": "PAY-P-FORMULA", "layer": "SEMANTIC", "seed": {"inputCurrencies": ["USD", "EUR"], "explicitFxRef": null}, "expectedError": "CURRENCY_MISMATCH"},
+    {"caseId": "PAY-N-SOURCE-STALE", "baseCaseId": "PAY-P-RUN-REGULAR", "layer": "SEMANTIC", "seed": {"currentTimRevision": 10}, "expectedError": "STALE_SOURCE_VECTOR"},
+    {"caseId": "PAY-N-PERIOD-CLOSED", "baseCaseId": "PAY-P-RUN-REGULAR", "layer": "TRANSITION", "transition": {"aggregate": "PayrollPeriod", "from": "CLOSED", "operation": "run.start"}, "expectedError": "PERIOD_REOPEN_REQUIRED"},
+    {"caseId": "PAY-N-PACK-NOT-INSTALLED", "baseCaseId": "PAY-P-CASE-NO-PACK", "layer": "SEMANTIC", "seed": {"jurisdictionCalculationRequired": true, "packState": "NOT_INSTALLED"}, "expectedError": "COUNTRY_PACK_REQUIRED"},
+    {"caseId": "PAY-N-PARTIAL-INPUT", "baseCaseId": "PAY-P-RUN-REGULAR", "layer": "SEMANTIC", "seed": {"expectedInputRows": 100, "materializedInputRows": 99}, "expectedError": "INPUT_CARDINALITY_MISMATCH"},
+    {"caseId": "PAY-N-RESULT-REWRITE", "layer": "SEMANTIC", "input": {"operation": "update finalized result in place"}, "expectedError": "CORRECTION_OR_REVERSAL_REQUIRED"},
+    {"caseId": "PAY-N-HARDCODED-LAW", "layer": "SEMANTIC", "input": {"coreConstant": "jurisdiction tax rate"}, "expectedError": "STATUTORY_VALUE_IN_CORE_FORBIDDEN"},
+    {"caseId": "PAY-N-SILENT-FALLBACK", "layer": "SEMANTIC", "input": {"packState": "UNAVAILABLE", "fallback": "generic guess"}, "expectedError": "SILENT_FALLBACK_FORBIDDEN"}
+  ]
+}

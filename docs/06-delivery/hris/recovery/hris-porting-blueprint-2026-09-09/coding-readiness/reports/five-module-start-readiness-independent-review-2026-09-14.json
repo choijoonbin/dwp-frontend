@@ -1,0 +1,1703 @@
+{
+  "schema": "dwp.hris.five-module-start-readiness-independent-review.v1",
+  "reviewedAtUtc": "2026-09-14T03:34:41.125381+00:00",
+  "auditDate": "2026-09-14",
+  "reviewer": "current_backend_readiness_recheck",
+  "status": "INDEPENDENT_READ_ONLY_REVIEW_NOT_READY",
+  "effectiveCodingDecision": "NO_FIVE_MODULE_G3_START",
+  "canonicalGateAtRead": {
+    "file": "g0/current-g3-gate-decision.json",
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "currentState": "VALIDATOR_CONTROLLED_BLOCKED",
+    "authority": "AUTHORITATIVE_LIVE_VALIDATOR_AND_PUBLISHED_TRUTH_ONLY",
+    "production": "NOT_AUTHORIZED_G6"
+  },
+  "authorityBoundary": "This report is independent evidence/closing advice, not canonical approval, Gate mutation, domain implementation certification or independent approval of reviewer-authored proposals.",
+  "scope": {
+    "readOnly": true,
+    "newHeavyTests": 0,
+    "newGradleTests": 0,
+    "newDatabaseOrRuntimeRuns": 0,
+    "newGlobalStaticRuns": 0,
+    "newServerChanges": 0,
+    "newCommits": 0,
+    "writeScope": [
+      "coding-readiness/reports/five-module-start-readiness-independent-review-2026-09-14.json",
+      "coding-readiness/reports/five-module-start-readiness-independent-review-2026-09-14.md"
+    ],
+    "prohibitedTargetsUnchangedByReviewer": [
+      "main worktrees",
+      "SKKF",
+      "SQL",
+      "backend/frontend source",
+      "canonical Gate/registers",
+      "runtime/server/process",
+      "commits"
+    ],
+    "authorConflictExclusions": [
+      "PAY exact proposal AUTHOR_ONLY; root independent review is separate input",
+      "HRM modern proposal AUTHOR_ONLY; existing independent semantic audit is input",
+      "TIM BASE proposal AUTHOR_ONLY; sibling independent review is input"
+    ],
+    "unverifiedScope": [
+      "TIM review-remediation follow-up lacks final stable completion/independent acceptance signal",
+      "Full all86 source business oracle, all10001 child semantic restoration and global customer necessity remain unverified",
+      "Proposed owner ports/13stream decisions do not become current published authority by this review",
+      "Changed readiness-recovery MD bytes are pinned for traceability but not relied upon as final stable independent proof",
+      "External vendor assertions/legal/statutory/country activation not independently verified here"
+    ]
+  },
+  "method": {
+    "skills": [
+      "spreadsheets:Spreadsheets, read-only CSV scope/IA analysis"
+    ],
+    "reads": "Primary architecture/decision/boundary/session/DesignAI documents were fully read; selected source/CLI logic/current git metadata and saved reports were inspected. CSV counts were read-only actual row analysis. Prior independently pinned business/source audits provide defect evidence; no new exhaustive semantic/static/runtime run.",
+    "checks": "JSON/CSV parsing, selected current-vs-sealed SHA comparison, git HEAD/tree/status and ancestry probes, registered receipt existence, authored report format/evidence-ref validation only.",
+    "reportFormatChecksDoNotEqualFunctionalPass": true,
+    "evidenceRepositories": {
+      "BLUEPRINT": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+      "INTEGRATION_FRONTEND": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+      "INTEGRATION_BACKEND": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend"
+    }
+  },
+  "currentSourceSnapshot": {
+    "capturedAt": "2026-09-14T03:24:58.845332+00:00",
+    "worktrees": [
+      {
+        "module": "hrm",
+        "surface": "backend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/hrm/backend",
+        "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+        "tree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+        "branch": "codex/hris-hrm-g1-backend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "hrm",
+        "surface": "frontend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/hrm/frontend",
+        "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+        "tree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+        "branch": "codex/hris-hrm-g1-frontend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "per",
+        "surface": "backend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/per/backend",
+        "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+        "tree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+        "branch": "codex/hris-per-g1-backend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "per",
+        "surface": "frontend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/per/frontend",
+        "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+        "tree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+        "branch": "codex/hris-per-g1-frontend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "pay",
+        "surface": "backend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/pay/backend",
+        "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+        "tree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+        "branch": "codex/hris-pay-g1-backend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "pay",
+        "surface": "frontend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/pay/frontend",
+        "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+        "tree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+        "branch": "codex/hris-pay-g1-frontend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "tim",
+        "surface": "backend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/tim/backend",
+        "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+        "tree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+        "branch": "codex/hris-tim-g1-backend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "tim",
+        "surface": "frontend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/tim/frontend",
+        "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+        "tree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+        "branch": "codex/hris-tim-g1-frontend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "sys",
+        "surface": "backend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/sys/backend",
+        "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+        "tree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+        "branch": "codex/hris-sys-g1-backend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "sys",
+        "surface": "frontend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/sys/frontend",
+        "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+        "tree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+        "branch": "codex/hris-sys-g1-frontend-20260910",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "integration",
+        "surface": "backend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+        "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+        "tree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+        "branch": "codex/hris-integration-backend-20260909",
+        "clean": false,
+        "statusCount": 4,
+        "trackedChanges": 0,
+        "untrackedPaths": 4,
+        "statusSha256": "d412dad8cbf7df3ce8c6585090161f4ce7a6465915c611b81d369b080fa3c454",
+        "statusPaths": [
+          "?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/",
+          "?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/",
+          "?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/",
+          "?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/"
+        ]
+      },
+      {
+        "module": "integration",
+        "surface": "frontend",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "head": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+        "tree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+        "branch": "codex/hris-integration-frontend-20260909",
+        "clean": true,
+        "statusCount": 0,
+        "trackedChanges": 0,
+        "untrackedPaths": 0,
+        "statusSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "statusPaths": []
+      },
+      {
+        "module": "main",
+        "surface": "backend",
+        "path": "/Users/a10697/Work/DWP/dwp-backend",
+        "head": "449b2db05bada8851c376e1841830f0b68f8a346",
+        "tree": "b30b3b92463d8f89beafb89bb0a86d11341dff32",
+        "branch": "dwp-dev",
+        "clean": false,
+        "statusCount": 236,
+        "trackedChanges": 67,
+        "untrackedPaths": 169,
+        "statusSha256": "9729bbde61320f39e48e56dc5113ecdcbb5a4b57d0a09b965aa38f3490fe006c",
+        "statusPaths": []
+      },
+      {
+        "module": "main",
+        "surface": "frontend",
+        "path": "/Users/a10697/Work/DWP/dwp-frontend",
+        "head": "8b9975e4e69a80e653618beae71305e91dd0d969",
+        "tree": "62a67219052d13f2ef3b349d388a2bb846b6fff6",
+        "branch": "dwp-dev",
+        "clean": false,
+        "statusCount": 299,
+        "trackedChanges": 104,
+        "untrackedPaths": 195,
+        "statusSha256": "4931841b868cee372cd0ae74dc9882248b1cfc51396d0731e2f6043430cfd42b",
+        "statusPaths": []
+      }
+    ],
+    "upstreamAncestry": [
+      {
+        "surface": "backend",
+        "upstreamRef": "origin/dwp-dev",
+        "upstreamSha": "449b2db05bada8851c376e1841830f0b68f8a346",
+        "ancestorExitCode": 0
+      },
+      {
+        "surface": "frontend",
+        "upstreamRef": "origin/dwp-dev",
+        "upstreamSha": "8b9975e4e69a80e653618beae71305e91dd0d969",
+        "ancestorExitCode": 0
+      }
+    ]
+  },
+  "sourceRelationAssessment": {
+    "pairedClean": 10,
+    "pairedTotal": 10,
+    "backendCommonHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "frontendCommonHead": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+    "backendCommonTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "frontendCommonTree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+    "upstreamAlreadyIncluded": true,
+    "ancestryCommand": "git merge-base --is-ancestor origin/dwp-dev HEAD; backend0/frontend0",
+    "registeredBaselineStillHistorical": true,
+    "mainDirtyChangesPreserved": true,
+    "rawMainPathsNotPublished": true,
+    "statusDigestCodec": "SHA256 of raw git status --porcelain output including trailing LF at currentSourceSnapshot time"
+  },
+  "structuralEvidence": {
+    "familyResolutionRows": 86,
+    "familiesByModule": {
+      "HRM": 17,
+      "PER": 16,
+      "PAY": 21,
+      "TIM": 19,
+      "SYS": 13
+    },
+    "parentSourceRowsSum": 2269,
+    "childCountDeclaredByCanonicalModuleGate": 10001,
+    "familyStates": {
+      "RESOLVED_G2_CONTRACT": 84,
+      "RETIRED_DECIDED": 2
+    },
+    "independentBaseFamilyMeaning": {
+      "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER": 69,
+      "DECIDED_RETIRED_NO_CODE_NOT_BUSINESS_PASS": 2,
+      "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS": 15
+    },
+    "plannedBaseTables": 163,
+    "plannedBaseTablesByOwner": {
+      "HRM": 24,
+      "PER": 34,
+      "TIM": 31,
+      "PAY": 42,
+      "SYS": 32
+    },
+    "publicBasePepTransportBindings": 175,
+    "canonicalCrossModuleContracts": 21,
+    "iaRows": 98,
+    "iaSourceSets": {
+      "BASE76": 76,
+      "MODERN22": 22
+    },
+    "iaOwners": {
+      "HRM": 24,
+      "PER": 19,
+      "PAY": 17,
+      "TIM": 17,
+      "SYS": 21
+    },
+    "iaImplementationStates": {
+      "PILOT_CURRENT_RUNTIME_LIMITED_SCOPE": 5,
+      "NOT_STARTED_G3": 92,
+      "NOT_STARTED_G3_TEST_PROVIDER_ONLY": 1
+    },
+    "navigation": {
+      "fixedHome": 1,
+      "workbenches": 7,
+      "explorerUtility": 1,
+      "registerRecords": 9,
+      "taskGroups": 46,
+      "nonHomeAssignedNodes": 97
+    },
+    "g5aPackages": 5,
+    "g5aCurrentState": "PLANNED_NOT_DUE_AFTER_G4",
+    "limitation": "Current structural rows/counts and planned contracts/test allocations are positive coverage trace, not independent all-source business restoration, all-customer global necessity, actual G4 CRUD/runtime or completed DesignAI handoff."
+  },
+  "savedReports": {
+    "static": {
+      "path": "coding-readiness/reports/full-coding-readiness-static-latest.json",
+      "generatedAt": "2026-09-14T00:50:16.180652Z",
+      "authority": "DIAGNOSTIC_STATIC",
+      "status": "FAIL",
+      "effectiveGate": "BLOCKED",
+      "checks": 169019,
+      "errors": 77,
+      "currentCorrectedArchitectureBytesNotCoveredByOldArtifactHashes": true
+    },
+    "latestLive": {
+      "path": "coding-readiness/reports/full-coding-readiness-latest.json",
+      "generatedAt": "2026-09-11T06:43:23.710121Z",
+      "authority": "AUTHORITATIVE_LIVE",
+      "status": "FAIL",
+      "effectiveGate": "BLOCKED",
+      "checks": 169099,
+      "errors": 68,
+      "currentSourcePass": false
+    },
+    "measurementNonEquivalence": "Aggregate77 errors, semantic validator2007errors, independent business findings and executed test cases are separate scopes. Do not add them or use a low/zero structural error count as semantic approval."
+  },
+  "currentCentralSealComparison": [
+    {
+      "path": "coding-readiness/02-frontend-module-architecture.md",
+      "sealedSha256": "01f9ae36e92b62b13261a600ea6048280c1bdff4c5a4e417828ce7275e58611a",
+      "currentSha256": "7c35d11952f7f34b013ce3b8e76dbe83f65c75dc424eb4f2618de00acf07f0cd",
+      "matches": false
+    },
+    {
+      "path": "coding-readiness/03-backend-service-architecture.md",
+      "sealedSha256": "63b0322b22df396e4a5e338d4d4002bb781d40c40b6acca332efe78de8865d5e",
+      "currentSha256": "2ce6f3867d23017e7bb101aa41fcefa9864057e520d8181b3840135dc75a5d3b",
+      "matches": false
+    },
+    {
+      "path": "session-prompts/00-common-session-contract.md",
+      "sealedSha256": "8eec020f847b02c9f01e4cc7da45674a5a01c4efd97e5d8bfc9899c131311262",
+      "currentSha256": "cb6525b40861745de1f72b90293432cb662a0ff1947a8dc5b6437d821aab2115",
+      "matches": false
+    },
+    {
+      "path": "session-prompts/07-g3-full-coding-execution-contract.md",
+      "sealedSha256": "5904cac9dc4cfa322dda30f75a8ccc8b176dea4d36d1633a973154fe677c998c",
+      "currentSha256": "0a08ae788e8fa02ea3046b2e572a685fe8d5db8fbaff0d8beeec84d93ae7064a",
+      "matches": false
+    }
+  ],
+  "completedEvidence": [
+    {
+      "id": "PROOF-PAIR",
+      "result": "10/10 current paired worktrees clean and common SHA/tree equal; origin/dwp-dev included",
+      "notProven": "Gate approval, current central receipt or native independent runtime capacity"
+    },
+    {
+      "id": "PROOF-BE-FULL-HISTORICAL",
+      "file": "coding-readiness/reports/backend-full-diagnostic-70c996f-2026-09-14.v1.json",
+      "sourceHead": "70c996fdafc011392056a1909a2e5222b240ded3",
+      "reportedSuites": 774,
+      "reportedCases": 4075,
+      "failures": 0,
+      "errors": 0,
+      "skips": 68,
+      "newSuites": 307,
+      "newCases": 1712,
+      "newCasesSkipped": 1,
+      "reusedSuites": 467,
+      "reusedCases": 2363,
+      "reusedCasesSkipped": 67,
+      "durationSeconds": 816.375,
+      "exitCode": 0,
+      "notProven": "All4075 fresh non-skipped, full currentdb0/ABI proof or all-domain CRUD"
+    },
+    {
+      "id": "PROOF-FE-FULL-HISTORICAL",
+      "file": "coding-readiness/reports/frontend-full-diagnostic-da7f1d8-2026-09-14.v1.md",
+      "sourceHead": "da7f1d8dae2eb99f6b60f5ef7e47acc093366083",
+      "files": 574,
+      "tests": 4673,
+      "exitCode": 0,
+      "notProven": "Currentaaeba79 all-source canonical catalog attestation or all98 new UI"
+    },
+    {
+      "id": "PROOF-COMPOSITE-FOCUSED",
+      "file": "coding-readiness/reports/stream-authority-composite-focused-2026-09-14.v1.json",
+      "sourceHead": "76130dde620084124a9c16ff8edc731487e0a4c3",
+      "tests": 114,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "scope": "External-Control/privatePG ACL inspection plus disabled supplier call0",
+      "notProven": "Runtime-only app startup wiring/signature/freshness/fence or13stream bootstrap"
+    },
+    {
+      "id": "PROOF-ABI-FOCUSED",
+      "file": "coding-readiness/reports/identity-owner-abi-focused-2026-09-14.v1.json",
+      "reportSha256": "21bbd6eb16d48efbfa4c5a2730fec4c4d80aafafa82f459154e271ced2fd9a66",
+      "abiJsonSha256": "cb05e3f1a00e90574c97118a7508fc6e325b50f3bfd89809c2ac45a621b2d9d6",
+      "tests": 85,
+      "identityCases": 59,
+      "neutralCases": 22,
+      "mockConsumerCases": 4,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "durationSeconds": 17.9,
+      "stableSourceFiles": 16,
+      "committed": false,
+      "nativeWired": false,
+      "notProven": "Actual Auth/People/Gateway/PEP/native producer or complete lifecycle revision/13streams/G3 approval",
+      "rootIndependentReview": {
+        "file": "coding-readiness/reports/identity-owner-abi-root-independent-review-2026-09-14.json",
+        "sha256": "f7a650dd9fed4029389b0ea8a2c5ad79f60ba213e3a18677372befebc27bc125",
+        "status": "INDEPENDENT_SCAFFOLD_REVIEW_ONLY_NOT_READY",
+        "sourceShaMatches": 16,
+        "xmlFilesIndependentlyMatched": 5,
+        "cases": 85,
+        "reexecutedByRoot": false,
+        "sourceMtimePrecisionCaveat": "Historical16 numeric mtimeNs exceed JS safe integer and differ by-133..178ns; not retroactively exact-ns PASS. Current ns decimal strings in successor are new capture only. SourceSHA and source modified-before-run facts independently verified."
+      }
+    },
+    {
+      "id": "PROOF-RUNTIME-SEPT11",
+      "files": [
+        "/private/tmp/hris-runtime-topology-smoke-evidence.json",
+        "/private/tmp/hris-runtime-application-smoke-evidence.json"
+      ],
+      "controlReference": "dwp-migration-control-v2:ef73526dde9f921fcd76a7f10f36d9827bec31e00a3c2e9969bedc959651d86a",
+      "services": 8,
+      "streams": 9,
+      "assertionsPassed": 1136,
+      "assertionsFailed": 0,
+      "expectedMissingReceiptBootBlocks": 8,
+      "positiveLaunchesIncludingRestarts": 16,
+      "result": "PASS_HISTORICAL_V1_SCOPE",
+      "notProven": "Current repo SHA is not explicit file root binding; not current03a51 Control reference or13stream authority"
+    },
+    {
+      "id": "PROOF-DEVCTL-CAPTURE",
+      "file": "coding-readiness/reports/devctl-profile-diagnostic-db0d2b5-2026-09-14.v1.md",
+      "unitCases": 67,
+      "unitExitCode": 0,
+      "currentDoctorsPassed": 0,
+      "currentDoctorsCapacityBlocked": 5,
+      "provider": "read-only --diagnostic-capacity doctor capture",
+      "result": "CAPTURE_SUCCESS_RUNTIME_BLOCKED_NOT_PROFILE_PASS",
+      "notProven": "5 native profile readiness or production SLO capacity"
+    }
+  ],
+  "findings": [
+    {
+      "id": "START-P0-001",
+      "status": "OPEN",
+      "stage": "G0_G3",
+      "title": "Current source and corrected central bytes lack authoritative current seal/open publication",
+      "scope": "ALL_FIVE",
+      "observed": "The five paired worktrees are clean at db0d2b5/aaeba79, but the registered baseline remains 6f1ed92/c2b3b. Current 02/03/00/07 hashes differ from the Sep11 central manifest; integration backend has four untracked identity ABI directories. Current gate is CLOSED_FAIL_SAFE, and latest published LIVE report is Sep11 FAIL/BLOCKED, not current approval.",
+      "evidence": [
+        {
+          "file": "g0/current-g3-gate-decision.json",
+          "selector": "/effectiveGate; /currentState; /authority"
+        },
+        {
+          "file": "g0/integration-baseline-manifest.csv",
+          "selector": "baseline_id=BASE-BACKEND|BASE-FRONTEND"
+        },
+        {
+          "file": "g0/blueprint-central-snapshot-manifest.v1.json",
+          "selector": "files[path=02/03/00/07], compared with current hashes"
+        },
+        {
+          "file": "session-prompts/00-common-session-contract.md",
+          "selector": "Control global initial/common approval versus post-approval scoped checks",
+          "line": 46
+        }
+      ],
+      "close": "After approved source/contract changes are complete, Control commits and propagates exact scope, registers current HEAD/tree/upstream and central bytes, captures current catalog/checkpoint receipts and publishes only a successful authoritative global LIVE decision. Do not manually edit Gate tokens to open."
+    },
+    {
+      "id": "START-P0-002",
+      "status": "OPEN",
+      "stage": "G3_EXACT_PREPARATION",
+      "title": "Structural source-to-target resolution is not exact business semantic closure",
+      "scope": "ALL_FIVE",
+      "observed": "86 families structurally cover 2269 parent and declared 10001 child rows; 84 RESOLVED_G2_CONTRACT labels plus 2 retired decisions do not certify business restoration. Prior independent BASE audit recorded 69 families with known P0 dependencies/unverified remainder, 15 with unverified business oracle and 2 retired, with no all86 PASS. Canonical modern audit enumerated 45 wrong-ID correlations and 413 phantom response sources; validator FAIL2007 and aggregate static77 are different measurements. New proposals do not replace canonical historical contracts.",
+      "evidence": [
+        {
+          "file": "coding-readiness/target-family-resolution-register.csv",
+          "selector": "all86 resolution_id rows"
+        },
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "/results; /findings; /baseFamilyAuditRows"
+        },
+        {
+          "file": "coding-readiness/reports/global-product-semantic-audit-2026-09-14.json",
+          "selector": "identity/source, stored response and object-lifecycle findings"
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/global-product-upgrade-decision.proposal.v1.md",
+          "selector": "source behavior keep/rebuild/consolidate/configure/extend/exclude evidence",
+          "line": 17
+        }
+      ],
+      "close": "Publish an independently reviewed, source-linked successor for exact request/query/record/response/event and planned SQL write/read/state/column-source contracts, typed owner refs and concrete API-valid A/B/negative fixtures. Keep historical blobs immutable. Resolve or explicitly exclude retained source behaviors rather than certify by family/schema/menu counts. Actual all-domain CRUD execution is G4, not this closure."
+    },
+    {
+      "id": "START-P0-003",
+      "status": "OPEN",
+      "stage": "G3_SHARED_OWNER_CONTRACT",
+      "title": "Existing Auth→Person→native employment identity chain needs actual verified owner publication and integration",
+      "scope": "HRM_PER_TIM_PAY_SYS",
+      "observed": "Auth com_users.person_public_id and Gateway trusted-person propagation to People person→worker→relationship→assignment are actual existing identity, not a missing normal identity journal. Existing primary LIMIT1/current-date/inclusive-end queries do not define complete purpose/asOf multi-employment selection. Final identity ABI pin has 85 passing mock/failclosed tests and stable14Java+2document hashes, but is uncommitted/unwired. Account activation native SQL changes status without incrementing version/access_revision, so current stamps are not complete lifecycle freshness. Real Auth producer/signed codec/freshness/revoke, complete People native producer, lifecycle ordering/relink and route PEP remain OPEN.",
+      "evidence": [
+        {
+          "file": "coding-readiness/reports/dwp-identity-reuse-independent-audit-2026-09-14.json",
+          "selector": "actual Auth/Gateway/People owner source chain and IDR findings"
+        },
+        {
+          "file": "coding-readiness/reports/identity-owner-abi-focused-2026-09-14.v1.json",
+          "selector": "/verification; /sourceIntegrity; /remainingCommonP0"
+        },
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "selector": "native date/parent graph is not target half-open/asOf contract",
+          "line": 93
+        },
+        {
+          "file": "coding-readiness/reports/identity-owner-abi-root-independent-review-2026-09-14.json",
+          "selector": "16source/5XML85cases independently checked; historicalns rounding; nativeintegrationOPEN"
+        }
+      ],
+      "close": "Reuse owner identity, register exact typed owner DTO/SPI/codecs and purpose/admission contracts with native UUID tuple and owner versions, implement failclosed shared production adapters and consumer compile/selected pilot integration/security negatives at current source. Missing owner must call zero fallback adapters; principal/person/worker UUID substitution and synthetic worker defaults are forbidden. Actual customer authority adoption is G6, not a requirement for all G4 business implementation before G3."
+    },
+    {
+      "id": "START-P0-004",
+      "status": "OPEN",
+      "stage": "G3_SHARED_STREAM_AUTHORITY",
+      "title": "Proposed 8-service/13-stream authority is not published or wired runtime-only startup",
+      "scope": "ALL_FIVE",
+      "observed": "Corrected03 describes8services/13streams/14runtime purposes as proposal with bootstrap/startup wiring OPEN. Existing Sep11 runtime smoke covers8services/9streams and control ref ef735..., not current03a51... or proposed13. Composite114 focused cases prove external-Control inspection/private PG ACL and disabled supplier call0; its entry point explicitly requires an external migration DataSource, not runtime startup. Config effective snapshot/config issuer/protected admission/new Insights authorities and exact owner producer/manifest/receipt/guard wiring remain proposed.",
+      "evidence": [
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "selector": "13streams and runtime-only startup boundary explicitly PROPOSED",
+          "line": 63
+        },
+        {
+          "file": "coding-readiness/reports/stream-authority-composite-focused-2026-09-14.v1.json",
+          "selector": "external Control inspection and excluded native/runtime wiring"
+        },
+        {
+          "file": "/private/tmp/hris-runtime-topology-smoke-evidence.json",
+          "selector": "/controlReference; /assertions; historical8/9topology"
+        },
+        {
+          "file": "coding-readiness/reports/identity-owner-abi-focused-2026-09-14.v1.json",
+          "selector": "/remainingCommonP0"
+        }
+      ],
+      "close": "Control integrates approved exact stream schema/history/role/manifest/config-source DTO/SPI successor, producer-to-guard receipt verification and failclosed shared startup/purpose fencing; current common/pilot runtime smoke must bind current reference. Demonstrate uninstalled optional protected features are not invoked and analytics/AI without Listening does not require Listening issuer. Real customer DB authority/adoption and production credential/deployment activation remain G6."
+    },
+    {
+      "id": "START-P0-005",
+      "status": "OPEN",
+      "stage": "G0_G3_MIGRATION_ALLOCATION",
+      "title": "Historical reserved ranges are already consumed by approved common hardening",
+      "scope": "HRM_SYS_AND_SHARED_MIGRATIONS",
+      "observed": "Current committed People V47/V48, Auth V211/V212 and Platform V231..V237 overlap old HRM47..69, SYS Auth211..239/Platform231..259 allocations.03 now warns the ranges are historical/non-authorizing. Historical PeopleV1..V46 must not simply be widened to suppress failure. PAY proposal hris_payroll planned schema also lacks approved successor to actual public/payroll-main history/location authority.",
+      "evidence": [
+        {
+          "file": "g0/migration-allocation-register.csv",
+          "selector": "MIG-HRM-PEOPLE-47-69|MIG-SYS-AUTH-211-239|MIG-SYS-PLATFORM-231-259"
+        },
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "selector": "historical consumed ranges and approved successor requirement",
+          "line": 98
+        },
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "/findings[id=BASE-P0-001]"
+        },
+        {
+          "file": "coding-readiness/reports/pay-base-proposal-independent-review-2026-09-14.md",
+          "selector": "P0 actual payroll-main/public/history versus proposal schema authority"
+        }
+      ],
+      "close": "Approve noncolliding owner stream/resource/schema/history/location reservations against exact current prefix; preserve sealed historical blobs and register approved common prefix plus owner allocation successor. Module owns CREATE-only domain migration; Control merges source-linked identical blobs and conducts central replay. Do not use V47/V48 for HRM business migrations, rename old migrations, regenerate module SQL centrally or cross-context/database FK."
+    },
+    {
+      "id": "START-P0-006",
+      "status": "OPEN",
+      "stage": "G0_G3_CURRENT_EXECUTION_EVIDENCE",
+      "title": "Saved passing tests have exact historical/focused boundaries, not current complete common approval",
+      "scope": "ALL_FIVE",
+      "observed": "BE full4075 XML cases at70c996f include68 skips and467 reused suites; FE full574files/4673tests is atda7f1d8. Current db0d2b5/aaeba79 newer bytes and untracked ABI are not covered by those full diagnostics. Canonical target-command evidence is still Sep11 BE6f1ed92 PASS and FE7635ce4 contract FAIL; current saved static is FAIL77 and latest LIVE FAIL68. ABI85 mock and doctor capture success do not attest full Gate.",
+      "evidence": [
+        {
+          "file": "coding-readiness/reports/backend-full-diagnostic-70c996f-2026-09-14.v1.json",
+          "selector": "source pin and774suites/4075cases/68skips/fresh-vs-reused"
+        },
+        {
+          "file": "coding-readiness/reports/frontend-full-diagnostic-da7f1d8-2026-09-14.v1.md",
+          "selector": "source pin and574files/4673tests diagnostic-only"
+        },
+        {
+          "file": "g0/target-command-evidence-backend.json",
+          "selector": "/generated_at; /checks/0/observed_post_head_sha"
+        },
+        {
+          "file": "g0/target-command-evidence-frontend.json",
+          "selector": "/failed_check_ids; old7635ce4 baseline"
+        },
+        {
+          "file": "coding-readiness/reports/full-coding-readiness-static-latest.json",
+          "selector": "/status; /summary"
+        },
+        {
+          "file": "coding-readiness/reports/full-coding-readiness-latest.json",
+          "selector": "LIVE authority but old FAIL"
+        }
+      ],
+      "close": "After stable approved common integration and fanout, Control serializes current catalog-backed common/pilot checks with precise argv/output digests/pre-postHEAD/tree/source/skip justification, fresh official OpenAPI/FE provenance and independent verification, then global LIVE/checkpoint publication. Module slices use bounded focused tests and two approved scoped validators; do not launch repeated global suites from five sessions."
+    },
+    {
+      "id": "START-P0-007",
+      "status": "OPEN",
+      "stage": "G0_G3_LOCAL_EXECUTION_PREPARATION",
+      "title": "Five native profiles lack sufficient host capacity and registered session-environment receipts",
+      "scope": "ALL_FIVE",
+      "observed": "Actual db0d2b5 devctl profile capture records0/5PASS and5CAPACITYBLOCKED: HRM3.64<5.25GiB, PER3.69<4.62, PAY3.50<6.50, TIM3.66<5.88, SYS4.01<6.50. No servers were started/stopped. g0/session-environment-evidence.json is absent; catalog exists. Thus clean paired directories alone do not establish five independently operable current native sessions.",
+      "evidence": [
+        {
+          "file": "coding-readiness/reports/devctl-profile-diagnostic-db0d2b5-2026-09-14.v1.md",
+          "selector": "five current profile doctors actual CAPACITYFAIL"
+        },
+        {
+          "file": "/private/tmp/hris-runtime-profile-doctor-db0d2b5-20260914.json",
+          "selector": "/result and five profile observations"
+        },
+        {
+          "file": "g0/session-environment-command-catalog.v1.json",
+          "selector": "registered profile/command catalog"
+        },
+        {
+          "file": "g0/session-environment-evidence.json",
+          "selector": "read-only existence probe: absent"
+        },
+        {
+          "file": "remaining-preparation-register.csv",
+          "selector": "prep_id=G0-08"
+        }
+      ],
+      "close": "Control completes bounded approved resource/concurrency/profile/instance-isolation plan and current session-environment command receipts without silently killing user services. Local common/pilot feasibility is G0/G3; final production capacity/SLO/DR is G6. Preparation may serialize bounded checks; do not infer five simultaneous heavyweight runs or rewrite a blocked capture as runtime PASS."
+    },
+    {
+      "id": "START-P0-008",
+      "status": "OPEN_REQUIRED_VERIFICATION",
+      "stage": "G3_OPTIONAL_DEPENDENCY_AND_POLICY",
+      "title": "Optional-install intent needs exact enforced owner/dependency/admission fixtures, not mandatory-customer installation",
+      "scope": "ALL_FIVE",
+      "observed": "Latest00/07 explicitly distinguish16modern development scope from all-customer installation, consistent with global proposal. Missing active required owner must deny affected journey, but absent unrelated optional feature must not block base core. Historical19dependency READY labels and module exact files do not independently certify current install matrix/conditional owner calls. TIM availability belongs TIM orchestration joining HRM employment and TIM schedule/leave/rules plus optionalPERskills; HRM.WorkforceAvailabilitySnapshot is not published authoritative all-owner calculation.",
+      "evidence": [
+        {
+          "file": "session-prompts/00-common-session-contract.md",
+          "selector": "16modern development scope versus installation; affected-owner failclosed",
+          "line": 102
+        },
+        {
+          "file": "session-prompts/07-g3-full-coding-execution-contract.md",
+          "selector": "optional customer install and analytics/AI independence",
+          "line": 87
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/global-product-upgrade-decision.proposal.v1.md",
+          "selector": "optional owner/dependency/database/deploy consistency and no-skillWFM",
+          "line": 43
+        },
+        {
+          "file": "coding-readiness/module-dependency-register.csv",
+          "selector": "DEP-007|008|009|019 plus READY labels"
+        },
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "/findings[id=BASE-P0-011]"
+        }
+      ],
+      "close": "Register canonical conditional dependency/purpose/population/field/asOf/snapshot/version and invalidation rules and concrete installed/uninstalled/missing-active-owner/no-skill/analytics-without-Listening negative fixtures in shared adapters/consumer contract tests. Keep native manual paths connector-independent; no optional provider/key fallback. This is exact shared preparation, not proof of all future customer configurations."
+    }
+  ],
+  "modules": [
+    {
+      "module": "HRM",
+      "session": "HRIS-HRM",
+      "familyCount": 17,
+      "iaNodes": 24,
+      "status": "NO_G3_START",
+      "authorConflict": "HRM modern proposal authored by reviewer: no independent approval",
+      "specific": "BASE-P0-007 generic event/patch schema lacks per-business-event typed input/write/source; modern requisition/candidate/offer, template/assignment/task, benefits, service-case and contingent lifecycles have independent known wrong IDs/pseudo states/unreachable terminals. Existing normal identity journal direction was superseded by verified reuse, but new self-context owner publication remains OPEN.",
+      "refs": [
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "BASE-P0-003|007"
+        },
+        {
+          "file": "coding-readiness/reports/global-product-semantic-audit-2026-09-14.json",
+          "selector": "HRM identity/source and separated object lifecycle"
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+          "selector": "DESIGN_PROPOSED, author-only; not canonical overlay"
+        }
+      ],
+      "commonBlockingFindings": [
+        "START-P0-001",
+        "START-P0-002",
+        "START-P0-003",
+        "START-P0-004",
+        "START-P0-005",
+        "START-P0-006",
+        "START-P0-007",
+        "START-P0-008"
+      ],
+      "businessCrudPrerequisiteForG3": false,
+      "productionAuthorized": false
+    },
+    {
+      "module": "PER",
+      "session": "HRIS-PER",
+      "familyCount": 16,
+      "iaNodes": 19,
+      "status": "NO_G3_START",
+      "authorConflict": "No authored PER proposal approval in this review",
+      "specific": "BASE-P0-008 exact commands/owner signals do not close separate cycle/goal/review/feedback/check-in/calibration/result/appeal machines; caller distributionImpact is not owner computation. BASE-P0-009 closed allOf FreezePopulationCommand is unsatisfiable. Modern learning/skills/compensation/succession contracts need exact immutable owner/source/lifecycle successor; PER BASE exact preparation remains unverified/not published.",
+      "refs": [
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "BASE-P0-008|009 including schema witness"
+        },
+        {
+          "file": "coding-readiness/reports/global-product-semantic-audit-2026-09-14.json",
+          "selector": "PER source/object lifecycle"
+        },
+        {
+          "file": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+          "selector": "FreezePopulationCommand line719; CalibrationAdjustmentCommand line906"
+        }
+      ],
+      "commonBlockingFindings": [
+        "START-P0-001",
+        "START-P0-002",
+        "START-P0-003",
+        "START-P0-004",
+        "START-P0-005",
+        "START-P0-006",
+        "START-P0-007",
+        "START-P0-008"
+      ],
+      "businessCrudPrerequisiteForG3": false,
+      "productionAuthorized": false
+    },
+    {
+      "module": "TIM",
+      "session": "HRIS-TIM",
+      "familyCount": 19,
+      "iaNodes": 17,
+      "status": "NO_G3_START",
+      "authorConflict": "TIM BASE proposal authored by reviewer; sibling review controls independent findings",
+      "specific": "BASE-P0-004/005/006/011 native schedule, rule/accrual, literal Timecard status versus projection and multi-owner availability remain canonical gaps. Independent TIM BASE review has5P0/6P1 including termination/cancel route collision, immutable run-input/settlement gaps, fake source dependencies and unposted owner ports. Independent root WFM review reports7P0/7P1/1P2, not closure. Follow-up TIM review-remediation proposal lacks final stable approval signal and is UNVERIFIED_IN_PROGRESS.",
+      "refs": [
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "BASE-P0-004|005|006|011"
+        },
+        {
+          "file": "coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.json",
+          "selector": "all5P0/6P1; not author structure PASS"
+        },
+        {
+          "file": "coding-readiness/reports/tim-wfm-proposal-independent-review-2026-09-14.json",
+          "selector": "independent15findings; new actual domain executions0"
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+          "selector": "DESIGN_PROPOSED_AUTHOR_REMEDIATION_NOT_INDEPENDENT_PASS"
+        }
+      ],
+      "commonBlockingFindings": [
+        "START-P0-001",
+        "START-P0-002",
+        "START-P0-003",
+        "START-P0-004",
+        "START-P0-005",
+        "START-P0-006",
+        "START-P0-007",
+        "START-P0-008"
+      ],
+      "businessCrudPrerequisiteForG3": false,
+      "productionAuthorized": false
+    },
+    {
+      "module": "PAY",
+      "session": "HRIS-PAY",
+      "familyCount": 21,
+      "iaNodes": 17,
+      "status": "NO_G3_START",
+      "authorConflict": "PAY exact proposal authored by reviewer: AUTHOR_ONLY, no independent approval",
+      "specific": "BASE-P0-010 foundation payload/input-vector/formula and BASE-SCOPE-012 source cases remain unresolved canonically. Root bounded independent PAY review records4P0/2acceptance conditions: missing exact SYS/HRM owner source/publication, hris_payroll versus actual public/payroll-main authority, opaque self/native identity binding/physical guards, retained retirement/YEA and HRM/PER BASE completeness. String-only negatives/semantic formula codec are not execution closure.",
+      "refs": [
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "BASE-P0-010|BASE-SCOPE-012"
+        },
+        {
+          "file": "coding-readiness/reports/pay-base-proposal-independent-review-2026-09-14.md",
+          "selector": "root independent4P0/2acceptance conditions"
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/pay-base-exact.proposal.v1.json",
+          "selector": "AUTHOR_ONLY; not canonical/published"
+        }
+      ],
+      "commonBlockingFindings": [
+        "START-P0-001",
+        "START-P0-002",
+        "START-P0-003",
+        "START-P0-004",
+        "START-P0-005",
+        "START-P0-006",
+        "START-P0-007",
+        "START-P0-008"
+      ],
+      "businessCrudPrerequisiteForG3": false,
+      "productionAuthorized": false
+    },
+    {
+      "module": "SYS",
+      "session": "HRIS-SYS",
+      "familyCount": 13,
+      "iaNodes": 21,
+      "status": "NO_G3_START",
+      "authorConflict": "Root SYS proposal treated proposal, not current approval",
+      "specific": "Auth/Platform reuse is the intended owner, but no shadow security model or company seeds may become canonical policy. Proposed effective configuration/config issuer/protected admission and13stream/runtime producer/bootstrap remain unposted; old Auth/Platform ranges consumed. Modern case/query/automation/analytics/listening workflow and purpose/data/privacy source binding remain exact contract/shared-wiring work, not module installation by customer mandate.",
+      "refs": [
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "selector": "Auth/Platform/Insights owner boundaries and proposed streams",
+          "line": 14
+        },
+        {
+          "file": "coding-readiness/reports/global-product-semantic-audit-2026-09-14.json",
+          "selector": "SYS exact sources/phantom response/lifecycles"
+        },
+        {
+          "file": "session-prompts/07-g3-full-coding-execution-contract.md",
+          "selector": "XCON21 published versus proposed ports; customer activation G6",
+          "line": 69
+        }
+      ],
+      "commonBlockingFindings": [
+        "START-P0-001",
+        "START-P0-002",
+        "START-P0-003",
+        "START-P0-004",
+        "START-P0-005",
+        "START-P0-006",
+        "START-P0-007",
+        "START-P0-008"
+      ],
+      "businessCrudPrerequisiteForG3": false,
+      "productionAuthorized": false
+    }
+  ],
+  "directiveAssessments": [
+    {
+      "topic": "global-versus-session-validator-cadence",
+      "assessment": "CORRECTION_CONFIRMED_ON_CURRENT_BYTES_NOT_GATE_APPROVAL",
+      "evidence": [
+        {
+          "file": "session-prompts/00-common-session-contract.md",
+          "selector": "Control initial/common global PASS; module post-approval scoped checks",
+          "line": 46
+        },
+        {
+          "file": "session-prompts/07-g3-full-coding-execution-contract.md",
+          "selector": "two --session commands; scoped cannot publish",
+          "line": 12
+        },
+        {
+          "file": "coding-readiness/validate_full_coding_readiness.py",
+          "selector": "CLI --session requires --check-live and rejects --write-report",
+          "line": 7100
+        },
+        {
+          "file": "g0/validate_code_checkpoint.py",
+          "selector": "live_scope_includes and target_session selection",
+          "line": 4244
+        }
+      ],
+      "limit": "Earlier global/scoped instruction contradiction is corrected, not counted as remaining P0. Related contract-test list still requires owner/cadence application under common heavy-suite serialization; no five repeated global runs."
+    },
+    {
+      "topic": "customer-mandatory-modern-installation",
+      "assessment": "NO_MANDATORY_ALL_CUSTOMER_INSTALL_IN_CORRECTED_DIRECTIVE; ENFORCEMENT_OPEN",
+      "evidence": [
+        {
+          "file": "session-prompts/00-common-session-contract.md",
+          "selector": "modern development scope not all customer install",
+          "line": 102
+        },
+        {
+          "file": "session-prompts/07-g3-full-coding-execution-contract.md",
+          "selector": "optional dependency/activation distinction",
+          "line": 87
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/global-product-upgrade-decision.proposal.v1.md",
+          "selector": "conditional feature admission and unrelated base workability",
+          "line": 25
+        }
+      ],
+      "limit": "16 capability development commitments do not mean every customer installs every modern module/provider. Current matrix/shared-wiring negative proof remains OPEN."
+    },
+    {
+      "topic": "copy-paste-and-global-necessity",
+      "assessment": "ACCEPTED_PRODUCT_DIRECTION_NOT_ALL_SOURCE_CERTIFICATION",
+      "evidence": [
+        {
+          "file": "coding-readiness/semantic-remediation/global-product-upgrade-decision.proposal.v1.md",
+          "selector": "source disposition and object-specific consolidation",
+          "line": 17
+        },
+        {
+          "file": "coding-readiness/01-full-coding-architecture.md",
+          "selector": "avoid source1:1 copying/company hardcode",
+          "line": 1
+        },
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "all86 semantic/unverified statuses"
+        }
+      ],
+      "limit": "Vendor/product direction is design judgment, not independently verified vendor feature comparison or legal certification. Retired presentation/sample duplication differs from retirement of distinct business cases/ACL/country meanings."
+    },
+    {
+      "topic": "company-constants-and-free-text-rule-execution",
+      "assessment": "FORBIDDEN_BY_DIRECTION; CANONICAL_EXACT_PAYLOADS_STILL_OPEN",
+      "evidence": [
+        {
+          "file": "coding-readiness/semantic-remediation/global-product-upgrade-decision.proposal.v1.md",
+          "selector": "typed versioned config; safe protocol constants versus company/statutory values",
+          "line": 23
+        },
+        {
+          "file": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+          "selector": "BASE-P0-005|010"
+        },
+        {
+          "file": "coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.json",
+          "selector": "sourceGraph/runInputs/accrual defects"
+        }
+      ],
+      "limit": "Protocol enums and safe technical bounds may be product constants; statutory quotas/rates/calendar/company policy must be versioned typed owner config, not core if(companyId), DSL string or example tenant seed."
+    },
+    {
+      "topic": "permission-shadow-and-tenant-sod",
+      "assessment": "REUSE_DWP_OWNER_MODEL_REQUIRED; ACTUAL_NEW_OWNER_PEP_OPEN",
+      "evidence": [
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "selector": "Auth owner and domain protected boundaries",
+          "line": 14
+        },
+        {
+          "file": "coding-readiness/02-frontend-module-architecture.md",
+          "selector": "deep link deny403, owner duty/population/field revisions",
+          "line": 44
+        },
+        {
+          "file": "session-prompts/07-g3-full-coding-execution-contract.md",
+          "selector": "personas not security groups; packages/duties/SoD",
+          "line": 109
+        },
+        {
+          "file": "coding-readiness/reports/dwp-identity-reuse-independent-audit-2026-09-14.json",
+          "selector": "native identity/admission/ordering/owner publication gaps"
+        }
+      ],
+      "limit": "UI visibility and five persona labels are not command authorization or field/population entitlement; no secondary HRIS role ledger or cross-domain native UUID guess."
+    },
+    {
+      "topic": "session-file-and-runtime-collision",
+      "assessment": "PAIR_CLEAN_AND_OWNERSHIP_PLAN_VERIFIED; CURRENT_AUTHORITY_AND_FEASIBILITY_OPEN",
+      "evidence": [
+        {
+          "file": "five-session-execution-manifest.csv",
+          "selector": "five module allowed globs and forbidden central edits"
+        },
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "selector": "module migration ownership and central single writer",
+          "line": 120
+        },
+        {
+          "file": "session-prompts/00-common-session-contract.md",
+          "selector": "bounded tests/common semaphore/front-end concurrency",
+          "line": 80
+        }
+      ],
+      "limit": "Ten clean worktrees and source upstream inclusion are actual positives. Shared People runtime does not authorize HRM/PER repo imports; uncommitted common changes need central source-linked approval/fanout. Ports/profile capacity/current stream and migration authority still block readiness."
+    },
+    {
+      "topic": "home-widgets-versus-menu-catalog",
+      "assessment": "DIRECTION_CORRECT; SELECTED_CURRENT_HOME_NOT_CATALOG; FULL_NEW_UI_G4",
+      "evidence": [
+        {
+          "file": "coding-readiness/02-frontend-module-architecture.md",
+          "selector": "home+7workbenches; owner-materialized widgets; catalog Explorer",
+          "line": 41
+        },
+        {
+          "file": "coding-readiness/09-information-architecture-contract.md",
+          "selector": "98IA planned versus5limited pilots"
+        },
+        {
+          "file": "apps/dwp/src/pages/hcm.tsx",
+          "selector": "lazy HcmHome; render HcmHome",
+          "line": 20
+        },
+        {
+          "file": "apps/dwp/src/features/hcm/hcm-home.tsx",
+          "selector": "home contribution query/widget render",
+          "line": 108
+        }
+      ],
+      "limit": "Selected current FE code shows HcmHome rather than mounted HrisProductMap menu catalog. This is a scoped source observation, not full frontend runtime/GUI verification. Missing full98new feature pages is G4 work, not alone a G3 blocker."
+    },
+    {
+      "topic": "full-designai-handoff",
+      "assessment": "EXACT_FULL_SURFACE_PLAN_PRESENT; ACTUAL_PACKAGE_NOT_DUE_BEFORE_G4",
+      "evidence": [
+        {
+          "file": "session-prompts/90-design-ai-handoff-output-contract.md",
+          "selector": "owned98nodes and (ia_node_id,surface_key) closure/allstates/personas",
+          "line": 65
+        },
+        {
+          "file": "session-prompts/90-design-ai-handoff-output-contract.md",
+          "selector": "G4 blob/inventory bidirectional validation, OCR/redaction/detached ZIP",
+          "line": 140
+        },
+        {
+          "file": "coding-readiness/g5a-design-ai-package-allocation-register.csv",
+          "selector": "all5 PLANNED_NOT_DUE_AFTER_G4"
+        },
+        {
+          "file": "session-prompts/00-common-session-contract.md",
+          "selector": "G5A/B/C full DesignAI handoff",
+          "line": 118
+        }
+      ],
+      "limit": "All module prompts include full surfaces, not only home/pilots. Actual G4surface inventory/screenshots/editable design/OCR/ZIP submission is not complete and not required to open G3. Template allocation alone must not mark G5A done."
+    },
+    {
+      "topic": "g3-g4-g6-circular-approval",
+      "assessment": "CORRECTED_STAGE_BOUNDARY_CONFIRMED; CURRENT_G3_SHARED_P0_REMAIN",
+      "evidence": [
+        {
+          "file": "coding-readiness/semantic-remediation/g3-preparation-boundary.md",
+          "selector": "G3 exact planned+actualshared, G4 domainCRUD, G6 customer activation",
+          "line": 7
+        },
+        {
+          "file": "coding-readiness/02-frontend-module-architecture.md",
+          "selector": "G3/4/5A distinctions",
+          "line": 134
+        },
+        {
+          "file": "session-prompts/07-g3-full-coding-execution-contract.md",
+          "selector": "real provider/legal/customer/SLO activationG6; generic disabledfailclosedG3",
+          "line": 115
+        },
+        {
+          "file": "coding-readiness/activation-gate-register.csv",
+          "selector": "17deferredG6, noneblocksG3core"
+        }
+      ],
+      "limit": "No all82/114/119native business journeys or full domain SQL CRUD prerequisite for coding readiness. Current exact business sources/state/schema, approved owner DTO/SPI/adapters/consumer compile and common/pilot smoke are genuine G3 requirements. Real customer adoption/legal/provider activation is G6."
+    },
+    {
+      "topic": "supplementalSYSaggregate-and-minimalTypedEvent-clarification",
+      "assessment": "CURRENT_DOCUMENT_CORRECTION_CONFIRMED_NOT_REGISTER_OR_PRODUCER_COMPLETION",
+      "evidence": [
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "line": 58,
+          "selector": "4supplemental contexts: Configuration definitions, ProtectedAdmission raw response, Insights privacy-safe projection, Auth issuer"
+        },
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "line": 65,
+          "selector": "Run totals/checksum plus actual immutable owner input/item/result/trace exact refetch; architecture successor not approved"
+        },
+        {
+          "file": "coding-readiness/03-backend-service-architecture.md",
+          "line": 74,
+          "selector": "event-specific typed least-PII payload includes nativeversion/CAS/owner snapshot/refetch reference"
+        }
+      ],
+      "limit": "Full134line new03 reread after root patch. Earlier aggregate ownership/minimal-ID-only wording clarified. The document itself explicitly leaves subroot/port/DS architecture register/test successor and13stream native producer/bootstrap/pilot OPEN. Root reported118document-only checks0errors; not rerun here and not global LIVE/semantic/runtime approval."
+    }
+  ],
+  "stageBoundary": {
+    "G3": "Exact planned source/data/API/state/readwrite/schema/SQL/owner/fixtures/test/file/migration contracts plus actual shared DTO/SPI/failclosed adapters/consumer compilation and current common/pilot runtime/coding readiness evidence.",
+    "G4": "Implement all selected business domain CRUD/SQL/materialization and real native A/B/negative acceptance/receipts/events/refetch; counts alone no PASS.",
+    "G5": "Full actual G4 surface/persona/state DesignAI packages and independent returned-design acceptance/application regression.",
+    "G6": "Real customer identity authority/adoption, country statutory/legal values, external bank/ERP/YEA/provider activation, production DB credentials/deploy/SLO/DR/business release."
+  },
+  "closingSequence": [
+    {
+      "order": 1,
+      "stage": "G3_DESIGN",
+      "action": "Complete source-linked exact BASE/modern successor and canonical owner contracts with approved planned SQL/lifecycles/source/immutable artifacts/typed fixtures/test allocation and independent semantic approval; preserve historical blobs and own-author conflicts."
+    },
+    {
+      "order": 2,
+      "stage": "G3_COMMON",
+      "action": "Approve noncolliding migration/schema/history/role/stream successor; integrate exact identity/config/authority DTO/SPI/adapters/guard/producers/current PEP/shared pilot and optional-dependency failclosed behavior. Do not require all business CRUD before shared readiness."
+    },
+    {
+      "order": 3,
+      "stage": "G0_G3_EVIDENCE",
+      "action": "Commit approved common scoped source, fan out exact clean baseline, capture current resource/session-env/catalog-backed serialized common/pilot checks and official FE provenance, then reseal current central snapshot/upstream."
+    },
+    {
+      "order": 4,
+      "stage": "G3_INITIAL_GLOBAL",
+      "action": "Control obtains both unscoped --check-live PASS and current independently published authoritative global OPEN; report tokens alone are non-authority."
+    },
+    {
+      "order": 5,
+      "stage": "G3_MODULE_EXECUTION",
+      "action": "Only after global approval, each module first change/resume/slice obtains both validators --check-live --session exact own ID; bounded module tests. Scoped cannot publish/bypass common/integration changes; Control source-linked reseals impacts."
+    },
+    {
+      "order": 6,
+      "stage": "G4_G5_G6",
+      "action": "Implement domain journeys and all-source acceptance, then full actual DesignAI handoff, then separately authorize real customer/provider/country/production activation."
+    }
+  ],
+  "evidenceManifest": [
+    {
+      "path": "coding-readiness/semantic-remediation/global-product-upgrade-decision.proposal.v1.md",
+      "exists": true,
+      "bytes": 8202,
+      "sha256": "801f238eabc771bbe6fcd2ef70b2de5b712d859bdaea1bb255594beca5247882"
+    },
+    {
+      "path": "coding-readiness/01-full-coding-architecture.md",
+      "exists": true,
+      "bytes": 13334,
+      "sha256": "cb7d29165d4eb6834698c82f3885419f397e11f55312b337adc83e6f5db3d8e8"
+    },
+    {
+      "path": "coding-readiness/02-frontend-module-architecture.md",
+      "exists": true,
+      "bytes": 9909,
+      "sha256": "7c35d11952f7f34b013ce3b8e76dbe83f65c75dc424eb4f2618de00acf07f0cd"
+    },
+    {
+      "path": "coding-readiness/03-backend-service-architecture.md",
+      "exists": true,
+      "bytes": 14963,
+      "sha256": "2ce6f3867d23017e7bb101aa41fcefa9864057e520d8181b3840135dc75a5d3b"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/g3-preparation-boundary.md",
+      "exists": true,
+      "bytes": 4909,
+      "sha256": "a6f545e28788d688c5bb0460be18f9dc2e00462f228e028f6152e68243ccb4f7"
+    },
+    {
+      "path": "g0/current-g3-gate-decision.json",
+      "exists": true,
+      "bytes": 876,
+      "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e"
+    },
+    {
+      "path": "g0/integration-baseline-manifest.csv",
+      "exists": true,
+      "bytes": 1484,
+      "sha256": "6e83aae4ffee6737dcbaa3acc20994f5165b4cea55c6f2c3577c81e1f853e311"
+    },
+    {
+      "path": "g0/worktree-branch-register.csv",
+      "exists": true,
+      "bytes": 3824,
+      "sha256": "c1144de84e6f85301196e1d8703fdc5720a40649ae75dbc6787293ced987a4bb"
+    },
+    {
+      "path": "g0/migration-allocation-register.csv",
+      "exists": true,
+      "bytes": 6706,
+      "sha256": "e714b34be1bd391d668f614d38d4e83e1054f678fa24ca4978ce275c8bc2db98"
+    },
+    {
+      "path": "g0/blueprint-central-snapshot-manifest.v1.json",
+      "exists": true,
+      "bytes": 57104,
+      "sha256": "2cba992f02e2d715a051e19d548b86ca5c7093bc26a4671d05c0d119762f034d"
+    },
+    {
+      "path": "g0/target-command-evidence-backend.json",
+      "exists": true,
+      "bytes": 7077,
+      "sha256": "57c35dec7f2d42c87d2319a34a98bca7c02bd7412902b4f5cf5c1873ce1891f5"
+    },
+    {
+      "path": "g0/target-command-evidence-frontend.json",
+      "exists": true,
+      "bytes": 21173,
+      "sha256": "ca89f9bf6186aea36f2af64714fad8dbe7e1df3f70da795f562d013c597cf196"
+    },
+    {
+      "path": "g0/file-ownership-register.csv",
+      "exists": true,
+      "bytes": 16214,
+      "sha256": "e8852c7bcd1140a3c67a5d9faf5e56d33b1fcca8e5760c8b62c70186cb64063b"
+    },
+    {
+      "path": "g0/role-operational-binding-register.csv",
+      "exists": true,
+      "bytes": 4119,
+      "sha256": "bb8fab4580127b2dc21739a2efe3e45202269b2bf9b0fc50173b3c1f8b3365d5"
+    },
+    {
+      "path": "coding-readiness/module-code-gate-register.csv",
+      "exists": true,
+      "bytes": 3661,
+      "sha256": "6d66b20839667b08d8289b73503a5f2b42735a6e0ef4a06baf21e5ab2351d4b8"
+    },
+    {
+      "path": "coding-readiness/activation-gate-register.csv",
+      "exists": true,
+      "bytes": 6524,
+      "sha256": "44c3e3203f2eac107302034eacb289c02ec9829240178a7a987d179f0d40860e"
+    },
+    {
+      "path": "coding-readiness/module-dependency-register.csv",
+      "exists": true,
+      "bytes": 3575,
+      "sha256": "b4262b1801b74966e941d84955fc58d9e03c593d7f7bc23b486643f10f31f596"
+    },
+    {
+      "path": "coding-readiness/module-structure-contract-register.csv",
+      "exists": true,
+      "bytes": 6029,
+      "sha256": "1a8873e6800d4c4a97478c4d4ddd25c156b212d1b86912f3f7c5917618f6e970"
+    },
+    {
+      "path": "coding-readiness/g3-file-allocation-register.csv",
+      "exists": true,
+      "bytes": 21437,
+      "sha256": "adfe95e90c2df54df471ab757a1af83e5febaf4a2cd1f9c9c4dc84a763c3923d"
+    },
+    {
+      "path": "coding-readiness/g3-slice-code-go-register.csv",
+      "exists": true,
+      "bytes": 279914,
+      "sha256": "21c7d49f5b811eec96b03c5f9f7b262282e65c4e9203a3db55f328957097fbba"
+    },
+    {
+      "path": "coding-readiness/target-family-resolution-register.csv",
+      "exists": true,
+      "bytes": 38399,
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819"
+    },
+    {
+      "path": "coding-readiness/hris-information-architecture-register.csv",
+      "exists": true,
+      "bytes": 104043,
+      "sha256": "35de8f8aefb69d79ad5138af84da393813fec9ee4cbd722a9d0308de1da459d8"
+    },
+    {
+      "path": "coding-readiness/hris-shell-navigation-register.csv",
+      "exists": true,
+      "bytes": 3226,
+      "sha256": "f85ee40a66ce4100c5578fd3ca96bc89b652b0762e19d74cc7aeb76338009000"
+    },
+    {
+      "path": "coding-readiness/hris-workbench-task-group-register.csv",
+      "exists": true,
+      "bytes": 13920,
+      "sha256": "f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b"
+    },
+    {
+      "path": "coding-readiness/g5a-design-ai-package-allocation-register.csv",
+      "exists": true,
+      "bytes": 2782,
+      "sha256": "2c0e84180aefe109345f4e530f46fba51bdcecd121cb0940878b1ea370d7e330"
+    },
+    {
+      "path": "coding-readiness/cross-module-canonical-schemas.v1.json",
+      "exists": true,
+      "bytes": 28061,
+      "sha256": "6221da1de36e397d5d52ac2bde1b68f3116b79a96c66a48bdefa14f261c29d71"
+    },
+    {
+      "path": "coding-readiness/physical-owner-prefix-register.csv",
+      "exists": true,
+      "bytes": 2015,
+      "sha256": "7413f9d227b889f7b86949d8998f40823d953ab097047646a34a00cc023c9cba"
+    },
+    {
+      "path": "coding-readiness/modern-capability-delivery-register.csv",
+      "exists": true,
+      "bytes": 8151,
+      "sha256": "a15ecff207915aa046830c94a98ba60acb450f437b1fd110289a08e1888250ce"
+    },
+    {
+      "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "exists": true,
+      "bytes": 1648904,
+      "sha256": "32b3d6c4e98037c0a26df0b08e112ad9ab067f95d70f3dc3d5dedf4f53f291fb"
+    },
+    {
+      "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+      "exists": true,
+      "bytes": 76337,
+      "sha256": "ae9619899fad6dcfe19ad270b38b62371fdeef51f9de4eb8dee425d4d878a12f"
+    },
+    {
+      "path": "coding-readiness/reports/full-coding-readiness-static-latest.json",
+      "exists": true,
+      "bytes": 80665,
+      "sha256": "624f6c72bc14f6fa6d9838bb0083735f2cbda4451375db92eb9a4cb247c02b03"
+    },
+    {
+      "path": "coding-readiness/reports/full-coding-readiness-latest.json",
+      "exists": true,
+      "bytes": 79845,
+      "sha256": "0e4c987bbdc012d88d202c3e9f044fd8b1ec510c9ec7b6e3c8f201af25c8fbd0"
+    },
+    {
+      "path": "coding-readiness/reports/readiness-recovery-2026-09-14.md",
+      "exists": true,
+      "bytes": 29239,
+      "sha256": "2df8b154375c38d88321db6a14910eb81f6c6941194aa05402cf29e48e883e5c",
+      "reviewStatus": "UNVERIFIED_IN_PROGRESS_NOT_RELIED_ON",
+      "pinnedCaptureAtUtc": "2026-09-14T03:24:38.791045+00:00"
+    },
+    {
+      "path": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+      "exists": true,
+      "bytes": 164384,
+      "sha256": "b0785ae509688a3094db999b2da4c25f95b7ad86e555f72a417d42b1fdba692d"
+    },
+    {
+      "path": "coding-readiness/reports/global-product-semantic-audit-2026-09-14.json",
+      "exists": true,
+      "bytes": 284116,
+      "sha256": "e086f26155dc3f35b0502a119dc159c7c1e95e76072f2fa162e9503aafd95667"
+    },
+    {
+      "path": "coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.json",
+      "exists": true,
+      "bytes": 196120,
+      "sha256": "7cc282ca4e116524cace6576e2b29b08f9c5c21ffd38f55b942f175abf8dcda5"
+    },
+    {
+      "path": "coding-readiness/reports/dwp-identity-reuse-independent-audit-2026-09-14.json",
+      "exists": true,
+      "bytes": 148393,
+      "sha256": "36f8ce83727da04d20bec057700ae40d8436562b02677e115cb8f1871dcecedb"
+    },
+    {
+      "path": "coding-readiness/reports/tim-wfm-proposal-independent-review-2026-09-14.json",
+      "exists": true,
+      "bytes": 86420,
+      "sha256": "b042f0ee2736cf48a398599ffe8eb8db4da77d3a31ecf5028aebdda5f03e31e2"
+    },
+    {
+      "path": "coding-readiness/reports/backend-full-diagnostic-70c996f-2026-09-14.v1.json",
+      "exists": true,
+      "bytes": 109213,
+      "sha256": "750b7ab388bb9f0e7e53b87e7a2bbec4e0773dc50e705c3e0b25bfd607a7a983"
+    },
+    {
+      "path": "coding-readiness/reports/stream-authority-composite-focused-2026-09-14.v1.json",
+      "exists": true,
+      "bytes": 53025,
+      "sha256": "8973c593c257b6cd87dc2f73757a65124991d99a1d495500afa644cb42200d5f"
+    },
+    {
+      "path": "coding-readiness/reports/devctl-profile-diagnostic-db0d2b5-2026-09-14.v1.md",
+      "exists": true,
+      "bytes": 4276,
+      "sha256": "7ce1dcef116b74186521ae07eb17a59b61a6dae43e22cad64bd5de7b2187bcb7"
+    },
+    {
+      "path": "coding-readiness/reports/frontend-full-diagnostic-da7f1d8-2026-09-14.v1.md",
+      "exists": true,
+      "bytes": 2131,
+      "sha256": "bcaef3aa1fdcb16f891ccdbaff42af7c7a960a30dae193fe7b0207b8fc44e71e"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+      "exists": true,
+      "bytes": 5315757,
+      "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+      "exists": true,
+      "bytes": 10707168,
+      "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/pay-base-exact.proposal.v1.json",
+      "exists": true,
+      "bytes": 4867094,
+      "sha256": "bfe3e38b1417b180339e91ca22e20409e75f3991904ab26ecf0e8f3cb7e22455"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/identity-owner-abi.proposal.v1.json",
+      "exists": true,
+      "bytes": 7086,
+      "sha256": "cb05e3f1a00e90574c97118a7508fc6e325b50f3bfd89809c2ac45a621b2d9d6"
+    },
+    {
+      "path": "five-session-execution-manifest.csv",
+      "exists": true,
+      "bytes": 9097,
+      "sha256": "4a4c3b7ba409b0b4b8c96d719e964dd5988b2139b463fa3a57d9a2dcc409d010"
+    },
+    {
+      "path": "remaining-preparation-register.csv",
+      "exists": true,
+      "bytes": 11389,
+      "sha256": "9a3017e18f7d2527f2589301c2f20e8d47e100e6833ed7992100e5488c2e5af5"
+    },
+    {
+      "path": "g0/source-governance-decision.md",
+      "exists": true,
+      "bytes": 6814,
+      "sha256": "e4cb5e59d633abb154d6de3dc4c068c75d8d189f12427ea9904853ef06827e52"
+    },
+    {
+      "path": "session-prompts/00-common-session-contract.md",
+      "exists": true,
+      "bytes": 20221,
+      "sha256": "cb6525b40861745de1f72b90293432cb662a0ff1947a8dc5b6437d821aab2115"
+    },
+    {
+      "path": "session-prompts/01-cloudhr-hrm-session.md",
+      "exists": true,
+      "bytes": 9599,
+      "sha256": "44bc5c167016951cd5faffdcf2de81a988ed0636c077c4bcb4e5ca5c501019b7"
+    },
+    {
+      "path": "session-prompts/02-cloudhr-per-session.md",
+      "exists": true,
+      "bytes": 9866,
+      "sha256": "514eb5726ce8bdc711dfe68ff01257d8c74d31420a1ef1ce80953f35e0110ba2"
+    },
+    {
+      "path": "session-prompts/03-cloudhr-pay-session.md",
+      "exists": true,
+      "bytes": 12598,
+      "sha256": "933bef0430c867e79dcb6878f75843b20fd30cca6fb8844c653da3a15fbdfcb7"
+    },
+    {
+      "path": "session-prompts/04-cloudhr-tim-session.md",
+      "exists": true,
+      "bytes": 9840,
+      "sha256": "909f2a9c09bdc344c45cd793ea9b4eea2ecb297df68e090c6911176c5510afaf"
+    },
+    {
+      "path": "session-prompts/05-cloudhr-sys-session.md",
+      "exists": true,
+      "bytes": 13161,
+      "sha256": "56612c8b1e5a8622dddc0de3a9e5c9a259883a30f9668ce57ee09a9b4b7c9a8e"
+    },
+    {
+      "path": "session-prompts/06-hris-integration-control.md",
+      "exists": true,
+      "bytes": 11022,
+      "sha256": "67b3e1bf499e0ca129b5fe47ff75be1d4f8daae5e1dd56746f9b58046d2d3c5d"
+    },
+    {
+      "path": "session-prompts/07-g3-full-coding-execution-contract.md",
+      "exists": true,
+      "bytes": 18948,
+      "sha256": "0a08ae788e8fa02ea3046b2e572a685fe8d5db8fbaff0d8beeec84d93ae7064a"
+    },
+    {
+      "path": "session-prompts/90-design-ai-handoff-output-contract.md",
+      "exists": true,
+      "bytes": 19703,
+      "sha256": "4d05a235b8417cf4c986d50d4ebe05a5af29ee29472cb49fc0609823af685239"
+    },
+    {
+      "path": "coding-readiness/reports/identity-owner-abi-focused-2026-09-14.v1.json",
+      "exists": true,
+      "bytes": 67565,
+      "sha256": "21bbd6eb16d48efbfa4c5a2730fec4c4d80aafafa82f459154e271ced2fd9a66"
+    },
+    {
+      "path": "coding-readiness/reports/identity-owner-abi-focused-2026-09-14.v1.md",
+      "exists": true,
+      "bytes": 3891,
+      "sha256": "869d844a37e59e177057237e834d26b2a1db432e84b100451fd77c7170481468"
+    },
+    {
+      "path": "coding-readiness/reports/pay-base-proposal-independent-review-2026-09-14.md",
+      "exists": true,
+      "bytes": 9738,
+      "sha256": "3b1f28d1eb059a168d3ee28a00e32bd36c8c175e4ab3850e0dc5208ffae90158"
+    },
+    {
+      "path": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.md",
+      "exists": true,
+      "bytes": 33957,
+      "sha256": "16a591db0ca0395c6d4deb8d217e9090fb5d15d59abe565ddddf09adb779e83f"
+    },
+    {
+      "path": "coding-readiness/reports/global-product-semantic-audit-2026-09-14.md",
+      "exists": true,
+      "bytes": 14496,
+      "sha256": "ad4dc24364ec5ed156f70fb37df8444c07bfcaead0510bbf0e6c77113f87eb04"
+    },
+    {
+      "path": "coding-readiness/reports/dwp-identity-reuse-independent-audit-2026-09-14.md",
+      "exists": true,
+      "bytes": 20778,
+      "sha256": "05e315311e01b3af8f7440cff168b9ac80bec324d21b9351f5152773e585ffd7"
+    },
+    {
+      "path": "coding-readiness/reports/tim-base-proposal-independent-review-2026-09-14.md",
+      "exists": true,
+      "bytes": 28140,
+      "sha256": "9840eb1082d3db4afc8657dd07e4133c4aabc68b7f41238730ef64e5d52e174e"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+      "exists": true,
+      "bytes": 958428,
+      "sha256": "87fcc981d17db68b94b141eb5aa4cba37552d577d5835057f9d3c58789207ea8",
+      "reviewStatus": "UNVERIFIED_IN_PROGRESS_NOT_RELIED_ON",
+      "pinnedCaptureAtUtc": "2026-09-14T03:24:38.791045+00:00"
+    },
+    {
+      "path": "coding-readiness/semantic-remediation/identity-owner-abi.proposal.v1.md",
+      "exists": true,
+      "bytes": 5599,
+      "sha256": "fcad99bea801b660312561ef76a2cfc73170aa7e1f782921aa97d5368b4c1478"
+    },
+    {
+      "path": "g0/validate_code_checkpoint.py",
+      "exists": true,
+      "bytes": 274261,
+      "sha256": "b60c92e844cb1f7ee23fca79ad0cc691f7ef29dec7a192be5d4926c223909f1c"
+    },
+    {
+      "path": "coding-readiness/validate_full_coding_readiness.py",
+      "exists": true,
+      "bytes": 291859,
+      "sha256": "4ac0219103d5f0cd12e2f5f2f31e2fee932d1d85e4fb2fbb0b30b5a58aa4d048"
+    },
+    {
+      "path": "coding-readiness/09-information-architecture-contract.md",
+      "exists": true,
+      "bytes": 5654,
+      "sha256": "d507fd42c2e78211ab0855d16aed5ba48f0838c95a90727a715d41d1bf098c82"
+    },
+    {
+      "path": "session-registers/hris-pay-source-coverage.csv",
+      "exists": true,
+      "bytes": 506567,
+      "sha256": "ee6c851040b80f1ccc3bef86d603fc07c6f8f5ce8c97fdb862dd8dbdfe21319d"
+    },
+    {
+      "path": "coding-readiness/reports/identity-owner-abi-root-independent-review-2026-09-14.json",
+      "exists": true,
+      "bytes": 20524,
+      "sha256": "f7a650dd9fed4029389b0ea8a2c5ad79f60ba213e3a18677372befebc27bc125"
+    },
+    {
+      "path": "coding-readiness/reports/identity-owner-abi-root-independent-review-2026-09-14.md",
+      "exists": true,
+      "bytes": 2243,
+      "sha256": "a6102395de48bb821b9fe6b173ee5533ebe0e9dc32003eb1ccdb2969b7cf317f"
+    }
+  ],
+  "inputChangeHandling": {
+    "latestCommonAnd07ParentCorrectionFullyReread": true,
+    "earlierCommonSha256": "b6e02f888035d9fed243bd66ced71c24b843acbab4f43cb7ff857a40180117f7",
+    "earlier07Sha256": "426a8eebc804ac373d8139713ee798892eb31c55bc9f7d389cf0840b9fa57dbb",
+    "changedRecoveryNotReliedUponForFinalClosure": true,
+    "abiFinalStableSignalReceived": true,
+    "timFollowupStableSignalReceived": false,
+    "abiRootIndependentScaffoldReviewReceived": true,
+    "architecture03RootClarificationFullyReread": true,
+    "previousArchitecture03Sha256": "e9b77f5e8752d9bfc7dc79cb3f411ed77cb12673dd98d582352d39b2722dd68f",
+    "currentArchitecture03Sha256": "2ce6f3867d23017e7bb101aa41fcefa9864057e520d8181b3840135dc75a5d3b",
+    "currentArchitecture03ReadAndCrosscheckedAtUtc": "2026-09-14T03:34:41.125381+00:00"
+  },
+  "formatValidation": {
+    "executed": true,
+    "checkedAtUtc": "2026-09-14T03:34:41.125381+00:00",
+    "result": "PASS_REPORT_FORMAT_AND_REFERENCES_ONLY",
+    "assertions": {
+      "jsonParsed": true,
+      "fiveUniqueModuleSessionRows": true,
+      "allModulesNoG3Start": true,
+      "noBusinessCrudPrerequisiteForG3": true,
+      "productionUnauthorized": true,
+      "noNewHeavyRuntimeCommitsOrServerChanges": true,
+      "evidenceReferencePathsResolvedExceptDeclaredAbsentReceipt": true,
+      "markdownShaLiteralsMatchJson": true,
+      "exactReviewerWriteScopeTwoReports": true
+    },
+    "inputPinComparison": {
+      "total": 73,
+      "unchanged": 71,
+      "expectedInProgressDrift": 2,
+      "observations": [
+        {
+          "path": "coding-readiness/reports/readiness-recovery-2026-09-14.md",
+          "pinned": "2df8b154375c38d88321db6a14910eb81f6c6941194aa05402cf29e48e883e5c",
+          "current": "508d94abe0c8f9cd3a117e00ba2684f43b7dee4542800b807eed6cc742a56e1a"
+        },
+        {
+          "path": "coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+          "pinned": "87fcc981d17db68b94b141eb5aa4cba37552d577d5835057f9d3c58789207ea8",
+          "current": "04a4785e199b9babc92ae71c0a35df282194bb97adccc7eb31579a602d2cc448"
+        }
+      ],
+      "meaning": "71 stable input hashes, including corrected primary instructions/architecture and final ABI/source evidence. The2changed author/root working artifacts remain UNVERIFIED_IN_PROGRESS and are not relied upon as final closure; retain the captured historical pins."
+    },
+    "explicitAbsentReference": [
+      "g0/session-environment-evidence.json"
+    ],
+    "meaning": "Author report structure/evidence references only; no functional, canonical or independent proposal PASS. Report SHA is supplied separately to avoid a circular self-hash."
+  }
+}

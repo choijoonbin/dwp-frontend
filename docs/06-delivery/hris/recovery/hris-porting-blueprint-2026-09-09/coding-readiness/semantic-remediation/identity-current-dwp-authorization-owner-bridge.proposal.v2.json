@@ -1,0 +1,332 @@
+{
+  "schemaVersion": "1.0",
+  "proposalId": "dwp-current-hris-authorization-owner-bridge.abi.v2",
+  "status": "AUTHOR_MOCK_SCAFFOLD_ONLY_G3_CLOSED",
+  "currentNativeProvidersImplemented": false,
+  "currentSignedTransportImplemented": false,
+  "newRbacOrIdentityLedger": false,
+  "plannedConsumersAndTests": [
+  {
+    "owner": "Auth",
+    "source": "dwp-auth-server/.../hris/authorization/v2/AuthCurrentDwpAuthorizationBridgeV2.java",
+    "test": "dwp-auth-server/.../hris/authorization/v2/AuthCurrentDwpAuthorizationBridgeV2Test.java + isolated PostgresTest",
+    "status": "NOT_IMPLEMENTED",
+    "requiredNativeChecks": "com_users original tenant/user/principal/person+version/access/current status; actual ProductAuthorizationAuthorityAdapter route-scoped native result; HRIS generic atomic-duty/SoD registration; no People DB access"
+  },
+  {
+    "owner": "Gateway",
+    "source": "dwp-gateway/.../productsurface/HrisCurrentInvocationBridgeV2.java",
+    "test": "HrisCurrentInvocationBridgeV2ForgeryTest.java",
+    "status": "NOT_IMPLEMENTED",
+    "requiredNativeChecks": "verified session/service invocation and tenant/plane/actor binding; current native psr source; no client-minted flags/source revisions; signed freshness/transport issuer/audience"
+  },
+  {
+    "owner": "People",
+    "source": "dwp-people-server/.../hris/authorization/v2/PeopleCurrentTargetAuthorityBridgeV2.java",
+    "test": "PeopleCurrentTargetAuthorityBridgeV2Test.java + isolated PostgresTest",
+    "status": "NOT_IMPLEMENTED",
+    "requiredNativeChecks": "PERSON/no target Auth/worker-free and EMPLOYMENT selected native FK+4versions; current registered population/field/purpose/dynamic SoD; no com_users DB access"
+  },
+  {
+    "owner": "People/Payroll/HRIS consumers",
+    "source": "per-operation server PEP and transaction/query projection",
+    "test": "CurrentHrisAuthorizationV2ConsumerTest.java + revision/revoke/SoD race native tests",
+    "status": "NOT_IMPLEMENTED",
+    "requiredNativeChecks": "consume exact actor2 versus target4 stamps/string revision types; actual query field masking and mutation target locks/CAS/expected current psr; compiler/root registry allocation"
+  }
+],
+  "ownedSources": [
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationExceptionV2.java",
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2.java",
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationPortsV2.java",
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/VerifiedCurrentHrisAuthorizationV2.java",
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/GuardedCurrentHrisAuthorizationPortV2.java",
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2Test.java"
+  ],
+  "sourcePins": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationExceptionV2.java",
+      "sha256": "53651c8aaafe91d6540036c63ba8be414f7281fe5bcaf11cf15072a382a4b9c2",
+      "bytes": 786,
+      "mtimeNs": "1789370904365491717"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationPortsV2.java",
+      "sha256": "c7f8cf621b2b4679f65b4ca9747987caaa379c88d17b47a43f8506a66ffcd841",
+      "bytes": 2315,
+      "mtimeNs": "1789370904366254895"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2.java",
+      "sha256": "a5537ff53d88b93d9ac759d2ccfd3c5840b3b91b80a97e021ce60cf28424efdd",
+      "bytes": 4952,
+      "mtimeNs": "1789370928007662329"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/GuardedCurrentHrisAuthorizationPortV2.java",
+      "sha256": "b87b2cc6d461a8b23bbbb87596bcc2abc6d256593644b5364c67b976b771eb33",
+      "bytes": 16115,
+      "mtimeNs": "1789370927998939867"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/VerifiedCurrentHrisAuthorizationV2.java",
+      "sha256": "f6de6969a3bf65e499faa108beddd7d4b1d2924911079bfa30f2ee3f00259d05",
+      "bytes": 2548,
+      "mtimeNs": "1789370904366695734"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v2/CurrentHrisAuthorizationV2Test.java",
+      "sha256": "311633497bfba7fc8f9ab54cb2cd6155dc2a647d9bc3a339572141ccd37bfdcf",
+      "bytes": 19580,
+      "mtimeNs": "1789371076502812143"
+    }
+  ],
+  "existingSources": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/build.gradle",
+      "sha256": "7e8db78e92907338d1023bee7d3555427c1d0fa79b5c0e4af98a43b73af873d8",
+      "bytes": 8698,
+      "mtimeNs": "1789089247750201697"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityController.java",
+      "sha256": "4bd9987bc8764bdd6e66b0a5bcb344c355ea8237611b505e74b324451a37202d",
+      "bytes": 1120,
+      "mtimeNs": "1788935965279359583"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/dto/ProductSurfaceAuthorityDtos.java",
+      "sha256": "3ecb2e6ec4ed99735d365ce7074c79d3b2de48af53b793cc4bf04877337ccf9b",
+      "bytes": 6843,
+      "mtimeNs": "1788935965286321355"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+      "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+      "bytes": 4887,
+      "mtimeNs": "1789359261552529839"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "sha256": "4f3d2f108adc23f26637c1719acc49ad601eff8aec7fdc10fd90b71fd7bb1a24",
+      "bytes": 35761,
+      "mtimeNs": "1788935965316088539"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupport.java",
+      "sha256": "de41aa1d4b033af28135105e8b385182d6399b48b9bc40f66db4ef10706bbaf0",
+      "bytes": 18555,
+      "mtimeNs": "1788935965316315202"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+      "sha256": "7d83c62b6eab54ea7531561f4c94f35e23a1ee89c0143c86a3e362b0d3961197",
+      "bytes": 5512,
+      "mtimeNs": "1788935965317704181"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceAuthorityService.java",
+      "sha256": "91046d6dad9fb0845cf5660a66bb289728226f8a9fff5d2b2e3c6c81fc8f8e3a",
+      "bytes": 4448,
+      "mtimeNs": "1788935965318024427"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ScopedAdminDutyEvidenceService.java",
+      "sha256": "54622e2bc4583570aa339ce91161a6f5e42605cfbc6444d0a5470dcb5bda74bf",
+      "bytes": 15548,
+      "mtimeNs": "1788935965318956454"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ScopedAdminDutyPolicy.java",
+      "sha256": "ad43ced63ee044ce8c1b1b1de4edebf172c29cbedf5aae36fad815614d0a8b6d",
+      "bytes": 6560,
+      "mtimeNs": "1788935965319068453"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextAggregationSupport.java",
+      "sha256": "f179deefdde11b74ae3c1d447988fd9956a1f2eb8c5ca282745759aba56fb9f2",
+      "bytes": 3668,
+      "mtimeNs": "1788935965395882857"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+      "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+      "bytes": 9105,
+      "mtimeNs": "1789360393439338720"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+      "sha256": "4007621b17847ceac74f72644147b6fc8faeb61780fdf65d94de3bcdd80ca53e",
+      "bytes": 12074,
+      "mtimeNs": "1788935965786261823"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "sha256": "630dda8034e987fe36a4d43c13a6ee323a5b0557dd6dd44f2e2b918a17a92ce4",
+      "bytes": 12088,
+      "mtimeNs": "1788935965786755940"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "sha256": "69b339368be840bdf6948400b8b40f2975f29df2fc0628c69dbf123521608a3b",
+      "bytes": 4568,
+      "mtimeNs": "1788935965786949562"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/security/ProductSurfaceEligibilityDtos.java",
+      "sha256": "0fa698b19b05b479f57240da3cf5df1a19722d3336a0c9a2aa4bd54b1e35898f",
+      "bytes": 2755,
+      "mtimeNs": "1788935965789790645"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+      "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+      "bytes": 649,
+      "mtimeNs": "1789354991077290911"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "1b9cd6961ee86eea17b2f912bddb22030492db23fc6dff07da6c30eccaaab0c4",
+      "bytes": 340,
+      "mtimeNs": "1788935966266960659"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/settings.gradle",
+      "sha256": "bbaf19ef8cdf3894bfa06fc036f6548c2367decc0a8f447288f01bb019252683",
+      "bytes": 508,
+      "mtimeNs": "1789100377990483676"
+    }
+  ],
+  "nativeEvidenceOwnership": {
+    "Auth": {
+      "identity": "public.com_users: tenant_id/user_id/public_id/person_public_id/identity_plane/status/version/access_revision; native principal→person authoritative relation",
+      "rowBindingStamp": "existing user.version, conservatively; separate access_revision; never auth-SHA→long",
+      "authorization": "ProductAuthorizationIdentityEvidenceService auth-* current permission/roles/resource responsibilities/scoped-duty hash; ProductAuthorizationAuthorityAdapter exact policy-* active bundle pointer+checksum and psc-* context; no new independent RBAC"
+    },
+    "Gateway": {
+      "identity": "verified session/server invocation after external actor/person/tenant header stripping and service-token validation",
+      "decisionRevision": "psr-* composite auth/policy/relationship/population/support + rollout, never substituted with auth-*"
+    },
+    "People": {
+      "identity": "public.ppl_persons→ppl_workers→ppl_work_relationships→ppl_assignments owner-native public UUID parent links and person/worker/relationship/assignment versions",
+      "policies": "owner-derived selected population, relationship, field policy, purpose policy, dynamic maker/approver/publisher SoD; opaque native string references"
+    }
+  },
+  "abi": {
+    "publicRequest": "authorize(TargetSelector): only BUSINESS object selector; no public raw authority, actor claim, entitlement/duty/field/purpose boolean or expected-version claim accepted",
+    "trustedConfiguration": "Requirements constructor is a server-registry composition boundary, not request JSON. Exact operation/product/surface/route/purpose/audience/plane/mode/SELF|TARGET_POPULATION/targetKind/permissions/atomicDuties/fields/mutation",
+    "invocation": "current authenticated source carries native Auth tenant/user/principal/person and expected existing row/access stamps with session source revision and bounded current capture/expiry",
+    "nativeStringTypes": [
+      "AuthRevision(auth-64hex)",
+      "PolicyRevision(exact opaque native policy-* string)",
+      "ContextKey(psc-64hex)",
+      "DecisionRevision(psr-64hex)",
+      "PeopleRevision(typed owner kind + exact opaque native string)"
+    ],
+    "targetKinds": {
+      "PERSON": "tenant/person public UUID+person version+owner state only; all employment IDs/parents/versions absent; no worker/location/zone/TIM/target Auth account required",
+      "EMPLOYMENT": "PERSON plus selected worker/person parent UUID+version; relationship/worker parent UUID+version; assignment/relationship parent UUID+version; zero versions valid; no implicit first primary assignment"
+    },
+    "selfBoundary": "target person must equal explicitly native-bound Auth person; no email/name/correlation/UUID equality fallback. Missing native Auth person denies SELF.",
+    "nonSelfBoundary": "People-owned authorized subject is distinct from native Auth actor. NONSELF may target prehire person without Auth account; actor without person allowed only in NONSELF, with current permission/population/field/purpose/SoD decisions.",
+    "output": "VerifiedCurrentHrisAuthorizationV2 private constructor+guard-only mint; bounded local verified composition, NOT a signed production owner proof"
+  },
+  "guardSequence": [
+    "missing any adapter/clock/config denies before every provider call (0/0/0)",
+    "capture initial current Clock; configured verified current invocation; recapture monotonic Clock and validate invocation",
+    "private DwpLookup to trusted bridge: native Auth identity/access + fresh exact Auth current route-scoped reevaluation and verified Gateway composite source; recapture Clock; validate exact requirements/actor/stamps/decision/permissions/duties/APP/static SoD/lease/native string namespaces",
+    "private PeopleLookup with selected business target/current exact route+scope; owner resolves actual target FK/versions/current population/fields/purpose/dynamic SoD; recapture Clock",
+    "refetch current DWP authority and actor stamps; recapture Clock; exact semantic equality excluding lease capture renewal (no source revision substitution)",
+    "refetch current People target and owner policy revisions; recapture Clock; exact target/parent/state/4versions+policy/allowed field equality",
+    "recheck all original proof expiry, cap lifetime≤30s, mint only at current issuance time with minimum expiry; no provider-supplied cause survives redacted error"
+  ],
+  "errors": [
+    "MISSING_ADAPTER",
+    "INVOCATION_INVALID",
+    "CLOCK_INVALID",
+    "OWNER_UNAVAILABLE",
+    "AUTHORITY_STALE",
+    "AUTHORITY_MISMATCH",
+    "AUTHORITY_CHANGED",
+    "APP_DENIED",
+    "PERMISSION_DENIED",
+    "DUTY_DENIED",
+    "SOD_DENIED",
+    "SCOPE_DENIED",
+    "PURPOSE_DENIED",
+    "FIELD_DENIED",
+    "TARGET_INVALID",
+    "TARGET_CHANGED"
+  ],
+  "registrationOrder": [
+    {
+      "phase": 1,
+      "owner": "Product/Auth/Gateway/People",
+      "work": "independently approve exact versioned owner-neutral schemas/transport source ownership and current freshness/session binding; map source revisions without numeric conversion",
+      "implemented": false
+    },
+    {
+      "phase": 2,
+      "owner": "Auth",
+      "work": "new private v2 lookup native user/person/current permissions bridge over existing Auth SoR; reevaluate through current ProductAuthorizationAuthorityAdapter; route-scoped evaluated grants and existing responsibilities/duties; registered HRIS generic scoped duty/SoD extension, not existing approvals-only default true",
+      "implemented": false
+    },
+    {
+      "phase": 3,
+      "owner": "Gateway",
+      "work": "verified invocation + current psr source delivery; no client actor/person/tenant header authority, no same-string revision substitution; exact route/purpose/audience and native session/access revalidation",
+      "implemented": false
+    },
+    {
+      "phase": 4,
+      "owner": "People",
+      "work": "explicit PERSON/EMPLOYMENT native target selector/parent/version refetch and registered population/field/purpose/dynamic SoD policy; no lateral LIMIT1/multiple-scope implicit first selection; no Auth DB join",
+      "implemented": false
+    },
+    {
+      "phase": 5,
+      "owner": "command/query service",
+      "work": "actual per-operation PEP; query projection/masking; transactional target lock/CAS/current expected psr and native versions before mutation/outbox; epoch/freshness/revocation/relocation cross-owner boundary reviewed",
+      "implemented": false
+    },
+    {
+      "phase": 6,
+      "owner": "shared registration/independent reviewers",
+      "work": "consumer compile/native PG/verified-transport forgery/lifecycle/revoke/SoD race tests, register source/operation contracts after proof; do not open Gate from author mocks",
+      "implemented": false
+    }
+  ],
+  "knownOpen": [
+    "ScopedAdminDutyPolicy.requiresScopedDuty currently approvals/approvals.admin only and staticSodConflict switch covers only 3 approvals capabilities; HRIS policy is not already completed.",
+    "Native production Auth/current Gateway/People providers, HTTP parser/signature/audience/freshness proof and owner relink/revoke ordering are absent from this scaffold.",
+    "People existing primary-assignment/implicit selected-scope behavior must not be inherited as comprehensive multi-employment authority.",
+    "Sequential native refetch cannot prove cross-database atomic revocation or transaction PEP; end-of-read bounded lease is not action authorization at a later time.",
+    "String namespace validation proves shape only; actual auth/policy/psc/psr/People source provenance requires trusted native/transport providers.",
+    "No source verification-root/owner registry/menu route was registered; whole current BE check/HRIS G3 approval are not claimed."
+  ],
+  "authorTestAllocation": {
+    "suite": "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+    "typedCases": 60,
+    "typedPositive": 6,
+    "typedNegative": 53,
+    "privateApiBoundary": 1,
+    "actualNativeCases": 0,
+    "skipped": 0,
+    "actualExecutionStatus": "60_CASES_REAL_AUTHOR_UNIT_PASS_NOT_NATIVE_INTEGRATION",
+    "run": {
+      "argv": [
+        "./gradlew",
+        ":dwp-platform-contracts:test",
+        "--rerun",
+        "--tests",
+        "com.dwp.platform.contracts.hris.identity.v2.CurrentHrisAuthorizationV2Test",
+        "--no-daemon",
+        "--max-workers=1"
+      ],
+      "startedAt": "2026-09-14T07:33:31.712490+00:00",
+      "finishedAt": "2026-09-14T07:33:37.799811+00:00",
+      "durationSeconds": 6.086671249999199,
+      "exitCode": 0
+    }
+  }
+}

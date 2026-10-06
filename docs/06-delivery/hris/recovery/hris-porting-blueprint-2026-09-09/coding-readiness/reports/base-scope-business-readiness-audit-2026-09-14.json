@@ -1,0 +1,3770 @@
+{
+  "schema": "dwp.hris.base-scope-business-readiness-audit.v1",
+  "auditDate": "2026-09-14",
+  "status": "INDEPENDENT_READ_ONLY_AUDIT_G3_CLOSED_NOT_ALL86_PASS",
+  "canonicalGateDecisionRef": "g0/current-g3-gate-decision.json",
+  "effectiveGateAtRead": "CLOSED_FAIL_SAFE",
+  "authority": "EVIDENCE_REPORT_ONLY_NO_GATE_MUTATION",
+  "scope": {
+    "baseFamilies": 86,
+    "activeFamilies": 84,
+    "retiredFamilies": 2,
+    "sourceParents": 2269,
+    "transitivelyResolvedSourceChildren": 10001,
+    "baseIaNodes": 76,
+    "basePlannedPhysicalTables": 163,
+    "basePlannedPhysicalByModule": {
+      "HRM": 24,
+      "PER": 34,
+      "TIM": 31,
+      "PAY": 42,
+      "SYS": 32
+    },
+    "publicBaseApiPepTransportBindings": 175,
+    "canonicalCrossModuleContracts": 21,
+    "typedProviderConsumerTestPathBindings": 130,
+    "fullAllSourceBusinessCertification": "UNVERIFIED",
+    "notAuthorReviewOfHrmModernProposal": true,
+    "newModernProposalsUsedOnlyForExplicitCrossOwnerAvailabilityContext": true
+  },
+  "method": {
+    "skill": "Spreadsheets read-only precedent/CSV semantic joins; bundled Python csv/json and Ruby YAML parsing; original CSV/workbook not edited",
+    "fullReadLimits": [
+      "All86 target-family rationales and source capability group rows reviewed; validator checked all2269 parent/all10001 child structural resolutions.",
+      "Selected exact historical API/transport/state/SQL/fixture semantics reviewed; not every10001 sanitized child business value/operator inspected.",
+      "8 existing non-mutating default static validators run; no database/container/process/migration/business runtime mutations.",
+      "Property-set constructive witness proves PER freeze closed-allOf contradiction; no installed standard JSON-Schema engine was used.",
+      "Actual customer/statutory/provider facts, raw excluded source content and full-domain G4 runtime execution were not audited."
+    ],
+    "sourceSafety": {
+      "rawSourceContentRead": false,
+      "sanitizedAvailability": {
+        "available": 2258,
+        "blocked": 9,
+        "retired": 2
+      },
+      "excludedSources": "BENSK/ADDSK/customer raw scripts and credentials not read/restored",
+      "nonCanonicalChildField": "target_api_event_candidate",
+      "authoritativeChildPath": "child.parent_artifact_id -> source parent target family -> target-family-resolution-register.resolution_refs"
+    }
+  },
+  "stageBoundary": {
+    "G3": [
+      "Exact approved planned API/schema/SQL/column source/read-write/state/refetch/PEP/fixture/test allocation, including native and optional-pack failure modes.",
+      "Canonical shared owner DTO/SPI/generated bindings + strict fail-closed adapters + independent consumer compile/source oracle.",
+      "Current common/pilot static/focused/runtime smoke, approved schema/role/stream receipt/source guard, environment/capacity/SHA and authoritative Gate reconciliation."
+    ],
+    "G4": [
+      "Implement full business CRUD/migrations/object state/write sets/PEP/outbox and all domain native/negative/concurrent/recovery journeys.",
+      "Complete business schedule/leave/performance/payroll/HRM and modern APIs after coding readiness is authorized."
+    ],
+    "G6": [
+      "Actual customer identity verification authority/data link bootstrap/adoption/cutover/policy activation.",
+      "Jurisdiction official rule/effective-date/approval and production provider credential/integration/legal/DR/production evidence."
+    ],
+    "forbiddenCircularCondition": "Do not require all business operations or G4 SQL materialization/native acceptance runtime before G3 coding readiness."
+  },
+  "observedBackend": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "head": "70c996fdafc011392056a1909a2e5222b240ded3",
+    "workingTreeAtRead": "CLEAN",
+    "readOnly": true,
+    "mainUserDirtyWorktree": "NOT_MUTATED_OR_USED_AS_CODE_AUTHORITY",
+    "currentCommonOccupiedVersions": {
+      "People": [
+        47,
+        48
+      ],
+      "Auth": [
+        211,
+        212
+      ],
+      "Platform": [
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237
+      ]
+    }
+  },
+  "results": {
+    "staticValidatorSummary": {
+      "executed": 8,
+      "pass": 6,
+      "fail": 2,
+      "scope": "STRUCTURAL_AND_SOURCE_PREPARATION_CHECKS_NOT_ALL_BUSINESS_RUNTIME"
+    },
+    "familySemanticStatusCounts": {
+      "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER": 69,
+      "DECIDED_RETIRED_NO_CODE_NOT_BUSINESS_PASS": 2,
+      "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS": 15
+    },
+    "knownG3P0FindingCount": 11,
+    "unverifiedScopeFindingCount": 1,
+    "noAll86BusinessPass": true,
+    "sourceDecisions": {
+      "hrm": {
+        "columns": [
+          "session_id",
+          "source_module",
+          "artifact_type",
+          "artifact_id",
+          "display_key",
+          "source_file",
+          "source_line",
+          "legacy_contract",
+          "legacy_component_or_table",
+          "observed_metadata",
+          "disposition",
+          "target_capability_id",
+          "target_bounded_context_candidate",
+          "target_api_or_event",
+          "target_data_owner",
+          "process_change",
+          "genericity",
+          "acceptance_evidence",
+          "decision_status",
+          "decision_owner",
+          "notes"
+        ],
+        "dispositionCounts": {
+          "CONFIGURE": 87,
+          "EXTENSION": 49,
+          "REBUILD": 312,
+          "RETIRE": 23,
+          "REUSE": 112
+        },
+        "genericityCounts": {
+          "DWP_SHARED_PLATFORM": 28,
+          "EXCLUDED_BENSK": 2,
+          "PRODUCT_CORE": 316,
+          "PRODUCT_CORE|COUNTRY_PACK_EXTENSION_POINTS": 53,
+          "PRODUCT_CORE|COUNTRY_PACK_FIELDSET": 6,
+          "PRODUCT_CORE|TENANT_CONFIGURATION": 21,
+          "PROVIDER_EXTENSION": 43,
+          "RETIRED_PRESENTATION_DUPLICATE": 14,
+          "RETIRED_SAMPLE": 3,
+          "RETIRED_SECURITY_ANTIPATTERN": 1,
+          "RETIRED_TECHNICAL_DUPLICATE": 3,
+          "TENANT_CONFIGURATION": 87,
+          "TENANT_EXTENSION": 6
+        }
+      },
+      "per": {
+        "columns": [
+          "session_id",
+          "source_module",
+          "artifact_type",
+          "artifact_id",
+          "display_key",
+          "source_file",
+          "source_line",
+          "legacy_contract",
+          "legacy_component_or_table",
+          "observed_metadata",
+          "disposition",
+          "target_capability_id",
+          "target_bounded_context_candidate",
+          "target_api_or_event",
+          "target_data_owner",
+          "process_change",
+          "genericity",
+          "acceptance_evidence",
+          "decision_status",
+          "decision_owner",
+          "notes"
+        ],
+        "dispositionCounts": {
+          "CONFIGURE": 17,
+          "EXTENSION": 6,
+          "REBUILD": 305,
+          "RETIRE": 9,
+          "REUSE": 12
+        },
+        "genericityCounts": {
+          "DWP_PLATFORM_REUSE": 12,
+          "GLOBAL_CORE": 305,
+          "RETIRED_LEGACY": 9,
+          "SIGNED_EXTENSION_PACK": 6,
+          "TYPED_TENANT_CONFIGURATION": 17
+        }
+      },
+      "tim": {
+        "columns": [
+          "session_id",
+          "source_module",
+          "artifact_type",
+          "artifact_id",
+          "display_key",
+          "source_file",
+          "source_line",
+          "legacy_contract",
+          "legacy_component_or_table",
+          "observed_metadata",
+          "disposition",
+          "target_capability_id",
+          "target_bounded_context_candidate",
+          "target_api_or_event",
+          "target_data_owner",
+          "process_change",
+          "genericity",
+          "acceptance_evidence",
+          "decision_status",
+          "decision_owner",
+          "notes"
+        ],
+        "dispositionCounts": {
+          "CONFIGURE": 164,
+          "EXTENSION": 9,
+          "REBUILD": 190,
+          "RETIRE": 177,
+          "REUSE": 28
+        },
+        "genericityCounts": {
+          "CORE": 163,
+          "CORE_PLATFORM": 21,
+          "COUNTRY_PACK_KR_OPTIONAL": 17,
+          "EXTENSION_PACK": 9,
+          "RETIRED": 177,
+          "TENANT_CONFIG": 181
+        }
+      },
+      "pay": {
+        "columns": [
+          "session_id",
+          "source_module",
+          "artifact_type",
+          "artifact_id",
+          "display_key",
+          "source_file",
+          "source_line",
+          "legacy_contract",
+          "legacy_component_or_table",
+          "observed_metadata",
+          "disposition",
+          "target_capability_id",
+          "target_bounded_context_candidate",
+          "target_api_or_event",
+          "target_data_owner",
+          "process_change",
+          "genericity",
+          "acceptance_evidence",
+          "decision_status",
+          "decision_owner",
+          "notes"
+        ],
+        "dispositionCounts": {
+          "CONFIGURE": 121,
+          "EXTENSION": 57,
+          "REBUILD": 227,
+          "RETIRE": 147,
+          "REUSE": 28
+        },
+        "genericityCounts": {
+          "CORE": 109,
+          "CORE_PLATFORM": 20,
+          "COUNTRY_OR_TENANT_CONFIG": 3,
+          "COUNTRY_PACK_KR_OPTIONAL": 149,
+          "EXTENSION_PACK": 31,
+          "RETIRED": 147,
+          "TENANT_CONFIG": 121
+        }
+      },
+      "sys": {
+        "columns": [
+          "session_id",
+          "source_module",
+          "artifact_type",
+          "artifact_id",
+          "display_key",
+          "source_file",
+          "source_line",
+          "legacy_contract",
+          "legacy_component_or_table",
+          "observed_metadata",
+          "disposition",
+          "target_capability_id",
+          "target_bounded_context_candidate",
+          "target_api_or_event",
+          "target_data_owner",
+          "process_change",
+          "genericity",
+          "acceptance_evidence",
+          "decision_status",
+          "decision_owner",
+          "notes"
+        ],
+        "dispositionCounts": {
+          "CONFIGURE": 37,
+          "REBUILD": 47,
+          "RETIRE": 4,
+          "REUSE": 101
+        },
+        "genericityCounts": {
+          "DWP_SHARED_PLATFORM": 89,
+          "DWP_SHARED_PLATFORM|EXTENSION_PACK": 2,
+          "DWP_SHARED_PLATFORM|TENANT_CONFIG": 31,
+          "DWP_SHARED_PLATFORM|TENANT_CONFIG|EXTENSION_PACK": 19,
+          "PRODUCT_CORE|TENANT_CONFIG": 44,
+          "RETIRED": 4
+        }
+      }
+    },
+    "baseFixtureSpecs": {
+      "HRM": 15,
+      "PER": 18,
+      "TIM": 13,
+      "PAY": 17,
+      "SYS": 60,
+      "meaning": "Planned synthetic cases; counts do not prove API-valid input/source/state closure or executed runtime for all families."
+    }
+  },
+  "positiveEvidence": [
+    {
+      "claim": "All86 families have explicit source→target consolidation/exclusion rationales and resolved references;2 families are decision-only retired, with3 pinned retired child overrides.",
+      "proof": "family validator actual PASS; TFR sha in evidenceManifest",
+      "limitation": "Structural transitive closure, not every retained child semantic restoration."
+    },
+    {
+      "claim": "175 public API/PEP tuples,175 transport bindings,121 async→authorized receipt convergences and130 exact provider/consumer test writer allocations exist.",
+      "proof": "transport parity/async checks; typedTest PASS130",
+      "limitation": "Transport source resolution currently FAIL14; allocation is not an executed consumer test result."
+    },
+    {
+      "claim": "XCON21 closed canonical typed schemas have pinned normalized digests, producer/consumer generated import and52 XCON test bindings.",
+      "proof": "xcon actual PASS21,31consumer bindings/52test paths",
+      "limitation": "Identity/self, native schedule/availability/skills owner ports are not in existing21."
+    },
+    {
+      "claim": "TIM→PAY ClosedTimeResult and PER→PAY ApprovedCompensationPlanSnapshot specify immutable owner refetch, typed decimal/unit/currency, bounded streaming, staged atomic count/sequence/digest validation and reopen/supersede failure modes.",
+      "proof": "TIM providedSnapshots/0; PAY consumedSnapshots ClosedTimeResult/ApprovedCompensationPlanSnapshot; existing XCON binding",
+      "limitation": "This audit does not independently rerun full-domain producer/consumer runtime."
+    },
+    {
+      "claim": "Shared access/SoD/effective-dating/receipt sealed-originating authorization, controlled object metadata/scan snapshot and typed widget privacy are concretely planned, not menu-only API counts.",
+      "proof": "SYS state machines; historical transport/current common SQL; IA and contamination structural PASS",
+      "limitation": "PER/HRM state docs still contain stale idempotency tuple/state prose; approved successor must resolve contradictions against current shared protocol."
+    }
+  ],
+  "findings": [
+    {
+      "id": "BASE-P0-001",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Historical migration seal and current owner allocation diverge",
+      "families": [
+        "TFR-HRM-*",
+        "TFR-PER-*",
+        "TFR-SYS-*"
+      ],
+      "evidence": [
+        {
+          "file": "g0/migration-allocation-register.csv",
+          "selector": "allocation_id=MIG-HRM-PEOPLE-47-69|MIG-SYS-AUTH-211-239|MIG-SYS-PLATFORM-231-259"
+        },
+        {
+          "file": "coding-readiness/validate_base_schema_postgres_feasibility.py",
+          "selector": "actual default static result: 3 errors, current People V1..V48 compared with sealed V1..V46"
+        }
+      ],
+      "observation": "Current clean integration HEAD 70c996fdafc011392056a1909a2e5222b240ded3 contains People V47/V48, Auth V211/V212, Platform V231..V237 common hardening. Existing reservations start at those occupied versions. HRM/PER baseline static check rejects current48-file prefix; this does not mean historical V1..V46 SQL blobs were changed.",
+      "closingConditions": [
+        "Preserve sealed historical V1..V46 blobs/digests; approve an exact common-prefix successor and current baseline lineage independently.",
+        "Reallocate create-only business versions after actual current high-water, with exact files/owner/history/stream and synchronized checkpoint/touch manifests.",
+        "Do not widen historical validator range or renumber installed migrations to obtain PASS."
+      ]
+    },
+    {
+      "id": "BASE-P0-002",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Current baseline transport source cannot be resolved by historical worktree seal",
+      "families": [
+        "TFR-HRM-002",
+        "TFR-SYS-012"
+      ],
+      "evidence": [
+        {
+          "file": "coding-readiness/transport-schema-resolution-register.csv",
+          "selector": "pep_binding_id=PEP-SYS-033|PEP-SYS-034; DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json"
+        },
+        {
+          "file": "coding-readiness/validate_transport_schema_resolution.py",
+          "selector": "actual default static result: HEAD drift and14 errors"
+        }
+      ],
+      "observation": "175-operation parity/121 asynchronous authorized-receipt convergences remain structurally closed, but source resolution for GET/PUT baseline home-preferences fails because the historical validator rejects current worktree lineage and resolves to /__invalid_baseline__. It is a seal/source reconciliation failure, not proof that the real GET/PUT API disappeared.",
+      "closingConditions": [
+        "Approve current exact common baseline successor and prove immutable historical source-reference bytes/current generated OpenAPI relation.",
+        "Reconcile baseline references and named body-version CAS exception without substituting an unrelated current schema; rerun transport and published/current Gate validators."
+      ]
+    },
+    {
+      "id": "BASE-P0-003",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Self/worker identity lacks a canonical verified multi-employment source contract",
+      "families": [
+        "TFR-HRM-004",
+        "TFR-HRM-008",
+        "TFR-HRM-010",
+        "TFR-HRM-009",
+        "TFR-HRM-011",
+        "TFR-PER-007",
+        "TFR-PER-009",
+        "TFR-PER-013",
+        "TFR-TIM-006",
+        "TFR-TIM-014",
+        "TFR-TIM-016",
+        "TFR-TIM-017",
+        "TFR-TIM-018",
+        "TFR-PAY-009",
+        "TFR-PAY-015",
+        "TFR-SYS-012"
+      ],
+      "evidence": [
+        {
+          "file": "coding-readiness/cross-module-canonical-schemas.v1.json",
+          "selector": "WorkerAssignmentSnapshot: personPublicId/workerPublicId/assignments; no authenticated-principal-to-worker mapping"
+        },
+        {
+          "file": "session-evidence/tim/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/LeaveRequestCommand/required"
+        },
+        {
+          "file": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+          "selector": "CreateGoalCommand.ownerPublicId; CreateCheckinCommand subjectWorkerPublicId/managerWorkerPublicId"
+        },
+        {
+          "file": "dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+          "repository": "INTEGRATION_BACKEND",
+          "selector": "worker→person identity, not user/principal→worker link"
+        }
+      ],
+      "observation": "Trusted tenant and authenticated principal do not imply worker identity. Read-only search of current People V1..V48 and historical G2 SQL found worker/person linkage and actor audit IDs, but no canonical verified effective principal↔person↔worker self-resolution relation. Body worker UUIDs may be authorized operator references; they cannot establish a self claim. Proposed HRM identity mapping remains DESIGN_PROPOSED, not canonical closure.",
+      "closingConditions": [
+        "Publish exact owner identity link schema/query DTO+SPI: tenant+principal, independent verification/provenance, valid half-open interval, linked person/worker/employment IDs and explicit multi-employment selfContext selection.",
+        "Compile strict fail-closed shared producer/consumer adapters with synthetic zero/one/many/expired/revoked/cross-tenant link, body-self-claim and unrelated assignment negatives.",
+        "Customer identity authority/adoption/link bootstrap is G6; full business SELF CRUD is G4, not a prerequisite for G3."
+      ]
+    },
+    {
+      "id": "BASE-P0-004",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Schedule policy CRUD is not the actual worker schedule lifecycle",
+      "families": [
+        "TFR-TIM-016",
+        "TFR-TIM-010",
+        "TFR-TIM-015",
+        "TFR-TIM-019"
+      ],
+      "evidence": [
+        {
+          "file": "session-registers/hris-tim-source-coverage.csv",
+          "csvRows": [
+            4,
+            6,
+            10,
+            12,
+            27
+          ],
+          "selector": "TIM-SCHEDULE: crew/rotation/work-time/crew-change/flexible work source semantics;129 parents"
+        },
+        {
+          "file": "session-evidence/tim/g2-api-event-contracts.json",
+          "pointer": "/operations/2"
+        },
+        {
+          "file": "session-evidence/tim/g2-api-event-contracts.json",
+          "pointer": "/operations/3"
+        },
+        {
+          "file": "session-evidence/tim/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/SchedulePage"
+        },
+        {
+          "file": "session-evidence/tim/g2-physical-schema.sql",
+          "line": 88,
+          "selector": "tme_schedule_patterns; tme_worker_schedule_assignments at109; tme_scheduled_segments at130"
+        }
+      ],
+      "observation": "All28 public operations offer schedule.query and work-rule-version create/validate/simulate/publish, but no registered native schedule-period/worker-assignment/segment create, assign, validate, submit, publish, amend or cancel command/write set. SchedulePage exposes DRAFT/PUBLISHED/CANCELLED schedule states without defining their aggregate source or materialization. Rule publication alone cannot identify worker/assignment/crew/shift/calendar/effective-period writes or preserve correction lineage.",
+      "closingConditions": [
+        "Define exact native schedule aggregate API/state/column-source/read-write design, including worker/assignment and immutable shift/pattern/rule/calendar refs, effective timezone/DST intervals, approval/CAS, amendments/cancellation and restore/replay rules.",
+        "Publish the TIM canonical schedule transaction/query snapshot port, fail-closed owner validation adapter and independent consumer compile fixtures before WFM depends on it.",
+        "Allocate two deterministic configuration journeys and assignment-overlap, source stale, rejected approval, cross-tenant, SoD and stale amendment negatives; domain execution belongs to G4."
+      ]
+    },
+    {
+      "id": "BASE-P0-005",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Time rule and leave accrual policy are bounded strings, not exact typed semantics",
+      "families": [
+        "TFR-TIM-005",
+        "TFR-TIM-010",
+        "TFR-TIM-011",
+        "TFR-TIM-012",
+        "TFR-TIM-013",
+        "TFR-TIM-014",
+        "TFR-TIM-015",
+        "TFR-TIM-016"
+      ],
+      "evidence": [
+        {
+          "file": "session-evidence/tim/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/RuleVersionCommand/properties/ruleExpression"
+        },
+        {
+          "file": "session-evidence/tim/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/LeavePlanCommand/properties/rules"
+        },
+        {
+          "file": "session-evidence/tim/synthetic-golden-fixtures.json",
+          "pointer": "/cases/3"
+        },
+        {
+          "file": "session-evidence/tim/g2-physical-schema.sql",
+          "line": 422,
+          "selector": "abs_worker_plan_enrollments"
+        }
+      ],
+      "observation": "ruleExpression is arbitrary string(max20000), leave rules are arrays of strings(max2000). Closed outer schema and bounded size do not define code-owned operators, units, accrual basis, eligibility, enrollment/source, carryover/caps/expiry, proration/calendar dependencies or deterministic precedence. One overtime threshold fixture gives a valid illustrative expected total, not a complete API-valid published policy contract.",
+      "closingConditions": [
+        "Register closed rule AST or exact grammar+typed operator/input/output registry; reject executable scripts/unknown operators, unit mismatch and arbitrary customer literals.",
+        "Define immutable policy versions, owner schema/source/refetch provenance, worker-plan enrollment generation and replay/cancel/reversal write sets.",
+        "Provide API-valid two-policy synthetic fixtures with exact quantities/rounding/calendar/eligibility/negative results; optional statutory policy approval/activation remains G6."
+      ]
+    },
+    {
+      "id": "BASE-P0-006",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Timecard response state cannot be projected literally from planned SQL",
+      "families": [
+        "TFR-TIM-007",
+        "TFR-TIM-015",
+        "TFR-TIM-017"
+      ],
+      "evidence": [
+        {
+          "file": "session-evidence/tim/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/TimecardResponse/properties/state/enum"
+        },
+        {
+          "file": "session-evidence/tim/g2-physical-schema.sql",
+          "line": 340,
+          "selector": "ck_tme_time_card_status"
+        }
+      ],
+      "observation": "Response enum is OPEN/SUBMITTED/APPROVED/REJECTED/CLOSED, while table status is OPEN/SUBMITTED/APPROVED/REJECTED/LOCKED/CORRECTION_REQUIRED. CLOSED is absent in SQL; LOCKED/CORRECTION_REQUIRED are absent in response. No explicit typed domain projection mapping justifies collapsing locked/needs-correction into closed.",
+      "closingConditions": [
+        "Approve one object-state vocabulary or explicit closed projection mapping with source/guard definition, preserving lock vs close vs corrective lifecycle.",
+        "Allocate source enum completeness and every legal/illegal transition/projection fixture before implementation; do not add unguarded storage states only to match counts."
+      ]
+    },
+    {
+      "id": "BASE-P0-007",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "HRM employment events and patches do not yet define event-specific typed change/write schemas",
+      "families": [
+        "TFR-HRM-004",
+        "TFR-HRM-005",
+        "TFR-HRM-007",
+        "TFR-HRM-008",
+        "TFR-HRM-010",
+        "TFR-HRM-013",
+        "TFR-TIM-003",
+        "TFR-PAY-021",
+        "TFR-PER-016",
+        "TFR-TIM-019"
+      ],
+      "evidence": [
+        {
+          "file": "coding-readiness/hrm-transport-schema-supplement.v1.json",
+          "pointer": "/$defs/AssignmentEventCommand"
+        },
+        {
+          "file": "coding-readiness/hrm-transport-schema-supplement.v1.json",
+          "pointer": "/$defs/EmployeeChangeCommand/properties/patch/items"
+        },
+        {
+          "file": "session-registers/hris-tim-source-coverage.csv",
+          "csvRows": [
+            20,
+            31,
+            33,
+            307,
+            496,
+            497
+          ],
+          "selector": "leave-of-absence/reinstatement moved to HRM absence-cases|EmploymentChanged"
+        },
+        {
+          "file": "session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+          "selector": "Create person/worker guard; separation requires downstream tasks and post-irreversible reversal/return/rehire"
+        }
+      ],
+      "observation": "LEAVE/RETURN/HIRE/REHIRE/CORRECTION event codes exist; absence/reinstatement ownership transfer to HRM is sensible. They are not wholly missing lifecycles. However, changes[field,value] permits untyped scalar values and EmployeeChange patch accepts arbitrary object/array values under schemaKey/version without a registered event-specific fieldset/source/write-set graph here. HIRE requires an existing assignmentPublicId; native first person/worker/relationship/assignment admission and separation task completion/correction source commands are not exact in the22 HRM endpoint catalog. Source-shaped absence-cases is noncanonical, so it cannot substitute for those contracts.",
+      "closingConditions": [
+        "Publish eventType-discriminated exact body/record/source/write contracts and registered patch schema versions for native admission, appointments, leave/return, concurrent employment, termination and correction.",
+        "Bind relationship/assignment/org/position/config refs to the proper tenant-bound owner snapshot or local resolver; no first-path/correlation/business-key UUID substitution.",
+        "Specify separation task command/query/callback and post-irreversible successor semantics with source versions and existing historical facts retained. G4 implements these operations; G3 approves exact plan and shared owner source contracts."
+      ]
+    },
+    {
+      "id": "BASE-P0-008",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Performance declares multi-aggregate lifecycles whose command/owner signal coverage is incomplete",
+      "families": [
+        "TFR-PER-002",
+        "TFR-PER-003",
+        "TFR-PER-005",
+        "TFR-PER-006",
+        "TFR-PER-008",
+        "TFR-PER-009",
+        "TFR-PER-012",
+        "TFR-PER-013",
+        "TFR-PER-014",
+        "TFR-PAY-016"
+      ],
+      "evidence": [
+        {
+          "file": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+          "selector": "paths:21 public operations +2 owner-internal operations"
+        },
+        {
+          "file": "session-evidence/per/g2-readiness/state-guard-idempotency-recovery.md",
+          "selector": "Cycle/Goal/Review/Feedback/Check-in/Calibration/Result/Appeal machines"
+        },
+        {
+          "file": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+          "line": 906,
+          "selector": "CalibrationAdjustmentCommand.distributionImpact supplied by caller"
+        },
+        {
+          "file": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+          "line": 1050,
+          "selector": "PerformanceAppealResolved event with no exact resolve command"
+        }
+      ],
+      "observation": "Catalog has create/check-in, create-feedback, append-calibration, publish-results and open-appeal, but not exact cycle activation/close trigger, goal approval/complete/return, feedback response/decline/release, check-in complete/ack, calibration session create/submit/approve/lock, result compute/validate/approve, appeal review/resolve/withdraw/close commands or owner signal definitions. Therefore final states are not reachable through the registered public/internal command graph unless undocumented jobs/callbacks are assumed. Goal RETURNED text is absent from response enum; feedback AGGREGATED and check-in ACKNOWLEDGED/DRAFT vocabulary also diverge. Caller previousValue/distributionImpact cannot be the authoritative score/cohort baseline.",
+      "closingConditions": [
+        "Bind each real aggregate transition to exact operationId or typed trusted owner signal, write set, PEP/SoD/source version and receipt/outbox schema; remove unsupported lifecycle claims only by explicit approved scope decision.",
+        "Refetch/calculatively derive result/calibration baseline and distribution from immutable owner snapshots; treat caller values only as compare assertions.",
+        "Provide per-aggregate reachability/terminal/no-submit-after-lock fixtures and full producer source/input/output schemas before G4 lifecycle implementation."
+      ]
+    },
+    {
+      "id": "BASE-P0-009",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Performance population freeze closed allOf schema rejects every required valid input",
+      "families": [
+        "TFR-PER-006",
+        "TFR-PER-013"
+      ],
+      "evidence": [
+        {
+          "file": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+          "line": 719,
+          "pointer": "/components/schemas/FreezePopulationCommand"
+        },
+        {
+          "file": "session-evidence/per/g2-readiness/api-event-contracts.yaml",
+          "line": 711,
+          "pointer": "/components/schemas/PopulationPreviewCommand"
+        }
+      ],
+      "observation": "FreezePopulationCommand allOf combines closed PopulationPreviewCommand(required populationRuleId/workforceSnapshotId/workforceSnapshotRevision) with a second closed object permitting only required previewContentHash. Base rejects previewContentHash and extension rejects all three base fields. A constructive property-set witness on actual saved YAML confirms the required-property intersection is unsatisfiable. This is a mechanical JSON-Schema closure proof, not a full standards-engine validation run.",
+      "closingConditions": [
+        "Flatten the closed schema or use a correctly supported allOf/unevaluatedProperties construction, retaining all four typed required fields and no unknown properties.",
+        "Execute standard JSON-Schema/OpenAPI valid+missing+unknown-field fixtures and exact consumer DTO compile test after an approved successor; keep historical YAML immutable."
+      ]
+    },
+    {
+      "id": "BASE-P0-010",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "Payroll foundation/input freeze and formula wire payload lack exact authoritative artifact/DSL binding",
+      "families": [
+        "TFR-PAY-006",
+        "TFR-PAY-007",
+        "TFR-PAY-011",
+        "TFR-PAY-013",
+        "TFR-PAY-014",
+        "TFR-PAY-016",
+        "TFR-PAY-019",
+        "TFR-PAY-020",
+        "TFR-PAY-021"
+      ],
+      "evidence": [
+        {
+          "file": "session-evidence/pay/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/VersionedConfigCommand"
+        },
+        {
+          "file": "session-evidence/pay/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/RunCommand"
+        },
+        {
+          "file": "session-evidence/pay/g2-transport-schemas.v1.json",
+          "pointer": "/$defs/FormulaCommand/properties/expression"
+        },
+        {
+          "file": "session-evidence/pay/synthetic-golden-fixtures.json",
+          "pointer": "/cases/1/input/validExpression"
+        },
+        {
+          "file": "session-evidence/pay/g2-api-event-contracts.json",
+          "pointer": "/principles/formulaExecution"
+        }
+      ],
+      "observation": "Foundation create passes payloadDigest only with configCode/version/effective scope; run.prepare passes inputSnapshotDigest without exact immutable input IDs/revisions/source vector or declared owner materialization query binding. A digest can validate bytes only after actual authoritative artifact resolution. Formula wire expression is a string, while golden validExpression is a typed MULTIPLY graph and principles require typed-bounded-dsl-only. No exact string grammar or closed AST registry in these audited artifacts bridges that contract. Existing six decimal value types and typed worker entry discriminants are meaningful hardening, but do not complete foundation/formula/source semantics.",
+      "closingConditions": [
+        "Define exact foundation artifact payload/ref/import+owner refetch schema and run input source vector/snapshot sealing rule, including HRM/TIM/PER current authorized revision and reopen/supersede invalidation.",
+        "Publish typed bounded formula AST or exact grammar/operator/type/unit/error registry, closed return/currency/rounding-policy binding and dependency graph/source schema.",
+        "Allocate API-valid two-config calculation+retro/off-cycle/source-stale/unknown-function/cycle/unit/currency/forged-digest fixtures; implementation and complete payroll runtime journeys are G4."
+      ]
+    },
+    {
+      "id": "BASE-P0-011",
+      "priority": "P0",
+      "stage": "G3",
+      "title": "WFM availability must be a TIM-orchestrated multi-owner snapshot, not HRM-owned calculation",
+      "families": [
+        "TFR-TIM-016",
+        "TFR-TIM-014",
+        "TFR-TIM-019",
+        "TFR-HRM-008",
+        "TFR-HRM-005",
+        "TFR-PER-016"
+      ],
+      "evidence": [
+        {
+          "file": "coding-readiness/cross-module-contract-register.csv",
+          "selector": "canonical21: no TIM availability/schedule planning-input or PER skills vocabulary contract"
+        },
+        {
+          "file": "session-evidence/tim/g2-api-event-contracts.json",
+          "pointer": "/providedSnapshots"
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.json",
+          "pointer": "/planningInputOwnerDecision"
+        },
+        {
+          "file": "coding-readiness/semantic-remediation/sys-tim-synthetic-acceptance.v1.json",
+          "pointer": "/fixtures/0/inputs/ownerSnapshots/availability"
+        }
+      ],
+      "observation": "Current proposal explicitly owner=TIM/notOwner=HRM and composes HRM effective assignment/location, TIM absence availability/canonical schedule, PER WFM skill vocabulary. Root corrected the fixture alias during this audit to TIM.WfmPlanningInputSnapshot.v1 and PER.WfmSkillVocabularySnapshot.proposal.v1. The earlier HRM.WorkforceAvailabilitySnapshot alias is no longer the current fixture defect. Neither corrected label nor expectation-only tests publish the canonical contracts. Historical TIM G2 provides only ClosedTimeResult snapshot, and XCON21 lacks these ports.",
+      "closingConditions": [
+        "Independently register exact producer operation/response schema and DTO+SPI for HRM employment/assignment/location, TIM approved leave/work arrangement/schedule availability, PER skill/taxonomy/proficiency evidence.",
+        "TIM orchestrates an authorized tenant/worker/assignment/asOf/effective interval/revision join; HRM does not calculate TIM/PER rules and SYS does not join owner databases.",
+        "Define immutable source vector/refetch/staleness/interval-intersection/privacy semantics and strict negative compile/source fixtures; full WFM business execution is G4, production provider activation G6."
+      ]
+    },
+    {
+      "id": "BASE-SCOPE-012",
+      "priority": "P1",
+      "stage": "UNVERIFIED_SCOPE",
+      "title": "Consolidation/retirement counts are not all-source business restoration or optional-country certification",
+      "families": [
+        "TFR-PAY-003",
+        "TFR-PAY-004",
+        "TFR-PAY-005",
+        "TFR-PAY-017",
+        "TFR-TIM-011",
+        "TFR-HRM-006",
+        "TFR-SYS-013"
+      ],
+      "evidence": [
+        {
+          "file": "coding-readiness/target-family-resolution-register.csv",
+          "csvRows": [
+            22,
+            35,
+            79
+          ],
+          "selector": "PAY retirement119 parents→country activation+generic run/results; optional country/provider bounded claims"
+        },
+        {
+          "file": "session-registers/hris-pay-source-coverage.csv",
+          "csvRows": [
+            145,
+            149,
+            161,
+            171,
+            172,
+            179,
+            185,
+            189
+          ],
+          "selector": "PAY-RETIREMENT source cases/annuity/DC/average-wage/tax/midterm payments"
+        },
+        {
+          "file": "migration-traceability-register.csv",
+          "selector": "16 historical proposed owner-empty rows, not final target-family canonical authority"
+        },
+        {
+          "file": "coding-readiness/validate_source_provenance.py",
+          "selector": "actual static available2258/blocked9/retired2; no raw source content read"
+        }
+      ],
+      "observation": "2269 parents/10001 children have transitive resolution and3 pinned retired child overrides; child target_api_event_candidate is noncanonical. This audit did not inspect every sanitized child business value/rule or every excluded/blocked source byte. Retirement country workflows are mapped to generic activation/run/results, but that does not independently prove all retirement-specific case/eligibility/basis/output/correction semantics are planned. 13 contamination retire decisions are explicit and structurally validated; no customer rates, BENSK/ADDSK/raw scripts should be restored into generic core.",
+      "closingConditions": [
+        "For every retained source family, approve source requirement→exact target object/typed field/rule/operation/event/fixture/negative/source-restore matrix with explicit consolidation/exclusion rationale; an unsupported semantic must remain OPEN, not hidden behind generic counts.",
+        "Define generic optional pack/provider DTO/SPI and fail-closed feature-disabled/conformance fixtures at G3 where planned; actual jurisdiction rules/official approval/customer data/provider adoption are G6.",
+        "Do not treat proposed historical traceability or mechanically inherited child target as an independently verified business oracle; no all86 PASS claim."
+      ]
+    }
+  ],
+  "perFreezeSchemaWitness": {
+    "schemaRef": "session-evidence/per/g2-readiness/api-event-contracts.yaml#/components/schemas/FreezePopulationCommand",
+    "input": {
+      "populationRuleId": "00000000-0000-4000-8000-000000000111",
+      "workforceSnapshotId": "00000000-0000-4000-8000-000000000112",
+      "workforceSnapshotRevision": 1,
+      "previewContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "baseAdditionalProperties": false,
+    "extensionAdditionalProperties": false,
+    "baseForbiddenProperties": [
+      "previewContentHash"
+    ],
+    "extensionForbiddenProperties": [
+      "populationRuleId",
+      "workforceSnapshotId",
+      "workforceSnapshotRevision"
+    ],
+    "result": "UNSATISFIABLE_REQUIRED_PROPERTY_INTERSECTION"
+  },
+  "perRegisteredOperationIds": [
+    "getPerformanceDashboard",
+    "listCycles",
+    "createCycle",
+    "getCycle",
+    "updateCycleDraft",
+    "validateCycle",
+    "publishCycle",
+    "previewPopulation",
+    "freezePopulation",
+    "createGoal",
+    "submitGoal",
+    "getAssignedReview",
+    "saveReviewDraft",
+    "submitReview",
+    "createFeedbackRequest",
+    "createCheckin",
+    "appendCalibrationAdjustment",
+    "publishResults",
+    "openAppeal",
+    "requestImport",
+    "getCommandReceipt",
+    "getApprovedCompensationPlanSnapshot",
+    "materializePerformanceHomeContribution"
+  ],
+  "availabilityAtFinalRead": {
+    "status": "FIXTURE_SPEC_PROPOSED_NOT_DOMAIN_EXECUTION_EVIDENCE",
+    "ownerSnapshots": {
+      "availability": {
+        "contractId": "TIM.WfmPlanningInputSnapshot.v1",
+        "publicId": "90000000-0000-4000-8000-000000000300",
+        "revision": 1,
+        "fixtureOnly": true
+      },
+      "skills": {
+        "contractId": "PER.WfmSkillVocabularySnapshot.proposal.v1",
+        "publicId": "90000000-0000-4000-8000-000000000301",
+        "revision": 2,
+        "fixtureOnly": true
+      }
+    },
+    "proposalOwnerDecision": {
+      "owner": "TIM",
+      "notOwner": "HRM",
+      "composition": [
+        "HRM.EffectiveAssignmentSnapshot.v1",
+        "TIM.AbsenceAvailabilitySnapshot.v1",
+        "TIM.CanonicalScheduleSnapshot.v1",
+        "PER.WfmSkillVocabularySnapshot.proposal.v1",
+        "HRM.EffectiveLocationSnapshot.proposal.v1"
+      ]
+    },
+    "classification": "CORRECTED_PROPOSAL_LABEL_AND_EXPECTATION_ONLY_NOT_PUBLISHED_CANONICAL_OWNER_CONTRACT",
+    "remainingG3": "Independent exact owner DTO/SPI/source/refetch registry plus compile/fail-closed shared adapters and current pilot."
+  },
+  "baseFamilyAuditRows": [
+    {
+      "resolutionId": "TFR-HRM-001",
+      "csvRow": 2,
+      "module": "HRM",
+      "sourceCapabilityIds": "settings-workflow",
+      "sourceParentCount": 34,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Source-shaped workflow screens consolidate into the shared versioned Approval policy and decision contract with owner-side state guards.",
+      "sliceCsvRow": 3,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:2",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:3",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-002",
+      "csvRow": 3,
+      "module": "HRM",
+      "sourceCapabilityIds": "dwp-experience",
+      "sourceParentCount": 10,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Shell tasks notifications and object references resolve through the composed home explorer approval notification and controlled-transfer contracts.",
+      "sliceCsvRow": 4,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:3",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:4",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-002"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-002",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-003",
+      "csvRow": 4,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-operations-home",
+      "sourceParentCount": 19,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Workforce home data is a scoped owner projection plus signed materialization ref and change event rather than a route catalog.",
+      "sliceCsvRow": 5,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:4",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:5",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-004",
+      "csvRow": 5,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-people",
+      "sourceParentCount": 133,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Repeated person pages consolidate into scoped search and as-of People 360 with a minimized invalidation event.",
+      "sliceCsvRow": 6,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:5",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:6",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-007"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-007",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-005",
+      "csvRow": 6,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-organization-positions",
+      "sourceParentCount": 43,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Organization graph query and effective-dated assignment-event workflow replace direct organization mutation screens.",
+      "sliceCsvRow": 7,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:6",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:7",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-007",
+        "BASE-P0-011"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-007",
+        "BASE-P0-011",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-006",
+      "csvRow": 7,
+      "module": "HRM",
+      "sourceCapabilityIds": "OUT_OF_SCOPE.BENSK|OUT_OF_SCOPE.TECHNICAL_DUPLICATE",
+      "sourceParentCount": 23,
+      "resolutionState": "RETIRED_DECIDED",
+      "consolidationRationale": "Governed excluded customer code and technical duplicates have no target endpoint and remain closed by explicit decisions.",
+      "sliceCsvRow": 2,
+      "migrationAllocationIds": "",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:7",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:2",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "DECIDED_RETIRED_NO_CODE_NOT_BUSINESS_PASS",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-SCOPE-012"
+      ],
+      "independentWorkability": "NO_CODE_SCOPE",
+      "closingConditionRefs": [
+        "Preserve exact retirement decision; no producer, API, migration or menu restoration without approved new scope."
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-007",
+      "csvRow": 8,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-appointments",
+      "sourceParentCount": 31,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Appointment variants consolidate into one validated submitted and published effective-dated assignment event lifecycle.",
+      "sliceCsvRow": 8,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:8",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:8",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-007"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-007",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-008",
+      "csvRow": 9,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-employment-assignments",
+      "sourceParentCount": 18,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Employment assignment mutations consolidate into the same effective-dated assignment event command and publication lifecycle.",
+      "sliceCsvRow": 9,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:9",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:9",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-007",
+        "BASE-P0-011"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-007",
+        "BASE-P0-011",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-009",
+      "csvRow": 10,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-certificates-documents",
+      "sourceParentCount": 21,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Certificate variants consolidate into one governed request with object reference and a data-minimized issuance event.",
+      "sliceCsvRow": 10,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:10",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:10",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-010",
+      "csvRow": 11,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-employee-change-requests",
+      "sourceParentCount": 73,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Employee changes use create submit approval callback and guarded apply with immutable receipts instead of direct table mutation.",
+      "sliceCsvRow": 11,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:11",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:11",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-007"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-007",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-011",
+      "csvRow": 12,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-contracts-compensation-basis",
+      "sourceParentCount": 30,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Contract issuance and compensation basis use owner commands plus field-projected snapshots and minimized change events.",
+      "sliceCsvRow": 12,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:12",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:12",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-012",
+      "csvRow": 13,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-data-quality",
+      "sourceParentCount": 49,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Data-quality screens consolidate into governed workforce ingestion with reconciliation counts digest and quarantine outcome.",
+      "sliceCsvRow": 13,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:13",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:13",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-013",
+      "csvRow": 14,
+      "module": "HRM",
+      "sourceCapabilityIds": "hr-exit-return",
+      "sourceParentCount": 23,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Exit and return variants resolve through governed separation cases and corrective lifecycle commands without destructive edits.",
+      "sliceCsvRow": 14,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:14",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:14",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-007"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-007",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-014",
+      "csvRow": 15,
+      "module": "HRM",
+      "sourceCapabilityIds": "settings-documents-communications",
+      "sourceParentCount": 12,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Document templates become typed immutable configurations with controlled object transfer and minimal notification intent.",
+      "sliceCsvRow": 15,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:15",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:15",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-015",
+      "csvRow": 16,
+      "module": "HRM",
+      "sourceCapabilityIds": "dwp-extensibility",
+      "sourceParentCount": 6,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Extensions use verified pack catalog install-disabled and explicit enable lifecycle rather than embedded customer branches.",
+      "sliceCsvRow": 80,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:16",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:80",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-016",
+      "csvRow": 17,
+      "module": "HRM",
+      "sourceCapabilityIds": "settings-reference",
+      "sourceParentCount": 52,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Reference variants consolidate into typed configuration versions with validate simulate approve publish and change event.",
+      "sliceCsvRow": 16,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:17",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:16",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-HRM-017",
+      "csvRow": 18,
+      "module": "HRM",
+      "sourceCapabilityIds": "settings-operations",
+      "sourceParentCount": 6,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Retention and operating policies become immutable typed configurations with audit evidence and no executable source values.",
+      "sliceCsvRow": 17,
+      "migrationAllocationIds": "MIG-HRM-PEOPLE-47-69",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:18",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:17",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-001",
+      "csvRow": 19,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-PLATFORM-NOTIFICATION",
+      "sourceParentCount": 7,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payroll notifications emit minimal allowlisted intent through the shared notification contract without direct channel coupling.",
+      "sliceCsvRow": 24,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:19",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:24",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-002",
+      "csvRow": 20,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-CONNECTOR",
+      "sourceParentCount": 7,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Central connector control owns credentials mapping dry-run execution and receipt then invokes typed payroll foundation or worker inputs.",
+      "sliceCsvRow": 25,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:20",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:25",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-003",
+      "csvRow": 21,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-KR-INSURANCE",
+      "sourceParentCount": 34,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Country-specific insurance screens collapse into signed pack activation plus generic immutable calculation and result projection.",
+      "sliceCsvRow": 26,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:21",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:26",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [
+        "BASE-SCOPE-012"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-SCOPE-012",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-004",
+      "csvRow": 22,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-RETIREMENT",
+      "sourceParentCount": 119,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Country-specific retirement screens collapse into signed pack activation plus generic immutable calculation and result projection.",
+      "sliceCsvRow": 27,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:22",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:27",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [
+        "BASE-SCOPE-012"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-SCOPE-012",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-005",
+      "csvRow": 23,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-KR-TAX",
+      "sourceParentCount": 16,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Country-specific tax screens collapse into signed pack activation plus generic immutable calculation and result projection.",
+      "sliceCsvRow": 28,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:23",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:28",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [
+        "BASE-SCOPE-012"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-SCOPE-012",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-006",
+      "csvRow": 24,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-ELEMENT-FORMULA",
+      "sourceParentCount": 63,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Elements and formulas use immutable versions with validate simulate and publish instead of mutable executable source configuration.",
+      "sliceCsvRow": 29,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:24",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:29",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-007",
+      "csvRow": 25,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-FOUNDATION",
+      "sourceParentCount": 13,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payroll foundation screens consolidate into query and immutable version creation with a minimized publication event.",
+      "sliceCsvRow": 30,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:25",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:30",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-008",
+      "csvRow": 26,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-PAYMENT",
+      "sourceParentCount": 7,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payment and accounting screens use governed batch release download grants and GL posting with immutable release events.",
+      "sliceCsvRow": 31,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:26",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:31",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-009",
+      "csvRow": 27,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-PAYSLIP",
+      "sourceParentCount": 20,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payslip variants consolidate into field-projected query and expiring download grant with publication event.",
+      "sliceCsvRow": 32,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:27",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:32",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-010",
+      "csvRow": 28,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-RETRO-OFFCYCLE",
+      "sourceParentCount": 48,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Retro and off-cycle variants become immutable retro events and corrective commands rather than in-place result edits.",
+      "sliceCsvRow": 33,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:28",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:33",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-011",
+      "csvRow": 29,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-CALCULATION",
+      "sourceParentCount": 12,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Calculation variants consolidate into versioned run attempts with deterministic inputs and a minimized calculated event.",
+      "sliceCsvRow": 34,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:29",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:34",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-012",
+      "csvRow": 30,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-RESULT-TRACE",
+      "sourceParentCount": 32,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Result screens consolidate into scoped results worker trace and validation receipt with immutable validation event.",
+      "sliceCsvRow": 35,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:30",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:35",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-013",
+      "csvRow": 31,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-RUN-PREPARE",
+      "sourceParentCount": 23,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Run preparation variants become one idempotent command freezing typed source revisions and emitting a prepared event.",
+      "sliceCsvRow": 36,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:31",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:36",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-014",
+      "csvRow": 32,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-STATUTORY-DEDUCTION",
+      "sourceParentCount": 4,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Statutory deductions are versioned element and formula rules evaluated by the generic run without a parallel deduction engine.",
+      "sliceCsvRow": 37,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:32",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:37",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-015",
+      "csvRow": 33,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-DASHBOARD",
+      "sourceParentCount": 7,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payroll home status is a minimized widget query plus delegated materialization and change-event contract.",
+      "sliceCsvRow": 38,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:33",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:38",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-016",
+      "csvRow": 34,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-WORKER-INPUT",
+      "sourceParentCount": 91,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Worker input variants consolidate into typed create and corrective commands with no direct People database access.",
+      "sliceCsvRow": 39,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:34",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:39",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-008",
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-008",
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-017",
+      "csvRow": 35,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-YEA-HYBRID",
+      "sourceParentCount": 34,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Year-end functions use provider-neutral case evidence and submission receipts while real KR provider activation stays G6.",
+      "sliceCsvRow": 40,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:35",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:40",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [
+        "BASE-SCOPE-012"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-SCOPE-012",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-018",
+      "csvRow": 36,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-PLATFORM-AUTOMATION",
+      "sourceParentCount": 5,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payroll scheduling uses the central allowlisted automation definition run receipt retry and attempt contracts.",
+      "sliceCsvRow": 41,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:36",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:41",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-019",
+      "csvRow": 37,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-PLATFORM-CONFIG",
+      "sourceParentCount": 13,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payroll policy values are immutable central configurations consumed as typed snapshots with no hardcoded tenant values.",
+      "sliceCsvRow": 42,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:37",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:42",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-020",
+      "csvRow": 38,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-TIME-PROJECTION",
+      "sourceParentCount": 19,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payroll consumes immutable closed-time snapshots through authorized refetch and versioned close reopen and ready events.",
+      "sliceCsvRow": 43,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:38",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:43",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PAY-021",
+      "csvRow": 39,
+      "module": "PAY",
+      "sourceCapabilityIds": "PAY-HRM-PROJECTION",
+      "sourceParentCount": 6,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Payroll reads only approved workforce compensation dependent tax-token and bank-token projections through owner contracts.",
+      "sliceCsvRow": 44,
+      "migrationAllocationIds": "MIG-PAY-PAYROLL-1-49",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:39",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:44",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-007",
+        "BASE-P0-010"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-007",
+        "BASE-P0-010",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-001",
+      "csvRow": 40,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-NOTIFICATION-001",
+      "sourceParentCount": 2,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Performance notifications emit minimal allowlisted intent through the shared notification contract without direct channel coupling.",
+      "sliceCsvRow": 45,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:40",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:45",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-002",
+      "csvRow": 41,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-CALIBRATION-001",
+      "sourceParentCount": 36,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Calibration screens consolidate into append-only adjustments and a governed approval publication event.",
+      "sliceCsvRow": 46,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:41",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:46",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-008"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-003",
+      "csvRow": 42,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-CHECKIN-001",
+      "sourceParentCount": 27,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Check-in variants consolidate into one scoped idempotent interaction command with immutable history.",
+      "sliceCsvRow": 47,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:42",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:47",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-008"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-004",
+      "csvRow": 43,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-CONFIG-001",
+      "sourceParentCount": 12,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Performance settings become typed immutable central configuration versions with validate simulate approve and publish.",
+      "sliceCsvRow": 48,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:43",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:48",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-005",
+      "csvRow": 44,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-CYCLE-001",
+      "sourceParentCount": 8,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Cycle menus consolidate into one versioned query draft validate and publish lifecycle with event evidence.",
+      "sliceCsvRow": 49,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:44",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:49",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-008"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-006",
+      "csvRow": 45,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-POPULATION-001",
+      "sourceParentCount": 42,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Population selection uses preview then immutable freeze with revision digest rather than mutable evaluator lists.",
+      "sliceCsvRow": 50,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:45",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:50",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE-P0-009"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE-P0-009",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-007",
+      "csvRow": 46,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-HOME-001",
+      "sourceParentCount": 5,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Performance home status is a scoped dashboard plus delegated materialization and minimized change event.",
+      "sliceCsvRow": 51,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:46",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:51",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-008",
+      "csvRow": 47,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-FEEDBACK-001",
+      "sourceParentCount": 14,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Feedback screens consolidate into scoped requests with minimized submission events and protected narrative fields.",
+      "sliceCsvRow": 52,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:47",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:52",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-008"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-009",
+      "csvRow": 48,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-GOAL-001",
+      "sourceParentCount": 77,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Goal variants consolidate into create and submit commands with optimistic revision and committed event.",
+      "sliceCsvRow": 53,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:48",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:53",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-008"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-008",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-010",
+      "csvRow": 49,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-INTEGRATION-001",
+      "sourceParentCount": 6,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Performance imports use one governed command with reconciliation receipt and minimized completion event.",
+      "sliceCsvRow": 54,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:49",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:54",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-011",
+      "csvRow": 50,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-MONITOR-001",
+      "sourceParentCount": 27,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Monitoring views consolidate into dashboard and command receipt projections backed by immutable audit evidence.",
+      "sliceCsvRow": 55,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:50",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:55",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-012",
+      "csvRow": 51,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-RESULT-001",
+      "sourceParentCount": 35,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Results use governed publication and appeal commands with immutable result publication event.",
+      "sliceCsvRow": 56,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:51",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:56",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-008"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-013",
+      "csvRow": 52,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-REVIEW-001",
+      "sourceParentCount": 26,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Review screens consolidate into assigned view draft save and guarded submit with protected evidence.",
+      "sliceCsvRow": 57,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:52",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:57",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-008",
+        "BASE-P0-009"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-003",
+        "BASE-P0-008",
+        "BASE-P0-009",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-014",
+      "csvRow": 53,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-TEMPLATE-001",
+      "sourceParentCount": 22,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Template authoring is integrated into the versioned cycle designer lifecycle instead of a separate mutable template menu.",
+      "sliceCsvRow": 58,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:53",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:58",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-008"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-008",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-015",
+      "csvRow": 54,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-PLATFORM-001",
+      "sourceParentCount": 4,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Performance scheduling uses the central allowlisted automation definition run receipt retry and attempt contracts.",
+      "sliceCsvRow": 59,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:54",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:59",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-PER-016",
+      "csvRow": 55,
+      "module": "PER",
+      "sourceCapabilityIds": "PER-WORKFORCE-PROJECTION-001",
+      "sourceParentCount": 6,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Performance consumes workforce facts through a typed in-process port and canonical snapshot invalidation events.",
+      "sliceCsvRow": 60,
+      "migrationAllocationIds": "MIG-PER-PERFORMANCE-1-63",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:55",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:60",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-007",
+        "BASE-P0-011"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-007",
+        "BASE-P0-011",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-001",
+      "csvRow": 56,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.GOVERNANCE.AUDIT_EVIDENCE",
+      "sourceParentCount": 16,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Audit source screens resolve to the existing canonical audit event query and immutable minimized evidence contract.",
+      "sliceCsvRow": 68,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:56",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:68",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-002",
+      "csvRow": 57,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.OPERATIONS.OBSERVABILITY",
+      "sourceParentCount": 5,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "The central operations view is read and deep-link only while every recovery command remains authorized by its owning domain.",
+      "sliceCsvRow": 69,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:57",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:69",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-003",
+      "csvRow": 58,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.APPROVAL.WORKFLOW",
+      "sourceParentCount": 10,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Approval policy screens reuse the existing policy catalog and publish command; team delegation uses the distinct existing list/create/revoke contracts and owner-side state guards.",
+      "sliceCsvRow": 70,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:58",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:70",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-004",
+      "csvRow": 59,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.IDENTITY.PRODUCT_ACCESS",
+      "sourceParentCount": 39,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Product access resolves through versioned package assignment simulation approval activation revocation and projection events.",
+      "sliceCsvRow": 71,
+      "migrationAllocationIds": "MIG-SYS-AUTH-211-239",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:59",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:71",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-005",
+      "csvRow": 60,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.COMMUNICATION.TEMPLATES",
+      "sourceParentCount": 12,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Communication templates reuse the existing catalog and draft contract while delivery uses minimal notification intents.",
+      "sliceCsvRow": 72,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:60",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:72",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-006",
+      "csvRow": 61,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.AUTOMATION.CONTROL_PLANE",
+      "sourceParentCount": 10,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Automation source screens resolve to allowlisted definitions runs attempts retries receipts and immutable state events.",
+      "sliceCsvRow": 73,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:61",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:73",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-007",
+      "csvRow": 62,
+      "module": "SYS",
+      "sourceCapabilityIds": "HRIS.CONFIG.REFERENCE_DATA",
+      "sourceParentCount": 37,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Reference data becomes typed immutable configurations with validate simulate approve publish and change event.",
+      "sliceCsvRow": 74,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:62",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:74",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-008",
+      "csvRow": 63,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.INTEGRATION.CONTROL_PLANE",
+      "sourceParentCount": 19,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Connector source screens resolve to central definitions tests mapping dry-runs executions reconciliation and state events.",
+      "sliceCsvRow": 75,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:63",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:75",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-009",
+      "csvRow": 64,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.OBJECT.CONTROLLED_TRANSFER",
+      "sourceParentCount": 2,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "File functions use governed object references malware scan digest expiry receipt and transfer state without arbitrary paths.",
+      "sliceCsvRow": 76,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:64",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:76",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-010",
+      "csvRow": 65,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.DATA.GOVERNANCE",
+      "sourceParentCount": 9,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Data governance screens reuse the provider metadata catalog and versioned policy draft contract without business-row reads.",
+      "sliceCsvRow": 77,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:65",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:77",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-011",
+      "csvRow": 66,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.TENANT.ENTERPRISE_DIRECTORY",
+      "sourceParentCount": 19,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Tenant source screens reuse the enterprise directory query and governed tenant lifecycle command rather than HRIS copies.",
+      "sliceCsvRow": 78,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:66",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:78",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-012",
+      "csvRow": 67,
+      "module": "SYS",
+      "sourceCapabilityIds": "HRIS.EXPERIENCE.COMPOSITION",
+      "sourceParentCount": 7,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Home preferences reuse the fixed hcm-home platform surface while module contributions remain signed and capability projected.",
+      "sliceCsvRow": 79,
+      "migrationAllocationIds": "MIG-SYS-PLATFORM-231-259",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:67",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:79",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-P0-002",
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-001",
+        "BASE-P0-002",
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-SYS-013",
+      "csvRow": 68,
+      "module": "SYS",
+      "sourceCapabilityIds": "DWP.PLATFORM.RETIRED_LEGACY_PATH",
+      "sourceParentCount": 4,
+      "resolutionState": "RETIRED_DECIDED",
+      "consolidationRationale": "Retired legacy platform paths have no target endpoint and remain closed by an explicit product decision.",
+      "sliceCsvRow": 67,
+      "migrationAllocationIds": "",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:68",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:67",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "DECIDED_RETIRED_NO_CODE_NOT_BUSINESS_PASS",
+      "findingIds": [
+        "BASE-P0-001",
+        "BASE-SCOPE-012"
+      ],
+      "independentWorkability": "NO_CODE_SCOPE",
+      "closingConditionRefs": [
+        "Preserve exact retirement decision; no producer, API, migration or menu restoration without approved new scope."
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-001",
+      "csvRow": 69,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-APPROVAL",
+      "sourceParentCount": 7,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Time approvals reuse the shared versioned approval decision and the owner service independently guards its state.",
+      "sliceCsvRow": 84,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:69",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:84",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-002",
+      "csvRow": 70,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-PLATFORM-NOTIFICATION",
+      "sourceParentCount": 1,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Time notifications emit minimal allowlisted intent through the shared notification contract without direct channel coupling.",
+      "sliceCsvRow": 85,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:70",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:85",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-003",
+      "csvRow": 71,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-LEAVE-ABSENCE",
+      "sourceParentCount": 14,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Employment absence facts remain People owned and enter Time through the canonical minimized change contract.",
+      "sliceCsvRow": 86,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:71",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:86",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-007"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-007",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-004",
+      "csvRow": 72,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-PLATFORM-AUTOMATION",
+      "sourceParentCount": 5,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Time scheduling uses the central allowlisted automation definition run receipt retry and attempt contracts.",
+      "sliceCsvRow": 87,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:72",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:87",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-005",
+      "csvRow": 73,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-PLATFORM-CONFIG",
+      "sourceParentCount": 13,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Time policy values are immutable central configurations consumed as typed snapshots without tenant hardcoding.",
+      "sliceCsvRow": 88,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:73",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:88",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-005"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-005",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-006",
+      "csvRow": 74,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-CLOCK",
+      "sourceParentCount": 6,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Clock sources converge on idempotent event recording and corrective void commands with immutable recorded event.",
+      "sliceCsvRow": 89,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:74",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:89",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-007",
+      "csvRow": 75,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-CLOSE-HANDOFF",
+      "sourceParentCount": 22,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Close and payroll handoff use validate close reopen immutable result refetch and receipt contracts with lineage.",
+      "sliceCsvRow": 90,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:75",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:90",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-006"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-006",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-008",
+      "csvRow": 76,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-CONNECTOR",
+      "sourceParentCount": 7,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Central connector control owns transport mapping dry-run and receipt then invokes canonical clock recording without a duplicate connector API.",
+      "sliceCsvRow": 91,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:76",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:91",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-009",
+      "csvRow": 77,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-ANALYTICS",
+      "sourceParentCount": 20,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Time analytics screens consolidate into governed summary and asynchronous export receipt with field policy.",
+      "sliceCsvRow": 92,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:77",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:92",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "UNVERIFIED_BUSINESS_ORACLE_NOT_COUNT_PASS",
+      "findingIds": [],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-010",
+      "csvRow": 78,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-INTERPRETATION",
+      "sourceParentCount": 26,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Interpretation variants consolidate into deterministic run and trace projections with immutable rule and source digests.",
+      "sliceCsvRow": 93,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:78",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:93",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-004",
+        "BASE-P0-005"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-004",
+        "BASE-P0-005",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-011",
+      "csvRow": 79,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-LEAVE-KR",
+      "sourceParentCount": 28,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "KR leave rules are signed effective-dated configuration packs evaluated by generic plan and entitlement operations.",
+      "sliceCsvRow": 94,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:79",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:94",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-005",
+        "BASE-SCOPE-012"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-005",
+        "BASE-SCOPE-012",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-012",
+      "csvRow": 80,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-LEAVE-LEDGER",
+      "sourceParentCount": 32,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Leave ledger screens consolidate into deterministic entitlement runs and balance query with append-only posting event.",
+      "sliceCsvRow": 95,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:80",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:95",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-005"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-005",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-013",
+      "csvRow": 81,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-LEAVE-POLICY",
+      "sourceParentCount": 29,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Leave policy variants consolidate into immutable plan versions and explicit guarded publication.",
+      "sliceCsvRow": 96,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:81",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:96",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-005"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-005",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-014",
+      "csvRow": 82,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-LEAVE-REQUEST",
+      "sourceParentCount": 77,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Leave request screens use create decision and cancellation commands with immutable decision evidence.",
+      "sliceCsvRow": 97,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:82",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:97",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-003",
+        "BASE-P0-005",
+        "BASE-P0-011"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-003",
+        "BASE-P0-005",
+        "BASE-P0-011",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-015",
+      "csvRow": 83,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-OVERTIME",
+      "sourceParentCount": 82,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Overtime is a governed timecard proposal and approval decision so no duplicate mutable overtime ledger is introduced.",
+      "sliceCsvRow": 98,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:83",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:98",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-004",
+        "BASE-P0-005",
+        "BASE-P0-006"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-004",
+        "BASE-P0-005",
+        "BASE-P0-006",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-016",
+      "csvRow": 84,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-SCHEDULE",
+      "sourceParentCount": 129,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Schedule variants consolidate into scoped query and versioned work-rule create validate simulate publish lifecycle.",
+      "sliceCsvRow": 99,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:84",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:99",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-003",
+        "BASE-P0-004",
+        "BASE-P0-005",
+        "BASE-P0-011"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-003",
+        "BASE-P0-004",
+        "BASE-P0-005",
+        "BASE-P0-011",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-017",
+      "csvRow": 85,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-TIMECARD",
+      "sourceParentCount": 42,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Timecard screens consolidate into query correction submit and decision commands with immutable decision event.",
+      "sliceCsvRow": 100,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:85",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:100",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-003",
+        "BASE-P0-006"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-003",
+        "BASE-P0-006",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-018",
+      "csvRow": 86,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-DASHBOARD",
+      "sourceParentCount": 20,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Time home status is a minimized widget query plus delegated materialization and change-event contract.",
+      "sliceCsvRow": 101,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:86",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:101",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-003"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-003",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    },
+    {
+      "resolutionId": "TFR-TIM-019",
+      "csvRow": 87,
+      "module": "TIM",
+      "sourceCapabilityIds": "TIM-HRM-PROJECTION",
+      "sourceParentCount": 8,
+      "resolutionState": "RESOLVED_G2_CONTRACT",
+      "consolidationRationale": "Time consumes worker and workplace facts through authorized snapshots and minimized invalidation events without People database access.",
+      "sliceCsvRow": 102,
+      "migrationAllocationIds": "MIG-TIM-TIME-1-39",
+      "sourceRef": "coding-readiness/target-family-resolution-register.csv:87",
+      "sliceRef": "coding-readiness/g3-slice-code-go-register.csv:102",
+      "structuralResolution": "PASS_TRANSITIVE_REFERENCE_CLOSURE",
+      "businessSemanticStatus": "OPEN_KNOWN_G3_CONTRACT_DEFECT_AND_UNVERIFIED_REMAINDER",
+      "findingIds": [
+        "BASE-P0-004",
+        "BASE-P0-007",
+        "BASE-P0-011"
+      ],
+      "independentWorkability": "NOT_CERTIFIED",
+      "closingConditionRefs": [
+        "BASE-P0-004",
+        "BASE-P0-007",
+        "BASE-P0-011",
+        "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE"
+      ],
+      "g4ImplementationRequiredForG3": false
+    }
+  ],
+  "closingConditions": {
+    "BASE86_SOURCE_TO_TARGET_BUSINESS_ORACLE": [
+      "Per retained family: named source requirement→business object/effective facts→closed typed request/record/response/event→allowed real transition/trusted signal→transaction write set→column-source/ref resolver→owner snapshot refetch→tenant/population/field/SoD rule→API-valid two-config journey/negative/test allocation.",
+      "Retired/consolidated child keeps semantic decision and proof of preserved behavior or intentional exclusion; no forced one-to-one legacy screen/table count.",
+      "Independently verify column identity/provenance, unit/currency/decimal/calendar precision and all terminal reachability, correction/history/reopen semantics.",
+      "A named owner alias, businessKey/digest, UUID shape or test count alone cannot establish source authority; unresolved source/identity stays OPEN.",
+      "Complete native business implementations/runtime journeys are G4; real customer identity/statutory/provider activation G6."
+    ],
+    "rootIntegration": [
+      "Approve exact canonical owner-contract successors and source semantic bindings; run independent source/contract validator on actual saved candidate, not label bypass.",
+      "Approve common stream/role/receipt/DS/identity source scaffolding and strict shared adapters with consumer compile + bounded pilot evidence.",
+      "Reconcile current allocation/common SHA/source seals/current capacity/checkpoint/published Gate truth. This report does not run --write-report or mutate authoritative Gate."
+    ]
+  },
+  "staticExecutionEvidence": [
+    {
+      "name": "family",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "coding-readiness/validate_target_family_resolution.py",
+        "--compact"
+      ],
+      "exitCode": 0,
+      "result": {
+        "schema": "dwp.hris.target-family-resolution.v1",
+        "status": "PASS",
+        "checks": {
+          "exact86FamilyCoverage": true,
+          "all2269SourceParentsResolved": true,
+          "all10001SourceChildrenTransitivelyResolved": true,
+          "childParentFamilyIntegrity": true,
+          "childDecisionsResolved": true,
+          "onlyPinnedRetiredChildOverrides": true,
+          "childCandidateIsNonCanonical": true,
+          "exactContractReferencesResolve": true,
+          "homeContributionProducerSemanticClosure": true,
+          "primaryRelatedSemanticRoleClosure": true,
+          "sharedBaselineOpenapiVerified": true,
+          "retiredFamiliesDecisionOnly": true,
+          "activeFamiliesCallable": true,
+          "consolidationRationalePresent": true,
+          "registerIntegrity": true
+        },
+        "coverage": {
+          "sourceParentRows": 2269,
+          "resolvedSourceParentRows": 2269,
+          "sourceChildRows": 10001,
+          "resolvedSourceChildRows": 10001,
+          "sourceChildRowsByModule": {
+            "HRM": 1654,
+            "PER": 1041,
+            "TIM": 3566,
+            "PAY": 3515,
+            "SYS": 225
+          },
+          "intentionalRetiredChildOverrides": 3,
+          "authoritativeChildResolutionPath": "child.parent_artifact_id -> source parent target family -> target-family-resolution-register.resolution_refs",
+          "nonCanonicalChildField": "target_api_event_candidate",
+          "sourceTargetFamilies": 86,
+          "resolvedTargetFamilies": 86,
+          "byModule": {
+            "HRM": 17,
+            "PAY": 21,
+            "PER": 16,
+            "SYS": 13,
+            "TIM": 19
+          },
+          "referenceTypeCounts": {
+            "DECISION": 3,
+            "EVT": 57,
+            "PEP": 135,
+            "PLAT": 14,
+            "SHARED": 12,
+            "SVC": 22,
+            "SYS": 153,
+            "XCON": 50
+          }
+        },
+        "registerSha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+        "sharedCatalogSha256": "34ffec83a60a7cb369406807bb856755e7bb34cf2be5dacb67dac1b0f3a07118",
+        "blockers": []
+      }
+    },
+    {
+      "name": "typedTest",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "g0/validate_typed_contract_test_allocations.py",
+        "--compact"
+      ],
+      "exitCode": 0,
+      "result": {
+        "errors": [],
+        "schema": "dwp.hris.typed-contract-test-allocation.v1",
+        "status": "PASS",
+        "typedTestBindingCount": 130
+      }
+    },
+    {
+      "name": "transport",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "coding-readiness/validate_transport_schema_resolution.py",
+        "--compact"
+      ],
+      "exitCode": 1,
+      "result": {
+        "checks": {
+          "allSchemaReferencesResolve": false,
+          "async202AuthorizedReceiptConvergence": true,
+          "exactOperationParity": true,
+          "fieldTypeRequiredClosure": true,
+          "namedBaselineExceptions": {
+            "SYS-API-032": "BASELINE_BODY_VERSION_CAS"
+          },
+          "pathPlaceholderExactSets": true,
+          "standaloneApiPepValidatorPass": true,
+          "states": {
+            "implementation": "NOT_STARTED_G3",
+            "production": "NOT_AUTHORIZED_G6"
+          }
+        },
+        "coverage": {
+          "async202OperationCount": 121,
+          "async202ResolvedToAuthorizedReceiptCount": 121,
+          "byModule": {
+            "HRM": 16,
+            "PAY": 33,
+            "PER": 21,
+            "SYS": 77,
+            "TIM": 28
+          },
+          "duplicateOperationCount": 0,
+          "orphanOperationCount": 0,
+          "receiptQueriesByModule": {
+            "HRM": 1,
+            "PAY": 1,
+            "PER": 1,
+            "SYS": 2,
+            "TIM": 1
+          },
+          "receiptQueryOperationCount": 6,
+          "resolvedOperationCount": 175,
+          "sourcePublicOperationCount": 175
+        },
+        "digests": {
+          "coding-readiness/decimal-value-types.v1.json": "8597640fa5cf5051cccc14fe4b83a4f179d54dfe36f0ffdaa319dc1149b5c6a6",
+          "coding-readiness/hrm-transport-schema-supplement.v1.json": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+          "coding-readiness/transport-schema-resolution-register.csv": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e",
+          "session-evidence/pay/g2-transport-schemas.v1.json": "d88d7b37ebda7d9abb6eb9e8aa0032bf0344a6dccc65d7d3d8b88abb06d037fd",
+          "session-evidence/sys/g2-transport-schemas.v1.json": "8ae12abdb504eb58ab8b8b610e47327f496a2136607028581d66a5119f90c8fc",
+          "session-evidence/tim/g2-transport-schemas.v1.json": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc"
+        },
+        "errors": [
+          "code-entry backend worktree HEAD drift",
+          "PEP-SYS-033: transport shape digest resolution failed: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/get/parameters -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-033: path_schema_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/get/parameters -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-033: response_schema_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/components/schemas/platform_ApiResponseHomePreferenceResponse -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-033: header_schema_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/get/parameters -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-033: validation_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/get -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-034: transport shape digest resolution failed: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/put/parameters -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-034: path_schema_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/put/parameters -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-034: request_schema_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/components/schemas/platform_UpdateHomePreferenceRequest -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-034: response_schema_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/components/schemas/platform_ApiResponseHomePreferenceResponse -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-034: header_schema_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/put/parameters -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "PEP-SYS-034: validation_ref: reference file missing: DWP_BACKEND@5670877de7a39e94e75021c7e23cbbb553296c90:contracts/openapi/gateway-public.json#/paths/~1api~1platform~1v1~1home-preferences~1surfaces~1{surfaceKey}/put -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "SYS: reference file missing: contracts/openapi/gateway-public.json#/components/schemas/platform_ApiResponseHomePreferenceResponse -> /__invalid_baseline__/contracts/openapi/gateway-public.json",
+          "HomePreference baseline resolution failed: [Errno 2] No such file or directory: '/__invalid_baseline__/contracts/openapi/gateway-public.json'"
+        ],
+        "namedBaselineExceptions": {
+          "SYS-API-032": "BASELINE_BODY_VERSION_CAS"
+        },
+        "schema": "dwp.hris.transport-schema-resolution.v1",
+        "states": {
+          "implementation": "NOT_STARTED_G3",
+          "production": "NOT_AUTHORIZED_G6"
+        },
+        "status": "FAIL"
+      }
+    },
+    {
+      "name": "contamination",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "coding-readiness/validate_contamination_decisions.py",
+        "--compact"
+      ],
+      "exitCode": 0,
+      "result": {
+        "contaminationRows": 13,
+        "decidedRetireRows": 13,
+        "errors": [],
+        "schema": "dwp.hris.contamination-decisions.v1",
+        "status": "PASS"
+      }
+    },
+    {
+      "name": "ia",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "coding-readiness/validate_information_architecture.py",
+        "--compact"
+      ],
+      "exitCode": 0,
+      "result": {
+        "artifactSha256": {
+          "generate_information_architecture_register.py": "e945ff6e0e46a302e37f0832e51f54627262d8c0302ad047a050f031c1b356ba",
+          "hris-information-architecture-register.csv": "35de8f8aefb69d79ad5138af84da393813fec9ee4cbd722a9d0308de1da459d8",
+          "hris-shell-navigation-register.csv": "f85ee40a66ce4100c5578fd3ca96bc89b652b0762e19d74cc7aeb76338009000",
+          "hris-workbench-task-group-register.csv": "f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b",
+          "route-transition-register.csv": "54871ec25fbab4b911232b4ed02a9c10b7c51f84cc602ac62d88f34021e5df32"
+        },
+        "blockers": [],
+        "checks": {
+          "apiAndAuthorizationClosure": true,
+          "benskCompatibilityIsolation": true,
+          "canonicalRouteAndWorkbenchClosure": true,
+          "deepLinkClosure": true,
+          "exactSourceMaterialization": true,
+          "fixedHomeSevenSidebarAndExplorerClosure": true,
+          "implementationAndActivationHonesty": true,
+          "nodeCoverageAndUniqueness": true,
+          "taskOrientedWorkbenchClosure": true
+        },
+        "coverage": {
+          "apiContractReferenceCount": 372,
+          "authorizationCapabilityCount": 119,
+          "baseNodeCount": 76,
+          "explorerUtilityEntryCount": 1,
+          "fixedHomeEntryCount": 1,
+          "modernNodeCount": 22,
+          "nodeCount": 98,
+          "routeTransitionDecisionCount": 2,
+          "shellNavigationEntryCount": 9,
+          "sidebarWorkbenchEntryCount": 7,
+          "sourceFamilyReferenceCount": 80,
+          "taskGroupedIaNodeCount": 97,
+          "uniqueCanonicalPathCount": 98,
+          "workbenchTaskGroupCount": 46
+        },
+        "schema": "dwp.hris.information-architecture.v1",
+        "status": "PASS"
+      }
+    },
+    {
+      "name": "xcon",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "coding-readiness/validate_cross_module_schema_contracts.py",
+        "--compact"
+      ],
+      "exitCode": 0,
+      "result": {
+        "checks": {
+          "draft202012TypedClosedSchemas": true,
+          "exact21Parity": true,
+          "normalizedSchemaDigestsPinned": true,
+          "producerConsumerEvidenceExact": true,
+          "producerConsumerTestsAllocated": true,
+          "sameGeneratedImportAtBothEnds": true
+        },
+        "coverage": {
+          "bindingCount": 21,
+          "byKind": {
+            "EVENT": 13,
+            "SNAPSHOT": 8
+          },
+          "byProducer": {
+            "HRIS-HRM": 12,
+            "HRIS-PAY": 1,
+            "HRIS-PER": 3,
+            "HRIS-TIM": 5
+          },
+          "consumerBindingCount": 31,
+          "duplicateContractCount": 0,
+          "generatedImportMatchCount": 21,
+          "orphanBindingCount": 0,
+          "producerEvidenceMatchCount": 21,
+          "resolvedSchemaCount": 21,
+          "sourceContractCount": 21,
+          "testAllocationCount": 52
+        },
+        "digests": {
+          "coding-readiness/cross-module-canonical-schemas.v1.json": "6221da1de36e397d5d52ac2bde1b68f3116b79a96c66a48bdefa14f261c29d71",
+          "coding-readiness/cross-module-contract-register.csv": "682f32d97dd8efa8c21f6d620c061bc049883e63ca6e1136df470d511985281d",
+          "coding-readiness/cross-module-schema-binding-register.csv": "2d46ccd146e89220dda90ace977c768c316923874affd6df7affb754348151d1",
+          "coding-readiness/decimal-value-types.v1.json": "8597640fa5cf5051cccc14fe4b83a4f179d54dfe36f0ffdaa319dc1149b5c6a6"
+        },
+        "errors": [],
+        "schema": "dwp.hris.cross-module-schema-contracts.v1",
+        "states": {
+          "implementation": "NOT_STARTED_G3",
+          "production": "NOT_AUTHORIZED_G6"
+        },
+        "status": "PASS"
+      }
+    },
+    {
+      "name": "baseSql",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "coding-readiness/validate_base_schema_postgres_feasibility.py",
+        "--compact"
+      ],
+      "exitCode": 1,
+      "result": {
+        "baseOwnerTables": 131,
+        "checks": 116,
+        "errors": [
+          "People migration versions must be exact V1..V46; got [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]",
+          "People migration filename set must contain exactly 46 unique files",
+          "People V1..V46 migration filename digest drift"
+        ],
+        "executionPlan": {
+          "onErrorStop": true,
+          "payrollDatabase": "independent-empty",
+          "peopleBaselineSinglePsqlSession": true,
+          "peopleDatabaseOrder": [
+            "People V1..V46",
+            "HRM",
+            "PER"
+          ],
+          "peopleMigrationTransactions": 48,
+          "timeDatabase": "independent-empty"
+        },
+        "inputDigests": {
+          "moduleDdlSha256": {
+            "HRM": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969",
+            "PAY": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0",
+            "PER": "0099544d7a5fa22bd4b565664b21e5f8f1a68288cce16cdbec83a212f5e70d44",
+            "TIM": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80"
+          },
+          "peopleV1ToV46ContentChainSha256": "2b34b9bdbbeb03afd1a35f3f84cac5263569a05b4c0b92a7f523e7bb93d535d3"
+        },
+        "mode": "static",
+        "modules": {
+          "HRM": {
+            "checkConstraints": 53,
+            "exclusionConstraints": 7,
+            "explicitIndexes": 22,
+            "foreignKeys": 35,
+            "primaryKeys": 24,
+            "rlsTables": 44,
+            "schema": "public",
+            "tableSetSha256": "e11531b3832910a152c2f3a25f1cfe93ee4b31c939ef3eeb5dbb2ae8c806e6d3",
+            "tables": 24,
+            "triggers": 4,
+            "uniqueConstraints": 59
+          },
+          "PAY": {
+            "checkConstraints": 119,
+            "exclusionConstraints": 7,
+            "explicitIndexes": 11,
+            "foreignKeys": 35,
+            "primaryKeys": 42,
+            "rlsTables": 42,
+            "schema": "public",
+            "tableSetSha256": "7039aa94b8c19893d188514f084ad13e4d492cb08e46b182d50330251f5b628d",
+            "tables": 42,
+            "triggers": 20,
+            "uniqueConstraints": 82
+          },
+          "PER": {
+            "checkConstraints": 78,
+            "exclusionConstraints": 2,
+            "explicitIndexes": 17,
+            "foreignKeys": 38,
+            "primaryKeys": 34,
+            "rlsTables": 34,
+            "schema": "hris_performance",
+            "tableSetSha256": "d6c9c5c5ca8eb26b0459f83aae3ca88cc9372b270f6344fdf6b61b7ac26236e7",
+            "tables": 34,
+            "triggers": 2,
+            "uniqueConstraints": 66
+          },
+          "TIM": {
+            "checkConstraints": 90,
+            "exclusionConstraints": 4,
+            "explicitIndexes": 12,
+            "foreignKeys": 17,
+            "primaryKeys": 31,
+            "rlsTables": 31,
+            "schema": "public",
+            "tableSetSha256": "56c4044a649c86e27337e48ca7a6cda0644a6ae7d8b48214882c169d5fa1722e",
+            "tables": 31,
+            "triggers": 9,
+            "uniqueConstraints": 59
+          }
+        },
+        "peopleBaselineMigrations": 48,
+        "peopleBaselineTableSetSha256": "1fdfb5774ea3d991122bbba30765f325d2c22f8ab979805e9db06da6abe5c48f",
+        "peopleBaselineTables": 67,
+        "peopleBaselineVersions": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48
+        ],
+        "peopleMigrationFilenameSetSha256": "fa369d5a85b1732c49932baa868ce2f8f7ce98c5f13beef352eed12eead55dca",
+        "postgresExecution": {
+          "executed": false
+        },
+        "schema": "dwp.hris.base-schema-postgres-feasibility.v1",
+        "selfTestCases": [],
+        "selfTests": 0,
+        "status": "FAIL"
+      }
+    },
+    {
+      "name": "provenance",
+      "command": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "coding-readiness/validate_source_provenance.py",
+        "--static"
+      ],
+      "exitCode": 0,
+      "result": {
+        "checks": 168943,
+        "coverageParents": 2269,
+        "errors": [],
+        "gitLiveOperations": [],
+        "groups": {
+          "coverage-access": {
+            "checks": 20421,
+            "errors": 0
+          },
+          "coverage-inventory": {
+            "checks": 51,
+            "errors": 0
+          },
+          "evidence-digest": {
+            "checks": 81,
+            "errors": 0
+          },
+          "sanitized-bytes": {
+            "checks": 148306,
+            "errors": 0
+          },
+          "scope-tree-view": {
+            "checks": 84,
+            "errors": 0
+          }
+        },
+        "inventory": {
+          "controllers": 825,
+          "entities": 558,
+          "routes": 886
+        },
+        "mode": "static",
+        "rawSourceContentRead": false,
+        "sanitized": {
+          "available": 2258,
+          "blocked": 9,
+          "retired": 2
+        },
+        "schema": "dwp.hris.source-provenance.v1",
+        "sources": 6,
+        "status": "PASS"
+      }
+    }
+  ],
+  "evidenceManifest": {
+    "coding-readiness/target-family-resolution-register.csv": {
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/g3-slice-code-go-register.csv": {
+      "sha256": "21c7d49f5b811eec96b03c5f9f7b262282e65c4e9203a3db55f328957097fbba",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/hris-information-architecture-register.csv": {
+      "sha256": "35de8f8aefb69d79ad5138af84da393813fec9ee4cbd722a9d0308de1da459d8",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/api-pep-binding-register.csv": {
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/transport-schema-resolution-register.csv": {
+      "sha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/cross-module-contract-register.csv": {
+      "sha256": "682f32d97dd8efa8c21f6d620c061bc049883e63ca6e1136df470d511985281d",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/cross-module-schema-binding-register.csv": {
+      "sha256": "2d46ccd146e89220dda90ace977c768c316923874affd6df7affb754348151d1",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/g3-file-allocation-register.csv": {
+      "sha256": "adfe95e90c2df54df471ab757a1af83e5febaf4a2cd1f9c9c4dc84a763c3923d",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "customer-specific-contamination-register.csv": {
+      "sha256": "8985dfe3c2238a384d3247596563202ffbcc4dfe67c122ccf41e9de7520a4075",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "migration-traceability-register.csv": {
+      "sha256": "9e785b77ea3fb355557f84ae4124d4f16d91d5a1b6405595cab5bc053cf009d8",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "five-session-source-coverage-register.csv": {
+      "sha256": "3ce8ec6f60bb1d9f8e36cdb1803b54963e07fcf2d0366ef4c5d8fef899498ff2",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "g0/source-scope-register.csv": {
+      "sha256": "4a3f0f6e6feec1700165414d1bb044df341669f64aec66dd8c4e263a32f81ee8",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "g0/migration-allocation-register.csv": {
+      "sha256": "e714b34be1bd391d668f614d38d4e83e1054f678fa24ca4978ce275c8bc2db98",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-registers/hris-hrm-source-coverage.csv": {
+      "sha256": "8b9044ed595be8847fddab74075c5f308e61343f179da1da4e231e8ffe48e6c2",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-registers/hris-per-source-coverage.csv": {
+      "sha256": "c993e59ae2a7e351b96f50650374e83ad1fc2b96e110de764554d2428f0bdb68",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-registers/hris-tim-source-coverage.csv": {
+      "sha256": "13d59e2176702aa82f4f49718377fb9dcd5bdea2bbc861b1513c161257a8340c",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-registers/hris-pay-source-coverage.csv": {
+      "sha256": "ee6c851040b80f1ccc3bef86d603fc07c6f8f5ce8c97fdb862dd8dbdfe21319d",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-registers/hris-sys-source-coverage.csv": {
+      "sha256": "a3097505a01f60e1a45d369fbbfb0f0c1fbb9f78b09b7beb31a336b814536ab4",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql": {
+      "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/per/g2-readiness/physical-schema.sql": {
+      "sha256": "0099544d7a5fa22bd4b565664b21e5f8f1a68288cce16cdbec83a212f5e70d44",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/tim/g2-physical-schema.sql": {
+      "sha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/pay/g2-physical-schema.sql": {
+      "sha256": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/sys/g2-physical-schema.sql": {
+      "sha256": "e1d47e863e9883f37507f381c9a0c328725832d02c0ee1b426a6f709b86e2821",
+      "bytes": null,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/hrm-transport-schema-supplement.v1.json": {
+      "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+      "bytes": 20613,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/hrm/g2-readiness/api-event-contracts.v1.json": {
+      "sha256": "5390eac887c06d33e744252ddf013183f2f1e55198f8a28d341197b6a6336e65",
+      "bytes": 35196,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md": {
+      "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+      "bytes": 14892,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/hrm/g2-readiness/synthetic-golden-fixtures.json": {
+      "sha256": "f334c8747f4c6c18f31d5f0d89b30cafba8b178ee534aac242ad6ffa99e9fe99",
+      "bytes": 16303,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/per/g2-readiness/api-event-contracts.yaml": {
+      "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a",
+      "bytes": 47246,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/per/g2-readiness/state-guard-idempotency-recovery.md": {
+      "sha256": "ab6000d5a14b329b58a04e497545933575708d3e22264db238186e94f9cd91c0",
+      "bytes": 12472,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/per/g2-readiness/golden/performance-golden-fixtures.json": {
+      "sha256": "430e85824903ecbc4d8a74fc65828c7b4a85f2fe9307d852757423305017d927",
+      "bytes": 9983,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/tim/g2-api-event-contracts.json": {
+      "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f",
+      "bytes": 19564,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/tim/g2-transport-schemas.v1.json": {
+      "sha256": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc",
+      "bytes": 28885,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/tim/synthetic-golden-fixtures.json": {
+      "sha256": "1c8bbc5b69c6ea96b364a8f7fbad3fccf6e7ec2c14108daf8d4a5a93637ebed0",
+      "bytes": 7415,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/pay/g2-api-event-contracts.json": {
+      "sha256": "040e64703871582aaff04f102495592f405a603f690ed4f8a20029981eee3a21",
+      "bytes": 26314,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/pay/g2-transport-schemas.v1.json": {
+      "sha256": "d88d7b37ebda7d9abb6eb9e8aa0032bf0344a6dccc65d7d3d8b88abb06d037fd",
+      "bytes": 36218,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/pay/synthetic-golden-fixtures.json": {
+      "sha256": "fbf1830e3f2615acc410e87c832fab44a45bd20586fcd1f19b5f86ff7a9ee9e4",
+      "bytes": 12818,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/sys/g2-contract-catalog.csv": {
+      "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206",
+      "bytes": 17102,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/sys/g2-state-machines.md": {
+      "sha256": "7ee14c1369945498029b00b119679f3f6dd9c1285df1f176b186bbd1b45b8f10",
+      "bytes": 11847,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/sys/g2-transport-schemas.v1.json": {
+      "sha256": "8ae12abdb504eb58ab8b8b610e47327f496a2136607028581d66a5119f90c8fc",
+      "bytes": 95384,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "session-evidence/sys/g2-golden-scenarios.csv": {
+      "sha256": "2476313506b65294ae8d67a052bb854b22d07c4101cceb144d0c45f3e34de76d",
+      "bytes": 16979,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/cross-module-canonical-schemas.v1.json": {
+      "sha256": "6221da1de36e397d5d52ac2bde1b68f3116b79a96c66a48bdefa14f261c29d71",
+      "bytes": 28061,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "g0/current-g3-gate-decision.json": {
+      "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+      "bytes": 876,
+      "classification": "AUDITED_CANONICAL_OR_HISTORICAL_INPUT"
+    },
+    "coding-readiness/semantic-remediation/sys-data-boundary-architecture-review.v1.md": {
+      "sha256": "77ceb4eb655ef18044d58eef54ac9aca12e80946e1c9b1352d9e446dc8a795ab",
+      "bytes": 10143,
+      "classification": "CONCURRENT_DESIGN_PROPOSED_CONTEXT_NOT_CANONICAL"
+    },
+    "coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.json": {
+      "sha256": "4576e0cbe57014d454049b31b09a8aeb96322f3e9e7f2f216939bb9ba0fc695b",
+      "bytes": 89779,
+      "classification": "CONCURRENT_DESIGN_PROPOSED_CONTEXT_NOT_CANONICAL"
+    },
+    "coding-readiness/semantic-remediation/sys-tim-synthetic-acceptance.v1.json": {
+      "sha256": "12a0168f35c2c5f0c46734e0ac29f27dd83cd356d9ac734af7a8fd6467f8c5b6",
+      "bytes": 22464,
+      "classification": "CONCURRENT_DESIGN_PROPOSED_CONTEXT_NOT_CANONICAL"
+    }
+  },
+  "writeScope": {
+    "created": [
+      "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+      "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.md"
+    ],
+    "otherFilesEdited": false,
+    "databasesContainersProcessesCommitsMutated": false,
+    "validation": "JSON parse/exact86 unique rows/parent sums/12 findings/actual referenced JSON pointers and CSV rows/hash preservation verified after save; detailed result returned to parent separately."
+  }
+}

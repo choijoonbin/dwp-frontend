@@ -1,0 +1,25 @@
+{
+  "baseFileUsed": null,
+  "bytes": 51577,
+  "destination": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql",
+  "inventedContent": false,
+  "lineCount": 1031,
+  "lineSourceCounts": {
+    "exec-2ff7449d-5908-4413-a3f4-4d0dfb5436a9": 228,
+    "exec-4c0a5b0d-6a8f-4b5a-bcd4-d7646dc5b181": 406,
+    "exec-95bc4549-3f3f-4390-9b36-964e681cd105": 397
+  },
+  "observedItemIds": [
+    "exec-2ff7449d-5908-4413-a3f4-4d0dfb5436a9",
+    "exec-4c0a5b0d-6a8f-4b5a-bcd4-d7646dc5b181",
+    "exec-95bc4549-3f3f-4390-9b36-964e681cd105"
+  ],
+  "relativePath": "session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql",
+  "schema": "dwp.hris.blueprint.numbered-event-recovery.v1",
+  "selectedItemIds": [
+    "exec-2ff7449d-5908-4413-a3f4-4d0dfb5436a9",
+    "exec-4c0a5b0d-6a8f-4b5a-bcd4-d7646dc5b181",
+    "exec-95bc4549-3f3f-4390-9b36-964e681cd105"
+  ],
+  "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969"
+}

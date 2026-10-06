@@ -1,0 +1,116 @@
+{
+  "fixtureSetId": "dwp-hris-time-core-golden-v1",
+  "status": "CODE_READY_PROPOSAL",
+  "syntheticOnly": true,
+  "currencyOrLegalAssertion": false,
+  "defaultTenant": "00000000-0000-0000-0000-000000000101",
+  "cases": [
+    {
+      "id": "TIM-GOLD-001",
+      "title": "overnight shift preserves local work date",
+      "layer": "GLOBAL_CORE",
+      "input": {"zone":"Asia/Seoul","localWorkDate":"2026-02-10","start":"2026-02-10T22:00:00+09:00","end":"2026-02-11T06:00:00+09:00","breakMinutes":60},
+      "expected": {"elapsedMinutes":480,"regularMinutes":420,"localWorkDate":"2026-02-10","exceptionCodes":[]}
+    },
+    {
+      "id": "TIM-GOLD-002",
+      "title": "DST spring gap uses instants and retains source offsets",
+      "layer": "GLOBAL_CORE",
+      "input": {"zone":"America/New_York","start":"2026-03-08T01:30:00-05:00","end":"2026-03-08T03:30:00-04:00","breakMinutes":0},
+      "expected": {"elapsedMinutes":60,"sourceOffsets":[-300,-240],"exceptionCodes":[]}
+    },
+    {
+      "id": "TIM-GOLD-003",
+      "title": "duplicate and out-of-order clock events are deterministic",
+      "layer": "GLOBAL_CORE",
+      "input": {"events":[{"key":"E1","type":"IN","at":"2026-02-10T09:00:00+09:00","receivedOrder":2},{"key":"E2","type":"OUT","at":"2026-02-10T18:00:00+09:00","receivedOrder":1},{"key":"E1","type":"IN","at":"2026-02-10T09:00:00+09:00","receivedOrder":3}]},
+      "expected": {"acceptedEventKeys":["E1","E2"],"duplicateCount":1,"elapsedMinutes":540,"outputStableAfterReplay":true}
+    },
+    {
+      "id": "TIM-GOLD-004",
+      "title": "tenant-configured overtime threshold is not a legal default",
+      "layer": "TENANT_CONFIGURATION",
+      "input": {"scheduledMinutes":480,"workedMinutes":600,"configuredRegularLimitMinutes":480,"approvalRequired":true,"approved":true},
+      "expected": {"regularMinutes":480,"overtimeMinutes":120,"blockingExceptions":0}
+    },
+    {
+      "id": "TIM-GOLD-005",
+      "title": "leave balance replays from grant use and cancellation",
+      "layer": "GLOBAL_CORE",
+      "input": {"entries":[{"type":"GRANT","quantityMinutes":480},{"type":"USE","quantityMinutes":-240},{"type":"RELEASE","quantityMinutes":240}]},
+      "expected": {"balanceMinutes":480,"entryCount":3,"directBalanceMutationCount":0,"replayMatchesProjection":true}
+    },
+    {
+      "id": "TIM-GOLD-006",
+      "title": "concurrent timecard decisions use expected version",
+      "layer": "GLOBAL_CORE",
+      "input": {"initialState":"SUBMITTED","initialVersion":7,"commands":[{"decision":"APPROVED","expectedVersion":7},{"decision":"REJECTED","expectedVersion":7}]},
+      "expected": {"successfulCommands":1,"staleCommands":1,"staleError":"409_STALE_OR_INVALID_STATE","finalVersion":8}
+    },
+    {
+      "id": "TIM-GOLD-007",
+      "title": "close blocks then reopens with lineage",
+      "layer": "GLOBAL_CORE",
+      "input": {"initialStatus":"OPEN","blockingExceptions":1,"firstCloser":"actor-A","reopenApprover":"actor-B","correctedBlockingExceptions":0},
+      "expected": {"firstCloseStatus":"BLOCKED","secondCloseStatus":"CLOSED","reopenStatus":"REOPENED","closeRevisions":[1,2],"sameActorSoD":false,"oldClosedResultUnchanged":true,"newClosedResultRevision":2,"supersedesPriorResult":true}
+    },
+    {
+      "id": "TIM-GOLD-008",
+      "title": "Payroll handoff recovers result unknown by receipt",
+      "layer": "GLOBAL_CORE",
+      "input": {"closeRevision":3,"workerCount":2,"aggregates":[{"worker":"W1","payCode":"REG","minutes":480},{"worker":"W2","payCode":"REG","minutes":420}],"firstTransportResult":"TIMEOUT_AFTER_COMMIT","receiptLookup":"ACKNOWLEDGED"},
+      "expected": {"logicalHandoffCount":1,"acceptedWorkerCount":2,"acceptedMinutes":900,"finalStatus":"ACKNOWLEDGED","duplicatePayloadCount":0}
+    },
+    {
+      "id": "TIM-GOLD-009",
+      "title": "authorization failures do not disclose target existence",
+      "layer": "GLOBAL_CORE",
+      "input": {"checks":["CROSS_TENANT","OUT_OF_POPULATION","SELF_APPROVAL","SENSITIVE_FIELD_WITHOUT_PURPOSE"]},
+      "expected": {"CROSS_TENANT":"404_OPAQUE","OUT_OF_POPULATION":"404_OPAQUE","SELF_APPROVAL":"409_SOD_CONFLICT","SENSITIVE_FIELD_WITHOUT_PURPOSE":"403_FIELD_POLICY"}
+    },
+    {
+      "id": "TIM-GOLD-010",
+      "title": "optional pack and connector fail closed without disabling core",
+      "layer": "ACTIVATION_BOUNDARY",
+      "input": {"krPackInstalled":false,"clockConnectorInstalled":false,"commands":["CORE_MANUAL_CLOCK","KR_STATUTORY_LEAVE","VENDOR_CLOCK_IMPORT"]},
+      "expected": {"CORE_MANUAL_CLOCK":"SUCCEEDED","KR_STATUTORY_LEAVE":"422_COUNTRY_PACK_NOT_ACTIVE","VENDOR_CLOCK_IMPORT":"422_CONNECTOR_NOT_ACTIVE"},
+      "activationGate": ["official-reference-and-golden-for-country-pack","provider-contract-and-conformance-for-connector"]
+    },
+    {
+      "id": "TIM-GOLD-011",
+      "title": "receipt lookup cannot outlive or broaden originating authorization",
+      "layer": "GLOBAL_CORE",
+      "input": {"originatingAction":"TIME_PERIOD_CLOSE","sealedPopulationScopeDigest":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","sealedPurposeCode":"TIME_CLOSE_OPERATION","authorizationRevisionAtCommand":7,"lookupAuthorizationRevision":8,"currentEntitlement":"REVOKED"},
+      "expected": {"receiptPersisted":true,"lookupResult":"404_OPAQUE","originatingContextUnchanged":true,"callerScopeOverrideAccepted":false,"accessBroadened":false}
+    },
+    {
+      "id": "TIM-GOLD-012",
+      "title": "DST overlap and gap retain versioned civil-time provenance",
+      "layer": "GLOBAL_CORE",
+      "input": {"overlap":{"occurredAt":"2026-11-01T06:30:00Z","sourceLocalDateTime":"2026-11-01T01:30:00","timeZone":"America/New_York","sourceUtcOffsetMinutes":-300,"dstResolution":"LATER_OFFSET_SELECTED","instantAuthority":"LOCAL_WITH_OFFSET","tzdbVersion":"2026a","timeZoneRuleVersion":"iana-2026a-america-new_york","sourceProvenanceDigest":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},"tamperedRetry":{"sourceUtcOffsetMinutes":-240,"sameProvenanceDigest":true}},
+      "expected": {"acceptedInstant":"2026-11-01T06:30:00Z","selectedOffsetMinutes":-300,"evidencePersisted":true,"tamperedRetry":"409_IDEMPOTENCY_KEY_REUSED","serverTzdbRecalculation":false}
+    },
+    {
+      "id": "TIM-GOLD-013",
+      "title": "command idempotency is caller-bound and the authorization seal is immutable",
+      "layer": "GLOBAL_CORE",
+      "input": {
+        "originatingAction": "TIME_PERIOD_CLOSE",
+        "idempotencyKey": "synthetic-time-close-013",
+        "firstSubject": "00000000-0000-0000-0000-000000000131",
+        "secondSubject": "00000000-0000-0000-0000-000000000132",
+        "firstRequestDigest": "1313131313131313131313131313131313131313131313131313131313131313",
+        "changedRequestDigest": "2323232323232323232323232323232323232323232323232323232323232323",
+        "sealedFields": ["tenantId","commandType","originatingAction","subjectPrincipalPublicId","populationScopeDigest","fieldPolicyRevision","purposeCode","authorizationRevision","idempotencyKey","requestDigest","correlationId"]
+      },
+      "expected": {
+        "sameSubjectSameDigest": "ORIGINAL_RECEIPT",
+        "sameSubjectDifferentDigest": "409_IDEMPOTENCY_KEY_REUSED",
+        "differentSubjectSameKey": "INDEPENDENT_RECEIPT",
+        "sealedFieldUpdate": "REJECTED",
+        "receiptDelete": "REJECTED",
+        "logicalCommandCountForFirstSubject": 1
+      }
+    }
+  ]
+}

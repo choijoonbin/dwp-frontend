@@ -1,0 +1,1324 @@
+{
+  "schema": "dwp.hris.stream-authority-composite-focused-evidence.v1",
+  "status": "FOCUSED_PASS_UNWIRED_DISABLED_SCAFFOLD",
+  "codingGate": "G3_CLOSED",
+  "commonReadiness": "COMMON_P0_OPEN",
+  "capturedAtUtc": "2026-09-14T02:13:56.899885+00:00",
+  "backendRoot": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+  "architectureDecision": "coding-readiness/semantic-remediation/sys-stream-authority-decision.proposal.v1.md",
+  "runtimeOnlyBoundary": "coding-readiness/semantic-remediation/runtime-only-startup-authority-boundary.proposal.v1.md",
+  "scope": {
+    "services": 8,
+    "streams": 13,
+    "runtimePurposes": 14,
+    "proposedDistinctLoginPrincipals": 27,
+    "executionBoundary": "EXTERNAL_CONTROL_AUTHORITY_INSPECTION",
+    "publicEntryPoint": "CompositeRuntimeBindingGuard.inspectExternallyControlledService",
+    "wiredIntoApplicationStartup": false,
+    "externalCompositeControlProducerImplemented": false,
+    "applicationRuntimeOnlyStartupGuardImplemented": false,
+    "actualCurrent13StreamBootstrapProven": false,
+    "fullCurrentBackendCheckPerformed": false,
+    "productionScalarControlSqlBootstrapRegistryChanged": false,
+    "protectedUserMainDatabaseOrServersTouched": false,
+    "testDataScope": "Owner-created disposable PostgreSQL Testcontainers and private catalogs/roles only; actual native history/inventory/identity/ACL probes; rollback/read-only inspection; no arbitrary endpoint or caller SQL admission.",
+    "fixtureAuthorityReferenceNature": "SYNTHETIC_CONTRACT_ONLY: dwp-migration-control-v2:<64 a characters>. Pilot native history/inventory SHA values and JDBC role/ACL observations are real isolated PostgreSQL values, not a genuine 13-stream Control receipt or current-source bootstrap proof.",
+    "currentControlSourceReferenceNature": "Independently computed by existing scripts.devctl.migration_control_reference from current attested source closure. The current Control does not produce the new composite receipt."
+  },
+  "baseline": {
+    "head": "70c996fdafc011392056a1909a2e5222b240ded3",
+    "tree": "ad226258485214e52a552e08594668c3593c320b",
+    "scope": "Historical full backend diagnostic on 70c996f remains historical and is not reused as this commit's full backend approval."
+  },
+  "commit": {
+    "head": "76130dde620084124a9c16ff8edc731487e0a4c3",
+    "tree": "b7007b8c27cd4cfb9aadf50a034e316e7864869e",
+    "parent": "70c996fdafc011392056a1909a2e5222b240ded3",
+    "message": "feat(core): add external stream authority inspection scaffold",
+    "newFiles": 12,
+    "insertions": 1929,
+    "postCommitClean": true,
+    "existingFilesChanged": 0
+  },
+  "controlReference": "dwp-migration-control-v2:a18c30c83e7ec75d0ea42312dc9683c526c73007c0d2a5a9626f1d403d55dc0e",
+  "sourceIntegrity": {
+    "sourceFrozenBeforeStartedAt": "2026-09-14T02:07:01.898Z",
+    "allCommittedFileModificationTimesBeforeRun": true,
+    "beforeAndAfterCommitSha256Equal": true,
+    "unstagedChangesBeforeCommit": false,
+    "postCommitControlReferenceUnchanged": true,
+    "scopeNote": "The source manifest was independently hashed after the focused run and again after commit. All 12 committed file modification timestamps precede run start; exact staged additions were checked before commit."
+  },
+  "execution": {
+    "command": "./gradlew :dwp-core:test --tests com.dwp.core.database.authority.* --no-daemon --max-workers=1 --continue",
+    "startedAtUtc": "2026-09-14T02:07:01.898Z",
+    "finishedAtUtc": "2026-09-14T02:10:46.611Z",
+    "exitCode": 0,
+    "durationSeconds": 224.713,
+    "timeoutSeconds": 900,
+    "maxWorkers": 1,
+    "tasks": {
+      "actionable": 11,
+      "executed": 4,
+      "upToDate": 7
+    },
+    "semaphore": {
+      "schema": "dwp.hris.host-semaphore-receipt.v1",
+      "name": "hris-verification",
+      "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+      "requestedAt": "2026-09-14T02:07:01.898Z",
+      "acquiredAt": "2026-09-14T02:07:01.899Z",
+      "releasedAt": "2026-09-14T02:10:46.611Z",
+      "waitMilliseconds": 0,
+      "status": "RELEASED"
+    },
+    "failureOrSkipPolicy": "No guards weakened; no tests removed or skipped; wrapper timeout would affect only its owned child process group. No user server killed."
+  },
+  "testSummary": {
+    "suites": 4,
+    "tests": 114,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "contractAndNoDatasourceUnits": 65,
+    "isolatedPostgresPilotCases": 49
+  },
+  "staticChecks": [
+    {
+      "name": "check-service-boundaries.py",
+      "exitCode": 0,
+      "output": "PASS service boundaries: backend modules, HTTP/application/persistence layering, direct service HTTP clients, and cross-database metadata exceptions match docs/architecture/service-interface-contracts.json."
+    },
+    {
+      "name": "check-source-size.py",
+      "exitCode": 0,
+      "output": "PASS source-size budget: 1613 production files checked; exceptions are exact and new files are limited to 700 lines."
+    },
+    {
+      "name": "check-java-dependency-cycles.py",
+      "exitCode": 0,
+      "output": "PASS Java dependency cycles: 1613 production classes, 12 exact legacy SCCs, 0 Spring constructor cycles."
+    },
+    {
+      "name": "check-unused-private-methods.py",
+      "exitCode": 0,
+      "output": "PASS unused private methods: no trivially unreachable unannotated private methods."
+    },
+    {
+      "name": "check-test-source-size.py",
+      "exitCode": 0,
+      "output": "PASS test source-size budget: 791 Java test files checked; 7 exact legacy exception(s); new files are limited to 1000 lines."
+    },
+    {
+      "name": "check-authorization-negative-matrix.py",
+      "exitCode": 0,
+      "output": "Authorization negative matrix valid: 46 canonical fixture records integrity-validated, 5 vectors, 12 products (12 EXACT, 0 INCOMPLETE_KINDS, 0 MISSING), 0 missing product-vector cells, state COMPLETE"
+    }
+  ],
+  "sourceManifest": [
+    {
+      "path": "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceipt.java",
+      "sha256": "390d7b9e0c78ce876afc16cf31b5983bede48873ce5e32fbfff61299a5b6591c",
+      "lines": 49,
+      "mtimeUtc": "2026-09-14T01:40:36.609272+00:00"
+    },
+    {
+      "path": "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuard.java",
+      "sha256": "c47eb95d57168999fedc10dbd7f3cf4f4903ed4b630f1deaf8644210bfa4e70f",
+      "lines": 427,
+      "mtimeUtc": "2026-09-14T02:06:28.452941+00:00"
+    },
+    {
+      "path": "dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+      "sha256": "3ae35ffdd8416955bd4373409caa48fd92770e65f7efd4dc407ba2468fe290fb",
+      "lines": 55,
+      "mtimeUtc": "2026-09-14T01:51:34.625708+00:00"
+    },
+    {
+      "path": "dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java",
+      "sha256": "cf9a5d83bc9b26900d885535cb39d5c4e98c78090728fb77236ddafa79e3caca",
+      "lines": 187,
+      "mtimeUtc": "2026-09-14T02:00:32.023425+00:00"
+    },
+    {
+      "path": "dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityJson.java",
+      "sha256": "079bc72fcec53de3229860080c3339115310d53cfbe2800f0234fbf6097e22a9",
+      "lines": 105,
+      "mtimeUtc": "2026-09-14T01:40:36.609743+00:00"
+    },
+    {
+      "path": "dwp-core/src/main/resources/database/stream-authority/composite-authority-receipt.v1.schema.json",
+      "sha256": "38cb91dc1822e1f42e0acf0cb64aa1df2b3ecb706bc08ec038260a0e0622d742",
+      "lines": 39,
+      "mtimeUtc": "2026-09-14T02:06:28.454133+00:00"
+    },
+    {
+      "path": "dwp-core/src/main/resources/database/stream-authority/stream-authority-manifest.v1.schema.json",
+      "sha256": "4a84b47ec0b1cd22502b053b7877ecc2cfd7635731996144b02b0cc30d1b28c0",
+      "lines": 73,
+      "mtimeUtc": "2026-09-14T01:59:20.805011+00:00"
+    },
+    {
+      "path": "dwp-core/src/test/java/com/dwp/core/database/authority/AuthorityFixtures.java",
+      "sha256": "0ce8bc90c8b67c56afa046e81227c1f794728f35b3c233653a847b42d3aa8b4f",
+      "lines": 66,
+      "mtimeUtc": "2026-09-14T01:51:34.627944+00:00"
+    },
+    {
+      "path": "dwp-core/src/test/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuardPostgresTest.java",
+      "sha256": "d088b4fc4367a70fcb01179c614fe7a9eb63988542acb6c840bace4852930847",
+      "lines": 307,
+      "mtimeUtc": "2026-09-14T02:06:28.453685+00:00"
+    },
+    {
+      "path": "dwp-core/src/test/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuardTest.java",
+      "sha256": "2ff05ffaa7f6ff97a1a0817992f9f362a82120403ac82ec620d8d16ad359ebf0",
+      "lines": 127,
+      "mtimeUtc": "2026-09-14T02:07:01.472863+00:00"
+    },
+    {
+      "path": "dwp-core/src/test/java/com/dwp/core/database/authority/InsightsPurposeBindingGuardPostgresTest.java",
+      "sha256": "5d64741867c21d83c9fdf4b2d5fee59cfeb58a013c58bf7fc62a27703d66d6e1",
+      "lines": 254,
+      "mtimeUtc": "2026-09-14T01:56:05.181272+00:00"
+    },
+    {
+      "path": "dwp-core/src/test/java/com/dwp/core/database/authority/StreamAuthorityJsonTest.java",
+      "sha256": "9d3b49b1d4a8118b9db606d0f54856f1ecc990326c0aaa294048fc64f59c4aad",
+      "lines": 240,
+      "mtimeUtc": "2026-09-14T02:00:32.066897+00:00"
+    }
+  ],
+  "compiledClassManifest": [
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeAuthorityReceipt$StreamSeal.class",
+      "sha256": "421ce8c45225f584ce06621af7304ec14d3f79bc0e825236bcabf53379cd4755",
+      "classId": "CompositeAuthorityReceipt$StreamSeal",
+      "mtimeUtc": "2026-09-14T02:07:10.166924+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeAuthorityReceipt.class",
+      "sha256": "e8466f85cb34d4d246bf0392ff454a2234a4308e62ca0bb02b9e7d067d9b0ff3",
+      "classId": "CompositeAuthorityReceipt",
+      "mtimeUtc": "2026-09-14T02:07:10.168829+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeRuntimeBindingGuard$ExternalExpected.class",
+      "sha256": "47eba7e20611c012db2e0c83d33debc39a60bbba1fafbf178b57245c877ac167",
+      "classId": "CompositeRuntimeBindingGuard$ExternalExpected",
+      "mtimeUtc": "2026-09-14T02:07:10.209483+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeRuntimeBindingGuard$Identity.class",
+      "sha256": "fe3c59d28e6ae05a943783a9916d12285a1a132fea420edbf31444c60227bbce",
+      "classId": "CompositeRuntimeBindingGuard$Identity",
+      "mtimeUtc": "2026-09-14T02:07:10.211907+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeRuntimeBindingGuard$Inspection.class",
+      "sha256": "1dc9f953386ef92ff08955addb489aacf0e41a9e5514cd80cabd186b07e7376f",
+      "classId": "CompositeRuntimeBindingGuard$Inspection",
+      "mtimeUtc": "2026-09-14T02:07:10.211154+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeRuntimeBindingGuard$NetworkBoundary.class",
+      "sha256": "e0f99c768eaea8c7934e1ab014ff17b407ada9cf73b65c3c855dea7e7f7b3ac5",
+      "classId": "CompositeRuntimeBindingGuard$NetworkBoundary",
+      "mtimeUtc": "2026-09-14T02:07:10.212767+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeRuntimeBindingGuard$RegisteredDataSource.class",
+      "sha256": "75fce8f518d7a606629db829b831abeddc44a0d128973f441efe787d996f9c09",
+      "classId": "CompositeRuntimeBindingGuard$RegisteredDataSource",
+      "mtimeUtc": "2026-09-14T02:07:10.210342+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/CompositeRuntimeBindingGuard.class",
+      "sha256": "4da0a293f18c50e1d38c6cabfc53e417332a4e2e95f940ab53bd4bbfcfdb6cae",
+      "classId": "CompositeRuntimeBindingGuard",
+      "mtimeUtc": "2026-09-14T02:07:10.218312+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/ExactStreamTopology$Stream.class",
+      "sha256": "0fd578e9eb771f0a78a59b5e02ddec92ca2d6c95a9154468cd2c1ddd93515944",
+      "classId": "ExactStreamTopology$Stream",
+      "mtimeUtc": "2026-09-14T01:52:18.400659+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/ExactStreamTopology.class",
+      "sha256": "8aee5e614339b03d6134f36f928c987e4513e25fec80f3c44ca42b2e1231671e",
+      "classId": "ExactStreamTopology",
+      "mtimeUtc": "2026-09-14T01:52:18.407329+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/StreamAuthorityContract$Catalog.class",
+      "sha256": "0250326deafbbba5603efaae24369ef99d15955a255071ebb5b1596e458a6f89",
+      "classId": "StreamAuthorityContract$Catalog",
+      "mtimeUtc": "2026-09-14T02:07:10.142603+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/StreamAuthorityContract$ObjectGrant.class",
+      "sha256": "0f72b42acbb39c37ba11976650c5807cea059a6e2de1f4719fc2090cb2b88174",
+      "classId": "StreamAuthorityContract$ObjectGrant",
+      "mtimeUtc": "2026-09-14T02:07:10.151356+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/StreamAuthorityContract$RuntimePrincipal.class",
+      "sha256": "1677134927d9a9bbbb7b520cfca77e63629dbb8562ca046b59d8a0357c46c7e4",
+      "classId": "StreamAuthorityContract$RuntimePrincipal",
+      "mtimeUtc": "2026-09-14T02:07:10.146807+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/StreamAuthorityContract$StreamAuthority.class",
+      "sha256": "223a419d44c67356b31f0921a290233ae05d85302513eeaea09b7f7cc38b8c12",
+      "classId": "StreamAuthorityContract$StreamAuthority",
+      "mtimeUtc": "2026-09-14T02:07:10.144967+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/StreamAuthorityContract.class",
+      "sha256": "1967441bfd319e91e92c31383d7acc9d39ec15ec62cdf01602b13246b72fb3ee",
+      "classId": "StreamAuthorityContract",
+      "mtimeUtc": "2026-09-14T02:07:10.158160+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/main/com/dwp/core/database/authority/StreamAuthorityJson.class",
+      "sha256": "3d96abd9f60646e56536a8812b3f35c3579b20ea798058b9b7c201d1e19d8638",
+      "classId": "StreamAuthorityJson",
+      "mtimeUtc": "2026-09-14T02:07:10.233526+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/AuthorityFixtures.class",
+      "sha256": "8c3faeafac378cf07537dd4882d25d6f1db6eec379a6d3d0a656c66844f1ed26",
+      "classId": "AuthorityFixtures",
+      "mtimeUtc": "2026-09-14T02:07:11.494398+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/CompositeRuntimeBindingGuardPostgresTest$1.class",
+      "sha256": "d833957cb0f8918929521876b034bb9226c4b5e451c4e3363f82d6629f668e83",
+      "classId": "CompositeRuntimeBindingGuardPostgresTest$1",
+      "mtimeUtc": "2026-09-14T02:07:11.561372+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/CompositeRuntimeBindingGuardPostgresTest$2.class",
+      "sha256": "98e4234ed7fee39df57fdac262310109272de88cb677846da5c41dc1021939c7",
+      "classId": "CompositeRuntimeBindingGuardPostgresTest$2",
+      "mtimeUtc": "2026-09-14T02:07:11.561937+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/CompositeRuntimeBindingGuardPostgresTest$3.class",
+      "sha256": "304e9bfdad5651e38c3f8c793d1761c422df78190269625fd066c5d431b240c7",
+      "classId": "CompositeRuntimeBindingGuardPostgresTest$3",
+      "mtimeUtc": "2026-09-14T02:07:11.562304+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/CompositeRuntimeBindingGuardPostgresTest$4.class",
+      "sha256": "d7c7ee25d4114e9d6fe2a2bc6ad265f207ecb826a6754c7cdcdb9512cf32909e",
+      "classId": "CompositeRuntimeBindingGuardPostgresTest$4",
+      "mtimeUtc": "2026-09-14T02:07:11.562656+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/CompositeRuntimeBindingGuardPostgresTest.class",
+      "sha256": "1756aca19964a55be672f7301da62b710c356bd71db039e58298b9f3dfcba57b",
+      "classId": "CompositeRuntimeBindingGuardPostgresTest",
+      "mtimeUtc": "2026-09-14T02:07:11.566343+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/CompositeRuntimeBindingGuardTest.class",
+      "sha256": "0dbd50fa6ba7d836e2782bcd95c4c90fb8a8f40f84b30d0d277f961cd4f307e0",
+      "classId": "CompositeRuntimeBindingGuardTest",
+      "mtimeUtc": "2026-09-14T02:07:11.512386+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/InsightsPurposeBindingGuardPostgresTest$1.class",
+      "sha256": "8ea521e6881769b110419f838a077de667f29fe205e581e35c18c7d95b890d6e",
+      "classId": "InsightsPurposeBindingGuardPostgresTest$1",
+      "mtimeUtc": "2026-09-14T02:07:11.582451+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/InsightsPurposeBindingGuardPostgresTest.class",
+      "sha256": "8f5a17fd747f198a47dc45edc5b47a43e54590e8c101b10f264abbd1b122a6be",
+      "classId": "InsightsPurposeBindingGuardPostgresTest",
+      "mtimeUtc": "2026-09-14T02:07:11.585719+00:00"
+    },
+    {
+      "path": "dwp-core/build/classes/java/test/com/dwp/core/database/authority/StreamAuthorityJsonTest.class",
+      "sha256": "e2ef0262bcfd6c50b79db609005022c59dd3ba4a77c21640e976dcb0cf0ae3d2",
+      "classId": "StreamAuthorityJsonTest",
+      "mtimeUtc": "2026-09-14T02:07:11.540777+00:00"
+    }
+  ],
+  "xmlManifest": [
+    {
+      "path": "dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest.xml",
+      "sha256": "34039a2f9fb8da620ab10c25782a1a0cdd3a1dae88a37546adcdd6b4636f9284",
+      "suiteClass": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T02:07:14",
+      "timeSeconds": 146.688,
+      "caseIds": [
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[1] mutation=superuser",
+          "timeSeconds": 3.982,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[2] mutation=createdb",
+          "timeSeconds": 3.493,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[3] mutation=createrole",
+          "timeSeconds": 2.512,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[4] mutation=replication",
+          "timeSeconds": 2.472,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[5] mutation=bypassrls",
+          "timeSeconds": 2.863,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[6] mutation=membership",
+          "timeSeconds": 2.928,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[7] mutation=incomingMembership",
+          "timeSeconds": 2.193,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[8] mutation=runtimeOwner",
+          "timeSeconds": 2.634,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[9] mutation=migrationForeignOwner",
+          "timeSeconds": 1.701,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[10] mutation=foreignSchemaUsage",
+          "timeSeconds": 2.78,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[11] mutation=schemaCreate",
+          "timeSeconds": 2.809,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[12] mutation=databaseCreate",
+          "timeSeconds": 2.719,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[13] mutation=temporary",
+          "timeSeconds": 2.624,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[14] mutation=foreignCatalogConnect",
+          "timeSeconds": 2.825,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[15] mutation=historySelect",
+          "timeSeconds": 4.424,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[16] mutation=unknownTable",
+          "timeSeconds": 5.248,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[17] mutation=columnGrant",
+          "timeSeconds": 4.877,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[18] mutation=grantOption",
+          "timeSeconds": 4.243,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[19] mutation=sequenceUsage",
+          "timeSeconds": 5.588,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[20] mutation=typeUsage",
+          "timeSeconds": 5.061,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[21] mutation=publicRoutine",
+          "timeSeconds": 4.11,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[22] mutation=runtimeRoutine",
+          "timeSeconds": 5.957,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[23] mutation=defaultPrivilege",
+          "timeSeconds": 6.563,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[24] mutation=publicTable",
+          "timeSeconds": 7.976,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[25] mutation=wrongSearchPath",
+          "timeSeconds": 7.373,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[26] mutation=persistentWrongPath",
+          "timeSeconds": 6.074,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[27] mutation=historyChecksum",
+          "timeSeconds": 8.353,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[28] mutation=historyPrincipal",
+          "timeSeconds": 3.69,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[29] mutation=historyRank",
+          "timeSeconds": 3.45,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[30] mutation=inventoryDdl",
+          "timeSeconds": 3.643,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[31] mutation=foreignGrantee",
+          "timeSeconds": 3.778,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[32] mutation=unknownTypePublic",
+          "timeSeconds": 3.503,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "[33] mutation=runtimeMigrationPrincipal",
+          "timeSeconds": 1.943,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "privilegedOriginalLoginCannotHideBehindSessionAuthorizationOfSafeRuntime()",
+          "timeSeconds": 1.927,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "reusedGuardWrappedDriverFailureCannotExposeCredentialCause()",
+          "timeSeconds": 3.354,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "rejectsSessionUserSetRoleAndWrongCatalogServerOrReadOnlyIdentity()",
+          "timeSeconds": 1.712,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardPostgresTest",
+          "caseName": "acceptsExactDirectLoginNativeSealAndStableReadOnlyReinspection()",
+          "timeSeconds": 5.27,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "path": "dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest.xml",
+      "sha256": "2b4a3396316faf4f2301b393556251095d392fe3af88cf85cff2c8db23547917",
+      "suiteClass": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T02:09:41",
+      "timeSeconds": 0.456,
+      "caseIds": [
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest",
+          "caseName": "foreignRegistryOrTamperedReceiptRejectsBeforeAnySupplierOpens()",
+          "timeSeconds": 0.042,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest",
+          "caseName": "missingInsightsQueryOrWriterBindingRejectsBeforeAnySupplierOpens()",
+          "timeSeconds": 0.007,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest",
+          "caseName": "inspectionMarkerIsExternalUnwiredAndCannotClaimApplicationStartupApproval()",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest",
+          "caseName": "missingSupplementalBindingRejectsBeforeOpeningAnyPrimaryPoolAndCannotFallback()",
+          "timeSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest",
+          "caseName": "datasourceInstanceReuseIsRejectedBeforeAnyDatabaseConnectionOpens()",
+          "timeSeconds": 0.392,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.CompositeRuntimeBindingGuardTest",
+          "caseName": "disabledSupplementalSuppliersAreNeverInvokedEvenWhenMandatoryProbeFails()",
+          "timeSeconds": 0.008,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "path": "dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest.xml",
+      "sha256": "3f130695c914525fcf43e25eadff0421547a54b4730c90b795eb8a9139f270e5",
+      "suiteClass": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T02:09:42",
+      "timeSeconds": 63.389,
+      "caseIds": [
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "writerCannotReadOrWriteProtectedAndForeignGrantFailsTheGuard()",
+          "timeSeconds": 5.789,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[1] mutation=queryWriteEnabledPool",
+          "timeSeconds": 4.07,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[2] mutation=writerReadOnlyPool",
+          "timeSeconds": 4.465,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[3] mutation=writerRoleReadOnly",
+          "timeSeconds": 4.26,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[4] mutation=wrongPurpose",
+          "timeSeconds": 4.297,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[5] mutation=wrongQualifierDto",
+          "timeSeconds": 4.098,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[6] mutation=writerBoundToQueryPool",
+          "timeSeconds": 4.647,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[7] mutation=queryBoundToWriterPool",
+          "timeSeconds": 3.847,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[1] privilege=INSERT",
+          "timeSeconds": 8.46,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[2] privilege=UPDATE",
+          "timeSeconds": 7.357,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "[3] privilege=DELETE",
+          "timeSeconds": 5.273,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.InsightsPurposeBindingGuardPostgresTest",
+          "caseName": "acceptsQuerySelectAndWriterBoundedCrudWhileQueryCannotWriteOrReadProtected()",
+          "timeSeconds": 6.819,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "path": "dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.StreamAuthorityJsonTest.xml",
+      "sha256": "9b41ba836a4aa2c37d8c06bd267557eede111f6037694f15dd8cfe104186b5d3",
+      "suiteClass": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+      "tests": 59,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T02:10:46",
+      "timeSeconds": 0.116,
+      "caseIds": [
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[1] mutation=missingWriter",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[2] mutation=missingQuery",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[3] mutation=writeEnabledQuery",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[4] mutation=readOnlyWriter",
+          "timeSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[5] mutation=reusedPrincipal",
+          "timeSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "rejectsDisabledMandatoryStreamsAndUnpairedListeningDependencies()",
+          "timeSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "acceptsCanonicalSealedSyntheticManifestAndReceiptWithoutClaimingControlBoot()",
+          "timeSeconds": 0.009,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "documentsAndCollectionsAreImmutableAndParserDoesNotExposeSecretCauses()",
+          "timeSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[1] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[2] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[3] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[4] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[5] malformedDocument",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[6] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[7] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[8] malformedDocument",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[9] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[10] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[11] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[12] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[13] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[14] malformedDocument",
+          "timeSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[15] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[16] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[17] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[18] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[19] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[20] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[21] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[22] malformedDocument",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[23] malformedDocument",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[24] malformedDocument",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "rejectsMissingDuplicateOrRelabelledStreamsEvenWithExternallyRecomputedDigests()",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[1] mutation=wrongDatabase",
+          "timeSeconds": 0.009,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[2] mutation=wrongAuthority",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[3] mutation=wrongPrincipal",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[4] mutation=missingStream",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[5] mutation=duplicateStream",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[6] mutation=wrongOrder",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[7] mutation=wrongVersion",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[8] mutation=wrongMode",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[9] mutation=unrevokedTemp",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[10] mutation=floatCount",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[11] mutation=unknownField",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[12] mutation=trailingTokens",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "rejectsExternalDigestReferenceAndReceiptChainSubstitution()",
+          "timeSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[1] field=schemaVersion",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[2] field=topologyVersion",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[3] field=controlReference",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[4] field=enabledCapabilities",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[5] field=catalogs",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[6] field=streams",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[7] field=manifestSha256",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[1] capability=PEOPLE_ANALYTICS",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[2] capability=GOVERNED_AI",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[1] mutation=wrongDatabase",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[2] mutation=wrongAuthority",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "[3] mutation=wrongPrincipal",
+          "timeSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "className": "com.dwp.core.database.authority.StreamAuthorityJsonTest",
+          "caseName": "rejectsHistoryForeignGrantBroadPrivilegesUnknownClassesAndGrantCoercions()",
+          "timeSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    }
+  ],
+  "remainingCommonP0": [
+    "Implement and independently verify the genuine external resource-only composite Control producer/bootstrap/manifest/grants/provenance/chain for 8 catalogs, 13 streams and 14 runtime purpose pools.",
+    "Implement separately versioned application runtime-only StartupSeal contract and guard with independently verified signature/key/source/digest/identity/freshness/epoch/permit/deployment-fence; application must never own migration suppliers or history SELECT.",
+    "Define trusted transport/key rotation/revocation/outage/TTL/permit consumption, DDL race/drain/reseal and rolling deployment fence semantics.",
+    "Deliver actual private stream migration resources/object-grant inventories and feature dependency configuration; current proposed classpath locations are not deployed.",
+    "Provision new composite principal isolation: scalar People main/performance shared migration principal is historical, not proof of the new pairwise-distinct topology.",
+    "After integration, rerun complete current backend/source/G0/G3/worktree/catalogue proofs and canonical modular contract/source graph validation; this focused scaffold PASS is not HRIS readiness."
+  ]
+}

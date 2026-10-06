@@ -1,0 +1,4 @@
+# Recovered HRIS evidence is immutable byte-level input. Do not normalize line endings.
+docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/** -text
+docs/06-delivery/hris/recovery/hris-scoped-authoring-control-2026-09-16/** -text
+docs/06-delivery/hris/recovery/audit/** -text

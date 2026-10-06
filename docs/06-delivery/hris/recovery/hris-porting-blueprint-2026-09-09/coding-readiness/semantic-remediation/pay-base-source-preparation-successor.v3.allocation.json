@@ -1,0 +1,245 @@
+{
+  "status": "MODULE_EXACT_PLANNED_FILE_TEST_OWNERSHIP_INTERNAL_EXPERT_REVIEW_OPEN",
+  "rows": [
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollEntityGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.ENTITY",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollEntityGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.ENTITY",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollEntityGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollPaygroupGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.PAYGROUP",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollPaygroupGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.PAYGROUP",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollPaygroupGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollCalendarGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.CALENDAR",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollCalendarGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.CALENDAR",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollCalendarGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollRoundingGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.ROUNDING",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollRoundingGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.ROUNDING",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollRoundingGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollEligibilityGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.ELIGIBILITY",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollEligibilityGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.ELIGIBILITY",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollEligibilityGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollElementGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.ELEMENT",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollElementGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.ELEMENT",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollElementGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollFormulaGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.FORMULA",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollFormulaGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.FORMULA",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollFormulaGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollGlMappingGovernanceQueryV3.java",
+      "schemaRef": "PAYV3.GovernanceQuery.GL_MAPPING",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "Control shared + SYS producer + PAY consumer",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollGlMappingGovernanceSnapshotV3.java",
+      "schemaRef": "PAYV3.GovernanceSnapshot.GL_MAPPING",
+      "status": "PLANNED_G3_REQUIRED_NOT_REGISTERED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollGlMappingGovernanceQueryV3Test.java",
+      "tests": [
+        "complete A/B DTO+query schema",
+        "current tenant/purpose/population/field SoD refetch",
+        "stale/digest/expiry",
+        "supplementalDS exact no primary fallback"
+      ],
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "Control shared",
+      "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/payroll/v3/PayrollConfigurationGovernancePortV3.java",
+      "purpose": "eight typed query/snapshot methods, unavailable typed exception",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollGovernanceQueryServiceV3.java",
+      "purpose": "supplemental configuration datasource, current owner policy/refetch/SoD",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "SYS",
+      "file": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/payroll/v3/PayrollGovernanceSourceAdapterV3.java",
+      "purpose": "explicit stream/role/schema registry and runtime authority guard; unregistered fails closed",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "PAY",
+      "file": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/configuration/v3/PayrollGovernanceConsumerV3.java",
+      "purpose": "all eight raw typed snapshots refetch and current authority/source binding guard",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "PAY",
+      "file": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/configuration/v3/UnavailablePayrollGovernanceAdapterV3.java",
+      "purpose": "missing adapter0calls; no fallback/mock in runtime",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "PAY",
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/configuration/v3/PayrollGovernanceConsumerV3CompileTest.java",
+      "purpose": "exact eight DTO/SPI compile fixture; purpose/population/digest/missing adapter0calls",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "HRM/People",
+      "file": "dwp-people-server/src/main/java/com/dwp/services/people/hris/payroll/v3/NativeLegalEmployerSnapshotQueryV3.java",
+      "purpose": "actual native V1/V49 source query and current nonself employer-scope purpose PEP",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "PAY",
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/input/v3/PayrollInputPreparationV3ContractTest.java",
+      "purpose": "prepare->ingest->freeze actual internal parent/CAS/typed manifest, optional no call, unknown receipt query",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    },
+    {
+      "owner": "PAY",
+      "file": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/configuration/v3/PayrollFoundationVersionV3ContractTest.java",
+      "purpose": "all eight complete normalized bodies/materialized columns/counter/result/outbox, source-dependent negatives",
+      "status": "PLANNED_G3_REQUIRED_NOT_IMPLEMENTED"
+    }
+  ],
+  "sharedAuthPurpose": "current proof transport/purpose/SoD source methods require internal Auth/Security/People/PAY expert agreement, not additional customer permission; no auto grant",
+  "designOwner": "this new v3 prefix only; SYS/PAY implementation files owned by their sessions after common authorization, not edited here"
+}

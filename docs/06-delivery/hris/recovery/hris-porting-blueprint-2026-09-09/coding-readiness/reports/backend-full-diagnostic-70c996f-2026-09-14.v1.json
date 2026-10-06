@@ -1,0 +1,2097 @@
+{
+  "schema": "dwp.hris.backend-full-verification-diagnostic-report.v1",
+  "generatedAt": "2026-09-14T01:33:14.149Z",
+  "diagnosticStatus": "BUILD_SUCCESS_WITH_EXISTING_SKIPS",
+  "globalHrisCodingReadiness": "NOT_ASSERTED_BY_THIS_DIAGNOSTIC",
+  "oldG0CatalogReceiptEligible": false,
+  "rawRun": {
+    "command": [
+      "./gradlew",
+      "check",
+      "--no-daemon",
+      "--max-workers=1",
+      "--continue"
+    ],
+    "durationSeconds": 816.375,
+    "finishedAt": "2026-09-14T01:29:20.949Z",
+    "gradleExit": 0,
+    "gradleTimeoutSeconds": 1730,
+    "hostSemaphore": {
+      "acquiredAt": "2026-09-14T01:15:44.578Z",
+      "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+      "name": "hris-verification",
+      "releasedAt": "2026-09-14T01:29:20.951Z",
+      "requestedAt": "2026-09-14T01:15:44.578Z",
+      "schema": "dwp.hris.host-semaphore-receipt.v1",
+      "status": "RELEASED",
+      "waitMilliseconds": 0
+    },
+    "limitations": [
+      "Gradle incremental UP-TO-DATE outcomes are reported; no rerun-tasks option was requested.",
+      "XML includes current on-disk suites; modifiedDuringRun marks newly refreshed artifacts.",
+      "No source, policy, registry, guard, G0 catalog, skip annotation or user server was changed."
+    ],
+    "ownedProcessGroupOnly": true,
+    "post": {
+      "changedPaths": [],
+      "clean": true,
+      "controlReference": "dwp-migration-control-v2:7f31c20e45bfdb6a3a4b101b79227645208c1846d16e7b5af790aef707c3b09c",
+      "head": "70c996fdafc011392056a1909a2e5222b240ded3",
+      "tree": "ad226258485214e52a552e08594668c3593c320b"
+    },
+    "pre": {
+      "changedPaths": [],
+      "clean": true,
+      "controlReference": "dwp-migration-control-v2:7f31c20e45bfdb6a3a4b101b79227645208c1846d16e7b5af790aef707c3b09c",
+      "head": "70c996fdafc011392056a1909a2e5222b240ded3",
+      "tree": "ad226258485214e52a552e08594668c3593c320b"
+    },
+    "schema": "dwp.hris.backend-exact-head-diagnostic.v1",
+    "scope": "Fresh resource-safe full backend diagnostic; not an old G0 catalog receipt",
+    "sourceUnchanged": true,
+    "startedAt": "2026-09-14T01:15:44.578Z",
+    "startedAtEpoch": 1789348544.5787039,
+    "status": "PASS",
+    "taskOutcomes": [
+      "> Task :productAuthorizationRegistryCheck",
+      "> Task :approvalProjectionSchemaCheck",
+      "> Task :authorizationNegativeMatrixTest",
+      "> Task :authorizationNegativeMatrixCheck",
+      "> Task :javaDependencyCycleRatchetTest",
+      "> Task :checkJavaDependencyCycles",
+      "> Task :serviceBoundaryRatchetTest",
+      "> Task :checkServiceBoundaries",
+      "> Task :sourceSizeRatchetTest",
+      "> Task :checkSourceSize",
+      "> Task :testSourceSizeRatchetTest",
+      "> Task :checkTestSourceSize",
+      "> Task :unusedPrivateMethodRatchetTest",
+      "> Task :checkUnusedPrivateMethods",
+      "> Task :hrisContractGeneratorTest",
+      "> Task :hrisContractsCheck",
+      "> Task :pilotFixturesCheck",
+      "> Task :compileJava NO-SOURCE",
+      "> Task :processResources NO-SOURCE",
+      "> Task :classes UP-TO-DATE",
+      "> Task :compileTestJava NO-SOURCE",
+      "> Task :processTestResources NO-SOURCE",
+      "> Task :testClasses UP-TO-DATE",
+      "> Task :test NO-SOURCE",
+      "> Task :check",
+      "> Task :dwp-audit:compileJava UP-TO-DATE",
+      "> Task :dwp-audit:processResources NO-SOURCE",
+      "> Task :dwp-audit:classes UP-TO-DATE",
+      "> Task :dwp-audit:jar UP-TO-DATE",
+      "> Task :dwp-observability:compileJava UP-TO-DATE",
+      "> Task :dwp-observability:processResources NO-SOURCE",
+      "> Task :dwp-observability:classes UP-TO-DATE",
+      "> Task :dwp-observability:jar UP-TO-DATE",
+      "> Task :dwp-platform-contracts:compileJava UP-TO-DATE",
+      "> Task :dwp-platform-contracts:processResources UP-TO-DATE",
+      "> Task :dwp-platform-contracts:classes UP-TO-DATE",
+      "> Task :dwp-platform-contracts:jar UP-TO-DATE",
+      "> Task :dwp-core:compileJava UP-TO-DATE",
+      "> Task :dwp-core:processResources UP-TO-DATE",
+      "> Task :dwp-core:classes UP-TO-DATE",
+      "> Task :dwp-core:jar UP-TO-DATE",
+      "> Task :dwp-approval-server:compileJava UP-TO-DATE",
+      "> Task :dwp-approval-server:processResources UP-TO-DATE",
+      "> Task :dwp-approval-server:classes UP-TO-DATE",
+      "> Task :dwp-approval-server:jar UP-TO-DATE",
+      "> Task :dwp-migration-control:compileJava UP-TO-DATE",
+      "> Task :dwp-migration-control:compileTestFixturesJava UP-TO-DATE",
+      "> Task :dwp-approval-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-approval-server:processTestResources UP-TO-DATE",
+      "> Task :dwp-approval-server:testClasses UP-TO-DATE",
+      "> Task :dwp-migration-control:processResources NO-SOURCE",
+      "> Task :dwp-migration-control:classes UP-TO-DATE",
+      "> Task :dwp-migration-control:jar UP-TO-DATE",
+      "> Task :dwp-migration-control:processTestFixturesResources NO-SOURCE",
+      "> Task :dwp-migration-control:testFixturesClasses UP-TO-DATE",
+      "> Task :dwp-migration-control:testFixturesJar UP-TO-DATE",
+      "> Task :dwp-migration-control:stageApprovalMigrationControlResources UP-TO-DATE",
+      "> Task :dwp-migration-control:verifyApprovalMigrationControlResources",
+      "> Task :dwp-migration-control:verifyMigrationControlRuntimeClasspath",
+      "> Task :dwp-approval-server:test",
+      "> Task :dwp-approval-server:check",
+      "> Task :dwp-audit:compileTestJava UP-TO-DATE",
+      "> Task :dwp-audit:processTestResources NO-SOURCE",
+      "> Task :dwp-audit:testClasses UP-TO-DATE",
+      "> Task :dwp-audit:test UP-TO-DATE",
+      "> Task :dwp-audit:check UP-TO-DATE",
+      "> Task :dwp-auth-server:compileJava UP-TO-DATE",
+      "> Task :dwp-auth-server:processResources UP-TO-DATE",
+      "> Task :dwp-auth-server:classes UP-TO-DATE",
+      "> Task :dwp-auth-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-auth-server:processTestResources UP-TO-DATE",
+      "> Task :dwp-auth-server:testClasses UP-TO-DATE",
+      "> Task :dwp-auth-server:test UP-TO-DATE",
+      "> Task :dwp-auth-server:check UP-TO-DATE",
+      "> Task :dwp-core:compileTestJava UP-TO-DATE",
+      "> Task :dwp-core:processTestResources NO-SOURCE",
+      "> Task :dwp-core:testClasses UP-TO-DATE",
+      "> Task :dwp-core:test UP-TO-DATE",
+      "> Task :dwp-core:check UP-TO-DATE",
+      "> Task :dwp-gateway:compileJava UP-TO-DATE",
+      "> Task :dwp-gateway:processResources UP-TO-DATE",
+      "> Task :dwp-gateway:classes UP-TO-DATE",
+      "> Task :dwp-provider-server:compileJava UP-TO-DATE",
+      "> Task :dwp-provider-server:processResources UP-TO-DATE",
+      "> Task :dwp-provider-server:classes UP-TO-DATE",
+      "> Task :dwp-provider-server:jar UP-TO-DATE",
+      "> Task :dwp-gateway:compileTestJava UP-TO-DATE",
+      "> Task :dwp-gateway:processTestResources UP-TO-DATE",
+      "> Task :dwp-gateway:testClasses UP-TO-DATE",
+      "> Task :dwp-gateway:test UP-TO-DATE",
+      "> Task :dwp-gateway:check UP-TO-DATE",
+      "> Task :dwp-meeting-server:compileJava UP-TO-DATE",
+      "> Task :dwp-meeting-server:processResources UP-TO-DATE",
+      "> Task :dwp-meeting-server:classes UP-TO-DATE",
+      "> Task :dwp-meeting-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-meeting-server:processTestResources NO-SOURCE",
+      "> Task :dwp-meeting-server:testClasses UP-TO-DATE",
+      "> Task :dwp-meeting-server:test UP-TO-DATE",
+      "> Task :dwp-meeting-server:check UP-TO-DATE",
+      "> Task :dwp-messaging-server:compileJava UP-TO-DATE",
+      "> Task :dwp-messaging-server:processResources UP-TO-DATE",
+      "> Task :dwp-messaging-server:classes UP-TO-DATE",
+      "> Task :dwp-messaging-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-messaging-server:processTestResources NO-SOURCE",
+      "> Task :dwp-messaging-server:testClasses UP-TO-DATE",
+      "> Task :dwp-messaging-server:test UP-TO-DATE",
+      "> Task :dwp-messaging-server:check UP-TO-DATE",
+      "> Task :dwp-migration-control:compileTestJava UP-TO-DATE",
+      "> Task :dwp-migration-control:processTestResources NO-SOURCE",
+      "> Task :dwp-migration-control:testClasses UP-TO-DATE",
+      "> Task :dwp-notification-server:compileJava UP-TO-DATE",
+      "> Task :dwp-notification-server:processResources UP-TO-DATE",
+      "> Task :dwp-notification-server:classes UP-TO-DATE",
+      "> Task :dwp-notification-server:jar UP-TO-DATE",
+      "> Task :dwp-migration-control:test",
+      "> Task :dwp-migration-control:check",
+      "> Task :dwp-notification-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-notification-server:processTestResources NO-SOURCE",
+      "> Task :dwp-notification-server:testClasses UP-TO-DATE",
+      "> Task :dwp-notification-server:test UP-TO-DATE",
+      "> Task :dwp-notification-server:check UP-TO-DATE",
+      "> Task :dwp-observability:compileTestJava UP-TO-DATE",
+      "> Task :dwp-observability:processTestResources NO-SOURCE",
+      "> Task :dwp-observability:testClasses UP-TO-DATE",
+      "> Task :dwp-observability:test UP-TO-DATE",
+      "> Task :dwp-observability:check UP-TO-DATE",
+      "> Task :dwp-payroll-server:compileJava UP-TO-DATE",
+      "> Task :dwp-payroll-server:processResources UP-TO-DATE",
+      "> Task :dwp-payroll-server:classes UP-TO-DATE",
+      "> Task :dwp-payroll-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-payroll-server:processTestResources UP-TO-DATE",
+      "> Task :dwp-payroll-server:testClasses UP-TO-DATE",
+      "> Task :dwp-payroll-server:test UP-TO-DATE",
+      "> Task :dwp-payroll-server:check UP-TO-DATE",
+      "> Task :dwp-people-server:compileJava UP-TO-DATE",
+      "> Task :dwp-people-server:processResources UP-TO-DATE",
+      "> Task :dwp-people-server:classes UP-TO-DATE",
+      "> Task :dwp-people-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-people-server:processTestResources UP-TO-DATE",
+      "> Task :dwp-people-server:testClasses UP-TO-DATE",
+      "> Task :dwp-people-server:test UP-TO-DATE",
+      "> Task :dwp-people-server:check UP-TO-DATE",
+      "> Task :dwp-platform-contracts:compileTestJava UP-TO-DATE",
+      "> Task :dwp-platform-contracts:processTestResources NO-SOURCE",
+      "> Task :dwp-platform-contracts:testClasses UP-TO-DATE",
+      "> Task :dwp-platform-contracts:test UP-TO-DATE",
+      "> Task :dwp-platform-contracts:check UP-TO-DATE",
+      "> Task :dwp-platform-server:compileJava UP-TO-DATE",
+      "> Task :dwp-platform-server:processResources UP-TO-DATE",
+      "> Task :dwp-platform-server:classes UP-TO-DATE",
+      "> Task :dwp-platform-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-platform-server:processTestResources UP-TO-DATE",
+      "> Task :dwp-platform-server:testClasses UP-TO-DATE",
+      "> Task :dwp-platform-server:test",
+      "> Task :dwp-platform-server:check",
+      "> Task :dwp-provider-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-provider-server:processTestResources UP-TO-DATE",
+      "> Task :dwp-provider-server:testClasses UP-TO-DATE",
+      "> Task :dwp-provider-server:test",
+      "> Task :dwp-provider-server:check",
+      "> Task :dwp-space-server:compileJava UP-TO-DATE",
+      "> Task :dwp-space-server:processResources UP-TO-DATE",
+      "> Task :dwp-space-server:classes UP-TO-DATE",
+      "> Task :dwp-space-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-space-server:processTestResources NO-SOURCE",
+      "> Task :dwp-space-server:testClasses UP-TO-DATE",
+      "> Task :dwp-space-server:test UP-TO-DATE",
+      "> Task :dwp-space-server:check UP-TO-DATE",
+      "> Task :dwp-time-server:compileJava UP-TO-DATE",
+      "> Task :dwp-time-server:processResources UP-TO-DATE",
+      "> Task :dwp-time-server:classes UP-TO-DATE",
+      "> Task :dwp-time-server:compileTestJava UP-TO-DATE",
+      "> Task :dwp-time-server:processTestResources UP-TO-DATE",
+      "> Task :dwp-time-server:testClasses UP-TO-DATE",
+      "> Task :dwp-time-server:test UP-TO-DATE",
+      "> Task :dwp-time-server:check UP-TO-DATE"
+    ],
+    "timedOut": false,
+    "workdir": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "xml": {
+      "failedSuites": [],
+      "focused12": {
+        "status": "PASS",
+        "suites": [
+          {
+            "classIds": [
+              "com.dwp.services.approval.config.ApprovalDatabaseMigrationConfigurationTest"
+            ],
+            "durationSeconds": 1.604,
+            "errors": 0,
+            "failedTests": [],
+            "failures": 0,
+            "focusedTestIds": [
+              "applicationYamlPinsSeparatedCredentialsAndExactFlywayProfile()",
+              "strictAndLocalProfilesAcceptOnlyTheirExactLocationSets()",
+              "missingBootFlywayOrInitializerFailsClosed()"
+            ],
+            "modifiedDuringRun": true,
+            "module": "dwp-approval-server",
+            "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.config.ApprovalDatabaseMigrationConfigurationTest.xml",
+            "sha256": "ef950c125257cd46864a79eaa4a750997581d8a052dbd0304160c8b189936630",
+            "skipped": 0,
+            "skippedTests": [],
+            "suite": "com.dwp.services.approval.config.ApprovalDatabaseMigrationConfigurationTest",
+            "task": "test",
+            "tests": 3,
+            "xmlTimestamp": "2026-09-14T01:16:08"
+          },
+          {
+            "classIds": [
+              "com.dwp.services.approval.support.ApprovalApplicationContextPostgresTest"
+            ],
+            "durationSeconds": 5.039,
+            "errors": 0,
+            "failedTests": [],
+            "failures": 0,
+            "focusedTestIds": [
+              "missingActualExternalReceiptRejectsBootWithoutChangingTheNativeSeal()",
+              "startsTheRealWebContextAndPublishesOpenApi()",
+              "realRuntimePrincipalCannotCreateTemporaryOrDomainObjectsOrReadHistory()"
+            ],
+            "modifiedDuringRun": true,
+            "module": "dwp-approval-server",
+            "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.support.ApprovalApplicationContextPostgresTest.xml",
+            "sha256": "3b1abcd78d191a614edb445265af24535659074cd7ec46ddc2cf610b8e609091",
+            "skipped": 0,
+            "skippedTests": [],
+            "suite": "com.dwp.services.approval.support.ApprovalApplicationContextPostgresTest",
+            "task": "test",
+            "tests": 3,
+            "xmlTimestamp": "2026-09-14T01:17:29"
+          },
+          {
+            "classIds": [
+              "com.dwp.migration.testing.ControlFixtureProcessTest"
+            ],
+            "durationSeconds": 0.491,
+            "errors": 0,
+            "failedTests": [],
+            "failures": 0,
+            "focusedTestIds": [
+              "diagnosticRedactsKnownCredentialsAndPasswordLiterals()",
+              "nonzeroChildHasOnlySanitizedDiagnostics()",
+              "oversizedChildOutputFailsClosed()",
+              "boundedChildReceivesOnlyExplicitEnvironment()",
+              "timeoutFailsAndCleansUpTheOwnedChild()",
+              "diagnosticIsBoundedAfterRedaction()"
+            ],
+            "modifiedDuringRun": true,
+            "module": "dwp-migration-control",
+            "path": "dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.testing.ControlFixtureProcessTest.xml",
+            "sha256": "f9f118d77baf6bcd0290a6d3ecdc39f5c4c3c0a32a8a5104e78cc2c62056712d",
+            "skipped": 0,
+            "skippedTests": [],
+            "suite": "com.dwp.migration.testing.ControlFixtureProcessTest",
+            "task": "test",
+            "tests": 6,
+            "xmlTimestamp": "2026-09-14T01:18:41"
+          }
+        ]
+      },
+      "modules": {
+        "dwp-approval-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 34,
+          "skipped": 0,
+          "suites": 34,
+          "tests": 236
+        },
+        "dwp-audit": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 1,
+          "tests": 1
+        },
+        "dwp-auth-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 106,
+          "tests": 445
+        },
+        "dwp-core": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 36,
+          "tests": 199
+        },
+        "dwp-gateway": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 1,
+          "suites": 41,
+          "tests": 309
+        },
+        "dwp-meeting-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 2,
+          "suites": 111,
+          "tests": 664
+        },
+        "dwp-messaging-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 58,
+          "suites": 44,
+          "tests": 193
+        },
+        "dwp-migration-control": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 5,
+          "skipped": 0,
+          "suites": 5,
+          "tests": 32
+        },
+        "dwp-notification-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 6,
+          "suites": 57,
+          "tests": 265
+        },
+        "dwp-observability": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 1,
+          "tests": 4
+        },
+        "dwp-payroll-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 4,
+          "tests": 6
+        },
+        "dwp-people-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 55,
+          "tests": 225
+        },
+        "dwp-platform-contracts": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 2,
+          "tests": 22
+        },
+        "dwp-platform-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 212,
+          "skipped": 1,
+          "suites": 212,
+          "tests": 1160
+        },
+        "dwp-provider-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 56,
+          "skipped": 0,
+          "suites": 56,
+          "tests": 284
+        },
+        "dwp-space-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 5,
+          "tests": 24
+        },
+        "dwp-time-server": {
+          "errors": 0,
+          "failures": 0,
+          "modifiedSuites": 0,
+          "skipped": 0,
+          "suites": 4,
+          "tests": 6
+        }
+      },
+      "skippedSuites": [
+        {
+          "classIds": [
+            "com.dwp.services.provider.rollout.FeatureRolloutKafkaGatewayRehearsalTest"
+          ],
+          "durationSeconds": 0.004,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-gateway",
+          "path": "dwp-gateway/build/test-results/test/TEST-com.dwp.services.provider.rollout.FeatureRolloutKafkaGatewayRehearsalTest.xml",
+          "sha256": "c90aa6e5962d636afeb99a069eb739d80e06b9b99143786df55c65cdd353cccb",
+          "skipped": 1,
+          "skippedTests": [
+            "com.dwp.services.provider.rollout.FeatureRolloutKafkaGatewayRehearsalTest#relaysOutboxEventThroughKafkaAndInvalidatesGatewayCache()"
+          ],
+          "suite": "com.dwp.services.provider.rollout.FeatureRolloutKafkaGatewayRehearsalTest",
+          "task": "test",
+          "tests": 2,
+          "xmlTimestamp": "2026-09-14T00:33:42"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.meeting.videomeeting.domain.MeetingParticipantWebhookLocalOperationalTest"
+          ],
+          "durationSeconds": 0,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-meeting-server",
+          "path": "dwp-meeting-server/build/test-results/test/TEST-com.dwp.services.meeting.videomeeting.domain.MeetingParticipantWebhookLocalOperationalTest.xml",
+          "sha256": "8c76d741710ecdddd2b737e8fffb8d3ce35bb6eaba097bf55c1f284bc84fa157",
+          "skipped": 1,
+          "skippedTests": [
+            "com.dwp.services.meeting.videomeeting.domain.MeetingParticipantWebhookLocalOperationalTest#cachedJwtRejoinIsRemovedBySignedWebhookWhileTheHostRemainsConnected()"
+          ],
+          "suite": "com.dwp.services.meeting.videomeeting.domain.MeetingParticipantWebhookLocalOperationalTest",
+          "task": "test",
+          "tests": 1,
+          "xmlTimestamp": "2026-09-14T00:35:12"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.meeting.videomeeting.provider.LiveKitLocalOperationalSmokeTest"
+          ],
+          "durationSeconds": 0,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-meeting-server",
+          "path": "dwp-meeting-server/build/test-results/test/TEST-com.dwp.services.meeting.videomeeting.provider.LiveKitLocalOperationalSmokeTest.xml",
+          "sha256": "da96d8c94d41a98f4d111125121dbb1af17512f5da61016ab521cab5c451f0cf",
+          "skipped": 1,
+          "skippedTests": [
+            "com.dwp.services.meeting.videomeeting.provider.LiveKitLocalOperationalSmokeTest#credentialedControlPlaneCreatesReconcilesAndDeletesABoundEphemeralRoom()"
+          ],
+          "suite": "com.dwp.services.meeting.videomeeting.provider.LiveKitLocalOperationalSmokeTest",
+          "task": "test",
+          "tests": 1,
+          "xmlTimestamp": "2026-09-14T00:38:39"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest"
+          ],
+          "durationSeconds": 0,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest.xml",
+          "sha256": "2f1ed345e4d0d36c6528d8e0ddbe561f42a6493c870c33b76e40ba0e0394620f",
+          "skipped": 2,
+          "skippedTests": [
+            "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest#cleanAttachmentCanOnlyBeAttachedByItsUploaderAndCannotBeReused()",
+            "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest#idempotentUploadConvergesAndChangedMetadataConflicts()"
+          ],
+          "suite": "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest",
+          "task": "test",
+          "tests": 2,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest"
+          ],
+          "durationSeconds": 0,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest.xml",
+          "sha256": "4058efa9325d068e2548e48fb034286f1fb8251a4b6496019f5a4937051396ee",
+          "skipped": 4,
+          "skippedTests": [
+            "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#createsGroupIdempotentlyWithCurrentUserAsOwnerAndRejectsChangedRequest()",
+            "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#searchEnforcesTenantMembershipAndExcludesDeletedMessagesAndInactivePeople()",
+            "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#searchValidatesQueryTypesAndGlobalLimit()",
+            "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#rejectsInactiveAndCrossTenantMembersWithoutDisclosingWhichLookupFailed()"
+          ],
+          "suite": "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest",
+          "task": "test",
+          "tests": 4,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest"
+          ],
+          "durationSeconds": 0.001,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest.xml",
+          "sha256": "b8523ae427d3f4857bb5811398390a3574f32b61f274d3e484773b196862c1d4",
+          "skipped": 4,
+          "skippedTests": [
+            "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#addsAndReaddsIdempotentlyAtAFromJoinBoundaryWithPayloadFreeEvents()",
+            "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#blocksIdorInactivePeopleUnsupportedConversationTypesAndNonManagers()",
+            "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#letsDirectMembersLeaveAndRefreshesHistoryWhenTheyRejoin()",
+            "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#enforcesManagerOwnerContinuityProtectedSourcesAndOptimisticVersions()"
+          ],
+          "suite": "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest",
+          "task": "test",
+          "tests": 4,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest"
+          ],
+          "durationSeconds": 0,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest.xml",
+          "sha256": "133ddff6323de5716edb2aaf4710dab92c1c3c3e62d505e790017ac0db05fcd4",
+          "skipped": 4,
+          "skippedTests": [
+            "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#pagesOnlyRootMessagesByDurableSequenceInDisplayOrder()",
+            "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#appliesTheSameHistoryBoundaryToTimelineDirectLookupSavedItemsAndReadCursor()",
+            "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#excludesPreJoinMessagesFromUnreadAndConversationPreviews()",
+            "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#pageQueryEnforcesTenantActiveMembershipAndHistoryBoundary()"
+          ],
+          "suite": "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest",
+          "task": "test",
+          "tests": 4,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest"
+          ],
+          "durationSeconds": 0,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest.xml",
+          "sha256": "ce7436d4e4bf646ca373e3ba987c20ce0594f4a46760cec4a0741edb3b78b0ee",
+          "skipped": 2,
+          "skippedTests": [
+            "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest#archivedConversationCannotInflateMentionsSavedCountsOrSavedPagination()",
+            "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest#deletedOnlyUnreadConversationDoesNotInflateHomeUnreadAndMentions()"
+          ],
+          "suite": "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest",
+          "task": "test",
+          "tests": 2,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest"
+          ],
+          "durationSeconds": 0.001,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest.xml",
+          "sha256": "b7d016efafa354795a38fe73b45d486d03442fa38c5276d401c16aed71cc27f4",
+          "skipped": 10,
+          "skippedTests": [
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#privateCursorAndPrivacyEventsAreSelfOnlyInLiveChecksReplayAndHighWaterQueries()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#deletedSystemAndArchivedMessagesHaveNoPublicReceiptsOrObservations()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#observationsNotGlobalCursorDetermineReadIncludingUnopenedThreadReplies()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#defaultAndOptOutFlipAreUnilateralRetainObservationsAndNeverChangeSelfCursor()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#batchAndSingleAgreeAndExcludeInactiveRevokedPreJoinAndLaterFullHistoryMembers()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#optimisticVersionsAreAtomicForFirstInsertAndConcurrentUpdates()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#onlyActiveAuthorCanGetReceiptsAndUnauthorizedIdsRejectWholeBatch()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#observationAuthorizationEnforcesHistoryTenantConversationAndActiveMember()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#observationWritesAreIdempotentAllOrNothingAndLeaveUnreadCursorAndEventsAlone()",
+            "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#revocationAndRejoinCannotResurrectOldReceiptEligibility()"
+          ],
+          "suite": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest",
+          "task": "test",
+          "tests": 10,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest"
+          ],
+          "durationSeconds": 0.001,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest.xml",
+          "sha256": "feee267c41e33e2dbbe83d5cf6b108b904851384a26a090396fcd44f4512272b",
+          "skipped": 11,
+          "skippedTests": [
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#conversationSettingsUseCompareAndSetVersioning()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#concurrentWritersReceiveUniqueMonotonicConversationSequences()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#realtimeEventLogCommitsAtomicallyAndCarriesMessageSequence()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#reusedIdempotencyKeyWithChangedPayloadIsAConflict()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#readCursorNeverRegressesAndRejectsConversationOrTenantMismatch()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#sameIdempotencyKeyAndPayloadReturnsTheOriginalMessage()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#databaseRejectsReplyParentFromAnotherConversation()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#mentionScopeReturnsOnlyUnreadMentionedConversations()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#conversationAndTimelineDtosExposeSequenceBasedState()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#messageEditUsesCompareAndSetVersioning()",
+            "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#concurrentSameKeyRequestsConvergeOnOneMessage()"
+          ],
+          "suite": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest",
+          "task": "test",
+          "tests": 11,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest"
+          ],
+          "durationSeconds": 0.001,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest.xml",
+          "sha256": "864c267a6343ad5cd78d3ffb8d12ed22c0f642d64014f00df0018b2f85e6fd37",
+          "skipped": 8,
+          "skippedTests": [
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#recentOrderingAndGlobalLimitAreDeterministicAcrossKinds()",
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#archiveAndDisabledViewerHideAssetsAndInvalidateOutstandingGrant()",
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#deletionAfterGrantRevokesMetadataAndDownloadWithoutConsumingGrant()",
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#historyBoundaryAppliesToFilesLinksMetadataAndDownloadGrantConsumption()",
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#tenantAndMembershipScopesCannotLeakAssets()",
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#exposesActualCleanFilesAndSafeLinksWithoutStorageOrDownloadCredentials()",
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#realDownloadRemainsSingleUseAndBoundToCorrectTenantAndUser()",
+            "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#quarantineRejectedOrphanAndSystemAssetsNeverAppear()"
+          ],
+          "suite": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest",
+          "task": "test",
+          "tests": 8,
+          "xmlTimestamp": "2026-09-14T00:38:43"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest"
+          ],
+          "durationSeconds": 0.001,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-messaging-server",
+          "path": "dwp-messaging-server/build/test-results/test/TEST-com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest.xml",
+          "sha256": "cbe533483b1d3c7a9219e20f0e8fb6ebb72e0e718a1dc7231a856beb54ec1092",
+          "skipped": 13,
+          "skippedTests": [
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#draftCandidateDoesNotActivateExactPepAtBaselineRollout()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#malformedConversationCandidateCannotBypassMessagingOwnerPep()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#normalAndProviderSupportModesCannotBecomeConfusedDeputiesAtMessagingOwnerPep()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#crossTenantConversationScopeFailsClosedAtMessagingOwnerPep()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#invalidContextKeyFailsClosedBeforeMessagingControllerOrRepository()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#pageDataAndActionBindingsReachMessagingOwnerOnlyWithExactEvidence()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#elevatedWorkModeDeclaredByDraftContractReachesMessagingOwner()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#staleAuthorityRevisionFailsClosedBeforeMessagingAction()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#scopeRevalidationFailureReturnsAuthorityUnavailableWithoutOwnerCall()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#duplicateTrustedHeaderFailsClosedBeforeMessagingControllerOrRepository()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#canonicalOpaqueScopeEscapeFailsClosedAtMessagingOwnerPep()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#whitespacePaddedTrustedHeaderFailsClosedBeforeMessagingControllerOrRepository()",
+            "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#spoofedInternalHeadersCannotBypassMessagingGatewayServiceIdentity()"
+          ],
+          "suite": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest",
+          "task": "test",
+          "tests": 13,
+          "xmlTimestamp": "2026-09-14T00:38:44"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest"
+          ],
+          "durationSeconds": 0.001,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": false,
+          "module": "dwp-notification-server",
+          "path": "dwp-notification-server/build/test-results/test/TEST-com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest.xml",
+          "sha256": "d5267035f3b7eb9edb2f5e0449c0d9d1356d894a04eeb0d44e533f571728a8ee",
+          "skipped": 6,
+          "skippedTests": [
+            "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#aliasExpansionPreservesKeysetPaginationWithoutDuplicatesOrSkips()",
+            "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#unknownFiltersMatchOnlyTheirLiteralCodeWithoutInventingDirectMembership()",
+            "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#mentionViewReasonFilterAndCounterAgreeIncludingLegacyCase()",
+            "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#unknownRemainsVisibleWithNeutralReasonButOutsideEveryCanonicalReasonFilter()",
+            "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#reasonAliasesRemainAnIntersectionWithAppPriorityReadStateAndView()",
+            "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#filtersBothSpellingsAndReturnsCanonicalDisplay(String, String, String)"
+          ],
+          "suite": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest",
+          "task": "test",
+          "tests": 6,
+          "xmlTimestamp": "2026-09-14T00:38:46"
+        },
+        {
+          "classIds": [
+            "com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest"
+          ],
+          "durationSeconds": 0,
+          "errors": 0,
+          "failedTests": [],
+          "failures": 0,
+          "modifiedDuringRun": true,
+          "module": "dwp-platform-server",
+          "path": "dwp-platform-server/build/test-results/test/TEST-com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest.xml",
+          "sha256": "bbade6e9ee7b65c395b8719896f93c7e6f90f1bba96dbf4e0e73dbaadb3d2dbc",
+          "skipped": 1,
+          "skippedTests": [
+            "com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest#exportLatestPlatformControllersUsingAnIsolatedDatabaseAndRandomPort()"
+          ],
+          "suite": "com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest",
+          "task": "test",
+          "tests": 1,
+          "xmlTimestamp": "2026-09-14T01:25:51"
+        }
+      ],
+      "totals": {
+        "classIds": 774,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 68,
+        "suites": 774,
+        "tests": 4075
+      }
+    }
+  },
+  "gradleSummary": {
+    "actionableTasks": 103,
+    "executed": 23,
+    "upToDate": 80
+  },
+  "coverage": {
+    "suites": 774,
+    "tests": 4075,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 68,
+    "executedOrPreviouslySuccessfulCases": 4007,
+    "freshlyRefreshedSuites": 307,
+    "freshlyRefreshedReportedCases": 1712,
+    "freshlyRefreshedSkippedCases": 1,
+    "reusedSuites": 467,
+    "reusedReportedCases": 2363,
+    "reusedSkippedCases": 67,
+    "classes": 774,
+    "skipPolicy": "No opt-in flag, skip annotation, exclusion, environment credential or user-server setting was changed.",
+    "countCaveat": "JUnit XML counts are exact reported testcase IDs; class-level skipped parameterized invocations may not be expanded.",
+    "taskArtifactScopeValidation": "PASS; all 307 refreshed suites belong to EXECUTED tasks and all 467 reused suites belong to UP-TO-DATE tasks."
+  },
+  "focused12": {
+    "status": "PASS",
+    "suites": [
+      {
+        "classIds": [
+          "com.dwp.services.approval.config.ApprovalDatabaseMigrationConfigurationTest"
+        ],
+        "durationSeconds": 1.604,
+        "errors": 0,
+        "failedTests": [],
+        "failures": 0,
+        "focusedTestIds": [
+          "applicationYamlPinsSeparatedCredentialsAndExactFlywayProfile()",
+          "strictAndLocalProfilesAcceptOnlyTheirExactLocationSets()",
+          "missingBootFlywayOrInitializerFailsClosed()"
+        ],
+        "modifiedDuringRun": true,
+        "module": "dwp-approval-server",
+        "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.config.ApprovalDatabaseMigrationConfigurationTest.xml",
+        "sha256": "ef950c125257cd46864a79eaa4a750997581d8a052dbd0304160c8b189936630",
+        "skipped": 0,
+        "skippedTests": [],
+        "suite": "com.dwp.services.approval.config.ApprovalDatabaseMigrationConfigurationTest",
+        "task": "test",
+        "tests": 3,
+        "xmlTimestamp": "2026-09-14T01:16:08"
+      },
+      {
+        "classIds": [
+          "com.dwp.services.approval.support.ApprovalApplicationContextPostgresTest"
+        ],
+        "durationSeconds": 5.039,
+        "errors": 0,
+        "failedTests": [],
+        "failures": 0,
+        "focusedTestIds": [
+          "missingActualExternalReceiptRejectsBootWithoutChangingTheNativeSeal()",
+          "startsTheRealWebContextAndPublishesOpenApi()",
+          "realRuntimePrincipalCannotCreateTemporaryOrDomainObjectsOrReadHistory()"
+        ],
+        "modifiedDuringRun": true,
+        "module": "dwp-approval-server",
+        "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.support.ApprovalApplicationContextPostgresTest.xml",
+        "sha256": "3b1abcd78d191a614edb445265af24535659074cd7ec46ddc2cf610b8e609091",
+        "skipped": 0,
+        "skippedTests": [],
+        "suite": "com.dwp.services.approval.support.ApprovalApplicationContextPostgresTest",
+        "task": "test",
+        "tests": 3,
+        "xmlTimestamp": "2026-09-14T01:17:29"
+      },
+      {
+        "classIds": [
+          "com.dwp.migration.testing.ControlFixtureProcessTest"
+        ],
+        "durationSeconds": 0.491,
+        "errors": 0,
+        "failedTests": [],
+        "failures": 0,
+        "focusedTestIds": [
+          "diagnosticRedactsKnownCredentialsAndPasswordLiterals()",
+          "nonzeroChildHasOnlySanitizedDiagnostics()",
+          "oversizedChildOutputFailsClosed()",
+          "boundedChildReceivesOnlyExplicitEnvironment()",
+          "timeoutFailsAndCleansUpTheOwnedChild()",
+          "diagnosticIsBoundedAfterRedaction()"
+        ],
+        "modifiedDuringRun": true,
+        "module": "dwp-migration-control",
+        "path": "dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.testing.ControlFixtureProcessTest.xml",
+        "sha256": "f9f118d77baf6bcd0290a6d3ecdc39f5c4c3c0a32a8a5104e78cc2c62056712d",
+        "skipped": 0,
+        "skippedTests": [],
+        "suite": "com.dwp.migration.testing.ControlFixtureProcessTest",
+        "task": "test",
+        "tests": 6,
+        "xmlTimestamp": "2026-09-14T01:18:41"
+      }
+    ]
+  },
+  "skippedTests": [
+    {
+      "id": "com.dwp.services.provider.rollout.FeatureRolloutKafkaGatewayRehearsalTest#relaysOutboxEventThroughKafkaAndInvalidatesGatewayCache()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "METHOD_LEVEL_JUNIT_ASSUMPTION",
+        "sourcePath": "dwp-gateway/src/test/java/com/dwp/services/provider/rollout/FeatureRolloutKafkaGatewayRehearsalTest.java",
+        "sourceLine": 47,
+        "environmentVariableDeclarationLine": 35,
+        "environmentVariable": "DWP_RUN_KAFKA_ROLLOUT_REHEARSAL",
+        "requiredPattern": "Boolean.parseBoolean(...) == true",
+        "declaredMessage": "Local Kafka rollout rehearsal is opt-in",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.meeting.videomeeting.domain.MeetingParticipantWebhookLocalOperationalTest#cachedJwtRejoinIsRemovedBySignedWebhookWhileTheHostRemainsConnected()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/domain/MeetingParticipantWebhookLocalOperationalTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_LIVEKIT_SMOKE",
+        "requiredPattern": "true",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.meeting.videomeeting.provider.LiveKitLocalOperationalSmokeTest#credentialedControlPlaneCreatesReconcilesAndDeletesABoundEphemeralRoom()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-meeting-server/src/test/java/com/dwp/services/meeting/videomeeting/provider/LiveKitLocalOperationalSmokeTest.java",
+        "sourceLine": 14,
+        "environmentVariable": "DWP_LIVEKIT_SMOKE",
+        "requiredPattern": "true",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest#cleanAttachmentCanOnlyBeAttachedByItsUploaderAndCannotBeReused()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/attachment/AttachmentRepositoryIntegrationTest.java",
+        "sourceLine": 19,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest#idempotentUploadConvergesAndChangedMetadataConflicts()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/attachment/AttachmentRepositoryIntegrationTest.java",
+        "sourceLine": 19,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#createsGroupIdempotentlyWithCurrentUserAsOwnerAndRejectsChangedRequest()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/CollaborationRepositoryIntegrationTest.java",
+        "sourceLine": 25,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#searchEnforcesTenantMembershipAndExcludesDeletedMessagesAndInactivePeople()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/CollaborationRepositoryIntegrationTest.java",
+        "sourceLine": 25,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#searchValidatesQueryTypesAndGlobalLimit()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/CollaborationRepositoryIntegrationTest.java",
+        "sourceLine": 25,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest#rejectsInactiveAndCrossTenantMembersWithoutDisclosingWhichLookupFailed()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/CollaborationRepositoryIntegrationTest.java",
+        "sourceLine": 25,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#addsAndReaddsIdempotentlyAtAFromJoinBoundaryWithPayloadFreeEvents()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/ConversationMembershipRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#blocksIdorInactivePeopleUnsupportedConversationTypesAndNonManagers()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/ConversationMembershipRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#letsDirectMembersLeaveAndRefreshesHistoryWhenTheyRejoin()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/ConversationMembershipRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest#enforcesManagerOwnerContinuityProtectedSourcesAndOptimisticVersions()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/collaboration/ConversationMembershipRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#pagesOnlyRootMessagesByDurableSequenceInDisplayOrder()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingHistoryVisibilityIntegrationTest.java",
+        "sourceLine": 15,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#appliesTheSameHistoryBoundaryToTimelineDirectLookupSavedItemsAndReadCursor()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingHistoryVisibilityIntegrationTest.java",
+        "sourceLine": 15,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#excludesPreJoinMessagesFromUnreadAndConversationPreviews()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingHistoryVisibilityIntegrationTest.java",
+        "sourceLine": 15,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest#pageQueryEnforcesTenantActiveMembershipAndHistoryBoundary()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingHistoryVisibilityIntegrationTest.java",
+        "sourceLine": 15,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest#archivedConversationCannotInflateMentionsSavedCountsOrSavedPagination()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingHomeMetricsPostgresIntegrationTest.java",
+        "sourceLine": 13,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest#deletedOnlyUnreadConversationDoesNotInflateHomeUnreadAndMentions()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingHomeMetricsPostgresIntegrationTest.java",
+        "sourceLine": 13,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#privateCursorAndPrivacyEventsAreSelfOnlyInLiveChecksReplayAndHighWaterQueries()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#deletedSystemAndArchivedMessagesHaveNoPublicReceiptsOrObservations()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#observationsNotGlobalCursorDetermineReadIncludingUnopenedThreadReplies()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#defaultAndOptOutFlipAreUnilateralRetainObservationsAndNeverChangeSelfCursor()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#batchAndSingleAgreeAndExcludeInactiveRevokedPreJoinAndLaterFullHistoryMembers()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#optimisticVersionsAreAtomicForFirstInsertAndConcurrentUpdates()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#onlyActiveAuthorCanGetReceiptsAndUnauthorizedIdsRejectWholeBatch()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#observationAuthorizationEnforcesHistoryTenantConversationAndActiveMember()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#observationWritesAreIdempotentAllOrNothingAndLeaveUnreadCursorAndEventsAlone()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest#revocationAndRejoinCannotResurrectOldReceiptEligibility()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingReadReceiptPostgresIntegrationTest.java",
+        "sourceLine": 39,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#conversationSettingsUseCompareAndSetVersioning()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#concurrentWritersReceiveUniqueMonotonicConversationSequences()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#realtimeEventLogCommitsAtomicallyAndCarriesMessageSequence()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#reusedIdempotencyKeyWithChangedPayloadIsAConflict()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#readCursorNeverRegressesAndRejectsConversationOrTenantMismatch()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#sameIdempotencyKeyAndPayloadReturnsTheOriginalMessage()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#databaseRejectsReplyParentFromAnotherConversation()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#mentionScopeReturnsOnlyUnreadMentionedConversations()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#conversationAndTimelineDtosExposeSequenceBasedState()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#messageEditUsesCompareAndSetVersioning()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest#concurrentSameKeyRequestsConvergeOnOneMessage()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/domain/MessagingRepositoryIntegrationTest.java",
+        "sourceLine": 32,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#recentOrderingAndGlobalLimitAreDeterministicAcrossKinds()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#archiveAndDisabledViewerHideAssetsAndInvalidateOutstandingGrant()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#deletionAfterGrantRevokesMetadataAndDownloadWithoutConsumingGrant()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#historyBoundaryAppliesToFilesLinksMetadataAndDownloadGrantConsumption()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#tenantAndMembershipScopesCannotLeakAssets()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#exposesActualCleanFilesAndSafeLinksWithoutStorageOrDownloadCredentials()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#realDownloadRemainsSingleUseAndBoundToCorrectTenantAndUser()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest#quarantineRejectedOrphanAndSystemAssetsNeverAppear()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/home/MessagingHomeAssetPostgresIntegrationTest.java",
+        "sourceLine": 18,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#draftCandidateDoesNotActivateExactPepAtBaselineRollout()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#malformedConversationCandidateCannotBypassMessagingOwnerPep()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#normalAndProviderSupportModesCannotBecomeConfusedDeputiesAtMessagingOwnerPep()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#crossTenantConversationScopeFailsClosedAtMessagingOwnerPep()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#invalidContextKeyFailsClosedBeforeMessagingControllerOrRepository()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#pageDataAndActionBindingsReachMessagingOwnerOnlyWithExactEvidence()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#elevatedWorkModeDeclaredByDraftContractReachesMessagingOwner()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#staleAuthorityRevisionFailsClosedBeforeMessagingAction()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#scopeRevalidationFailureReturnsAuthorityUnavailableWithoutOwnerCall()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#duplicateTrustedHeaderFailsClosedBeforeMessagingControllerOrRepository()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#canonicalOpaqueScopeEscapeFailsClosedAtMessagingOwnerPep()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#whitespacePaddedTrustedHeaderFailsClosedBeforeMessagingControllerOrRepository()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest#spoofedInternalHeadersCannotBypassMessagingGatewayServiceIdentity()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-messaging-server/src/test/java/com/dwp/services/messaging/security/MessagingProductSurfacePepPostgresIntegrationTest.java",
+        "sourceLine": 38,
+        "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#aliasExpansionPreservesKeysetPaginationWithoutDuplicatesOrSkips()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationReasonQueryPostgresIntegrationTest.java",
+        "sourceLine": 35,
+        "environmentVariable": "DWP_NOTIFICATION_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#unknownFiltersMatchOnlyTheirLiteralCodeWithoutInventingDirectMembership()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationReasonQueryPostgresIntegrationTest.java",
+        "sourceLine": 35,
+        "environmentVariable": "DWP_NOTIFICATION_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#mentionViewReasonFilterAndCounterAgreeIncludingLegacyCase()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationReasonQueryPostgresIntegrationTest.java",
+        "sourceLine": 35,
+        "environmentVariable": "DWP_NOTIFICATION_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#unknownRemainsVisibleWithNeutralReasonButOutsideEveryCanonicalReasonFilter()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationReasonQueryPostgresIntegrationTest.java",
+        "sourceLine": 35,
+        "environmentVariable": "DWP_NOTIFICATION_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#reasonAliasesRemainAnIntersectionWithAppPriorityReadStateAndView()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationReasonQueryPostgresIntegrationTest.java",
+        "sourceLine": 35,
+        "environmentVariable": "DWP_NOTIFICATION_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest#filtersBothSpellingsAndReturnsCanonicalDisplay(String, String, String)",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationReasonQueryPostgresIntegrationTest.java",
+        "sourceLine": 35,
+        "environmentVariable": "DWP_NOTIFICATION_INTEGRATION_DB_URL",
+        "requiredPattern": ".+",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "UP-TO-DATE",
+      "xmlArtifactScope": "EXISTING_XML_FROM_UP_TO_DATE_TASK"
+    },
+    {
+      "id": "com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest#exportLatestPlatformControllersUsingAnIsolatedDatabaseAndRandomPort()",
+      "xmlSkipReason": null,
+      "xmlSkipReasonStatus": "NOT_RECORDED_BY_JUNIT_XML",
+      "declaredSourceCondition": {
+        "kind": "CLASS_LEVEL_ENABLED_IF_ENVIRONMENT_VARIABLE",
+        "sourcePath": "dwp-platform-server/src/test/java/com/dwp/services/platform/config/PlatformOpenApiSnapshotExportTest.java",
+        "sourceLine": 25,
+        "environmentVariable": "DWP_EXPORT_PLATFORM_OPENAPI",
+        "requiredPattern": "true",
+        "actualValue": "NOT_READ_OR_RECORDED"
+      },
+      "actualReasonCertainty": "SOURCE_CONDITION_ONLY; ACTUAL_XML_REASON_UNAVAILABLE",
+      "gradleTaskOutcome": "EXECUTED",
+      "xmlArtifactScope": "REFRESHED_DURING_THIS_RUN"
+    }
+  ],
+  "skipReasonGroups": [
+    {
+      "environmentVariable": "DWP_RUN_KAFKA_ROLLOUT_REHEARSAL",
+      "reportedSkippedCases": 1,
+      "actualEnvironmentValue": "NOT_READ_OR_RECORDED",
+      "xmlReason": "NOT_RECORDED_BY_JUNIT_XML"
+    },
+    {
+      "environmentVariable": "DWP_LIVEKIT_SMOKE",
+      "reportedSkippedCases": 2,
+      "actualEnvironmentValue": "NOT_READ_OR_RECORDED",
+      "xmlReason": "NOT_RECORDED_BY_JUNIT_XML"
+    },
+    {
+      "environmentVariable": "DWP_MESSAGING_INTEGRATION_DB_URL",
+      "reportedSkippedCases": 58,
+      "actualEnvironmentValue": "NOT_READ_OR_RECORDED",
+      "xmlReason": "NOT_RECORDED_BY_JUNIT_XML"
+    },
+    {
+      "environmentVariable": "DWP_NOTIFICATION_INTEGRATION_DB_URL",
+      "reportedSkippedCases": 6,
+      "actualEnvironmentValue": "NOT_READ_OR_RECORDED",
+      "xmlReason": "NOT_RECORDED_BY_JUNIT_XML"
+    },
+    {
+      "environmentVariable": "DWP_EXPORT_PLATFORM_OPENAPI",
+      "reportedSkippedCases": 1,
+      "actualEnvironmentValue": "NOT_READ_OR_RECORDED",
+      "xmlReason": "NOT_RECORDED_BY_JUNIT_XML"
+    }
+  ],
+  "sourceMutation": false,
+  "forcedProcessTermination": false,
+  "userServerMutation": false,
+  "ownedProcessObservations": [
+    {
+      "observedAt": "2026-09-14T01:22:27.634Z",
+      "reporterPid": 11356,
+      "wrapperPid": 11380,
+      "daemonPid": 11399,
+      "workerPid": 14955,
+      "output": "14955 11399 11399  14.1 03:44 /Users/a10697/Library/Java/JavaVirtualMachines/corretto-23.0.2/Contents/Home/bin/java\n"
+    },
+    {
+      "observedAt": "2026-09-14T01:26:27.194Z",
+      "output": "11356 10476 11356   0.0 10:44 /Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python\n11380 11356 11380   0.0 10:43 /usr/bin/java\n11399 11380 11399   0.3 10:42 /Users/a10697/Library/Java/JavaVirtualMachines/corretto-23.0.2/Contents/Home/bin/java\n14955 11399 11399   1.1 07:44 /Users/a10697/Library/Java/JavaVirtualMachines/corretto-23.0.2/Contents/Home/bin/java\n"
+    }
+  ],
+  "finalOwnedProcessObservation": {
+    "observedAt": "2026-09-14T01:33:42.199Z",
+    "queriedPids": [
+      11356,
+      11380,
+      11399,
+      14955
+    ],
+    "queriedProcessGroups": [
+      11380,
+      11399
+    ],
+    "stdout": "",
+    "ownedProcessesOrGroupsRemaining": false,
+    "forcedTermination": false,
+    "scope": "Only directly observed descendants/groups of this diagnostic",
+    "output": "70c996fdafc011392056a1909a2e5222b240ded3\n",
+    "command": [
+      "ps exact own PIDs; pgrep exact own process groups; git status --porcelain; git rev-parse HEAD"
+    ]
+  },
+  "runner": {
+    "path": "/private/tmp/hris-backend-verification-20260914-zBhqrC/verify_backend.py",
+    "sha256": "26c382d6023dfe4fbaae01e0959104faeaedfcf8d8bdf528505390b55934b47f"
+  },
+  "artifactNotes": [
+    "This is a fresh full-command invocation, not an assertion that all UP-TO-DATE test tasks were re-executed.",
+    "A successful build with 68 existing skips is not 4075 individually executed passes.",
+    "Original G0 command-catalog/session/runtime smoke proof must be replayed separately at the current Control reference.",
+    "Production source/registry/guard/migration SQL, skip controls and user servers were preserved.",
+    "67 cached skip decisions were not re-evaluated in this invocation; declared source opt-in conditions do not assert observed environment values."
+  ],
+  "artifacts": {
+    "report": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/backend-full-diagnostic-70c996f-2026-09-14.v1.json",
+    "xmlManifest": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/backend-full-diagnostic-70c996f-2026-09-14.xml-manifest.v1.json",
+    "summary": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/backend-full-diagnostic-70c996f-2026-09-14.v1.md"
+  }
+}
+

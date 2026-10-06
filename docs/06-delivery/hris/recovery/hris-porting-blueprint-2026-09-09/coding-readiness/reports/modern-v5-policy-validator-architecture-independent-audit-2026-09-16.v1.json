@@ -1,0 +1,293 @@
+{
+  "reportId": "dwp.hris.modern-v5-policy-validator-architecture-independent-audit.2026-09-16.v1",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T03:20:52Z",
+  "status": "PASS_SOURCE_POLICY_VALIDATOR_ARCHITECTURE_FRESH_CONTROL_RECOMPOSITION_ONLY",
+  "decision": "PASS authorizes only a fresh, uniquely named Control recomposition from frozen source generators and sealed v5 policy. It never authorizes promotion, reuse, publication, physical emission, live replacement, or Gate action for any existing candidate or derivative.",
+  "authorityBoundary": "INDEPENDENT_READ_ONLY_AUDIT_NOT_G3_GATE_AUTHORITY_NOT_CANDIDATE_PROMOTION_AUTHORITY",
+  "writeBoundary": {
+    "modified": [
+      "coding-readiness/reports/modern-v5-policy-validator-architecture-independent-audit-2026-09-16.v1.json"
+    ],
+    "notModified": [
+      "source generators",
+      "sealed policies",
+      "canonical/live artifacts",
+      "all candidates and physical candidates",
+      "Gate/control registers and prior reports"
+    ]
+  },
+  "authorEvidenceRead": {
+    "path": "coding-readiness/reports/modern-v5-validator-policy-author-verification-2026-09-16.v1.json",
+    "fileSha256": "c17a5c3d4b34b1955c8b2b99a4d896ffc2ff811bf860786321e883d87604336e",
+    "sealedPayloadSha256": "5821479214eee98067251d84f77a9e6d5ab3d95ac6256b9683e6aff676aa5e84",
+    "role": "AUTHOR_CLAIM_REPLAYED_INDEPENDENTLY_NOT_APPROVAL_AUTHORITY"
+  },
+  "sealedPolicyClosure": {
+    "status": "PASS",
+    "chain": [
+      {
+        "schemaVersion": 2,
+        "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+        "fileSha256": "64bc16def08c4a87750a656a039588db67bba5ec5fad6fac0dbd1bed638e6444",
+        "sealedPayloadSha256": "36229b77ea56f94d61e9beee431b74d0413263853bb7e3b82951ae68534bfe86",
+        "sealRecomputed": true
+      },
+      {
+        "schemaVersion": 3,
+        "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+        "fileSha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+        "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+        "predecessorMatchesV2": true,
+        "sealRecomputed": true
+      },
+      {
+        "schemaVersion": 4,
+        "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+        "fileSha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+        "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+        "predecessorMatchesV3": true,
+        "sealRecomputed": true
+      },
+      {
+        "schemaVersion": 5,
+        "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+        "fileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+        "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2",
+        "predecessorMatchesV4": true,
+        "sealRecomputed": true,
+        "successorScope": {
+          "tables": 131,
+          "added": 17,
+          "removed": 1,
+          "netDelta": 16
+        }
+      }
+    ],
+    "triageAuthority": {
+      "path": "coding-readiness/reports/modern-v4-preflight-finding-triage-independent-2026-09-16.v1.json",
+      "fileSha256": "03f8e2a967e052a7096b0bc837b5ccb9c7faee6a30920717a1f438647f5e953c",
+      "sealedPayloadSha256": "e930be1e35d7987a1373c6e16133cc196a62e80fce9e50e685e81820fffbaa8e",
+      "sealRecomputed": true
+    },
+    "scopeReductionAuthority": {
+      "path": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v1.json",
+      "fileSha256": "99e96abe87d7141f3d7ff6a0185db5f1820a8385e700d34d0df3b8e11a322604",
+      "sealedPayloadSha256": "39a27f6c0362ca52eddfb19c8ac2b31981d98755de5d911e15ea2791b4242bcd",
+      "sealRecomputed": true
+    }
+  },
+  "frozenSourcePins": {
+    "closedSetDesign": {
+      "path": "coding-readiness/modern_closed_set_design.py",
+      "sha256": "61e5588caf114cf444396446b245b4f32ddf945de32a29dcaa6f87090b5aad66"
+    },
+    "manifestGenerator": {
+      "path": "coding-readiness/generate_modern_closed_set_manifest.py",
+      "sha256": "d497c31df6a1023ba6ebea1c325eea05d081aa9b345337218a54acb46ee63e29"
+    },
+    "globalAcceptanceValidator": {
+      "path": "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py",
+      "sha256": "f4080d54aba62ec1b2a7d9c0838a4f5510edf8187efe09c102c9c636fb787611"
+    },
+    "globalHostileSuite": {
+      "path": "coding-readiness/modern-independent-successor/audit_global_hcm_v5_validator_hostile.py",
+      "sha256": "a41b6134833d5e453366d1eecbbad8d9f38248f797d3095ffc5a359584f45532"
+    },
+    "ownerBoundaryValidator": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py",
+      "sha256": "77c14ed3a4b6feb495e3238b3ab66c64be907987db1d1fd63e35e4ce19dbbdcb"
+    }
+  },
+  "diagnosticCandidateOnly": {
+    "path": "coding-readiness/modern-canonical-candidate.v5p1363-final",
+    "disposition": "NON_PROMOTABLE_NO_REUSE_POST_SEAL_REWRITE",
+    "reason": "The causal generator's candidate-dir mode atomically replaced a candidate file after seal. Identical rendered content does not cure the immutable-candidate procedure violation.",
+    "roleInThisAudit": "READ_ONLY_DIAGNOSTIC_MUTATION_SUBSTRATE_ONLY",
+    "allExistingCandidatesAndPhysicalDerivatives": "NON_PROMOTABLE_DIAGNOSTIC_ONLY",
+    "globalSixInputBytesUnchanged": true,
+    "ownerEightInputBytesUnchanged": true,
+    "causalReadonlyCandidateCheckUnchanged": true
+  },
+  "validatorReplay": {
+    "globalCandidateEvaluator": {
+      "status": "PASS_DIAGNOSTIC_ONLY",
+      "findingCount": 0,
+      "selfTests": "35/35",
+      "enumeration": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "events": 157,
+        "tables": 131
+      }
+    },
+    "globalV5HostileSuite": {
+      "status": "PASS_DIAGNOSTIC_ONLY",
+      "positiveControlFindingCount": 0,
+      "tests": "50/50",
+      "candidateBytesUnchanged": true
+    },
+    "ownerBoundaryV5": {
+      "status": "PASS_DIAGNOSTIC_ONLY",
+      "findingCount": 0,
+      "selfTests": "20/20",
+      "inputStability": "UNCHANGED_DURING_FULL_AUDIT",
+      "resolvedProfile": "SUCCESSOR_V5_131"
+    },
+    "historicalQ0Regression": {
+      "status": "EXPECTED_HISTORICAL_FAIL",
+      "findingCount": 77,
+      "selfTests": "14/14",
+      "candidateDisposition": "REJECTED_FAIL_CLOSED"
+    },
+    "operationSemantics": {
+      "status": "PASS_DIAGNOSTIC_ONLY",
+      "findingCount": 0,
+      "selfTests": "24/24"
+    },
+    "routeTaxonomy": {
+      "status": "PASS_DIAGNOSTIC_ONLY",
+      "findingCount": 0,
+      "operations": 199
+    },
+    "semanticExactFixedPoint": {
+      "status": "PASS_DIAGNOSTIC_ONLY",
+      "operations": 199,
+      "events": 157,
+      "tables": 131,
+      "explicitBindings": 13297,
+      "typeFallbacks": 0,
+      "eventFallbacks": 0
+    },
+    "causalFixedPoint": {
+      "status": "PASS_DIAGNOSTIC_ONLY",
+      "readOnlyCandidateFiles": 8,
+      "candidateMutation": "NONE",
+      "hostileSelfTests": "22/22",
+      "readonlyHostileChecks": "6/6"
+    }
+  },
+  "targetedHostileCoverage": {
+    "rule": "Every listed mutation was applied to an in-memory copy or a disposable copy. Each required the exact named rejection rule; no wildcard, broad handler exemption, substring equivalence, or candidate write was accepted.",
+    "globalSuiteByRepairedGroup": {
+      "G02": 5,
+      "G03": 5,
+      "G04": 5,
+      "G05": 5,
+      "G06": 4,
+      "G07": 4,
+      "G08": 4,
+      "G09": 7,
+      "G11": 3,
+      "G12": 5,
+      "POLICY_CHAIN": 3
+    },
+    "ownerSuiteCoverage": {
+      "G13": [
+        "protected submit public/broker outbox rejected",
+        "protected submit missing answer-value owner DML rejected"
+      ],
+      "G14": [
+        "v2 authority predecessor edge rejected when drifted",
+        "manifest to v2 file hash rejected when drifted",
+        "manifest to v2 payload seal rejected when drifted",
+        "transitive predecessor-field substitution rejected"
+      ],
+      "selfTests": "20/20"
+    },
+    "p1363Mutation": {
+      "mutation": "Replaced the exact fixed-64-byte base64url P1363 ownerSignature requirement with an ASN.1 DER form on the signed Listening admission-close handler.",
+      "baselineFindingCount": 0,
+      "expectedRuleId": "EVENT.CONDITION",
+      "expectedSubjectId": "EmployeeListeningSurveyClosed.v3",
+      "matchingFindingCount": 1,
+      "exactRejectionObserved": true,
+      "candidateInputWrites": false
+    },
+    "truePositiveExclusion": "G01 and G10 are not counted as repaired validator false positives; their source repairs remain governed by their separate v4 author evidence."
+  },
+  "architectureCompleteness": {
+    "status": "PASS_DIAGNOSTIC_STRUCTURE_REVIEW",
+    "globalCounts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 27,
+      "publicEvents": 157,
+      "tables": 131,
+      "requiredSequence": "199/133/66/27/157/131"
+    },
+    "temporalDualStateContent": {
+      "queriesReviewed": [
+        "modern.contingent.engagement.query",
+        "modern.succession.plan.query"
+      ],
+      "systemTimeFirst": true,
+      "distinctStateAndContentWinners": true,
+      "exactHistoryNoLatestFallback": true,
+      "persistedEffectiveTo": "NULL_ONLY_NON_AUTHORITATIVE",
+      "clientEffectiveToForbiddenOnRevisions": true
+    },
+    "listening": {
+      "streams": 4,
+      "publicOperations": 10,
+      "publicEvents": 7,
+      "ownerPortOperations": 18,
+      "internalMessages": 6,
+      "tables": 23,
+      "localForeignKeys": 14,
+      "requiredSequence": "4/10/7/18/6/23/14"
+    },
+    "protectedSubmit": {
+      "requestSurface": "route surveyId plus signedParticipationCredential, responseToken, answers only",
+      "ownerTransactionSteps": 7,
+      "privateNoBroker": true,
+      "publicEvents": 0,
+      "outboxWrites": 0
+    },
+    "protectedErasure": {
+      "singleDatabaseTransactionClaim": false,
+      "multiPhaseLeaseKmsTx2Saga": true,
+      "failureDoesNotWriteTombstoneOrCompletionReceipt": true,
+      "publicOrBrokerOutboxWrites": 0
+    },
+    "workforceSimulationResult": {
+      "signedExactTupleAndTerminalCas": true,
+      "resultProofAssignments": true,
+      "orderedDml": "CLAIM_INBOX,LOCK,VALIDATE,UPDATE_CAS,COMPLETE_INBOX,APPEND_OUTBOX",
+      "refetch": "FORBIDDEN",
+      "latestFallback": "FORBIDDEN",
+      "payloadSufficiencyClosed": true
+    },
+    "readerSourceLineage": {
+      "sealedAddedTables": 17,
+      "allDeclaredReadersHaveReadPlanAndPhysicalSource": true,
+      "minimumDirectDurableBindingsPerReader": 2,
+      "qualifiedLineageClosed": true
+    },
+    "listeningAuthorityLineage": {
+      "manifestToSealedV2": true,
+      "sealedV2ToImmutableV1": true,
+      "manifestPredecessorSubstitution": "FORBIDDEN"
+    },
+    "signature": {
+      "ecdsaEncoding": "IEEE_P1363_FIXED_64_BYTE_R_CONCAT_S;ASN1_DER_FORBIDDEN",
+      "serialization": "BASE64URL_UNPADDED_P1363_FIXED_64_BYTE_SIGNATURE",
+      "validatorBindingAndHostileRejection": true
+    }
+  },
+  "finalAssertion": {
+    "sealedV5PolicyReadyForFreshControlComposition": true,
+    "frozenSourceAndValidatorArchitectureReadyForFreshReadOnlyValidation": true,
+    "existingCandidateReady": false,
+    "existingPhysicalCandidateReady": false,
+    "candidatePromotionAuthorized": false,
+    "physicalEmissionAuthorized": false,
+    "liveCanonicalReplacementAuthorized": false,
+    "gateOrG3Authorization": false,
+    "freshControlRecompositionOnly": true
+  },
+  "sealedPayloadSha256": "9d29d4e2fdfac01ee5aec09d68eda4dd57d5f1f5ce80c9077a31823b4c469ef4"
+}

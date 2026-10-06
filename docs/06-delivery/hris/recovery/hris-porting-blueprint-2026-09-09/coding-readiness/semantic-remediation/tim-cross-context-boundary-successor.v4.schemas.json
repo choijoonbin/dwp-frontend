@@ -1,0 +1,5570 @@
+{
+  "schemaVersion": 4,
+  "dialect": "DRAFT_07_STANDARD_REF_STORAGE",
+  "status": "PLANNED_CLOSED_DATA_TYPES_NOT_AUTHORITY",
+  "definitions": {
+    "HRM.EmploymentTerminationSnapshot.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.EmploymentTerminationSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "employmentPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.Employment",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.Worker",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "assignmentPublicIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "referenceContract": {
+              "entityType": "HRM.Assignment",
+              "idSpace": "PUBLIC_UUID"
+            }
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "employmentState": {
+          "const": "SEPARATED"
+        },
+        "employmentEndedOn": {
+          "type": "string",
+          "format": "date"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.SourceRef.v1"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        }
+      },
+      "required": [
+        "snapshotPublicId",
+        "employmentPublicId",
+        "workerPublicId",
+        "assignmentPublicIds",
+        "employmentState",
+        "employmentEndedOn",
+        "revision",
+        "asOf",
+        "validUntil",
+        "contentSha256",
+        "sourceRefs"
+      ],
+      "x-dateSemantics": "employmentEndedOn is the last employed local civil date, inclusive; owner TIM derives effectiveEndExclusive=employmentEndedOn+1 calendar day in the authorized pinned calendar zone. This new owner extension is not published and must be independently agreed."
+    },
+    "PAY.TerminationSettlementReceipt.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requestPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_termination_settlement_intents",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "commandSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "ownerReceiptPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "PAY.TerminationSettlementReceipt",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACCEPTED",
+            "RUNNING",
+            "SUCCEEDED",
+            "REJECTED",
+            "FAILED",
+            "RESULT_UNKNOWN"
+          ]
+        },
+        "finalSettlementPublicId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "PAY.TerminationSettlement",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "errorCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "requestPublicId",
+        "commandSha256",
+        "ownerReceiptPublicId",
+        "revision",
+        "status",
+        "finalSettlementPublicId",
+        "errorCode",
+        "asOf",
+        "contentSha256"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "SUCCEEDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "finalSettlementPublicId": {
+                "type": "string",
+                "format": "uuid",
+                "referenceContract": {
+                  "entityType": "PAY.TerminationSettlement",
+                  "idSpace": "PUBLIC_UUID"
+                }
+              },
+              "errorCode": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "finalSettlementPublicId": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Ref.Approval.TimeCancellationSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "Approval.TimeCancellationSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "Approval.CancellationSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-approval-server"
+        },
+        "streamKey": {
+          "const": "approval-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.Approval.TimeDecisionSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "Approval.TimeDecisionSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "Approval.DecisionSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-approval-server"
+        },
+        "streamKey": {
+          "const": "approval-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.HRM.EffectiveAssignmentSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "HRM.EffectiveAssignmentSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.EffectiveAssignmentSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-people-server"
+        },
+        "streamKey": {
+          "const": "people-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.HRM.EffectiveLocationSnapshot.proposal.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "HRM.EffectiveLocationSnapshot.proposal.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.EffectiveLocationSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-people-server"
+        },
+        "streamKey": {
+          "const": "people-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.HRM.EmploymentTerminationSnapshot.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "HRM.EmploymentTerminationSnapshot.v2"
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.EmploymentTerminationSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "ownerService": {
+          "const": "dwp-people-server"
+        },
+        "streamKey": {
+          "const": "people-main"
+        },
+        "schemaVersion": {
+          "const": 2
+        }
+      },
+      "required": [
+        "contractId",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "purposeCode",
+        "populationScopeDigest",
+        "ownerService",
+        "streamKey",
+        "schemaVersion"
+      ]
+    },
+    "Ref.HRM.VerifiedSelfScopeSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "HRM.VerifiedSelfScopeSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.VerifiedSelfScopeSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-people-server"
+        },
+        "streamKey": {
+          "const": "people-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.PER.WfmSkillVocabularySnapshot.proposal.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "PER.WfmSkillVocabularySnapshot.proposal.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "PER.SkillVocabularySnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-people-server"
+        },
+        "streamKey": {
+          "const": "people-performance"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.SYS.EffectiveTimeConfigurationSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "SYS.EffectiveTimeConfigurationSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "SYS.EffectiveTimeConfigurationSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-platform-server"
+        },
+        "streamKey": {
+          "const": "platform-hris-configuration"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.SYS.TimeCalendarSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "SYS.TimeCalendarSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "SYS.BusinessCalendarSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-platform-server"
+        },
+        "streamKey": {
+          "const": "platform-hris-configuration"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.SYS.TimePolicyContextSnapshot.proposal.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "SYS.TimePolicyContextSnapshot.proposal.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "SYS.TimePolicyContextSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-platform-server"
+        },
+        "streamKey": {
+          "const": "platform-hris-configuration"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.AbsenceAvailabilitySnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.AbsenceAvailabilitySnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "TIM.AbsenceAvailabilitySnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.AvailabilityCompositionSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.AvailabilityCompositionSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "TIM.AvailabilityCompositionSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.CanonicalSchedulePublicationPort.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.CanonicalSchedulePublicationPort.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_schedule_publication_receipts",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.CanonicalScheduleSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.CanonicalScheduleSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "TIM.CanonicalScheduleSnapshot",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.EffectiveCalendarSnapshot.proposal.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.EffectiveCalendarSnapshot.proposal.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_calendar_version_snapshots",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.EffectiveWorkRuleSnapshot.proposal.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.EffectiveWorkRuleSnapshot.proposal.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_owner_artifact_snapshots",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.LeavePolicyArtifactSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.LeavePolicyArtifactSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_leave_plan_versions",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.SchedulePatternArtifactSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.SchedulePatternArtifactSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_schedule_patterns",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.ShiftTemplateArtifactSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.ShiftTemplateArtifactSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_shift_template_versions",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.TimeRuleArtifactSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.TimeRuleArtifactSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_work_rule_set_versions",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "Ref.TIM.WfmPlanningInputSnapshot.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractId": {
+          "const": "TIM.WfmPlanningInputSnapshot.v1"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_wfm_planning_input_snapshots",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerService": {
+          "const": "dwp-time-server"
+        },
+        "streamKey": {
+          "const": "time-main"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "contractId",
+        "schemaVersion",
+        "snapshotPublicId",
+        "revision",
+        "contentSha256",
+        "asOf",
+        "validUntil",
+        "ownerService",
+        "streamKey",
+        "purposeCode",
+        "populationScopeDigest"
+      ]
+    },
+    "SYS.EffectiveTimeConfigurationSnapshot.v1": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "snapshotPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.EffectiveConfigurationSnapshot",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "configurationVersionPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.ConfigurationVersion",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "configurationKind": {
+              "const": "TIM_TIME_RULE"
+            },
+            "timeArtifactPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "table:tme_work_rule_set_versions",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "timeArtifactRevision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "timeArtifactSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "effectiveFrom": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "effectiveTo": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "PUBLISHED",
+                "RETIRED"
+              ]
+            },
+            "contentSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "approvalReceiptPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Approval.DecisionReceipt",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "authorPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "approverPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "publishedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "ownerStreamKey": {
+              "const": "platform-hris-configuration"
+            },
+            "sourceRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TIM.SourceRef.v1"
+              },
+              "minItems": 1,
+              "maxItems": 50000
+            },
+            "scope": {
+              "$ref": "#/definitions/TIM.Scope.v1"
+            },
+            "asOf": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "validUntil": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "snapshotPublicId",
+            "configurationVersionPublicId",
+            "revision",
+            "configurationKind",
+            "timeArtifactPublicId",
+            "timeArtifactRevision",
+            "timeArtifactSha256",
+            "priority",
+            "effectiveFrom",
+            "effectiveTo",
+            "status",
+            "contentSha256",
+            "approvalReceiptPublicId",
+            "authorPublicId",
+            "approverPublicId",
+            "publishedAt",
+            "ownerStreamKey",
+            "sourceRefs",
+            "scope",
+            "asOf",
+            "validUntil"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "snapshotPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.EffectiveConfigurationSnapshot",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "configurationVersionPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.ConfigurationVersion",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "configurationKind": {
+              "const": "TIM_SHIFT_TEMPLATE"
+            },
+            "timeArtifactPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "table:tme_shift_template_versions",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "timeArtifactRevision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "timeArtifactSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "effectiveFrom": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "effectiveTo": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "PUBLISHED",
+                "RETIRED"
+              ]
+            },
+            "contentSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "approvalReceiptPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Approval.DecisionReceipt",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "authorPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "approverPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "publishedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "ownerStreamKey": {
+              "const": "platform-hris-configuration"
+            },
+            "sourceRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TIM.SourceRef.v1"
+              },
+              "minItems": 1,
+              "maxItems": 50000
+            },
+            "scope": {
+              "$ref": "#/definitions/TIM.Scope.v1"
+            },
+            "asOf": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "validUntil": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "snapshotPublicId",
+            "configurationVersionPublicId",
+            "revision",
+            "configurationKind",
+            "timeArtifactPublicId",
+            "timeArtifactRevision",
+            "timeArtifactSha256",
+            "priority",
+            "effectiveFrom",
+            "effectiveTo",
+            "status",
+            "contentSha256",
+            "approvalReceiptPublicId",
+            "authorPublicId",
+            "approverPublicId",
+            "publishedAt",
+            "ownerStreamKey",
+            "sourceRefs",
+            "scope",
+            "asOf",
+            "validUntil"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "snapshotPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.EffectiveConfigurationSnapshot",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "configurationVersionPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.ConfigurationVersion",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "configurationKind": {
+              "const": "TIM_SCHEDULE_PATTERN"
+            },
+            "timeArtifactPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "table:tme_schedule_patterns",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "timeArtifactRevision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "timeArtifactSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "effectiveFrom": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "effectiveTo": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "PUBLISHED",
+                "RETIRED"
+              ]
+            },
+            "contentSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "approvalReceiptPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Approval.DecisionReceipt",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "authorPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "approverPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "publishedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "ownerStreamKey": {
+              "const": "platform-hris-configuration"
+            },
+            "sourceRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TIM.SourceRef.v1"
+              },
+              "minItems": 1,
+              "maxItems": 50000
+            },
+            "scope": {
+              "$ref": "#/definitions/TIM.Scope.v1"
+            },
+            "asOf": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "validUntil": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "snapshotPublicId",
+            "configurationVersionPublicId",
+            "revision",
+            "configurationKind",
+            "timeArtifactPublicId",
+            "timeArtifactRevision",
+            "timeArtifactSha256",
+            "priority",
+            "effectiveFrom",
+            "effectiveTo",
+            "status",
+            "contentSha256",
+            "approvalReceiptPublicId",
+            "authorPublicId",
+            "approverPublicId",
+            "publishedAt",
+            "ownerStreamKey",
+            "sourceRefs",
+            "scope",
+            "asOf",
+            "validUntil"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "snapshotPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.EffectiveConfigurationSnapshot",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "configurationVersionPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "SYS.ConfigurationVersion",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "configurationKind": {
+              "const": "TIM_LEAVE_POLICY"
+            },
+            "timeArtifactPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "table:abs_leave_plan_versions",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "timeArtifactRevision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "timeArtifactSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "effectiveFrom": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "effectiveTo": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "PUBLISHED",
+                "RETIRED"
+              ]
+            },
+            "contentSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "approvalReceiptPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Approval.DecisionReceipt",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "authorPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "approverPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "Auth.Principal",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            "publishedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "ownerStreamKey": {
+              "const": "platform-hris-configuration"
+            },
+            "sourceRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TIM.SourceRef.v1"
+              },
+              "minItems": 1,
+              "maxItems": 50000
+            },
+            "scope": {
+              "$ref": "#/definitions/TIM.Scope.v1"
+            },
+            "asOf": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "validUntil": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "snapshotPublicId",
+            "configurationVersionPublicId",
+            "revision",
+            "configurationKind",
+            "timeArtifactPublicId",
+            "timeArtifactRevision",
+            "timeArtifactSha256",
+            "priority",
+            "effectiveFrom",
+            "effectiveTo",
+            "status",
+            "contentSha256",
+            "approvalReceiptPublicId",
+            "authorPublicId",
+            "approverPublicId",
+            "publishedAt",
+            "ownerStreamKey",
+            "sourceRefs",
+            "scope",
+            "asOf",
+            "validUntil"
+          ]
+        }
+      ]
+    },
+    "TIM.AccrualAnniversary.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "ANNIVERSARY"
+        },
+        "ownerBasis": {
+          "type": "string",
+          "enum": [
+            "HRM_EFFECTIVE_EMPLOYMENT_START",
+            "HRM_VERIFIED_SERVICE_ANCHOR"
+          ]
+        },
+        "invalidDayPolicy": {
+          "type": "string",
+          "enum": [
+            "CLAMP_LAST_DAY",
+            "BLOCK"
+          ]
+        },
+        "localPeriodBoundaryTime": {
+          "type": "string",
+          "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "kind",
+        "ownerBasis",
+        "invalidDayPolicy",
+        "localPeriodBoundaryTime"
+      ]
+    },
+    "TIM.AccrualMonthly.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "MONTHLY"
+        },
+        "anchorDayOfMonth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 31
+        },
+        "invalidDayPolicy": {
+          "type": "string",
+          "enum": [
+            "CLAMP_LAST_DAY",
+            "BLOCK"
+          ]
+        },
+        "localPeriodBoundaryTime": {
+          "type": "string",
+          "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "kind",
+        "anchorDayOfMonth",
+        "invalidDayPolicy",
+        "localPeriodBoundaryTime"
+      ]
+    },
+    "TIM.AccrualPerWorkedUnit.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "PER_WORKED_UNIT"
+        },
+        "workedQuantityBasis": {
+          "$ref": "#/definitions/TIM.Quantity.v1"
+        },
+        "qualifyingPayCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "minItems": 1,
+          "maxItems": 1000,
+          "uniqueItems": true
+        },
+        "source": {
+          "const": "TIM_BOUND_ASSIGNMENT_POSTED_TIME_LEDGER"
+        },
+        "localPeriodBoundaryTime": {
+          "type": "string",
+          "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "kind",
+        "workedQuantityBasis",
+        "qualifyingPayCodes",
+        "source",
+        "localPeriodBoundaryTime"
+      ]
+    },
+    "TIM.AccrualSchedule.v1": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/TIM.AccrualMonthly.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.AccrualYearly.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.AccrualAnniversary.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.AccrualPerWorkedUnit.v1"
+        }
+      ]
+    },
+    "TIM.AccrualYearly.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "YEARLY"
+        },
+        "anchorMonth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "anchorDayOfMonth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 31
+        },
+        "invalidDayPolicy": {
+          "type": "string",
+          "enum": [
+            "CLAMP_LAST_DAY",
+            "BLOCK"
+          ]
+        },
+        "localPeriodBoundaryTime": {
+          "type": "string",
+          "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "kind",
+        "anchorMonth",
+        "anchorDayOfMonth",
+        "invalidDayPolicy",
+        "localPeriodBoundaryTime"
+      ]
+    },
+    "TIM.CalendarEntry.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "localDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "workingDay": {
+          "type": "boolean"
+        },
+        "scheduledMinutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "holidayCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "localDate",
+        "workingDay",
+        "scheduledMinutes",
+        "holidayCode"
+      ]
+    },
+    "TIM.CancelledEntitlementOutcome.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "CANCELLED"
+        },
+        "selectedItemPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_entitlement_selected_items",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "inputSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "cancelFence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cancelledAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reasonCode": {
+          "type": "string",
+          "enum": [
+            "RUN_CANCELLED_BEFORE_ITEM_EFFECT"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "selectedItemPublicId",
+        "inputSha256",
+        "cancelFence",
+        "cancelledAt",
+        "reasonCode"
+      ]
+    },
+    "TIM.ComputedEntitlementOutcome.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "CALCULATED",
+            "POSTED"
+          ]
+        },
+        "selectedItemPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_entitlement_selected_items",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "inputSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "leaseVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+          "x-valueType": "QuantityDecimal"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^(?!(?:0(?:\\.0{1,6})?)$)(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+          "x-valueType": "QuantityDecimal",
+          "x-numericConstraint": "STRICT_POSITIVE"
+        },
+        "quantity": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+          "x-valueType": "QuantityDecimal"
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "MINUTE",
+            "HOUR",
+            "DAY"
+          ]
+        },
+        "suppressedQuantity": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+          "x-valueType": "QuantityDecimal"
+        },
+        "roundingTrace": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "PRORATION",
+                  "GRANT",
+                  "CONVERSION",
+                  "CARRYOVER",
+                  "TERMINATION"
+                ]
+              },
+              "unrounded": {
+                "type": "string",
+                "pattern": "^-?(?:0|[1-9][0-9]{0,15})(?:\\.[0-9]{1,8})?$",
+                "x-valueType": "CalculationDecimal"
+              },
+              "rounded": {
+                "type": "string",
+                "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+                "x-valueType": "QuantityDecimal"
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "HALF_UP",
+                  "HALF_EVEN",
+                  "DOWN",
+                  "UP",
+                  "FLOOR",
+                  "CEILING"
+                ]
+              },
+              "scale": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 6
+              },
+              "policySha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "stage",
+              "unrounded",
+              "rounded",
+              "mode",
+              "scale",
+              "policySha256"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 6
+        },
+        "ledgerPublicIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "referenceContract": {
+              "entityType": "table:abs_entitlement_ledger_entries",
+              "idSpace": "PUBLIC_UUID"
+            }
+          },
+          "minItems": 0,
+          "maxItems": 10
+        }
+      },
+      "required": [
+        "kind",
+        "selectedItemPublicId",
+        "inputSha256",
+        "leaseVersion",
+        "numerator",
+        "denominator",
+        "quantity",
+        "unit",
+        "suppressedQuantity",
+        "roundingTrace",
+        "ledgerPublicIds"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "CALCULATED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ledgerPublicIds": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "POSTED"
+              }
+            }
+          },
+          "then": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "quantity": {
+                      "pattern": "^-?0(?:\\.0{1,6})?$"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "ledgerPublicIds": {
+                      "type": "array",
+                      "maxItems": 0
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "ledgerPublicIds": {
+                      "type": "array",
+                      "minItems": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "TIM.EnrollmentVersionRef.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enrollmentPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_worker_plan_enrollments",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.Worker",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "assignmentPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.Assignment",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "effectiveFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "effectiveTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "enrollmentPublicId",
+        "rowVersion",
+        "workerPublicId",
+        "assignmentPublicId",
+        "effectiveFrom",
+        "effectiveTo"
+      ]
+    },
+    "TIM.EntitlementInputDocument.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "inputVersionPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_entitlement_input_versions",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "runPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_entitlement_runs",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "const": 1
+        },
+        "capturedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "periodStart": {
+          "type": "string",
+          "format": "date"
+        },
+        "periodEnd": {
+          "type": "string",
+          "format": "date"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "DRY_RUN",
+            "POST"
+          ]
+        },
+        "policyRef": {
+          "$ref": "#/definitions/Ref.TIM.LeavePolicyArtifactSnapshot.v1"
+        },
+        "policyContent": {
+          "$ref": "#/definitions/TIM.LeavePolicyContent.v1"
+        },
+        "selectedCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "selectionDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "selectedItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.SelectedEntitlementItem.v2"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "inputVersionPublicId",
+        "runPublicId",
+        "revision",
+        "capturedAt",
+        "asOf",
+        "periodStart",
+        "periodEnd",
+        "mode",
+        "policyRef",
+        "policyContent",
+        "selectedCount",
+        "selectionDigest",
+        "selectedItems",
+        "contentSha256"
+      ]
+    },
+    "TIM.EntitlementOutcome.v2": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/TIM.ComputedEntitlementOutcome.v2"
+        },
+        {
+          "$ref": "#/definitions/TIM.ErrorEntitlementOutcome.v2"
+        },
+        {
+          "$ref": "#/definitions/TIM.CancelledEntitlementOutcome.v2"
+        }
+      ]
+    },
+    "TIM.ErrorEntitlementOutcome.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "BLOCKED",
+            "FAILED"
+          ]
+        },
+        "selectedItemPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_entitlement_selected_items",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "inputSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "leaseVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "errorCode": {
+          "type": "string",
+          "enum": [
+            "SOURCE_UNAVAILABLE",
+            "SOURCE_REVOKED",
+            "SOURCE_BINDING_MISMATCH",
+            "ZERO_DENOMINATOR",
+            "UNIT_MISMATCH",
+            "DECIMAL_OVERFLOW",
+            "CAP_BLOCK_POST",
+            "RULE_INVALID",
+            "PERIOD_CLOSED",
+            "UNBOUND_ASSIGNMENT",
+            "OWNER_RESULT_UNKNOWN"
+          ]
+        },
+        "failedStage": {
+          "type": "string",
+          "enum": [
+            "SOURCE",
+            "ELIGIBILITY",
+            "PRORATION",
+            "GRANT",
+            "CAP",
+            "PERSISTENCE_OBSERVATION"
+          ]
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.SourceRef.v1"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "observedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "kind",
+        "selectedItemPublicId",
+        "inputSha256",
+        "leaseVersion",
+        "errorCode",
+        "failedStage",
+        "sourceRefs",
+        "observedAt"
+      ]
+    },
+    "TIM.Expiry.v1": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/TIM.ExpiryNever.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.ExpiryAfterDays.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.ExpiryFixedDate.v1"
+        }
+      ]
+    },
+    "TIM.ExpiryAfterDays.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "AFTER_CALENDAR_DAYS"
+        },
+        "days": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "kind",
+        "days"
+      ]
+    },
+    "TIM.ExpiryFixedDate.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "FIXED_LOCAL_DATE"
+        },
+        "localDate": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "kind",
+        "localDate"
+      ]
+    },
+    "TIM.ExpiryNever.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "NEVER"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "TIM.LeavePolicyContent.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "type": "string",
+          "enum": [
+            "MINUTE",
+            "HOUR",
+            "DAY"
+          ]
+        },
+        "eligibility": {
+          "$ref": "#/definitions/TIM.RuleAst.v1"
+        },
+        "enrollmentMode": {
+          "type": "string",
+          "enum": [
+            "EXPLICIT_AUTHORIZED",
+            "AUTO_EFFECTIVE_EMPLOYMENT"
+          ]
+        },
+        "accrualAmount": {
+          "$ref": "#/definitions/TIM.Quantity.v1"
+        },
+        "prorationBasis": {
+          "type": "string",
+          "enum": [
+            "CALENDAR_DAYS",
+            "WORKING_DAYS",
+            "SCHEDULED_MINUTES",
+            "NONE"
+          ]
+        },
+        "proration": {
+          "$ref": "#/definitions/TIM.RuleAst.v1"
+        },
+        "carryoverCap": {
+          "$ref": "#/definitions/TIM.Quantity.v1"
+        },
+        "balanceCap": {
+          "$ref": "#/definitions/TIM.Quantity.v1"
+        },
+        "capTreatment": {
+          "type": "string",
+          "enum": [
+            "CLAMP_GRANT_WITH_SUPPRESSED_AMOUNT",
+            "BLOCK_POST"
+          ]
+        },
+        "terminationTreatment": {
+          "type": "string",
+          "enum": [
+            "PRORATE_FINAL_PERIOD",
+            "STOP_FUTURE_ONLY",
+            "OWNER_APPROVED_SETTLEMENT"
+          ]
+        },
+        "negativeBalanceAllowed": {
+          "type": "boolean"
+        },
+        "reservationMode": {
+          "type": "string",
+          "enum": [
+            "RESERVE_ON_SUBMIT",
+            "RESERVE_ON_APPROVAL"
+          ]
+        },
+        "rounding": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.Rounding.v1"
+          },
+          "minItems": 1,
+          "maxItems": 6
+        },
+        "calendarRef": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Ref.SYS.TimeCalendarSnapshot.v1"
+            },
+            {
+              "$ref": "#/definitions/Ref.TIM.EffectiveCalendarSnapshot.proposal.v1"
+            }
+          ]
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.SourceRef.v1"
+          },
+          "minItems": 1,
+          "maxItems": 50000
+        },
+        "expiry": {
+          "$ref": "#/definitions/TIM.Expiry.v1"
+        },
+        "accrualSchedule": {
+          "$ref": "#/definitions/TIM.AccrualSchedule.v1"
+        }
+      },
+      "required": [
+        "unit",
+        "eligibility",
+        "enrollmentMode",
+        "accrualAmount",
+        "accrualSchedule",
+        "prorationBasis",
+        "proration",
+        "carryoverCap",
+        "balanceCap",
+        "capTreatment",
+        "terminationTreatment",
+        "negativeBalanceAllowed",
+        "reservationMode",
+        "rounding",
+        "calendarRef",
+        "sourceRefs",
+        "expiry"
+      ]
+    },
+    "TIM.Quantity.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+          "x-valueType": "QuantityDecimal",
+          "x-normalization": "XCON.QuantityDecimal parse complete string then signedZero->0/stripTrailingZeros/toPlainString before compare/hash/SQL/output. Quantized presentation is separate declared scale+trace."
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "MINUTE",
+            "HOUR",
+            "DAY",
+            "COUNT"
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ]
+    },
+    "TIM.Rounding.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scale": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "HALF_UP",
+            "HALF_EVEN",
+            "DOWN",
+            "UP",
+            "FLOOR",
+            "CEILING"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "enum": [
+            "PRORATION",
+            "GRANT",
+            "CONVERSION",
+            "CARRYOVER",
+            "TERMINATION",
+            "TIME_CLASSIFICATION"
+          ]
+        }
+      },
+      "required": [
+        "scale",
+        "mode",
+        "stage"
+      ]
+    },
+    "TIM.RuleAst.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.RuleNode.v1"
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        },
+        "rootNodeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "declaredOutput": {
+          "type": "string",
+          "enum": [
+            "BOOLEAN",
+            "RATE",
+            "MINUTE",
+            "HOUR",
+            "DAY",
+            "COUNT"
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "nodes",
+        "rootNodeId",
+        "declaredOutput"
+      ]
+    },
+    "TIM.RuleBoolConstant.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "BOOLEAN_CONST"
+        },
+        "nodeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "value": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "nodeId",
+        "value"
+      ]
+    },
+    "TIM.RuleInput.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "INPUT"
+        },
+        "nodeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "inputKey": {
+          "type": "string",
+          "enum": [
+            "WORK_ELAPSED_MINUTES",
+            "PAID_BREAK_MINUTES",
+            "SCHEDULED_MINUTES",
+            "EMPLOYMENT_ELIGIBLE_DAYS",
+            "PERIOD_CALENDAR_DAYS",
+            "PERIOD_WORKING_DAYS",
+            "EMPLOYMENT_ACTIVE",
+            "ASSIGNMENT_ACTIVE",
+            "APPROVED_OVERTIME",
+            "OPEN_BALANCE",
+            "UNUSED_GRANT_LOT",
+            "COMPLETED_SERVICE_MONTHS",
+            "TERMINATION_ELIGIBLE_DAYS"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "nodeId",
+        "inputKey"
+      ]
+    },
+    "TIM.RuleNode.v1": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/TIM.RuleQuantityConstant.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.RuleRateConstant.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.RuleBoolConstant.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.RuleInput.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.RuleOperator.v1"
+        }
+      ]
+    },
+    "TIM.RuleOperator.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "OPERATOR"
+        },
+        "nodeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "ADD",
+            "SUBTRACT",
+            "MULTIPLY_RATE",
+            "DIVIDE_TO_RATE",
+            "MIN",
+            "MAX",
+            "GT",
+            "GTE",
+            "EQ",
+            "AND",
+            "OR",
+            "NOT",
+            "IF",
+            "ROUND",
+            "CONVERT_USING_CALENDAR"
+          ]
+        },
+        "operandNodeIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "rounding": {
+          "$ref": "#/definitions/TIM.Rounding.v1"
+        },
+        "conversionContext": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "targetUnit": {
+              "type": "string",
+              "enum": [
+                "MINUTE",
+                "HOUR",
+                "DAY"
+              ]
+            },
+            "calendarRef": {
+              "$ref": "#/definitions/Ref.SYS.TimeCalendarSnapshot.v1"
+            },
+            "workerSelector": {
+              "$ref": "#/definitions/TIM.WorkerSelector.v1"
+            },
+            "localDate": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "required": [
+            "targetUnit",
+            "calendarRef",
+            "workerSelector",
+            "localDate"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "nodeId",
+        "operator",
+        "operandNodeIds"
+      ]
+    },
+    "TIM.RuleQuantityConstant.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "QUANTITY_CONST"
+        },
+        "nodeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "quantity": {
+          "$ref": "#/definitions/TIM.Quantity.v1"
+        }
+      },
+      "required": [
+        "kind",
+        "nodeId",
+        "quantity"
+      ]
+    },
+    "TIM.RuleRateConstant.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "RATE_CONST"
+        },
+        "nodeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,10})(?:\\.[0-9]{1,8})?$",
+          "x-valueType": "RateDecimal"
+        }
+      },
+      "required": [
+        "kind",
+        "nodeId",
+        "value"
+      ]
+    },
+    "TIM.Scope.v1": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/TIM.ScopeTenant.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.ScopeLegalEntity.v1"
+        },
+        {
+          "$ref": "#/definitions/TIM.ScopeTimeGroup.v1"
+        }
+      ]
+    },
+    "TIM.ScopeLegalEntity.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "LEGAL_ENTITY"
+        },
+        "legalEntityPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.LegalEntity",
+            "idSpace": "PUBLIC_UUID"
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "legalEntityPublicId"
+      ]
+    },
+    "TIM.ScopeTenant.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "TENANT"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "TIM.ScopeTimeGroup.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "TIME_GROUP"
+        },
+        "timeGroupPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:tme_time_groups",
+            "idSpace": "PUBLIC_UUID"
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "timeGroupPublicId"
+      ]
+    },
+    "TIM.SelectedEntitlementItem.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "selectedItemPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_entitlement_selected_items",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "inputVersionPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_entitlement_input_versions",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "enrollment": {
+          "$ref": "#/definitions/TIM.EnrollmentVersionRef.v2"
+        },
+        "employmentRef": {
+          "$ref": "#/definitions/Ref.HRM.EffectiveAssignmentSnapshot.v1"
+        },
+        "calendarRef": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Ref.SYS.TimeCalendarSnapshot.v1"
+            },
+            {
+              "$ref": "#/definitions/Ref.TIM.EffectiveCalendarSnapshot.proposal.v1"
+            }
+          ]
+        },
+        "configurationRef": {
+          "$ref": "#/definitions/Ref.SYS.EffectiveTimeConfigurationSnapshot.v1"
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "MINUTE",
+            "HOUR",
+            "DAY"
+          ]
+        },
+        "ledgerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reservationRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "correctionMode": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "REVERSE_AND_REGRANT"
+          ]
+        },
+        "originalGrantPublicId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "table:abs_entitlement_ledger_entries",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "originalRunPublicId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid",
+              "referenceContract": {
+                "entityType": "table:abs_entitlement_runs",
+                "idSpace": "PUBLIC_UUID"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "selectedItemPublicId",
+        "inputVersionPublicId",
+        "ordinal",
+        "enrollment",
+        "employmentRef",
+        "calendarRef",
+        "configurationRef",
+        "unit",
+        "ledgerRevision",
+        "reservationRevision",
+        "correctionMode",
+        "originalGrantPublicId",
+        "originalRunPublicId"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "correctionMode": {
+                "const": "NONE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "originalGrantPublicId": {
+                "type": "null"
+              },
+              "originalRunPublicId": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "originalGrantPublicId": {
+                "type": "string",
+                "format": "uuid",
+                "referenceContract": {
+                  "entityType": "table:abs_entitlement_ledger_entries",
+                  "idSpace": "PUBLIC_UUID"
+                }
+              },
+              "originalRunPublicId": {
+                "type": "string",
+                "format": "uuid",
+                "referenceContract": {
+                  "entityType": "table:abs_entitlement_runs",
+                  "idSpace": "PUBLIC_UUID"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TIM.SourceRef.v1": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Ref.HRM.EffectiveAssignmentSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.HRM.VerifiedSelfScopeSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.HRM.EffectiveLocationSnapshot.proposal.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.SYS.EffectiveTimeConfigurationSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.SYS.TimeCalendarSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.Approval.TimeDecisionSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.CanonicalScheduleSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.AbsenceAvailabilitySnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.AvailabilityCompositionSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.TimeRuleArtifactSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.ShiftTemplateArtifactSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.SchedulePatternArtifactSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.LeavePolicyArtifactSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.CanonicalSchedulePublicationPort.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.WfmPlanningInputSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.PER.WfmSkillVocabularySnapshot.proposal.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.EffectiveCalendarSnapshot.proposal.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.TIM.EffectiveWorkRuleSnapshot.proposal.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.Approval.TimeCancellationSnapshot.v1"
+        },
+        {
+          "$ref": "#/definitions/Ref.SYS.TimePolicyContextSnapshot.proposal.v1"
+        }
+      ]
+    },
+    "TIM.TerminationLedgerSummary.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enrollmentPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_worker_plan_enrollments",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "ledgerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reservationRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "MINUTE",
+            "HOUR",
+            "DAY"
+          ]
+        },
+        "postedBalance": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+          "x-valueType": "QuantityDecimal"
+        },
+        "reservedQuantity": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+          "x-valueType": "QuantityDecimal"
+        },
+        "originalGrantPublicIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "referenceContract": {
+              "entityType": "table:abs_entitlement_ledger_entries",
+              "idSpace": "PUBLIC_UUID"
+            }
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "closedPeriodPublicIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "referenceContract": {
+              "entityType": "table:tme_close_periods",
+              "idSpace": "PUBLIC_UUID"
+            }
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "summarySha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "enrollmentPublicId",
+        "ledgerRevision",
+        "reservationRevision",
+        "unit",
+        "postedBalance",
+        "reservedQuantity",
+        "originalGrantPublicIds",
+        "closedPeriodPublicIds",
+        "summarySha256"
+      ]
+    },
+    "TIM.TerminationSettlementCommand.v2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requestPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_termination_settlement_intents",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "workflowPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "table:abs_enrollment_termination_workflows",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "revision": {
+          "const": 1
+        },
+        "enrollment": {
+          "$ref": "#/definitions/TIM.EnrollmentVersionRef.v2"
+        },
+        "employmentTerminationRef": {
+          "$ref": "#/definitions/Ref.HRM.EmploymentTerminationSnapshot.v2"
+        },
+        "policyRef": {
+          "$ref": "#/definitions/Ref.TIM.LeavePolicyArtifactSnapshot.v1"
+        },
+        "ledgerSummary": {
+          "$ref": "#/definitions/TIM.TerminationLedgerSummary.v2"
+        },
+        "settlementKind": {
+          "type": "string",
+          "enum": [
+            "CLOSED_TIME_PERIOD",
+            "DURABLE_PAY_HANDOFF",
+            "PAST_CONSUMPTION"
+          ]
+        },
+        "purposeCode": {
+          "const": "TIM_TERMINATION_SETTLEMENT"
+        },
+        "commandSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "requestPublicId",
+        "workflowPublicId",
+        "revision",
+        "enrollment",
+        "employmentTerminationRef",
+        "policyRef",
+        "ledgerSummary",
+        "settlementKind",
+        "purposeCode",
+        "commandSha256"
+      ]
+    },
+    "TIM.WorkerSelector.v1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.Worker",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "assignmentPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.Assignment",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "selfContextPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "referenceContract": {
+            "entityType": "HRM.VerifiedSelfContext",
+            "idSpace": "PUBLIC_UUID"
+          }
+        }
+      },
+      "required": [
+        "workerPublicId",
+        "assignmentPublicId"
+      ]
+    },
+    "V4.ActorAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actorPrincipalPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actorUserRowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "actorAccessRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authRevision": {
+          "type": "string",
+          "pattern": "^auth-[a-f0-9]{64}$"
+        },
+        "policyRevision": {
+          "type": "string",
+          "pattern": "^policy-.+$"
+        },
+        "contextKey": {
+          "type": "string",
+          "pattern": "^psc-[a-f0-9]{64}$"
+        },
+        "decisionRevision": {
+          "type": "string",
+          "pattern": "^psr-[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "actorPrincipalPublicId",
+        "actorUserRowVersion",
+        "actorAccessRevision",
+        "authRevision",
+        "policyRevision",
+        "contextKey",
+        "decisionRevision"
+      ]
+    },
+    "V4.CalendarPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "calendarVersionPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timeZone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effectiveFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "effectiveTo": {
+          "type": "string",
+          "format": "date"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.CalendarEntry.v1"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "calendarVersionPublicId",
+        "revision",
+        "timeZone",
+        "effectiveFrom",
+        "effectiveTo",
+        "entries"
+      ]
+    },
+    "V4.ConfigurationPayload": {
+      "$ref": "#/definitions/SYS.EffectiveTimeConfigurationSnapshot.v1"
+    },
+    "V4.GovernancePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "governanceRequestPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "subjectPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "subjectRowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subjectContentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "APPROVED",
+            "REJECTED",
+            "CANCELLED",
+            "RESULT_UNKNOWN"
+          ]
+        }
+      },
+      "required": [
+        "governanceRequestPublicId",
+        "subjectPublicId",
+        "subjectRowVersion",
+        "subjectContentSha256",
+        "decision"
+      ]
+    },
+    "V4.Header": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "businessRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "purposeCode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "populationScopeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "actorAuthority": {
+          "$ref": "#/definitions/V4.ActorAuthority"
+        }
+      },
+      "required": [
+        "tenantId",
+        "snapshotPublicId",
+        "businessRevision",
+        "asOf",
+        "validUntil",
+        "purposeCode",
+        "populationScopeDigest",
+        "contentSha256",
+        "actorAuthority"
+      ]
+    },
+    "V4.NativeEmployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "personPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workRelationshipPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assignmentPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "legalEmployerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "personVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "workerVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "workRelationshipVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assignmentVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "employmentStartedOn": {
+          "type": "string",
+          "format": "date"
+        },
+        "employmentEndedOn": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.SourceRef.v1"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "personPublicId",
+        "workerPublicId",
+        "workRelationshipPublicId",
+        "assignmentPublicId",
+        "legalEmployerPublicId",
+        "personVersion",
+        "workerVersion",
+        "workRelationshipVersion",
+        "assignmentVersion",
+        "employmentStartedOn",
+        "employmentEndedOn",
+        "sourceRefs"
+      ]
+    },
+    "V4.OwnerResponse": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ownerContractId": {
+              "const": "HRM.NativeEmploymentSnapshot.proposal.v4"
+            },
+            "sourceStreamKey": {
+              "const": "people-employment"
+            },
+            "header": {
+              "$ref": "#/definitions/V4.Header"
+            },
+            "payload": {
+              "$ref": "#/definitions/V4.NativeEmployment"
+            }
+          },
+          "required": [
+            "ownerContractId",
+            "sourceStreamKey",
+            "header",
+            "payload"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ownerContractId": {
+              "const": "SYS.TimeCalendarSnapshot.proposal.v4"
+            },
+            "sourceStreamKey": {
+              "const": "configuration-calendar"
+            },
+            "header": {
+              "$ref": "#/definitions/V4.Header"
+            },
+            "payload": {
+              "$ref": "#/definitions/V4.CalendarPayload"
+            }
+          },
+          "required": [
+            "ownerContractId",
+            "sourceStreamKey",
+            "header",
+            "payload"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ownerContractId": {
+              "const": "TIME.PublishedCalendarSnapshot.proposal.v4"
+            },
+            "sourceStreamKey": {
+              "const": "time-calendar"
+            },
+            "header": {
+              "$ref": "#/definitions/V4.Header"
+            },
+            "payload": {
+              "$ref": "#/definitions/V4.CalendarPayload"
+            }
+          },
+          "required": [
+            "ownerContractId",
+            "sourceStreamKey",
+            "header",
+            "payload"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ownerContractId": {
+              "const": "TIME.PublishedScheduleSnapshot.proposal.v4"
+            },
+            "sourceStreamKey": {
+              "const": "time-schedule"
+            },
+            "header": {
+              "$ref": "#/definitions/V4.Header"
+            },
+            "payload": {
+              "$ref": "#/definitions/V4.SchedulePayload"
+            }
+          },
+          "required": [
+            "ownerContractId",
+            "sourceStreamKey",
+            "header",
+            "payload"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ownerContractId": {
+              "const": "SYS.AbsGovernanceDecision.proposal.v4"
+            },
+            "sourceStreamKey": {
+              "const": "configuration-leave-governance"
+            },
+            "header": {
+              "$ref": "#/definitions/V4.Header"
+            },
+            "payload": {
+              "$ref": "#/definitions/V4.GovernancePayload"
+            }
+          },
+          "required": [
+            "ownerContractId",
+            "sourceStreamKey",
+            "header",
+            "payload"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ownerContractId": {
+              "const": "SYS.EffectiveTimeConfigurationSnapshot.proposal.v4"
+            },
+            "sourceStreamKey": {
+              "const": "configuration-time"
+            },
+            "header": {
+              "$ref": "#/definitions/V4.Header"
+            },
+            "payload": {
+              "$ref": "#/definitions/V4.ConfigurationPayload"
+            }
+          },
+          "required": [
+            "ownerContractId",
+            "sourceStreamKey",
+            "header",
+            "payload"
+          ]
+        }
+      ]
+    },
+    "V4.PolicyReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "LeavePolicy"
+        },
+        "subjectPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "subjectRowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subjectContentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reportKind": {
+          "type": "string",
+          "enum": [
+            "VALIDATION",
+            "SIMULATION"
+          ]
+        },
+        "ruleVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fieldPath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "BLOCK",
+                  "WARNING"
+                ]
+              }
+            },
+            "required": [
+              "code",
+              "fieldPath",
+              "severity"
+            ]
+          }
+        },
+        "measures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "string",
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "value",
+              "unit"
+            ]
+          }
+        }
+      },
+      "required": [
+        "artifactKind",
+        "subjectPublicId",
+        "subjectRowVersion",
+        "subjectContentSha256",
+        "reportKind",
+        "ruleVersion",
+        "findings",
+        "measures"
+      ]
+    },
+    "V4.SchedulePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "publicationPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "publicationRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/V4.ScheduleSegment"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "publicationPublicId",
+        "publicationRevision",
+        "segments"
+      ]
+    },
+    "V4.ScheduleSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "segmentPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "periodPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assignmentPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "lineKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "localWorkDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timeZone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startOffsetSeconds": {
+          "type": "integer"
+        },
+        "endOffsetSeconds": {
+          "type": "integer"
+        },
+        "tzdbVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "zoneRuleVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startDstResolution": {
+          "type": "string",
+          "enum": [
+            "UNIQUE",
+            "EARLIER",
+            "LATER"
+          ]
+        },
+        "endDstResolution": {
+          "type": "string",
+          "enum": [
+            "UNIQUE",
+            "EARLIER",
+            "LATER"
+          ]
+        },
+        "provenanceSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "WORK",
+            "BREAK",
+            "ON_CALL",
+            "TRAINING",
+            "ABSENCE"
+          ]
+        },
+        "paid": {
+          "type": "boolean"
+        },
+        "workRuleContentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "segmentPublicId",
+        "periodPublicId",
+        "workerPublicId",
+        "assignmentPublicId",
+        "lineKey",
+        "localWorkDate",
+        "startsAt",
+        "endsAt",
+        "timeZone",
+        "startOffsetSeconds",
+        "endOffsetSeconds",
+        "tzdbVersion",
+        "zoneRuleVersion",
+        "startDstResolution",
+        "endDstResolution",
+        "provenanceSha256",
+        "kind",
+        "paid",
+        "workRuleContentSha256"
+      ]
+    },
+    "V4.TerminationInstruction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workflowPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "enrollment": {
+          "$ref": "#/definitions/TIM.EnrollmentVersionRef.v2"
+        },
+        "employmentTermination": {
+          "$ref": "#/definitions/HRM.EmploymentTerminationSnapshot.v2"
+        },
+        "policyRef": {
+          "$ref": "#/definitions/Ref.TIM.LeavePolicyArtifactSnapshot.v1"
+        },
+        "policyContent": {
+          "$ref": "#/definitions/TIM.LeavePolicyContent.v1"
+        },
+        "ledgerSummary": {
+          "$ref": "#/definitions/TIM.TerminationLedgerSummary.v2"
+        },
+        "treatment": {
+          "type": "string",
+          "enum": [
+            "STOP_FUTURE_ONLY",
+            "PRORATE_FINAL_PERIOD",
+            "OWNER_APPROVED_SETTLEMENT"
+          ]
+        },
+        "instructionSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "workflowPublicId",
+        "enrollment",
+        "employmentTermination",
+        "policyRef",
+        "policyContent",
+        "ledgerSummary",
+        "treatment",
+        "instructionSha256"
+      ]
+    }
+  },
+  "schemas": {
+    "OWNER": {
+      "$ref": "#/definitions/V4.OwnerResponse"
+    },
+    "INPUT": {
+      "$ref": "#/definitions/TIM.EntitlementInputDocument.v2"
+    },
+    "INSTRUCTION": {
+      "$ref": "#/definitions/V4.TerminationInstruction"
+    },
+    "OUTCOME": {
+      "$ref": "#/definitions/TIM.EntitlementOutcome.v2"
+    },
+    "REPORT": {
+      "$ref": "#/definitions/V4.PolicyReport"
+    },
+    "V4.SqlBind.abs_entitlement_runs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entitlement_run_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "leave_plan_version_id": {
+          "type": "integer"
+        },
+        "period_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "run_mode": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "input_snapshot_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "rule_snapshot_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "previous_run_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "row_version": {
+          "type": "integer"
+        },
+        "lease_version": {
+          "type": "integer"
+        },
+        "lease_expires_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "input_version_id": {
+          "type": "integer"
+        },
+        "selected_count": {
+          "type": "integer"
+        },
+        "lease_owner_public_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cancel_requested_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entitlement_run_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "leave_plan_version_id",
+        "period_start",
+        "period_end",
+        "run_mode",
+        "status",
+        "input_snapshot_digest",
+        "rule_snapshot_digest",
+        "previous_run_id",
+        "row_version",
+        "lease_version",
+        "lease_expires_at",
+        "input_version_id",
+        "selected_count",
+        "lease_owner_public_id",
+        "cancel_requested_at"
+      ]
+    },
+    "V4.SqlBind.abs_entitlement_run_items": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entitlement_run_item_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "entitlement_run_id": {
+          "type": "integer"
+        },
+        "enrollment_id": {
+          "type": "integer"
+        },
+        "employment_snapshot_id": {
+          "type": "integer"
+        },
+        "calendar_snapshot_id": {
+          "type": "integer"
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.SourceRef.v1"
+          }
+        },
+        "numerator": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]{0,12})(\\.[0-9]{1,6})?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]{0,12})(\\.[0-9]{1,6})?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]{0,12})(\\.[0-9]{1,6})?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 12
+        },
+        "suppressed_quantity": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]{0,12})(\\.[0-9]{1,6})?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rounding_trace": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "stage": {
+                    "type": "string",
+                    "enum": [
+                      "PRORATION",
+                      "GRANT",
+                      "CONVERSION",
+                      "CARRYOVER",
+                      "TERMINATION"
+                    ]
+                  },
+                  "unrounded": {
+                    "type": "string",
+                    "pattern": "^-?(?:0|[1-9][0-9]{0,15})(?:\\.[0-9]{1,8})?$",
+                    "x-valueType": "CalculationDecimal"
+                  },
+                  "rounded": {
+                    "type": "string",
+                    "pattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+                    "x-valueType": "QuantityDecimal"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "HALF_UP",
+                      "HALF_EVEN",
+                      "DOWN",
+                      "UP",
+                      "FLOOR",
+                      "CEILING"
+                    ]
+                  },
+                  "scale": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 6
+                  },
+                  "policySha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "stage",
+                  "unrounded",
+                  "rounded",
+                  "mode",
+                  "scale",
+                  "policySha256"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 6
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "result_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "input_version_id": {
+          "type": "integer"
+        },
+        "selected_item_id": {
+          "type": "integer"
+        },
+        "outcome_payload": {
+          "$ref": "#/definitions/TIM.EntitlementOutcome.v2"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 80
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lease_version": {
+          "type": "integer"
+        },
+        "cancel_fence": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entitlement_run_item_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "entitlement_run_id",
+        "enrollment_id",
+        "employment_snapshot_id",
+        "calendar_snapshot_id",
+        "source_refs",
+        "numerator",
+        "denominator",
+        "quantity",
+        "unit",
+        "suppressed_quantity",
+        "rounding_trace",
+        "status",
+        "result_digest",
+        "input_version_id",
+        "selected_item_id",
+        "outcome_payload",
+        "error_code",
+        "lease_version",
+        "cancel_fence"
+      ]
+    },
+    "V4.SqlBind.abs_entitlement_input_versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input_version_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "run_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "selected_count": {
+          "type": "integer"
+        },
+        "selection_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "input_payload": {
+          "$ref": "#/definitions/TIM.EntitlementInputDocument.v2"
+        },
+        "content_digest": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "input_version_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "run_public_id",
+        "revision",
+        "selected_count",
+        "selection_digest",
+        "input_payload",
+        "content_digest"
+      ]
+    },
+    "V4.SqlBind.abs_entitlement_selected_items": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "selected_item_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "input_version_id": {
+          "type": "integer"
+        },
+        "ordinal": {
+          "type": "integer"
+        },
+        "enrollment_id": {
+          "type": "integer"
+        },
+        "enrollment_revision": {
+          "type": "integer"
+        },
+        "employment_snapshot_id": {
+          "type": "integer"
+        },
+        "calendar_snapshot_id": {
+          "type": "integer"
+        },
+        "selected_payload": {
+          "$ref": "#/definitions/TIM.SelectedEntitlementItem.v2"
+        },
+        "content_digest": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "selected_item_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "input_version_id",
+        "ordinal",
+        "enrollment_id",
+        "enrollment_revision",
+        "employment_snapshot_id",
+        "calendar_snapshot_id",
+        "selected_payload",
+        "content_digest"
+      ]
+    },
+    "V4.SqlBind.abs_enrollment_termination_workflows": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "termination_workflow_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "enrollment_id": {
+          "type": "integer"
+        },
+        "employment_ended_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "policy_treatment": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "instruction_payload": {
+          "$ref": "#/definitions/V4.TerminationInstruction"
+        },
+        "instruction_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "corrective_run_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "settlement_intent_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "final_settlement_public_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "row_version": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "termination_workflow_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "enrollment_id",
+        "employment_ended_on",
+        "policy_treatment",
+        "instruction_payload",
+        "instruction_digest",
+        "status",
+        "corrective_run_id",
+        "settlement_intent_id",
+        "final_settlement_public_id",
+        "row_version"
+      ]
+    },
+    "V4.SqlBind.abs_termination_settlement_intents": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "settlement_intent_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "termination_workflow_id": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "command_payload": {
+          "$ref": "#/definitions/TIM.TerminationSettlementCommand.v2"
+        },
+        "command_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "owner_receipt_payload": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PAY.TerminationSettlementReceipt.v2"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "row_version": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "settlement_intent_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "termination_workflow_id",
+        "revision",
+        "command_payload",
+        "command_digest",
+        "owner_receipt_payload",
+        "status",
+        "row_version"
+      ]
+    },
+    "V4.SqlBind.abs_owner_artifact_snapshots": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner_artifact_snapshot_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "owner_contract_id": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "snapshot_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "snapshot_revision": {
+          "type": "integer"
+        },
+        "content_schema_id": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "content": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/V4.NativeEmployment"
+            },
+            {
+              "$ref": "#/definitions/V4.CalendarPayload"
+            },
+            {
+              "$ref": "#/definitions/V4.SchedulePayload"
+            },
+            {
+              "$ref": "#/definitions/V4.GovernancePayload"
+            },
+            {
+              "$ref": "#/definitions/V4.ConfigurationPayload"
+            }
+          ]
+        },
+        "content_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_stream_key": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "purpose_code": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "scope_digest": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "owner_artifact_snapshot_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "owner_contract_id",
+        "snapshot_public_id",
+        "snapshot_revision",
+        "content_schema_id",
+        "content",
+        "content_digest",
+        "as_of",
+        "valid_until",
+        "source_stream_key",
+        "purpose_code",
+        "scope_digest"
+      ]
+    },
+    "V4.SqlBind.abs_policy_evaluation_reports": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy_evaluation_report_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "artifact_kind": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "subject_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "subject_row_version": {
+          "type": "integer"
+        },
+        "subject_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "report_kind": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "content": {
+          "$ref": "#/definitions/V4.PolicyReport"
+        },
+        "result_digest": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "policy_evaluation_report_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "artifact_kind",
+        "subject_public_id",
+        "subject_row_version",
+        "subject_digest",
+        "report_kind",
+        "content",
+        "result_digest"
+      ]
+    },
+    "V4.SqlBind.abs_policy_governance_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy_governance_binding_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "leave_policy_version_id": {
+          "type": "integer"
+        },
+        "subject_row_version": {
+          "type": "integer"
+        },
+        "subject_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "requester_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sys_governance_request_public_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_snapshot_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 24
+        }
+      },
+      "required": [
+        "policy_governance_binding_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "leave_policy_version_id",
+        "subject_row_version",
+        "subject_digest",
+        "requester_public_id",
+        "sys_governance_request_public_id",
+        "owner_snapshot_id",
+        "status"
+      ]
+    },
+    "V4.SqlBind.abs_calendar_version_snapshots": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "calendar_snapshot_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "owner_snapshot_id": {
+          "type": "integer"
+        },
+        "calendar_version_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "calendar_revision": {
+          "type": "integer"
+        },
+        "content_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "time_zone": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "effective_from": {
+          "type": "string",
+          "format": "date"
+        },
+        "effective_to": {
+          "type": "string",
+          "format": "date"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TIM.CalendarEntry.v1"
+          }
+        }
+      },
+      "required": [
+        "calendar_snapshot_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "owner_snapshot_id",
+        "calendar_version_public_id",
+        "calendar_revision",
+        "content_digest",
+        "time_zone",
+        "effective_from",
+        "effective_to",
+        "entries"
+      ]
+    },
+    "V4.SqlBind.abs_time_schedule_segment_snapshots": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheduled_segment_id": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "integer"
+        },
+        "public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "line_key": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "local_work_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "starts_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ends_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_time_zone": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "start_utc_offset_seconds": {
+          "type": "integer"
+        },
+        "end_utc_offset_seconds": {
+          "type": "integer"
+        },
+        "tzdb_version": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "zone_rule_version": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "start_dst_resolution": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "end_dst_resolution": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "provenance_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "segment_type": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "paid": {
+          "type": "boolean"
+        },
+        "rule_digest": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "source_segment_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "source_snapshot_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "source_period_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "worker_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assignment_public_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "source_revision": {
+          "type": "integer"
+        },
+        "source_as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "population_scope_digest": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "scheduled_segment_id",
+        "tenant_id",
+        "public_id",
+        "created_at",
+        "created_by",
+        "line_key",
+        "local_work_date",
+        "starts_at",
+        "ends_at",
+        "source_time_zone",
+        "start_utc_offset_seconds",
+        "end_utc_offset_seconds",
+        "tzdb_version",
+        "zone_rule_version",
+        "start_dst_resolution",
+        "end_dst_resolution",
+        "provenance_digest",
+        "segment_type",
+        "paid",
+        "rule_digest",
+        "source_segment_public_id",
+        "source_snapshot_public_id",
+        "source_period_public_id",
+        "worker_public_id",
+        "assignment_public_id",
+        "source_revision",
+        "source_as_of",
+        "valid_until",
+        "population_scope_digest"
+      ]
+    }
+  }
+}

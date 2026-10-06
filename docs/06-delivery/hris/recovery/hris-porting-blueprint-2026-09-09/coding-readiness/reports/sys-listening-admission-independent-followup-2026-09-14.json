@@ -1,0 +1,1039 @@
+{
+  "contractId": "SYS.LISTENING.INDEPENDENT.FOLLOWUP.2026-09-14",
+  "schemaVersion": 1,
+  "status": "INDEPENDENT_BOUNDED_FOLLOWUP_G3_BLOCKED",
+  "reviewedAt": "2026-09-14T02:16:03Z",
+  "reviewer": "/root/final_architecture_adversarial_audit",
+  "reviewedAuthor": "/root",
+  "sourcePins": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-listening-admission-exact.proposal.v1.json",
+      "sha256": "418628cc19a789b22f0b03efea93df165eee5967cdd14dd906d9d24a5d346137"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-listening-admission-exact.proposal.v1.md",
+      "sha256": "4fb5e25032307f403255c6a9779cde5c30caed8d70c3816dae07be1d524edbe1"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_sys_listening_admission_proposal.cjs",
+      "sha256": "9969df4872606b3941f9daad902986f32d24d7c1b83146e4f2d7d0990952ad67"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-stream-authority-decision.proposal.v1.md",
+      "sha256": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1"
+    }
+  ],
+  "previousImmutableReview": {
+    "json": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/sys-listening-admission-independent-review-2026-09-14.json",
+    "sha256": "e01393cf398562109e2317346ffa00ae0c48defef4600f131c9081d1728be8b4",
+    "reviewedSourceSha256": "ed13ab82bb6e625fbf915e7b8b87981b2e737994e04cbbb647da66501ab0d614",
+    "mutation": "NONE"
+  },
+  "scope": {
+    "included": [
+      "four selected actual Draft-07 schemas",
+      "response/receipt/token selected local composite FK specification",
+      "admission lifetime budget parent and replay child key specification",
+      "actual admission source_revision column existence",
+      "small residual parent/result linkage review"
+    ],
+    "excluded": [
+      "global cross-survey/admission/population/window privacy proof",
+      "cryptographic envelope/HMAC/entropy implementation or attacker experiment",
+      "DDL materialization/PostgreSQL enforcement",
+      "complete Survey/Form/Action or BASE86 certification",
+      "full operation/event/entity/source graph",
+      "canonical gate opening",
+      "actual domain CRUD acceptance execution"
+    ],
+    "canonicalMutation": "NONE",
+    "backendMutation": "NONE",
+    "g3Authorization": "NONE",
+    "domainExecution": "NOT_EXECUTED_G4"
+  },
+  "evidence": {
+    "authoredCheckerReproduced": {
+      "command": "node /Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_sys_listening_admission_proposal.cjs /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+      "exitCode": 0,
+      "schemaCount": 15,
+      "schemaCases": 97,
+      "boundaryChecks": 107,
+      "proofScope": "STANDARD_SCHEMA_AND_SELECTED_BOUNDARY_ONLY_NOT_DOMAIN_OR_CRYPTO"
+    },
+    "independentReadOnlyProbe": {
+      "command": "node via stdin; exact reproducible source stored in this report",
+      "exitCode": 0,
+      "sourceSha256": "418628cc19a789b22f0b03efea93df165eee5967cdd14dd906d9d24a5d346137",
+      "engine": "ajv-6.12.6",
+      "independentSchemaCount": 4,
+      "schemaCases": 113,
+      "tokenFinalCharacterAccepted": 16,
+      "tokenFinalCharacterRejected": 48,
+      "cases": [
+        {
+          "name": "control-valid",
+          "schema": "SYS.ListeningAdmissionControlRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "owner-slot-swap-formVersionRef",
+          "schema": "SYS.ListeningAdmissionControlRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "owner-slot-swap-privacyVersionRef",
+          "schema": "SYS.ListeningAdmissionControlRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "owner-slot-swap-retentionVersionRef",
+          "schema": "SYS.ListeningAdmissionControlRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-valid",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "submit-valid",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "cohort-valid",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "answer-reject-\"04.0000\"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\"04.0000\"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-\"-0.0000\"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\"-0.0000\"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-\"-0\"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\"-0\"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-\"+4\"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\"+4\"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-\"4e0\"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\"4e0\"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-\" 4\"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\" 4\"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-\"4 \"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\"4 \"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-\"4.00000\"",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-\"4.00000\"",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-reject-4",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "nested-answer-reject-4",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "answer-valid-0",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "answer-valid-0.0000",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "answer-valid--0.0001",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "answer-valid--1.25",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "answer-valid-99999.9999",
+          "schema": "SYS.ListeningAnswer.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "global-suppression-valid",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "global-suppression-no-value",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "global-suppression-no-adequate",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "complete-cannot-be-insufficient",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "complete-cannot-be-empty",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "completed-measure-cannot-be-null",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "suppressed-measure-cannot-be-nonnull",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "partial-suppression-null-valid",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "complete-cannot-contain-only-suppression",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "mean-reject-04.0000",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "mean-reject--0.0000",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "mean-reject-+4",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "mean-reject-4e0",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-A",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-B",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-C",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-D",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-E",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-F",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-G",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-H",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-I",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-J",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-K",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-L",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-M",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-N",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-O",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-P",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-Q",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-R",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-S",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-T",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-U",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-V",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-W",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-X",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-Y",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-Z",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-a",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-b",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-c",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-d",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-e",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-f",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-g",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-h",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-i",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-j",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-k",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-l",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-m",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-n",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-o",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-p",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-q",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-r",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-s",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-t",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-u",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-v",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-w",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-x",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-y",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-z",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-0",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-1",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-2",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-3",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-4",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-5",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-6",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-7",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-8",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        },
+        {
+          "name": "token-final-9",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final--",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-final-_",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-framing-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-framing-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-framing-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-framing-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "token-framing-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/",
+          "schema": "SYS.ListeningSubmitRequest.proposal.v1",
+          "expectedAccepted": false,
+          "actualAccepted": false
+        },
+        {
+          "name": "OPEN-duplicate-question-conflicting-mean",
+          "schema": "SYS.ListeningCohortResult.proposal.v1",
+          "expectedAccepted": true,
+          "actualAccepted": true
+        }
+      ],
+      "allForeignKeyStructuralClosureCount": 12,
+      "selectedThreeWayTupleSimulation": [
+        {
+          "from": "sys_hris_listening_responses",
+          "to": "sys_hris_listening_protected_response_receipts",
+          "positiveTupleAccepted": true,
+          "mutations": [
+            {
+              "changed": "tenant_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "public_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "admission_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "protected_receipt_public_id",
+              "acceptedByTuple": false
+            }
+          ]
+        },
+        {
+          "from": "sys_hris_listening_protected_response_receipts",
+          "to": "sys_hris_listening_responses",
+          "positiveTupleAccepted": true,
+          "mutations": [
+            {
+              "changed": "tenant_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "response_public_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "admission_id",
+              "acceptedByTuple": false
+            }
+          ]
+        },
+        {
+          "from": "sys_hris_listening_token_consumptions",
+          "to": "sys_hris_listening_protected_response_receipts",
+          "positiveTupleAccepted": true,
+          "mutations": [
+            {
+              "changed": "tenant_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "protected_receipt_public_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "admission_id",
+              "acceptedByTuple": false
+            },
+            {
+              "changed": "response_token_hmac",
+              "acceptedByTuple": false
+            }
+          ]
+        }
+      ],
+      "parentUniqueKey": [
+        "tenant_id",
+        "admission_id"
+      ],
+      "childReplayUniqueKey": [
+        "tenant_id",
+        "epoch_budget_id",
+        "canonical_query_digest"
+      ],
+      "sourceRevisionColumnFound": true,
+      "proposalUnchanged": true,
+      "sqlExecution": "NOT_EXECUTED",
+      "cryptographicVerification": "NOT_EXECUTED",
+      "reproSource": "\nconst fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict'),{createRequire}=require('node:module');\nconst path='/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-listening-admission-exact.proposal.v1.json';\nconst bytes=fs.readFileSync(path),p=JSON.parse(bytes),Ajv=createRequire('/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json')('ajv');\nconst a=new Ajv({coerceTypes:false,useDefaults:false,removeAdditional:false,allErrors:true});\nconst four=['SYS.ListeningAdmissionControlRequest.proposal.v1','SYS.ListeningAnswer.proposal.v1','SYS.ListeningSubmitRequest.proposal.v1','SYS.ListeningCohortResult.proposal.v1'];\nconst v=Object.fromEntries(four.map(id=>[id,a.compile(p.jsonSchemas[id])]));\nconst u='90000000-0000-4000-8000-000000000801', ref=id=>({ownerContractId:id,schemaVersion:1,publicId:u,revision:1,contentSha256:'a'.repeat(64)});\nconst control={surveyPublicId:u,expectedAdmissionRevision:0,formVersionRef:ref('SYS.ListeningFormVersion.proposal.v1'),privacyVersionRef:ref('SYS.ListeningPrivacyVersion.proposal.v1'),retentionVersionRef:ref('SYS.ListeningRetentionVersion.proposal.v1'),opensAt:'2026-09-14T01:00:00Z',closesAt:'2026-09-15T01:00:00Z',sourcePublicationRevision:1,contentSha256:'b'.repeat(64)};\nconst answer={questionKey:'q',kind:'SCALE',value:'4.0000'}, submit={participationEnvelope:'unsigned-test-only-'.repeat(10),responseToken:'A'.repeat(43),formRevision:1,answers:[answer]};\nconst measure={questionKey:'q',status:'COMPLETED',meanValue:'4.0000',unit:'SCALE_POINT'}, cohort={resultPublicId:u,status:'COMPLETED',adequacyCategory:'ADEQUATE',measures:[measure],privacyRevision:1,queryEpochPublicId:u,sourceRevision:1};\nconst cases=[];function check(name,id,input,want){const actual=Boolean(v[id](input));assert.equal(actual,want,name);cases.push({name,schema:id,expectedAccepted:want,actualAccepted:actual});}\ncheck('control-valid',four[0],control,true);\nfor(const [slot,wrong]of [['formVersionRef','SYS.ListeningPrivacyVersion.proposal.v1'],['privacyVersionRef','SYS.ListeningRetentionVersion.proposal.v1'],['retentionVersionRef','SYS.ListeningFormVersion.proposal.v1']])check('owner-slot-swap-'+slot,four[0],{...control,[slot]:ref(wrong)},false);\ncheck('answer-valid',four[1],answer,true);check('submit-valid',four[2],submit,true);check('cohort-valid',four[3],cohort,true);\nfor(const value of ['04.0000','-0.0000','-0','+4','4e0',' 4','4 ','4.00000',4]) {\n check('answer-reject-'+JSON.stringify(value),four[1],{...answer,value},false);\n check('nested-answer-reject-'+JSON.stringify(value),four[2],{...submit,answers:[{...answer,value}]},false);\n}\nfor(const value of ['0','0.0000','-0.0001','-1.25','99999.9999'])check('answer-valid-'+value,four[1],{...answer,value},true);\ncheck('global-suppression-valid',four[3],{...cohort,status:'SUPPRESSED',adequacyCategory:'INSUFFICIENT',measures:[]},true);\ncheck('global-suppression-no-value',four[3],{...cohort,status:'SUPPRESSED',adequacyCategory:'INSUFFICIENT'},false);\ncheck('global-suppression-no-adequate',four[3],{...cohort,status:'SUPPRESSED'},false);\ncheck('complete-cannot-be-insufficient',four[3],{...cohort,adequacyCategory:'INSUFFICIENT'},false);\ncheck('complete-cannot-be-empty',four[3],{...cohort,measures:[]},false);\ncheck('completed-measure-cannot-be-null',four[3],{...cohort,measures:[{...measure,meanValue:null}]},false);\ncheck('suppressed-measure-cannot-be-nonnull',four[3],{...cohort,measures:[measure,{...measure,questionKey:'q2',status:'SUPPRESSED'}]},false);\ncheck('partial-suppression-null-valid',four[3],{...cohort,measures:[measure,{...measure,questionKey:'q2',status:'SUPPRESSED',meanValue:null}]},true);\ncheck('complete-cannot-contain-only-suppression',four[3],{...cohort,measures:[{...measure,status:'SUPPRESSED',meanValue:null}]},false);\nfor(const value of ['04.0000','-0.0000','+4','4e0'])check('mean-reject-'+value,four[3],{...cohort,measures:[{...measure,meanValue:value}]},false);\nconst alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_',allowed=new Set('AEIMQUYcgkosw048');let tokenAccepted=0;\nfor(const c of alphabet){const token='A'.repeat(42)+c,expected=allowed.has(c);check('token-final-'+c,four[2],{...submit,responseToken:token},expected);if(expected){assert.equal(Buffer.from(token,'base64url').length,32);assert.equal(Buffer.from(token,'base64url').toString('base64url'),token);tokenAccepted++;}}\nfor(const token of ['A'.repeat(42),'A'.repeat(44),'A'.repeat(43)+'=','A'.repeat(42)+'+','A'.repeat(42)+'/'])check('token-framing-'+token,four[2],{...submit,responseToken:token},false);\nconst conflict={...cohort,measures:[measure,{...measure,meanValue:'5.0000'}]};check('OPEN-duplicate-question-conflicting-mean',four[3],conflict,true);\nconst tables=p.tableSpecifications,tm=new Map(tables.map(t=>[t.tableName,t]));const closure=[];let fkCount=0;\nfor(const [ti,t]of tables.entries())for(const[fki,fk]of t.foreignKeys.entries()){\n const target=tm.get(fk.targetTable),cols=x=>new Set([x.localIdColumn.name,x.tenantColumn.name,x.publicIdColumn.name,...x.columns.map(c=>c.name)]);\n assert(target);assert.equal(fk.columns.length,fk.targetColumns.length);assert(fk.columns.every(c=>cols(t).has(c)));assert(fk.targetColumns.every(c=>cols(target).has(c)));\n assert(target.uniqueKeys.some(k=>JSON.stringify(k)===JSON.stringify(fk.targetColumns)));assert.equal(t.schema,target.schema);assert.equal(fk.columns[0],'tenant_id');assert.equal(fk.targetColumns[0],'tenant_id');fkCount++;\n}\nconst edges=[\n ['sys_hris_listening_responses','sys_hris_listening_protected_response_receipts',['tenant_id','public_id','admission_id','protected_receipt_public_id'],['tenant_id','response_public_id','admission_id','public_id']],\n ['sys_hris_listening_protected_response_receipts','sys_hris_listening_responses',['tenant_id','response_public_id','admission_id'],['tenant_id','public_id','admission_id']],\n ['sys_hris_listening_token_consumptions','sys_hris_listening_protected_response_receipts',['tenant_id','protected_receipt_public_id','admission_id','response_token_hmac'],['tenant_id','public_id','admission_id','response_token_hmac']]\n];\nconst rows={sys_hris_listening_responses:[{tenant_id:1,public_id:'response-1',admission_id:10,protected_receipt_public_id:'receipt-1'}],sys_hris_listening_protected_response_receipts:[{tenant_id:1,public_id:'receipt-1',admission_id:10,response_public_id:'response-1',response_token_hmac:'hmac-1'}],sys_hris_listening_token_consumptions:[{tenant_id:1,protected_receipt_public_id:'receipt-1',admission_id:10,response_token_hmac:'hmac-1'}]};\nconst matches=(row,fk,targetRows)=>targetRows.some(tr=>fk.columns.every((c,i)=>row[c]===tr[fk.targetColumns[i]]));\nfor(const[from,to,sourceCols,targetCols]of edges){const table=tm.get(from),fk=table.foreignKeys.find(x=>x.targetTable===to);assert.deepEqual(fk.columns,sourceCols);assert.deepEqual(fk.targetColumns,targetCols);assert.equal(fk.deferrable,'INITIALLY_DEFERRED');assert(matches(rows[from][0],fk,rows[to]));\n const mutations=[];for(const key of sourceCols){const changed={...rows[from][0],[key]:key==='tenant_id'?2:key==='admission_id'?11:'wrong-'+key};assert.equal(matches(changed,fk,rows[to]),false);mutations.push({changed:key,acceptedByTuple:false});}closure.push({from,to,positiveTupleAccepted:true,mutations});}\nconst parent=tm.get('sys_hris_listening_cohort_epoch_budgets'),child=tm.get('sys_hris_listening_cohort_query_authorizations');assert(parent.uniqueKeys.some(k=>JSON.stringify(k)==='[\"tenant_id\",\"admission_id\"]'));assert(!parent.columns.some(c=>c.name==='canonical_query_digest'));assert(child.uniqueKeys.some(k=>JSON.stringify(k)==='[\"tenant_id\",\"epoch_budget_id\",\"canonical_query_digest\"]'));\nconst admission=tm.get('sys_hris_listening_admission_versions'),result=tm.get('sys_hris_listening_private_cohort_results');assert(admission.columns.some(c=>c.name==='source_revision'&&c.sqlType==='BIGINT'));assert(result.columns.find(c=>c.name==='source_revision').source.includes('admission.source_revision'));\nassert.equal(fs.readFileSync(path).compare(bytes),0);\nconsole.log(JSON.stringify({sourceSha256:crypto.createHash('sha256').update(bytes).digest('hex'),engine:'ajv-'+createRequire('/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json')('ajv/package.json').version,independentSchemaCount:4,schemaCases:cases.length,tokenFinalCharacterAccepted:tokenAccepted,tokenFinalCharacterRejected:64-tokenAccepted,cases,allForeignKeyStructuralClosureCount:fkCount,selectedThreeWayTupleSimulation:closure,parentUniqueKey:['tenant_id','admission_id'],childReplayUniqueKey:['tenant_id','epoch_budget_id','canonical_query_digest'],sourceRevisionColumnFound:true,proposalUnchanged:true,sqlExecution:'NOT_EXECUTED',cryptographicVerification:'NOT_EXECUTED'}));\n"
+    },
+    "independentAdditionalTupleWitness": {
+      "command": "node via stdin; exact reproducible source stored in this report",
+      "exitCode": 0,
+      "kind": "READ_ONLY_PROPOSED_FK_TUPLE_SIMULATION_NOT_POSTGRES",
+      "resultAdmission": 10,
+      "parentAdmission": 20,
+      "resultFks": [
+        {
+          "targetTable": "sys_hris_listening_admission_versions",
+          "accepted": true
+        },
+        {
+          "targetTable": "sys_hris_listening_cohort_epoch_budgets",
+          "accepted": true
+        }
+      ],
+      "childSealedResult": "nonexistent-result",
+      "childFks": [
+        {
+          "targetTable": "sys_hris_listening_cohort_epoch_budgets",
+          "accepted": true
+        }
+      ],
+      "childSealedResultForeignKeyPresent": false,
+      "actualDomainCodeExecution": "NONE",
+      "reproSource": "\nconst fs=require('node:fs'),assert=require('node:assert/strict');\nconst p=JSON.parse(fs.readFileSync('/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-listening-admission-exact.proposal.v1.json'));\nconst tm=new Map(p.tableSpecifications.map(t=>[t.tableName,t]));\nconst child=tm.get('sys_hris_listening_cohort_query_authorizations'),result=tm.get('sys_hris_listening_private_cohort_results');\nconst rows={\n sys_hris_listening_admission_versions:[{tenant_id:1,admission_id:10},{tenant_id:1,admission_id:20}],\n sys_hris_listening_cohort_epoch_budgets:[{tenant_id:1,epoch_budget_id:200,admission_id:20}],\n sys_hris_listening_private_cohort_results:[{tenant_id:1,private_cohort_result_id:300,public_id:'result-for-A',admission_id:10,epoch_budget_id:200}],\n sys_hris_listening_cohort_query_authorizations:[{tenant_id:1,query_authorization_id:400,epoch_budget_id:200,status:'CONSUMED',sealed_result_public_id:'nonexistent-result'}]\n};\nconst fits=(row,fk)=>rows[fk.targetTable].some(target=>fk.columns.every((key,i)=>row[key]===target[fk.targetColumns[i]]));\nconst resultFks=result.foreignKeys.map(fk=>({targetTable:fk.targetTable,accepted:fits(rows[result.tableName][0],fk)}));\nconst childFks=child.foreignKeys.map(fk=>({targetTable:fk.targetTable,accepted:fits(rows[child.tableName][0],fk)}));\nassert(resultFks.every(x=>x.accepted));assert(childFks.every(x=>x.accepted));\nassert(!child.foreignKeys.some(fk=>fk.columns.includes('sealed_result_public_id')));\nconsole.log(JSON.stringify({kind:'READ_ONLY_PROPOSED_FK_TUPLE_SIMULATION_NOT_POSTGRES',resultAdmission:10,parentAdmission:20,resultFks,childSealedResult:'nonexistent-result',childFks,childSealedResultForeignKeyPresent:false,actualDomainCodeExecution:'NONE'}));\n"
+    }
+  },
+  "independentlyVerifiedChanges": [
+    {
+      "id": "LIS-FU-VERIFIED-001",
+      "previousFinding": "LIS-P0-001",
+      "scopeVerdict": "SELECTED_WIRE_SLOT_CONFUSION_REJECTED_NOT_OWNER_REFETCH_APPROVAL",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningAdmissionControlRequest.proposal.v1/properties/formVersionRef/properties/ownerContractId",
+        "/jsonSchemas/SYS.ListeningAdmissionControlRequest.proposal.v1/properties/privacyVersionRef/properties/ownerContractId",
+        "/jsonSchemas/SYS.ListeningAdmissionControlRequest.proposal.v1/properties/retentionVersionRef/properties/ownerContractId"
+      ],
+      "evidence": "Three switched owner types rejected by actual schema validators. Public ID/revision/digest authoritative owner refetch remains unimplemented."
+    },
+    {
+      "id": "LIS-FU-VERIFIED-002",
+      "previousFinding": "LIS-P0-002",
+      "scopeVerdict": "SUPPRESSION_ADEQUACY_VALUE_MATRIX_REJECTED_KEY_UNIQUENESS_OPEN",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningCohortResult.proposal.v1/allOf",
+        "/jsonSchemas/SYS.ListeningCohortResult.proposal.v1/properties/measures/items/allOf"
+      ],
+      "evidence": "Global SUPPRESSED requires INSUFFICIENT and empty measures; COMPLETED requires ADEQUATE and at least one completed non-null measure. Suppressed per-question measure requires null. Different values with the same questionKey still accepted, deliberately documented."
+    },
+    {
+      "id": "LIS-FU-VERIFIED-003",
+      "previousFinding": "LIS-P1-006",
+      "scopeVerdict": "SELECTED_LEXICAL_MALLEABILITY_REJECTED_SHARED_CANONICAL_CODEC_OPEN",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningAnswer.proposal.v1/oneOf/0/properties/value",
+        "/jsonSchemas/SYS.ListeningSubmitRequest.proposal.v1/properties/answers/items/oneOf/0/properties/value",
+        "/jsonSchemas/SYS.ListeningSubmitRequest.proposal.v1/properties/responseToken",
+        "/canonicalPayloadProtocol"
+      ],
+      "evidence": "04/-0/+sign/exponent/whitespace/non-string/excess scale rejected in standalone and nested SCALE. Token last-character exhaustive 64 variants: 16 canonical accepted,48 rejected; accepted variants decode32 bytes and reencode identically. 0.0000/4.0000 remain valid input spellings; unique canonical content normalization is a planned owner codec, not yet proved."
+    },
+    {
+      "id": "LIS-FU-VERIFIED-004",
+      "previousFinding": "LIS-P1-005",
+      "scopeVerdict": "SELECTED_THREE_WAY_FK_TUPLE_CONFUSION_REJECTED_AT_SPEC_LEVEL_NOT_PG",
+      "pointers": [
+        "/tableSpecifications/1/foreignKeys/1",
+        "/tableSpecifications/3/foreignKeys/1",
+        "/tableSpecifications/4/foreignKeys/1"
+      ],
+      "evidence": "response->receipt binds tenant+response+admission+receipt; receipt->response binds tenant+response+admission; consumption->receipt binds tenant+receipt+admission+token. All12 declared FKs target actual same-schema columns and exact unique keys. Three selected positive tuples and11 independent key mutations checked in-memory; no actual deferred FK/transaction enforcement test."
+    },
+    {
+      "id": "LIS-FU-VERIFIED-005",
+      "previousFinding": "LIS-P0-003",
+      "scopeVerdict": "PER_ADMISSION_BUDGET_REPARTITION_KEY_REMOVED_GLOBAL_AND_RUNTIME_ENFORCEMENT_OPEN",
+      "pointers": [
+        "/tableSpecifications/5/uniqueKeys/2",
+        "/tableSpecifications/9/uniqueKeys/2",
+        "/tableSpecifications/5/checks",
+        "/operations/5/guards"
+      ],
+      "evidence": "Parent exact UK tenant_id+admission_id, no canonical_query_digest parent column; query-digest replay UK moved to child. Lifetime single complete release at CLOSED cutoff, current-gated exact replay and no source/erasure/policy reset are written in planned guards. Actual cumulative/parallel cap and global owner-stable batch are not proved."
+    },
+    {
+      "id": "LIS-FU-VERIFIED-006",
+      "previousFinding": "SOURCE_REVISION_COLUMN_GAP",
+      "scopeVerdict": "SOURCE_COLUMN_EXISTS_SEMANTIC_RUNTIME_AND_EVENT_GRAPH_OPEN",
+      "pointers": [
+        "/tableSpecifications/0/columns/14",
+        "/tableSpecifications/6/columns/5"
+      ],
+      "evidence": "Actual proposed BIGINT admission.source_revision exists; result source refers to that real column. Increment/no-op rules are proposed source text, not executed behavior."
+    }
+  ],
+  "remainingFindings": [
+    {
+      "id": "LIS-FU-P0-001",
+      "severity": "P0",
+      "status": "OPEN_ACKNOWLEDGED_DESIGN_AND_SHARED_SCAFFOLD",
+      "title": "동일 모집단의 survey/admission/window alias 전역 publication budget은 미완료",
+      "pointers": [
+        "/tableSpecifications/5/checks/8",
+        "/remainingOpenG3/4"
+      ],
+      "reason": "A per-admission lifetime parent prevents query-digest/epoch repartition only inside one admission. Separate survey/admission aliases can still target the same underlying people; the authoritative cross-admission population/time-window publication-batch contract is explicitly OPEN.",
+      "requiredG3": "Exact owner-stable batch/source/population/window identity, cumulative policy epoch and safe complete-package overlap rule, concurrent parent/child admission protocol, typed current-gate DTO/SPI/fail-closed shared adapter and negative pilot allocation.",
+      "actualDomainExecutionStage": "G4",
+      "negativeAcceptance": [
+        "same population via two surveys/admissions cannot mint two independent release budgets",
+        "parallel alternate cohort/query aliases and source/erasure epoch rotation never reset release cap",
+        "unavailable current authoritative batch/epoch fails closed"
+      ]
+    },
+    {
+      "id": "LIS-FU-P0-002",
+      "severity": "P0",
+      "status": "OPEN_ACKNOWLEDGED_SHARED_PROJECTION_GUARD",
+      "title": "questionKey 고유성 및 실제 질문별 contributor threshold는 공유 owner guard가 필요",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningCohortResult.proposal.v1/properties/measures/uniqueItems",
+        "/operations/5/guards/4",
+        "/operations/5/guards/5",
+        "/remainingOpenG3/6"
+      ],
+      "reason": "Actual schema still accepts q=4 and q=5 in one result. The proposal correctly says uniqueItems does not mean unique key. Each sparse optional answer must independently meet distinct actual contributor threshold; a written overall cohort rule alone is not sufficient.",
+      "requiredG3": "Strict shared result projection keyed by published questionKey, exact fixed request package, per-cell distinct ACTIVE/unfenced contribution rule, current policy/form owner-refetch; actual shared guard/consumer negative compile/pilot test allocation.",
+      "actualDomainExecutionStage": "G4",
+      "negativeAcceptance": [
+        "duplicate same questionKey with conflicting mean rejected before any publication",
+        "cohort population>=k but one question has only1 contributor produces suppressed/null for that question",
+        "missing/skipped answers never imputed0; unknown/narrowed package rejected"
+      ]
+    },
+    {
+      "id": "LIS-FU-P0-003",
+      "severity": "P0",
+      "status": "OPEN_ACKNOWLEDGED_AUTHORITY_AND_CRYPTO_SCAFFOLD",
+      "title": "issuer/protected purpose PEP·canonical HMAC·revocation/erasure adapter 및 stream scaffold 미구현",
+      "pointers": [
+        "/ownerPorts",
+        "/remainingOpenG3/2",
+        "/remainingOpenG3/3",
+        "/remainingOpenG3/5",
+        "/canonicalPayloadProtocol/currentSharedCodec"
+      ],
+      "reason": "Ajv validates unsigned fixture shapes only. No owner-issued signature, token entropy, current revocation/fence, byte codec, external key-owner ack, log-redaction enforcement, direct distinct protected/issuer purpose DS or composite Control/native receipt proof has been executed.",
+      "requiredG3": "Exact published DTO/SPI/closed versioned payload/refetch and purpose PEP; fail-closed current status/key-erasure shared adapter; deterministic byte vectors and denied negatives; exact stream/role/Control composite scaffolds and current common runtime evidence. Existing9 scalar receipt proof does not authorize13 streams/14 runtime purposes.",
+      "actualDomainExecutionStage": "G4 full domain erasure/cohort CRUD; G6 customer-key/authority and process-isolation activation",
+      "negativeAcceptance": [
+        "forged or stale issuer envelope/current-gate unavailable denied before claims/body use",
+        "ordinary principal-bound G2 interceptor not substituted on anonymous submit",
+        "same consumed token after erasure returns same ERASED receipt even different payload, no writes or answer oracle",
+        "RESULT_UNKNOWN keeps first-access fence; only actual matching key REVOKED ack permits final erasure"
+      ]
+    },
+    {
+      "id": "LIS-FU-P0-004",
+      "severity": "P0",
+      "status": "OPEN_FULL_CAPABILITY_CANONICAL_DESIGN",
+      "title": "부분 admission 보완안을 전체 Survey/Form/Audience/Action 준비 승인으로 확대할 수 없음",
+      "pointers": [
+        "/scope",
+        "/remainingOpenG3/0",
+        "/remainingOpenG3/1"
+      ],
+      "reason": "The fragment explicitly excludes full configuration/Action/IA lifecycle. Form/privacy/retention actual closed owner schemas, authoritative published source refetch, exact operation events/read/write/query lineage and test allocation still need canonical composition.",
+      "requiredG3": "Complete exact design and actual cross-module shared scaffolds; not all business CRUD implementation.",
+      "actualDomainExecutionStage": "G4 complete domain/API/DB acceptance execution; G5 full-screen Design AI handoff; G6 live/customer authority"
+    },
+    {
+      "id": "LIS-FU-P1-001",
+      "severity": "P1",
+      "status": "NEW_SPEC_LEVEL_TUPLE_WITNESS",
+      "title": "cohort result→budget 및 query child→result의 동일 admission/parent 결속 누락",
+      "pointers": [
+        "/tableSpecifications/6/foreignKeys",
+        "/tableSpecifications/9/columns/5",
+        "/tableSpecifications/9/foreignKeys"
+      ],
+      "reason": "Result has independent admission FK and budget FK, accepting result.admission_id=10 linked to budget.admission_id=20. Child can set sealed_result_public_id to a nonexistent result without violating declared child FK. This is an in-memory witness of actual proposal tuples, not a live DB exploitation claim.",
+      "repairDesign": [
+        "Parent exact UK (tenant_id,epoch_budget_id,admission_id); result composite FK (tenant_id,epoch_budget_id,admission_id) to parent.",
+        "Result exact UK (tenant_id,epoch_budget_id,public_id); child nullable composite FK (tenant_id,epoch_budget_id,sealed_result_public_id) to result; no cross-schema FK.",
+        "Materializable terminal checks: CONSUMED => sealed result non-null; RESERVED/DENIED => no success result. Parent release_count bounds0..1 and first_publication_digest consistency must be explicit SQL+shared CAS invariants."
+      ],
+      "negativeAcceptance": [
+        "same-tenant different-admission budget reference denied",
+        "same-tenant different-parent result reference denied",
+        "missing sealed result denied for CONSUMED child",
+        "deferred valid response/receipt/token atomic insert positive; partial/orphan transaction rollback"
+      ]
+    }
+  ],
+  "conclusion": {
+    "boundedChanges": "INDEPENDENTLY_REPRODUCED_SELECTED_SCHEMA_AND_SPEC_TUPLES_ONLY",
+    "p0P1Zero": false,
+    "fullPrivacyApproval": "NONE",
+    "g3Pass": "NONE",
+    "selfAuthoredAnalyticsAiApproval": "NONE",
+    "canonicalChange": "NONE",
+    "historicalChange": "NONE"
+  }
+}

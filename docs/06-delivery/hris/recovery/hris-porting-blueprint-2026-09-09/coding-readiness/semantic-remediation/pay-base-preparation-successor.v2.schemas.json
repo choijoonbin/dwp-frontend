@@ -1,0 +1,1209 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:dwp:pay:base:preparation:v2:author",
+  "status": "AUTHOR_SCHEMA_ONLY_NOT_CANONICAL",
+  "$defs": {
+    "PAYV2.NativeSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workRelationshipPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assignmentPublicId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "workerPublicId",
+        "workRelationshipPublicId",
+        "assignmentPublicId"
+      ]
+    },
+    "PAYV2.AuthBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "userId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "principalPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "personPublicId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "identityPlane": {
+          "enum": [
+            "TENANT",
+            "PLATFORM"
+          ]
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "INVITED",
+            "SUSPENDED",
+            "INACTIVE"
+          ]
+        },
+        "userRowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "accessRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "capturedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "tenantId",
+        "userId",
+        "principalPublicId",
+        "personPublicId",
+        "identityPlane",
+        "status",
+        "userRowVersion",
+        "accessRevision",
+        "capturedAt",
+        "expiresAt"
+      ]
+    },
+    "PAYV2.NativeWorker": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "publicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "personPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "publicId",
+        "personPublicId",
+        "version",
+        "status"
+      ]
+    },
+    "PAYV2.NativeRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "publicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "legalEmployerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "publicId",
+        "workerPublicId",
+        "legalEmployerPublicId",
+        "version",
+        "startDate",
+        "endDate"
+      ]
+    },
+    "PAYV2.NativeAssignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "publicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workRelationshipPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effectiveStartDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "effectiveEndDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workZone": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "publicId",
+        "workRelationshipPublicId",
+        "version",
+        "status",
+        "effectiveStartDate",
+        "effectiveEndDate",
+        "workZone"
+      ]
+    },
+    "PAYV2.NativeContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "worker": {
+          "$ref": "#/$defs/PAYV2.NativeWorker"
+        },
+        "relationship": {
+          "$ref": "#/$defs/PAYV2.NativeRelationship"
+        },
+        "assignment": {
+          "$ref": "#/$defs/PAYV2.NativeAssignment"
+        }
+      },
+      "required": [
+        "worker",
+        "relationship",
+        "assignment"
+      ]
+    },
+    "PAYV2.NativeContextSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "personPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "personVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "personState": {
+          "enum": [
+            "ACTIVE",
+            "INACTIVE"
+          ]
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "contexts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PAYV2.NativeContext"
+          }
+        }
+      },
+      "required": [
+        "tenantId",
+        "personPublicId",
+        "personVersion",
+        "personState",
+        "asOf",
+        "complete",
+        "contexts"
+      ]
+    },
+    "PAYV2.NativeLegalEmployer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "publicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lifecycleState": {
+          "enum": [
+            "ACTIVE",
+            "INACTIVE"
+          ]
+        },
+        "countryCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "capturedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "tenantId",
+        "publicId",
+        "version",
+        "lifecycleState",
+        "countryCode",
+        "capturedAt",
+        "expiresAt"
+      ]
+    },
+    "PAYV2.ConfigurationScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "legalPayrollEntityId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payGroupId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "legalPayrollEntityId",
+        "payGroupId"
+      ]
+    },
+    "PAYV2.ConfigurationQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "enum": [
+            "ENTITY",
+            "PAYGROUP",
+            "CALENDAR",
+            "ROUNDING",
+            "ELIGIBILITY",
+            "ELEMENT",
+            "FORMULA",
+            "GL_MAPPING"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest"
+      ]
+    },
+    "PAYV2.ConfigurationResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V2"
+        },
+        "artifactKind": {
+          "enum": [
+            "ENTITY",
+            "PAYGROUP",
+            "CALENDAR",
+            "ROUNDING",
+            "ELIGIBILITY",
+            "ELEMENT",
+            "FORMULA",
+            "GL_MAPPING"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV2.StatementAuthorityQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "statementPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "statementVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "statementDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "action": {
+          "enum": [
+            "READ",
+            "DOWNLOAD"
+          ]
+        },
+        "purpose": {
+          "enum": [
+            "SELF_PAY_READ",
+            "SELF_PAY_DOWNLOAD"
+          ]
+        }
+      },
+      "required": [
+        "statementPublicId",
+        "statementVersion",
+        "statementDigest",
+        "action",
+        "purpose"
+      ]
+    },
+    "PAYV2.StatementAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "principalPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "personPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "statementPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "statementVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "statementDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "historicalWorkerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "historicalWorkRelationshipPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "historicalLegalEmployerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "action": {
+          "enum": [
+            "READ",
+            "DOWNLOAD"
+          ]
+        },
+        "purpose": {
+          "enum": [
+            "SELF_PAY_READ",
+            "SELF_PAY_DOWNLOAD"
+          ]
+        },
+        "appEntitled": {
+          "type": "boolean"
+        },
+        "dutyAllowed": {
+          "type": "boolean"
+        },
+        "fieldPolicyAllowed": {
+          "type": "boolean"
+        },
+        "stepUpVerified": {
+          "type": "boolean"
+        },
+        "authUserVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authAccessRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "personVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "statementOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "capturedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "tenantId",
+        "principalPublicId",
+        "personPublicId",
+        "statementPublicId",
+        "statementVersion",
+        "statementDigest",
+        "historicalWorkerPublicId",
+        "historicalWorkRelationshipPublicId",
+        "historicalLegalEmployerPublicId",
+        "action",
+        "purpose",
+        "appEntitled",
+        "dutyAllowed",
+        "fieldPolicyAllowed",
+        "stepUpVerified",
+        "authUserVersion",
+        "authAccessRevision",
+        "personVersion",
+        "statementOwnerRevision",
+        "capturedAt",
+        "expiresAt"
+      ]
+    },
+    "PAYV2.Download": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "purposeCode": {
+          "const": "SELF_PAY_DOWNLOAD"
+        },
+        "statementAuthority": {
+          "$ref": "#/$defs/PAYV2.StatementAuthorityQuery"
+        }
+      },
+      "required": [
+        "purposeCode",
+        "statementAuthority"
+      ]
+    },
+    "PAYV2.FrozenEmploymentBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "personPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "selector": {
+          "$ref": "#/$defs/PAYV2.NativeSelector"
+        },
+        "personVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "workerVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relationshipVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assignmentVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "legalEmployerPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "legalEmployerVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "inclusiveFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "inclusiveTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ownerZone": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "personPublicId",
+        "selector",
+        "personVersion",
+        "workerVersion",
+        "relationshipVersion",
+        "assignmentVersion",
+        "legalEmployerPublicId",
+        "legalEmployerVersion",
+        "asOf",
+        "inclusiveFrom",
+        "inclusiveTo",
+        "ownerZone"
+      ]
+    },
+    "PAYV2.PhysicalSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "table": {
+          "type": "string",
+          "minLength": 1
+        },
+        "column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sqlType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceStatus": {
+          "enum": [
+            "DIRECT_PLANNED",
+            "OPEN_BUSINESS_TRANSFORM",
+            "OPEN_HISTORICAL_SOURCE",
+            "OPEN_PHASE_BINDING"
+          ]
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "originalSource": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "table",
+        "column",
+        "sqlType",
+        "sourceStatus",
+        "inputs",
+        "originalSource"
+      ]
+    },
+    "PAYV2.FixtureFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "targetTenantId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "principal": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "person": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "worker": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "authorizedWorker": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "groupAllowed": {
+          "type": "boolean"
+        },
+        "contexts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "personAuthority": {
+          "type": "boolean"
+        },
+        "payPurpose": {
+          "type": "boolean"
+        },
+        "appEntitled": {
+          "type": "boolean"
+        },
+        "ownerPublished": {
+          "type": "boolean"
+        },
+        "ownerFresh": {
+          "type": "boolean"
+        },
+        "ownerSuperseded": {
+          "type": "boolean"
+        },
+        "payloadPresent": {
+          "type": "boolean"
+        },
+        "digestValid": {
+          "type": "boolean"
+        },
+        "parentValid": {
+          "type": "boolean"
+        },
+        "sequence": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "declaredCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requiredOptional": {
+          "type": "boolean"
+        },
+        "optionalSelected": {
+          "type": "boolean"
+        },
+        "operator": {
+          "enum": [
+            "ADD",
+            "MULTIPLY",
+            "DIVIDE",
+            "UNKNOWN"
+          ]
+        },
+        "leftUnit": {
+          "enum": [
+            "AMOUNT",
+            "HOUR",
+            "DAY"
+          ]
+        },
+        "rightUnit": {
+          "enum": [
+            "AMOUNT",
+            "HOUR",
+            "DAY"
+          ]
+        },
+        "leftCurrency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rightCurrency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "denominator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cycle": {
+          "type": "boolean"
+        },
+        "nodeCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nodeLimit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decimal": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maker": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actor": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "loadedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fenceExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "now": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "existingReceipt": {
+          "type": "boolean"
+        },
+        "sameKey": {
+          "type": "boolean"
+        },
+        "sameDigest": {
+          "type": "boolean"
+        },
+        "sameActor": {
+          "type": "boolean"
+        },
+        "finalized": {
+          "type": "boolean"
+        },
+        "approvalPending": {
+          "type": "boolean"
+        },
+        "activeRegular": {
+          "type": "boolean"
+        },
+        "destructive": {
+          "type": "boolean"
+        },
+        "correctionModes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "DIFFERENCE",
+              "FULL_REVERSE_REPLACE"
+            ]
+          }
+        },
+        "bankVerified": {
+          "type": "boolean"
+        },
+        "bankEditor": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "settlementOutcome": {
+          "enum": [
+            "UNKNOWN",
+            "PARTIAL",
+            "ACK",
+            "NATIVE"
+          ]
+        },
+        "settlementMethod": {
+          "enum": [
+            "BANK",
+            "MANUAL"
+          ]
+        },
+        "proofMethod": {
+          "enum": [
+            "BANK",
+            "MANUAL"
+          ]
+        },
+        "approvalOutcome": {
+          "enum": [
+            "CANCELLED_BEFORE_DECISION",
+            "APPROVED",
+            "REJECTED",
+            "UNKNOWN",
+            "NOT_FOUND"
+          ]
+        },
+        "balanced": {
+          "type": "boolean"
+        },
+        "stepUp": {
+          "type": "boolean"
+        },
+        "statementRevoked": {
+          "type": "boolean"
+        },
+        "entitlement": {
+          "type": "boolean"
+        },
+        "providerActive": {
+          "type": "boolean"
+        },
+        "serviceComplete": {
+          "type": "boolean"
+        },
+        "annualCoverageComplete": {
+          "type": "boolean"
+        },
+        "civilStart": {
+          "type": "string",
+          "format": "date"
+        },
+        "civilEnd": {
+          "type": "string",
+          "format": "date"
+        },
+        "timeZone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roundingStages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "countryOverlap": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tenantId",
+        "targetTenantId",
+        "principal",
+        "person",
+        "worker",
+        "authorizedWorker",
+        "groupAllowed",
+        "contexts",
+        "personAuthority",
+        "payPurpose",
+        "appEntitled",
+        "ownerPublished",
+        "ownerFresh",
+        "ownerSuperseded",
+        "payloadPresent",
+        "digestValid",
+        "parentValid",
+        "sequence",
+        "declaredCount",
+        "requiredOptional",
+        "optionalSelected",
+        "operator",
+        "leftUnit",
+        "rightUnit",
+        "leftCurrency",
+        "rightCurrency",
+        "denominator",
+        "cycle",
+        "nodeCount",
+        "nodeLimit",
+        "decimal",
+        "maker",
+        "actor",
+        "expectedVersion",
+        "loadedVersion",
+        "fenceExpiresAt",
+        "now",
+        "existingReceipt",
+        "sameKey",
+        "sameDigest",
+        "sameActor",
+        "finalized",
+        "approvalPending",
+        "activeRegular",
+        "destructive",
+        "correctionModes",
+        "bankVerified",
+        "bankEditor",
+        "settlementOutcome",
+        "settlementMethod",
+        "proofMethod",
+        "approvalOutcome",
+        "balanced",
+        "stepUp",
+        "statementRevoked",
+        "entitlement",
+        "providerActive",
+        "serviceComplete",
+        "annualCoverageComplete",
+        "civilStart",
+        "civilEnd",
+        "timeZone",
+        "roundingStages",
+        "countryOverlap"
+      ]
+    }
+  }
+}

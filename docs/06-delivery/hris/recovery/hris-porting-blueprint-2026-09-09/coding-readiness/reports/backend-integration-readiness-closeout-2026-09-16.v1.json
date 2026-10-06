@@ -1,0 +1,180 @@
+{
+  "schema": "dwp.hris.backend-integration-readiness-closeout/v1",
+  "status": "BACKEND_PASS_EXTERNAL_CANONICAL_CONSUMER_PENDING",
+  "recordedAtUtc": "2026-09-15T17:55:07Z",
+  "scope": "BACKEND_INTEGRATION_PRE_G3_COMMON_FOUNDATION",
+  "authority": {
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "moduleStartAuthorization": "NONE",
+    "productionAuthorization": "NOT_AUTHORIZED_G6",
+    "technicalEvidenceOnly": true
+  },
+  "source": {
+    "repository": "DWP_BACKEND",
+    "baselineCommit": "787f25753a72dc5f0fbbb06783205c0bff6635a5",
+    "commit": "299336eacb52de29a85366318a08151ea691eb5e",
+    "tree": "d5277fabaa2315ddc28a4220fa8075875be28920",
+    "subject": "fix(hris): close backend readiness boundaries",
+    "worktree": ".codex-worktrees/hris/integration/backend",
+    "worktreeClean": true,
+    "indexClean": true
+  },
+  "rootFullTest": {
+    "command": [
+      "./gradlew",
+      "test",
+      "--rerun-tasks",
+      "--no-daemon",
+      "--max-workers=1"
+    ],
+    "status": "PASS",
+    "durationMilliseconds": 4385000,
+    "totals": {
+      "tests": 7607,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 94
+    },
+    "modules": [
+      {"module": "dwp-approval-server", "tests": 2056, "failures": 0, "errors": 0, "skipped": 1},
+      {"module": "dwp-audit-server", "tests": 1, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-auth-server", "tests": 945, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-core", "tests": 642, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-gateway", "tests": 311, "failures": 0, "errors": 0, "skipped": 1},
+      {"module": "dwp-meeting-server", "tests": 674, "failures": 0, "errors": 0, "skipped": 2},
+      {"module": "dwp-messaging-server", "tests": 193, "failures": 0, "errors": 0, "skipped": 58},
+      {"module": "dwp-migration-control", "tests": 149, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-notification-server", "tests": 332, "failures": 0, "errors": 0, "skipped": 31},
+      {"module": "dwp-observability", "tests": 4, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-payroll-server", "tests": 10, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-people-server", "tests": 472, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-platform-contracts", "tests": 198, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-platform-server", "tests": 1259, "failures": 0, "errors": 0, "skipped": 1},
+      {"module": "dwp-provider-server", "tests": 284, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-space-server", "tests": 24, "failures": 0, "errors": 0, "skipped": 0},
+      {"module": "dwp-time-server", "tests": 53, "failures": 0, "errors": 0, "skipped": 0}
+    ],
+    "skipClassification": {
+      "changedMandatoryScopeSkipped": 0,
+      "totalEnvironmentOrOperatorOptIn": 94,
+      "classes": [
+        {"class": "com.dwp.services.approval.attachment.ApprovalAttachmentClamAvInteropTest", "count": 1, "reason": "EXTERNAL_CLAMAV_G6_OPERATIONAL_OPT_IN", "hermeticCompanion": "com.dwp.services.approval.attachment.ApprovalAttachmentClamAvTest"},
+        {"class": "com.dwp.services.provider.rollout.FeatureRolloutKafkaGatewayRehearsalTest", "count": 1, "reason": "EXTERNAL_KAFKA_REHEARSAL_OPT_IN"},
+        {"class": "com.dwp.services.meeting.videomeeting.domain.MeetingParticipantWebhookLocalOperationalTest", "count": 1, "reason": "LOCAL_LIVEKIT_OPERATIONAL_OPT_IN"},
+        {"class": "com.dwp.services.meeting.videomeeting.provider.LiveKitLocalOperationalSmokeTest", "count": 1, "reason": "LOCAL_LIVEKIT_OPERATIONAL_OPT_IN"},
+        {"class": "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest", "count": 2, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest", "count": 4, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest", "count": 4, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest", "count": 4, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest", "count": 2, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest", "count": 10, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest", "count": 11, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest", "count": 8, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest", "count": 13, "reason": "EXTERNAL_POSTGRES_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest", "count": 6, "reason": "EXTERNAL_NOTIFICATION_INTEGRATION_DB_OPT_IN"},
+        {"class": "com.dwp.services.notification.integration.ApprovalSlaDeliveryJournalPostgresIntegrationTest", "count": 17, "reason": "EXTERNAL_NOTIFICATION_SLA_DB_OPT_IN"},
+        {"class": "com.dwp.services.notification.integration.ApprovalSlaMaterializationPostgresIntegrationTest", "count": 8, "reason": "EXTERNAL_NOTIFICATION_SLA_DB_OPT_IN"},
+        {"class": "com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest", "count": 1, "reason": "OPENAPI_EXPORT_OPT_IN"}
+      ]
+    }
+  },
+  "focusedVerification": [
+    {"id": "migration-control-persistent-foreign-session-fail-closed", "repetitions": 3, "status": "PASS"},
+    {"id": "migration-control-closing-session-bounded-drain", "repetitions": 3, "status": "PASS"},
+    {"id": "platform-full-rerun", "tests": 1259, "failures": 0, "errors": 0, "status": "PASS"},
+    {"id": "notification-full-rerun", "tests": 332, "failures": 0, "errors": 0, "status": "PASS"},
+    {"id": "static-hris-contract-generation-check", "sourceCount": 37, "mappingCount": 35, "schemaCount": 2, "status": "PASS"},
+    {"id": "static-service-boundaries", "status": "PASS"},
+    {"id": "static-approval-projection", "schemaCount": 7, "bindingCount": 13, "status": "PASS"},
+    {"id": "python-script-tests", "tests": 280, "failures": 0, "status": "PASS"},
+    {"id": "capture-runner-hostile-selftest", "tests": 44, "failures": 0, "status": "PASS"},
+    {"id": "receipt-validator-hostile-selftest", "tests": 75, "failures": 0, "status": "PASS"},
+    {"id": "receipt-materializer-hostile-selftest", "tests": 9, "failures": 0, "status": "PASS"},
+    {"id": "migration-successor-hostile-selftest", "tests": 25, "rejected": 25, "status": "PASS"}
+  ],
+  "migrationClosure": {
+    "exactAddCount": 6,
+    "oldMigrationModifiedCount": 0,
+    "oldChecksumEditAllowed": false,
+    "b260ArtifactCount": 0,
+    "notificationV31Included": false,
+    "files": [
+      {"path": "dwp-approval-server/src/main/resources/db/migration/V36__close_remaining_approval_trigger_execution_boundaries.sql", "fileMode": "100644", "gitBlobOid": "56b4332a05e1731757ec364be26dc651690f9696", "sha256": "0224d0666ded2fc79c1771c532a653ad3717aa08a1440419d7a22a6199e4add9", "byteLength": 6965},
+      {"path": "dwp-approval-server/src/main/resources/db/migration/V37__close_approval_seed_execution_boundary.sql", "fileMode": "100644", "gitBlobOid": "09de859442b50afe22cb3caa2a424c90817fe480", "sha256": "c3e631680b4560e887bb1d7ebf20fb80d60ddbbb0c353b86095ad84e6e861325", "byteLength": 540},
+      {"path": "dwp-approval-server/src/main/resources/db/migration/V38__bind_retention_aware_trigger_entrypoints_to_owner.sql", "fileMode": "100644", "gitBlobOid": "a90028e65872a54a18aeb9a0c64374450ee59fe5", "sha256": "9c676f86e53b885308e88766d91ec453122f0033f1077c46a33d8231084c58f9", "byteLength": 2544},
+      {"path": "dwp-platform-server/src/main/resources/db/migration/V254_1__bridge_platform_trigger_inventory_before_v255.sql", "fileMode": "100644", "gitBlobOid": "9b10b03e6e7f9181bb558f5b554fe1dcd22bc43c", "sha256": "ee9d299d9f394dc54c7dda14fa0189442f3bb1ebd125d2f129f7af9983e5e7a0", "byteLength": 8749},
+      {"path": "dwp-platform-server/src/main/resources/db/migration/V261__close_platform_trigger_and_facility_retention_boundaries.sql", "fileMode": "100644", "gitBlobOid": "bee08fe4935794a9db2a55440ce988eec73c4a2e", "sha256": "4b0a973b2b649f1ae0540b702bb88805dc6d38c321d3664a6ef098be7353f353", "byteLength": 29348},
+      {"path": "dwp-notification-server/src/main/resources/db/migration/V32__close_approval_sla_delivery_trigger_execution_boundary.sql", "fileMode": "100644", "gitBlobOid": "37ce8f4d00bbae7bad384d80035c6ba9d5c761fd", "sha256": "b5a90a0e822b3f161dc85a4adcacc7c1032afe93897bed8c626762f5abde75ba", "byteLength": 7017}
+    ],
+    "immutablePredecessorSets": [
+      {"streamKey": "approval-main", "baselineHighWater": 35, "fileCount": 35, "manifestSha256": "4ac9d2323460ac2e1b929f026e0fc891bab075ed3adcc21441a3e55708215488"},
+      {"streamKey": "platform-main", "baselineHighWater": 260, "fileCount": 211, "manifestSha256": "d0d063e979e9c02747d887fbff30d813af5018b53968ac757a4bdda48137d67e"},
+      {"streamKey": "notification-main", "baselineHighWater": 30, "fileCount": 30, "manifestSha256": "1fa482133c603244a0130ce8658f00734b7c5fac87eab5e63fc9c3f50333f39d"}
+    ]
+  },
+  "proofSources": [
+    {"path": "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformInventoryBridgeControlPostgresTest.java", "fileMode": "100644", "gitBlobOid": "a4fc023b5257684d0232b1da116a29abf21868e5", "sha256": "e4e1611acc6b606b67826fa4f09477f2f4fedff57e5d891db5acb38de650e905", "byteLength": 41549},
+    {"path": "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformMigrationObservationSidecar.java", "fileMode": "100644", "gitBlobOid": "1f9d2ee4131f9d863f6de34ad02c608e8706203e", "sha256": "11cb0ccc593032d85572e83bf525d659b27fa1c9681f89b66840a670077a6815", "byteLength": 6848},
+    {"path": "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationTriggerExecutionBoundaryPostgresTest.java", "fileMode": "100644", "gitBlobOid": "7c853fef642db1d729a0129cd3558f7dd04b3fc6", "sha256": "f0ed0e90f95fffede510e5a1f849a124166e1d1d9b635b04481341819d405e74", "byteLength": 29325},
+    {"path": "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationMigrationObservationSidecar.java", "fileMode": "100644", "gitBlobOid": "fcab15d4f03b0d29be54073413a067c418b8b53e", "sha256": "cc7f1d70b4e261d895f91c89bb0c35589a6f28f4f24842555dbf1c6232ad26df", "byteLength": 7199}
+  ],
+  "postgresEvidence": [
+    {
+      "image": "postgres:16-alpine",
+      "resolvedRepositoryDigest": "postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685",
+      "evidence": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.v1.json", "fileMode": "0600", "sha256": "063224138449aabea0512731a324180b3199e661225e7c6dc5d59a7109ce0303", "byteLength": 8248},
+      "platformJunit": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.junit.xml", "fileMode": "0600", "sha256": "397f384b49aed039bf83f8a564dbf1665f0dfc98c8eeb87ddaeb8ecd688851cb", "byteLength": 906583, "tests": 21, "failures": 0, "errors": 0, "skipped": 0, "uniqueCaseIds": 21},
+      "platformObservation": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.observations.v1.json", "fileMode": "0600", "sha256": "d5683be1148700e4cbfeeae00f16e263c35f681bbc3bf1058723dc9ce1769420", "byteLength": 1117},
+      "notificationJunit": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification.junit.xml", "fileMode": "0600", "sha256": "a5dbb405de03fd4c052a4d678cf3058a997dc4681b674e58d82f5bbf3df360c5", "byteLength": 119448, "tests": 5, "failures": 0, "errors": 0, "skipped": 0, "uniqueCaseIds": 5},
+      "notificationObservation": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification-observations.v1.json", "fileMode": "0600", "sha256": "c3757d3e629c8b9aca9894a052f70ba901022425b54213b925824f9bd1a176be", "byteLength": 722}
+    },
+    {
+      "image": "postgres:18.4-alpine",
+      "resolvedRepositoryDigest": "postgres@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15",
+      "evidence": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.v1.json", "fileMode": "0600", "sha256": "84d553c45dd36593f2f48625cda0d6bc624f6d2288a3fdfeab57c237b0d83556", "byteLength": 8254},
+      "platformJunit": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.junit.xml", "fileMode": "0600", "sha256": "1e5108ccbc317033e42ad6857c5e6e3671645680ee1ac63020bace276452d38f", "byteLength": 905726, "tests": 21, "failures": 0, "errors": 0, "skipped": 0, "uniqueCaseIds": 21},
+      "platformObservation": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.observations.v1.json", "fileMode": "0600", "sha256": "80863f9782b177bdd12c3a6ea4a7571c7211927f7aeb2d48b5e0b381a7d9220d", "byteLength": 1119},
+      "notificationJunit": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.notification.junit.xml", "fileMode": "0600", "sha256": "d8ae3aa4d4a68a4ca1d083ca8e987a7f19173d60f4e4bfa699675f7a1036dcf1", "byteLength": 119438, "tests": 5, "failures": 0, "errors": 0, "skipped": 0, "uniqueCaseIds": 5},
+      "notificationObservation": {"path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.notification-observations.v1.json", "fileMode": "0600", "sha256": "0b3a22b0c4b660cbd9c18c022f8c8b396087818488e2850027ae0f96ffd181dd", "byteLength": 724}
+    }
+  ],
+  "observedDatabaseInvariants": {
+    "platform": {"triggerFunctionCount": 50, "triggerMappingCount": 68, "triggerMappingSha256": "cade7c2964b47a298bedc9c9d26f5185e5418ec0736db3b0d6ba5a5e7bc2bd8d", "bridgedMappingCount": 8, "bridgedMappingSha256": "342b41d9d6d39450b750bbdf63415fa98bb28e133d0138fa435bd82221c0d2af", "finalBridgeSchemaCount": 0, "migrationPrincipalDatabaseCreateAtEntry": false, "migrationPrincipalDatabaseCreateAtExit": false},
+    "notification": {"triggerFunctionCount": 2, "securityDefinerFunctionCount": 2, "fixedSearchPathFunctionCount": 2, "triggerBoundaryTupleCount": 3, "triggerBoundaryTupleSha256": "f00383323e062fdb4f1c92f4ecadf8e6e33cbf5a0290b5fd7cb3054449e181ef", "directRuntimeExecuteGrantCount": 0, "successfulV32HistoryCount": 1, "failedV32HistoryCount": 0, "failureRollbackFunctionStateUnchanged": true}
+  },
+  "controlArtifacts": {
+    "captureRunner": {"path": "g0/capture_pre_g3_common_foundation_postgres_evidence.py", "sha256": "52577858fb9a31c90b091bf0fb5ca68cf58ed264eb0aac2fbd019377bf8d49d6", "byteLength": 34286, "selfTests": 44, "status": "PASS"},
+    "validator": {"path": "g0/validate_pre_g3_common_foundation_migrations.py", "sha256": "c49dc9791847895eb442faff9ccd175639932f274bc24e0773831d0c2129ea14", "byteLength": 86707, "selfTests": 75, "status": "PASS"},
+    "materializer": {"path": "g0/materialize_pre_g3_common_foundation_migration_receipts.py", "sha256": "1efe1f7ae44bfd9e7d85e077123ecc6d2fdafa2ac8c4cf43c06af9221ef97541", "byteLength": 24498, "selfTests": 9, "status": "PASS"},
+    "allocation": {"path": "g0/pre-g3-common-foundation-migration-allocation.v1.json", "fileMode": "0600", "sha256": "f3335dfaf2c8666d4576d487f4907ea004d5c905ad9081dd1031afef25e998a6", "byteLength": 6509, "status": "SEALED_TECHNICAL_ALLOCATION_NO_START_AUTHORITY"},
+    "technicalReview": {"path": "g0/pre-g3-common-foundation-migration-technical-review.v1.json", "fileMode": "0600", "sha256": "ca455525875ae6096f8836fa5cea73a8d47c5fae8e6a125e3482508274bd08c7", "byteLength": 2912, "status": "INTERNAL_TECHNICAL_REVIEW_PASS_G3_ENTRY_ONLY"},
+    "migrationSuccessor": {"path": "g0/migration-successor-register.v1.json", "fileMode": "0600", "sha256": "f0fa1caf02de0634d812a4c18c7fe8e8095fdea5e977251b976371af3d5e3106", "byteLength": 15580, "writeStatus": "PASS", "checkStatus": "PASS", "hostileSelfTests": 25, "hostileRejected": 25, "normalValidationStatus": "FAIL_CLOSED_EXTERNAL_CONSUMER_STALE"}
+  },
+  "quarantine": {
+    "reason": "VALID_PG16_CAPTURE_PREDATED_FINAL_DUAL_IMAGE_ENVIRONMENT_BINDING",
+    "directory": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST",
+    "preservedFileCount": 5,
+    "manifest": {"path": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/quarantine-manifest.v1.json", "fileMode": "0600", "sha256": "cb992866ceb9c2b9bd9b9ce4d09e0691c1a963182734f71c81ca310982debc30", "byteLength": 2676},
+    "byteModeDigestValidation": "PASS"
+  },
+  "residuals": [
+    {
+      "id": "EXTERNAL-CANONICAL-CONSUMER-SYS-PLATFORM-RANGE",
+      "count": 1,
+      "scope": "SHARED_BLUEPRINT_CANONICAL_SUCCESSOR",
+      "owner": "CANONICAL_SUCCESSOR_REFRESH",
+      "path": "coding-readiness/g3-slice-code-go-register.csv",
+      "observed": "MIG-SYS-PLATFORM-261-289",
+      "required": "MIG-SYS-PLATFORM-262-290",
+      "validatorError": "coding-readiness/g3-slice-code-go-register.csv still authorizes stale id MIG-SYS-PLATFORM-261-289",
+      "backendImpact": "NONE",
+      "gateImpact": "MIGRATION_SUCCESSOR_NORMAL_VALIDATION_REMAINS_FAIL_CLOSED",
+      "disposition": "DEFER_TO_IN_PROGRESS_CANONICAL_LISTENING_SUCCESSOR_ATOMIC_REFRESH"
+    }
+  ],
+  "artifactLifecycle": {
+    "classification": "NEW_CENTRAL_MACHINE_READABLE_CLOSEOUT_REPORT",
+    "canonicalSnapshotInclusion": "PENDING_NEXT_ATOMIC_CANONICAL_SNAPSHOT_REFRESH",
+    "doNotTreatAsCurrentSnapshotUntilRefreshed": true
+  }
+}

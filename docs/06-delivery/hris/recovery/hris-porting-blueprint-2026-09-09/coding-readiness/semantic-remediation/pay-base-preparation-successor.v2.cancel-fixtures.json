@@ -1,0 +1,1663 @@
+{
+  "status": "EXACT_TYPED_SYNTHETIC_CANCELLATION_API_BRANCHES_NOT_NATIVE",
+  "stateMappings": {
+    "CONFIG_ARTIFACT": {
+      "pending": "APPROVAL_PENDING",
+      "approved": "APPROVED",
+      "rejected": "REJECTED"
+    },
+    "RUN": {
+      "pending": "APPROVAL_PENDING",
+      "approved": "APPROVED",
+      "rejected": "VALIDATION_FAILED"
+    },
+    "PAYMENT": {
+      "pending": "APPROVAL_PENDING",
+      "approved": "APPROVED",
+      "rejected": "REJECTED"
+    },
+    "GL": {
+      "pending": "APPROVAL_PENDING",
+      "approved": "APPROVED",
+      "rejected": "REJECTED"
+    },
+    "RETIREMENT_CASE": {
+      "pending": "CALCULATED",
+      "approved": "REVIEWED",
+      "rejected": "CALCULATED"
+    },
+    "YEAR_END_CASE": {
+      "pending": "CALCULATED",
+      "approved": "REVIEWED",
+      "rejected": "CALCULATED"
+    }
+  },
+  "caseReviewPolicy": "CALCULATED business case + binding decision PENDING is review pending. No phantom APPROVAL_PENDING/REJECTED case state. Rejected remains CALCULATED with binding REJECTED. Approved becomes REVIEWED. Cancellation before decision from CALCULATED requires no unresolved provider/financial posting.",
+  "plannedTransitions": [
+    "GL APPROVAL_PENDING→CANCELLED common owner cancellation; approve/reject adoption exact existing states",
+    "retirement/yearEnd CALCULATED→CANCELLED with bound owner CANCELLED_BEFORE_DECISION; CALCULATED→REVIEWED for already approved; rejected stays CALCULATED plus rejected binding; unknown case unchanged"
+  ],
+  "newPhysicalStateRequired": "only GL CANCELLED; case review progression is authoritative binding decision not new fake case enum",
+  "fixtures": [
+    {
+      "fixtureId": "CONFIG_ARTIFACT_CANCELLED_BEFORE_DECISION",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-0-0",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000900",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000100",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000200",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000010",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000100",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000200",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000100",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "CANCELLED_BEFORE_DECISION"
+      },
+      "expectedSubjectState": "CANCELLED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "CONFIG_ARTIFACT_APPROVED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-0-1",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000900",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000100",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000200",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000010",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000100",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000200",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000100",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "APPROVED"
+      },
+      "expectedSubjectState": "APPROVED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "CONFIG_ARTIFACT_REJECTED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-0-2",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000900",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000100",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000200",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000010",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000100",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000200",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000100",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "REJECTED"
+      },
+      "expectedSubjectState": "REJECTED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "CONFIG_ARTIFACT_UNKNOWN",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-0-3",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000900",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000100",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000200",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000010",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000100",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000200",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000100",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "UNKNOWN"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "CONFIG_ARTIFACT_NOT_FOUND",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-0-4",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000900",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000100",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "CONFIG_ARTIFACT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000200",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000010",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000100",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000200",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000010",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000100",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "NOT_FOUND"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RUN_CANCELLED_BEFORE_DECISION",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-1-0",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000901",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RUN",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000101",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RUN",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000201",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000011",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000101",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000201",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000101",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "CANCELLED_BEFORE_DECISION"
+      },
+      "expectedSubjectState": "CANCELLED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RUN_APPROVED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-1-1",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000901",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RUN",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000101",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RUN",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000201",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000011",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000101",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000201",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000101",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "APPROVED"
+      },
+      "expectedSubjectState": "APPROVED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RUN_REJECTED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-1-2",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000901",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RUN",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000101",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RUN",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000201",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000011",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000101",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000201",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000101",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "REJECTED"
+      },
+      "expectedSubjectState": "VALIDATION_FAILED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RUN_UNKNOWN",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-1-3",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000901",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RUN",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000101",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RUN",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000201",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000011",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000101",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000201",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000101",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "UNKNOWN"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RUN_NOT_FOUND",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-1-4",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000901",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RUN",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000101",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RUN",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000201",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000011",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000101",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000201",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000011",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000101",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "NOT_FOUND"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "PAYMENT_CANCELLED_BEFORE_DECISION",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-2-0",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000902",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "PAYMENT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000102",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "PAYMENT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000202",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000012",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000102",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000202",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000102",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "CANCELLED_BEFORE_DECISION"
+      },
+      "expectedSubjectState": "CANCELLED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "PAYMENT_APPROVED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-2-1",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000902",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "PAYMENT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000102",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "PAYMENT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000202",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000012",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000102",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000202",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000102",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "APPROVED"
+      },
+      "expectedSubjectState": "APPROVED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "PAYMENT_REJECTED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-2-2",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000902",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "PAYMENT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000102",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "PAYMENT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000202",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000012",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000102",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000202",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000102",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "REJECTED"
+      },
+      "expectedSubjectState": "REJECTED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "PAYMENT_UNKNOWN",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-2-3",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000902",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "PAYMENT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000102",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "PAYMENT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000202",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000012",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000102",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000202",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000102",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "UNKNOWN"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "PAYMENT_NOT_FOUND",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-2-4",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000902",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "PAYMENT",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000102",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "PAYMENT",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000202",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000012",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000102",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000202",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000012",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000102",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "NOT_FOUND"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "GL_CANCELLED_BEFORE_DECISION",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-3-0",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000903",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "GL",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000103",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "GL",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000203",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000013",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000103",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000203",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000103",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "CANCELLED_BEFORE_DECISION"
+      },
+      "expectedSubjectState": "CANCELLED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "GL_APPROVED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-3-1",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000903",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "GL",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000103",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "GL",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000203",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000013",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000103",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000203",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000103",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "APPROVED"
+      },
+      "expectedSubjectState": "APPROVED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "GL_REJECTED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-3-2",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000903",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "GL",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000103",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "GL",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000203",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000013",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000103",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000203",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000103",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "REJECTED"
+      },
+      "expectedSubjectState": "REJECTED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "GL_UNKNOWN",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-3-3",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000903",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "GL",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000103",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "GL",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000203",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000013",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000103",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000203",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000103",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "UNKNOWN"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "GL_NOT_FOUND",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-3-4",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000903",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "GL",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000103",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "GL",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000203",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000013",
+        "rowVersion": 7,
+        "status": "APPROVAL_PENDING"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000103",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000203",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000013",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000103",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "NOT_FOUND"
+      },
+      "expectedSubjectState": "APPROVAL_PENDING",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RETIREMENT_CASE_CANCELLED_BEFORE_DECISION",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-4-0",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000904",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000104",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000204",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000014",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000104",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000204",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000104",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "CANCELLED_BEFORE_DECISION"
+      },
+      "expectedSubjectState": "CANCELLED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RETIREMENT_CASE_APPROVED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-4-1",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000904",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000104",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000204",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000014",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000104",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000204",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000104",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "APPROVED"
+      },
+      "expectedSubjectState": "REVIEWED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RETIREMENT_CASE_REJECTED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-4-2",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000904",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000104",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000204",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000014",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000104",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000204",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000104",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "REJECTED"
+      },
+      "expectedSubjectState": "CALCULATED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RETIREMENT_CASE_UNKNOWN",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-4-3",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000904",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000104",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000204",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000014",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000104",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000204",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000104",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "UNKNOWN"
+      },
+      "expectedSubjectState": "CALCULATED",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "RETIREMENT_CASE_NOT_FOUND",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-4-4",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000904",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000104",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "RETIREMENT_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000204",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000014",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000104",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000204",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000014",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000104",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "NOT_FOUND"
+      },
+      "expectedSubjectState": "CALCULATED",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "YEAR_END_CASE_CANCELLED_BEFORE_DECISION",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-5-0",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000905",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000105",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000205",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000015",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000105",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000205",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000105",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "CANCELLED_BEFORE_DECISION"
+      },
+      "expectedSubjectState": "CANCELLED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "YEAR_END_CASE_APPROVED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-5-1",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000905",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000105",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000205",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000015",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000105",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000205",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000105",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "APPROVED"
+      },
+      "expectedSubjectState": "REVIEWED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "YEAR_END_CASE_REJECTED",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-5-2",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000905",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000105",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000205",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000015",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000105",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000205",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000105",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "REJECTED"
+      },
+      "expectedSubjectState": "CALCULATED",
+      "expectedSubjectWrites": 1,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "YEAR_END_CASE_UNKNOWN",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-5-3",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000905",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000105",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000205",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000015",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000105",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000205",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000105",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "UNKNOWN"
+      },
+      "expectedSubjectState": "CALCULATED",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    },
+    {
+      "fixtureId": "YEAR_END_CASE_NOT_FOUND",
+      "operationId": "pay.approval.reconcile",
+      "headers": {
+        "Idempotency-Key": "cancel-5-4",
+        "X-Correlation-Id": "00000000-0000-4000-8000-000000000905",
+        "If-Match": "\"7\""
+      },
+      "cancelRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "approvalBindingId": "00000000-0000-4000-8000-000000000105",
+        "reason": "REQUEST_WITHDRAWN"
+      },
+      "reconcileRequest": {
+        "subjectKind": "YEAR_END_CASE",
+        "cancellationSnapshot": {
+          "contractRef": "Approval.PayrollCancellationSnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000000205",
+          "ownerRevision": 8,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "loadedSubject": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000015",
+        "rowVersion": 7,
+        "status": "CALCULATED"
+      },
+      "loadedBinding": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000000105",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "subjectRevision": 5,
+        "subjectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rowVersion": 2,
+        "decision": "PENDING"
+      },
+      "ownerResponse": {
+        "tenantId": 1,
+        "requestPublicId": "00000000-0000-4000-8000-000000000205",
+        "subjectPublicId": "00000000-0000-4000-8000-000000000015",
+        "bindingPublicId": "00000000-0000-4000-8000-000000000105",
+        "ownerRevision": 8,
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "outcome": "NOT_FOUND"
+      },
+      "expectedSubjectState": "CALCULATED",
+      "expectedSubjectWrites": 0,
+      "expectedOriginalFinancialWrites": 0,
+      "providerCalls": 0,
+      "syntheticOnly": true,
+      "CURRENT_NATIVE_OWNER_RESPONSE_PUBLISHED": false
+    }
+  ]
+}

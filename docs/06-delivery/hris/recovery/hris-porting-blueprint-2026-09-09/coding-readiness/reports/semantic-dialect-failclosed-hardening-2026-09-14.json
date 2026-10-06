@@ -1,0 +1,272 @@
+{
+  "schema": "dwp.hris.semantic-dialect-failclosed-hardening.v1",
+  "status": "VALIDATOR_HARDENING_VERIFIED_CURRENT_CONTRACTS_STILL_FAIL",
+  "capturedAtUtc": "2026-09-14T02:33:25.855388+00:00",
+  "gateAuthorization": "NONE_G3_CLOSED",
+  "implementationScope": [
+    "coding-readiness/validate_modern_semantic_field_lineage.py",
+    "coding-readiness/test_modern_semantic_field_lineage.py",
+    "coding-readiness/validate_modern_capability_contracts.py: minimal independent-scope caller hook"
+  ],
+  "mutations": {
+    "proposalChangedByThisTask": false,
+    "backendChangedByThisTask": false,
+    "frontendChangedByThisTask": false,
+    "canonicalContractsChanged": false,
+    "gateOrSealChanged": false,
+    "actualDatabaseOrUserServerTouched": false,
+    "commitCreated": false
+  },
+  "modeContract": {
+    "default": "READINESS",
+    "readinessRequirements": [
+      "explicit canonical operationBindings and operationFieldLineage arrays",
+      "nonempty exact unique binding and lineage operation IDs",
+      "both ID sets cover one another exactly once",
+      "document scope.operations/fieldLineageScope.operations/commands/queries equal actual supplied graph when declared",
+      "independently supplied expected IDs/count equal the exact audited document scope",
+      "unsupported or mixed operationDeltas/internalOperations/operations graphs rejected until explicit canonical successor adapter"
+    ],
+    "scopeParameters": {
+      "expected_operation_ids": "Exact independently known scope for the supplied document, not a silently applied filter; module documents may be smaller when their independent registry and counts are exact.",
+      "expected_operation_count": "Dynamically derived integer; zero/boolean/coerced/negative readiness counts rejected; no hardcoded 100-operation target."
+    },
+    "diagnosticOnly": {
+      "mode": "DIAGNOSTIC_ONLY",
+      "explicitEmptyCanonicalGraphAllowed": true,
+      "unsupportedOrMissingGraphsAllowed": false,
+      "readinessPassAlwaysFalse": true,
+      "validationStatus": "DIAGNOSTIC_ONLY when error-free",
+      "cliOrAggregateGateWiring": false,
+      "existingIntentionalZeroOperationDiagnosticCallerFound": false,
+      "note": "Only explicit library keyword can opt into this observation mode. CLI has no diagnostic bypass and uses readiness_pass for status/exit."
+    },
+    "independentScopeOrigin": "Both fixed canonical CLI and aggregate derive expected IDs/count from canonical_operation_and_table_maps(validate_contracts(capability registry)), not operationBindings cloned from the document under test."
+  },
+  "sourceCompatibility": {
+    "OperationValidatorFieldChecksChanged": false,
+    "fieldCheckerImplementationSha256": "cd32a67174847ea3747d6ce1787314fafb1a02f9da8234a89f19dda8b44a0e07",
+    "normalQueriesForcedToWrite": false,
+    "queryShapeBindingTypeIdentityChecksPreserved": true,
+    "oldHealthyAndNegativeUnitCases": 35,
+    "newDialectScopeUnitCases": 25,
+    "previousIndependentCurrentIssueCaptureSha256": "bcff18a5bf25ad27f4d5e8152a4f8f95cd5e53584dc8b9c5e9bc8da6603e4e99",
+    "currentIssuesSha256": "bcff18a5bf25ad27f4d5e8152a4f8f95cd5e53584dc8b9c5e9bc8da6603e4e99",
+    "issueFingerprintUnchangedSincePreviousIndependentCapture": true,
+    "note": "The pre-modification CLI observed 2,007 actual canonical errors and the same eight issue counts. Those are historical measurements, not hardcoded acceptance totals; current metrics/fingerprint are independently recomputed. The current broken contracts are intentionally not made PASS."
+  },
+  "verification": {
+    "capturedAtUtc": "2026-09-14T02:33:25.855388+00:00",
+    "pythonVersion": "3.12.14",
+    "warningPolicy": "error::SyntaxWarning",
+    "unitTests": {
+      "cases": 60,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "caseIds": [
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_both_graph_ids_relabelled_with_same_count_are_caught",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_both_graphs_and_counts_shortened_are_caught_by_independent_scope",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_canonical_cli_uses_independent_registry_not_cloned_doc_ids",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_canonical_graphs_require_array_not_null_object_or_string",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_declared_scope_must_be_object",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_diagnostic_cannot_accept_unsupported_or_missing_graph",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_diagnostic_still_validates_real_nonempty_sources",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_document_count_mismatch_and_noncanonical_numbers_are_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_duplicate_binding_cannot_be_dictionary_overwritten",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_duplicate_lineage_is_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_empty_canonical_scope_is_not_readiness",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_empty_lineage_cannot_cover_nonempty_operations",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_explicit_empty_diagnostic_is_never_readiness_pass",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_independent_count_mismatch_cannot_be_supplied_by_document",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_independent_scope_requires_unique_exact_ids_not_filter",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_invalid_independent_count_boolean_zero_string_negative",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_legitimate_scope_counts_can_grow_without_hardcoded_total",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_minimum_real_query_witness_needs_no_write",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_missing_either_canonical_graph_is_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_nonobject_document_is_failclosed",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_operation_ids_require_exact_nonempty_string_and_object",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_proposal_jobs_cannot_hide_behind_appended_canonical_graph",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_unknown_lineage_and_missing_operation_lineage_are_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_unknown_validation_mode_is_not_diagnostic_fallback",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_unsupported_wfm_22_public_and_6_internal_is_not_zero_op_pass",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_aggregate_string_cannot_bypass_source_registration",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_business_source_requires_provenance",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_correlation_cannot_hide_inside_registered_derived_source",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_correlation_cannot_originate_worker_uuid",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_correlation_header_is_not_a_business_object",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_cross_owner_sql_reference_is_forbidden",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_cursor_requires_asof_binding",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_derived_string_requires_registered_definition",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_generated_id_must_be_persisted_for_replay",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_generated_id_must_match_persisted_entity",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_generic_derivation_slogan_is_not_executable_contract",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_healthy_request_principal_local_fk_query_receipt_generated_id",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_local_resolution_must_bind_real_internal_column",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_local_uuid_to_bigint_needs_exact_resolution",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_nested_record_projection_requires_all_fields",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_nonexistent_column_is_not_a_projection",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_owner_validation_cannot_be_false",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_policy_id_cannot_be_relabelled_as_principal",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_projection_must_use_declared_inputs",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_projection_string_cannot_bypass_source_registration",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_real_scalar_uuid_array_cannot_masquerade_as_record_page_items",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_receipt_cannot_use_unregistered_or_phantom_table",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_receipt_registration_needs_actual_columns",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_request_cannot_expose_internal_id_space",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_request_uuid_needs_independent_entity_declaration",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_response_cannot_expose_internal_bigint_as_uuid",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_schema_entity_cannot_disagree_with_independent_fk",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_source_table_must_be_in_exact_operation_access",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_sql_parser_handles_nested_comma_defaults_and_constraints",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_trace_cannot_populate_non_metadata_scalar",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_typed_definition_cannot_omit_dependencies",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_typed_definition_dependencies_must_be_real",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_typed_definitions_are_acyclic",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_unused_typed_definitions_are_still_checked",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_wrong_request_sink_is_not_excused_by_correct_column_source"
+      ],
+      "outputSha256": "11bd99735a33705e2f59a717b4f47cb3335e1cd7c2dc1102b262795a9cce951a"
+    },
+    "existingAggregateNegativeCases": 16,
+    "existingAggregateNegativeFailures": [],
+    "currentCanonical": {
+      "status": "FAIL",
+      "readinessPass": false,
+      "operations": 100,
+      "fieldSources": 2335,
+      "typedSources": 0,
+      "errors": 2007,
+      "issueCounts": {
+        "CORRELATION_AS_BUSINESS_ID": 45,
+        "CORRELATION_OBJECT_REFERENCE": 100,
+        "PROJECTION_SOURCE_SHAPE_MISMATCH": 22,
+        "REQUEST_ENTITY_UNDECLARED": 108,
+        "SEMANTIC_BINDING_MISSING": 371,
+        "SOURCE_COLUMN_MISSING": 413,
+        "SOURCE_TYPE_MISMATCH": 82,
+        "SOURCE_UNRESOLVED": 866
+      },
+      "issuesSha256": "bcff18a5bf25ad27f4d5e8152a4f8f95cd5e53584dc8b9c5e9bc8da6603e4e99",
+      "independentExpectedCount": 100
+    },
+    "actualWfmProposal": {
+      "sha256": "2f95367ceb94b871833bce3b38406c08c770049fd41b0df94b720a5123898c40",
+      "publicOperations": 22,
+      "internalOperations": 6,
+      "status": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "UNSUPPORTED_PROPOSAL_DIALECT",
+        "OPERATION_GRAPH_REQUIRED"
+      ]
+    },
+    "commands": [
+      {
+        "command": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-W",
+          "error::SyntaxWarning",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/validate_modern_semantic_field_lineage.py",
+          "--self-test",
+          "--compact"
+        ],
+        "exitCode": 1,
+        "durationSeconds": 0.238971,
+        "outputSha256": "9ac55d5e9df4f7120cbdbb81ef2332272c4f6f202001ae1958156252a816ca2a",
+        "statusLines": [
+          "MODERN_SEMANTIC_LINEAGE_SELF_TESTS=PASS",
+          "MODERN_SEMANTIC_FIELD_LINEAGE=FAIL errors=2007 operations=100 field_sources=2335 typed_sources=0",
+          "ISSUE_COUNTS={\"CORRELATION_AS_BUSINESS_ID\": 45, \"CORRELATION_OBJECT_REFERENCE\": 100, \"PROJECTION_SOURCE_SHAPE_MISMATCH\": 22, \"REQUEST_ENTITY_UNDECLARED\": 108, \"SEMANTIC_BINDING_MISSING\": 371, \"SOURCE_COLUMN_MISSING\": 413, \"SOURCE_TYPE_MISMATCH\": 82, \"SOURCE_UNRESOLVED\": 866}"
+        ]
+      },
+      {
+        "command": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-W",
+          "error::SyntaxWarning",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/validate_modern_capability_contracts.py",
+          "--self-test",
+          "--compact"
+        ],
+        "exitCode": 1,
+        "durationSeconds": 0.372185,
+        "outputSha256": "1c6676517fc6483b6f3cd38dee3faba8777165c8707ad4da8f30f8df2c42acb1",
+        "statusLines": [
+          "MODERN_SEMANTIC_LINEAGE_SELF_TESTS=PASS cases=60",
+          "MODERN_CAPABILITY_CONTRACTS=FAIL errors=2007"
+        ]
+      }
+    ],
+    "sourceManifest": [
+      {
+        "path": "validate_modern_semantic_field_lineage.py",
+        "sha256": "eaaf05d092c71c21edf1968d9c6c22d193a2eef7b083b7be5f56e2b31cf086a7",
+        "lines": 839
+      },
+      {
+        "path": "test_modern_semantic_field_lineage.py",
+        "sha256": "9a429b5abe442b5f03c3280023f21bdfb0ce0b742c4cd70d5290cadee9430209",
+        "lines": 483
+      },
+      {
+        "path": "validate_modern_capability_contracts.py",
+        "sha256": "43b9e7456dd4f6cf5fd9edfeae1f9c60c3c299d7ad6f51eeb6be392f16e33737",
+        "lines": 2000
+      }
+    ],
+    "canonicalPins": [
+      {
+        "path": "modern-capability-exact-schema-contracts.v1.json",
+        "sha256": "32b3d6c4e98037c0a26df0b08e112ad9ab067f95d70f3dc3d5dedf4f53f291fb"
+      },
+      {
+        "path": "modern-capability-event-payload-contracts.v1.json",
+        "sha256": "ae9619899fad6dcfe19ad270b38b62371fdeef51f9de4eb8dee425d4d878a12f"
+      }
+    ],
+    "fieldCheckerImplementationSha256": "cd32a67174847ea3747d6ce1787314fafb1a02f9da8234a89f19dda8b44a0e07",
+    "normalMinimalQueryWitness": {
+      "status": "PASS",
+      "readinessPass": true,
+      "operations": 1,
+      "fieldSources": 7,
+      "typedSources": 5,
+      "writesTables": [],
+      "errors": 0
+    },
+    "explicitDiagnosticWitness": {
+      "status": "DIAGNOSTIC_ONLY",
+      "readinessPass": false,
+      "operations": 0,
+      "errors": 0
+    }
+  },
+  "crossRuntime": {
+    "python396UnitCases": 60,
+    "python396UnitFailures": 0,
+    "python396UnitErrors": 0,
+    "python396UnitSkips": 0,
+    "python396ExitCode": 0,
+    "python396Command": "python3 -W error::SyntaxWarning -m unittest discover -s /Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness -p test_modern_semantic_field_lineage.py",
+    "note": "The final unchanged source passed all 60 cases on Python 3.9.6 as well as the independently captured Python 3.12.14 SyntaxWarning-as-error run. Current canonical/aggregate CLI and complete machine manifest proof use Python 3.12.14."
+  },
+  "regressionCoverage": [
+    "normal minimum real readonly query: 1 operation / 7 field sources / 5 typed sources / no writes",
+    "unsupported synthetic WFM22+6 and current actual WFM proposal",
+    "proposal jobs hidden behind appended canonical bindings (mixed dialect)",
+    "missing/empty/null/object/string binding or lineage graphs",
+    "duplicate/blank/nonstring/nonobject IDs and missing/unknown lineage closure",
+    "declared command/query/total counts and independent count mismatch",
+    "both binding and lineage graphs shortened with rewritten matching document counts",
+    "both graph IDs relabelled while preserving count",
+    "fixed canonical CLI ignores cloned document IDs and uses independent registry",
+    "independent scope invalid/duplicate/empty/partial (no silent selection filter)",
+    "legitimate scope expansion, exact module witness and no fixed canonical count",
+    "explicit zero diagnostic never readiness PASS; no unknown-mode fallback",
+    "diagnostic still checks bad nonempty real-column sources",
+    "all previous business-ID/correlation/internal-vs-public/FK/source/projection/receipt/cursor/typed-source negative cases preserved"
+  ],
+  "remainingBoundary": "This hardening does not convert proposal dialects, publish owner DTO/SPI/PEP/fixtures, implement domain lifecycles or execute native HRIS CRUD. Canonical source errors and other readiness P0 remain; global/module G3 is not opened."
+}

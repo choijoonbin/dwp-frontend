@@ -1,0 +1,316 @@
+{
+  "activeSourceCount": 45,
+  "dispositionCounts": {
+    "CONTROL_WRITER_SELF_GUARDED": 1,
+    "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+    "GUARDED_DIRECT_ENTRYPOINT": 40,
+    "GUARDED_LIBRARY_CALLERS_ONLY": 3
+  },
+  "entries": [
+    {
+      "disposition": "GUARDED_CJS_DIRECT_ENTRYPOINT",
+      "language": "CJS",
+      "path": "coding-readiness/audit_sys_exact_business_start.cjs",
+      "sourceSha256": "544307f4449422b29018b0273f0b630f24aba74bc4cce1bbd706cf608bb92726"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/build_modern_causal_independent_oracle.py",
+      "sourceSha256": "c93a6437bd7b82f0cb183f5b7efa0b22483619ccf9dfca7f97cb5f81c9ded1bd"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_g3_slice_code_go_register.py",
+      "sourceSha256": "3c3d0e5766cef6843ed60474c35bf412b9c66c1e3f67f6d59a3305a6e560095a"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_canonical_five_successor.py",
+      "sourceSha256": "b194782344484bff2b1ce6fc354f17458e1d668d4bbf00aac5298e26c44de5a5"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_causal_module_successor.py",
+      "sourceSha256": "96b12e8c1fa59c8b0f8b5b338629037ef3d168abe48efff17adae5db43448106"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_causal_successor.py",
+      "sourceSha256": "560f7b321a5890b0903cc91798abb8c51336c8061aa767bc54dec9ad81bb0122"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_closed_set_manifest.py",
+      "sourceSha256": "2a1f62c81eb626c55fe54b8508a50b87307961b9f63dcf273da6764557d43b52"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_event_successor_lineage.py",
+      "sourceSha256": "79060782e28faebc0cf174acb893e23d414495a35e824cd91873199335e98c0d"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_exact_event_successor.py",
+      "sourceSha256": "cd6406e5103de93c22e06a1c65272b8008c720e64b80a47f97d7f9a202c1f660"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sourceSha256": "aed23eeaed6aaa68453ec5c45cce2ad4140ccf0a946cb1a4e254f393a205ce9f"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_semantic_field_lineage.py",
+      "sourceSha256": "fa68630a5d975774cd742c99e25bd5a5f59f46a6d0d7af2b377c6840dfb98b5a"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_modern_semantic_identity_successor.py",
+      "sourceSha256": "3f35ebe83f95bbd05e398631980d71ec1fdc3f1d569155f94028dce398d364c5"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/generate_sys_listening_stream_authority_successor.py",
+      "sourceSha256": "7d000266c7f71e43e2c1915b04c9ab18003536923639832615114851f9fdf868"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py",
+      "sourceSha256": "5cdec3ce379aeccc7720f2c924d34eb90ef93247ece58c7390ffdaeb6370b93f"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sourceSha256": "4d26757397acddd744e7abe7fb29b05fc9d094a5f8be0b9aad1f7f8784ecda97"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py",
+      "sourceSha256": "3c2bb1df13e9d67fe0786000889ff578d58052257dfb294ac66c5a5b45cbc6df"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-independent-successor/audit_successor_dependency_dag.py",
+      "sourceSha256": "396ea7071f018627fd099c947d8e7255c64796a69bb0bbfa19df5bf86b335784"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py",
+      "sourceSha256": "667c997bc1da451c840d64db5c1dc13908c2c20294e92093f71815ff350fbce9"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-independent-successor/validate_modern_independent_successor.py",
+      "sourceSha256": "88ab5e99459cb68898b6e4ecda17f1dac8d304973f3b320d594d537c8b4af3f9"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-independent-successor/validate_table_scope_132_independent_review.py",
+      "sourceSha256": "abc9424332fe0bae18f098c68600bd17403c52e45855c965f53768f8c543a223"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py",
+      "sourceSha256": "7f8c892af0d1f16a2d61197a96f8fb518f112bf47e44e5c2a187c28d035e9334"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py",
+      "sourceSha256": "ee3f0fa75269c611131e0ea3e7c357768e2fd5c9fc5451ab9d16bd0e39e01d5e"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern-physical-successor/validate_modern_physical_successor.py",
+      "sourceSha256": "372c0b393ef95a49f0c18a68f24a940d25b9f3ac5d2a91a7cf9074d19c713750"
+    },
+    {
+      "disposition": "GUARDED_LIBRARY_CALLERS_ONLY",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern_causal_candidate_projection.py",
+      "sourceSha256": "a436c36fd183cac30902529e588bfcde8f53992521fb12c5c0b85c36aa04d9ed"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern_causal_derivative_publication.py",
+      "sourceSha256": "fe104e8bc38352b495b97dea0e7477bf607b207b3ca13435ff94b0d86b287051"
+    },
+    {
+      "disposition": "GUARDED_LIBRARY_CALLERS_ONLY",
+      "language": "PYTHON",
+      "path": "coding-readiness/modern_causal_successor_profile.py",
+      "sourceSha256": "4e0931a98c149f584823b512d064f2edc5987330facffca384b260dd5e81f9e8"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/prepare_modern_causal_final_endorsement.py",
+      "sourceSha256": "63e8e42aaf779bc62858b18474ee948dcb27d64b8e5d8b4220ae2031c8e2515a"
+    },
+    {
+      "disposition": "CONTROL_WRITER_SELF_GUARDED",
+      "language": "PYTHON",
+      "path": "coding-readiness/promote_modern_successor_bundle.py",
+      "sourceSha256": "16775944d01a082b63ac1972924dee4f5361079634aa4acbefd38627b1d553ae"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/run_modern_causal_independent_pg_fixtures.py",
+      "sourceSha256": "ebd6009bc31ee722bcfa070c73df509df27d2044f3f86c061cfda0dec4f22562"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/semantic-remediation/tim_cross_context_successor_v4.py",
+      "sourceSha256": "7fec0778a26f0a0459faa45ed3b4f7dee590f0ca16dbc0690b4368fd8631abb8"
+    },
+    {
+      "disposition": "GUARDED_LIBRARY_CALLERS_ONLY",
+      "language": "PYTHON",
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sourceSha256": "7394b66f91a01eed7bec1cf10749e63b08b67fded5a88562a2c2aea6f66085aa"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/test_modern_candidate_validator_coherence.py",
+      "sourceSha256": "12bbc45dc56b2974a4f85958b764295b8d672fa40b091d1a01d5b22a675d164d"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_compensation_snapshot_v2_authority.py",
+      "sourceSha256": "4d9223727c73a73322eb3929093b2cbc8dd2ffc869ee3a3b1904113be7fbda15"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_full_coding_readiness.py",
+      "sourceSha256": "a0f41a4de53142b81f5e563622fc7f9bbfb2c754138a3644c46e80111f52d031"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_g3_slice_code_go.py",
+      "sourceSha256": "c1e320763e35d4cfb8fbb55d6b7ac7b48630de9307fe225218839da681a67d8a"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_modern_capability_contracts.py",
+      "sourceSha256": "3953e904fd6d1f6d5e8fa11b8eb45de76471486291886581d72e1608adebbadf"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_modern_causal_final_endorsement.py",
+      "sourceSha256": "83f6d23976fcda78a1c216692a73572ee6697443f8b5a5a0c8cfb7deb35c88f9"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_modern_causal_independent_oracle.py",
+      "sourceSha256": "49343d922c2289b210d955a398337e22186c5ee693e5295bcb470cd7a1e2c51b"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_modern_causal_state_contracts.py",
+      "sourceSha256": "8e8572ff2231dff866e0a73a5762f3de8bf66f751b473fb87316af6604c52285"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_modern_semantic_field_lineage.py",
+      "sourceSha256": "8d3e2939418e5538b0710fc6a0c4227599efaf499dc23ce1352a683c7287241c"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_physical_owner_prefixes.py",
+      "sourceSha256": "f88f108bc8c71d76c75936e24fb6d7b65fde872f66b0367d21cb48925b2aeb4d"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_published_gate_truth.py",
+      "sourceSha256": "1a3c75622f12a738fc4e35b22fec6a33dc038aa2c0505d00957cb6f6b510bb2b"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_sys_exact_business_start.py",
+      "sourceSha256": "2c90e3524f1df54e87261d64e2a7f1d4d3e854b473129098919a9b576684eca7"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/validate_sys_listening_stream_authority_successor.py",
+      "sourceSha256": "05fa988098f2c5b92bc045fac4be97c3073ddd6d60667dcbb880d396055d6b76"
+    },
+    {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "g0/validate_blueprint_artifact_lineage.py",
+      "sourceSha256": "a8e2140d485c8066d0d15a839c20ac22db0ebb00684eaaa87a166c325cac06c0"
+    }
+  ],
+  "generatedAt": "2026-09-16T06:19:51Z",
+  "inventoryId": "DWP-HRIS-MODERN-SUCCESSOR-SUPPORTED-READERS-2026-09-16-V5",
+  "predecessorInventory": {
+    "disposition": "IMMUTABLE_SELF_SEALED_PREDECESSOR_SUPERSEDED_BY_V5_REFRESH",
+    "fileSha256": "40d272662a574e67f16779580822d6c68ce2ceb39868825a96f19a15d58eb08c",
+    "path": "coding-readiness/modern-successor-supported-reader-inventory.v4.json",
+    "sealedPayloadSha256": "6d54e432c4c069338087eb9a944e7ba04da2b7ed3e587eca7a1612bab696b5dd"
+  },
+  "readerContract": {
+    "directBypass": "NOT_SUPPORTED_AND_SOURCE_VALIDATOR_REJECTED",
+    "dynamicDiscovery": "DIRECT_DESTINATION_BASENAME_OR_SUCCESSOR_PATH_RESOLVER_REFERENCE",
+    "historicalOutputs": "CREATE_ONLY_EXPLICIT_UNIQUE_PATHS_NO_CANONICAL_V1_REPLACEMENT",
+    "lock": "SHARED_FLOCK_ON_HRIS_VERIFICATION",
+    "persistentFence": "NONTERMINAL_PROMOTION_JOURNAL_BLOCKS_AFTER_WRITER_DEATH",
+    "productionState": "NOT_AUTHORIZED_G6",
+    "writerLock": "EXCLUSIVE_FLOCK_ON_SAME_INODE"
+  },
+  "schema": "dwp.hris.modern-successor-supported-reader-inventory.v5",
+  "scope": {
+    "canonicalDestinations": 8,
+    "discoveryMarkers": [
+      "successor_paths("
+    ],
+    "historicalReportScriptsExcludedFromSupportedExecution": true,
+    "infrastructureSelfReferencesExcluded": [
+      "coding-readiness/modern_successor_reader_guard.cjs",
+      "coding-readiness/modern_successor_reader_guard.py",
+      "coding-readiness/validate_modern_successor_reader_coverage.py"
+    ],
+    "physicalDestinations": 8,
+    "totalDestinations": 16
+  },
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "60f4a09fa4908a21da3e80817b1cfc06828663734c779c0dec19951e7c55b956",
+  "status": "ACTIVE_FAIL_CLOSED_EXACT_ALLOWLIST"
+}

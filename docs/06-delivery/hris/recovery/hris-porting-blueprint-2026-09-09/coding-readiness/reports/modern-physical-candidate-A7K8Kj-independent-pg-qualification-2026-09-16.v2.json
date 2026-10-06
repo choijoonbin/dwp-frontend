@@ -1,0 +1,229 @@
+{
+  "schema": "dwp.hris.modern-physical-candidate-independent-pg-qualification/v2",
+  "reportId": "modern-physical-candidate-A7K8Kj-independent-pg-qualification-2026-09-16.v2",
+  "recordedAtUtc": "2026-09-16T04:24:43Z",
+  "status": "PASS_PHYSICAL_QUALIFICATION_ONLY_NOT_G3_AUTHORITY",
+  "authority": "INDEPENDENT_PHYSICAL_QUALIFICATION_ONLY_NOT_G3_NOT_G6",
+  "decision": {
+    "qualified": true,
+    "qualifiedSubject": "EXACT_A7K8Kj_CANONICAL_AND_PHYSICAL_CANDIDATE_BYTES",
+    "scope": "POSTGRESQL_16_AND_18_PHYSICAL_FEASIBILITY_SECURITY_AND_TEMPORAL_ARBITRATION",
+    "limitations": [
+      "NOT_CANONICAL_OR_LIVE_PROMOTION_AUTHORITY",
+      "NOT_G3_GATE_AUTHORITY",
+      "NOT_OPEN_G3_CODE_AUTHORITY",
+      "NOT_MODULE_SESSION_START_AUTHORITY",
+      "NOT_G6_PRODUCTION_ACTIVATION_AUTHORITY"
+    ],
+    "nextStep": "MAY_BE_USED_AS_PHYSICAL_QUALIFICATION_INPUT_TO_A_SEPARATE_CONTROLLED_TRANSITION_DECISION"
+  },
+  "productionState": "NOT_AUTHORIZED_G3_OR_G6",
+  "scope": {
+    "profile": "v5-131-successor",
+    "canonicalDir": "coding-readiness/modern-canonical-candidate.A7K8Kj",
+    "physicalDir": "coding-readiness/modern-physical-candidate.A7K8Kj",
+    "policy": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+    "ownerPrefixRegister": "coding-readiness/physical-owner-prefix-register.csv",
+    "validator": "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py",
+    "strictReadOnly": true,
+    "candidateCreated": false,
+    "promotionOrPublication": false,
+    "gateTransition": false
+  },
+  "rejectedPredecessorReport": {
+    "path": "coding-readiness/reports/modern-physical-candidate-A7K8Kj-independent-pg-qualification-2026-09-16.v1.json",
+    "fileSha256": "c7c1128d7df1fedaaf29301d3733493b6a5abce36523bd7756459e56a82573e8",
+    "declaredSealedPayloadSha256": "PENDING",
+    "computedPayloadDigestIfSealFieldExcluded": "e26fc96519cba3dd8c1c3e2434df058b23fbcfc795ddfba5d83d5c093d968347",
+    "disposition": "REJECTED_INCOMPLETE_NOT_OVERWRITTEN_NOT_AUTHORITY",
+    "evidenceLimitation": "Its projected PG rows retained seals from fuller execution rows and therefore their projected bytes could not reproduce those seals; its validator pin also differed from the current validator bytes.",
+    "rerunRequired": true
+  },
+  "authorReportIndependentVerification": {
+    "path": "coding-readiness/reports/modern-physical-v5-a7k8kj-pg-author-verification-2026-09-16.v1.json",
+    "fileSha256": "9efd91f6bf622450d5a255ff65dd72f717e53cada203ec08f27aae0786f585df",
+    "declaredSealedPayloadSha256": "e4db63047c2a6224575cef6929fcfd68bdfc1ff339636b14c564e0bc0a4ec935",
+    "computedSealedPayloadSha256": "e4db63047c2a6224575cef6929fcfd68bdfc1ff339636b14c564e0bc0a4ec935",
+    "selfSealValid": true,
+    "status": "PASS_CANDIDATE_NOT_G3_AUTHORITY",
+    "errors": 0,
+    "canonicalHashesMatchCurrent": true,
+    "physicalHashesMatchCurrent": true,
+    "postgres16RowSealValid": true,
+    "postgres18RowSealValid": true,
+    "treatedAsAuthority": false
+  },
+  "snapshotPolicy": {
+    "method": "O_RDONLY|O_NOFOLLOW|O_CLOEXEC with lstat/fstat identity and metadata checks before and after bounded reads; exact directory membership",
+    "fields": ["path", "sha256", "dev", "inode", "mode", "size", "mtime_ns", "ctime_ns"],
+    "beforeSnapshotSha256": "ffbb15c82c9e3629e1629ad800a9e21d1184072f9c8af89b7999f9ac8bd862da",
+    "afterSnapshotSha256": "ffbb15c82c9e3629e1629ad800a9e21d1184072f9c8af89b7999f9ac8bd862da",
+    "exactBeforeAfterEquality": true,
+    "canonicalFileCount": 8,
+    "physicalFileCount": 8,
+    "supportingFileCount": 14
+  },
+  "candidateIntegrity": {
+    "canonicalMembership": [
+      "modern-capability-causal-state-contracts.v2.json",
+      "modern-capability-closed-set-manifest.v3.json",
+      "modern-capability-event-payload-contracts.v1.json",
+      "modern-capability-exact-schema-contracts.v1.json",
+      "modern-capability-operation-causal-contract-ssot.v2.json",
+      "modern-capability-public-identity-registry.v1.json",
+      "modern-capability-semantic-bindings.v1.json",
+      "sys-listening-stream-authority-successor.v2.json"
+    ],
+    "physicalMembership": [
+      "hrm-modern-forward-ddl.v4.sql",
+      "modern-owner-handler-physical-contracts.v4.json",
+      "modern-query-projection-physical-contracts.v4.json",
+      "per-modern-forward-ddl.v4.sql",
+      "physical-candidate-generation-report.v4.json",
+      "sys-auth-modern-forward-ddl.v4.sql",
+      "sys-platform-modern-forward-ddl.v4.sql",
+      "tim-modern-forward-ddl.v4.sql"
+    ],
+    "membershipExact": true,
+    "before": {
+      "canonical": [
+        {"path": "modern-capability-causal-state-contracts.v2.json", "sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe", "dev": 16777234, "inode": 47635963, "mode": "0o600", "size": 4790036, "mtime_ns": 1789529754770713989, "ctime_ns": 1789529754771598118},
+        {"path": "modern-capability-closed-set-manifest.v3.json", "sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612", "dev": 16777234, "inode": 47631719, "mode": "0o600", "size": 294333, "mtime_ns": 1789529741603144818, "ctime_ns": 1789529741613400356},
+        {"path": "modern-capability-event-payload-contracts.v1.json", "sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4", "dev": 16777234, "inode": 47635697, "mode": "0o644", "size": 1687439, "mtime_ns": 1789529753300605189, "ctime_ns": 1789529753312166242},
+        {"path": "modern-capability-exact-schema-contracts.v1.json", "sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02", "dev": 16777234, "inode": 47635696, "mode": "0o644", "size": 7912823, "mtime_ns": 1789529753291935712, "ctime_ns": 1789529753311934197},
+        {"path": "modern-capability-operation-causal-contract-ssot.v2.json", "sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227", "dev": 16777234, "inode": 47635693, "mode": "0o644", "size": 5279746, "mtime_ns": 1789529753285236174, "ctime_ns": 1789529753311676152},
+        {"path": "modern-capability-public-identity-registry.v1.json", "sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e", "dev": 16777234, "inode": 47635700, "mode": "0o644", "size": 759646, "mtime_ns": 1789529753310138009, "ctime_ns": 1789529753312616372},
+        {"path": "modern-capability-semantic-bindings.v1.json", "sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598", "dev": 16777234, "inode": 47635698, "mode": "0o644", "size": 5400337, "mtime_ns": 1789529753303798726, "ctime_ns": 1789529753312414328},
+        {"path": "sys-listening-stream-authority-successor.v2.json", "sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316", "dev": 16777234, "inode": 47631865, "mode": "0o644", "size": 298993, "mtime_ns": 1789529742246644107, "ctime_ns": 1789529742247008694}
+      ],
+      "physical": [
+        {"path": "hrm-modern-forward-ddl.v4.sql", "sha256": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975", "dev": 16777234, "inode": 47668112, "mode": "0o644", "size": 164079, "mtime_ns": 1789530192953770846, "ctime_ns": 1789530192953770846},
+        {"path": "modern-owner-handler-physical-contracts.v4.json", "sha256": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6", "dev": 16777234, "inode": 47668117, "mode": "0o644", "size": 461341, "mtime_ns": 1789530192958405412, "ctime_ns": 1789530192958405412},
+        {"path": "modern-query-projection-physical-contracts.v4.json", "sha256": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6", "dev": 16777234, "inode": 47668118, "mode": "0o644", "size": 4047816, "mtime_ns": 1789530192959582169, "ctime_ns": 1789530192959582169},
+        {"path": "per-modern-forward-ddl.v4.sql", "sha256": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780", "dev": 16777234, "inode": 47668113, "mode": "0o644", "size": 160855, "mtime_ns": 1789530192954467933, "ctime_ns": 1789530192954467933},
+        {"path": "physical-candidate-generation-report.v4.json", "sha256": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89", "dev": 16777234, "inode": 47668119, "mode": "0o644", "size": 4512, "mtime_ns": 1789530192964069901, "ctime_ns": 1789530192964069901},
+        {"path": "sys-auth-modern-forward-ddl.v4.sql", "sha256": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6", "dev": 16777234, "inode": 47668116, "mode": "0o644", "size": 19585, "mtime_ns": 1789530192956541985, "ctime_ns": 1789530192956541985},
+        {"path": "sys-platform-modern-forward-ddl.v4.sql", "sha256": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6", "dev": 16777234, "inode": 47668115, "mode": "0o644", "size": 127841, "mtime_ns": 1789530192956049691, "ctime_ns": 1789530192956049691},
+        {"path": "tim-modern-forward-ddl.v4.sql", "sha256": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27", "dev": 16777234, "inode": 47668114, "mode": "0o644", "size": 52207, "mtime_ns": 1789530192954875560, "ctime_ns": 1789530192954875560}
+      ]
+    },
+    "after": {
+      "canonical": [
+        {"path": "modern-capability-causal-state-contracts.v2.json", "sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe", "dev": 16777234, "inode": 47635963, "mode": "0o600", "size": 4790036, "mtime_ns": 1789529754770713989, "ctime_ns": 1789529754771598118},
+        {"path": "modern-capability-closed-set-manifest.v3.json", "sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612", "dev": 16777234, "inode": 47631719, "mode": "0o600", "size": 294333, "mtime_ns": 1789529741603144818, "ctime_ns": 1789529741613400356},
+        {"path": "modern-capability-event-payload-contracts.v1.json", "sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4", "dev": 16777234, "inode": 47635697, "mode": "0o644", "size": 1687439, "mtime_ns": 1789529753300605189, "ctime_ns": 1789529753312166242},
+        {"path": "modern-capability-exact-schema-contracts.v1.json", "sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02", "dev": 16777234, "inode": 47635696, "mode": "0o644", "size": 7912823, "mtime_ns": 1789529753291935712, "ctime_ns": 1789529753311934197},
+        {"path": "modern-capability-operation-causal-contract-ssot.v2.json", "sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227", "dev": 16777234, "inode": 47635693, "mode": "0o644", "size": 5279746, "mtime_ns": 1789529753285236174, "ctime_ns": 1789529753311676152},
+        {"path": "modern-capability-public-identity-registry.v1.json", "sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e", "dev": 16777234, "inode": 47635700, "mode": "0o644", "size": 759646, "mtime_ns": 1789529753310138009, "ctime_ns": 1789529753312616372},
+        {"path": "modern-capability-semantic-bindings.v1.json", "sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598", "dev": 16777234, "inode": 47635698, "mode": "0o644", "size": 5400337, "mtime_ns": 1789529753303798726, "ctime_ns": 1789529753312414328},
+        {"path": "sys-listening-stream-authority-successor.v2.json", "sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316", "dev": 16777234, "inode": 47631865, "mode": "0o644", "size": 298993, "mtime_ns": 1789529742246644107, "ctime_ns": 1789529742247008694}
+      ],
+      "physical": [
+        {"path": "hrm-modern-forward-ddl.v4.sql", "sha256": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975", "dev": 16777234, "inode": 47668112, "mode": "0o644", "size": 164079, "mtime_ns": 1789530192953770846, "ctime_ns": 1789530192953770846},
+        {"path": "modern-owner-handler-physical-contracts.v4.json", "sha256": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6", "dev": 16777234, "inode": 47668117, "mode": "0o644", "size": 461341, "mtime_ns": 1789530192958405412, "ctime_ns": 1789530192958405412},
+        {"path": "modern-query-projection-physical-contracts.v4.json", "sha256": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6", "dev": 16777234, "inode": 47668118, "mode": "0o644", "size": 4047816, "mtime_ns": 1789530192959582169, "ctime_ns": 1789530192959582169},
+        {"path": "per-modern-forward-ddl.v4.sql", "sha256": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780", "dev": 16777234, "inode": 47668113, "mode": "0o644", "size": 160855, "mtime_ns": 1789530192954467933, "ctime_ns": 1789530192954467933},
+        {"path": "physical-candidate-generation-report.v4.json", "sha256": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89", "dev": 16777234, "inode": 47668119, "mode": "0o644", "size": 4512, "mtime_ns": 1789530192964069901, "ctime_ns": 1789530192964069901},
+        {"path": "sys-auth-modern-forward-ddl.v4.sql", "sha256": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6", "dev": 16777234, "inode": 47668116, "mode": "0o644", "size": 19585, "mtime_ns": 1789530192956541985, "ctime_ns": 1789530192956541985},
+        {"path": "sys-platform-modern-forward-ddl.v4.sql", "sha256": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6", "dev": 16777234, "inode": 47668115, "mode": "0o644", "size": 127841, "mtime_ns": 1789530192956049691, "ctime_ns": 1789530192956049691},
+        {"path": "tim-modern-forward-ddl.v4.sql", "sha256": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27", "dev": 16777234, "inode": 47668114, "mode": "0o644", "size": 52207, "mtime_ns": 1789530192954875560, "ctime_ns": 1789530192954875560}
+      ]
+    },
+    "beforeAfterExact": true
+  },
+  "policyAndToolPins": {
+    "policyFileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+    "policySealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2",
+    "ownerPrefixRegisterSha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49",
+    "rejectedV1ValidatorSha256": "c8aef3074574e1f49976401727548579b66fb236e72e4033aa864576f88dbd4a",
+    "currentRerunValidatorSha256": "7dd5c2e60923b4698973e8ead31790a49d4fa9cf389239e54a3e10ebfbc74168",
+    "validatorDriftDisposition": "OLD_CAPTURE_NOT_REUSED; CURRENT_BYTES_RERUN_AND_PINNED"
+  },
+  "freshExecution": {
+    "command": "python3 -B coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --scope-profile v5-131-successor --canonical-dir coding-readiness/modern-canonical-candidate.A7K8Kj --physical-dir coding-readiness/modern-physical-candidate.A7K8Kj --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --docker-postgres all --self-test",
+    "returnCode": 0,
+    "status": "PASS_CANDIDATE_NOT_G3_AUTHORITY",
+    "errors": 0,
+    "stdoutSha256": "1afd5f79f30e76a5cfb565ffc35146269b1c4b6e312fbac6837bde0d8a461d5d",
+    "stdoutBytes": 57574,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "validatorReportDeclaredSeal": "1a4a5810353edf27a34810abf3e6fc6fb1925d40ab1921ea70e8cdd43b76893d",
+    "validatorReportComputedSeal": "1a4a5810353edf27a34810abf3e6fc6fb1925d40ab1921ea70e8cdd43b76893d",
+    "validatorReportSealValid": true,
+    "toolSelfTest": {"status": "PASS", "passed": 45, "total": 45, "sealedPayloadSha256": "7e454245d2135bd603403a87df6066ce9d0799c4a15be406cbd1e3538de41b66"},
+    "candidateHostileSelfTest": {"status": "PASS", "passed": 23, "total": 23, "sealedPayloadSha256": "b94c88430feddb3119e46cc8b2612eff3ae5c46275718e048fa2c71d4c16041d"},
+    "counts": {"operations": 199, "commands": 133, "queries": 66, "handlers": 27, "events": 157, "tables": 131},
+    "canonicalHashesMatchSnapshot": true,
+    "physicalHashesMatchSnapshot": true
+  },
+  "postgres": {
+    "requested": "--docker-postgres all",
+    "runs": [
+      {
+        "requestedImage": "postgres:16",
+        "container": "dwp-hris-physical-16-41790c22a7",
+        "imageId": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+        "containerImageId": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+        "repositoryDigests": ["postgres@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94"],
+        "status": "PASS",
+        "cleanup": "PASS",
+        "sealedPayloadSha256": "df9e35a010e85b127278cc3dccdf96a3aef5aca4effac79bd004e9051f40bbf3",
+        "computedSealedPayloadSha256": "df9e35a010e85b127278cc3dccdf96a3aef5aca4effac79bd004e9051f40bbf3",
+        "databases": {
+          "dwp-auth": {"status": "PASS", "files": [["sys-auth-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-people": {"status": "PASS", "files": [["hrm-modern-forward-ddl.v4.sql", "PASS"], ["per-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-platform": {"status": "PASS", "files": [["sys-platform-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-time": {"status": "PASS", "files": [["tim-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"}
+        },
+        "temporalArbitration": {"status": "PASS", "strategy": "APPEND_ONLY_PREDECESSOR_CHAIN", "cases": {"concurrentSameExpectedVersion": "PASS", "futureSupersedeBusinessAsOf": "PASS", "sameIntervalCorrectionAndSystemAsOf": "PASS"}}
+      },
+      {
+        "requestedImage": "postgres:18",
+        "container": "dwp-hris-physical-18-e79ca7e772",
+        "imageId": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280",
+        "containerImageId": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280",
+        "repositoryDigests": ["postgres@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280"],
+        "status": "PASS",
+        "cleanup": "PASS",
+        "sealedPayloadSha256": "881e1a850be671f3691fc101405de730ea52c27d203197d5ebbb15431fa3be91",
+        "computedSealedPayloadSha256": "881e1a850be671f3691fc101405de730ea52c27d203197d5ebbb15431fa3be91",
+        "databases": {
+          "dwp-auth": {"status": "PASS", "files": [["sys-auth-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-people": {"status": "PASS", "files": [["hrm-modern-forward-ddl.v4.sql", "PASS"], ["per-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-platform": {"status": "PASS", "files": [["sys-platform-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"},
+          "dwp-time": {"status": "PASS", "files": [["tim-modern-forward-ddl.v4.sql", "PASS"]], "roleProvisioning": "PASS", "roleRlsAclAssertions": "PASS"}
+        },
+        "temporalArbitration": {"status": "PASS", "strategy": "APPEND_ONLY_PREDECESSOR_CHAIN", "cases": {"concurrentSameExpectedVersion": "PASS", "futureSupersedeBusinessAsOf": "PASS", "sameIntervalCorrectionAndSystemAsOf": "PASS"}}
+      }
+    ],
+    "normalizedObservationEquality": true,
+    "caseSetEquality": true,
+    "freshAuthorAndRejectedV1ProjectedObservationsEqual": true,
+    "inputPhysicalHashesMatchSnapshot": true,
+    "postRunMatchingContainerLines": [],
+    "postRunContainerCleanupVerified": true
+  },
+  "independentEvidenceReview": {
+    "status": "PASS",
+    "checksPassed": 32,
+    "checksFailed": 0,
+    "reviewRecordSha256": "b688702eaa64a474998157d7955117f83ffedabcadec77db6103d2526d71619f"
+  },
+  "supportingInputStability": {
+    "validator": true,
+    "policy": true,
+    "ownerPrefixRegister": true,
+    "authorReport": true,
+    "rejectedV1Report": true,
+    "liveCanonicalSeven": true,
+    "gateFiles": true,
+    "gateDecisionSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "gateTransitionRegisterSha256": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a",
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "currentState": "VALIDATOR_CONTROLLED_BLOCKED"
+  },
+  "errors": [],
+  "conclusion": "The exact immutable A7K8Kj canonical eight and physical eight files independently passed the current validator, 45 tool self-tests, 23 candidate hostile tests, and fresh PostgreSQL 16 and 18 execution across all four owner databases, role provisioning, RLS/ACL assertions, and three temporal arbitration cases. Both engine rows and the full validator result self-seals were independently recomputed. Normalized observations and case sets are equal across engines and match the separately sealed author run and the rejected v1 projection. Exact before/after candidate and supporting metadata are identical, containers were cleaned up, and no candidate, live canonical, Gate, tool, policy, or predecessor report was modified. This is physical qualification only and grants no G3/G6 or module coding authority.",
+  "sealedPayloadSha256": "c90ef3a5bef1a9ed01a8db067ccc1c036cf73ddfadcf2c5432fef39c2059f23d"
+}

@@ -1,0 +1,31 @@
+{
+  "baseFileUsed": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-physical-schema.sql",
+  "bytes": 72758,
+  "destination": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-physical-schema.sql",
+  "inventedContent": false,
+  "lineCount": 1406,
+  "lineSourceCounts": {
+    "BASE_FILE": 59,
+    "exec-42b0e17a-1474-4646-ba1c-7ff5c7d3e18d": 441,
+    "exec-6c4e89d1-9c0d-407e-851f-b3073460c842": 36,
+    "exec-876e2f3f-7a14-451a-8b1d-bdc122baa433": 197,
+    "exec-a1971cee-6986-4a58-8da9-41cbfc83e5e3": 673
+  },
+  "observedItemIds": [
+    "exec-42b0e17a-1474-4646-ba1c-7ff5c7d3e18d",
+    "exec-6c4e89d1-9c0d-407e-851f-b3073460c842",
+    "exec-876e2f3f-7a14-451a-8b1d-bdc122baa433",
+    "exec-a1971cee-6986-4a58-8da9-41cbfc83e5e3",
+    "exec-fe94c18c-4908-4fc7-acb6-fa321a101d6a"
+  ],
+  "relativePath": "session-evidence/pay/g2-physical-schema.sql",
+  "schema": "dwp.hris.blueprint.numbered-event-recovery.v1",
+  "selectedItemIds": [
+    "exec-42b0e17a-1474-4646-ba1c-7ff5c7d3e18d",
+    "exec-6c4e89d1-9c0d-407e-851f-b3073460c842",
+    "exec-876e2f3f-7a14-451a-8b1d-bdc122baa433",
+    "exec-a1971cee-6986-4a58-8da9-41cbfc83e5e3",
+    "exec-fe94c18c-4908-4fc7-acb6-fa321a101d6a"
+  ],
+  "sha256": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0"
+}

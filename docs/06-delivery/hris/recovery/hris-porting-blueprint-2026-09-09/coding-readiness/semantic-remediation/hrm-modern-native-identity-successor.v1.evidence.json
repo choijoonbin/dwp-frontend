@@ -1,0 +1,702 @@
+{
+  "schemaVersion": "HRM_MODERN_NATIVE_IDENTITY_SUCCESSOR_AUTHOR_EVIDENCE_V1",
+  "status": "AUTHOR_CHECK_PASS_NOT_CANONICAL_NOT_G3",
+  "formatValidation": {
+    "status": "ACTUAL_LOCAL_EXIT_ZERO",
+    "parsedJsonFiles": 4,
+    "candidateEqualsFreshAuthorMaterializer": true,
+    "mdUtf8Nonempty": true,
+    "nodeSyntaxCheckedJsFiles": 2,
+    "schemaEngineExecutionIsIndependentApproval": false
+  },
+  "capturedAt": "2026-09-14T05:24:43.786Z",
+  "scope": {
+    "owner": "HRM successor design author",
+    "allowedWritePrefix": "coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.*",
+    "backendChangedByThisTask": false,
+    "sqlChangedByThisTask": false,
+    "mainChangedByThisTask": false,
+    "canonicalCsvOrGateChanged": false,
+    "historicalArtifactsChanged": false,
+    "runtimeOrDatabaseStartedByThisTask": false,
+    "commitCreated": false,
+    "canonicalOverlayDialectApproved": false,
+    "independentExpectedScopeApproved": false
+  },
+  "execution": {
+    "command": "node output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.check.js",
+    "cwd": "/Users/a10697/Work/DWP",
+    "exitCode": 0,
+    "wallTimeSeconds": 0.2937375,
+    "engine": "Ajv 6.12.6 JSON Schema Draft-07 full formats; coerceTypes/useDefaults/removeAdditional false",
+    "result": {
+      "status": "AUTHOR_CHECK_PASS_NOT_G3",
+      "capturedAt": "2026-09-14T05:24:43.594Z",
+      "engineVersion": "6.12.6",
+      "counts": {
+        "assertions": 543,
+        "schemas": 383,
+        "shapeRequests": 83,
+        "concreteIdentityRequests": 10,
+        "positiveBoundaryChecks": 9,
+        "negativeBoundaryChecks": 31
+      },
+      "failures": [],
+      "sourcePinDrift": [],
+      "directInputDefects": [],
+      "sourceShapeDefects": [],
+      "executedNegativeCases": [
+        {
+          "caseId": "HRIS_PERSON_APP_PURPOSE_FORBIDDEN",
+          "expectedError": "HRIS_PERSON_APP_PURPOSE_FORBIDDEN",
+          "actualError": "HRIS_PERSON_APP_PURPOSE_FORBIDDEN"
+        },
+        {
+          "caseId": "PERSON_PURPOSE_FORBIDDEN",
+          "expectedError": "PERSON_PURPOSE_FORBIDDEN",
+          "actualError": "PERSON_PURPOSE_FORBIDDEN"
+        },
+        {
+          "caseId": "TENANT_MISMATCH",
+          "expectedError": "TENANT_MISMATCH",
+          "actualError": "TENANT_MISMATCH"
+        },
+        {
+          "caseId": "AUTH_PERSON_BINDING_MISMATCH",
+          "expectedError": "AUTH_PERSON_BINDING_MISMATCH",
+          "actualError": "AUTH_PERSON_BINDING_MISMATCH"
+        },
+        {
+          "caseId": "AUTH_VERSION_STALE",
+          "expectedError": "AUTH_VERSION_STALE",
+          "actualError": "AUTH_VERSION_STALE"
+        },
+        {
+          "caseId": "AUTH_ACCESS_REVISION_STALE",
+          "expectedError": "AUTH_VERSION_STALE",
+          "actualError": "AUTH_VERSION_STALE"
+        },
+        {
+          "caseId": "AUTH_EXPIRED",
+          "expectedError": "AUTH_EXPIRED",
+          "actualError": "AUTH_EXPIRED"
+        },
+        {
+          "caseId": "AUTH_REVOKED",
+          "expectedError": "AUTH_REVOKED",
+          "actualError": "AUTH_REVOKED"
+        },
+        {
+          "caseId": "PURPOSE_MISMATCH",
+          "expectedError": "PURPOSE_MISMATCH",
+          "actualError": "PURPOSE_MISMATCH"
+        },
+        {
+          "caseId": "FUTURE_SELF_ASOF",
+          "expectedError": "FUTURE_SELF_ASOF",
+          "actualError": "FUTURE_SELF_ASOF"
+        },
+        {
+          "caseId": "INCOMPLETE_CONTEXT_SET",
+          "expectedError": "INCOMPLETE_CONTEXT_SET",
+          "actualError": "INCOMPLETE_CONTEXT_SET"
+        },
+        {
+          "caseId": "NATIVE_PERSON_PARENT_MISMATCH",
+          "expectedError": "NATIVE_PERSON_PARENT_MISMATCH",
+          "actualError": "NATIVE_PERSON_PARENT_MISMATCH"
+        },
+        {
+          "caseId": "NATIVE_WORKER_PARENT_MISMATCH",
+          "expectedError": "NATIVE_WORKER_PARENT_MISMATCH",
+          "actualError": "NATIVE_WORKER_PARENT_MISMATCH"
+        },
+        {
+          "caseId": "NATIVE_RELATIONSHIP_PARENT_MISMATCH",
+          "expectedError": "NATIVE_RELATIONSHIP_PARENT_MISMATCH",
+          "actualError": "NATIVE_RELATIONSHIP_PARENT_MISMATCH"
+        },
+        {
+          "caseId": "DUPLICATE_NATIVE_TUPLE",
+          "expectedError": "DUPLICATE_NATIVE_TUPLE",
+          "actualError": "DUPLICATE_NATIVE_TUPLE"
+        },
+        {
+          "caseId": "NATIVE_VERSION_STALE",
+          "expectedError": "NATIVE_VERSION_STALE",
+          "actualError": "NATIVE_VERSION_STALE"
+        },
+        {
+          "caseId": "OWNER_ZONE_MISSING",
+          "expectedError": "OWNER_ZONE_INVALID",
+          "actualError": "OWNER_ZONE_INVALID"
+        },
+        {
+          "caseId": "INCLUSIVE_END_DATE_AFTER_BOUNDARY",
+          "expectedError": "NATIVE_SELECTOR_FORBIDDEN",
+          "actualError": "NATIVE_SELECTOR_FORBIDDEN"
+        },
+        {
+          "caseId": "HIRE_RECEIPT_PERSON_MISMATCH",
+          "expectedError": "HIRE_RECEIPT_PERSON_MISMATCH",
+          "actualError": "HIRE_RECEIPT_PERSON_MISMATCH"
+        },
+        {
+          "caseId": "HIRE_RECEIPT_UNACCEPTED",
+          "expectedError": "HIRE_RECEIPT_UNACCEPTED",
+          "actualError": "HIRE_RECEIPT_UNACCEPTED"
+        },
+        {
+          "caseId": "FUTURE_EMPLOYMENT_BIND",
+          "expectedError": "FUTURE_EMPLOYMENT_BIND",
+          "actualError": "FUTURE_EMPLOYMENT_BIND"
+        },
+        {
+          "caseId": "CANCELLED_JOURNEY_BIND",
+          "expectedError": "CANCELLED_JOURNEY_BIND",
+          "actualError": "CANCELLED_JOURNEY_BIND"
+        },
+        {
+          "caseId": "CHANGED_RECEIPT_REPLAY",
+          "expectedError": "CHANGED_RECEIPT_REPLAY",
+          "actualError": "CHANGED_RECEIPT_REPLAY"
+        }
+      ],
+      "canonicalLineagePass": false,
+      "independentExpectedScopeApproved": false,
+      "nativeRuntimeExecuted": false,
+      "authorityOrPepProven": false,
+      "domainCrudExecuted": false,
+      "sourceGraphSemanticClosure": false,
+      "unverifiedNegativeCases": [],
+      "unverifiedAuthorityTests": [
+        "These negative/positive cases model author source/payload/native parent guards, not signature/revocation/native proof/PEP transport. Those shared integrations remain G3 OPEN."
+      ],
+      "gateDecision": "UNCHANGED_CLOSED"
+    }
+  },
+  "artifactPre": {
+    "capturedAt": "2026-09-14T05:24:31.237Z",
+    "files": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.json",
+        "sha256": "f8ccc88f646e13d2a3a37d49af636eda4a9a60bc822055056283f36e2c4b0b79",
+        "bytes": 6798297,
+        "mtimeNs": "1789363383313641722"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.md",
+        "sha256": "45c885658a09a0a6abf3c4c507278ec78d5c8a756ca78e81bf3b00503cdda3a5",
+        "bytes": 11564,
+        "mtimeNs": "1789363454095698884"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.schemas.json",
+        "sha256": "7b5282c67cec4fe006e03cc10e5905c3589b77ad85308449884c9329afe3c538",
+        "bytes": 750242,
+        "mtimeNs": "1789362757455153612"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.fixtures.json",
+        "sha256": "b278d80c8c5b30e13578dcc5eed9af200f6b8d1305d2a6f33e56731841a1daaa",
+        "bytes": 98047,
+        "mtimeNs": "1789363454082379554"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.check.js",
+        "sha256": "9a785fdc051689beda08d620d3a7adfa60ca95948d7ba7cf585753fcf3e966ee",
+        "bytes": 96180,
+        "mtimeNs": "1789363348494745253"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.fixture-check.js",
+        "sha256": "7f6a72202d29a037dc086c5cd8aa52557b4ce896fdcc22e18803e6db246931d0",
+        "bytes": 40182,
+        "mtimeNs": "1789363453869186062"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+        "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+        "bytes": 5315757,
+        "mtimeNs": "1789349234344579200"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.md",
+        "sha256": "db5d5a09096c1eec7ae70488edd346f984052c188e63444a626441ff953aa01e",
+        "bytes": 31935,
+        "mtimeNs": "1789349131937306961"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.proposal.v1.json",
+        "sha256": "44c5acfe8b5cbe65a2c30e56177fe2a5313f8b72ca63a634c689fafc5c7c7a9c",
+        "bytes": 1241116,
+        "mtimeNs": "1789360954513118213"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.proposal.v1.md",
+        "sha256": "b200cd0818fb3d6978685579bc5e3817baf4a9135f505496c8b9cbd95d4af875",
+        "bytes": 10582,
+        "mtimeNs": "1789360976613482689"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.fixtures.v1.json",
+        "sha256": "d34a879375237f02f664696a7b70e2a1d5a407b52210eeeaed52092ae0e3f0b0",
+        "bytes": 160668,
+        "mtimeNs": "1789360768315445489"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.check.v1.js",
+        "sha256": "a1647278f5e724da50847216e44a64704505bd628302b04e622b2785e858094d",
+        "bytes": 29085,
+        "mtimeNs": "1789360768329548389"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.evidence.v1.json",
+        "sha256": "28dc78ef01bae8fd747c1e4d02f5ba46899f522cbd9ddc688778e69afd1ddfd7",
+        "bytes": 14022,
+        "mtimeNs": "1789361005697915864"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+        "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+        "bytes": 649,
+        "mtimeNs": "1789354991077290911"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+        "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+        "bytes": 1496,
+        "mtimeNs": "1789354991078381067"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextAuthorityV1.java",
+        "sha256": "df1db8b5740aee6381c46bc692d9a01dbe91a43e28d422b373237b52cdbce827",
+        "bytes": 1574,
+        "mtimeNs": "1789355199306843445"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextQueryV1.java",
+        "sha256": "8e17e7f5f5baaed2bb8479136cc2b9860232c868879978807f0d1995e35152a2",
+        "bytes": 317,
+        "mtimeNs": "1789354991076747667"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextSelectorV1.java",
+        "sha256": "258846f1a4a037aae51da484fe8df1e9c06a30c64cf03caa36e2a89749e6af50",
+        "bytes": 315,
+        "mtimeNs": "1789354991076040548"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextResolutionV1.java",
+        "sha256": "61e7f0762065ba2997d387ceddd18af3399972c0c1922369ad764aba166a18e5",
+        "bytes": 2658,
+        "mtimeNs": "1789354991081169998"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+        "sha256": "7e3ea5978a47dbb09d752757a05806404453d0cf5f8ce7227d1e9b911acef2bd",
+        "bytes": 543,
+        "mtimeNs": "1789354991075458554"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextOwnerPortsV1.java",
+        "sha256": "ccb3c2ace5e192c01cb620c8a658df8b69599e945f07181c1ced62384e0f46c4",
+        "bytes": 2479,
+        "mtimeNs": "1789355058604417179"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java",
+        "sha256": "c665723f366527687c9e3dec55cefd4534defdc8b0aecc596ada3ab15eb40735",
+        "bytes": 12998,
+        "mtimeNs": "1789361799934737638"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonPortV1.java",
+        "sha256": "da53481c004df5e8c6b2924fb5a3c632dd7752822fd18b2f372c0c7fa14e82a4",
+        "bytes": 266,
+        "mtimeNs": "1789361378866867663"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonOwnerPortsV1.java",
+        "sha256": "f6b139f187097c3f8a7255dc7730a173fd94ebaebcf37094e771d417fbbfb43a",
+        "bytes": 1332,
+        "mtimeNs": "1789361378867909626"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonResolutionV1.java",
+        "sha256": "40a6e0c394dd268dcc06f759ab2db2b7233d811e24ea9f578665130c17c7e98f",
+        "bytes": 1388,
+        "mtimeNs": "1789361378868214378"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfPersonSnapshotV1.java",
+        "sha256": "62378ba2bb29d6cc020b3260720ac99d65d2dedad37306f390dc0f759758b41d",
+        "bytes": 472,
+        "mtimeNs": "1789361378867411541"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfPersonPortV1.java",
+        "sha256": "fc8c01dfe60de405b37fa363b4f727ec3681dc67fda17b43daae93b82260a8b7",
+        "bytes": 7901,
+        "mtimeNs": "1789361441385963841"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+        "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+        "bytes": 4887,
+        "mtimeNs": "1789359261552529839"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+        "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+        "bytes": 9105,
+        "mtimeNs": "1789360393439338720"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1.java",
+        "sha256": "a5a3d0fc5dde0e52c3f0c2bf47150e2a23e3b832458e7ff05afcae79de826d9c",
+        "bytes": 3983,
+        "mtimeNs": "1789361378869009090"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+        "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+        "bytes": 1833,
+        "mtimeNs": "1788935965800010744"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V4__add_identity_access_governance.sql",
+        "sha256": "b5e86459c2e8d7fe6ed1bf4ba80084960dfe9f3f0b97a8b78f7864c23fbcac65",
+        "bytes": 643,
+        "mtimeNs": "1788935965331321438"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V7__add_tenant_and_group_role_foundation.sql",
+        "sha256": "5c76ac483112004d38e09e83f6eb43b163fe174cd5f87a3387cf4129faf1ec97",
+        "bytes": 6263,
+        "mtimeNs": "1788935965336091242"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+        "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+        "bytes": 27320,
+        "mtimeNs": "1788935965796121926"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+        "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+        "bytes": 918,
+        "mtimeNs": "1789360448778031618"
+      }
+    ],
+    "counts": {
+      "typedSources": 1585,
+      "nativeSourceWritePlans": 22,
+      "employeeFields": 18,
+      "personFields": 9
+    }
+  },
+  "artifactPost": {
+    "capturedAt": "2026-09-14T05:24:43.786Z",
+    "files": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.json",
+        "sha256": "f8ccc88f646e13d2a3a37d49af636eda4a9a60bc822055056283f36e2c4b0b79",
+        "bytes": 6798297,
+        "mtimeNs": "1789363383313641722"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.md",
+        "sha256": "45c885658a09a0a6abf3c4c507278ec78d5c8a756ca78e81bf3b00503cdda3a5",
+        "bytes": 11564,
+        "mtimeNs": "1789363454095698884"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.schemas.json",
+        "sha256": "7b5282c67cec4fe006e03cc10e5905c3589b77ad85308449884c9329afe3c538",
+        "bytes": 750242,
+        "mtimeNs": "1789362757455153612"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.fixtures.json",
+        "sha256": "b278d80c8c5b30e13578dcc5eed9af200f6b8d1305d2a6f33e56731841a1daaa",
+        "bytes": 98047,
+        "mtimeNs": "1789363454082379554"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.check.js",
+        "sha256": "9a785fdc051689beda08d620d3a7adfa60ca95948d7ba7cf585753fcf3e966ee",
+        "bytes": 96180,
+        "mtimeNs": "1789363348494745253"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.fixture-check.js",
+        "sha256": "7f6a72202d29a037dc086c5cd8aa52557b4ce896fdcc22e18803e6db246931d0",
+        "bytes": 40182,
+        "mtimeNs": "1789363453869186062"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json",
+        "sha256": "1b93c3b7b89137f4c742789f336beb834cef1944fac0577278a84283a759bc4a",
+        "bytes": 5315757,
+        "mtimeNs": "1789349234344579200"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-modern-remediation.v1.md",
+        "sha256": "db5d5a09096c1eec7ae70488edd346f984052c188e63444a626441ff953aa01e",
+        "bytes": 31935,
+        "mtimeNs": "1789349131937306961"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.proposal.v1.json",
+        "sha256": "44c5acfe8b5cbe65a2c30e56177fe2a5313f8b72ca63a634c689fafc5c7c7a9c",
+        "bytes": 1241116,
+        "mtimeNs": "1789360954513118213"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.proposal.v1.md",
+        "sha256": "b200cd0818fb3d6978685579bc5e3817baf4a9135f505496c8b9cbd95d4af875",
+        "bytes": 10582,
+        "mtimeNs": "1789360976613482689"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.fixtures.v1.json",
+        "sha256": "d34a879375237f02f664696a7b70e2a1d5a407b52210eeeaed52092ae0e3f0b0",
+        "bytes": 160668,
+        "mtimeNs": "1789360768315445489"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.check.v1.js",
+        "sha256": "a1647278f5e724da50847216e44a64704505bd628302b04e622b2785e858094d",
+        "bytes": 29085,
+        "mtimeNs": "1789360768329548389"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.evidence.v1.json",
+        "sha256": "28dc78ef01bae8fd747c1e4d02f5ba46899f522cbd9ddc688778e69afd1ddfd7",
+        "bytes": 14022,
+        "mtimeNs": "1789361005697915864"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+        "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+        "bytes": 649,
+        "mtimeNs": "1789354991077290911"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+        "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+        "bytes": 1496,
+        "mtimeNs": "1789354991078381067"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextAuthorityV1.java",
+        "sha256": "df1db8b5740aee6381c46bc692d9a01dbe91a43e28d422b373237b52cdbce827",
+        "bytes": 1574,
+        "mtimeNs": "1789355199306843445"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextQueryV1.java",
+        "sha256": "8e17e7f5f5baaed2bb8479136cc2b9860232c868879978807f0d1995e35152a2",
+        "bytes": 317,
+        "mtimeNs": "1789354991076747667"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextSelectorV1.java",
+        "sha256": "258846f1a4a037aae51da484fe8df1e9c06a30c64cf03caa36e2a89749e6af50",
+        "bytes": 315,
+        "mtimeNs": "1789354991076040548"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextResolutionV1.java",
+        "sha256": "61e7f0762065ba2997d387ceddd18af3399972c0c1922369ad764aba166a18e5",
+        "bytes": 2658,
+        "mtimeNs": "1789354991081169998"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+        "sha256": "7e3ea5978a47dbb09d752757a05806404453d0cf5f8ce7227d1e9b911acef2bd",
+        "bytes": 543,
+        "mtimeNs": "1789354991075458554"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextOwnerPortsV1.java",
+        "sha256": "ccb3c2ace5e192c01cb620c8a658df8b69599e945f07181c1ced62384e0f46c4",
+        "bytes": 2479,
+        "mtimeNs": "1789355058604417179"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java",
+        "sha256": "c665723f366527687c9e3dec55cefd4534defdc8b0aecc596ada3ab15eb40735",
+        "bytes": 12998,
+        "mtimeNs": "1789361799934737638"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonPortV1.java",
+        "sha256": "da53481c004df5e8c6b2924fb5a3c632dd7752822fd18b2f372c0c7fa14e82a4",
+        "bytes": 266,
+        "mtimeNs": "1789361378866867663"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonOwnerPortsV1.java",
+        "sha256": "f6b139f187097c3f8a7255dc7730a173fd94ebaebcf37094e771d417fbbfb43a",
+        "bytes": 1332,
+        "mtimeNs": "1789361378867909626"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfPersonResolutionV1.java",
+        "sha256": "40a6e0c394dd268dcc06f759ab2db2b7233d811e24ea9f578665130c17c7e98f",
+        "bytes": 1388,
+        "mtimeNs": "1789361378868214378"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfPersonSnapshotV1.java",
+        "sha256": "62378ba2bb29d6cc020b3260720ac99d65d2dedad37306f390dc0f759758b41d",
+        "bytes": 472,
+        "mtimeNs": "1789361378867411541"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfPersonPortV1.java",
+        "sha256": "fc8c01dfe60de405b37fa363b4f727ec3681dc67fda17b43daae93b82260a8b7",
+        "bytes": 7901,
+        "mtimeNs": "1789361441385963841"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+        "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+        "bytes": 4887,
+        "mtimeNs": "1789359261552529839"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+        "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+        "bytes": 9105,
+        "mtimeNs": "1789360393439338720"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1.java",
+        "sha256": "a5a3d0fc5dde0e52c3f0c2bf47150e2a23e3b832458e7ff05afcae79de826d9c",
+        "bytes": 3983,
+        "mtimeNs": "1789361378869009090"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+        "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+        "bytes": 1833,
+        "mtimeNs": "1788935965800010744"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V4__add_identity_access_governance.sql",
+        "sha256": "b5e86459c2e8d7fe6ed1bf4ba80084960dfe9f3f0b97a8b78f7864c23fbcac65",
+        "bytes": 643,
+        "mtimeNs": "1788935965331321438"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V7__add_tenant_and_group_role_foundation.sql",
+        "sha256": "5c76ac483112004d38e09e83f6eb43b163fe174cd5f87a3387cf4129faf1ec97",
+        "bytes": 6263,
+        "mtimeNs": "1788935965336091242"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+        "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+        "bytes": 27320,
+        "mtimeNs": "1788935965796121926"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+        "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+        "bytes": 918,
+        "mtimeNs": "1789360448778031618"
+      }
+    ],
+    "counts": {
+      "typedSources": 1585,
+      "nativeSourceWritePlans": 22,
+      "employeeFields": 18,
+      "personFields": 9
+    }
+  },
+  "all35ObservedFilesShaAndDecimalStringNsStable": true,
+  "stableScope": "6 owned input/document files + 2 historical modern files + 5 frozen BASE package files + 22 observed owner source files; not the entire actively changing backend tree",
+  "review": {
+    "capabilities": 6,
+    "historicalOperations": 82,
+    "candidateOperations": 83,
+    "retainedHistoricalOperationIds": 82,
+    "addedOperationIds": [
+      "modern.onboarding.journey.employment.bind"
+    ],
+    "historicalTableDeltas": 34,
+    "removedShadowIdentityTableDeltas": 1,
+    "retainedTableDeltas": 33,
+    "additionalNativePersonAdmissionBusinessReceiptPlan": 1,
+    "independentPhysicalAllocation": false,
+    "historicalReferenceInventory": 348,
+    "keyReferences": 10,
+    "valueReferences": 338,
+    "normalCandidateExecutableForbiddenReferences": 0,
+    "nativeSelectedEmploymentFieldAdapters": 18,
+    "nativeCurrentSelfPersonFieldAdapters": 9,
+    "nativeSourceWritePlans": 22,
+    "typedSourceRows": 1585,
+    "typedSourceCountIsSemanticProof": false
+  },
+  "fixedSelfPersonBoundary": {
+    "actualPort": "SelfPersonPortV1.resolve()",
+    "callerFields": 0,
+    "callerHistoricalAsOf": false,
+    "actualPurpose": "SELF_PROFILE_READ / HRIS_HRM",
+    "appEntitledRequired": true,
+    "separationOfDutiesRequired": true,
+    "employmentEntityRequired": false,
+    "profilePermissionIsHrCaseOrTaskActionPermission": false,
+    "nonAppPrehireTaskContract": "DWP.NativePersonTaskAuthority.proposal.v1",
+    "nonAppTaskOwnerTransportGrantAndProducerStatus": "OPEN_UNALLOCATED_NOT_CURRENT_PUBLISHED",
+    "automaticAppGrant": false
+  },
+  "otherAgentEvidence": {
+    "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/identity-self-person-abi-author-verification-2026-09-14.json",
+    "sha256": "e99289365114efc9ff76e7705ded6978725ffdcea8d954c4865ed47606589fc0",
+    "readAndHashMatched": true,
+    "reproducedByThisTask": false,
+    "reportedTests": {
+      "tests": 72,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "guard": 48,
+      "jdbc": 16,
+      "nativePostgres": 8
+    },
+    "currentVerifier": "EXPLICIT_MOCK_ONLY",
+    "productionWiring": false,
+    "G3Approval": false
+  },
+  "limitations": [
+    "83 request witnesses prove shape only, not all-operation business journeys; 10 concrete A/B identity requests have planned owner prerequisites, not HTTP/native producer receipts.",
+    "JS guard negative/positive models do not verify real signature/current native authority/revocation/PEP/transport.",
+    "Observed working DTO/readers/forward V49 source pins are not approved canonical owner publication or full lifecycle source closure.",
+    "Inherited nonidentity source graph, read/write/event oracle, proposed table/owner/internal operation allocation and BASE-modern canonical unification require independent expert review.",
+    "New non-app DWP task request/response/query field plans are explicitly unallocated; no actual producer or action grant is inferred from HRIS profile identity.",
+    "Bigint safe-integer fixture codec, decimal type bounds and schema compilation are author wire proposals, not approved canonical transport.",
+    "Current canonical 2007-line lineage checker and historical CSV/Gate were neither modified nor treated as supporting this successor dialect."
+  ],
+  "remaining": {
+    "G3": [
+      "Independent expected operation/capability/table/owner/state/source/fixture registry and canonical source-dialect integration.",
+      "People common V49 approval and HRM V50+ nonconflicting owner allocation; do not widen historical G2 proof.",
+      "Current Auth authority/lifecycle/revocation producer and People native query/selector/version/purpose/field source approval.",
+      "Dedicated HRcase/onboarding action field PEP and separate non-app DWP task grant/native person authority contract source publication.",
+      "Admission/reuse/relink/immutable native receipt/pinned config owner-contract exact preparation and shared fail-closed adapter/consumer compilation/current common-pilot proof."
+    ],
+    "G4": [
+      "Domain CRUD/physical materialization/events/receipt producers and complete native 83-operation journeys; not a prerequisite to G3 coding preparation."
+    ],
+    "G6": [
+      "Customer identity authority/adoption and optional provider/country/connector production activation."
+    ]
+  },
+  "internalReviewIsNotExternalUserDecision": true,
+  "gateDecision": "UNCHANGED_CLOSED"
+}

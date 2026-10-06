@@ -1,0 +1,2201 @@
+{
+  "contractId": "dwp.hris.modern.hrm.v1",
+  "schemaVersion": 1,
+  "status": "G3_CONTRACT_READY_NOT_IMPLEMENTED",
+  "session": "HRIS-HRM",
+  "runtimeOwners": [
+    "dwp-people-server"
+  ],
+  "eventEnvelope": {
+    "schemaRef": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+    "required": [
+      "specVersion",
+      "id",
+      "source",
+      "type",
+      "schemaVersion",
+      "time",
+      "tenantId",
+      "aggregateType",
+      "aggregateId",
+      "aggregateSequence",
+      "correlationId",
+      "data"
+    ],
+    "partitionKey": "tenantId:aggregateId",
+    "outbox": "same_transaction",
+    "consumerRule": "inbox_dedupe_by_tenantId_and_event_id_then_aggregateSequence_gap_detection"
+  },
+  "physicalTableDefaults": {
+    "tenantColumn": "tenant_id BIGINT NOT NULL",
+    "internalId": "module-specific BIGSERIAL PRIMARY KEY; never exposed outside owning runtime",
+    "publicId": "public_id UUID NOT NULL; UNIQUE(tenant_id,public_id)",
+    "aggregateVersion": "aggregate_version BIGINT NOT NULL DEFAULT 0 CHECK (aggregate_version >= 0)",
+    "auditColumns": "created_at TIMESTAMPTZ NOT NULL; created_by UUID NOT NULL; updated_at TIMESTAMPTZ; updated_by UUID; correlation_id UUID NOT NULL",
+    "rowSecurity": "ENABLE ROW LEVEL SECURITY; FORCE ROW LEVEL SECURITY; tenant predicate current_setting('dwp.tenant_id',true)::bigint; application role NOBYPASSRLS",
+    "foreignKeyBoundary": "composite (tenant_id,id) FK only inside same physical store; cross-runtime references are tenant-bound opaque public UUIDs with no DB FK",
+    "deletionRule": "retention-class policy; terminal or ledger records use reversal/supersession and are never hard-deleted",
+    "indexRule": "every work queue or as-of query begins with tenant_id; no unbounded JSONB search index"
+  },
+  "capabilities": [
+    {
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "session": "HRIS-HRM",
+      "boundedContext": "DWP_PEOPLE_HRIS",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris",
+      "frontendBase": "apps/dwp/src/features/hris",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "people/recruiting",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/recruiting",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/people/recruiting",
+      "frontendRoot": "apps/dwp/src/features/hris/people/recruiting",
+      "frontendTestRoot": "apps/dwp/src/features/hris/people/recruiting/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/migration/V64__hrm_modern_recruiting_ats.sql",
+      "openapiFile": "contracts/openapi/hris/hrm/recruiting-ats.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/hrm/recruiting-ats.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.operations.recruiting"
+      ],
+      "authorizationCapabilities": [
+        "hcm.recruiting.view",
+        "hcm.recruiting.operate",
+        "hcm.recruiting.decide"
+      ],
+      "dataContracts": [
+        "Requisition.v1",
+        "CandidateCase.v1",
+        "Offer.v1",
+        "HireHandoff.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.recruiting.requisitions.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/recruiting/requisitions",
+          "action": "REQUISITION_QUERY",
+          "authorizationCapability": "hcm.recruiting.view",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "QUERY",
+          "response": "RequisitionPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.recruiting.requisition.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/recruiting/requisitions",
+          "action": "REQUISITION_CREATE",
+          "authorizationCapability": "hcm.recruiting.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-RECRUIT-TR-001"
+          ],
+          "emits": [
+            "CandidateStageChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.requisition.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/publish",
+          "action": "REQUISITION_PUBLISH",
+          "authorizationCapability": "hcm.recruiting.decide",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-RECRUIT-TR-002"
+          ],
+          "emits": [
+            "CandidateStageChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.candidate.stage",
+          "method": "PATCH",
+          "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/stage",
+          "action": "CANDIDATE_STAGE_UPDATE",
+          "authorizationCapability": "hcm.recruiting.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-RECRUIT-TR-003"
+          ],
+          "emits": [
+            "CandidateStageChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.offer.issue",
+          "method": "POST",
+          "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/offers",
+          "action": "OFFER_ISSUE",
+          "authorizationCapability": "hcm.recruiting.decide",
+          "scope": [
+            "LEGAL_ENTITY",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-RECRUIT-TR-004"
+          ],
+          "emits": [
+            "CandidateStageChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.hire.record",
+          "method": "POST",
+          "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/hire-decisions",
+          "action": "HIRE_DECISION_RECORD",
+          "authorizationCapability": "hcm.recruiting.decide",
+          "scope": [
+            "LEGAL_ENTITY",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-RECRUIT-TR-005"
+          ],
+          "emits": [
+            "CandidateHired.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-HRM-RECRUIT-SM-001",
+          "aggregate": "RecruitingCase",
+          "initialState": "NONE",
+          "terminalStates": [
+            "HIRED",
+            "CLOSED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-HRM-RECRUIT-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.recruiting.requisition.create",
+              "guard": "job-position snapshot current and requester scope allowed"
+            },
+            {
+              "transitionId": "MOD-HRM-RECRUIT-TR-002",
+              "from": "DRAFT",
+              "to": "OPEN",
+              "operationId": "modern.recruiting.requisition.publish",
+              "guard": "approved requisition version and human publisher"
+            },
+            {
+              "transitionId": "MOD-HRM-RECRUIT-TR-003",
+              "from": "OPEN",
+              "to": "SCREENING_OR_INTERVIEW",
+              "operationId": "modern.recruiting.candidate.stage",
+              "guard": "allowed stage edge and candidate retention consent"
+            },
+            {
+              "transitionId": "MOD-HRM-RECRUIT-TR-004",
+              "from": "SCREENING_OR_INTERVIEW",
+              "to": "OFFERED",
+              "operationId": "modern.recruiting.offer.issue",
+              "guard": "human selection receipt and compensation range policy"
+            },
+            {
+              "transitionId": "MOD-HRM-RECRUIT-TR-005",
+              "from": "OFFERED",
+              "to": "HIRED",
+              "operationId": "modern.recruiting.hire.record",
+              "guard": "accepted offer and human final decision; no autonomous employment decision"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "CandidateStageChanged.v1",
+          "type": "CandidateStageChanged",
+          "version": 1,
+          "topic": "dwp.hris.recruiting.candidate-stage.changed.v1",
+          "aggregate": "RecruitingCase",
+          "payloadRequired": [
+            "candidateCaseId",
+            "requisitionId",
+            "fromStage",
+            "toStage",
+            "decisionReceiptId",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-RECRUIT-TR-001",
+            "MOD-HRM-RECRUIT-TR-002",
+            "MOD-HRM-RECRUIT-TR-003",
+            "MOD-HRM-RECRUIT-TR-004"
+          ]
+        },
+        {
+          "name": "CandidateHired.v1",
+          "type": "CandidateHired",
+          "version": 1,
+          "topic": "dwp.hris.recruiting.candidate-hired.v1",
+          "aggregate": "RecruitingCase",
+          "payloadRequired": [
+            "candidateCaseId",
+            "requisitionId",
+            "offerId",
+            "hireHandoffId",
+            "effectiveDate",
+            "aggregateVersion",
+            "payloadDigest"
+          ],
+          "emittedOn": [
+            "MOD-HRM-RECRUIT-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "ppl_rec_requisitions",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "requisition_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL; half-open [from,to)",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:position_public_id->HRM.Position",
+            "OPAQUE:organization_public_id->HRM.Organization"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,requisition_code)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (DRAFT,OPEN,PAUSED,CLOSED)",
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,valid_from)",
+            "(tenant_id,position_public_id,status)"
+          ],
+          "retentionClass": "HR_RECRUITING_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_rec_candidate_cases",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "candidate_case_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ; candidate_consent_expires_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,requisition_id)->ppl_rec_requisitions",
+            "OPAQUE:candidate_person_token->privacy vault"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,source_system_id,source_candidate_key)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "stage IN (APPLIED,SCREENING,INTERVIEW,OFFERED,HIRED,REJECTED,CLOSED)",
+            "candidate_person_token IS NOT NULL"
+          ],
+          "indexes": [
+            "(tenant_id,requisition_id,stage,updated_at)",
+            "(tenant_id,candidate_consent_expires_at)"
+          ],
+          "retentionClass": "CANDIDATE_PRIVACY_PURPOSE_AND_CONSENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_rec_offers",
+          "kind": "CHILD_VERSIONED",
+          "idColumn": "offer_id",
+          "effectiveTime": "valid_from DATE NOT NULL; expires_at TIMESTAMPTZ NOT NULL",
+          "immutability": "TERMINAL_IMMUTABLE_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,candidate_case_id)->ppl_rec_candidate_cases",
+            "OPAQUE:compensation_policy_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,candidate_case_id,offer_version)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "offer_version > 0",
+            "status IN (DRAFT,ISSUED,ACCEPTED,DECLINED,EXPIRED,WITHDRAWN)"
+          ],
+          "indexes": [
+            "(tenant_id,candidate_case_id,offer_version DESC)",
+            "(tenant_id,status,expires_at)"
+          ],
+          "retentionClass": "CANDIDATE_OFFER_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_rec_hire_handoff_receipts",
+          "kind": "RECEIPT",
+          "idColumn": "hire_handoff_receipt_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,candidate_case_id)->ppl_rec_candidate_cases",
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,candidate_case_id,decision_revision)",
+            "(tenant_id,payload_digest)"
+          ],
+          "checks": [
+            "decision_revision > 0",
+            "payload_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,worker_public_id,recorded_at DESC)"
+          ],
+          "retentionClass": "EMPLOYMENT_DECISION_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-HRM-RECRUIT-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/hrm/g4/modern/recruiting-ats/state-machine-test.json",
+          "assertion": "every allowed and forbidden candidate/requisition edge plus idempotent replay"
+        },
+        {
+          "testId": "MOD-HRM-RECRUIT-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/hrm/g4/modern/recruiting-ats/privacy-negative.json",
+          "assertion": "cross-tenant candidate access, expired consent and prohibited-attribute use are denied and audited"
+        },
+        {
+          "testId": "MOD-HRM-RECRUIT-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/hrm/g4/modern/recruiting-ats/acceptance.json",
+          "assertion": "requisition-to-hire handoff reconciles and final decision remains human"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "job-board connectors",
+        "background-check providers",
+        "country candidate-retention rules"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "session": "HRIS-HRM",
+      "boundedContext": "DWP_PEOPLE_HRIS",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris",
+      "frontendBase": "apps/dwp/src/features/hris",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "employeeservice/onboarding",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/onboarding",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/onboarding",
+      "frontendRoot": "apps/dwp/src/features/hris/employee-services/onboarding",
+      "frontendTestRoot": "apps/dwp/src/features/hris/employee-services/onboarding/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/migration/V65__hrm_modern_onboarding.sql",
+      "openapiFile": "contracts/openapi/hris/hrm/onboarding.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/hrm/onboarding.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.services",
+        "hcm.operations.onboarding"
+      ],
+      "authorizationCapabilities": [
+        "hcm.onboarding.self.view",
+        "hcm.onboarding.task.complete",
+        "hcm.onboarding.operate"
+      ],
+      "dataContracts": [
+        "JourneyTemplate.v1",
+        "WorkerJourneyAssignment.v1",
+        "JourneyTaskEvidence.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.onboarding.self.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/onboarding/my-journeys",
+          "action": "ONBOARDING_SELF_QUERY",
+          "authorizationCapability": "hcm.onboarding.self.view",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "QUERY",
+          "response": "WorkerJourneyPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.onboarding.template.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/onboarding/templates",
+          "action": "ONBOARDING_TEMPLATE_CREATE",
+          "authorizationCapability": "hcm.onboarding.operate",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-ONBOARD-TR-001"
+          ],
+          "emits": [
+            "OnboardingJourneyChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.onboarding.template.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/onboarding/templates/{templateId}/versions/{version}/publish",
+          "action": "ONBOARDING_TEMPLATE_PUBLISH",
+          "authorizationCapability": "hcm.onboarding.operate",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-ONBOARD-TR-002"
+          ],
+          "emits": [
+            "OnboardingJourneyChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.onboarding.journey.assign",
+          "method": "POST",
+          "path": "/api/people/v1/hris/onboarding/journey-assignments",
+          "action": "ONBOARDING_JOURNEY_ASSIGN",
+          "authorizationCapability": "hcm.onboarding.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-ONBOARD-TR-003"
+          ],
+          "emits": [
+            "OnboardingJourneyChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.onboarding.task.complete",
+          "method": "POST",
+          "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/tasks/{taskId}/complete",
+          "action": "ONBOARDING_TASK_COMPLETE",
+          "authorizationCapability": "hcm.onboarding.task.complete",
+          "scope": [
+            "SELF",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-ONBOARD-TR-004"
+          ],
+          "emits": [
+            "OnboardingJourneyCompleted.v1"
+          ]
+        },
+        {
+          "operationId": "modern.onboarding.journey.cancel",
+          "method": "POST",
+          "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/cancel",
+          "action": "ONBOARDING_JOURNEY_CANCEL",
+          "authorizationCapability": "hcm.onboarding.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-ONBOARD-TR-005"
+          ],
+          "emits": [
+            "OnboardingJourneyChanged.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-HRM-ONBOARD-SM-001",
+          "aggregate": "OnboardingJourneyControl",
+          "initialState": "NONE",
+          "terminalStates": [
+            "COMPLETED",
+            "CANCELLED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-HRM-ONBOARD-TR-001",
+              "from": "NONE",
+              "to": "TEMPLATE_DRAFT",
+              "operationId": "modern.onboarding.template.create",
+              "guard": "tenant-owned versioned template key"
+            },
+            {
+              "transitionId": "MOD-HRM-ONBOARD-TR-002",
+              "from": "TEMPLATE_DRAFT",
+              "to": "TEMPLATE_PUBLISHED",
+              "operationId": "modern.onboarding.template.publish",
+              "guard": "all task owners due-date rules and evidence schemas valid"
+            },
+            {
+              "transitionId": "MOD-HRM-ONBOARD-TR-003",
+              "from": "TEMPLATE_PUBLISHED",
+              "to": "ASSIGNED",
+              "operationId": "modern.onboarding.journey.assign",
+              "guard": "worker lifecycle and template effective date overlap"
+            },
+            {
+              "transitionId": "MOD-HRM-ONBOARD-TR-004",
+              "from": "ASSIGNED",
+              "to": "IN_PROGRESS_OR_COMPLETED",
+              "operationId": "modern.onboarding.task.complete",
+              "guard": "task actor owns task and evidence digest is valid"
+            },
+            {
+              "transitionId": "MOD-HRM-ONBOARD-TR-005",
+              "from": "ASSIGNED|IN_PROGRESS_OR_COMPLETED",
+              "to": "CANCELLED",
+              "operationId": "modern.onboarding.journey.cancel",
+              "guard": "non-terminal assignment and reason code"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "OnboardingJourneyChanged.v1",
+          "type": "OnboardingJourneyChanged",
+          "version": 1,
+          "topic": "dwp.hris.onboarding.journey.changed.v1",
+          "aggregate": "OnboardingJourneyControl",
+          "payloadRequired": [
+            "journeyAssignmentId",
+            "workerPublicId",
+            "templateVersionId",
+            "fromState",
+            "toState",
+            "aggregateVersion",
+            "dueAt"
+          ],
+          "emittedOn": [
+            "MOD-HRM-ONBOARD-TR-001",
+            "MOD-HRM-ONBOARD-TR-002",
+            "MOD-HRM-ONBOARD-TR-003",
+            "MOD-HRM-ONBOARD-TR-005"
+          ]
+        },
+        {
+          "name": "OnboardingJourneyCompleted.v1",
+          "type": "OnboardingJourneyCompleted",
+          "version": 1,
+          "topic": "dwp.hris.onboarding.journey.completed.v1",
+          "aggregate": "OnboardingJourneyControl",
+          "payloadRequired": [
+            "journeyAssignmentId",
+            "workerPublicId",
+            "completedTaskCount",
+            "evidenceDigest",
+            "completedAt",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-ONBOARD-TR-004"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "ppl_jny_templates",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "journey_template_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL; half-open [from,to)",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:config_scope_public_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,template_key)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (DRAFT,PUBLISHED,RETIRED)",
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,valid_from)"
+          ],
+          "retentionClass": "HR_CONFIGURATION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_jny_assignments",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "journey_assignment_id",
+          "effectiveTime": "assigned_at TIMESTAMPTZ NOT NULL; due_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,journey_template_id)->ppl_jny_templates",
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,worker_public_id,journey_template_id,assignment_revision)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (ASSIGNED,IN_PROGRESS,COMPLETED,CANCELLED)",
+            "assignment_revision > 0"
+          ],
+          "indexes": [
+            "(tenant_id,worker_public_id,status,due_at)",
+            "(tenant_id,status,due_at)"
+          ],
+          "retentionClass": "EMPLOYEE_JOURNEY_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_jny_task_evidence",
+          "kind": "EVIDENCE_LEDGER",
+          "idColumn": "journey_task_evidence_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,journey_assignment_id)->ppl_jny_assignments",
+            "OPAQUE:object_ref->document service"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,journey_assignment_id,task_key,completion_revision)",
+            "(tenant_id,evidence_digest)"
+          ],
+          "checks": [
+            "completion_revision > 0",
+            "evidence_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,journey_assignment_id,task_key,recorded_at DESC)"
+          ],
+          "retentionClass": "EMPLOYEE_DOCUMENT_PURPOSE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-HRM-ONBOARD-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/hrm/g4/modern/onboarding/journey-test.json",
+          "assertion": "template publish and assignment lifecycle with accountable owner and due dates"
+        },
+        {
+          "testId": "MOD-HRM-ONBOARD-AT-002",
+          "type": "STATE",
+          "evidencePath": "../session-evidence/hrm/g4/modern/onboarding/idempotency-test.json",
+          "assertion": "duplicate assign complete cancel returns same receipt without duplicate evidence"
+        },
+        {
+          "testId": "MOD-HRM-ONBOARD-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/hrm/g4/modern/onboarding/acceptance.json",
+          "assertion": "all required tasks and document receipts reconcile before completion"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "e-signature connector",
+        "country onboarding documents"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "session": "HRIS-HRM",
+      "boundedContext": "DWP_PEOPLE_HRIS",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris",
+      "frontendBase": "apps/dwp/src/features/hris",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "organization/workforceplanning",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/workforceplanning",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/workforceplanning",
+      "frontendRoot": "apps/dwp/src/features/hris/organization/workforce-planning",
+      "frontendTestRoot": "apps/dwp/src/features/hris/organization/workforce-planning/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/migration/V66__hrm_modern_workforce_planning.sql",
+      "openapiFile": "contracts/openapi/hris/hrm/workforce-planning.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/hrm/workforce-planning.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.operations.workforce-planning"
+      ],
+      "authorizationCapabilities": [
+        "hcm.workforce.plan.view",
+        "hcm.workforce.plan.model",
+        "hcm.workforce.plan.publish"
+      ],
+      "dataContracts": [
+        "WorkforceScenario.v1",
+        "WorkforceScenarioRevision.v1",
+        "WorkforcePlanPublishReceipt.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.workforceplan.scenarios.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/workforce-planning/scenarios",
+          "action": "WORKFORCE_SCENARIO_QUERY",
+          "authorizationCapability": "hcm.workforce.plan.view",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE",
+            "ORG_UNIT"
+          ],
+          "mode": "QUERY",
+          "response": "WorkforceScenarioPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.workforceplan.scenario.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/workforce-planning/scenarios",
+          "action": "WORKFORCE_SCENARIO_CREATE",
+          "authorizationCapability": "hcm.workforce.plan.model",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-WFP-TR-001"
+          ],
+          "emits": [
+            "WorkforceScenarioChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.workforceplan.scenario.simulate",
+          "method": "POST",
+          "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/simulations",
+          "action": "WORKFORCE_SCENARIO_SIMULATE",
+          "authorizationCapability": "hcm.workforce.plan.model",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "WorkforceSimulationReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-WFP-TR-002"
+          ],
+          "emits": [
+            "WorkforceScenarioChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.workforceplan.scenario.submit",
+          "method": "POST",
+          "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/submit",
+          "action": "WORKFORCE_SCENARIO_SUBMIT",
+          "authorizationCapability": "hcm.workforce.plan.model",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-WFP-TR-003"
+          ],
+          "emits": [
+            "WorkforceScenarioChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.workforceplan.scenario.approve",
+          "method": "POST",
+          "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/approve",
+          "action": "WORKFORCE_SCENARIO_APPROVE",
+          "authorizationCapability": "hcm.workforce.plan.publish",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-WFP-TR-004"
+          ],
+          "emits": [
+            "WorkforceScenarioChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.workforceplan.scenario.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/publish",
+          "action": "WORKFORCE_SCENARIO_PUBLISH",
+          "authorizationCapability": "hcm.workforce.plan.publish",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_TREE"
+          ],
+          "mode": "COMMAND",
+          "response": "WorkforcePlanPublishReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-WFP-TR-005"
+          ],
+          "emits": [
+            "WorkforcePlanPublished.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-HRM-WFP-SM-001",
+          "aggregate": "WorkforceScenario",
+          "initialState": "NONE",
+          "terminalStates": [
+            "PUBLISHED",
+            "REJECTED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-HRM-WFP-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.workforceplan.scenario.create",
+              "guard": "as-of organization position and cost snapshots pinned"
+            },
+            {
+              "transitionId": "MOD-HRM-WFP-TR-002",
+              "from": "DRAFT|SIMULATED",
+              "to": "SIMULATED",
+              "operationId": "modern.workforceplan.scenario.simulate",
+              "guard": "same inputs and rule versions produce deterministic digest"
+            },
+            {
+              "transitionId": "MOD-HRM-WFP-TR-003",
+              "from": "SIMULATED",
+              "to": "PENDING_APPROVAL",
+              "operationId": "modern.workforceplan.scenario.submit",
+              "guard": "no blocking invariant and impact digest frozen"
+            },
+            {
+              "transitionId": "MOD-HRM-WFP-TR-004",
+              "from": "PENDING_APPROVAL",
+              "to": "APPROVED",
+              "operationId": "modern.workforceplan.scenario.approve",
+              "guard": "maker-checker and SoD pass"
+            },
+            {
+              "transitionId": "MOD-HRM-WFP-TR-005",
+              "from": "APPROVED",
+              "to": "PUBLISHED",
+              "operationId": "modern.workforceplan.scenario.publish",
+              "guard": "approval and canonical publish target revision unchanged"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "WorkforceScenarioChanged.v1",
+          "type": "WorkforceScenarioChanged",
+          "version": 1,
+          "topic": "dwp.hris.workforce-planning.scenario.changed.v1",
+          "aggregate": "WorkforceScenario",
+          "payloadRequired": [
+            "scenarioId",
+            "fromState",
+            "toState",
+            "inputSnapshotId",
+            "ruleVersionId",
+            "resultDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-WFP-TR-001",
+            "MOD-HRM-WFP-TR-002",
+            "MOD-HRM-WFP-TR-003",
+            "MOD-HRM-WFP-TR-004"
+          ]
+        },
+        {
+          "name": "WorkforcePlanPublished.v1",
+          "type": "WorkforcePlanPublished",
+          "version": 1,
+          "topic": "dwp.hris.workforce-planning.plan.published.v1",
+          "aggregate": "WorkforceScenario",
+          "payloadRequired": [
+            "scenarioId",
+            "publishReceiptId",
+            "approvedRevision",
+            "effectiveDate",
+            "impactDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-WFP-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "ppl_wfp_scenarios",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "workforce_scenario_id",
+          "effectiveTime": "as_of_date DATE NOT NULL; effective_date DATE",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:organization_snapshot_id->HRM.Organization",
+            "OPAQUE:config_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,scenario_key)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (DRAFT,SIMULATED,PENDING_APPROVAL,APPROVED,PUBLISHED,REJECTED)",
+            "input_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,status,as_of_date)",
+            "(tenant_id,effective_date,status)"
+          ],
+          "retentionClass": "WORKFORCE_PLAN_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_wfp_scenario_revisions",
+          "kind": "REVISION_LEDGER",
+          "idColumn": "workforce_scenario_revision_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,workforce_scenario_id)->ppl_wfp_scenarios"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,workforce_scenario_id,revision_no)",
+            "(tenant_id,result_digest)"
+          ],
+          "checks": [
+            "revision_no > 0",
+            "result_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,workforce_scenario_id,revision_no DESC)"
+          ],
+          "retentionClass": "WORKFORCE_PLAN_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_wfp_publish_receipts",
+          "kind": "RECEIPT",
+          "idColumn": "workforce_plan_publish_receipt_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL; effective_date DATE NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,workforce_scenario_id)->ppl_wfp_scenarios",
+            "OPAQUE:approval_case_public_id->Approval"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,workforce_scenario_id,approved_revision)",
+            "(tenant_id,payload_digest)"
+          ],
+          "checks": [
+            "approved_revision > 0",
+            "payload_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,effective_date,recorded_at DESC)"
+          ],
+          "retentionClass": "WORKFORCE_PLAN_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-HRM-WFP-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/hrm/g4/modern/workforce-planning/determinism-test.json",
+          "assertion": "same as-of snapshots and rules produce identical scenario digest"
+        },
+        {
+          "testId": "MOD-HRM-WFP-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/hrm/g4/modern/workforce-planning/approval-negative.json",
+          "assertion": "maker cannot approve or publish and unauthorized org scope is denied"
+        },
+        {
+          "testId": "MOD-HRM-WFP-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/hrm/g4/modern/workforce-planning/acceptance.json",
+          "assertion": "approved scenario publishes exactly once and reconciles canonical changes"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "real tenant cost model",
+        "customer planning dimensions"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "session": "HRIS-HRM",
+      "boundedContext": "DWP_PEOPLE_HRIS",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris",
+      "frontendBase": "apps/dwp/src/features/hris",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "COUNTRY_PACK",
+        "TENANT_CONFIG",
+        "EXTENSION"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "employeeservice/benefits",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/benefits",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/benefits",
+      "frontendRoot": "apps/dwp/src/features/hris/employee-services/benefits",
+      "frontendTestRoot": "apps/dwp/src/features/hris/employee-services/benefits/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/migration/V67__hrm_modern_benefits_admin.sql",
+      "openapiFile": "contracts/openapi/hris/hrm/benefits-admin.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/hrm/benefits-admin.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.benefits",
+        "hcm.operations.benefits"
+      ],
+      "authorizationCapabilities": [
+        "hcm.benefits.self.view",
+        "hcm.benefits.self.enroll",
+        "hcm.benefits.operate"
+      ],
+      "dataContracts": [
+        "BenefitPlan.v1",
+        "BenefitEnrollment.v1",
+        "BenefitLifeEvent.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.benefits.self.plans.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/benefits/my-eligible-plans",
+          "action": "BENEFIT_ELIGIBLE_PLAN_QUERY",
+          "authorizationCapability": "hcm.benefits.self.view",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "QUERY",
+          "response": "EligibleBenefitPlanPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.benefits.plan.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/benefits/plans",
+          "action": "BENEFIT_PLAN_CREATE",
+          "authorizationCapability": "hcm.benefits.operate",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-BENEFITS-TR-001"
+          ],
+          "emits": [
+            "BenefitAdministrationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.benefits.plan.publish",
+          "method": "POST",
+          "path": "/api/people/v1/hris/benefits/plans/{planId}/versions/{version}/publish",
+          "action": "BENEFIT_PLAN_PUBLISH",
+          "authorizationCapability": "hcm.benefits.operate",
+          "scope": [
+            "TENANT",
+            "LEGAL_ENTITY"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-BENEFITS-TR-002"
+          ],
+          "emits": [
+            "BenefitAdministrationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.benefits.enrollment.submit",
+          "method": "POST",
+          "path": "/api/people/v1/hris/benefits/enrollments",
+          "action": "BENEFIT_ENROLLMENT_SUBMIT",
+          "authorizationCapability": "hcm.benefits.self.enroll",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-BENEFITS-TR-003"
+          ],
+          "emits": [
+            "BenefitAdministrationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.benefits.lifeevent.submit",
+          "method": "POST",
+          "path": "/api/people/v1/hris/benefits/life-events",
+          "action": "BENEFIT_LIFE_EVENT_SUBMIT",
+          "authorizationCapability": "hcm.benefits.self.enroll",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-BENEFITS-TR-004"
+          ],
+          "emits": [
+            "BenefitAdministrationChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.benefits.enrollment.decide",
+          "method": "POST",
+          "path": "/api/people/v1/hris/benefits/enrollments/{enrollmentId}/decisions",
+          "action": "BENEFIT_ENROLLMENT_DECIDE",
+          "authorizationCapability": "hcm.benefits.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-BENEFITS-TR-005"
+          ],
+          "emits": [
+            "BenefitEnrollmentChanged.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-HRM-BENEFITS-SM-001",
+          "aggregate": "BenefitAdministrationCase",
+          "initialState": "NONE",
+          "terminalStates": [
+            "ACTIVE",
+            "REJECTED",
+            "CANCELLED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-HRM-BENEFITS-TR-001",
+              "from": "NONE",
+              "to": "PLAN_DRAFT",
+              "operationId": "modern.benefits.plan.create",
+              "guard": "generic plan schema and eligibility rule reference"
+            },
+            {
+              "transitionId": "MOD-HRM-BENEFITS-TR-002",
+              "from": "PLAN_DRAFT",
+              "to": "PLAN_PUBLISHED",
+              "operationId": "modern.benefits.plan.publish",
+              "guard": "eligibility test suite and effective-date overlap pass"
+            },
+            {
+              "transitionId": "MOD-HRM-BENEFITS-TR-003",
+              "from": "PLAN_PUBLISHED",
+              "to": "ENROLLMENT_SUBMITTED",
+              "operationId": "modern.benefits.enrollment.submit",
+              "guard": "worker dependent eligibility snapshot and election window valid"
+            },
+            {
+              "transitionId": "MOD-HRM-BENEFITS-TR-004",
+              "from": "PLAN_PUBLISHED|ENROLLMENT_SUBMITTED",
+              "to": "LIFE_EVENT_PENDING",
+              "operationId": "modern.benefits.lifeevent.submit",
+              "guard": "life-event evidence purpose and retention policy valid"
+            },
+            {
+              "transitionId": "MOD-HRM-BENEFITS-TR-005",
+              "from": "ENROLLMENT_SUBMITTED|LIFE_EVENT_PENDING",
+              "to": "ACTIVE|REJECTED",
+              "operationId": "modern.benefits.enrollment.decide",
+              "guard": "approved rule decision with field-projected dependent data"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "BenefitAdministrationChanged.v1",
+          "type": "BenefitAdministrationChanged",
+          "version": 1,
+          "topic": "dwp.hris.benefits.administration.changed.v1",
+          "aggregate": "BenefitAdministrationCase",
+          "payloadRequired": [
+            "caseId",
+            "workerPublicId",
+            "planId",
+            "fromState",
+            "toState",
+            "effectiveDate",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-BENEFITS-TR-001",
+            "MOD-HRM-BENEFITS-TR-002",
+            "MOD-HRM-BENEFITS-TR-003",
+            "MOD-HRM-BENEFITS-TR-004"
+          ]
+        },
+        {
+          "name": "BenefitEnrollmentChanged.v1",
+          "type": "BenefitEnrollmentChanged",
+          "version": 1,
+          "topic": "dwp.hris.benefits.enrollment.changed.v1",
+          "aggregate": "BenefitAdministrationCase",
+          "payloadRequired": [
+            "enrollmentId",
+            "workerPublicId",
+            "planId",
+            "coverageLevel",
+            "effectiveFrom",
+            "decisionReceiptId",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-BENEFITS-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "ppl_bnf_plans",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "benefit_plan_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL; half-open [from,to)",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:eligibility_policy_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,plan_code)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (DRAFT,PUBLISHED,RETIRED)",
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,valid_from)"
+          ],
+          "retentionClass": "BENEFIT_CONFIGURATION_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_bnf_enrollments",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "benefit_enrollment_id",
+          "effectiveTime": "effective_from DATE NOT NULL; effective_to DATE NULL; half-open [from,to)",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,benefit_plan_id)->ppl_bnf_plans",
+            "OPAQUE:worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,worker_public_id,benefit_plan_id,effective_from)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (SUBMITTED,ACTIVE,REJECTED,CANCELLED)",
+            "effective_to IS NULL OR effective_to > effective_from"
+          ],
+          "indexes": [
+            "(tenant_id,worker_public_id,status,effective_from DESC)"
+          ],
+          "retentionClass": "BENEFIT_ENROLLMENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_bnf_life_events",
+          "kind": "EVIDENCE_CASE",
+          "idColumn": "benefit_life_event_id",
+          "effectiveTime": "event_date DATE NOT NULL; evidence_expires_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:worker_public_id->HRM.Worker",
+            "OPAQUE:evidence_object_ref->document service"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,worker_public_id,event_type,event_date,source_record_key)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (PENDING,VERIFIED,REJECTED,EXPIRED)",
+            "event_type <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,worker_public_id,status,event_date DESC)",
+            "(tenant_id,evidence_expires_at)"
+          ],
+          "retentionClass": "DEPENDENT_AND_LIFE_EVENT_PURPOSE_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_bnf_provider_receipts",
+          "kind": "RECEIPT",
+          "idColumn": "benefit_provider_receipt_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,benefit_enrollment_id)->ppl_bnf_enrollments",
+            "OPAQUE:connector_execution_id->SYS.Connector"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,provider_key,provider_reference)",
+            "(tenant_id,request_digest)"
+          ],
+          "checks": [
+            "request_digest <> ''",
+            "response_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,benefit_enrollment_id,recorded_at DESC)"
+          ],
+          "retentionClass": "BENEFIT_PROVIDER_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-HRM-BENEFITS-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/hrm/g4/modern/benefits-admin/eligibility-property-test.json",
+          "assertion": "effective-date eligibility and election invariants hold over generated cases"
+        },
+        {
+          "testId": "MOD-HRM-BENEFITS-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/hrm/g4/modern/benefits-admin/privacy-negative.json",
+          "assertion": "dependent fields masked or omitted outside exact purpose and population"
+        },
+        {
+          "testId": "MOD-HRM-BENEFITS-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/hrm/g4/modern/benefits-admin/acceptance.json",
+          "assertion": "life-event enrollment and provider receipt reconcile without BENSK artifacts"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "country eligibility pack",
+        "benefit provider connector",
+        "real plan catalog"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "session": "HRIS-HRM",
+      "boundedContext": "DWP_PEOPLE_HRIS",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris",
+      "frontendBase": "apps/dwp/src/features/hris",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "TENANT_CONFIG"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "employeeservice/hrservice",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/hrservice",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/hrservice",
+      "frontendRoot": "apps/dwp/src/features/hris/employee-services/hr-service",
+      "frontendTestRoot": "apps/dwp/src/features/hris/employee-services/hr-service/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/migration/V68__hrm_modern_hr_service_delivery.sql",
+      "openapiFile": "contracts/openapi/hris/hrm/hr-service-delivery.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/hrm/hr-service-delivery.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.personal.services",
+        "hcm.operations.hr-services"
+      ],
+      "authorizationCapabilities": [
+        "hcm.hrservice.self.create",
+        "hcm.hrservice.case.work",
+        "hcm.hrservice.restricted.assign"
+      ],
+      "dataContracts": [
+        "HrCase.v1",
+        "KnowledgeAnswer.v1",
+        "CaseSlaReceipt.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.hrservice.case.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/hr-services/cases",
+          "action": "HR_CASE_CREATE",
+          "authorizationCapability": "hcm.hrservice.self.create",
+          "scope": [
+            "SELF"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-HRSD-TR-001"
+          ],
+          "emits": [
+            "HrCaseChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.hrservice.case.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/hr-services/cases/{caseId}",
+          "action": "HR_CASE_QUERY",
+          "authorizationCapability": "hcm.hrservice.case.work",
+          "scope": [
+            "SELF",
+            "NAMED_POPULATION"
+          ],
+          "mode": "QUERY",
+          "response": "HrCaseDetail.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.hrservice.case.triage",
+          "method": "POST",
+          "path": "/api/people/v1/hris/hr-services/cases/{caseId}/triage",
+          "action": "HR_CASE_TRIAGE",
+          "authorizationCapability": "hcm.hrservice.case.work",
+          "scope": [
+            "NAMED_POPULATION",
+            "SERVICE_QUEUE"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-HRSD-TR-002"
+          ],
+          "emits": [
+            "HrCaseChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.hrservice.case.assign",
+          "method": "POST",
+          "path": "/api/people/v1/hris/hr-services/cases/{caseId}/assignments",
+          "action": "HR_CASE_RESTRICTED_ASSIGN",
+          "authorizationCapability": "hcm.hrservice.restricted.assign",
+          "scope": [
+            "NAMED_POPULATION",
+            "SERVICE_QUEUE"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-HRSD-TR-003"
+          ],
+          "emits": [
+            "HrCaseChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.hrservice.case.respond",
+          "method": "POST",
+          "path": "/api/people/v1/hris/hr-services/cases/{caseId}/responses",
+          "action": "HR_CASE_RESPOND",
+          "authorizationCapability": "hcm.hrservice.case.work",
+          "scope": [
+            "SELF",
+            "NAMED_POPULATION",
+            "SERVICE_QUEUE"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-HRSD-TR-004"
+          ],
+          "emits": [
+            "HrCaseChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.hrservice.case.resolve",
+          "method": "POST",
+          "path": "/api/people/v1/hris/hr-services/cases/{caseId}/resolve",
+          "action": "HR_CASE_RESOLVE",
+          "authorizationCapability": "hcm.hrservice.case.work",
+          "scope": [
+            "NAMED_POPULATION",
+            "SERVICE_QUEUE"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-HRSD-TR-005"
+          ],
+          "emits": [
+            "HrCaseResolved.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-HRM-HRSD-SM-001",
+          "aggregate": "HrCase",
+          "initialState": "NONE",
+          "terminalStates": [
+            "RESOLVED",
+            "CANCELLED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-HRM-HRSD-TR-001",
+              "from": "NONE",
+              "to": "OPEN",
+              "operationId": "modern.hrservice.case.create",
+              "guard": "case type purpose and requester identity validated"
+            },
+            {
+              "transitionId": "MOD-HRM-HRSD-TR-002",
+              "from": "OPEN",
+              "to": "TRIAGED",
+              "operationId": "modern.hrservice.case.triage",
+              "guard": "classification sensitivity and SLA policy version pinned"
+            },
+            {
+              "transitionId": "MOD-HRM-HRSD-TR-003",
+              "from": "TRIAGED",
+              "to": "IN_PROGRESS",
+              "operationId": "modern.hrservice.case.assign",
+              "guard": "restricted queue membership and conflict rules pass"
+            },
+            {
+              "transitionId": "MOD-HRM-HRSD-TR-004",
+              "from": "OPEN|TRIAGED|IN_PROGRESS",
+              "to": "WAITING_OR_IN_PROGRESS",
+              "operationId": "modern.hrservice.case.respond",
+              "guard": "response provenance and field policy recorded"
+            },
+            {
+              "transitionId": "MOD-HRM-HRSD-TR-005",
+              "from": "IN_PROGRESS|WAITING_OR_IN_PROGRESS",
+              "to": "RESOLVED",
+              "operationId": "modern.hrservice.case.resolve",
+              "guard": "resolution code and SLA receipt present"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "HrCaseChanged.v1",
+          "type": "HrCaseChanged",
+          "version": 1,
+          "topic": "dwp.hris.hr-service.case.changed.v1",
+          "aggregate": "HrCase",
+          "payloadRequired": [
+            "caseId",
+            "caseType",
+            "fromState",
+            "toState",
+            "queueKey",
+            "slaDueAt",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-HRSD-TR-001",
+            "MOD-HRM-HRSD-TR-002",
+            "MOD-HRM-HRSD-TR-003",
+            "MOD-HRM-HRSD-TR-004"
+          ]
+        },
+        {
+          "name": "HrCaseResolved.v1",
+          "type": "HrCaseResolved",
+          "version": 1,
+          "topic": "dwp.hris.hr-service.case.resolved.v1",
+          "aggregate": "HrCase",
+          "payloadRequired": [
+            "caseId",
+            "resolutionCode",
+            "resolvedAt",
+            "slaOutcome",
+            "responseDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-HRSD-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "ppl_hrs_cases",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "hr_case_id",
+          "effectiveTime": "opened_at TIMESTAMPTZ NOT NULL; due_at TIMESTAMPTZ; resolved_at TIMESTAMPTZ",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:requester_worker_public_id->HRM.Worker",
+            "OPAQUE:sla_policy_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,case_number)",
+            "(tenant_id,public_id)"
+          ],
+          "checks": [
+            "status IN (OPEN,TRIAGED,IN_PROGRESS,WAITING,RESOLVED,CANCELLED)",
+            "sensitivity_class <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,queue_key,status,due_at)",
+            "(tenant_id,requester_worker_public_id,opened_at DESC)"
+          ],
+          "retentionClass": "HR_CASE_BY_TYPE_AND_SENSITIVITY_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_hrs_case_actions",
+          "kind": "ACTION_LEDGER",
+          "idColumn": "hr_case_action_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,hr_case_id)->ppl_hrs_cases",
+            "OPAQUE:actor_public_id->Auth.Principal"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,hr_case_id,action_sequence)",
+            "(tenant_id,correlation_id)"
+          ],
+          "checks": [
+            "action_sequence > 0",
+            "action_type <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,hr_case_id,action_sequence)"
+          ],
+          "retentionClass": "HR_CASE_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_hrs_sla_receipts",
+          "kind": "RECEIPT",
+          "idColumn": "hr_case_sla_receipt_id",
+          "effectiveTime": "measured_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,hr_case_id)->ppl_hrs_cases",
+            "OPAQUE:sla_policy_version_id->SYS.Config"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,hr_case_id,milestone,case_revision)"
+          ],
+          "checks": [
+            "elapsed_seconds >= 0",
+            "outcome IN (MET,BREACHED,PAUSED,EXEMPT)"
+          ],
+          "indexes": [
+            "(tenant_id,outcome,measured_at DESC)"
+          ],
+          "retentionClass": "HR_CASE_SLA_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-HRM-HRSD-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/hrm/g4/modern/hr-service-delivery/sla-journey-test.json",
+          "assertion": "intake-to-resolution lifecycle and SLA pause resume receipts reconcile"
+        },
+        {
+          "testId": "MOD-HRM-HRSD-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/hrm/g4/modern/hr-service-delivery/restricted-negative.json",
+          "assertion": "restricted cases cannot be listed assigned or searched by unentitled agents"
+        },
+        {
+          "testId": "MOD-HRM-HRSD-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/hrm/g4/modern/hr-service-delivery/acceptance.json",
+          "assertion": "knowledge answer provenance and retention class remain attached to resolution"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "customer knowledge corpus",
+        "real support queue SLAs"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "session": "HRIS-HRM",
+      "boundedContext": "DWP_PEOPLE_HRIS",
+      "runtimeOwner": "dwp-people-server",
+      "backendBase": "dwp-people-server/src/main/java/com/dwp/services/people/hris",
+      "backendTestBase": "dwp-people-server/src/test/java/com/dwp/services/people/hris",
+      "frontendBase": "apps/dwp/src/features/hris",
+      "migrationBase": "dwp-people-server/src/main/resources/db/migration",
+      "activationLayers": [
+        "PRODUCT_CORE",
+        "COUNTRY_PACK",
+        "TENANT_CONFIG",
+        "EXTENSION"
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "contextModule": "people/contingent",
+      "backendRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/contingent",
+      "backendTestRoot": "dwp-people-server/src/test/java/com/dwp/services/people/hris/people/contingent",
+      "frontendRoot": "apps/dwp/src/features/hris/people/contingent-workforce",
+      "frontendTestRoot": "apps/dwp/src/features/hris/people/contingent-workforce/__tests__",
+      "migrationFile": "dwp-people-server/src/main/resources/db/migration/V69__hrm_modern_contingent_workforce.sql",
+      "openapiFile": "contracts/openapi/hris/hrm/contingent-workforce.v1.yaml",
+      "asyncapiFile": "contracts/asyncapi/hris/hrm/contingent-workforce.v1.yaml",
+      "menuNodeKeys": [
+        "hcm.operations.contingent-workforce"
+      ],
+      "authorizationCapabilities": [
+        "hcm.contingent.view",
+        "hcm.contingent.operate",
+        "hcm.contingent.offboard"
+      ],
+      "dataContracts": [
+        "ContingentEngagement.v1",
+        "SponsorAssignment.v1",
+        "AccessExpiryReceipt.v1"
+      ],
+      "operations": [
+        {
+          "operationId": "modern.contingent.engagements.query",
+          "method": "GET",
+          "path": "/api/people/v1/hris/contingent-workforce/engagements",
+          "action": "CONTINGENT_ENGAGEMENT_QUERY",
+          "authorizationCapability": "hcm.contingent.view",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "QUERY",
+          "response": "ContingentEngagementPage.v1",
+          "idempotency": "READ_SAFE",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [],
+          "emits": []
+        },
+        {
+          "operationId": "modern.contingent.engagement.create",
+          "method": "POST",
+          "path": "/api/people/v1/hris/contingent-workforce/engagements",
+          "action": "CONTINGENT_ENGAGEMENT_CREATE",
+          "authorizationCapability": "hcm.contingent.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "NOT_APPLICABLE",
+          "transitionIds": [
+            "MOD-HRM-CONTINGENT-TR-001"
+          ],
+          "emits": [
+            "ContingentEngagementChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.contingent.engagement.submit",
+          "method": "POST",
+          "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/submit",
+          "action": "CONTINGENT_ENGAGEMENT_SUBMIT",
+          "authorizationCapability": "hcm.contingent.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-CONTINGENT-TR-002"
+          ],
+          "emits": [
+            "ContingentEngagementChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.contingent.engagement.activate",
+          "method": "POST",
+          "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/activate",
+          "action": "CONTINGENT_ENGAGEMENT_ACTIVATE",
+          "authorizationCapability": "hcm.contingent.operate",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-CONTINGENT-TR-003"
+          ],
+          "emits": [
+            "ContingentEngagementChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.contingent.engagement.offboard",
+          "method": "POST",
+          "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/offboard",
+          "action": "CONTINGENT_ENGAGEMENT_OFFBOARD",
+          "authorizationCapability": "hcm.contingent.offboard",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "HrisCommandReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-CONTINGENT-TR-004"
+          ],
+          "emits": [
+            "ContingentEngagementChanged.v1"
+          ]
+        },
+        {
+          "operationId": "modern.contingent.engagement.close",
+          "method": "POST",
+          "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/close",
+          "action": "CONTINGENT_ENGAGEMENT_CLOSE",
+          "authorizationCapability": "hcm.contingent.offboard",
+          "scope": [
+            "LEGAL_ENTITY",
+            "ORG_UNIT",
+            "NAMED_POPULATION"
+          ],
+          "mode": "COMMAND",
+          "response": "AccessExpiryReceipt.v1",
+          "idempotency": "REQUIRED",
+          "expectedVersion": "REQUIRED",
+          "transitionIds": [
+            "MOD-HRM-CONTINGENT-TR-005"
+          ],
+          "emits": [
+            "ContingentAccessExpired.v1"
+          ]
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "MOD-HRM-CONTINGENT-SM-001",
+          "aggregate": "ContingentEngagement",
+          "initialState": "NONE",
+          "terminalStates": [
+            "ENDED",
+            "REJECTED"
+          ],
+          "transitions": [
+            {
+              "transitionId": "MOD-HRM-CONTINGENT-TR-001",
+              "from": "NONE",
+              "to": "DRAFT",
+              "operationId": "modern.contingent.engagement.create",
+              "guard": "classification vendor and sponsor references valid"
+            },
+            {
+              "transitionId": "MOD-HRM-CONTINGENT-TR-002",
+              "from": "DRAFT",
+              "to": "PENDING_APPROVAL",
+              "operationId": "modern.contingent.engagement.submit",
+              "guard": "classification test and access-expiry date present"
+            },
+            {
+              "transitionId": "MOD-HRM-CONTINGENT-TR-003",
+              "from": "PENDING_APPROVAL",
+              "to": "ACTIVE",
+              "operationId": "modern.contingent.engagement.activate",
+              "guard": "approval receipt and sponsor active"
+            },
+            {
+              "transitionId": "MOD-HRM-CONTINGENT-TR-004",
+              "from": "ACTIVE",
+              "to": "OFFBOARDING",
+              "operationId": "modern.contingent.engagement.offboard",
+              "guard": "reason and end date present"
+            },
+            {
+              "transitionId": "MOD-HRM-CONTINGENT-TR-005",
+              "from": "OFFBOARDING",
+              "to": "ENDED",
+              "operationId": "modern.contingent.engagement.close",
+              "guard": "all access-expiry receipts reconciled"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "name": "ContingentEngagementChanged.v1",
+          "type": "ContingentEngagementChanged",
+          "version": 1,
+          "topic": "dwp.hris.contingent.engagement.changed.v1",
+          "aggregate": "ContingentEngagement",
+          "payloadRequired": [
+            "engagementId",
+            "workerPublicId",
+            "classificationCode",
+            "fromState",
+            "toState",
+            "sponsorWorkerPublicId",
+            "accessExpiresAt",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-CONTINGENT-TR-001",
+            "MOD-HRM-CONTINGENT-TR-002",
+            "MOD-HRM-CONTINGENT-TR-003",
+            "MOD-HRM-CONTINGENT-TR-004"
+          ]
+        },
+        {
+          "name": "ContingentAccessExpired.v1",
+          "type": "ContingentAccessExpired",
+          "version": 1,
+          "topic": "dwp.hris.contingent.access.expired.v1",
+          "aggregate": "ContingentEngagement",
+          "payloadRequired": [
+            "engagementId",
+            "workerPublicId",
+            "endedAt",
+            "revokedGrantCount",
+            "unreconciledGrantCount",
+            "receiptDigest",
+            "aggregateVersion"
+          ],
+          "emittedOn": [
+            "MOD-HRM-CONTINGENT-TR-005"
+          ]
+        }
+      ],
+      "tables": [
+        {
+          "name": "ppl_cwk_engagements",
+          "kind": "AGGREGATE_ROOT",
+          "idColumn": "contingent_engagement_id",
+          "effectiveTime": "effective_from DATE NOT NULL; effective_to DATE NOT NULL; half-open [from,to)",
+          "immutability": "MUTABLE_WITH_VERSION_THEN_TERMINAL",
+          "foreignKeyBoundaries": [
+            "OPAQUE:worker_public_id->HRM.Worker",
+            "OPAQUE:vendor_public_id->external vendor registry"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,engagement_code)",
+            "(tenant_id,worker_public_id,effective_from)"
+          ],
+          "checks": [
+            "status IN (DRAFT,PENDING_APPROVAL,ACTIVE,OFFBOARDING,ENDED,REJECTED)",
+            "effective_to > effective_from"
+          ],
+          "indexes": [
+            "(tenant_id,status,effective_to)",
+            "(tenant_id,sponsor_worker_public_id,status)"
+          ],
+          "retentionClass": "CONTINGENT_ENGAGEMENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_cwk_sponsor_assignments",
+          "kind": "EFFECTIVE_DATED_CHILD",
+          "idColumn": "sponsor_assignment_id",
+          "effectiveTime": "valid_from DATE NOT NULL; valid_to DATE NULL; half-open [from,to)",
+          "immutability": "MUTABLE_WITH_VERSION",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,contingent_engagement_id)->ppl_cwk_engagements",
+            "OPAQUE:sponsor_worker_public_id->HRM.Worker"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,contingent_engagement_id,valid_from)"
+          ],
+          "checks": [
+            "valid_to IS NULL OR valid_to > valid_from"
+          ],
+          "indexes": [
+            "(tenant_id,sponsor_worker_public_id,valid_from DESC)"
+          ],
+          "retentionClass": "CONTINGENT_ENGAGEMENT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "ppl_cwk_access_expiry_receipts",
+          "kind": "RECEIPT",
+          "idColumn": "access_expiry_receipt_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,contingent_engagement_id)->ppl_cwk_engagements",
+            "OPAQUE:grant_public_id->Auth.ProductAccess"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,grant_public_id,grant_revision)",
+            "(tenant_id,receipt_digest)"
+          ],
+          "checks": [
+            "grant_revision > 0",
+            "outcome IN (REVOKED,NOT_FOUND,RETRY_REQUIRED)"
+          ],
+          "indexes": [
+            "(tenant_id,contingent_engagement_id,outcome,recorded_at DESC)"
+          ],
+          "retentionClass": "ACCESS_REVOCATION_AUDIT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-HRM-CONTINGENT-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/hrm/g4/modern/contingent-workforce/classification-test.json",
+          "assertion": "worker classification and bounded engagement dates drive exact lifecycle"
+        },
+        {
+          "testId": "MOD-HRM-CONTINGENT-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/hrm/g4/modern/contingent-workforce/expiry-enforcement.json",
+          "assertion": "expired engagements lose all product grants and unresolved receipts block close"
+        },
+        {
+          "testId": "MOD-HRM-CONTINGENT-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/hrm/g4/modern/contingent-workforce/acceptance.json",
+          "assertion": "vendor sponsor tenant isolation and offboarding reconciliation pass"
+        }
+      ],
+      "countryOrExternalActivation": [
+        "country worker-classification pack",
+        "vendor connector"
+      ]
+    }
+  ]
+}

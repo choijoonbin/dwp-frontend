@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "contractId": "COMMON_ALLOCATION_SUCCESSOR_FIXTURES_V1",
+  "mode": "AUTHOR_NEGATIVE_STRUCTURAL_ONLY",
+  "readinessPass": false,
+  "fixtures": [
+    {
+      "caseId": "ALLOC-01",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-HRM-001",
+      "field": "version",
+      "value": 48,
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-02",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-SYS-004",
+      "field": "version",
+      "value": 213,
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-03",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-PAY-001",
+      "field": "exactFilename",
+      "value": "dwp-payroll-server/src/main/resources/db/other/V1__pay_invalid.sql",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-04",
+      "collection": "moduleReservations",
+      "identity": "SA-MOD-SYS-ANALYTICS-platform-hris-insights",
+      "field": "streamKey",
+      "value": "platform-main",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-05",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-HRM-001",
+      "field": "writerAction",
+      "value": "MODIFY",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-06",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-HRM-001",
+      "field": "testEvidenceRefs",
+      "value": "COUNT_ONLY_TEST",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-07",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-HRM-001",
+      "field": "sourceSliceId",
+      "value": "PHANTOM-SLICE",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-08",
+      "collection": "commonReservations",
+      "identity": "SC-WCE-REGISTRY",
+      "field": "version",
+      "value": 214,
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-09",
+      "collection": "commonReservations",
+      "identity": "SC-platform-hris-insights",
+      "field": "version",
+      "value": 2,
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-10",
+      "collection": "commonReservations",
+      "identity": "SC-platform-hris-protected",
+      "field": "exactFilename",
+      "value": "dwp-platform-server/src/main/resources/db/migration/V1__protected.sql",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-11",
+      "collection": "streams",
+      "identity": "platform-hris-insights",
+      "field": "createSchemas",
+      "value": true,
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-12",
+      "collection": "streams",
+      "identity": "platform-hris-protected",
+      "field": "status",
+      "value": "CURRENT_PUBLISHED",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-13",
+      "collection": "streams",
+      "identity": "auth-hris-participation-issuer",
+      "field": "migrationPrincipal",
+      "value": "dwp_auth_migration",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-14",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-HRM-001",
+      "field": "semanticClosure",
+      "value": "CLOSED",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    },
+    {
+      "caseId": "ALLOC-15",
+      "collection": "moduleReservations",
+      "identity": "SA-BASE-TFR-SYS-007",
+      "field": "routeStatus",
+      "value": "PUBLIC_CREATE_ALLOWED",
+      "expected": "REJECT_AUTHOR_STRUCTURE_NOT_DOMAIN_EXECUTION"
+    }
+  ],
+  "limitations": [
+    "No DB migration/resource/schema/ACL behavior is executed.",
+    "Existing 105 rows do not prove successor business grouping or source semantic closure."
+  ]
+}

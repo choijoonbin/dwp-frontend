@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.scoped-g3-authoring-packet.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "packetId",
+    "sessionId",
+    "issuedAt",
+    "mode",
+    "lifecycleState",
+    "authority",
+    "officialGateSnapshot",
+    "worktrees",
+    "firstSlice",
+    "pathPolicy",
+    "migrationPolicy",
+    "contractBindings",
+    "verificationBindings",
+    "holdPolicy",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {"const": "dwp.hris.scoped-g3-authoring-packet.v1"},
+    "packetId": {"type": "string", "minLength": 1},
+    "sessionId": {"enum": ["HRIS-HRM", "HRIS-PER", "HRIS-PAY", "HRIS-TIM", "HRIS-SYS"]},
+    "issuedAt": {"type": "string", "minLength": 1},
+    "mode": {"const": "PREPARE_ONLY_NO_CODE"},
+    "lifecycleState": {"const": "PACKET_ISSUED_HOLD"},
+    "authority": {
+      "type": "object",
+      "required": ["officialGateAuthority", "moduleCodeAuthority", "readinessAuthority", "productionAuthority"]
+    },
+    "worktrees": {
+      "type": "object",
+      "required": ["backend", "frontend"]
+    },
+    "firstSlice": {"type": "object", "required": ["sliceId", "sliceRowSha256", "codeGoTokenReference"]},
+    "pathPolicy": {"type": "object", "required": ["allowedBackendGlobs", "allowedFrontendGlobs", "forbiddenGlobs"]},
+    "migrationPolicy": {"type": "object", "required": ["allocationId", "state"]},
+    "contractBindings": {"type": "array", "minItems": 1},
+    "verificationBindings": {"type": "object", "required": ["backendProfileId", "frontendProfileId", "frontendTestPath"]},
+    "holdPolicy": {"type": "object", "required": ["startToken", "startCommandIssued", "developmentStarted"]},
+    "sealedPayloadSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true
+}
+

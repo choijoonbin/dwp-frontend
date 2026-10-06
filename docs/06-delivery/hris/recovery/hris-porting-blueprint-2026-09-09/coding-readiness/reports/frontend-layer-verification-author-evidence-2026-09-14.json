@@ -1,0 +1,1558 @@
+{
+  "contractId": "FRONTEND_LAYER_VERIFICATION_AUTHOR_EVIDENCE_V1",
+  "schemaVersion": 1,
+  "date": "2026-09-14",
+  "state": "AUTHOR_ONLY_IMPLEMENTED_VERIFICATION_PENDING_INDEPENDENT_REPLAY",
+  "authorTask": "/root/final_architecture_adversarial_audit",
+  "independentApproval": false,
+  "g3StartAuthorized": false,
+  "readinessPass": false,
+  "scope": {
+    "newVerifierFilesOnly": 3,
+    "newEvidenceFilesOnly": 2,
+    "existingFrontendCheckScriptsModified": false,
+    "packageSnapshotModified": false,
+    "productSourceModified": false,
+    "canonicalCsvOrGateModifiedByThisAuthor": false,
+    "dbOrServerOrGradleUsed": false
+  },
+  "files": [
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+      "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+      "mtimeNs": "1789372935387532984",
+      "lines": 303
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+      "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+      "mtimeNs": "1789372861693015249",
+      "lines": 162
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+      "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+      "mtimeNs": "1789372734551537974",
+      "lines": 238
+    }
+  ],
+  "claims": {
+    "compile": {
+      "virtualSources": 7,
+      "typescript": "6.0.3",
+      "react": "19.2.8",
+      "reactQuery": "5.101.4",
+      "diagnostics": 0,
+      "emittedFiles": 0,
+      "domRendered": false,
+      "domainRuntimeExecuted": false,
+      "apiMapping": "SYNTHETIC_API_LAYER_MAPPING_WITH_TRANSPORT_DECLARATIONS_ONLY"
+    },
+    "graph": {
+      "allowedEdges": 12,
+      "compiledFixtureDistinctEdges": 11,
+      "separateAstTestingPublicApiEdge": 1,
+      "closedLayerDag": true,
+      "fixtureNegativeInputs": 27,
+      "fixtureNegativesRejected": 27
+    },
+    "tests": {
+      "currentFreshUniqueNodeCases": 44,
+      "currentFail": 0,
+      "currentSkipped": 0,
+      "currentCancelled": 0,
+      "cases": [
+        "compile seven virtual React Query / controlled-form sources against installed types without emit",
+        "fixture eleven compiled edges plus separate testing/public-api witness cover all twelve edges",
+        "original eight-edge graph rejects exactly four distinct missing orchestration edges",
+        "twelve-layer contract remains a DAG; reverse forms/hooks is not an allowed edge",
+        "AST negative: pages_api",
+        "AST negative: components_api",
+        "AST negative: forms_api",
+        "AST negative: forms_hooks_reverse",
+        "AST negative: api_hooks_reverse",
+        "AST negative: hooks_components",
+        "AST negative: production_testing",
+        "AST negative: testing_internal",
+        "AST negative: nested_hris_relative",
+        "AST negative: nested_hris_alias",
+        "AST negative: nested_hris_reexport",
+        "AST negative: nested_hris_dynamic_literal",
+        "AST negative: nested_hris_type_query",
+        "AST negative: unknown_project_alias",
+        "AST negative: raw_dto_alias_renamed",
+        "AST negative: generated_dto_relative",
+        "AST negative: model_react",
+        "AST negative: forms_react",
+        "AST negative: page_react_query",
+        "AST negative: raw_gateway",
+        "AST negative: ui_axios",
+        "AST negative: raw_fetch",
+        "AST negative: computed_dynamic",
+        "AST negative: computed_require",
+        "AST negative: same_layer_relative_cycle",
+        "AST negative: same_layer_alias_cycle",
+        "AST negative: invalid_syntax",
+        "nested HRIS features are distinct despite their common hris directory",
+        "foreign feature public barrel is legal, but a lookalike nested index remains internal",
+        "same layer acyclic helpers are allowed but type-only cycles are not hidden",
+        "ordinary comments and strings do not manufacture imports or raw fetch calls",
+        "qualified and string-element browser transport calls cannot bypass the AST raw-transport rule",
+        "an HRIS-root file is explicitly unclassified instead of disappearing from coverage",
+        "missing relative project target is rejected, not treated as an external dependency",
+        "computed template import is rejected while a no-substitution template is resolved",
+        "renamed generated DTO via actual configured alias is rejected in UI and allowed in api",
+        "import-equals cannot bypass nested HRIS isolation",
+        "flat pilot sources and an empty namespace cannot give a zero-coverage PASS",
+        "CSV quote parsing and exact contract comparison are read-only operations",
+        "evidence hashes exact source namespace and labels installed package versions without readiness"
+      ]
+    },
+    "actualRepository": {
+      "sourceNamespaceCount": 2034,
+      "classifiedPublicApiBarrels": 2,
+      "layeredSources": 0,
+      "unclassifiedHrisSources": 38,
+      "diagnosticCount": 59,
+      "actualLayerCompliance": "NOT_VALIDATED_FAIL_ZERO_LAYERED_COVERAGE",
+      "exitCode": 1,
+      "legacyChecksDoNotEstablishNewLayerCompliance": true
+    }
+  },
+  "initialFailure": {
+    "testCases": 42,
+    "passed": 41,
+    "failed": 1,
+    "reason": "The old-eight-edge proof compared per-import diagnostics with a distinct-edge list. Separate hooks-to-model type/value imports correctly produced two diagnostics.",
+    "correction": "Deduplicate only the expected DISTINCT edge list; explicitly retain/assert both hooks-to-model import diagnostics. Added qualified raw browser transport and HRIS-root coverage regression cases; later added source namespace mtimeNs evidence without changing layer policy.",
+    "evidence": {
+      "argv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "scripts/verification/hris-layer-contract-v1.test.mjs"
+      ],
+      "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+      "startedAtUtc": "2026-09-14T08:00:09.889Z",
+      "endedAtUtc": "2026-09-14T08:00:11.007Z",
+      "elapsedMs": 1117.123916,
+      "exitCode": 1,
+      "signal": null,
+      "stdout": "TAP version 13\n# Subtest: compile seven virtual React Query / controlled-form sources against installed types without emit\nok 1 - compile seven virtual React Query / controlled-form sources against installed types without emit\n  ---\n  duration_ms: 389.851\n  type: 'test'\n  ...\n# Subtest: fixture eleven compiled edges plus separate testing/public-api witness cover all twelve edges\nok 2 - fixture eleven compiled edges plus separate testing/public-api witness cover all twelve edges\n  ---\n  duration_ms: 216.603291\n  type: 'test'\n  ...\n# Subtest: original eight-edge graph rejects exactly the four missing orchestration edges\nnot ok 3 - original eight-edge graph rejects exactly the four missing orchestration edges\n  ---\n  duration_ms: 2.652708\n  type: 'test'\n  location: '/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs:35:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly deep-equal:\n    + actual - expected\n    \n      [\n        'hooks>forms',\n        'hooks>model',\n    +   'hooks>model',\n        'pages>forms',\n        'pages>hooks'\n      ]\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected:\n    0: 'hooks>forms'\n    1: 'hooks>model'\n    2: 'pages>forms'\n    3: 'pages>hooks'\n  actual:\n    0: 'hooks>forms'\n    1: 'hooks>model'\n    2: 'hooks>model'\n    3: 'pages>forms'\n    4: 'pages>hooks'\n  operator: 'deepStrictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs:39:10)\n    Test.runInAsyncScope (node:async_hooks:227:14)\n    Test.run (node:internal/test_runner/test:1382:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:960:18)\n    Test.postRun (node:internal/test_runner/test:1522:19)\n    Test.run (node:internal/test_runner/test:1447:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)\n  ...\n# Subtest: twelve-layer contract remains a DAG; reverse forms/hooks is not an allowed edge\nok 4 - twelve-layer contract remains a DAG; reverse forms/hooks is not an allowed edge\n  ---\n  duration_ms: 0.151958\n  type: 'test'\n  ...\n# Subtest: AST negative: pages_api\nok 5 - AST negative: pages_api\n  ---\n  duration_ms: 0.2825\n  type: 'test'\n  ...\n# Subtest: AST negative: components_api\nok 6 - AST negative: components_api\n  ---\n  duration_ms: 0.12\n  type: 'test'\n  ...\n# Subtest: AST negative: forms_api\nok 7 - AST negative: forms_api\n  ---\n  duration_ms: 0.103167\n  type: 'test'\n  ...\n# Subtest: AST negative: forms_hooks_reverse\nok 8 - AST negative: forms_hooks_reverse\n  ---\n  duration_ms: 0.106125\n  type: 'test'\n  ...\n# Subtest: AST negative: api_hooks_reverse\nok 9 - AST negative: api_hooks_reverse\n  ---\n  duration_ms: 0.117458\n  type: 'test'\n  ...\n# Subtest: AST negative: hooks_components\nok 10 - AST negative: hooks_components\n  ---\n  duration_ms: 0.134833\n  type: 'test'\n  ...\n# Subtest: AST negative: production_testing\nok 11 - AST negative: production_testing\n  ---\n  duration_ms: 0.109834\n  type: 'test'\n  ...\n# Subtest: AST negative: testing_internal\nok 12 - AST negative: testing_internal\n  ---\n  duration_ms: 0.097041\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_relative\nok 13 - AST negative: nested_hris_relative\n  ---\n  duration_ms: 0.123375\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_alias\nok 14 - AST negative: nested_hris_alias\n  ---\n  duration_ms: 0.089791\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_reexport\nok 15 - AST negative: nested_hris_reexport\n  ---\n  duration_ms: 0.073\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_dynamic_literal\nok 16 - AST negative: nested_hris_dynamic_literal\n  ---\n  duration_ms: 0.137791\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_type_query\nok 17 - AST negative: nested_hris_type_query\n  ---\n  duration_ms: 0.09375\n  type: 'test'\n  ...\n# Subtest: AST negative: unknown_project_alias\nok 18 - AST negative: unknown_project_alias\n  ---\n  duration_ms: 0.050125\n  type: 'test'\n  ...\n# Subtest: AST negative: raw_dto_alias_renamed\nok 19 - AST negative: raw_dto_alias_renamed\n  ---\n  duration_ms: 0.071083\n  type: 'test'\n  ...\n# Subtest: AST negative: generated_dto_relative\nok 20 - AST negative: generated_dto_relative\n  ---\n  duration_ms: 0.094125\n  type: 'test'\n  ...\n# Subtest: AST negative: model_react\nok 21 - AST negative: model_react\n  ---\n  duration_ms: 0.048833\n  type: 'test'\n  ...\n# Subtest: AST negative: forms_react\nok 22 - AST negative: forms_react\n  ---\n  duration_ms: 0.06575\n  type: 'test'\n  ...\n# Subtest: AST negative: page_react_query\nok 23 - AST negative: page_react_query\n  ---\n  duration_ms: 0.046458\n  type: 'test'\n  ...\n# Subtest: AST negative: raw_gateway\nok 24 - AST negative: raw_gateway\n  ---\n  duration_ms: 0.040625\n  type: 'test'\n  ...\n# Subtest: AST negative: ui_axios\nok 25 - AST negative: ui_axios\n  ---\n  duration_ms: 0.046209\n  type: 'test'\n  ...\n# Subtest: AST negative: raw_fetch\nok 26 - AST negative: raw_fetch\n  ---\n  duration_ms: 0.133834\n  type: 'test'\n  ...\n# Subtest: AST negative: computed_dynamic\nok 27 - AST negative: computed_dynamic\n  ---\n  duration_ms: 0.064666\n  type: 'test'\n  ...\n# Subtest: AST negative: computed_require\nok 28 - AST negative: computed_require\n  ---\n  duration_ms: 0.051666\n  type: 'test'\n  ...\n# Subtest: AST negative: same_layer_relative_cycle\nok 29 - AST negative: same_layer_relative_cycle\n  ---\n  duration_ms: 0.1125\n  type: 'test'\n  ...\n# Subtest: AST negative: same_layer_alias_cycle\nok 30 - AST negative: same_layer_alias_cycle\n  ---\n  duration_ms: 0.093208\n  type: 'test'\n  ...\n# Subtest: AST negative: invalid_syntax\nok 31 - AST negative: invalid_syntax\n  ---\n  duration_ms: 0.066541\n  type: 'test'\n  ...\n# Subtest: nested HRIS features are distinct despite their common hris directory\nok 32 - nested HRIS features are distinct despite their common hris directory\n  ---\n  duration_ms: 0.072959\n  type: 'test'\n  ...\n# Subtest: foreign feature public barrel is legal, but a lookalike nested index remains internal\nok 33 - foreign feature public barrel is legal, but a lookalike nested index remains internal\n  ---\n  duration_ms: 0.23975\n  type: 'test'\n  ...\n# Subtest: same layer acyclic helpers are allowed but type-only cycles are not hidden\nok 34 - same layer acyclic helpers are allowed but type-only cycles are not hidden\n  ---\n  duration_ms: 0.240208\n  type: 'test'\n  ...\n# Subtest: ordinary comments and strings do not manufacture imports or raw fetch calls\nok 35 - ordinary comments and strings do not manufacture imports or raw fetch calls\n  ---\n  duration_ms: 0.071584\n  type: 'test'\n  ...\n# Subtest: missing relative project target is rejected, not treated as an external dependency\nok 36 - missing relative project target is rejected, not treated as an external dependency\n  ---\n  duration_ms: 0.092834\n  type: 'test'\n  ...\n# Subtest: computed template import is rejected while a no-substitution template is resolved\nok 37 - computed template import is rejected while a no-substitution template is resolved\n  ---\n  duration_ms: 0.351625\n  type: 'test'\n  ...\n# Subtest: renamed generated DTO via actual configured alias is rejected in UI and allowed in api\nok 38 - renamed generated DTO via actual configured alias is rejected in UI and allowed in api\n  ---\n  duration_ms: 53.951166\n  type: 'test'\n  ...\n# Subtest: import-equals cannot bypass nested HRIS isolation\nok 39 - import-equals cannot bypass nested HRIS isolation\n  ---\n  duration_ms: 0.358709\n  type: 'test'\n  ...\n# Subtest: flat pilot sources and an empty namespace cannot give a zero-coverage PASS\nok 40 - flat pilot sources and an empty namespace cannot give a zero-coverage PASS\n  ---\n  duration_ms: 0.124791\n  type: 'test'\n  ...\n# Subtest: CSV quote parsing and exact contract comparison are read-only operations\nok 41 - CSV quote parsing and exact contract comparison are read-only operations\n  ---\n  duration_ms: 1.8895\n  type: 'test'\n  ...\n# Subtest: evidence hashes exact source namespace and labels installed package versions without readiness\nok 42 - evidence hashes exact source namespace and labels installed package versions without readiness\n  ---\n  duration_ms: 12.632625\n  type: 'test'\n  ...\n1..42\n# tests 42\n# suites 0\n# pass 41\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 968.2815\n",
+      "stderr": "",
+      "sourcePre": {
+        "pins": [
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+            "sha256": "da750548a42248e27f7dbf0906c2d9dffe014138668706eed96a96a5694b945f",
+            "mtimeNs": "1789372606035821573"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+            "sha256": "2cb1240a98aacc971ef95a46d3753af70f5ad43aa2e62ed04ce3de0496871ffa",
+            "mtimeNs": "1789372785169281471"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+            "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+            "mtimeNs": "1789372734551537974"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+            "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+            "mtimeNs": "1789007262614952991"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+            "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+            "mtimeNs": "1788935990538631335"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+            "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+            "mtimeNs": "1788935990538496879"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+            "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+            "mtimeNs": "1788935990504762087"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+            "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+            "mtimeNs": "1788935990502329582"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+            "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+            "mtimeNs": "1788935990517149695"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+            "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+            "mtimeNs": "1789371903933227062"
+          }
+        ],
+        "namespaceCount": 2034,
+        "namespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+        "versions": {
+          "typescript": "6.0.3",
+          "react": "19.2.8",
+          "reactQuery": "5.101.4"
+        }
+      },
+      "sourcePost": {
+        "pins": [
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+            "sha256": "da750548a42248e27f7dbf0906c2d9dffe014138668706eed96a96a5694b945f",
+            "mtimeNs": "1789372606035821573"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+            "sha256": "2cb1240a98aacc971ef95a46d3753af70f5ad43aa2e62ed04ce3de0496871ffa",
+            "mtimeNs": "1789372785169281471"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+            "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+            "mtimeNs": "1789372734551537974"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+            "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+            "mtimeNs": "1789007262614952991"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+            "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+            "mtimeNs": "1788935990538631335"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+            "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+            "mtimeNs": "1788935990538496879"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+            "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+            "mtimeNs": "1788935990504762087"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+            "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+            "mtimeNs": "1788935990502329582"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+            "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+            "mtimeNs": "1788935990517149695"
+          },
+          {
+            "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+            "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+            "mtimeNs": "1789371903933227062"
+          }
+        ],
+        "namespaceCount": 2034,
+        "namespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+        "versions": {
+          "typescript": "6.0.3",
+          "react": "19.2.8",
+          "reactQuery": "5.101.4"
+        }
+      },
+      "sourcePinsStable": true,
+      "g3StartAuthorized": false
+    },
+    "captureHarnessCommand": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --input-type=module <<'JS'\nimport {spawnSync} from 'node:child_process';\nimport {sourceEvidence,readRepository,FRONTEND_ROOT} from './scripts/verification/hris-layer-contract-v1.mjs';\nconst register='/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv';\nconst extra=['scripts/check-feature-boundaries.mjs','scripts/check-api-boundaries.mjs','scripts/check-relative-import-cycles.mjs'].map(p=>FRONTEND_ROOT+'/'+p).concat(register);\nconst pre=sourceEvidence(readRepository(),FRONTEND_ROOT,extra);\nconst argv=[process.execPath,'--test','--test-reporter=tap','scripts/verification/hris-layer-contract-v1.test.mjs'];\nconst startedAtUtc=new Date().toISOString(),start=process.hrtime.bigint();\nconst result=spawnSync(argv[0],argv.slice(1),{cwd:FRONTEND_ROOT,encoding:'utf8',maxBuffer:4*1024*1024,env:{...process.env,HRIS_STRUCTURE_REGISTER:register}});\nconst elapsedMs=Number(process.hrtime.bigint()-start)/1e6,endedAtUtc=new Date().toISOString();\nconst post=sourceEvidence(readRepository(),FRONTEND_ROOT,extra);\nconsole.log(JSON.stringify({argv,cwd:FRONTEND_ROOT,startedAtUtc,endedAtUtc,elapsedMs,exitCode:result.status,signal:result.signal,stdout:result.stdout,stderr:result.stderr,sourcePre:pre,sourcePost:post,sourcePinsStable:JSON.stringify(pre)===JSON.stringify(post),g3StartAuthorized:false},null,2));\nprocess.exitCode=result.status??1;\nJS"
+  },
+  "currentTest": {
+    "argv": [
+      "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "scripts/verification/hris-layer-contract-v1.test.mjs"
+    ],
+    "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+    "startedAtUtc": "2026-09-14T08:03:19.271Z",
+    "endedAtUtc": "2026-09-14T08:03:20.710Z",
+    "elapsedMs": 1435.490042,
+    "exitCode": 0,
+    "signal": null,
+    "stdout": "TAP version 13\n# Subtest: compile seven virtual React Query / controlled-form sources against installed types without emit\nok 1 - compile seven virtual React Query / controlled-form sources against installed types without emit\n  ---\n  duration_ms: 439.107916\n  type: 'test'\n  ...\n# Subtest: fixture eleven compiled edges plus separate testing/public-api witness cover all twelve edges\nok 2 - fixture eleven compiled edges plus separate testing/public-api witness cover all twelve edges\n  ---\n  duration_ms: 244.503583\n  type: 'test'\n  ...\n# Subtest: original eight-edge graph rejects exactly four distinct missing orchestration edges\nok 3 - original eight-edge graph rejects exactly four distinct missing orchestration edges\n  ---\n  duration_ms: 1.611083\n  type: 'test'\n  ...\n# Subtest: twelve-layer contract remains a DAG; reverse forms/hooks is not an allowed edge\nok 4 - twelve-layer contract remains a DAG; reverse forms/hooks is not an allowed edge\n  ---\n  duration_ms: 0.22225\n  type: 'test'\n  ...\n# Subtest: AST negative: pages_api\nok 5 - AST negative: pages_api\n  ---\n  duration_ms: 0.258458\n  type: 'test'\n  ...\n# Subtest: AST negative: components_api\nok 6 - AST negative: components_api\n  ---\n  duration_ms: 0.096166\n  type: 'test'\n  ...\n# Subtest: AST negative: forms_api\nok 7 - AST negative: forms_api\n  ---\n  duration_ms: 0.08925\n  type: 'test'\n  ...\n# Subtest: AST negative: forms_hooks_reverse\nok 8 - AST negative: forms_hooks_reverse\n  ---\n  duration_ms: 0.078125\n  type: 'test'\n  ...\n# Subtest: AST negative: api_hooks_reverse\nok 9 - AST negative: api_hooks_reverse\n  ---\n  duration_ms: 0.084167\n  type: 'test'\n  ...\n# Subtest: AST negative: hooks_components\nok 10 - AST negative: hooks_components\n  ---\n  duration_ms: 0.121625\n  type: 'test'\n  ...\n# Subtest: AST negative: production_testing\nok 11 - AST negative: production_testing\n  ---\n  duration_ms: 0.074875\n  type: 'test'\n  ...\n# Subtest: AST negative: testing_internal\nok 12 - AST negative: testing_internal\n  ---\n  duration_ms: 0.075292\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_relative\nok 13 - AST negative: nested_hris_relative\n  ---\n  duration_ms: 0.08475\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_alias\nok 14 - AST negative: nested_hris_alias\n  ---\n  duration_ms: 0.064292\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_reexport\nok 15 - AST negative: nested_hris_reexport\n  ---\n  duration_ms: 0.057667\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_dynamic_literal\nok 16 - AST negative: nested_hris_dynamic_literal\n  ---\n  duration_ms: 0.087125\n  type: 'test'\n  ...\n# Subtest: AST negative: nested_hris_type_query\nok 17 - AST negative: nested_hris_type_query\n  ---\n  duration_ms: 0.067\n  type: 'test'\n  ...\n# Subtest: AST negative: unknown_project_alias\nok 18 - AST negative: unknown_project_alias\n  ---\n  duration_ms: 0.032333\n  type: 'test'\n  ...\n# Subtest: AST negative: raw_dto_alias_renamed\nok 19 - AST negative: raw_dto_alias_renamed\n  ---\n  duration_ms: 0.046459\n  type: 'test'\n  ...\n# Subtest: AST negative: generated_dto_relative\nok 20 - AST negative: generated_dto_relative\n  ---\n  duration_ms: 0.070792\n  type: 'test'\n  ...\n# Subtest: AST negative: model_react\nok 21 - AST negative: model_react\n  ---\n  duration_ms: 0.036167\n  type: 'test'\n  ...\n# Subtest: AST negative: forms_react\nok 22 - AST negative: forms_react\n  ---\n  duration_ms: 0.039209\n  type: 'test'\n  ...\n# Subtest: AST negative: page_react_query\nok 23 - AST negative: page_react_query\n  ---\n  duration_ms: 0.036583\n  type: 'test'\n  ...\n# Subtest: AST negative: raw_gateway\nok 24 - AST negative: raw_gateway\n  ---\n  duration_ms: 0.035708\n  type: 'test'\n  ...\n# Subtest: AST negative: ui_axios\nok 25 - AST negative: ui_axios\n  ---\n  duration_ms: 0.034541\n  type: 'test'\n  ...\n# Subtest: AST negative: raw_fetch\nok 26 - AST negative: raw_fetch\n  ---\n  duration_ms: 0.092625\n  type: 'test'\n  ...\n# Subtest: AST negative: computed_dynamic\nok 27 - AST negative: computed_dynamic\n  ---\n  duration_ms: 0.046209\n  type: 'test'\n  ...\n# Subtest: AST negative: computed_require\nok 28 - AST negative: computed_require\n  ---\n  duration_ms: 0.039041\n  type: 'test'\n  ...\n# Subtest: AST negative: same_layer_relative_cycle\nok 29 - AST negative: same_layer_relative_cycle\n  ---\n  duration_ms: 0.089875\n  type: 'test'\n  ...\n# Subtest: AST negative: same_layer_alias_cycle\nok 30 - AST negative: same_layer_alias_cycle\n  ---\n  duration_ms: 0.06825\n  type: 'test'\n  ...\n# Subtest: AST negative: invalid_syntax\nok 31 - AST negative: invalid_syntax\n  ---\n  duration_ms: 0.054292\n  type: 'test'\n  ...\n# Subtest: nested HRIS features are distinct despite their common hris directory\nok 32 - nested HRIS features are distinct despite their common hris directory\n  ---\n  duration_ms: 0.04725\n  type: 'test'\n  ...\n# Subtest: foreign feature public barrel is legal, but a lookalike nested index remains internal\nok 33 - foreign feature public barrel is legal, but a lookalike nested index remains internal\n  ---\n  duration_ms: 0.178166\n  type: 'test'\n  ...\n# Subtest: same layer acyclic helpers are allowed but type-only cycles are not hidden\nok 34 - same layer acyclic helpers are allowed but type-only cycles are not hidden\n  ---\n  duration_ms: 0.159084\n  type: 'test'\n  ...\n# Subtest: ordinary comments and strings do not manufacture imports or raw fetch calls\nok 35 - ordinary comments and strings do not manufacture imports or raw fetch calls\n  ---\n  duration_ms: 0.054\n  type: 'test'\n  ...\n# Subtest: qualified and string-element browser transport calls cannot bypass the AST raw-transport rule\nok 36 - qualified and string-element browser transport calls cannot bypass the AST raw-transport rule\n  ---\n  duration_ms: 0.315042\n  type: 'test'\n  ...\n# Subtest: an HRIS-root file is explicitly unclassified instead of disappearing from coverage\nok 37 - an HRIS-root file is explicitly unclassified instead of disappearing from coverage\n  ---\n  duration_ms: 0.086417\n  type: 'test'\n  ...\n# Subtest: missing relative project target is rejected, not treated as an external dependency\nok 38 - missing relative project target is rejected, not treated as an external dependency\n  ---\n  duration_ms: 0.076667\n  type: 'test'\n  ...\n# Subtest: computed template import is rejected while a no-substitution template is resolved\nok 39 - computed template import is rejected while a no-substitution template is resolved\n  ---\n  duration_ms: 0.232583\n  type: 'test'\n  ...\n# Subtest: renamed generated DTO via actual configured alias is rejected in UI and allowed in api\nok 40 - renamed generated DTO via actual configured alias is rejected in UI and allowed in api\n  ---\n  duration_ms: 36.743125\n  type: 'test'\n  ...\n# Subtest: import-equals cannot bypass nested HRIS isolation\nok 41 - import-equals cannot bypass nested HRIS isolation\n  ---\n  duration_ms: 0.642166\n  type: 'test'\n  ...\n# Subtest: flat pilot sources and an empty namespace cannot give a zero-coverage PASS\nok 42 - flat pilot sources and an empty namespace cannot give a zero-coverage PASS\n  ---\n  duration_ms: 0.145708\n  type: 'test'\n  ...\n# Subtest: CSV quote parsing and exact contract comparison are read-only operations\nok 43 - CSV quote parsing and exact contract comparison are read-only operations\n  ---\n  duration_ms: 2.144542\n  type: 'test'\n  ...\n# Subtest: evidence hashes exact source namespace and labels installed package versions without readiness\nok 44 - evidence hashes exact source namespace and labels installed package versions without readiness\n  ---\n  duration_ms: 10.488792\n  type: 'test'\n  ...\n1..44\n# tests 44\n# suites 0\n# pass 44\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 1164.595292\n",
+    "stderr": "",
+    "sourcePre": {
+      "pins": [
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+          "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+          "mtimeNs": "1789372935387532984"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+          "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+          "mtimeNs": "1789372861693015249"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+          "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+          "mtimeNs": "1789372734551537974"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+          "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+          "mtimeNs": "1788935990504762087"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+          "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+          "mtimeNs": "1788935990502329582"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+          "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+          "mtimeNs": "1788935990517149695"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+          "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+          "mtimeNs": "1789371903933227062"
+        }
+      ],
+      "namespaceCount": 2034,
+      "namespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+      "diskNamespaceNsCount": 2034,
+      "diskNamespaceNsSha256": "bf0e7c18c9b9dddbe2788af143440570fc05095404fd62426a62694bbf54086e",
+      "versions": {
+        "typescript": "6.0.3",
+        "react": "19.2.8",
+        "reactQuery": "5.101.4"
+      }
+    },
+    "sourcePost": {
+      "pins": [
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+          "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+          "mtimeNs": "1789372935387532984"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+          "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+          "mtimeNs": "1789372861693015249"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+          "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+          "mtimeNs": "1789372734551537974"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-feature-boundaries.mjs",
+          "sha256": "eb73114c69e57a297ad2a3abe43126e38daa8569349d30c202dd7157ef8a5142",
+          "mtimeNs": "1788935990504762087"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-api-boundaries.mjs",
+          "sha256": "a46df88b7f3de4a1a11a4058ff57e3f1b42805424072cc64bade618bcf9d80a2",
+          "mtimeNs": "1788935990502329582"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/check-relative-import-cycles.mjs",
+          "sha256": "e7d610aede780eeb85ccd2a50dbaf0bb144cb2f405c76639a8c626e8bd6a8b9a",
+          "mtimeNs": "1788935990517149695"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+          "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+          "mtimeNs": "1789371903933227062"
+        }
+      ],
+      "namespaceCount": 2034,
+      "namespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+      "diskNamespaceNsCount": 2034,
+      "diskNamespaceNsSha256": "bf0e7c18c9b9dddbe2788af143440570fc05095404fd62426a62694bbf54086e",
+      "versions": {
+        "typescript": "6.0.3",
+        "react": "19.2.8",
+        "reactQuery": "5.101.4"
+      }
+    },
+    "sourcePinsStable": true,
+    "g3StartAuthorized": false,
+    "captureHarnessCommand": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --input-type=module <<'JS'\nimport {spawnSync} from 'node:child_process';\nimport {sourceEvidence,readRepository,FRONTEND_ROOT} from './scripts/verification/hris-layer-contract-v1.mjs';\nconst register='/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv';\nconst extra=['scripts/check-feature-boundaries.mjs','scripts/check-api-boundaries.mjs','scripts/check-relative-import-cycles.mjs'].map(p=>FRONTEND_ROOT+'/'+p).concat(register);\nconst pre=sourceEvidence(readRepository(),FRONTEND_ROOT,extra);\nconst argv=[process.execPath,'--test','--test-reporter=tap','scripts/verification/hris-layer-contract-v1.test.mjs'];\nconst startedAtUtc=new Date().toISOString(),start=process.hrtime.bigint();\nconst result=spawnSync(argv[0],argv.slice(1),{cwd:FRONTEND_ROOT,encoding:'utf8',maxBuffer:4*1024*1024,env:{...process.env,HRIS_STRUCTURE_REGISTER:register}});\nconst elapsedMs=Number(process.hrtime.bigint()-start)/1e6,endedAtUtc=new Date().toISOString();\nconst post=sourceEvidence(readRepository(),FRONTEND_ROOT,extra);\nconsole.log(JSON.stringify({argv,cwd:FRONTEND_ROOT,startedAtUtc,endedAtUtc,elapsedMs,exitCode:result.status,signal:result.signal,stdout:result.stdout,stderr:result.stderr,sourcePre:pre,sourcePost:post,sourcePinsStable:JSON.stringify(pre)===JSON.stringify(post),g3StartAuthorized:false},null,2));\nprocess.exitCode=result.status??1;\nJS",
+    "xmlProduced": false,
+    "tapStoredVerbatim": true
+  },
+  "cliBatch": {
+    "sourcePre": {
+      "pins": [
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+          "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+          "mtimeNs": "1789372935387532984"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+          "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+          "mtimeNs": "1789372861693015249"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+          "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+          "mtimeNs": "1789372734551537974"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+          "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+          "mtimeNs": "1789371903933227062"
+        }
+      ],
+      "namespaceCount": 2034,
+      "namespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+      "diskNamespaceNsCount": 2034,
+      "diskNamespaceNsSha256": "bf0e7c18c9b9dddbe2788af143440570fc05095404fd62426a62694bbf54086e",
+      "versions": {
+        "typescript": "6.0.3",
+        "react": "19.2.8",
+        "reactQuery": "5.101.4"
+      }
+    },
+    "sourcePost": {
+      "pins": [
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+          "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+          "mtimeNs": "1789372935387532984"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+          "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+          "mtimeNs": "1789372861693015249"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+          "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+          "mtimeNs": "1789372734551537974"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+          "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+          "mtimeNs": "1789007262614952991"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+          "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+          "mtimeNs": "1788935990538631335"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+          "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+          "mtimeNs": "1788935990538496879"
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+          "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+          "mtimeNs": "1789371903933227062"
+        }
+      ],
+      "namespaceCount": 2034,
+      "namespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+      "diskNamespaceNsCount": 2034,
+      "diskNamespaceNsSha256": "bf0e7c18c9b9dddbe2788af143440570fc05095404fd62426a62694bbf54086e",
+      "versions": {
+        "typescript": "6.0.3",
+        "react": "19.2.8",
+        "reactQuery": "5.101.4"
+      }
+    },
+    "sourcePinsStable": true,
+    "runs": [
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/verification/hris-layer-contract-v1.mjs",
+          "--mode",
+          "fixture",
+          "--register",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:16.227Z",
+        "endedAtUtc": "2026-09-14T08:02:16.879Z",
+        "elapsedMs": 651.239833,
+        "exitCode": 0,
+        "signal": null,
+        "stdoutSummary": {
+          "mode": "fixture",
+          "structuralPass": true,
+          "readinessPass": false,
+          "g3StartAuthorized": false,
+          "exitCode": 0,
+          "sourceEvidence": {
+            "pins": [
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+                "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+                "mtimeNs": "1789372935387532984"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+                "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+                "mtimeNs": "1789372861693015249"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+                "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+                "mtimeNs": "1789372734551537974"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+                "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+                "mtimeNs": "1789007262614952991"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+                "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+                "mtimeNs": "1788935990538631335"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+                "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+                "mtimeNs": "1788935990538496879"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+                "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+                "mtimeNs": "1789371903933227062"
+              }
+            ],
+            "namespaceCount": 0,
+            "namespaceSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "diskNamespaceNsCount": 0,
+            "diskNamespaceNsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "versions": {
+              "typescript": "6.0.3",
+              "react": "19.2.8",
+              "reactQuery": "5.101.4"
+            }
+          },
+          "register": {
+            "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+            "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+            "rows": [
+              {
+                "sessionId": "HRIS-HRM",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/people|apps/dwp/src/features/hris/organization|apps/dwp/src/features/hris/employee-services"
+              },
+              {
+                "sessionId": "HRIS-PER",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/performance"
+              },
+              {
+                "sessionId": "HRIS-TIM",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/time|apps/dwp/src/features/hris/leave"
+              },
+              {
+                "sessionId": "HRIS-PAY",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/payroll"
+              },
+              {
+                "sessionId": "HRIS-SYS",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/shell|apps/dwp/src/features/hris/home|apps/dwp/src/features/hris/explorer|apps/dwp/src/features/hris/administration|apps/dwp/src/features/hris/integrations"
+              }
+            ],
+            "errors": [],
+            "structuralPass": true,
+            "readinessPass": false
+          },
+          "result": {
+            "virtualSourceCount": 7,
+            "diagnostics": [],
+            "compileFilesystemWrites": 0,
+            "compiledGraphUsedEdges": [
+              "api>model",
+              "components>model",
+              "forms>model",
+              "hooks>api",
+              "hooks>forms",
+              "hooks>model",
+              "pages>components",
+              "pages>forms",
+              "pages>hooks",
+              "pages>model",
+              "routes>pages"
+            ],
+            "testingUsedEdges": [
+              "testing>public-api"
+            ],
+            "coveredEdges": [
+              "api>model",
+              "components>model",
+              "forms>model",
+              "hooks>api",
+              "hooks>forms",
+              "hooks>model",
+              "pages>components",
+              "pages>forms",
+              "pages>hooks",
+              "pages>model",
+              "routes>pages",
+              "testing>public-api"
+            ],
+            "negativeCount": 27,
+            "negativesRejected": 27,
+            "apiImplementations": "SYNTHETIC_MAPPING_AND_DECLARATION_ONLY_NOT_EXECUTED"
+          }
+        },
+        "stdoutSha256": "461c68ef303aef9cac0530563cab5db0173439373af6ec7535007944c05198d5",
+        "stdoutBytes": 17465,
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/verification/hris-layer-contract-v1.mjs",
+          "--mode",
+          "contract",
+          "--register",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:16.880Z",
+        "endedAtUtc": "2026-09-14T08:02:17.129Z",
+        "elapsedMs": 249.22675,
+        "exitCode": 0,
+        "signal": null,
+        "stdoutSummary": {
+          "mode": "contract",
+          "structuralPass": true,
+          "readinessPass": false,
+          "g3StartAuthorized": false,
+          "exitCode": 0,
+          "sourceEvidence": {
+            "pins": [
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+                "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+                "mtimeNs": "1789372935387532984"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+                "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+                "mtimeNs": "1789372861693015249"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+                "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+                "mtimeNs": "1789372734551537974"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+                "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+                "mtimeNs": "1789007262614952991"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+                "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+                "mtimeNs": "1788935990538631335"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+                "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+                "mtimeNs": "1788935990538496879"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+                "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+                "mtimeNs": "1789371903933227062"
+              }
+            ],
+            "namespaceCount": 0,
+            "namespaceSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "diskNamespaceNsCount": 0,
+            "diskNamespaceNsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "versions": {
+              "typescript": "6.0.3",
+              "react": "19.2.8",
+              "reactQuery": "5.101.4"
+            }
+          },
+          "result": {
+            "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+            "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+            "rows": [
+              {
+                "sessionId": "HRIS-HRM",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/people|apps/dwp/src/features/hris/organization|apps/dwp/src/features/hris/employee-services"
+              },
+              {
+                "sessionId": "HRIS-PER",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/performance"
+              },
+              {
+                "sessionId": "HRIS-TIM",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/time|apps/dwp/src/features/hris/leave"
+              },
+              {
+                "sessionId": "HRIS-PAY",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/payroll"
+              },
+              {
+                "sessionId": "HRIS-SYS",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/shell|apps/dwp/src/features/hris/home|apps/dwp/src/features/hris/explorer|apps/dwp/src/features/hris/administration|apps/dwp/src/features/hris/integrations"
+              }
+            ],
+            "errors": [],
+            "structuralPass": true,
+            "readinessPass": false
+          }
+        },
+        "stdoutSha256": "62f3aaee5ba4ce844e3c3ab4617c0a8ebc1a1b3b9f0be1569b00afe6a397dffb",
+        "stdoutBytes": 4461,
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/verification/hris-layer-contract-v1.mjs",
+          "--mode",
+          "scan",
+          "--register",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:17.129Z",
+        "endedAtUtc": "2026-09-14T08:02:18.767Z",
+        "elapsedMs": 1637.719666,
+        "exitCode": 1,
+        "signal": null,
+        "stdoutSummary": {
+          "mode": "scan",
+          "structuralPass": false,
+          "readinessPass": false,
+          "g3StartAuthorized": false,
+          "exitCode": 1,
+          "sourceEvidence": {
+            "pins": [
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+                "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+                "mtimeNs": "1789372935387532984"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+                "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+                "mtimeNs": "1789372861693015249"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+                "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+                "mtimeNs": "1789372734551537974"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+                "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+                "mtimeNs": "1789007262614952991"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+                "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+                "mtimeNs": "1788935990538631335"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+                "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+                "mtimeNs": "1788935990538496879"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+                "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+                "mtimeNs": "1789371903933227062"
+              }
+            ],
+            "namespaceCount": 2034,
+            "namespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+            "diskNamespaceNsCount": 2034,
+            "diskNamespaceNsSha256": "bf0e7c18c9b9dddbe2788af143440570fc05095404fd62426a62694bbf54086e",
+            "versions": {
+              "typescript": "6.0.3",
+              "react": "19.2.8",
+              "reactQuery": "5.101.4"
+            }
+          },
+          "register": {
+            "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv",
+            "sha256": "52937682de524b363ee7ed3da2036abe991b07c0185ea72e2bdd45ff21ffbfbf",
+            "rows": [
+              {
+                "sessionId": "HRIS-HRM",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/people|apps/dwp/src/features/hris/organization|apps/dwp/src/features/hris/employee-services"
+              },
+              {
+                "sessionId": "HRIS-PER",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/performance"
+              },
+              {
+                "sessionId": "HRIS-TIM",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/time|apps/dwp/src/features/hris/leave"
+              },
+              {
+                "sessionId": "HRIS-PAY",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/payroll"
+              },
+              {
+                "sessionId": "HRIS-SYS",
+                "state": "ALLOCATED_G3_NOT_IMPLEMENTED",
+                "featureRoots": "apps/dwp/src/features/hris/shell|apps/dwp/src/features/hris/home|apps/dwp/src/features/hris/explorer|apps/dwp/src/features/hris/administration|apps/dwp/src/features/hris/integrations"
+              }
+            ],
+            "errors": [],
+            "structuralPass": true,
+            "readinessPass": false
+          },
+          "result": {
+            "sourceCount": 2034,
+            "classifiedCount": 2,
+            "layeredCount": 0,
+            "unclassifiedCount": 38,
+            "classified": [
+              "apps/dwp/src/features/hris/payroll/index.ts",
+              "apps/dwp/src/features/hris/performance/index.ts"
+            ],
+            "unclassified": [
+              "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.runtime.test.tsx",
+              "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.tsx",
+              "apps/dwp/src/features/hris/payroll/payroll-api.test.ts",
+              "apps/dwp/src/features/hris/payroll/payroll-api.ts",
+              "apps/dwp/src/features/hris/payroll/payroll-self-service-model.test.ts",
+              "apps/dwp/src/features/hris/payroll/payroll-self-service-model.ts",
+              "apps/dwp/src/features/hris/people/people-360-data-source.ts",
+              "apps/dwp/src/features/hris/people/people-360-detail.tsx",
+              "apps/dwp/src/features/hris/people/people-360-mobile-list.tsx",
+              "apps/dwp/src/features/hris/people/people-360-model.test.ts",
+              "apps/dwp/src/features/hris/people/people-360-model.ts",
+              "apps/dwp/src/features/hris/people/people-360-workspace.runtime.test.tsx",
+              "apps/dwp/src/features/hris/people/people-360-workspace.tsx",
+              "apps/dwp/src/features/hris/performance/hris-performance-workspace.runtime.test.tsx",
+              "apps/dwp/src/features/hris/performance/hris-performance-workspace.tsx",
+              "apps/dwp/src/features/hris/performance/performance-goal-components.tsx",
+              "apps/dwp/src/features/hris/performance/performance-goal-model.test.ts",
+              "apps/dwp/src/features/hris/performance/performance-goal-model.ts",
+              "apps/dwp/src/features/hris/performance/performance-phase-one-copy.ts",
+              "apps/dwp/src/features/hris/performance/performance-talent-api.test.ts",
+              "apps/dwp/src/features/hris/performance/performance-talent-api.ts",
+              "apps/dwp/src/features/hris/shared/hris-domain-components.tsx",
+              "apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+              "apps/dwp/src/features/hris/shell/hris-product-identity.test.ts",
+              "apps/dwp/src/features/hris/shell/hris-product-map-catalog.test.ts",
+              "apps/dwp/src/features/hris/shell/hris-product-map-catalog.ts",
+              "apps/dwp/src/features/hris/shell/hris-product-map-contract.ts",
+              "apps/dwp/src/features/hris/shell/hris-product-map.test.tsx",
+              "apps/dwp/src/features/hris/shell/hris-product-map.tsx",
+              "apps/dwp/src/features/hris/shell/hris-retained-route-registry.ts",
+              "apps/dwp/src/features/hris/time/hris-time-calendar.tsx",
+              "apps/dwp/src/features/hris/time/hris-time-command-notice.tsx",
+              "apps/dwp/src/features/hris/time/hris-time-data-source.test.ts",
+              "apps/dwp/src/features/hris/time/hris-time-data-source.ts",
+              "apps/dwp/src/features/hris/time/hris-time-model.test.ts",
+              "apps/dwp/src/features/hris/time/hris-time-model.ts",
+              "apps/dwp/src/features/hris/time/hris-time-workspace.runtime.test.tsx",
+              "apps/dwp/src/features/hris/time/hris-time-workspace.tsx"
+            ],
+            "usedEdges": [],
+            "errorCount": 59,
+            "errorCounts": {
+              "UNCLASSIFIED_FEATURE_LAYER": 38,
+              "UI_QUERY_ORCHESTRATION": 9,
+              "UNCLASSIFIED_TARGET_LAYER": 7,
+              "UI_RAW_CLIENT": 2,
+              "FOREIGN_FEATURE_INTERNAL": 2,
+              "NO_LAYERED_HRIS_SOURCES": 1
+            },
+            "firstErrors": [
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.runtime.test.tsx",
+                "line": 1
+              },
+              {
+                "code": "UI_QUERY_ORCHESTRATION",
+                "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.runtime.test.tsx",
+                "line": 4,
+                "specifier": "@tanstack/react-query"
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.tsx",
+                "line": 1
+              },
+              {
+                "code": "UI_QUERY_ORCHESTRATION",
+                "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.tsx",
+                "line": 4,
+                "specifier": "@tanstack/react-query"
+              },
+              {
+                "code": "UNCLASSIFIED_TARGET_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/index.ts",
+                "line": 1,
+                "specifier": "./hris-payroll-workspace"
+              },
+              {
+                "code": "UNCLASSIFIED_TARGET_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/index.ts",
+                "line": 2,
+                "specifier": "./hris-payroll-workspace"
+              },
+              {
+                "code": "UNCLASSIFIED_TARGET_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/index.ts",
+                "line": 13,
+                "specifier": "./payroll-self-service-model"
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/payroll-api.test.ts",
+                "line": 1
+              },
+              {
+                "code": "UI_RAW_CLIENT",
+                "file": "apps/dwp/src/features/hris/payroll/payroll-api.test.ts",
+                "line": 2,
+                "specifier": "@dwp-frontend/shared-utils/axios-instance"
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/payroll-api.ts",
+                "line": 1
+              },
+              {
+                "code": "UI_RAW_CLIENT",
+                "file": "apps/dwp/src/features/hris/payroll/payroll-api.ts",
+                "line": 1,
+                "specifier": "@dwp-frontend/shared-utils/axios-instance"
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/payroll-self-service-model.test.ts",
+                "line": 1
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/payroll/payroll-self-service-model.ts",
+                "line": 1
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/people/people-360-data-source.ts",
+                "line": 1
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/people/people-360-detail.tsx",
+                "line": 1
+              },
+              {
+                "code": "UI_QUERY_ORCHESTRATION",
+                "file": "apps/dwp/src/features/hris/people/people-360-detail.tsx",
+                "line": 3,
+                "specifier": "@tanstack/react-query"
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/people/people-360-mobile-list.tsx",
+                "line": 1
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/people/people-360-model.test.ts",
+                "line": 1
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/people/people-360-model.ts",
+                "line": 1
+              },
+              {
+                "code": "UNCLASSIFIED_FEATURE_LAYER",
+                "file": "apps/dwp/src/features/hris/people/people-360-workspace.runtime.test.tsx",
+                "line": 1
+              }
+            ],
+            "firstErrorsLimit": 20,
+            "structuralPass": false
+          }
+        },
+        "stdoutSha256": "386858780e9cda6ab697ef4b39961d88a6e4fb83d5ccf8f7a4c92d545e10e97c",
+        "stdoutBytes": 18047,
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/verification/hris-layer-contract-v1.mjs",
+          "--mode",
+          "fixture",
+          "--require-readiness"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:18.767Z",
+        "endedAtUtc": "2026-09-14T08:02:19.343Z",
+        "elapsedMs": 576.092458,
+        "exitCode": 1,
+        "signal": null,
+        "stdoutSummary": {
+          "mode": "fixture",
+          "structuralPass": true,
+          "readinessPass": false,
+          "g3StartAuthorized": false,
+          "exitCode": 1,
+          "sourceEvidence": {
+            "pins": [
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.mjs",
+                "sha256": "cbc0db0d5cea0e43d900173f18e78887b9b412e753cafccbee22a45cb9fb2b30",
+                "mtimeNs": "1789372935387532984"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/hris-layer-contract-v1.test.mjs",
+                "sha256": "688069582c6eb4f7ea2d85f60e346c6b47a0f96a30edcec6d9b0d918ecbc466f",
+                "mtimeNs": "1789372861693015249"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/scripts/verification/fixtures/hris-layer-contract-v1.json",
+                "sha256": "c5c218cd5450a72673708809ebf5d791fa14ee446478d05efef95b4a4862217d",
+                "mtimeNs": "1789372734551537974"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+                "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+                "mtimeNs": "1789007262614952991"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+                "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+                "mtimeNs": "1788935990538631335"
+              },
+              {
+                "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+                "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+                "mtimeNs": "1788935990538496879"
+              }
+            ],
+            "namespaceCount": 0,
+            "namespaceSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "diskNamespaceNsCount": 0,
+            "diskNamespaceNsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "versions": {
+              "typescript": "6.0.3",
+              "react": "19.2.8",
+              "reactQuery": "5.101.4"
+            }
+          },
+          "result": {
+            "virtualSourceCount": 7,
+            "diagnostics": [],
+            "compileFilesystemWrites": 0,
+            "compiledGraphUsedEdges": [
+              "api>model",
+              "components>model",
+              "forms>model",
+              "hooks>api",
+              "hooks>forms",
+              "hooks>model",
+              "pages>components",
+              "pages>forms",
+              "pages>hooks",
+              "pages>model",
+              "routes>pages"
+            ],
+            "testingUsedEdges": [
+              "testing>public-api"
+            ],
+            "coveredEdges": [
+              "api>model",
+              "components>model",
+              "forms>model",
+              "hooks>api",
+              "hooks>forms",
+              "hooks>model",
+              "pages>components",
+              "pages>forms",
+              "pages>hooks",
+              "pages>model",
+              "routes>pages",
+              "testing>public-api"
+            ],
+            "negativeCount": 27,
+            "negativesRejected": 27,
+            "apiImplementations": "SYNTHETIC_MAPPING_AND_DECLARATION_ONLY_NOT_EXECUTED"
+          }
+        },
+        "stdoutSha256": "db8faeb2bde88f7a4dc45fdf9f6fda7c9d9cf1bc504f33f55397daeb5f3ab0c1",
+        "stdoutBytes": 15667,
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/check-maintenance-source-size.mjs"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:19.343Z",
+        "endedAtUtc": "2026-09-14T08:02:19.608Z",
+        "elapsedMs": 264.86725,
+        "exitCode": 0,
+        "signal": null,
+        "stdout": "PASS maintenance source-size budget: 316 test/tool files checked; 13 exact legacy exception(s); new files are limited to 1000 lines.\n",
+        "stdoutSha256": "e25a6197ad5d3d01d5d0ed831d5604c5a967f1fa7476d7336796a9d8cfe53ef3",
+        "stdoutBytes": 133,
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/check-feature-boundaries.mjs"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:19.608Z",
+        "endedAtUtc": "2026-09-14T08:02:19.938Z",
+        "elapsedMs": 329.946584,
+        "exitCode": 0,
+        "signal": null,
+        "stdout": "PASS feature boundaries: product features do not import sibling feature implementations.\n",
+        "stdoutSha256": "4e753d5a8b955819d014f9ecbb163ce7c53a6f1ec7b21e2790710e577f9f26b7",
+        "stdoutBytes": 89,
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/check-api-boundaries.mjs"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:19.938Z",
+        "endedAtUtc": "2026-09-14T08:02:20.446Z",
+        "elapsedMs": 507.383541,
+        "exitCode": 0,
+        "signal": null,
+        "stdout": "PASS API boundaries: frontend runtime calls are centralized through Gateway /api/** clients.\n",
+        "stdoutSha256": "d520521f4a90c08e7db0b01dcd281522b81269d842c8d23594c513ca3521925b",
+        "stdoutBytes": 93,
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/check-relative-import-cycles.mjs"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAtUtc": "2026-09-14T08:02:20.446Z",
+        "endedAtUtc": "2026-09-14T08:02:21.950Z",
+        "elapsedMs": 1504.512125,
+        "exitCode": 0,
+        "signal": null,
+        "stdout": "PASS relative import cycles: 1437 production modules checked.\n",
+        "stdoutSha256": "545d686729a1a2c0ba9928178ed33357410f153d61bdafa68589fd00ac4bb976",
+        "stdoutBytes": 62,
+        "stderr": ""
+      }
+    ],
+    "g3StartAuthorized": false,
+    "captureHarnessCommand": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --input-type=module <<'JS'\nimport {spawnSync} from 'node:child_process';\nimport {createHash} from 'node:crypto';\nimport {sourceEvidence,readRepository,FRONTEND_ROOT} from './scripts/verification/hris-layer-contract-v1.mjs';\nconst register='/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/module-structure-contract-register.csv';\nconst pre=sourceEvidence(readRepository(),FRONTEND_ROOT,[register]);\nconst commands=[\n ['scripts/verification/hris-layer-contract-v1.mjs','--mode','fixture','--register',register],\n ['scripts/verification/hris-layer-contract-v1.mjs','--mode','contract','--register',register],\n ['scripts/verification/hris-layer-contract-v1.mjs','--mode','scan','--register',register],\n ['scripts/verification/hris-layer-contract-v1.mjs','--mode','fixture','--require-readiness'],\n ['scripts/check-maintenance-source-size.mjs'],\n ['scripts/check-feature-boundaries.mjs'],\n ['scripts/check-api-boundaries.mjs'],\n ['scripts/check-relative-import-cycles.mjs']\n];\nconst runs=[];\nfor(const command of commands){\n const argv=[process.execPath,...command],startedAtUtc=new Date().toISOString(),start=process.hrtime.bigint();\n const run=spawnSync(argv[0],argv.slice(1),{cwd:FRONTEND_ROOT,encoding:'utf8',maxBuffer:8*1024*1024});\n const endedAtUtc=new Date().toISOString(),elapsedMs=Number(process.hrtime.bigint()-start)/1e6;\n let parsed;\n try {parsed=JSON.parse(run.stdout);}catch{}\n const result=parsed?.result;\n const stdoutSummary=parsed?{mode:parsed.mode,structuralPass:parsed.structuralPass,readinessPass:parsed.readinessPass,g3StartAuthorized:parsed.g3StartAuthorized,exitCode:parsed.exitCode,\n sourceEvidence:parsed.sourceEvidence,register:parsed.register,\n result:parsed.mode==='fixture'?{virtualSourceCount:result.compile.virtualSourceCount,diagnostics:result.compile.diagnostics,compileFilesystemWrites:result.compile.filesystemWrites,compiledGraphUsedEdges:result.graph.usedEdges,testingUsedEdges:result.testing.usedEdges,coveredEdges:result.coveredEdges,negativeCount:result.negatives.length,negativesRejected:result.negatives.filter(x=>x.rejected).length,apiImplementations:result.apiImplementations}:\n parsed.mode==='scan'?{sourceCount:result.sourceCount,classifiedCount:result.classifiedCount,layeredCount:result.layeredCount,unclassifiedCount:result.unclassifiedCount,classified:result.classified,unclassified:result.unclassified,usedEdges:result.usedEdges,errorCount:result.errors.length,errorCounts:result.errors.reduce((a,x)=>(a[x.code]=(a[x.code]??0)+1,a),{}),firstErrors:result.errors.slice(0,20),firstErrorsLimit:20,structuralPass:result.structuralPass}:result}:undefined;\n runs.push({argv,cwd:FRONTEND_ROOT,startedAtUtc,endedAtUtc,elapsedMs,exitCode:run.status,signal:run.signal,\n stdout:parsed?undefined:run.stdout,stdoutSummary,stdoutSha256:createHash('sha256').update(run.stdout??'').digest('hex'),stdoutBytes:Buffer.byteLength(run.stdout??''),stderr:run.stderr});\n}\nconst post=sourceEvidence(readRepository(),FRONTEND_ROOT,[register]);\nconsole.log(JSON.stringify({sourcePre:pre,sourcePost:post,sourcePinsStable:JSON.stringify(pre)===JSON.stringify(post),runs,g3StartAuthorized:false},null,2));\nJS",
+    "stdoutRetention": "Node TAP is verbatim in currentTest/initialFailure. CLI JSON outputs are captured as explicit summaries plus full-stdout SHA256/byte counts; no claim that summarized CLI output is verbatim."
+  },
+  "repositoryDiagnosticReplay": {
+    "sourceNamespaceSha256": "dbe97f36342843f98bb9f40ec6f63a0dc183321ec2820ef2ba47548a71a79a3b",
+    "sourceNamespaceNsSha256": "bf0e7c18c9b9dddbe2788af143440570fc05095404fd62426a62694bbf54086e",
+    "sourceNamespaceCount": 2034,
+    "diagnostics": [
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.runtime.test.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.runtime.test.tsx",
+        "line": 4,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/payroll/hris-payroll-workspace.tsx",
+        "line": 4,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_TARGET_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/index.ts",
+        "line": 1,
+        "specifier": "./hris-payroll-workspace"
+      },
+      {
+        "code": "UNCLASSIFIED_TARGET_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/index.ts",
+        "line": 2,
+        "specifier": "./hris-payroll-workspace"
+      },
+      {
+        "code": "UNCLASSIFIED_TARGET_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/index.ts",
+        "line": 13,
+        "specifier": "./payroll-self-service-model"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/payroll-api.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UI_RAW_CLIENT",
+        "file": "apps/dwp/src/features/hris/payroll/payroll-api.test.ts",
+        "line": 2,
+        "specifier": "@dwp-frontend/shared-utils/axios-instance"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/payroll-api.ts",
+        "line": 1
+      },
+      {
+        "code": "UI_RAW_CLIENT",
+        "file": "apps/dwp/src/features/hris/payroll/payroll-api.ts",
+        "line": 1,
+        "specifier": "@dwp-frontend/shared-utils/axios-instance"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/payroll-self-service-model.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/payroll/payroll-self-service-model.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/people/people-360-data-source.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/people/people-360-detail.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/people/people-360-detail.tsx",
+        "line": 3,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/people/people-360-mobile-list.tsx",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/people/people-360-model.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/people/people-360-model.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/people/people-360-workspace.runtime.test.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/people/people-360-workspace.runtime.test.tsx",
+        "line": 5,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/people/people-360-workspace.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/people/people-360-workspace.tsx",
+        "line": 4,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/hris-performance-workspace.runtime.test.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/performance/hris-performance-workspace.runtime.test.tsx",
+        "line": 4,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/hris-performance-workspace.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/performance/hris-performance-workspace.tsx",
+        "line": 4,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_TARGET_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/index.ts",
+        "line": 4,
+        "specifier": "./hris-performance-workspace"
+      },
+      {
+        "code": "UNCLASSIFIED_TARGET_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/index.ts",
+        "line": 5,
+        "specifier": "./hris-performance-workspace"
+      },
+      {
+        "code": "UNCLASSIFIED_TARGET_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/index.ts",
+        "line": 18,
+        "specifier": "./performance-goal-model"
+      },
+      {
+        "code": "UNCLASSIFIED_TARGET_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/index.ts",
+        "line": 26,
+        "specifier": "./performance-goal-model"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/performance-goal-components.tsx",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/performance-goal-model.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/performance-goal-model.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/performance-phase-one-copy.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/performance-talent-api.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/performance/performance-talent-api.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shared/hris-domain-components.tsx",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-product-identity.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-product-map-contract.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-product-map.test.tsx",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-product-map.tsx",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/shell/hris-retained-route-registry.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-calendar.tsx",
+        "line": 1
+      },
+      {
+        "code": "FOREIGN_FEATURE_INTERNAL",
+        "file": "apps/dwp/src/features/hris/time/hris-time-calendar.tsx",
+        "line": 11,
+        "specifier": "../shared/hris-domain-components",
+        "targetFeature": "hris/shared"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-command-notice.tsx",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-data-source.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-data-source.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-model.test.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-model.ts",
+        "line": 1
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-workspace.runtime.test.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/time/hris-time-workspace.runtime.test.tsx",
+        "line": 4,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "UNCLASSIFIED_FEATURE_LAYER",
+        "file": "apps/dwp/src/features/hris/time/hris-time-workspace.tsx",
+        "line": 1
+      },
+      {
+        "code": "UI_QUERY_ORCHESTRATION",
+        "file": "apps/dwp/src/features/hris/time/hris-time-workspace.tsx",
+        "line": 4,
+        "specifier": "@tanstack/react-query"
+      },
+      {
+        "code": "FOREIGN_FEATURE_INTERNAL",
+        "file": "apps/dwp/src/features/hris/time/hris-time-workspace.tsx",
+        "line": 29,
+        "specifier": "../shared/hris-domain-components",
+        "targetFeature": "hris/shared"
+      },
+      {
+        "code": "NO_LAYERED_HRIS_SOURCES"
+      }
+    ],
+    "claim": "Read-only direct inspector replay for exact diagnostic pointers; unchanged namespace matches CLI/test captures. Flat-file inferred layer diagnostics are NOT 59 independently proven semantic/security defects."
+  },
+  "limits": [
+    "This is a compile-only/AST verification package, not domain API/schema/CRUD, idempotency/cache correctness, DOM/a11y/network, or a complete generated-DTO symbol-flow certification.",
+    "Existing HRIS flat pilots have no eligible planned-layer directories. Unclassified sources remain FAIL; no heuristic layer aliases or grandfathered PASS was added.",
+    "Static imports, exports, type imports, import-equals, literal require/dynamic imports and configured TS paths are inspected. Computed import/require in HRIS sources fails closed. This is not a JavaScript sandbox against eval, reflective APIs, or arbitrary third-party re-exports.",
+    "Synthetic @hris-fixture alias is explicitly fixture-only. Actual repository aliases come from existing TypeScript configuration; missing project-like aliases/targets are rejected.",
+    "Generated/transport detection is import-path/header based. An opaque generic library's transitive symbol shapes are not inferred; actual DTO contracts/providers and independent adapter tests remain separate.",
+    "No source size exceptions, check-script baselines, historical seals, gate status, package registration, existing feature implementations, runtime servers or databases were changed.",
+    "Root separately synchronized the canonical five-session twelve-edge contract. This author only read and pinned it.",
+    "Independent root replay/approval is pending. G3/G4/G6 readiness is not granted."
+  ]
+}

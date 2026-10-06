@@ -1,0 +1,930 @@
+{
+  "actualDirectReaderCases": {
+    "absent-admitted": true,
+    "committed-admitted": true,
+    "committing-writer-death-blocked": true,
+    "finalizing-writer-death-blocked": true,
+    "malformed-blocked": true,
+    "prepared-writer-death-blocked": true
+  },
+  "actualDirectReaderPass": true,
+  "candidate": {
+    "afterExactEightAndRegular": true,
+    "beforeAfterEqual": true,
+    "canonicalDirectory": "coding-readiness/modern-canonical-candidate.A7K8Kj",
+    "canonicalSha256": {
+      "modern-capability-causal-state-contracts.v2.json": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+      "modern-capability-closed-set-manifest.v3.json": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+      "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+      "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+      "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+      "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+      "sys-listening-stream-authority-successor.v2.json": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+    },
+    "membership": {
+      "allRegular": true,
+      "canonicalActual": [
+        "modern-capability-causal-state-contracts.v2.json",
+        "modern-capability-closed-set-manifest.v3.json",
+        "modern-capability-event-payload-contracts.v1.json",
+        "modern-capability-exact-schema-contracts.v1.json",
+        "modern-capability-operation-causal-contract-ssot.v2.json",
+        "modern-capability-public-identity-registry.v1.json",
+        "modern-capability-semantic-bindings.v1.json",
+        "sys-listening-stream-authority-successor.v2.json"
+      ],
+      "canonicalExpected": [
+        "modern-capability-causal-state-contracts.v2.json",
+        "modern-capability-closed-set-manifest.v3.json",
+        "modern-capability-event-payload-contracts.v1.json",
+        "modern-capability-exact-schema-contracts.v1.json",
+        "modern-capability-operation-causal-contract-ssot.v2.json",
+        "modern-capability-public-identity-registry.v1.json",
+        "modern-capability-semantic-bindings.v1.json",
+        "sys-listening-stream-authority-successor.v2.json"
+      ],
+      "exactCanonical8": true,
+      "exactPhysical8": true,
+      "physicalActual": [
+        "hrm-modern-forward-ddl.v4.sql",
+        "modern-owner-handler-physical-contracts.v4.json",
+        "modern-query-projection-physical-contracts.v4.json",
+        "per-modern-forward-ddl.v4.sql",
+        "physical-candidate-generation-report.v4.json",
+        "sys-auth-modern-forward-ddl.v4.sql",
+        "sys-platform-modern-forward-ddl.v4.sql",
+        "tim-modern-forward-ddl.v4.sql"
+      ],
+      "physicalExpected": [
+        "hrm-modern-forward-ddl.v4.sql",
+        "modern-owner-handler-physical-contracts.v4.json",
+        "modern-query-projection-physical-contracts.v4.json",
+        "per-modern-forward-ddl.v4.sql",
+        "physical-candidate-generation-report.v4.json",
+        "sys-auth-modern-forward-ddl.v4.sql",
+        "sys-platform-modern-forward-ddl.v4.sql",
+        "tim-modern-forward-ddl.v4.sql"
+      ]
+    },
+    "physicalDirectory": "coding-readiness/modern-physical-candidate.A7K8Kj",
+    "physicalSha256": {
+      "hrm-modern-forward-ddl.v4.sql": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975",
+      "modern-owner-handler-physical-contracts.v4.json": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6",
+      "modern-query-projection-physical-contracts.v4.json": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6",
+      "per-modern-forward-ddl.v4.sql": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780",
+      "physical-candidate-generation-report.v4.json": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89",
+      "sys-auth-modern-forward-ddl.v4.sql": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6",
+      "sys-platform-modern-forward-ddl.v4.sql": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6",
+      "tim-modern-forward-ddl.v4.sql": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27"
+    }
+  },
+  "checks": {
+    "directEntrypointGuarding": "PASS",
+    "exactActiveInventory": "FAIL",
+    "malformedJournalBlocking": "PASS",
+    "nonterminalWriterDeathBlocking": "PASS",
+    "physicalBundleCountEight": "PASS",
+    "sharedReaderExclusiveWriterExclusion": "PASS",
+    "terminalAndAbsentAdmission": "PASS"
+  },
+  "commands": [
+    {
+      "actualExitCode": 1,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_successor_reader_coverage.py --compact",
+      "elapsedSeconds": 0.33,
+      "expectedExitCode": 0,
+      "name": "coverage_exact44",
+      "parsedStdout": {
+        "activeSourceCount": 44,
+        "dispositionCounts": {
+          "CONTROL_WRITER_SELF_GUARDED": 1,
+          "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+          "GUARDED_DIRECT_ENTRYPOINT": 39,
+          "GUARDED_LIBRARY_CALLERS_ONLY": 3
+        },
+        "errors": [
+          "coding-readiness/generate_modern_exact_event_successor.py: source hash drift",
+          "coding-readiness/generate_modern_operation_ssot_successor.py: source hash drift",
+          "coding-readiness/generate_modern_semantic_identity_successor.py: source hash drift",
+          "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py: source hash drift",
+          "coding-readiness/validate_modern_causal_final_endorsement.py: source hash drift"
+        ],
+        "inventoryEntryCount": 44,
+        "schema": "dwp.hris.modern-successor-reader-coverage-validation.v1",
+        "status": "FAIL"
+      },
+      "status": "FAIL",
+      "stderrLastLine": "",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutLastLine": "{\"activeSourceCount\":44,\"dispositionCounts\":{\"CONTROL_WRITER_SELF_GUARDED\":1,\"GUARDED_CJS_DIRECT_ENTRYPOINT\":1,\"GUARDED_DIRECT_ENTRYPOINT\":39,\"GUARDED_LIBRARY_CALLERS_ONLY\":3},\"errors\":[\"coding-readiness/generate_modern_exact_event_successor.py: source hash drift\",\"coding-readiness/generate_modern_operation_ssot_successor.py: source hash drift\",\"coding-readiness/generate_modern_semantic_identity_successor.py: source hash drift\",\"coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py: source hash drift\",\"coding-readiness/validate_modern_causal_final_endorsement.py: source hash drift\"],\"inventoryEntryCount\":44,\"schema\":\"dwp.hris.modern-successor-reader-coverage-validation.v1\",\"status\":\"FAIL\"}",
+      "stdoutSha256": "1277482d6142ff932cf0882e81b643f4a91db3300d9ead08fbc7ebee513f6c0d",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 1,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_successor_reader_coverage.py --self-test --compact",
+      "elapsedSeconds": 0.574,
+      "expectedExitCode": 0,
+      "name": "coverage_hostile_9_of_9",
+      "parsedStdout": {
+        "caseCount": 4,
+        "cases": {
+          "actual-direct-reader-blocked-before-main-after-writer-death": false,
+          "current-exact-inventory-passes": false,
+          "guard-or-source-drift-rejected": false,
+          "new-uninventoried-reader-rejected": false
+        },
+        "failedCases": [
+          "actual-direct-reader-blocked-before-main-after-writer-death",
+          "current-exact-inventory-passes",
+          "guard-or-source-drift-rejected",
+          "new-uninventoried-reader-rejected"
+        ],
+        "passedCount": 0,
+        "schema": "dwp.hris.modern-successor-reader-coverage-self-test.v1",
+        "status": "FAIL"
+      },
+      "status": "FAIL",
+      "stderrLastLine": "",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutLastLine": "{\"caseCount\":4,\"cases\":{\"actual-direct-reader-blocked-before-main-after-writer-death\":false,\"current-exact-inventory-passes\":false,\"guard-or-source-drift-rejected\":false,\"new-uninventoried-reader-rejected\":false},\"failedCases\":[\"actual-direct-reader-blocked-before-main-after-writer-death\",\"current-exact-inventory-passes\",\"guard-or-source-drift-rejected\",\"new-uninventoried-reader-rejected\"],\"passedCount\":0,\"schema\":\"dwp.hris.modern-successor-reader-coverage-self-test.v1\",\"status\":\"FAIL\"}",
+      "stdoutSha256": "fe60cf565ee64c90ebec41c34e1c7eec1221326307ee8275f2dc3dc8980dfd94",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 0,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/modern_successor_reader_guard.py --self-test --compact",
+      "elapsedSeconds": 0.37,
+      "expectedExitCode": 0,
+      "name": "reader_guard_hostile_10_of_10",
+      "parsedStdout": {
+        "caseCount": 10,
+        "cases": {
+          "absent-journal-admitted": true,
+          "active-shared-reader-excludes-writer-process": true,
+          "malformed-journal-blocked": true,
+          "same-thread-nested-reader-is-reentrant": true,
+          "terminal-committed-admitted": true,
+          "terminal-rolled_back-admitted": true,
+          "writer-death-committing-blocked": true,
+          "writer-death-finalizing-blocked": true,
+          "writer-death-prepared-blocked": true,
+          "writer-process-admitted-after-reader-release": true
+        },
+        "failedCases": [],
+        "passedCount": 10,
+        "schema": "dwp.hris.modern-successor-reader-guard-self-test.v1",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "stderrLastLine": "",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutLastLine": "{\"caseCount\":10,\"cases\":{\"absent-journal-admitted\":true,\"active-shared-reader-excludes-writer-process\":true,\"malformed-journal-blocked\":true,\"same-thread-nested-reader-is-reentrant\":true,\"terminal-committed-admitted\":true,\"terminal-rolled_back-admitted\":true,\"writer-death-committing-blocked\":true,\"writer-death-finalizing-blocked\":true,\"writer-death-prepared-blocked\":true,\"writer-process-admitted-after-reader-release\":true},\"failedCases\":[],\"passedCount\":10,\"schema\":\"dwp.hris.modern-successor-reader-guard-self-test.v1\",\"status\":\"PASS\"}",
+      "stdoutSha256": "0dd9418a380e321db544d062382b1080010d616bb9223824e6d75fc6e961a23d",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 0,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/promote_modern_successor_bundle.py --self-test --compact",
+      "elapsedSeconds": 1.593,
+      "expectedExitCode": 0,
+      "name": "promotion_hostile_14_of_14",
+      "parsedStdout": {
+        "caseCount": 14,
+        "cases": {
+          "acceptance-tamper-rejected": true,
+          "candidate-extra-file-rejected": true,
+          "candidate-symlink-rejected": true,
+          "destination-cas-drift-rejected-before-journal": true,
+          "immutable-receipt-cannot-be-overwritten": true,
+          "injected-partial-crash-observed": true,
+          "missing-independent-reader-audit-rejected": true,
+          "partial-crash-exact-rollback": true,
+          "post-receipt-crash-observed": true,
+          "published-receipt-finalizes-exact-commit": true,
+          "read-only-preflight-passes": true,
+          "receipt-create-new-collision-rejected": true,
+          "same-bytes-source-rebinding-rejected": true,
+          "successful-commit-exact-sixteen-and-immutable-receipt": true
+        },
+        "failedCases": [],
+        "passedCount": 14,
+        "schema": "dwp.hris.modern-successor-promotion-self-test.v1",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "stderrLastLine": "",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutLastLine": "{\"caseCount\":14,\"cases\":{\"acceptance-tamper-rejected\":true,\"candidate-extra-file-rejected\":true,\"candidate-symlink-rejected\":true,\"destination-cas-drift-rejected-before-journal\":true,\"immutable-receipt-cannot-be-overwritten\":true,\"injected-partial-crash-observed\":true,\"missing-independent-reader-audit-rejected\":true,\"partial-crash-exact-rollback\":true,\"post-receipt-crash-observed\":true,\"published-receipt-finalizes-exact-commit\":true,\"read-only-preflight-passes\":true,\"receipt-create-new-collision-rejected\":true,\"same-bytes-source-rebinding-rejected\":true,\"successful-commit-exact-sixteen-and-immutable-receipt\":true},\"failedCases\":[],\"passedCount\":14,\"schema\":\"dwp.hris.modern-successor-promotion-self-test.v1\",\"status\":\"PASS\"}",
+      "stdoutSha256": "998361e32dbba4c65a295c33f1b3349b5fa112e9f15cd4518b93c8782a39c200",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 0,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/prepare_modern_causal_final_endorsement.py --self-test --profile successor-v2 --compact",
+      "elapsedSeconds": 0.239,
+      "expectedExitCode": 0,
+      "name": "successor_profile_prepare_selftest",
+      "parsedStdout": {
+        "canonicalCounts": {
+          "commands": 133,
+          "ownerDependencyContracts": 1,
+          "ownerPortOperationContracts": 18,
+          "publicEvents": 157,
+          "publicOperations": 199,
+          "queries": 66,
+          "systemHandlers": 27,
+          "tableSpecifications": 131
+        },
+        "cases": {
+          "existing-successor-pair-rejected": true,
+          "existing-successor-pair-unchanged": true,
+          "predecessor-pins-exact": true,
+          "profile-path-and-predecessor-controls": true,
+          "successor-inputs-pending": true,
+          "successor-stage-graph-acyclic": true,
+          "successor-targets-are-clean": true
+        },
+        "failures": [],
+        "policy": {
+          "fileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+          "path": "modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+          "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2"
+        },
+        "predecessorDisposition": "HISTORICAL_BYTES_PINNED_NOT_ACTIVE_GATE_AUTHORITY",
+        "profile": "successor-v2",
+        "schema": "dwp.hris.modern-causal-final-preparer-successor-self-test.v1",
+        "status": "PASS",
+        "tests": 9
+      },
+      "status": "PASS",
+      "stderrLastLine": "",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutLastLine": "{\"canonicalCounts\":{\"commands\":133,\"ownerDependencyContracts\":1,\"ownerPortOperationContracts\":18,\"publicEvents\":157,\"publicOperations\":199,\"queries\":66,\"systemHandlers\":27,\"tableSpecifications\":131},\"cases\":{\"existing-successor-pair-rejected\":true,\"existing-successor-pair-unchanged\":true,\"predecessor-pins-exact\":true,\"profile-path-and-predecessor-controls\":true,\"successor-inputs-pending\":true,\"successor-stage-graph-acyclic\":true,\"successor-targets-are-clean\":true},\"failures\":[],\"policy\":{\"fileSha256\":\"ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b\",\"path\":\"modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json\",\"sealedPayloadSha256\":\"4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2\"},\"predecessorDisposition\":\"HISTORICAL_BYTES_PINNED_NOT_ACTIVE_GATE_AUTHORITY\",\"profile\":\"successor-v2\",\"schema\":\"dwp.hris.modern-causal-final-preparer-successor-self-test.v1\",\"status\":\"PASS\",\"tests\":9}",
+      "stdoutSha256": "90e5ead818f86ad7785d617a8a9a080d3a7b34dc2f20b97ea9192a29ad289529",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 2,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --design-only --skip-self-tests --compact",
+      "elapsedSeconds": 0.128,
+      "expectedExitCode": 2,
+      "name": "legacy_design_default_requires_unique_report",
+      "parsedStdout": null,
+      "status": "PASS",
+      "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: legacy --design-only requires an explicit unique --report path; the historical v1 report is immutable",
+      "stderrSha256": "3b5b6219b45458cc41be820800b60e61fa59b8b0c2bb43769dcc0e9c63bc605b",
+      "stdoutLastLine": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 2,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --design-only --skip-self-tests --compact --report coding-readiness/reports/modern-causal-independent-design-findings.v1.json",
+      "elapsedSeconds": 0.127,
+      "expectedExitCode": 2,
+      "name": "legacy_design_canonical_v1_overwrite_blocked",
+      "parsedStdout": null,
+      "status": "PASS",
+      "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: legacy report output cannot target an immutable historical v1 path",
+      "stderrSha256": "dd7eabccd564dcb209f653a1b09722505916152b6a0ab84cb13b6c4061688777",
+      "stdoutLastLine": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 2,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --historical-fail --compact",
+      "elapsedSeconds": 0.144,
+      "expectedExitCode": 2,
+      "name": "legacy_historical_requires_explicit_pair",
+      "parsedStdout": null,
+      "status": "PASS",
+      "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: --historical-fail requires both --historical-fail-json-report and --historical-fail-markdown-report at unique new paths",
+      "stderrSha256": "8f4aa31a4dfc34cc70efe25021d0e795376549db16646719d1c072de6237dd93",
+      "stdoutLastLine": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 2,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --historical-fail --compact --historical-fail-json-report coding-readiness/reports/modern-causal-independent-historical-fail.v1.json --historical-fail-markdown-report coding-readiness/reports/modern-causal-independent-historical-fail.v1.md",
+      "elapsedSeconds": 0.24,
+      "expectedExitCode": 2,
+      "name": "legacy_historical_canonical_paths_blocked",
+      "parsedStdout": null,
+      "status": "PASS",
+      "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: historical reproduction outputs must be distinct from immutable v1 paths",
+      "stderrSha256": "5bef7f149b52931672f98260ed8029844e32455148febbe2b58306e2a36fae1e",
+      "stdoutLastLine": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 1,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --design-only --skip-self-tests --compact --report /var/folders/qp/_8pgqkt50bn5qm2hyh4y6km40000gq/T/hris-reader-legacy-output-independent-v4-final-t4z2e2qx/design.json",
+      "elapsedSeconds": 0.649,
+      "expectedExitCode": 1,
+      "name": "legacy_design_duplicate_create_only_blocked",
+      "parsedStdout": null,
+      "status": "PASS",
+      "stderrLastLine": "FileExistsError: successor publication target already exists (occupied): /var/folders/qp/_8pgqkt50bn5qm2hyh4y6km40000gq/T/hris-reader-legacy-output-independent-v4-final-t4z2e2qx/design.json",
+      "stderrSha256": "9fc6e7d68fe6deb28b5e287f91fa95b3d5c88824bd144be7864dc5731aab7e2d",
+      "stdoutLastLine": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false
+    },
+    {
+      "actualExitCode": 1,
+      "command": "/Library/Developer/CommandLineTools/usr/bin/python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --historical-fail --compact --historical-fail-json-report /var/folders/qp/_8pgqkt50bn5qm2hyh4y6km40000gq/T/hris-reader-legacy-output-independent-v4-final-t4z2e2qx/historical.json --historical-fail-markdown-report /var/folders/qp/_8pgqkt50bn5qm2hyh4y6km40000gq/T/hris-reader-legacy-output-independent-v4-final-t4z2e2qx/historical.md",
+      "elapsedSeconds": 0.275,
+      "expectedExitCode": 1,
+      "name": "legacy_historical_duplicate_create_only_blocked",
+      "parsedStdout": null,
+      "status": "PASS",
+      "stderrLastLine": "FileExistsError: successor publication target already exists (occupied): /var/folders/qp/_8pgqkt50bn5qm2hyh4y6km40000gq/T/hris-reader-legacy-output-independent-v4-final-t4z2e2qx/historical.json",
+      "stderrSha256": "520c9bce1edc28e5a602c355d750994829cbe22b75683cfc05b06a576f6fa21e",
+      "stdoutLastLine": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false
+    }
+  ],
+  "extraScopeDifferences": [],
+  "extraScopeUnchanged": true,
+  "findings": [
+    {
+      "code": "P0-READER-INVENTORY-SOURCE-PIN-DRIFT",
+      "detail": "v4 exact active-reader inventory is self-sealed and has 44 entries, but current source SHA differs from one or more v4 pins; independent reader-fence PASS cannot be asserted until a new inventory refresh is independently re-audited.",
+      "drift": [
+        {
+          "actualSha256": "926b9dfc60bac0fd725b59f757d04c0a89213676bd62f1bb7424ea8c6d58384c",
+          "inventorySha256": "99bb7ca05782137c03667e2dd8a05ed45dac01f620e0d3da94a5d842412c34d7",
+          "path": "coding-readiness/generate_modern_exact_event_successor.py"
+        },
+        {
+          "actualSha256": "69b0b5b04d91361f3690cd81d7be95173175a0872229e4d4064a3fcf39c82b69",
+          "inventorySha256": "f54dc7c6ff50e6eb6e7d52ef322c77ab0e803c25b35e0c1ae4590004ee9bb75c",
+          "path": "coding-readiness/generate_modern_operation_ssot_successor.py"
+        },
+        {
+          "actualSha256": "3f35ebe83f95bbd05e398631980d71ec1fdc3f1d569155f94028dce398d364c5",
+          "inventorySha256": "b665210e3f2543a915d71639b178b25c223203bed1cb39f53e671fc191233354",
+          "path": "coding-readiness/generate_modern_semantic_identity_successor.py"
+        },
+        {
+          "actualSha256": "992e7ec6d9e40151ab41c9b1ad8a6c36b9d11cdb067494e53c7726ab4e1e8226",
+          "inventorySha256": "f03de714cbf38d7f081e7af92fe569b9dd3d1d6f35c8a5c7c93df420633a9481",
+          "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py"
+        },
+        {
+          "actualSha256": "8b142ac232a9dc8cefc20f78fddc66dfa5f8790dca8ff4ea024e625015daef63",
+          "inventorySha256": "82f2ebad95b4cc047f85d39cda6d562c0cd2a44e18f906952c124333ac3d7332",
+          "path": "coding-readiness/validate_modern_causal_final_endorsement.py"
+        }
+      ],
+      "severity": "P0",
+      "status": "OPEN"
+    },
+    {
+      "code": "P0-READER-COVERAGE-COMMAND-FAIL",
+      "commandNames": [
+        "coverage_exact44",
+        "coverage_hostile_9_of_9"
+      ],
+      "detail": "current coverage exact44 and hostile coverage selftest fail closed because inventory source pins are stale.",
+      "severity": "P0",
+      "status": "OPEN"
+    }
+  ],
+  "gate": {
+    "currentState": "VALIDATOR_CONTROLLED_BLOCKED",
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "fileSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "path": "g0/current-g3-gate-decision.json",
+    "transitionRegisterSha256": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a"
+  },
+  "inventory": {
+    "activeSourceCount": 44,
+    "dispositionCounts": {
+      "CONTROL_WRITER_SELF_GUARDED": 1,
+      "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+      "GUARDED_DIRECT_ENTRYPOINT": 39,
+      "GUARDED_LIBRARY_CALLERS_ONLY": 3
+    },
+    "fileSha256": "40d272662a574e67f16779580822d6c68ce2ceb39868825a96f19a15d58eb08c",
+    "inventoryEntryCount": 44,
+    "lineageChain": {
+      "v1": {
+        "fileSha256": "631adb66431d30003620f78ccdc0ad9ecc6136874728d66a8185a41a3b85d2a4",
+        "fileSha256Pass": true,
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v1.json",
+        "predecessorPinPass": true,
+        "sealedPayloadSha256": "309b5e68757d7c57672e67604783ec2d920deb59dd9a461e61f617b4c5bb6be1",
+        "selfSealPass": true
+      },
+      "v2": {
+        "fileSha256": "81438665462b6945ae867ed6dbed78eb6cfe4aad996518652971eec74f977868",
+        "fileSha256Pass": true,
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v2.json",
+        "predecessorPinPass": true,
+        "sealedPayloadSha256": "1b8371c83be5a622ff7f556a716bc1429776a9fdfe88190516c55b02d625f132",
+        "selfSealPass": true
+      },
+      "v3": {
+        "fileSha256": "9cec05334b345e5d6cab7ad07c2963da42cac1e7409aa881419ba72618c8d5fe",
+        "fileSha256Pass": true,
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v3.json",
+        "predecessorPinPass": true,
+        "sealedPayloadSha256": "7f9e81a6d7b809e6e7b828c0912cfce2745c166c4e1d6c4b776dbb3f5b5bf225",
+        "selfSealPass": true
+      },
+      "v4": {
+        "fileSha256": "40d272662a574e67f16779580822d6c68ce2ceb39868825a96f19a15d58eb08c",
+        "fileSha256Pass": true,
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v4.json",
+        "predecessorPinPass": true,
+        "sealedPayloadSha256": "6d54e432c4c069338087eb9a944e7ba04da2b7ed3e587eca7a1612bab696b5dd",
+        "selfSealPass": true
+      }
+    },
+    "lineageChainAllPass": true,
+    "schema": "dwp.hris.modern-successor-supported-reader-inventory.v4",
+    "sealedPayloadSha256": "6d54e432c4c069338087eb9a944e7ba04da2b7ed3e587eca7a1612bab696b5dd",
+    "sourceChangedDuringAudit": [],
+    "sourceDrift": [
+      {
+        "actualSha256": "926b9dfc60bac0fd725b59f757d04c0a89213676bd62f1bb7424ea8c6d58384c",
+        "inventorySha256": "99bb7ca05782137c03667e2dd8a05ed45dac01f620e0d3da94a5d842412c34d7",
+        "path": "coding-readiness/generate_modern_exact_event_successor.py"
+      },
+      {
+        "actualSha256": "69b0b5b04d91361f3690cd81d7be95173175a0872229e4d4064a3fcf39c82b69",
+        "inventorySha256": "f54dc7c6ff50e6eb6e7d52ef322c77ab0e803c25b35e0c1ae4590004ee9bb75c",
+        "path": "coding-readiness/generate_modern_operation_ssot_successor.py"
+      },
+      {
+        "actualSha256": "3f35ebe83f95bbd05e398631980d71ec1fdc3f1d569155f94028dce398d364c5",
+        "inventorySha256": "b665210e3f2543a915d71639b178b25c223203bed1cb39f53e671fc191233354",
+        "path": "coding-readiness/generate_modern_semantic_identity_successor.py"
+      },
+      {
+        "actualSha256": "992e7ec6d9e40151ab41c9b1ad8a6c36b9d11cdb067494e53c7726ab4e1e8226",
+        "inventorySha256": "f03de714cbf38d7f081e7af92fe569b9dd3d1d6f35c8a5c7c93df420633a9481",
+        "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py"
+      },
+      {
+        "actualSha256": "8b142ac232a9dc8cefc20f78fddc66dfa5f8790dca8ff4ea024e625015daef63",
+        "inventorySha256": "82f2ebad95b4cc047f85d39cda6d562c0cd2a44e18f906952c124333ac3d7332",
+        "path": "coding-readiness/validate_modern_causal_final_endorsement.py"
+      }
+    ],
+    "sourceHashes": {
+      "coding-readiness/audit_sys_exact_business_start.cjs": "544307f4449422b29018b0273f0b630f24aba74bc4cce1bbd706cf608bb92726",
+      "coding-readiness/build_modern_causal_independent_oracle.py": "077a55327bb61621094975f54a81e2b004797d852823e86192c106cce43fd552",
+      "coding-readiness/generate_g3_slice_code_go_register.py": "3c3d0e5766cef6843ed60474c35bf412b9c66c1e3f67f6d59a3305a6e560095a",
+      "coding-readiness/generate_modern_canonical_five_successor.py": "b194782344484bff2b1ce6fc354f17458e1d668d4bbf00aac5298e26c44de5a5",
+      "coding-readiness/generate_modern_causal_module_successor.py": "96b12e8c1fa59c8b0f8b5b338629037ef3d168abe48efff17adae5db43448106",
+      "coding-readiness/generate_modern_causal_successor.py": "560f7b321a5890b0903cc91798abb8c51336c8061aa767bc54dec9ad81bb0122",
+      "coding-readiness/generate_modern_closed_set_manifest.py": "147164a98da1c52cb1b64e4d4f663292524ba7595bd51eee6892d97061620f5b",
+      "coding-readiness/generate_modern_event_successor_lineage.py": "79060782e28faebc0cf174acb893e23d414495a35e824cd91873199335e98c0d",
+      "coding-readiness/generate_modern_exact_event_successor.py": "926b9dfc60bac0fd725b59f757d04c0a89213676bd62f1bb7424ea8c6d58384c",
+      "coding-readiness/generate_modern_operation_ssot_successor.py": "69b0b5b04d91361f3690cd81d7be95173175a0872229e4d4064a3fcf39c82b69",
+      "coding-readiness/generate_modern_semantic_field_lineage.py": "fa68630a5d975774cd742c99e25bd5a5f59f46a6d0d7af2b377c6840dfb98b5a",
+      "coding-readiness/generate_modern_semantic_identity_successor.py": "3f35ebe83f95bbd05e398631980d71ec1fdc3f1d569155f94028dce398d364c5",
+      "coding-readiness/generate_sys_listening_stream_authority_successor.py": "7d000266c7f71e43e2c1915b04c9ab18003536923639832615114851f9fdf868",
+      "coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py": "5cdec3ce379aeccc7720f2c924d34eb90ef93247ece58c7390ffdaeb6370b93f",
+      "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py": "992e7ec6d9e40151ab41c9b1ad8a6c36b9d11cdb067494e53c7726ab4e1e8226",
+      "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py": "3c2bb1df13e9d67fe0786000889ff578d58052257dfb294ac66c5a5b45cbc6df",
+      "coding-readiness/modern-independent-successor/audit_successor_dependency_dag.py": "396ea7071f018627fd099c947d8e7255c64796a69bb0bbfa19df5bf86b335784",
+      "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py": "d517aa86a502a84b649b5eb11266008b85d986fdbca7b485bbbb894f88837d16",
+      "coding-readiness/modern-independent-successor/validate_modern_independent_successor.py": "88ab5e99459cb68898b6e4ecda17f1dac8d304973f3b320d594d537c8b4af3f9",
+      "coding-readiness/modern-independent-successor/validate_table_scope_132_independent_review.py": "abc9424332fe0bae18f098c68600bd17403c52e45855c965f53768f8c543a223",
+      "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py": "a24cd04ba2d6f2e1b6e6ad6e04aa656ae5c187a42069ef663cc6f8b2aa430ce4",
+      "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py": "7dd5c2e60923b4698973e8ead31790a49d4fa9cf389239e54a3e10ebfbc74168",
+      "coding-readiness/modern-physical-successor/validate_modern_physical_successor.py": "372c0b393ef95a49f0c18a68f24a940d25b9f3ac5d2a91a7cf9074d19c713750",
+      "coding-readiness/modern_causal_candidate_projection.py": "a436c36fd183cac30902529e588bfcde8f53992521fb12c5c0b85c36aa04d9ed",
+      "coding-readiness/modern_causal_successor_profile.py": "01d460abefe789eeba2d3259da4a35f581854b1ef2e3de04841ba11c168416f5",
+      "coding-readiness/prepare_modern_causal_final_endorsement.py": "63e8e42aaf779bc62858b18474ee948dcb27d64b8e5d8b4220ae2031c8e2515a",
+      "coding-readiness/promote_modern_successor_bundle.py": "f1b665f4cdf3f3f22f2aae3fc4e3e42d0b467a8411711887f874b271225df17e",
+      "coding-readiness/run_modern_causal_independent_pg_fixtures.py": "011d593d784d6e09b63a54dd7ed09688059847cd38e8d3e30a67f80da1947f46",
+      "coding-readiness/semantic-remediation/tim_cross_context_successor_v4.py": "7fec0778a26f0a0459faa45ed3b4f7dee590f0ca16dbc0690b4368fd8631abb8",
+      "coding-readiness/sys_listening_canonical_design.py": "7394b66f91a01eed7bec1cf10749e63b08b67fded5a88562a2c2aea6f66085aa",
+      "coding-readiness/test_modern_candidate_validator_coherence.py": "12bbc45dc56b2974a4f85958b764295b8d672fa40b091d1a01d5b22a675d164d",
+      "coding-readiness/validate_compensation_snapshot_v2_authority.py": "4d9223727c73a73322eb3929093b2cbc8dd2ffc869ee3a3b1904113be7fbda15",
+      "coding-readiness/validate_full_coding_readiness.py": "a0f41a4de53142b81f5e563622fc7f9bbfb2c754138a3644c46e80111f52d031",
+      "coding-readiness/validate_g3_slice_code_go.py": "c1e320763e35d4cfb8fbb55d6b7ac7b48630de9307fe225218839da681a67d8a",
+      "coding-readiness/validate_modern_capability_contracts.py": "3953e904fd6d1f6d5e8fa11b8eb45de76471486291886581d72e1608adebbadf",
+      "coding-readiness/validate_modern_causal_final_endorsement.py": "8b142ac232a9dc8cefc20f78fddc66dfa5f8790dca8ff4ea024e625015daef63",
+      "coding-readiness/validate_modern_causal_independent_oracle.py": "f4806b2ee689469ca46bf8770dca15b1da450a154d16daf5cd1055511adfe063",
+      "coding-readiness/validate_modern_causal_state_contracts.py": "8e8572ff2231dff866e0a73a5762f3de8bf66f751b473fb87316af6604c52285",
+      "coding-readiness/validate_modern_semantic_field_lineage.py": "8d3e2939418e5538b0710fc6a0c4227599efaf499dc23ce1352a683c7287241c",
+      "coding-readiness/validate_physical_owner_prefixes.py": "f88f108bc8c71d76c75936e24fb6d7b65fde872f66b0367d21cb48925b2aeb4d",
+      "coding-readiness/validate_published_gate_truth.py": "1a3c75622f12a738fc4e35b22fec6a33dc038aa2c0505d00957cb6f6b510bb2b",
+      "coding-readiness/validate_sys_exact_business_start.py": "2c90e3524f1df54e87261d64e2a7f1d4d3e854b473129098919a9b576684eca7",
+      "coding-readiness/validate_sys_listening_stream_authority_successor.py": "05fa988098f2c5b92bc045fac4be97c3073ddd6d60667dcbb880d396055d6b76",
+      "g0/validate_blueprint_artifact_lineage.py": "a8e2140d485c8066d0d15a839c20ac22db0ebb00684eaaa87a166c325cac06c0"
+    },
+    "sourceHashesBefore": {
+      "coding-readiness/audit_sys_exact_business_start.cjs": "544307f4449422b29018b0273f0b630f24aba74bc4cce1bbd706cf608bb92726",
+      "coding-readiness/build_modern_causal_independent_oracle.py": "077a55327bb61621094975f54a81e2b004797d852823e86192c106cce43fd552",
+      "coding-readiness/generate_g3_slice_code_go_register.py": "3c3d0e5766cef6843ed60474c35bf412b9c66c1e3f67f6d59a3305a6e560095a",
+      "coding-readiness/generate_modern_canonical_five_successor.py": "b194782344484bff2b1ce6fc354f17458e1d668d4bbf00aac5298e26c44de5a5",
+      "coding-readiness/generate_modern_causal_module_successor.py": "96b12e8c1fa59c8b0f8b5b338629037ef3d168abe48efff17adae5db43448106",
+      "coding-readiness/generate_modern_causal_successor.py": "560f7b321a5890b0903cc91798abb8c51336c8061aa767bc54dec9ad81bb0122",
+      "coding-readiness/generate_modern_closed_set_manifest.py": "147164a98da1c52cb1b64e4d4f663292524ba7595bd51eee6892d97061620f5b",
+      "coding-readiness/generate_modern_event_successor_lineage.py": "79060782e28faebc0cf174acb893e23d414495a35e824cd91873199335e98c0d",
+      "coding-readiness/generate_modern_exact_event_successor.py": "926b9dfc60bac0fd725b59f757d04c0a89213676bd62f1bb7424ea8c6d58384c",
+      "coding-readiness/generate_modern_operation_ssot_successor.py": "69b0b5b04d91361f3690cd81d7be95173175a0872229e4d4064a3fcf39c82b69",
+      "coding-readiness/generate_modern_semantic_field_lineage.py": "fa68630a5d975774cd742c99e25bd5a5f59f46a6d0d7af2b377c6840dfb98b5a",
+      "coding-readiness/generate_modern_semantic_identity_successor.py": "3f35ebe83f95bbd05e398631980d71ec1fdc3f1d569155f94028dce398d364c5",
+      "coding-readiness/generate_sys_listening_stream_authority_successor.py": "7d000266c7f71e43e2c1915b04c9ab18003536923639832615114851f9fdf868",
+      "coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py": "5cdec3ce379aeccc7720f2c924d34eb90ef93247ece58c7390ffdaeb6370b93f",
+      "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py": "992e7ec6d9e40151ab41c9b1ad8a6c36b9d11cdb067494e53c7726ab4e1e8226",
+      "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py": "3c2bb1df13e9d67fe0786000889ff578d58052257dfb294ac66c5a5b45cbc6df",
+      "coding-readiness/modern-independent-successor/audit_successor_dependency_dag.py": "396ea7071f018627fd099c947d8e7255c64796a69bb0bbfa19df5bf86b335784",
+      "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py": "d517aa86a502a84b649b5eb11266008b85d986fdbca7b485bbbb894f88837d16",
+      "coding-readiness/modern-independent-successor/validate_modern_independent_successor.py": "88ab5e99459cb68898b6e4ecda17f1dac8d304973f3b320d594d537c8b4af3f9",
+      "coding-readiness/modern-independent-successor/validate_table_scope_132_independent_review.py": "abc9424332fe0bae18f098c68600bd17403c52e45855c965f53768f8c543a223",
+      "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py": "a24cd04ba2d6f2e1b6e6ad6e04aa656ae5c187a42069ef663cc6f8b2aa430ce4",
+      "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py": "7dd5c2e60923b4698973e8ead31790a49d4fa9cf389239e54a3e10ebfbc74168",
+      "coding-readiness/modern-physical-successor/validate_modern_physical_successor.py": "372c0b393ef95a49f0c18a68f24a940d25b9f3ac5d2a91a7cf9074d19c713750",
+      "coding-readiness/modern_causal_candidate_projection.py": "a436c36fd183cac30902529e588bfcde8f53992521fb12c5c0b85c36aa04d9ed",
+      "coding-readiness/modern_causal_successor_profile.py": "01d460abefe789eeba2d3259da4a35f581854b1ef2e3de04841ba11c168416f5",
+      "coding-readiness/prepare_modern_causal_final_endorsement.py": "63e8e42aaf779bc62858b18474ee948dcb27d64b8e5d8b4220ae2031c8e2515a",
+      "coding-readiness/promote_modern_successor_bundle.py": "f1b665f4cdf3f3f22f2aae3fc4e3e42d0b467a8411711887f874b271225df17e",
+      "coding-readiness/run_modern_causal_independent_pg_fixtures.py": "011d593d784d6e09b63a54dd7ed09688059847cd38e8d3e30a67f80da1947f46",
+      "coding-readiness/semantic-remediation/tim_cross_context_successor_v4.py": "7fec0778a26f0a0459faa45ed3b4f7dee590f0ca16dbc0690b4368fd8631abb8",
+      "coding-readiness/sys_listening_canonical_design.py": "7394b66f91a01eed7bec1cf10749e63b08b67fded5a88562a2c2aea6f66085aa",
+      "coding-readiness/test_modern_candidate_validator_coherence.py": "12bbc45dc56b2974a4f85958b764295b8d672fa40b091d1a01d5b22a675d164d",
+      "coding-readiness/validate_compensation_snapshot_v2_authority.py": "4d9223727c73a73322eb3929093b2cbc8dd2ffc869ee3a3b1904113be7fbda15",
+      "coding-readiness/validate_full_coding_readiness.py": "a0f41a4de53142b81f5e563622fc7f9bbfb2c754138a3644c46e80111f52d031",
+      "coding-readiness/validate_g3_slice_code_go.py": "c1e320763e35d4cfb8fbb55d6b7ac7b48630de9307fe225218839da681a67d8a",
+      "coding-readiness/validate_modern_capability_contracts.py": "3953e904fd6d1f6d5e8fa11b8eb45de76471486291886581d72e1608adebbadf",
+      "coding-readiness/validate_modern_causal_final_endorsement.py": "8b142ac232a9dc8cefc20f78fddc66dfa5f8790dca8ff4ea024e625015daef63",
+      "coding-readiness/validate_modern_causal_independent_oracle.py": "f4806b2ee689469ca46bf8770dca15b1da450a154d16daf5cd1055511adfe063",
+      "coding-readiness/validate_modern_causal_state_contracts.py": "8e8572ff2231dff866e0a73a5762f3de8bf66f751b473fb87316af6604c52285",
+      "coding-readiness/validate_modern_semantic_field_lineage.py": "8d3e2939418e5538b0710fc6a0c4227599efaf499dc23ce1352a683c7287241c",
+      "coding-readiness/validate_physical_owner_prefixes.py": "f88f108bc8c71d76c75936e24fb6d7b65fde872f66b0367d21cb48925b2aeb4d",
+      "coding-readiness/validate_published_gate_truth.py": "1a3c75622f12a738fc4e35b22fec6a33dc038aa2c0505d00957cb6f6b510bb2b",
+      "coding-readiness/validate_sys_exact_business_start.py": "2c90e3524f1df54e87261d64e2a7f1d4d3e854b473129098919a9b576684eca7",
+      "coding-readiness/validate_sys_listening_stream_authority_successor.py": "05fa988098f2c5b92bc045fac4be97c3073ddd6d60667dcbb880d396055d6b76",
+      "g0/validate_blueprint_artifact_lineage.py": "a8e2140d485c8066d0d15a839c20ac22db0ebb00684eaaa87a166c325cac06c0"
+    },
+    "sourceSetExact": true
+  },
+  "legacyTestsPass": true,
+  "policy": {
+    "fileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+    "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+    "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2"
+  },
+  "productionState": "NOT_AUTHORIZED_G6",
+  "promotion": "NOT_EXECUTED_NOT_AUTHORIZED",
+  "protectedImmutability": {
+    "afterMatchesEmbedded": true,
+    "beforeAfterEqual": true,
+    "beforeMatchesEmbedded": true,
+    "comparedFields": [
+      "dev",
+      "inode",
+      "mode",
+      "size",
+      "mtimeNs",
+      "ctimeNs",
+      "sha256"
+    ],
+    "differences": [],
+    "embeddedSnapshotCanonicalSha256": "1197c5e2d552f7e87616bb8b3d880eef59a3cd7abc7dbe1d218eb37c77199191",
+    "files": [
+      {
+        "ctimeNs": 1789529754771598000,
+        "dev": 16777234,
+        "inode": 47635963,
+        "mode": "0o600",
+        "mtimeNs": 1789529754770714000,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-causal-state-contracts.v2.json",
+        "sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+        "size": 4790036,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789529741613400300,
+        "dev": 16777234,
+        "inode": 47631719,
+        "mode": "0o600",
+        "mtimeNs": 1789529741603144700,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-closed-set-manifest.v3.json",
+        "sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+        "size": 294333,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789529753312166100,
+        "dev": 16777234,
+        "inode": 47635697,
+        "mode": "0o644",
+        "mtimeNs": 1789529753300605200,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-event-payload-contracts.v1.json",
+        "sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+        "size": 1687439,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789529753311934200,
+        "dev": 16777234,
+        "inode": 47635696,
+        "mode": "0o644",
+        "mtimeNs": 1789529753291935700,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-exact-schema-contracts.v1.json",
+        "sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+        "size": 7912823,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789529753311676200,
+        "dev": 16777234,
+        "inode": 47635693,
+        "mode": "0o644",
+        "mtimeNs": 1789529753285236200,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-operation-causal-contract-ssot.v2.json",
+        "sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+        "size": 5279746,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789529753312616400,
+        "dev": 16777234,
+        "inode": 47635700,
+        "mode": "0o644",
+        "mtimeNs": 1789529753310138000,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-public-identity-registry.v1.json",
+        "sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+        "size": 759646,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789529753312414200,
+        "dev": 16777234,
+        "inode": 47635698,
+        "mode": "0o644",
+        "mtimeNs": 1789529753303798800,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-semantic-bindings.v1.json",
+        "sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+        "size": 5400337,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789529742247008800,
+        "dev": 16777234,
+        "inode": 47631865,
+        "mode": "0o644",
+        "mtimeNs": 1789529742246644200,
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/sys-listening-stream-authority-successor.v2.json",
+        "sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316",
+        "size": 298993,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789482779782482400,
+        "dev": 16777234,
+        "inode": 45500433,
+        "mode": "0o644",
+        "mtimeNs": 1789482779782482400,
+        "path": "coding-readiness/modern-capability-causal-state-contracts.v2.json",
+        "sha256": "4f604faf4593e765e3a10671a8577cfa3e43a250fc3d7f34d89759518a4d0b08",
+        "size": 2994570,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789482534900653600,
+        "dev": 16777234,
+        "inode": 46758935,
+        "mode": "0o644",
+        "mtimeNs": 1789482534900653600,
+        "path": "coding-readiness/modern-capability-closed-set-manifest.v3.json",
+        "sha256": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+        "size": 68869,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789482772913672200,
+        "dev": 16777234,
+        "inode": 46907787,
+        "mode": "0o644",
+        "mtimeNs": 1789482772905710600,
+        "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+        "sha256": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b",
+        "size": 1088230,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789482772913059600,
+        "dev": 16777234,
+        "inode": 46907786,
+        "mode": "0o644",
+        "mtimeNs": 1789482772900814600,
+        "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+        "sha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730",
+        "size": 4617575,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789482772912511700,
+        "dev": 16777234,
+        "inode": 46907785,
+        "mode": "0o644",
+        "mtimeNs": 1789482772896697000,
+        "path": "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+        "sha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+        "size": 3448189,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789482772914675200,
+        "dev": 16777234,
+        "inode": 46907789,
+        "mode": "0o644",
+        "mtimeNs": 1789482772911252200,
+        "path": "coding-readiness/modern-capability-public-identity-registry.v1.json",
+        "sha256": "d3c09697221660a35b6fd405182433d1dbbe6b36c4198fa5b08db088f9d00a06",
+        "size": 282654,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789482772914354000,
+        "dev": 16777234,
+        "inode": 46907788,
+        "mode": "0o644",
+        "mtimeNs": 1789482772907575800,
+        "path": "coding-readiness/modern-capability-semantic-bindings.v1.json",
+        "sha256": "834cd00e20148cded2765f1f41790926a479515afd0f23f6d95a0cea4ba389dd",
+        "size": 3168251,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192953770800,
+        "dev": 16777234,
+        "inode": 47668112,
+        "mode": "0o644",
+        "mtimeNs": 1789530192953770800,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/hrm-modern-forward-ddl.v4.sql",
+        "sha256": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975",
+        "size": 164079,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192958405400,
+        "dev": 16777234,
+        "inode": 47668117,
+        "mode": "0o644",
+        "mtimeNs": 1789530192958405400,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/modern-owner-handler-physical-contracts.v4.json",
+        "sha256": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6",
+        "size": 461341,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192959582200,
+        "dev": 16777234,
+        "inode": 47668118,
+        "mode": "0o644",
+        "mtimeNs": 1789530192959582200,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/modern-query-projection-physical-contracts.v4.json",
+        "sha256": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6",
+        "size": 4047816,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192954467800,
+        "dev": 16777234,
+        "inode": 47668113,
+        "mode": "0o644",
+        "mtimeNs": 1789530192954467800,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/per-modern-forward-ddl.v4.sql",
+        "sha256": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780",
+        "size": 160855,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192964070000,
+        "dev": 16777234,
+        "inode": 47668119,
+        "mode": "0o644",
+        "mtimeNs": 1789530192964070000,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/physical-candidate-generation-report.v4.json",
+        "sha256": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89",
+        "size": 4512,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192956542000,
+        "dev": 16777234,
+        "inode": 47668116,
+        "mode": "0o644",
+        "mtimeNs": 1789530192956542000,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/sys-auth-modern-forward-ddl.v4.sql",
+        "sha256": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6",
+        "size": 19585,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192956049700,
+        "dev": 16777234,
+        "inode": 47668115,
+        "mode": "0o644",
+        "mtimeNs": 1789530192956049700,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/sys-platform-modern-forward-ddl.v4.sql",
+        "sha256": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6",
+        "size": 127841,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789530192954875600,
+        "dev": 16777234,
+        "inode": 47668114,
+        "mode": "0o644",
+        "mtimeNs": 1789530192954875600,
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/tim-modern-forward-ddl.v4.sql",
+        "sha256": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27",
+        "size": 52207,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789531881177133000,
+        "dev": 16777234,
+        "inode": 47726449,
+        "mode": "0o644",
+        "mtimeNs": 1789531881177133000,
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v1.json",
+        "sha256": "631adb66431d30003620f78ccdc0ad9ecc6136874728d66a8185a41a3b85d2a4",
+        "size": 12633,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789531813663102700,
+        "dev": 16777234,
+        "inode": 47732469,
+        "mode": "0o644",
+        "mtimeNs": 1789531813663102700,
+        "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-physical-bundle-addendum-2026-09-16.v2.json",
+        "sha256": "9e8be5380327fb5da28870e53db6b41e9a403002d5d2bc2c42e156a8500ece21",
+        "size": 2368,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789089449181792500,
+        "dev": 16777234,
+        "inode": 41742789,
+        "mode": "0o644",
+        "mtimeNs": 1789089449181792500,
+        "path": "g0/current-g3-gate-decision.json",
+        "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+        "size": 876,
+        "state": "FILE"
+      },
+      {
+        "ctimeNs": 1789447365120199700,
+        "dev": 16777234,
+        "inode": 45989559,
+        "mode": "0o644",
+        "mtimeNs": 1789447365120199700,
+        "path": "g0/g3-gate-transition-register.csv",
+        "sha256": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a",
+        "size": 202,
+        "state": "FILE"
+      }
+    ],
+    "protectedFileCount": 27
+  },
+  "quarantine": {
+    "legacyAuthorityQuarantine": "FAIL_CLOSED_QUARANTINED_P0_EXACT_ORIGINAL_BYTES_UNAVAILABLE",
+    "legacyDesignReportFindings": 1385,
+    "legacyDesignReportPath": "coding-readiness/reports/modern-causal-independent-design-findings.v1.json",
+    "legacyDesignReportStatus": "FAIL",
+    "promotionDecision": "NOT_EXECUTED_NOT_AUTHORIZED"
+  },
+  "readerInventory": {
+    "fileSha256": "40d272662a574e67f16779580822d6c68ce2ceb39868825a96f19a15d58eb08c",
+    "path": "coding-readiness/modern-successor-supported-reader-inventory.v4.json",
+    "sealedPayloadSha256": "6d54e432c4c069338087eb9a944e7ba04da2b7ed3e587eca7a1612bab696b5dd"
+  },
+  "reportId": "DWP-HRIS-MODERN-SUCCESSOR-READER-FENCE-INDEPENDENT-AUDIT-V4-2026-09-16",
+  "reportPathCreateOnly": "coding-readiness/reports/modern-successor-reader-fence-independent-audit-v4-2026-09-16.v1.json",
+  "reviewerIndependence": "INDEPENDENT_OF_REPAIR_AUTHOR",
+  "schema": "dwp.hris.modern-successor-reader-fence-independent-audit.v1",
+  "scopeVersion": "V4_INVENTORY_ONLY",
+  "status": "FAIL_NO_GO_V4_SOURCE_PIN_DRIFT",
+  "v4AuthorReport": {
+    "fileSha256": "e0804377d9de1f49e9a2dcbd7928a19e8e23cc5d1f830c18556b2daf5027dbbb",
+    "path": "coding-readiness/reports/modern-successor-reader-inventory-v4-author-refresh-2026-09-16.v1.json",
+    "sealedPayloadSha256": "900e23984460fd79b7c65860dcff40d2fd03eb5e7d0a8cea46bb178e6a7aa936",
+    "status": "PASS_SOURCE_REFRESH_COMPLETE",
+    "verdict": "GO_FOR_INDEPENDENT_REAUDIT_NOT_PROMOTION"
+  },
+  "verdict": "NO_GO_V4_INVENTORY_SOURCE_PIN_DRIFT",
+  "authority": "INDEPENDENT_READ_ONLY_REAUDIT_ONLY_NOT_PROMOTION_AUTHORITY",
+  "generatedAtUtc": "2026-09-16T07:45:00Z",
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "3b46c986d98013c975e8288ce9101367c49ca1fa1a8da6ccbc5ccf4d660566ee"
+}

@@ -1,0 +1,112 @@
+{
+  "limits": {
+    "G3Open": false,
+    "globalTypecheckPendingCoordinatedStableWindow": true,
+    "nativeCasOrPepChanged": false,
+    "nativeSourceCalls": 0
+  },
+  "quality": {
+    "historicalLintFailurePreserved": true,
+    "performanceEslintPass": true,
+    "performanceLayerErrors": 0,
+    "performanceLayerPass": true,
+    "wholeHrisLayerErrorCountOutsideThisScopedClosure": 21,
+    "wholeHrisStructuralPass": false
+  },
+  "readbackAt": "2026-09-14T12:03:39.255618+00:00",
+  "schema": "dwp.hris.performance-race-final-readback.v1",
+  "sourceDelta": {
+    "counterexampleBeforeToRacePass": [
+      "apps/dwp/src/features/hris/performance/hooks/use-hris-performance-workspace.ts"
+    ],
+    "currentMatchesFinalPass": true,
+    "currentSources": [
+      {
+        "mtimeNs": "1789382460317823267",
+        "path": "apps/dwp/src/features/hris/performance/api/performance-talent-api.test.ts",
+        "sha256": "6d7586fca17c3c19ae16dc133e9fd5846df94b099df8d41d4998a86d22a80507"
+      },
+      {
+        "mtimeNs": "1789382460325997071",
+        "path": "apps/dwp/src/features/hris/performance/api/performance-talent-api.ts",
+        "sha256": "0296548ce6eecba11df106d110a5323bd9cf3c40740d043f07e8e4ec7d89fe05"
+      },
+      {
+        "mtimeNs": "1789382460338338252",
+        "path": "apps/dwp/src/features/hris/performance/components/performance-goal-components.tsx",
+        "sha256": "a545fd140ddfc17106fbd5aa2d8b5940f77ca579506a440e7f78274b06a07d2e"
+      },
+      {
+        "mtimeNs": "1789386982464389692",
+        "path": "apps/dwp/src/features/hris/performance/hooks/use-hris-performance-workspace.ts",
+        "sha256": "bb97b6f56ed225fa07ea22b3acfb73b5d9e4e11cbd026521fb51272218e57eab"
+      },
+      {
+        "mtimeNs": "1789382451824539812",
+        "path": "apps/dwp/src/features/hris/performance/index.ts",
+        "sha256": "98cc294369ffc7e3e46368b2224a8cb55c4019db4cfd38f0c5adfb35f38b28f5"
+      },
+      {
+        "mtimeNs": "1789384568637172251",
+        "path": "apps/dwp/src/features/hris/performance/model/performance-goal-model.test.ts",
+        "sha256": "06e52449141264f2f99ade88182eec9d05175177a62687fd0d29631becf68afd"
+      },
+      {
+        "mtimeNs": "1789387272140288850",
+        "path": "apps/dwp/src/features/hris/performance/model/performance-goal-model.ts",
+        "sha256": "a7d8ef35363f0dcaffdb8d51b96384f3ea819189f5cb48db03eae34b44176f65"
+      },
+      {
+        "mtimeNs": "1789382460390603614",
+        "path": "apps/dwp/src/features/hris/performance/model/performance-phase-one-copy.ts",
+        "sha256": "b6f371776d6f5c3f1ad65d54ab74210b96470f73ffc4e2eae9eaa45f0e0546bc"
+      },
+      {
+        "mtimeNs": "1789384134731745045",
+        "path": "apps/dwp/src/features/hris/performance/pages/hris-performance-workspace.tsx",
+        "sha256": "5107424a61a80ee87991d33c8bf910d6f23bd363017594bfcace5f7ec8d552f0"
+      },
+      {
+        "mtimeNs": "1789386787426775237",
+        "path": "apps/dwp/src/features/hris/performance/testing/hris-performance-workspace.runtime.test.tsx",
+        "sha256": "a16a5b28127ee19b4ffa70adbdd7448d9a6bb726438088af2cab0849f9aeebe7"
+      }
+    ],
+    "oldSixtyToCounterexampleBefore": [
+      "apps/dwp/src/features/hris/performance/testing/hris-performance-workspace.runtime.test.tsx"
+    ],
+    "racePassToLintSafeFinal": [
+      "apps/dwp/src/features/hris/performance/model/performance-goal-model.ts"
+    ]
+  },
+  "status": "PASS",
+  "tests": {
+    "beforeCounts": {
+      "numFailedTestSuites": 2,
+      "numFailedTests": 2,
+      "numPassedTestSuites": 6,
+      "numPassedTests": 60,
+      "numPendingTests": 0,
+      "numTotalTestSuites": 8,
+      "numTotalTests": 62
+    },
+    "counterexamples": [
+      "HRIS performance Phase 1 runtime prevents a pre-mutation GET from replacing a newer mutation response",
+      "HRIS performance Phase 1 runtime rejects a late mutation from an earlier visit after the scope returns from A to B to A"
+    ],
+    "finalArchiveSha256": "04947c61aefbf9c6d54cf189390bd3217f4531b25ca0c2bcb25433c11772677d",
+    "finalCounts": {
+      "numFailedTestSuites": 0,
+      "numFailedTests": 0,
+      "numPassedTestSuites": 8,
+      "numPassedTests": 62,
+      "numPendingTests": 0,
+      "numTotalTestSuites": 8,
+      "numTotalTests": 62
+    },
+    "finalFinishedAt": "2026-09-14T12:01:39.675754+00:00",
+    "finalReceiptSha256": "7b25d5f9973c9f6157d6cce4a1cb1bfe54a6745c1a2d571b2eeefa8ee0d01a03",
+    "finalStartedAt": "2026-09-14T12:01:34.268028+00:00",
+    "oldSixtyPreserved": true
+  }
+}

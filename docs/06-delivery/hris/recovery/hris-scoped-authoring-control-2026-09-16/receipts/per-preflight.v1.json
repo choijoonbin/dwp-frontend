@@ -1,0 +1,202 @@
+{
+  "blockers": [],
+  "checks": [
+    {
+      "checkId": "manifest-payload-seal",
+      "detail": "control-manifest.v1.json",
+      "status": "PASS"
+    },
+    {
+      "checkId": "packet-payload-seal",
+      "detail": "SCOPED-G3-AUTHORING-PER-V1",
+      "status": "PASS"
+    },
+    {
+      "checkId": "packet-session",
+      "detail": "HRIS-PER",
+      "status": "PASS"
+    },
+    {
+      "checkId": "packet-index-file-digest",
+      "detail": "146e76619d69ef9d8f5813550c36765bc75d11c8960ea91edba11a7266997362",
+      "status": "PASS"
+    },
+    {
+      "checkId": "official-gate-remains-closed",
+      "detail": "VALIDATOR_CONTROLLED_BLOCKED",
+      "status": "PASS"
+    },
+    {
+      "checkId": "no-code-authority-and-start-token-withheld",
+      "detail": {
+        "designAi": "WITHHELD_UNTIL_G4",
+        "developmentStarted": false,
+        "holds": [
+          "PERFORMANCE_MIGRATION_AUTHORING_UNTIL_STREAM_SEQUENCE_RECEIPT",
+          "HRM_LIVE_SNAPSHOT_WIRING",
+          "PER_TO_PAY_COMPENSATION_PUBLICATION",
+          "RESULT_PUBLICATION_APPEAL_AND_REOPEN",
+          "INTEGRATION_MERGE_AND_EVIDENCE_PROMOTION"
+        ],
+        "integrationMerge": "WITHHELD",
+        "liveWiring": "WITHHELD",
+        "officialEvidencePromotion": "WITHHELD",
+        "requiredFutureCommand": "START_SCOPED_AUTHORING",
+        "startCommandIssued": false,
+        "startToken": "WITHHELD"
+      },
+      "status": "PASS"
+    },
+    {
+      "checkId": "backend-worktree-exact-clean",
+      "detail": {
+        "branch": "codex/hris-per-scoped-g3-v1-backend-20260916",
+        "dirtyCount": 0,
+        "head": "299336eacb52de29a85366318a08151ea691eb5e",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/per/backend",
+        "registeredCount": 1,
+        "statusPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tree": "d5277fabaa2315ddc28a4220fa8075875be28920"
+      },
+      "status": "PASS"
+    },
+    {
+      "checkId": "frontend-worktree-exact-clean",
+      "detail": {
+        "branch": "codex/hris-per-scoped-g3-v1-frontend-20260916",
+        "dirtyCount": 0,
+        "head": "cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca",
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/per/frontend",
+        "registeredCount": 1,
+        "statusPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tree": "29a8ed87a323bfc318043b2171d39fb73129fe28"
+      },
+      "status": "PASS"
+    },
+    {
+      "checkId": "first-slice-binding",
+      "detail": {
+        "rowSha256": "b143d312a1f5796debfd30c5f89a669f6d749d085e649f4fd26b5d19f062cd0a",
+        "sliceId": "BASE-TFR-PER-005"
+      },
+      "status": "PASS"
+    },
+    {
+      "checkId": "file-allocation-ownership",
+      "detail": [
+        "G3-PER-BE-MIGRATION",
+        "G3-PER-BE-SOURCE",
+        "G3-PER-BE-TEST",
+        "G3-PER-FE-SOURCE"
+      ],
+      "status": "PASS"
+    },
+    {
+      "checkId": "migration-reservation-hold",
+      "detail": {
+        "allocationId": "MIG-PER-PERFORMANCE-1-63",
+        "createOnly": "YES",
+        "existingEditAllowed": "NO",
+        "migrationCreated": false,
+        "migrationExecuted": false,
+        "migrationPromoted": false,
+        "plannedFile": "dwp-people-server/src/main/resources/db/performance-migration/V5__per_base_tfr_per_005.sql",
+        "rangeFromCanonicalRegister": "1-63",
+        "state": "AUTHORING_HOLD_PENDING_V1_V4_STREAM_SEQUENCE"
+      },
+      "status": "PASS"
+    },
+    {
+      "checkId": "canonical-contract-fixture-digests",
+      "detail": {
+        "count": 10,
+        "failures": []
+      },
+      "status": "PASS"
+    },
+    {
+      "checkId": "closed-verification-profile-binding",
+      "detail": [
+        "G3CMD-PER-BE",
+        "G3CMD-PER-FE"
+      ],
+      "status": "PASS"
+    },
+    {
+      "checkId": "path-policy-and-control-single-writer",
+      "detail": {
+        "allowedBackendGlobs": [
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/**",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/**"
+        ],
+        "allowedFrontendGlobs": [
+          "apps/dwp/src/features/hris/performance/**"
+        ],
+        "centralSingleWriterGlobs": [
+          "contracts/**",
+          "dwp-gateway/**",
+          "architecture/**",
+          "libs/api-contracts/**",
+          "apps/dwp/src/routes/**",
+          "apps/dwp/src/features/hris/hris-navigation*.ts*",
+          "apps/dwp/src/features/hris/hris-product-manifest*.ts*",
+          "output/hris-porting-blueprint-2026-09-09/**"
+        ],
+        "forbiddenGlobs": [
+          "**/package.json",
+          ".yarn/**",
+          "apps/dwp/src/components/desktop-navigation-header*.ts*",
+          "apps/dwp/src/components/product-manifest*.ts*",
+          "apps/dwp/src/features/auth/**",
+          "apps/dwp/src/features/hris/hris-navigation*.ts*",
+          "apps/dwp/src/features/hris/hris-product-manifest*.ts*",
+          "apps/dwp/src/features/shell/**",
+          "apps/dwp/src/layouts/**",
+          "apps/dwp/src/pages/auth/**",
+          "apps/dwp/src/routes/**",
+          "architecture/**",
+          "build.gradle",
+          "contracts/**",
+          "dwp-gateway/**",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/**",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/**",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/**",
+          "gradle.properties",
+          "libs/api-contracts/**",
+          "libs/shared-i18n/**",
+          "libs/shared-utils/src/auth/**",
+          "nx.json",
+          "package.json",
+          "settings.gradle",
+          "yarn.lock"
+        ],
+        "touchManifestState": "NOT_ISSUED_UNTIL_START_COMMAND"
+      },
+      "status": "PASS"
+    },
+    {
+      "checkId": "future-test-path-binding-only",
+      "detail": {
+        "existsBeforeDevelopment": false,
+        "expectedBeforeDevelopment": false,
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/per/frontend/apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-005.slice.test.tsx",
+        "testsExecuted": false
+      },
+      "status": "PASS"
+    }
+  ],
+  "codeChangesObserved": false,
+  "developmentStarted": false,
+  "implementationAuthority": "NONE_START_TOKEN_WITHHELD",
+  "observedAt": "2026-09-16T18:09:28+09:00",
+  "officialGate": "CLOSED_FAIL_SAFE",
+  "packetFileSha256": "146e76619d69ef9d8f5813550c36765bc75d11c8960ea91edba11a7266997362",
+  "packetId": "SCOPED-G3-AUTHORING-PER-V1",
+  "receiptId": "PREFLIGHT-PER-V1",
+  "receiptPayloadSha256": "85eefdcd39abe671d6135b2d958bcca3dbed9b3cdc20197f0129c238ab8421b2",
+  "result": "PREFLIGHT_PASS_READY_TO_START_HOLD",
+  "schema": "dwp.hris.scoped-g3-preflight-receipt.v1",
+  "sessionId": "HRIS-PER",
+  "startCommandIssued": false,
+  "testsExecuted": false
+}

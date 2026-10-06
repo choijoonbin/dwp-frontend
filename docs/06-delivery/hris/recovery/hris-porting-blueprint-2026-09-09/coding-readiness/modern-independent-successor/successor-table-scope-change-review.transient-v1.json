@@ -1,0 +1,143 @@
+{
+  "reportId": "dwp.hris.modern-independent-successor.table-scope-change-review.transient-v1",
+  "capturedAt": "2026-09-15T14:27:03Z",
+  "status": "FAIL_PENDING_ROOT_ARCHITECTURE_APPROVAL_AND_EVENT_CLOSURE",
+  "authority": "INDEPENDENT_REVIEWER_SNAPSHOT_NOT_AN_APPROVAL",
+  "predecessorTableCount": 106,
+  "candidateTableCount": 115,
+  "deltaCount": 9,
+  "candidateHashesAtCapture": {
+    "manifest": "884ac83835fcb1ea1ee31b5ac50b1b6cf58213e18068aa22a7b4489a7abe7c2f",
+    "canonicalSsot": "fe8fb0a918e8fef8f9b9d3860ca6b502abfdec971b77b369f8743ba0ae5091f7",
+    "exactSchema": "89f94ba3581b66f2daa11b89db2c26ebc6a66e9a11d5a03bdd5baef29f46a7fe"
+  },
+  "invariants": {
+    "countPaddingForbidden": true,
+    "uuidArrayCountAfterDelta": 0,
+    "normalizedChildrenRequire": [
+      "same-tenant typed parent/child references",
+      "positive bounded ordinal",
+      "unique parent+ordinal",
+      "unique parent+child",
+      "APPEND_MANY producer",
+      "query/event re-entry"
+    ],
+    "publicationLedgersRequire": [
+      "same-tenant parent reference",
+      "unique tenant+public identity",
+      "unique parent+fact revision",
+      "seven-field immutable approval proof",
+      "same-transaction APPEND",
+      "public event exact ledger proof reference",
+      "physical append-only or write-once enforcement"
+    ]
+  },
+  "delta": [
+    {
+      "tableId": "prf_grw_coaching_note_evidence_refs",
+      "session": "HRIS-PER",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.growth.coaching.record",
+      "producerAction": "APPEND_MANY",
+      "parentTable": "prf_grw_coaching_notes",
+      "childColumn": "evidence_public_id",
+      "childTarget": "prf_skl_worker_evidence",
+      "consumers": ["modern.growth.profile.query", "modern.growth.profiles.query", "modern.growth.self.query"],
+      "observed": "PASS"
+    },
+    {
+      "tableId": "prf_grw_profile_revision_evidence_refs",
+      "session": "HRIS-PER",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.growth.profile.update",
+      "producerAction": "APPEND_MANY",
+      "parentTable": "prf_grw_profile_revisions",
+      "childColumn": "evidence_public_id",
+      "childTarget": "prf_skl_worker_evidence",
+      "consumers": ["modern.growth.profile.query", "modern.growth.profiles.query", "modern.growth.self.query"],
+      "observed": "PASS"
+    },
+    {
+      "tableId": "prf_lrn_completion_skill_evidence_refs",
+      "session": "HRIS-PER",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.learning.completion.verify",
+      "producerAction": "APPEND_MANY",
+      "parentTable": "prf_lrn_completion_evidence",
+      "childColumn": "skill_evidence_public_id",
+      "childTarget": "prf_skl_worker_evidence",
+      "consumers": ["modern.learning.assignment.query", "modern.learning.assignments.query", "LearningCompletionVerified.v2"],
+      "observed": "PASS"
+    },
+    {
+      "tableId": "sys_hris_analytics_export_projection_refs",
+      "session": "HRIS-SYS",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.analytics.export.create",
+      "producerAction": "APPEND_MANY",
+      "parentTable": "sys_hris_analytics_export_receipts",
+      "childColumn": "metric_projection_public_id",
+      "childTarget": "sys_hris_metric_projections",
+      "consumers": ["modern.analytics.export.query", "modern.analytics.exports.query"],
+      "observed": "PASS"
+    },
+    {
+      "tableId": "tme_wfm_schedule_candidate_time_group_refs",
+      "session": "HRIS-TIM",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "internal.wfm.schedule-optimization.result.consume",
+      "producerAction": "APPEND_MANY",
+      "parentTable": "tme_wfm_schedule_candidates",
+      "childColumn": "time_group_public_id",
+      "childTarget": "TIM.TimeGroup",
+      "consumers": ["modern.wfm.candidate.query", "modern.wfm.candidates.query"],
+      "observed": "PASS"
+    },
+    {
+      "tableId": "ppl_rec_requisition_publish_receipts",
+      "session": "HRIS-HRM",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.recruiting.requisition.publish",
+      "producerAction": "APPEND",
+      "parentTable": "ppl_rec_requisitions",
+      "eventConsumer": "RequisitionPublished.v2",
+      "observed": "FAIL_EVENT_DOES_NOT_REFERENCE_LEDGER_YET"
+    },
+    {
+      "tableId": "prf_lrn_offering_publish_receipts",
+      "session": "HRIS-PER",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.learning.offering.publish",
+      "producerAction": "APPEND",
+      "parentTable": "prf_lrn_offerings",
+      "eventConsumer": "LearningOfferingPublished.v2",
+      "observed": "FAIL_EVENT_DOES_NOT_REFERENCE_LEDGER_YET"
+    },
+    {
+      "tableId": "prf_mkt_opportunity_publish_receipts",
+      "session": "HRIS-PER",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.opportunity.publish",
+      "producerAction": "APPEND",
+      "parentTable": "prf_mkt_opportunities",
+      "eventConsumer": "TalentOpportunityPublished.v2",
+      "observed": "FAIL_EVENT_DOES_NOT_REFERENCE_LEDGER_YET"
+    },
+    {
+      "tableId": "prf_suc_publish_receipts",
+      "session": "HRIS-PER",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.succession.plan.publish",
+      "producerAction": "APPEND",
+      "parentTable": "prf_suc_plans",
+      "eventConsumer": "SuccessionPlanPublished.v2",
+      "observed": "FAIL_EVENT_DOES_NOT_REFERENCE_LEDGER_YET"
+    }
+  ],
+  "approval": {
+    "rootArchitectureApproval": false,
+    "expectedCountRemains": 106,
+    "nextExpectedCountAfterApprovalAndZeroFindings": 115,
+    "oracleFreezeForbidden": true
+  }
+}

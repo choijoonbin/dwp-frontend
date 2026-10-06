@@ -1,0 +1,28 @@
+{
+  "pinId": "dwp.hris.module-exact-business-start-pin.v1",
+  "status": "IMMUTABLE_REAUDIT_INPUT_PIN",
+  "decisionScope": "MODULE_EXACT_BUSINESS_DESIGN_P0_ONLY",
+  "gateAuthorization": "NONE_CLOSED_FAIL_SAFE",
+  "artifacts": [
+    {"path": "coding-readiness/module-exact-business-start-canonical.v1.json", "sha256": "483ae9f1aefaa59ed2758a0d0fb0e0280b7e961fb0e1340a60e75d1bbec81b36"},
+    {"path": "coding-readiness/module-exact-business-schemas.v1.json", "sha256": "aae9414546202ad8b80d4562bf634c2a3b6e4972c6210e8eb96a0828e7dfa31f"},
+    {"path": "coding-readiness/module-exact-business-fixtures.v1.json", "sha256": "7fec66f3f49f96d09a7fafb8cfdcc56b49ffe67c6aa528a6367fd56e7b272345"},
+    {"path": "coding-readiness/module-exact-business-lineage-register.v1.csv", "sha256": "537b51ba394c4d57ed73e08c34ac44842de6b4e0a7c6b3cdce269925a2d66f07"},
+    {"path": "coding-readiness/validate_module_exact_business_start.cjs", "sha256": "f981148810de9d90dbe09bd9627e1395bc57cc84869753f9b610c0528bd2caad"},
+    {"path": "coding-readiness/audit_module_exact_business_start.py", "sha256": "1fb457b3af99538e6263f3afff7d2d7069f7d4a46d3649457427d6b9c645e205"},
+    {"path": "coding-readiness/target-family-resolution-register.csv", "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819"},
+    {"path": "coding-readiness/transport-schema-resolution-register.csv", "sha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e"},
+    {"path": "coding-readiness/service-api-auth-binding-register.csv", "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"},
+    {"path": "coding-readiness/hris-api-sor-transition-register.csv", "sha256": "d76e81f8e661f59e8c10c163b6170947ab5f730987e587af162ebb732d20bfb9"},
+    {"path": "coding-readiness/validate_hris_api_sor_transitions.py", "sha256": "805f3bdff429a79184b927d25a529e849489d9ae4b2aa3c268db59f93657e9f2"},
+    {"path": "session-prompts/01-cloudhr-hrm-session.md", "sha256": "ab83e5c7978cfac98349a4eee83f7d4962a054cbf4e274bcbd3f7a636ae1f077"},
+    {"path": "session-prompts/02-cloudhr-per-session.md", "sha256": "03dd79eb5710455dfd86edef45b2d6a0fb2a8a8ede554f65a82aef393532b29e"},
+    {"path": "session-prompts/03-cloudhr-pay-session.md", "sha256": "73872b68fed72c3f35ef4c73e9178fc83217523fe16207ae9a5ce2858d322ef3"},
+    {"path": "session-prompts/04-cloudhr-tim-session.md", "sha256": "4c542c79b8f8e69ea1856d01bd5eaaf6ecb60dfe0eb4d869fef05344a4e20191"}
+  ],
+  "independentReplay": {
+    "primary": "node coding-readiness/validate_module_exact_business_start.cjs --self-test",
+    "secondImplementation": "python3 coding-readiness/audit_module_exact_business_start.py --self-test",
+    "successCondition": "Both return exit 0 against every pinned byte; neither may publish or widen G3."
+  }
+}

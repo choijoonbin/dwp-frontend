@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "dwp.hris.w1.sanitized-summary.v1",
+  "documentState": "SANITIZED_SUMMARY",
+  "capturedAt": "2026-10-06T06:36:27.973346Z",
+  "run": {
+    "runId": "w1-20261006t063231z-4ac97ea5",
+    "gate": "W1_SYNTHETIC_ACCEPTANCE_BACKEND",
+    "scope": "FULL_BACKEND_WITH_EXTERNAL_CHECKPOINT",
+    "startedAt": "2026-10-06T06:32:31.799852Z",
+    "finishedAt": "2026-10-06T06:36:27.973346Z",
+    "result": "BACKEND_RUNTIME_SUBGATE_PASS",
+    "checkpointResult": "PASS",
+    "phaseCount": 26,
+    "phaseFailureCount": 0,
+    "syntheticOnly": true,
+    "customerDataUsed": false,
+    "productionActivationPerformed": false
+  },
+  "sourcePins": {
+    "backend": {
+      "gitHead": "3c1a2940a1382e54503c86a4e5f5103ce1f33748",
+      "worktreeClean": true
+    },
+    "frontend": {
+      "gitHead": "970d1945d8fa43c19da697927ad17a01db0b8ac6",
+      "worktreeClean": true
+    }
+  },
+  "evidence": {
+    "rawEvidenceVersionedInGit": false,
+    "rawEvidenceLocator": "workspace://.codex-worktrees/hris/reconciled-20261001/backend/output/hris-w1-synthetic-20261006t063231z-4ac97ea5/",
+    "result": {
+      "path": "result.json",
+      "sha256": "bc94b0de458e851dbe060bcfff53d5e5d80b91b63c956e198415411b27ff5b6e"
+    },
+    "checkpointManifest": {
+      "path": "checkpoint/manifest.json",
+      "byteCount": 8834,
+      "sha256": "ea4a68344aa0499f9f0452bae06abedbcf881a7dea4c33957dfb71b06da20601"
+    },
+    "browserManifest": {
+      "sha256": "bc3e388a1166a17d2a4921892660a646471e53879bbd86e6c99fe5b5f16247a9"
+    },
+    "runner": {
+      "backendSha256": "f79f87a15ead25ac091c52f676ee16bef157c06dc3a56712634ed8aaa5d6ac60",
+      "frontendCheckpointSha256": "05b6815688b061c7237d3ced2180215f268e3cb47cddb9bcea2b482765449048",
+      "commandArgumentsSha256": "5ebecf5b3c4288077e3a04aa0ca8243dc58b2c03c88063703cca1c890a20986d"
+    }
+  },
+  "runtime": {
+    "services": [
+      "auth",
+      "platform",
+      "people",
+      "provider",
+      "payroll",
+      "time",
+      "gateway"
+    ],
+    "allRequiredServicesHealthy": true,
+    "browserGatewayOwnerDatabasePath": "PASS",
+    "migrationControl": {
+      "people": {
+        "status": "PASS",
+        "receiptSha256": "4150b659fdf7d21308d3080f0363a48d812ddf6b10751f13e4205ca0af48f682"
+      },
+      "payroll": {
+        "status": "PASS",
+        "receiptSha256": "2285ea36959e8db95dc4be5fbbe689d6536799ea865f13d003d00f922ce874d9"
+      },
+      "time": {
+        "status": "PASS",
+        "receiptSha256": "0665b0e60d750a2923dca000bc3894e4a28ec7186ac3ba1808bc3ee117f95109"
+      }
+    },
+    "trustedProjectionFeeds": {
+      "payroll": "PASS",
+      "time": "PASS",
+      "publisherForbiddenTableDenied": true,
+      "runtimeMutationDenied": true
+    }
+  },
+  "bundleLifecycle": {
+    "activationUnderTest": {
+      "version": 33,
+      "revision": 2,
+      "status": "PASS"
+    },
+    "rollback": {
+      "fromVersion": 33,
+      "toVersion": 32,
+      "finalRevision": 3,
+      "status": "PASS"
+    },
+    "activeAtFinish": {
+      "version": 32,
+      "revision": 3
+    }
+  },
+  "assertions": [
+    {
+      "name": "isolation.cross-tenant-denied",
+      "status": "PASS",
+      "evidenceSha256": "9b164f5ab7df60ff49c668cc2fc03cca48424b56d51262f5efb7242fa3f114b1"
+    },
+    {
+      "name": "isolation.population-boundary",
+      "status": "PASS",
+      "evidenceSha256": "550b3a36c70e8c9673ab3ebe4879e04041f9123c4777eacaf6d16e95958904d8"
+    },
+    {
+      "name": "negative.expired-evidence-denied",
+      "status": "PASS",
+      "evidenceSha256": "52ffa3fc54348361aaeca37d13e5338e9b9987e3961ddc21d089ac5882ca1d59"
+    },
+    {
+      "name": "negative.revoked-evidence-denied",
+      "status": "PASS",
+      "evidenceSha256": "43069c44263f9528f05ccb7b31d2a8355fa10915b3ddc047ff3db0d37dba6808"
+    },
+    {
+      "name": "negative.stale-evidence-denied",
+      "status": "PASS",
+      "evidenceSha256": "461de5ee15a04a56b681bdc42c3c8acfb6479277d2ac4113887ac1fcb932adda"
+    },
+    {
+      "name": "negative.unmapped-route-denied",
+      "status": "PASS",
+      "evidenceSha256": "d69df4feaea229cc00a48fbe9416708e8264c8cece2dc837a7fbf6340a9c694b"
+    },
+    {
+      "name": "path.browser-gateway-owner-db",
+      "status": "PASS",
+      "evidenceSha256": "f77ecb743576fe3c5e2ace0bde494d64366aefe49be49375573eae7b8fba659f"
+    },
+    {
+      "name": "rollout.flag-off",
+      "status": "PASS",
+      "evidenceSha256": "162ff235c8a0c155f56e39378da1d6ecb2f2de09ab725022015be5f1867fd1aa"
+    },
+    {
+      "name": "tenant-a.general-owner-api",
+      "status": "PASS",
+      "evidenceSha256": "2015f0541da34f655d46f3cb71a5148516c9fd6a9a9aac960c91c68c7be088da"
+    },
+    {
+      "name": "tenant-a.high-assurance-step-up",
+      "status": "PASS",
+      "evidenceSha256": "e16e095e43c390ea963b18b4e4b2a3f77974c406f57dc6fe3932c54138ccacae"
+    },
+    {
+      "name": "tenant-a.idempotency-replay",
+      "status": "PASS",
+      "evidenceSha256": "c76eca77238c5116f59edeb5300805803af08d172689fd24d4bb7243438b3cb8"
+    },
+    {
+      "name": "tenant-a.receipt-lineage",
+      "status": "PASS",
+      "evidenceSha256": "650e3cd239c2aaed1b4dc88a1292822161c20ca5f21b20f2e86d2ef5ef93241b"
+    },
+    {
+      "name": "tenant-a.separation-of-duties",
+      "status": "PASS",
+      "evidenceSha256": "30140fd02416ed72a3ab03899607405568c9427234281eb774b54db091efb6f2"
+    },
+    {
+      "name": "tenant-b.denied",
+      "status": "PASS",
+      "evidenceSha256": "b2d464277070f48c6f02315539ced027aab1c12cb0027a225b6158e4f4342f92"
+    },
+    {
+      "name": "tenant-b.feature-off",
+      "status": "PASS",
+      "evidenceSha256": "78d71914df4bc65583d35c74df9daf6ded3e75e59545dd958a17a0f44f6ea442"
+    }
+  ],
+  "cleanupAndSecurity": {
+    "rollbackComplete": true,
+    "teardownVerifiedClean": true,
+    "residualProcessCount": 0,
+    "residualContainerCount": 0,
+    "residualNetworkCount": 0,
+    "evidenceSecretScanFindingCount": 0,
+    "finalResultSecretScanFindingCount": 0
+  },
+  "statusInterpretation": {
+    "historicalHold": "SUPERSEDED_FOR_PINNED_CHECKPOINT_ONLY",
+    "recoveredCheckpoint": "PASS",
+    "latestReconciledTips": "NOT_COVERED",
+    "currentDwpDevHeads": "NOT_COVERED",
+    "finalIntegratedHeads": "NOT_CREATED_OR_EVALUATED",
+    "productionRelease": "NOT_ASSERTED"
+  },
+  "limitations": [
+    "This run used synthetic data only.",
+    "This run did not perform production activation.",
+    "The PASS is valid only for the pinned frontend and backend commits.",
+    "A frozen v35 integrated frontend/backend pair requires one successor W1 run."
+  ]
+}

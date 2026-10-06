@@ -1,0 +1,1377 @@
+{
+  "contractId": "RUNTIME_ONLY_WIRING_PRODUCER_IMPLEMENTATION_PLAN_V2",
+  "schemaVersion": "2.0",
+  "status": "DESIGN_PROPOSED_SOURCE_BASED_NOT_INDEPENDENT_APPROVAL",
+  "readinessPass": false,
+  "independentApproval": false,
+  "planOnly": true,
+  "productionWritesPerformed": 0,
+  "canonicalWritesPerformed": 0,
+  "gateWritesPerformed": 0,
+  "g3State": "NO_G3_START",
+  "g4State": "DOMAIN_ACCEPTANCE_NOT_EXECUTED",
+  "g6State": "NOT_AUTHORIZED",
+  "scope": {
+    "ownedNewArtifacts": [
+      "runtime-only-wiring-producer-implementation-plan.v2.json",
+      "runtime-only-wiring-producer-implementation-plan.v2.md"
+    ],
+    "permittedNow": "NEW planning artifacts only; frozen Phase-A/Phase-B/core/Control/service source unchanged",
+    "minimumNextImplementation": "P2-A actual native INSPECTION transition and in-fence Main bridge; then P2-B immutable publication/current ledger using frozen own+metadata contracts",
+    "excluded": [
+      "8 service Spring/YAML/secret wiring (subsequent P3 genuine implementation)",
+      "13-stream distinct-role/bootstrap activation (subsequent P4)",
+      "full HRIS domain G4 CRUD",
+      "customer G6 activation",
+      "historical scalar/G2 seals, SQL blobs or counts weakened"
+    ]
+  },
+  "historicalInputs": [
+    {
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/runtime-only-wiring-producer-implementation-plan.v1.json",
+      "sha256": "a1a0c818f73457d33c50ef93d47e5e388bbc227f09384c9787014e8735dda814"
+    },
+    {
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/runtime-only-wiring-producer-implementation-plan.v1.md",
+      "sha256": "56be7fa3f18a5f2c1b5a8176a6e2f228587a2da03fa0887bef1c00e823d10289"
+    },
+    {
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-stream-authority-decision.proposal.v1.md",
+      "sha256": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1"
+    },
+    {
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/runtime-authority-rw-p1-phase-b-author-evidence-2026-09-14.json",
+      "sha256": "bb23abe673432d5845bb33c631e6fe3267e8e1311615987ea632ed92d7efca71"
+    },
+    {
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/runtime-authority-rw-p1-phase-b-author-evidence-2026-09-14.md",
+      "sha256": "536d9eecea4be6f61c3a6a40adaefb49d434fb2dd0425e95fc31a53d08537a9f"
+    }
+  ],
+  "sourceCapture": {
+    "capturedAtUtc": "2026-09-14T09:51:53.446244+00:00",
+    "backendRoot": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "gitHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "sourceKind": "READ_ONLY_WORKING_TREE_SOURCE_SNAPSHOT_NOT_APPROVED_BINARY",
+    "paths": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-approval-server/src/main/resources/application.yml",
+        "relativePath": "dwp-approval-server/src/main/resources/application.yml",
+        "sha256": "98f116171df0e71bc4751677b40aeeb52c8092a5df0bb05fbf8e08ce6769c5c5",
+        "lastModifiedNs": "1789121229408621506",
+        "bytes": 6852,
+        "lines": 176
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/application.yml",
+        "relativePath": "dwp-auth-server/src/main/resources/application.yml",
+        "sha256": "c8aa4834f40aa9743aa5fc735e0663a78b1ffa83a5996e60b5df5f7c4b1644b2",
+        "lastModifiedNs": "1789132002639593686",
+        "bytes": 7505,
+        "lines": 200
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionEvidence.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionEvidence.java",
+        "sha256": "f4ed31ee4df2ced93c23d9746bf1927a1649960dde37b3db5ec07da0b17efce8",
+        "lastModifiedNs": "1789105700116557239",
+        "bytes": 9495,
+        "lines": 209
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java",
+        "sha256": "cc211e7c3e58373a6fd8882c5923b840949d1e1894648ec88d106dc4ab3b7951",
+        "lastModifiedNs": "1789108995292713746",
+        "bytes": 30933,
+        "lines": 666
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaDefinitionFingerprint.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaDefinitionFingerprint.java",
+        "sha256": "859af0e46a6dc89e76c1d4221dc8cdfbea13b1c767a1b9b5f18faed7a840d86a",
+        "lastModifiedNs": "1789128194028193079",
+        "bytes": 40548,
+        "lines": 665
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaObjectInventory.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaObjectInventory.java",
+        "sha256": "8944aceef69e216dcf601ac285bf9b6cd7d36dba60232dd0dfc5091bee0eb6d1",
+        "lastModifiedNs": "1789120285649498359",
+        "bytes": 21823,
+        "lines": 368
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceipt.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceipt.java",
+        "sha256": "390d7b9e0c78ce876afc16cf31b5983bede48873ce5e32fbfff61299a5b6591c",
+        "lastModifiedNs": "1789350036609272279",
+        "bytes": 3033,
+        "lines": 49
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2.java",
+        "sha256": "4c2f010740ab83788305c67f9cfd53b45fac13ee0447cabae4556ae947b04898",
+        "lastModifiedNs": "1789374183580189584",
+        "bytes": 7940,
+        "lines": 114
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2Json.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2Json.java",
+        "sha256": "a32060e50d8032d9f0396ff1231dd008669320174ea1d38fc7c71e7edfa146c2",
+        "lastModifiedNs": "1789375155939146867",
+        "bytes": 8512,
+        "lines": 122
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuard.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuard.java",
+        "sha256": "c47eb95d57168999fedc10dbd7f3cf4f4903ed4b630f1deaf8644210bfa4e70f",
+        "lastModifiedNs": "1789351588452940885",
+        "bytes": 28702,
+        "lines": 427
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+        "sha256": "3ae35ffdd8416955bd4373409caa48fd92770e65f7efd4dc407ba2468fe290fb",
+        "lastModifiedNs": "1789350694625708183",
+        "bytes": 3028,
+        "lines": 55
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1.java",
+        "sha256": "af260423156ec904ad2931d7f179ba8699a309bad111636c924779a8ba2ecd0b",
+        "lastModifiedNs": "1789377245269129079",
+        "bytes": 17579,
+        "lines": 259
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java",
+        "sha256": "41e1e2aae659a97a14225281b18d832c9e4bc6751ab8b1ccc4930ed74aa01072",
+        "lastModifiedNs": "1789363505133802999",
+        "bytes": 17913,
+        "lines": 331
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java",
+        "sha256": "6bff3ec29240d1e89f50dcee9a819aea495436869441e77ab95d8a97a94aa2c9",
+        "lastModifiedNs": "1789363552540372864",
+        "bytes": 18968,
+        "lines": 328
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1.java",
+        "sha256": "2282e2d66c1ec49dadd40f423a6777aeb1810d20d1177f7f1680c4ff5b9ea593",
+        "lastModifiedNs": "1789377245268250452",
+        "bytes": 19884,
+        "lines": 295
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceJsonV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceJsonV1.java",
+        "sha256": "bb94d059a0e11e7d8f81f94505d326e5d31a33a245121c3f33c613431bcc2dd3",
+        "lastModifiedNs": "1789375155937505316",
+        "bytes": 2931,
+        "lines": 56
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceV1.java",
+        "sha256": "ecf4e54d54ee1a1082a949e5b20cccb035a18f6b376d34d8472ee8f84a02108b",
+        "lastModifiedNs": "1789374222670488500",
+        "bytes": 4195,
+        "lines": 60
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceVerifierV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataCatalogReadEvidenceVerifierV1.java",
+        "sha256": "87a1e322e3e4354733b49502026cc733ee83d4977edde3b11ea96579bc27e805",
+        "lastModifiedNs": "1789375155941710089",
+        "bytes": 9932,
+        "lines": 121
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataPoolInspectionPortV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataPoolInspectionPortV1.java",
+        "sha256": "4de1a1dd27b91235dfad5ddf16a4d7a5c0a8d1fd3a9612129717b9f022d287f7",
+        "lastModifiedNs": "1789373981446382644",
+        "bytes": 1850,
+        "lines": 31
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java",
+        "sha256": "5a4f2d5470e5cbe820fc7489c9a488ed1507d061be557de299de3be1f2257083",
+        "lastModifiedNs": "1789370771476854934",
+        "bytes": 11372,
+        "lines": 162
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java",
+        "sha256": "e8274e838ec8db96e21c86525ec472cdd3b1d150a11cdce6b3b07bf4f48ebf73",
+        "lastModifiedNs": "1789361122539121289",
+        "bytes": 1643,
+        "lines": 30
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java",
+        "sha256": "4b31b7cc63b8515d17f979e9e35448d84172cfc0d0f61fbc6bf7942622a7c5df",
+        "lastModifiedNs": "1789361436917486779",
+        "bytes": 1195,
+        "lines": 22
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java",
+        "sha256": "75fbacf35b050fe0a4d7ff91ba60f1f3bacb0338ebbd8cdbfb37ae87d52b3642",
+        "lastModifiedNs": "1789361122538075533",
+        "bytes": 1491,
+        "lines": 27
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java",
+        "sha256": "7593c4549b8c94bc7feb2a351937262ee3700cea72d16acbff3fbd0edb040d95",
+        "lastModifiedNs": "1789361032752501870",
+        "bytes": 2627,
+        "lines": 52
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java",
+        "sha256": "cfbf934b016f42a503ebc6645cb3012888805a40ca29076edc0e49f55dba4e8a",
+        "lastModifiedNs": "1789361122538516077",
+        "bytes": 2060,
+        "lines": 40
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java",
+        "sha256": "cc0fbd59fd1ba6b5c2b049584d0a2858bb6a448a22f031a7f0cfbb5873db6220",
+        "lastModifiedNs": "1789361122538741537",
+        "bytes": 3076,
+        "lines": 44
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java",
+        "sha256": "e72e96409f4dbe752aa40887b1dd2d274f0ce9c6cc5d9799d05d349855f93a7a",
+        "lastModifiedNs": "1789361122536978653",
+        "bytes": 2925,
+        "lines": 66
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java",
+        "sha256": "beac0ed3725ab0a46db57cc988d1cac68a7695a636485011751f1ef6daf99140",
+        "lastModifiedNs": "1789361698278001440",
+        "bytes": 8709,
+        "lines": 128
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryAdapterV1.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryAdapterV1.java",
+        "sha256": "21aa39fcefabaa4ae58715c36e521ded75a558828aa3e0f229ca39f35ec5eee9",
+        "lastModifiedNs": "1789374783228104525",
+        "bytes": 4349,
+        "lines": 69
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryContract.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryContract.java",
+        "sha256": "683d57d4f799875a340c3e6fb216cf501047ee117b27b0e757e7aba8a5e1360d",
+        "lastModifiedNs": "1789374783226908810",
+        "bytes": 5055,
+        "lines": 76
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java",
+        "sha256": "cf9a5d83bc9b26900d885535cb39d5c4e98c78090728fb77236ddafa79e3caca",
+        "lastModifiedNs": "1789351232023424851",
+        "bytes": 12696,
+        "lines": 187
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityJson.java",
+        "relativePath": "dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityJson.java",
+        "sha256": "079bc72fcec53de3229860080c3339115310d53cfbe2800f0234fbf6097e22a9",
+        "lastModifiedNs": "1789350036609743238",
+        "bytes": 6140,
+        "lines": 105
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1PostgresTest.java",
+        "relativePath": "dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimeMetadataPoolInspectionV1PostgresTest.java",
+        "sha256": "2c98d096fa232880b98fcfd0d152276659ce87915fce6482c12e658d0cce341e",
+        "lastModifiedNs": "1789378033052390589",
+        "bytes": 23402,
+        "lines": 304
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1Test.java",
+        "relativePath": "dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1Test.java",
+        "sha256": "c597e2facc79a3757a1e79d163bfc48190b768608d4705b8bd336f6dda3e845d",
+        "lastModifiedNs": "1789377513868416025",
+        "bytes": 20294,
+        "lines": 277
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/build.gradle",
+        "relativePath": "dwp-migration-control/build.gradle",
+        "sha256": "020d5836e67df0efc7ea0d61a9dc4810165949d9ddd62158b72eab237c049d07",
+        "lastModifiedNs": "1789362552533175079",
+        "bytes": 10624,
+        "lines": 244
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java",
+        "sha256": "980836e73bbe5862f6aabd88e53f58db4e926a6cdad6c4020cd7233bf8ab5de3",
+        "lastModifiedNs": "1789109754020755214",
+        "bytes": 12653,
+        "lines": 262
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlContracts.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlContracts.java",
+        "sha256": "a764e6c4d79ca946c42546495b2d6064753f67147daf499f603022b43b03a146",
+        "lastModifiedNs": "1789105506293006508",
+        "bytes": 469,
+        "lines": 18
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlCredentials.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlCredentials.java",
+        "sha256": "acbbccc3cdcbae89a51475895de9c3240fc34c806b58b2a0b45c6fa86a8448c3",
+        "lastModifiedNs": "1789109754018812251",
+        "bytes": 821,
+        "lines": 20
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlDataSource.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlDataSource.java",
+        "sha256": "0c0dfa52d3f23d387a5199db841ff82d3a404c4d48956832a5bb7502b158649c",
+        "lastModifiedNs": "1789109754021310090",
+        "bytes": 1968,
+        "lines": 71
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlEnvironment.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlEnvironment.java",
+        "sha256": "a33bfc2ff8c96a341ae5c324eb94bc55d8ab624a5f9e272a3ac1947850ea8d5a",
+        "lastModifiedNs": "1789111591263577658",
+        "bytes": 9539,
+        "lines": 211
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlMetadata.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlMetadata.java",
+        "sha256": "94eacc421d223c6aceb42405d3a28a55f75732138b81456c123847dd9ff21cf2",
+        "lastModifiedNs": "1789120629638692421",
+        "bytes": 10463,
+        "lines": 179
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java",
+        "sha256": "e9bce1e7a69874ffc4f67ef09d0b5c7ea11da7bad15fe222d7003f99bc2b0214",
+        "lastModifiedNs": "1789121399525139139",
+        "bytes": 9107,
+        "lines": 213
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPreflight.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPreflight.java",
+        "sha256": "ef73585d019545fcef2d17f733a20ed3b039f14afa9bf25ec3fb09069d7a18d3",
+        "lastModifiedNs": "1789128953166764077",
+        "bytes": 5366,
+        "lines": 122
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlRunReceipt.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlRunReceipt.java",
+        "sha256": "0c9752e92445f3d7e53c70e62e5fc9d98570b7c72a31e60a991e690692f496f1",
+        "lastModifiedNs": "1789105415029550981",
+        "bytes": 4178,
+        "lines": 96
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java",
+        "sha256": "ff1449cf6fd7837e94176a40d0d95d3db7b6b752242523071b0c29093b9b69db",
+        "lastModifiedNs": "1789119392427821859",
+        "bytes": 4565,
+        "lines": 115
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java",
+        "sha256": "17af67195e81be0e1e5a2adea85cfae804c353b2deeec5901d3f0595ac34805c",
+        "lastModifiedNs": "1789128953167823537",
+        "bytes": 30096,
+        "lines": 624
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/FlywayControl.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/FlywayControl.java",
+        "sha256": "0dcb382008822ff08e85dba0f4d24163776c2446cd260d2f3830dfe7ae504f07",
+        "lastModifiedNs": "1789118096524215541",
+        "bytes": 6307,
+        "lines": 159
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+        "sha256": "a1cb0f34a0ae0d968c8acc28953430615b228569cc9693c86fcd32d9c7291587",
+        "lastModifiedNs": "1789127185080799413",
+        "bytes": 22029,
+        "lines": 464
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/NotificationAuthorityControl.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/NotificationAuthorityControl.java",
+        "sha256": "d582465c98d6a55fe6f96c2b1ae3b49f110f203864c2daa870f781307ae3b407",
+        "lastModifiedNs": "1789128160973710811",
+        "bytes": 27162,
+        "lines": 572
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/NotificationPrivilegedMigration.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/NotificationPrivilegedMigration.java",
+        "sha256": "941f6e49bd6d54a2e4ff94d89b426cfbebc9b8e0bd12a1c1f8ae0bc68f7d79b8",
+        "lastModifiedNs": "1789110433370583963",
+        "bytes": 4996,
+        "lines": 127
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ProtectedSchemaAclControl.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/ProtectedSchemaAclControl.java",
+        "sha256": "3323399613f1296518b0f6e5ff50c530f481df706cdb14c67821ddde35a62aaf",
+        "lastModifiedNs": "1789119651670594271",
+        "bytes": 2183,
+        "lines": 61
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/RoleMembershipFence.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/RoleMembershipFence.java",
+        "sha256": "11cd8b59c93e2c98fa617d86559de16bf3a08adbc309ff49f696de957602fcc8",
+        "lastModifiedNs": "1789120559743803458",
+        "bytes": 6587,
+        "lines": 160
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java",
+        "sha256": "55235d7762f92a53e7a6b42a8efb0bd08b38b3cca38c12eef173628f36b41114",
+        "lastModifiedNs": "1789364377490027282",
+        "bytes": 17643,
+        "lines": 271
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseSignerV1.java",
+        "relativePath": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseSignerV1.java",
+        "sha256": "3e4dfc1f492da8ff2110484af9d921df5c9cf2a0100e11abc1c9dbfd85c88e99",
+        "lastModifiedNs": "1789362830422061207",
+        "bytes": 2764,
+        "lines": 62
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-notification-server/src/main/resources/application.yml",
+        "relativePath": "dwp-notification-server/src/main/resources/application.yml",
+        "sha256": "d2e4a0d86fd4036ff4d8149858c358a878e4de09603e4ab070f99f792cfd386e",
+        "lastModifiedNs": "1789121229408905590",
+        "bytes": 10020,
+        "lines": 230
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/main/resources/application.yml",
+        "relativePath": "dwp-payroll-server/src/main/resources/application.yml",
+        "sha256": "9e0c14289d1e45c43d42eb002a0fa5e319356e422df3ddf966a105675f78011f",
+        "lastModifiedNs": "1789121229408315630",
+        "bytes": 4598,
+        "lines": 145
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/application.yml",
+        "relativePath": "dwp-people-server/src/main/resources/application.yml",
+        "sha256": "17e0d5d1b4ab40bde6c80e5c2f146ccbc6ebdc38958a56e74e46af27a7042f56",
+        "lastModifiedNs": "1789121229407247629",
+        "bytes": 7764,
+        "lines": 199
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-server/src/main/resources/application.yml",
+        "relativePath": "dwp-platform-server/src/main/resources/application.yml",
+        "sha256": "e79884e537b4662ee19214cab22c7be7c04eb750eb35f54a24fd8ed2d8d067e0",
+        "lastModifiedNs": "1789132002639953272",
+        "bytes": 9745,
+        "lines": 231
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-provider-server/src/main/resources/application.yml",
+        "relativePath": "dwp-provider-server/src/main/resources/application.yml",
+        "sha256": "c2cceaaf9dd5d224fa02a13d35acb73f9cb38f6978959d3b7691e4b7e87c4e9f",
+        "lastModifiedNs": "1789132002640306357",
+        "bytes": 8257,
+        "lines": 209
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-time-server/src/main/resources/application.yml",
+        "relativePath": "dwp-time-server/src/main/resources/application.yml",
+        "sha256": "4614b77ba8d3da74da7f3862e05ddd154a6a8799fba1352729b56a2417df1211",
+        "lastModifiedNs": "1789121229408044547",
+        "bytes": 4520,
+        "lines": 145
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/scripts/devctl.py",
+        "relativePath": "scripts/devctl.py",
+        "sha256": "797c34023407ce74588ff98244f264fd23f5320d40b4ad217b5cf44b3cb6a572",
+        "lastModifiedNs": "1789352534973676782",
+        "bytes": 200028,
+        "lines": 5126
+      }
+    ]
+  },
+  "evidenceBoundary": {
+    "phaseBReportSha256": "bb23abe673432d5845bb33c631e6fe3267e8e1311615987ea632ed92d7efca71",
+    "phaseBFinalUniqueCases": 91,
+    "phaseBEngineExecutions": 131,
+    "uniqueExplanation": "51 final unit + 40 native case IDs; same 40 run on PG16 and PG18.4. Not 131 distinct.",
+    "nativeComposition": "Actual four source catalog runtime-reader JDBC inspections with real Ed25519 but MOCK own/current issuer ports. No native publication/fence/transport producer evidence.",
+    "noAggregation": "Do not add Phase-A129, root241, author93, timeouts or old XML to this plan as current whole PASS."
+  },
+  "currentTopology": {
+    "revision": "scalar-nine-runtime-v1",
+    "services": 8,
+    "streams": 9,
+    "runtimeBindings": 8,
+    "migrationLogins": 8,
+    "streamKeys": [
+      "approval-main",
+      "auth-main",
+      "notification-main",
+      "payroll-main",
+      "people-main",
+      "people-performance",
+      "platform-main",
+      "provider-main",
+      "time-main"
+    ],
+    "peopleAlias": {
+      "bindingKey": "people-runtime",
+      "streams": [
+        "people-main",
+        "people-performance"
+      ],
+      "principal": "dwp_people_runtime",
+      "migrationPrincipal": "dwp_people_migration",
+      "sameRegisteredPool": true,
+      "histories": [
+        "public.flyway_schema_history",
+        "hris_performance.flyway_performance_schema_history"
+      ],
+      "emptyPerformanceMustBeNativeProven": true
+    },
+    "payrollDefault": {
+      "stream": "payroll-main",
+      "schema": "public",
+      "history": "flyway_schema_history",
+      "rationale": "Existing exact Control/source history identity. PAY module reservation alone does not authorize schema/role cutover."
+    },
+    "metadataSources": [
+      {
+        "sourceKey": "auth",
+        "fencedBy": "auth",
+        "principal": "dwp_provider_metadata_auth",
+        "database": "dwp_auth<same_instance_suffix>"
+      },
+      {
+        "sourceKey": "people",
+        "fencedBy": "people",
+        "principal": "dwp_provider_metadata_people",
+        "database": "dwp_people<same_instance_suffix>",
+        "histories": [
+          "public.flyway_schema_history",
+          "hris_performance.flyway_performance_schema_history"
+        ]
+      },
+      {
+        "sourceKey": "platform",
+        "fencedBy": "platform",
+        "principal": "dwp_provider_metadata_platform",
+        "database": "dwp_platform<same_instance_suffix>"
+      },
+      {
+        "sourceKey": "provider",
+        "fencedBy": "provider",
+        "principal": "dwp_provider_metadata_self",
+        "database": "dwp_provider<same_instance_suffix>"
+      }
+    ],
+    "future": {
+      "revision": "hris-stream-topology-v1",
+      "declaredStreams": 13,
+      "declaredRuntimePurposes": 14,
+      "status": "REGISTERED_NOT_IMPLEMENTED_NOT_AUTHORIZED_BY_SCALAR_NINE",
+      "extraStreams": [
+        "auth-hris-participation-issuer",
+        "platform-hris-configuration",
+        "platform-hris-insights",
+        "platform-hris-protected"
+      ],
+      "noMetadataAutoUpgrade": "Frozen metadata evidence/inspector admit scalar-nine history policy only. Future active histories require explicit reviewed successor; never PRIMARY disguise or omitted private-history approval."
+    }
+  },
+  "sourceFindings": [
+    {
+      "id": "P2-SOURCE-01",
+      "priority": "P0",
+      "status": "OPEN_NOT_IMPLEMENTED",
+      "refs": [
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java:38",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java:14",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java:70"
+      ],
+      "finding": "Main restores credentials/CONNECT before scalar receipt stdout. ACTIVE exact DB ACL allows migration only, including rotated runtime denied 42501.",
+      "repair": "Integrate publication hook under still-held native locks before restore; add explicit INSPECTION state with own exact ACL/session/credential policy, never relax ACTIVE.",
+      "nativeReproduction": "Planned actual PG16/18; source observation only in this plan."
+    },
+    {
+      "id": "P2-SOURCE-02",
+      "priority": "P0",
+      "status": "OPEN_NOT_IMPLEMENTED",
+      "refs": [
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java:13",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java:208",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java:270"
+      ],
+      "finding": "Each source owner fences its local Provider metadata login. Existing fence rotates runtime/migration credentials, not metadata passwords.",
+      "repair": "Rotate selected metadata login to Control-private probe credential before granting inspection CONNECT; original metadata credential must remain rejected until restore."
+    },
+    {
+      "id": "P2-SOURCE-03",
+      "priority": "P0",
+      "status": "OPEN_NOT_IMPLEMENTED",
+      "refs": [
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java:87",
+        "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1.java:57"
+      ],
+      "finding": "Existing V1 current locks consumer deployment/permit/lease only. Provider own ACTIVE lease does not bind foreign Auth/People/Platform epochs.",
+      "repair": "New V2 authority/current implementation uses same SQL transaction with resource rows -> consumer deployment -> permit -> lease. Immutable manifest source vector resolves every frozen slot/evidence hash to independent approved resource epoch and native snapshot. A precheck wrapper around V1 independent transaction is insufficient."
+    },
+    {
+      "id": "P2-SOURCE-04",
+      "priority": "P0",
+      "status": "OPEN_SOURCE_REPRODUCTION_REQUIRED",
+      "refs": [
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java:280",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java:45",
+        "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java:404"
+      ],
+      "finding": "Existing adoption rechecks legacyBoundary after ACTIVE; existing receipt branch opens runtime DS inside verifyBeforeMigration, conflicting with ACTIVE runtime CONNECT deny.",
+      "repair": "Capture typed exact legacy boundary+predecessor proof during locked BASELINE preflight; carry it in same run, owner-only recheck inside ACTIVE. No runtime login/SET ROLE or legacy-boundary extension. Actual adopted restart regression mandatory."
+    },
+    {
+      "id": "P2-SOURCE-05",
+      "priority": "P0",
+      "status": "OPEN_NOT_IMPLEMENTED",
+      "refs": [
+        "dwp-core/src/main/java/com/dwp/core/database/authority/CompositeAuthorityReceiptV2.java:71",
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPreflight.java:36"
+      ],
+      "finding": "V2 receipt DTO/digest consistency alone is not live source/history/checksum/status/native-empty/adoption proof.",
+      "repair": "External owner-only proof builder must compare actual all rows COUNT/MAX/provenance and Flyway exact resolved source/checksum closure; immutable original adoption receipt and predecessor; native history relation/OID/definition and genuine empty staged sources."
+    },
+    {
+      "id": "P2-SOURCE-06",
+      "priority": "P1",
+      "status": "OPEN_NOT_IMPLEMENTED",
+      "refs": [
+        "dwp-migration-control/build.gradle:149",
+        "dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java:105"
+      ],
+      "finding": "Current staged bytes match working tree, not independent immutable deployment authorization; compiler includes native OIDs and non-CONNECT catalog ACL surfaces.",
+      "repair": "Pinned committed artifact + per-file immutable manifest + independently approved target-specific surface policy. Observation is never self-approval. Inspection must not mutate ACL/role config/connlimit/expiry/body so frozen target-role effective CONNECT and compiler output equal approved restored-state policy."
+    },
+    {
+      "id": "P2-SOURCE-07",
+      "priority": "P0",
+      "status": "OPEN_NOT_IMPLEMENTED",
+      "refs": [
+        "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java:19",
+        "dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeMetadataAdmissionGuardV1.java:160"
+      ],
+      "finding": "External signer/current candidate is UNWIRED. No authenticated production approval, key lifecycle, current-resource proof, publication, renewal or Main integration.",
+      "repair": "P2-B one real entrypoint resolves approved publication from durable ledger and exact authenticated deployment identity; P3 apps use external transport and no migration DS. No runtime activation by source/report hashes alone."
+    }
+  ],
+  "invariants": [
+    "I01: Old DatabaseConnectionFence.ACTIVE remains bootstrap owner implicit privileges + migration CONNECT only; runtime/metadata/PUBLIC deny.",
+    "I02: No inspection through bootstrap SET ROLE, migration pool impersonation or history rows SELECT from runtime/metadata.",
+    "I03: Native catalog lock identity retains current dwp-migration-control:<database>:<service>, qualified hashtextextended/pg_try_advisory_lock; exact endpoint/catalog/server identity independently approved.",
+    "I04: Current/dynamic authority resource rows are per catalog fence domain, not pretend separate native locks per same Platform schema.",
+    "I05: Metadata4 requires all active source resource epochs; missing required source/pin/port fails before any app pool open; disabled source=0 pool construction/0 connection/0 lock.",
+    "I06: Every DDL/migration normal path must durable-drain resource first, revoke dependent publications/permits and verify actual offline native sessions/CONNECT. Current does not authorize unchecked alternate Main path.",
+    "I07: All source/resource/deployment/permit/lease locks use one deterministic global order; no cross-database SQL atomicity claim.",
+    "I08: INSPECTION is explicit and migration CONNECT denied; one selected original runtime or metadata login with private rotated credential; no concurrent DDL/migration session.",
+    "I09: Inspectors enforce original JDBC login=current_user=session_user, role none, pg_catalog native funcs, original approved DS identity/posture, immutable history-policy and independent expected hash.",
+    "I10: Notification normal exact API/worker/audit reachable NOLOGIN roles are hashed/validated, not indiscriminately called elevated; no inspector SET ROLE.",
+    "I11: Metadata runtime catalog-only fields may still expose catalog literals; no absolute data-blind/anonymity or privileged DBA/host compromise protection.",
+    "I12: Approved policy compiler VERSION unchanged DWP_RUNTIME_PRIVILEGE_SURFACE_V1; future schema/source changes require explicit external successor approval.",
+    "I13: Probe closure/rollback/restore/abort failure => FAILED/DRAINING + credentials invalid + CONNECT denied, no publication/permit ready.",
+    "I14: Publication SHA/claims are outcomes of exact independent approval + live verification. New DB capture cannot mint its own expected hash/key/source permission.",
+    "I15: Manifest hash is computed before signed own/metadata docs from independent static/source approval vector; never hash signed docs back into that same manifest creating a cycle.",
+    "I16: Own seal controlReceiptSha256 means externally exact CompositeAuthorityReceiptV2 digest in this new protocol; old scalar run receipt hash retained separately, never silently substituted.",
+    "I17: Metadata docs sign baseOwnSealSha256 and manifestSha256 after own seal exists; current vector signs exact fresh nonce + own signed ACTIVE lease document hash + ordered evidence/policy slots.",
+    "I18: Runtime signed current vector resolves immutable publication sources/resource epochs and checks all serving generations under same durable SQL lock; signed cached own lease alone is insufficient.",
+    "I19: Initial own/vector expiry cannot be revived by a later response; time captured after lock/inspection/sign/provider and before commit/return, monotonic, canonical microsecond persisted times, equality expiry denies.",
+    "I20: DRAINING durable epoch precedes native mutations; drain is NOT offline acknowledgement or automatic termination of existing JDBC sessions.",
+    "I21: RESTORED CONNECT/pw can precede SERVING only while external gates/offline orchestrator still closed; no valid permits/current issued until exact all-resource success and committed publication. Existing app owner-credential retention remains P3 open.",
+    "I22: Failed cross-catalog stage remains DRAINING; recovery by operation ID/CAS/source expected proof, not automatic history repair/reseal/unconditional restore.",
+    "I23: Current does not renew existing 30-second lease. Continuing request/task readiness, renewal and offline consumption fence are explicit P3+production requirements.",
+    "I24: Scalar-nine aliases and future thirteen distinct roles remain separate. Current public/payroll-main stays default.",
+    "I25: Runtime app cannot receive bootstrap/migration passwords, owner DS, source endpoint factory/private key or trusted issuer ledger datasource.",
+    "I26: G3 structural/shared native scaffold exactness required; full business G4 CRUD/acceptance not circular G3 prerequisite. Author checks never independent approval."
+  ],
+  "phaseStateMachine": [
+    {
+      "from": "SERVING",
+      "to": "DRAINING",
+      "scope": "durable resource + affected consumer deployments",
+      "action": "CAS expected resource epoch -> epoch+1; consumer beginDrain-style epoch+1 and revoke all dependent current publication/permits; commit before native mutate",
+      "requires": [
+        "authenticated trusted Control invocation",
+        "independent expected source/epoch",
+        "deterministic locks"
+      ],
+      "failure": "No resource mutation if CAS mismatch; otherwise remain DRAINING even process crash"
+    },
+    {
+      "from": "DRAINING",
+      "to": "ACTIVE",
+      "scope": "native catalog fence; durable resource remains DRAINING",
+      "action": "Offline acknowledgement plus same native advisory lock; exact BASELINE preflight; rotate current runtime/migration and metadata probe credentials; deny all non-Control sessions; exact ACTIVE migration-only CONNECT",
+      "failure": "FAILED native + DRAINING resource"
+    },
+    {
+      "from": "ACTIVE",
+      "to": "INSPECTION",
+      "scope": "new native-only explicit phase",
+      "action": "Complete migrations/adoption/TEMP/Notification capability revoke; close migration connections; revoke migration CONNECT; selected runtime/metadata private credential CONNECT only; open one exact original-login RR native probe",
+      "failure": "Every probe closed/abort then invalidate and revoke all; no restore"
+    },
+    {
+      "from": "INSPECTION",
+      "to": "ACTIVE",
+      "scope": "native phase",
+      "action": "Close/restore probe and verify selected session removed; revoke CONNECT/private probe credential; exact no foreign sessions; re-enable migration CONNECT only for final owner proof if needed",
+      "failure": "FAILED/DRAINING; no temporary inspection privilege survives"
+    },
+    {
+      "from": "ACTIVE",
+      "to": "VERIFIED_STAGED",
+      "scope": "durable native snapshot/publication run",
+      "action": "All streams owner-only full all-row/source/native-empty/adopted verification; independent policy equality; target epoch/approval exact; staged immutable docs and source vector with no permit available",
+      "failure": "No pending success publication; DRAINING"
+    },
+    {
+      "from": "VERIFIED_STAGED",
+      "to": "RESTORED",
+      "scope": "each native catalog fence",
+      "action": "Existing restore meaning exact expected service CONNECT/no PUBLIC; probe credentials invalid; approved service secret generation restore; all gates remain closed, all sessions still offline",
+      "failure": "Best-effort revoke/invalidate every touched catalog; entire resource vector DRAINING; no distributed atomicity assumption"
+    },
+    {
+      "from": "RESTORED",
+      "to": "SERVING",
+      "scope": "one durable authority SQL transaction",
+      "action": "All resource acknowledgements and immutable publication readback exact; publish resource current approvals/epoch and consumer deployment; issue approved per-instance permit bound own seal/source vector, atomically make publication current; signed output expiry checked after lock/sign",
+      "failure": "DRAINING/STAGED, old/new permits denied until explicit recovery"
+    },
+    {
+      "from": "SERVING",
+      "to": "RESERVED",
+      "scope": "startup permit/lease",
+      "action": "Authenticated instance/challenge/own seal exact; resolve publication source bindings; same transaction ordered source rows -> deployment -> permit -> lease; create unique bounded RESERVED lease",
+      "failure": "No lease"
+    },
+    {
+      "from": "RESERVED",
+      "to": "ACTIVE_LEASE",
+      "scope": "startup barrier",
+      "action": "App verifies own native pool then authority activate rechecks same resource epoch/source/current publication; signed exact ACTIVE lease; metadata pre-current -> native4 -> post-current separately",
+      "failure": "release best effort; app readiness closed"
+    },
+    {
+      "from": "SERVING",
+      "to": "CURRENT_VECTOR",
+      "scope": "fresh metadata request, not renewal",
+      "action": "Authenticated provider exact instance/nonce/slots; all source epochs SERVING and same immutable approved publication; exact own persisted ACTIVE/CONSUMED lease document hash; sign existing frozen CurrentClaims with <= own remaining expiry, no cached booleans",
+      "failure": "Optional.empty/generic no-cause; native pool unopened if initial current absent"
+    }
+  ],
+  "inspectionContract": {
+    "exactAllowedDbAcl": {
+      "baselineRestored": "bootstrap owner CONNECT/CREATE/TEMP + approved current runtime/migration/local metadata CONNECT only, no grantoption, bootstrap grantor",
+      "active": "unchanged migration CONNECT only + bootstrap owner baseline",
+      "inspection": "bootstrap owner baseline + exactly selected original-login target CONNECT, no migration/other runtime/metadata/PUBLIC; caller-provided grantee list rejected",
+      "failed": "bootstrap owner baseline only"
+    },
+    "sessionSet": "nativeControl fence backend PID(s) independently established and retained + current selected probe backend PID with exact principal/endpoint/original login; every other current DB backend rejected. PID exception scoped to phase+run, never arbitrary principal allowlist.",
+    "credentialPolicy": "private 32-byte random temporary credential per target in Control-only secret memory/vault. Existing metadata passwords also rotated before inspection; never exported in DTO/log/stdout/signed docs. Old credentials 28P01; rotated unselected credentials CONNECT 42501. End-probe credential invalidated before next phase. Existing service pw restoration only when all approval checks complete.",
+    "posture": "Pool configured before inspector opens: exact registered DS identity/qualifier/endpoint, autoCommit true; metadata JDBC readOnly true & search_path pg_catalog; own according approved PRIMARY/performance binding; no setReadOnly proof manufacture/no SET ROLE.",
+    "compilerCompatibility": "Frozen compiler captures target-role effective DB CONNECT (not arbitrary other-role datacl) and raw schema/relation/default/type/routine ACL + native OIDs. Inspection may change password/CONNECT only; do not change schema ACL, connlimit/rolvaliduntil/role config/searchPath during probe. Exact live compiler hash must equal independent restored target-purpose policy.",
+    "metadataMultiCatalog": "Four source metadata roles are local to four owners; deterministic bundle owns four resource rows and native catalog locks for first publication. Per-source source generation is retained. Later single-source drain revokes every publication/permit whose immutable source vector includes it.",
+    "requiredResourceScope": "Only sources named active external approved manifest. No unconditional activation/lock/open of private future histories or unrelated optional capability."
+  },
+  "immutableDtos": [
+    {
+      "proposedType": "ControlDeploymentApprovalV1",
+      "visibility": "EXTERNAL_CONTROL_ONLY",
+      "fields": [
+        "approvalId:canonicalUUID",
+        "authorityNamespace:DWP_CONTROL_STARTUP_PUBLICATION_V1",
+        "topologyRevision:scalar-nine-runtime-v1|explicit future successor",
+        "service:exact8 owner",
+        "deploymentId/applicationInstanceId/startupChallengeSha256",
+        "expectedEpoch/keyRevision/currentControlReference",
+        "sourceRevision40/sourceArtifactSha256/committedPerFileManifestSha256",
+        "approvedScalarRegistry/all9CompositeExpectedBinding",
+        "ownPurposePolicySha256/exact expected own native stream proofs",
+        "activeMetadataSources:closed ordered source vector",
+        "trustedKeyIds/notBefore/expiresAt"
+      ],
+      "rule": "Independent approval may be absent -> before credential/DB mutation reject. No caller assertion/current DB autoapproval."
+    },
+    {
+      "proposedType": "ControlSourceBindingV1",
+      "visibility": "EXTERNAL_DURABLE_MANIFEST",
+      "fields": [
+        "sourceKey:auth|people|platform|provider",
+        "resourceId/nativeEndpointId/serverAddress/serverPort/database/ownerService",
+        "resourceEpoch/approvalId/nativeSourceSnapshotId",
+        "sourceControlReference/sourceArtifactSha256/stagedSourcesSha256",
+        "sourceAllEnabledHistoryPolicySha256/sourceCompositeReceiptSha256",
+        "compilerVersion/expectedPrivilegeSurfaceSha256",
+        "metadataPrincipal/qualifier/readOnly/autoCommit/searchPath"
+      ],
+      "rule": "Frozen metadata Claims source lacks inline resource epoch. Exact approved manifestSha256 resolves this immutable row; current issuer resolves document/evidence SHA to this same row and checks live epoch. Future self-contained inline epoch needs reviewed V2, not hidden interpretation."
+    },
+    {
+      "proposedType": "ControlNativeVerifiedRunV1",
+      "visibility": "PRIVATE_CONSTRUCTOR_NATIVE_VERIFIER_ONLY",
+      "fields": [
+        "operationId/approvalId",
+        "native lock handles + resource vector",
+        "preflight exact original native/adoption predecessor proofs",
+        "full postflight stream proof and source closure",
+        "probe observation + independently approved expected policy",
+        "closed/restored PID ack and native phase generation"
+      ],
+      "rule": "No public current=true/offline=true constructor; not durable proof by itself after process restart. Reacquire lock and revalidate."
+    },
+    {
+      "proposedType": "ControlStartupPublicationV1",
+      "visibility": "READ_ONLY_EXTERNAL_BUNDLE_NO_SECRETS",
+      "fields": [
+        "publicationId/operationId/approvalId/consumerEpoch",
+        "pre-sign deploymentManifestSha256",
+        "allNineCompositeReceiptV2Sha256/oldScalarRunReceiptSha256ByService",
+        "ownSignedSeal/exact own seal SHA",
+        "metadataSignedEvidenceBySource/exact source-binding vector SHA",
+        "phase:STAGED|CURRENT|REVOKED",
+        "notBefore/expiresAt/keyRevision"
+      ],
+      "rule": "Own/metadata signed outputs refer pre-sign manifest, not each other recursively. Exact output bytes persisted before availability."
+    },
+    {
+      "existingType": "RuntimeMetadataAdmissionGuardV1.CurrentRequest",
+      "fields": [
+        "1.0",
+        "METADATA_CATALOG_READ_VECTOR",
+        "fresh requestId",
+        "ownLeaseId",
+        "ownLeaseDocumentSha256",
+        "ordered Slot(evidenceSha256,exact policy)"
+      ],
+      "rule": "Production current issuer must authenticate separate transport caller, resolve all inputs against CURRENT publication + native resource generation + signed own lease; never trusts values because shape valid."
+    }
+  ],
+  "ledgers": {
+    "catalog": "Separate constructor-bound trusted external Control catalog; existing source uses SQL schema dwp_deployment_startup. Actual provision/catalog/owner must be independently approved, not inferred from application DB or old prose dwp_deployment_control.",
+    "unchanged": "Do not add objects to app dwp_migration_control exact5 object inventory or own Control src/main/resources (build expects empty). Existing V1 current_deployments/permits/leases remain historical candidate; new tables additive external ledger bootstrap only.",
+    "newTables": [
+      {
+        "name": "dwp_deployment_startup.startup_resources",
+        "columns": [
+          "resource_id uuid PK",
+          "endpoint_id text NOT NULL",
+          "owner_service text NOT NULL",
+          "database_name text NOT NULL",
+          "epoch bigint NOT NULL CHECK >0",
+          "phase text NOT NULL CHECK IN(DRAINING,SERVING,FAILED)",
+          "key_revision bigint NOT NULL CHECK >0",
+          "current_approval_id uuid NULL",
+          "row_version bigint NOT NULL CHECK >=0"
+        ],
+        "unique": [
+          [
+            "endpoint_id",
+            "database_name"
+          ]
+        ],
+        "rule": "one native fence domain per endpoint/catalog; source epoch monotonic CAS, SERVING requires actual approved current snapshot; current_approval deferred FK to immutable approval"
+      },
+      {
+        "name": "dwp_deployment_startup.resource_approvals",
+        "columns": [
+          "approval_id uuid PK",
+          "resource_id uuid NOT NULL FK startup_resources",
+          "resource_epoch bigint NOT NULL CHECK >0",
+          "source_artifact_sha256/control_reference/staged_manifest_sha256 text NOT NULL canonical",
+          "native_snapshot_sha256/history_policy_sha256/compiler_policy_sha256 text NOT NULL canonical",
+          "snapshot_document text NOT NULL canonical bounded exact native proofs",
+          "approved_at timestamptz NOT NULL",
+          "approval_authority_id text NOT NULL"
+        ],
+        "unique": [
+          [
+            "resource_id",
+            "resource_epoch",
+            "approval_id"
+          ]
+        ],
+        "rule": "INSERT-only publisher after independent target policy and owner native proof exact. Source vectors cannot point arbitrary approval/epoch; full typed snapshot persisted without credentials; no blind SHA approval"
+      },
+      {
+        "name": "dwp_deployment_startup.startup_publications",
+        "columns": [
+          "publication_id uuid PK",
+          "operation_id uuid NOT NULL UNIQUE",
+          "request_sha256 text NOT NULL canonical",
+          "service/deployment_id/application_instance_id/epoch NOT NULL typed exact",
+          "permit_id uuid NOT NULL UNIQUE",
+          "own_resource_id uuid NOT NULL",
+          "own_resource_epoch bigint NOT NULL CHECK >0",
+          "own_resource_approval_id uuid NOT NULL",
+          "approval_id uuid NOT NULL",
+          "manifest_sha256/composite_receipt_sha256/own_seal_sha256 text NOT NULL canonical",
+          "own_seal_document text NOT NULL strict byte canonical bounded",
+          "phase text NOT NULL CHECK IN(STAGED,CURRENT,REVOKED)",
+          "not_before/expires_at timestamptz NOT NULL CHECK start<end",
+          "key_revision bigint NOT NULL CHECK >0",
+          "created_at timestamptz NOT NULL"
+        ],
+        "unique": [
+          [
+            "service",
+            "deployment_id",
+            "application_instance_id",
+            "epoch"
+          ]
+        ],
+        "rule": "same operation + exact request digest -> same immutable outputs; different digest -> conflict. STAGED unavailable to reserve/current. No mutable own claims rebinding. Existing startup_permits gets reviewed publication_id FK+publication binding adapter only after approval (or new V2 table, never silently weaken V1)",
+        "foreignKeys": [
+          {
+            "columns": [
+              "own_resource_id",
+              "own_resource_epoch",
+              "own_resource_approval_id"
+            ],
+            "target": "resource_approvals(resource_id,resource_epoch,approval_id)"
+          }
+        ]
+      },
+      {
+        "name": "dwp_deployment_startup.publication_sources",
+        "columns": [
+          "publication_id uuid NOT NULL FK startup_publications",
+          "source_key text NOT NULL CHECK IN(auth,people,platform,provider)",
+          "resource_id uuid NOT NULL",
+          "resource_epoch bigint NOT NULL CHECK >0",
+          "source_approval_id uuid NOT NULL",
+          "source_binding_sha256/evidence_sha256 text NOT NULL canonical",
+          "evidence_document/source_binding_document text NOT NULL strict byte canonical bounded"
+        ],
+        "primaryKey": [
+          "publication_id",
+          "source_key"
+        ],
+        "foreignKeys": [
+          {
+            "columns": [
+              "resource_id",
+              "resource_epoch",
+              "source_approval_id"
+            ],
+            "target": "resource_approvals(resource_id,resource_epoch,approval_id)"
+          }
+        ],
+        "rule": "zero rows iff metadata disabled; otherwise exact approved active set, no duplicate slot/catalog/qualifier/role or foreign-instance alias. Physical live server identity retained in source binding."
+      }
+    ],
+    "bootstrapArtifactProposed": "dwp-migration-control/deployment-startup-bootstrap/002_runtime_publication_ledger.v1.sql (reviewed external job input, OUTSIDE src/main/resources and service Flyway streams; not created by this plan)",
+    "bootstrapRules": [
+      "Native exact external catalog/principal/current=session/role none before SQL",
+      "DDL owner separate external bootstrap role; runtime/migration/metadata schema USAGE/DML/routine0 and no CONNECT to ledger catalog",
+      "PUBLIC current/default schema/table/seq/routine/type grants denied",
+      "Publisher INSERT/readback/phase update scoped; current issuer SELECT + existing phase transitions only, no permit arbitrary INSERT/rebind; private signer not DB grantee authority",
+      "Exact table columns/PK/UK/FK/checks/ACL+bootstrap artifact hash checked before reuse; no IF NOT EXISTS silently accepting drift",
+      "New external ledger namespace no Auth213/PeopleV*/public domain reservation, historical SQL unchanged"
+    ],
+    "ddlStatus": "DESIGN_ONLY_NOT_CREATED_NOT_REGISTERED",
+    "crossCatalogAtomicity": "Native catalog changes and external ledger commits are NOT one PostgreSQL transaction; operationId + durable DRAINING + per-resource exact ack makes failure unavailable, not automatically rolled back.",
+    "lockOrderSql": {
+      "resolveWithoutAuthority": "SELECT publication_id,phase,service,deployment_id,application_instance_id,epoch,permit_id,own_resource_id,own_resource_epoch,own_resource_approval_id,own_seal_sha256 FROM dwp_deployment_startup.startup_publications WHERE publication_id=? -- immutable tuple resolution only, NOT authorization",
+      "lockCurrentResources": "SELECT r.resource_id,r.endpoint_id,r.database_name,r.epoch,r.phase,r.current_approval_id,r.key_revision FROM dwp_deployment_startup.startup_resources r WHERE r.resource_id IN (SELECT own_resource_id FROM dwp_deployment_startup.startup_publications WHERE publication_id=? UNION SELECT resource_id FROM dwp_deployment_startup.publication_sources WHERE publication_id=?) ORDER BY r.endpoint_id,r.database_name FOR SHARE",
+      "lockDeployment": "SELECT epoch,key_revision,fence_state FROM dwp_deployment_startup.current_deployments WHERE service=? AND deployment_id=? FOR UPDATE",
+      "exactPermitLease": "After ordered resource locks and deployment lock, use existing exact permit service/deployment/instance/epoch/challenge/seal FOR UPDATE and lease FOR UPDATE; then recheck publication CURRENT and all exact source snapshots/approved epochs/key revisions before signing.",
+      "resourceDrain": "SELECT resource_id,epoch,phase FROM dwp_deployment_startup.startup_resources WHERE resource_id=? FOR UPDATE; -- affected deployments deterministically locked next, NOT call V1 beginDrain which uses an independent connection",
+      "casResource": "UPDATE dwp_deployment_startup.startup_resources SET epoch=epoch+1,phase='DRAINING',current_approval_id=NULL,row_version=row_version+1 WHERE resource_id=? AND epoch=? AND phase='SERVING' -- exactly 1 returned affected row required; overflow fails",
+      "dependentPublication": "SELECT DISTINCT p.service,p.deployment_id FROM dwp_deployment_startup.startup_publications p WHERE p.phase='CURRENT' AND (p.own_resource_id=? OR EXISTS(SELECT 1 FROM dwp_deployment_startup.publication_sources s WHERE s.publication_id=p.publication_id AND s.resource_id=?)) ORDER BY p.service,p.deployment_id -- lock each corresponding current_deployments row in same connection",
+      "revocation": "In same drain transaction, beginDrain-equivalent CAS every affected deployment epoch+1/SERVING->DRAINING, revoke dependent startup_permits ISSUED|RESERVED|CONSUMED and mark publications REVOKED; resource snapshot pointer cannot become serving by an unsigned caller acknowledgement.",
+      "currentReturn": "Re-read persisted approved own ACTIVE lease; canonical signed lease document hash must match request.ownLeaseDocumentSha256. Recapture clock after locks/signing; return a new signed CurrentClaims only within exact initial/current source/own/document windows, commit under still-held resource/deployment locks. No TTL renewal."
+    },
+    "proposedSql": {
+      "status": "ARTIFACT_DESIGN_ONLY_NO_RUNTIME_EXECUTION_OR_RESERVATION_APPROVAL",
+      "purpose": "Concrete additive external ledger DDL input for next review; these statements are NOT written into an application migration path by this task.",
+      "ddlOwnerRole": "dwp_startup_ledger_owner (proposed NOLOGIN, independently approved external bootstrap only)",
+      "externalPublisherRole": "dwp_startup_publication_publisher (proposed separate trusted external LOGIN)",
+      "currentIssuerRole": "dwp_startup_current_issuer (proposed trusted external LOGIN; no INSERT or policy rebind grants)",
+      "statements": [
+        "CREATE TABLE dwp_deployment_startup.startup_resources (\n resource_id uuid PRIMARY KEY, endpoint_id text NOT NULL, owner_service text NOT NULL,\n database_name text NOT NULL, epoch bigint NOT NULL CHECK(epoch>0),\n phase text NOT NULL CHECK(phase IN ('DRAINING','SERVING','FAILED')),\n key_revision bigint NOT NULL CHECK(key_revision>0), current_approval_id uuid,\n row_version bigint NOT NULL CHECK(row_version>=0),\n UNIQUE(endpoint_id,database_name),\n CHECK(owner_service IN ('approval','auth','notification','payroll','people','platform','provider','time')),\n CHECK(endpoint_id ~ '^[a-z][a-z0-9_.-]{0,127}$'),\n CHECK(database_name ~ '^[a-z_][a-z0-9_]{0,62}$'),\n CHECK(phase<>'SERVING' OR current_approval_id IS NOT NULL)\n);",
+        "CREATE TABLE dwp_deployment_startup.resource_approvals (\n approval_id uuid PRIMARY KEY, resource_id uuid NOT NULL REFERENCES dwp_deployment_startup.startup_resources,\n resource_epoch bigint NOT NULL CHECK(resource_epoch>0),\n source_artifact_sha256 text NOT NULL CHECK(source_artifact_sha256 ~ '^[0-9a-f]{64}$'),\n control_reference text NOT NULL CHECK(control_reference ~ '^dwp-migration-control-v2:[0-9a-f]{64}$'),\n staged_manifest_sha256 text NOT NULL CHECK(staged_manifest_sha256 ~ '^[0-9a-f]{64}$'),\n native_snapshot_sha256 text NOT NULL CHECK(native_snapshot_sha256 ~ '^[0-9a-f]{64}$'),\n history_policy_sha256 text NOT NULL CHECK(history_policy_sha256 ~ '^[0-9a-f]{64}$'),\n compiler_policy_sha256 text NOT NULL CHECK(compiler_policy_sha256 ~ '^[0-9a-f]{64}$'),\n snapshot_document text NOT NULL CHECK(pg_catalog.octet_length(snapshot_document) BETWEEN 1 AND 262144),\n approved_at timestamptz NOT NULL, approval_authority_id text NOT NULL,\n UNIQUE(resource_id,resource_epoch,approval_id)\n);",
+        "ALTER TABLE dwp_deployment_startup.startup_resources\n ADD CONSTRAINT fk_startup_resource_current_approval\n FOREIGN KEY(resource_id,epoch,current_approval_id)\n REFERENCES dwp_deployment_startup.resource_approvals(resource_id,resource_epoch,approval_id)\n DEFERRABLE INITIALLY DEFERRED;",
+        "CREATE TABLE dwp_deployment_startup.startup_publications (\n publication_id uuid PRIMARY KEY, operation_id uuid NOT NULL UNIQUE,\n request_sha256 text NOT NULL CHECK(request_sha256 ~ '^[0-9a-f]{64}$'),\n service text NOT NULL, deployment_id uuid NOT NULL, application_instance_id uuid NOT NULL,\n epoch bigint NOT NULL CHECK(epoch>0), permit_id uuid NOT NULL UNIQUE,\n approval_id uuid NOT NULL, own_resource_id uuid NOT NULL,\n own_resource_epoch bigint NOT NULL CHECK(own_resource_epoch>0), own_resource_approval_id uuid NOT NULL,\n manifest_sha256 text NOT NULL CHECK(manifest_sha256 ~ '^[0-9a-f]{64}$'),\n composite_receipt_sha256 text NOT NULL CHECK(composite_receipt_sha256 ~ '^[0-9a-f]{64}$'),\n own_seal_sha256 text NOT NULL CHECK(own_seal_sha256 ~ '^[0-9a-f]{64}$'),\n own_seal_document text NOT NULL CHECK(pg_catalog.octet_length(own_seal_document) BETWEEN 1 AND 262144),\n phase text NOT NULL CHECK(phase IN ('STAGED','CURRENT','REVOKED')),\n not_before timestamptz NOT NULL, expires_at timestamptz NOT NULL,\n key_revision bigint NOT NULL CHECK(key_revision>0), created_at timestamptz NOT NULL,\n CHECK(not_before<expires_at), CHECK(expires_at-not_before<=INTERVAL '5 minutes'),\n UNIQUE(service,deployment_id,application_instance_id,epoch),\n FOREIGN KEY(service,deployment_id) REFERENCES dwp_deployment_startup.current_deployments(service,deployment_id),\n FOREIGN KEY(own_resource_id,own_resource_epoch,own_resource_approval_id)\n REFERENCES dwp_deployment_startup.resource_approvals(resource_id,resource_epoch,approval_id)\n);",
+        "CREATE TABLE dwp_deployment_startup.publication_sources (\n publication_id uuid NOT NULL REFERENCES dwp_deployment_startup.startup_publications(publication_id),\n source_key text NOT NULL CHECK(source_key IN ('auth','people','platform','provider')),\n resource_id uuid NOT NULL, resource_epoch bigint NOT NULL CHECK(resource_epoch>0),\n source_approval_id uuid NOT NULL,\n source_binding_sha256 text NOT NULL CHECK(source_binding_sha256 ~ '^[0-9a-f]{64}$'),\n evidence_sha256 text NOT NULL CHECK(evidence_sha256 ~ '^[0-9a-f]{64}$'),\n evidence_document text NOT NULL CHECK(pg_catalog.octet_length(evidence_document) BETWEEN 1 AND 65536),\n source_binding_document text NOT NULL CHECK(pg_catalog.octet_length(source_binding_document) BETWEEN 1 AND 65536),\n PRIMARY KEY(publication_id,source_key),\n FOREIGN KEY(resource_id,resource_epoch,source_approval_id)\n REFERENCES dwp_deployment_startup.resource_approvals(resource_id,resource_epoch,approval_id)\n);",
+        "ALTER TABLE dwp_deployment_startup.startup_publications\n ADD CONSTRAINT uk_startup_publication_permit_binding\n UNIQUE(publication_id,permit_id,service,deployment_id,application_instance_id,epoch,own_seal_sha256);",
+        "ALTER TABLE dwp_deployment_startup.startup_permits ADD COLUMN publication_id uuid;\n ALTER TABLE dwp_deployment_startup.startup_permits ADD CONSTRAINT fk_startup_permit_publication_exact\n FOREIGN KEY(publication_id,permit_id,service,deployment_id,application_instance_id,epoch,seal_sha256)\n REFERENCES dwp_deployment_startup.startup_publications\n (publication_id,permit_id,service,deployment_id,application_instance_id,epoch,own_seal_sha256);"
+      ],
+      "accessPolicy": [
+        "These additive tables are owned by approved external NOLOGIN ledger owner. No runtime/migration/metadata can CONNECT to the external authority catalog or USAGE schema or have table/column/sequence/routine privileges.",
+        "Existing historical candidate V1 permits may have publication_id NULL and remain unusable by V2. V2 new permits MUST non-null exact publication and signed independent approval; no NULL fallback. A cutover CHECK/NOT NULL requires reviewed native migration and old V1 disablement, not this planning artifact.",
+        "Resource current_approval_id is NULL while DRAINING/FAILED; current native source approval insertion and serving resource pointer CAS occur together in external transaction. Native probe flag is not a DB boolean current authority.",
+        "Publication policy/document/identity columns and resource_approvals/source rows are INSERT-only for approved publisher; only phase/revocation and approved resource epoch/current pointer transitions are separately column-granted.",
+        "Current issuer keeps existing scoped permit/lease phase grants and SELECT on immutable publication/source/resource rows; it has no publication/native approval INSERT or policy/document UPDATE.",
+        "Trusted publisher grants must be reviewed alongside current/drain separation; arbitrary publisher program/key compromise excluded, not defeated by these rows.",
+        "Exact strict parser/canonical bytes/digest/schema/policy/publication-source cardinality checks occur in Java before insert/readback; SQL text length alone does not certify a typed snapshot.",
+        "Service/database/resource semantic oracle match, peer role attrs/memberships/CONNECT, and all FK indexes/bootstrap exact ACL must have actual PG16/18 tests before any schema/source approval. Statements are design input, not executed syntax proof."
+      ]
+    }
+  },
+  "proposedFiles": [
+    {
+      "phase": "P2-A",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1.java",
+      "kind": "NEW",
+      "role": "same-package bridge owns exact new INSPECTION ACL/credentials/session/PID transition; may call existing package-private DatabaseControl under retained lock; no arbitrary DS factory in core API"
+    },
+    {
+      "phase": "P2-A",
+      "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1PostgresTest.java",
+      "kind": "NEW",
+      "role": "actual PG16/18 original/private runtime+metadata login, exact ACL, no DDL/probe-history reads, release/crash/restore negatives"
+    },
+    {
+      "phase": "P2-A",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java",
+      "kind": "PROPOSED_MINIMAL_APPROVED_MODIFICATION_NOT_PERFORMED",
+      "role": "explicit INSPECTION case/expected one target native tuple + bounded probePID; old ACTIVE exact map untouched"
+    },
+    {
+      "phase": "P2-A",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+      "kind": "PROPOSED_APPROVED_IN_FENCE_INTEGRATION_NOT_PERFORMED",
+      "role": "invoke producer bridge before restore; preserve native lock, old success/failure finally, TEMP/Notification flow; retain preflight legacy boundary typed input instead of ACTIVE runtime re-open"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupPublicationV1.java",
+      "kind": "NEW",
+      "role": "closed external approval/source vector/publication DTO + domain constants, no secrets; nonrecursive manifest"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupPublicationLedgerV1.java",
+      "kind": "NEW",
+      "role": "external exact identity SQL, source/deployment deterministic locks, staged/current CAS/idempotency/native snapshot readback; bootstrap lives separate artifact"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlRuntimeStartupSealProducerV1.java",
+      "kind": "NEW",
+      "role": "actual proof builder invokes owner-only native history/source checks and real core own+metadata inspectors; exact external approval then sign/persist own/metadata docs; no self-discovery expected"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlRuntimePublicationSignerV1.java",
+      "kind": "NEW",
+      "role": "external Ed25519 pinned keypair + own/metadata/current domains; no private key export/generation or independent approval"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV2.java",
+      "kind": "NEW_SUCCESSOR_OLD_V1_FROZEN",
+      "role": "own reserve/activate/current/release + metadata CurrentIssuerPort execute source resources -> deployment -> permit -> lease in SAME transaction. Preserve V1 exact auth/time/row semantics; no check-then-delegate V1 race"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/startup/v1/ControlStartupPublicationV1PostgresTest.java",
+      "kind": "NEW",
+      "role": "real source tuple publication+four catalogs/native inspectors+signed vector; explicit authenticated fixture not production transport; source drain races/crash/predecessor/empty verified"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/startup/v1/ControlRuntimePublicationSignerV1Test.java",
+      "kind": "NEW",
+      "role": "real Ed25519 domain/key/source/replay/closed-parser negatives, malformed claims expiry and no secret causes"
+    },
+    {
+      "phase": "P2-B",
+      "path": "dwp-migration-control/deployment-startup-bootstrap/002_runtime_publication_ledger.v1.sql",
+      "kind": "PROPOSED_ARTIFACT_ONLY_AFTER_APPROVAL",
+      "role": "external ledger additive DDL exact table/ACL/check/FK bootstrap. Not app Flyway/not main resources/not runtime execution"
+    },
+    {
+      "phase": "P2-C",
+      "path": "scripts/devctl.py",
+      "kind": "PROPOSED_APPROVED_LAUNCHER_INTEGRATION_NOT_PERFORMED",
+      "role": "one external invocation/approved immutable bundle and independent authority identity; source owner Main does not bypass drain when publication-enabled. Parent owns existing script"
+    },
+    {
+      "phase": "P2-C",
+      "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupAuthorityTransportV1.java",
+      "kind": "NEW_ONLY_AFTER_AUTH_PROTOCOL_APPROVAL",
+      "role": "mTLS/workload authenticated typed identity/closed routes/response boundaries/current nonce, no caller bools/JSON identity/current ledger DS/key export"
+    },
+    {
+      "phase": "P3",
+      "path": "8 service application.yml + RuntimeOnlyStartupConfiguration/Test/PostgresTest",
+      "kind": "SUBSEQUENT_GENUINE_WIRING_OPEN",
+      "role": "migration credentials/DS/Flyway execution0; first one real service then8; Provider foreign reader configured through Phase-B not primary disguised"
+    },
+    {
+      "phase": "P4",
+      "path": "approved private4 stream bootstrap + role/purpose/pool adapters",
+      "kind": "REGISTERED_NOT_IMPLEMENTED",
+      "role": "distinct 13stream manifest14purpose (including People cutover) actual empty histories/native proof; optional inactive0 opens. New reservations separately approved"
+    }
+  ],
+  "integrationChunks": [
+    {
+      "id": "P2-A",
+      "priority": "FIRST_ACTUAL_NATIVE_CONNECTION_CHUNK",
+      "approvalRequired": true,
+      "scope": "new same-package inspection bridge + real PG test + explicitly reviewed Fence/Main hook",
+      "entry": "Existing Main held native advisory fence/verified old preflight",
+      "output": "Runtime and metadata original-login native observed proof, probe closed and ACTIVE exact restored; actual Main can no longer restore-before-publication when enabled",
+      "g3Closure": false
+    },
+    {
+      "id": "P2-B",
+      "approvalRequired": true,
+      "scope": "publication DTO/ledger/proof producer/signer/currentV2 + tests + external bootstrap artifact",
+      "entry": "P2-A typed native run handle and independent deployment/source approvals",
+      "output": "Actual owned catalog operation reserve/native own+metadata/current/drain with durable exact publication; no frozen contract changes",
+      "g3Closure": false
+    },
+    {
+      "id": "P2-C",
+      "approvalRequired": true,
+      "scope": "one real authenticated external authority entrypoint and trusted launcher path",
+      "entry": "P2-B proven same-transaction fences and immutable keys/manifest",
+      "output": "No orphan candidates: verified external command actually runs existing migration Main bridge and persisted publication consumed by freshness ports",
+      "g3Closure": false
+    },
+    {
+      "id": "P3",
+      "approvalRequired": true,
+      "scope": "service-by-service runtime-only startup wiring/secret-pruning/barrier",
+      "entry": "P2-C available actual authority",
+      "output": "Eight actual strict serial app starts/native missing/tamper/direct-JAR/restart/epoch-denial, zero owner credentials; no domain G4 preimplementation",
+      "g3Closure": "INDEPENDENT_COMMON_PREPARATION_REVIEW_REQUIRED_NOT_AUTOMATIC"
+    },
+    {
+      "id": "P4",
+      "approvalRequired": true,
+      "scope": "explicit active private4 empty scaffold + distinct-role manifest adapter, no default activation",
+      "entry": "independent successor allocation and role/source approval",
+      "output": "Optional inactive0 constructed/opened; required enabled missing deny; active exact native history source proof",
+      "g3Closure": "INDEPENDENT_COMPOSITE_PREPARATION_REVIEW_REQUIRED"
+    }
+  ],
+  "producerAlgorithm": [
+    "0 authenticate trusted orchestrator and resolve independent approval/immutable registry/committed artifact+per-file closure/current external key revision; missing/unapproved -> before native pool/credential mutation fail",
+    "1 resolve ONLY active resource vector (single owner for normal own; Provider metadata active4 includes source owner catalogs); deterministic source endpoint/catalog sort; ledger resource row locks then affected deployments/permits/leases; epoch CAS/drain/revoke dependents commit",
+    "2 retain native advisory locks for exact catalog/service keys in same deterministic order; offline normal service process ack plus current pg_stat_activity0foreign and exact BASELINE ACL; prior native/adopted external+DB receipt asymmetry fail-close; capture immutable preflight boundary",
+    "3 activate existing ACTIVE credentials/CONNECT/TEMP/native migration semantics per owner; each exact migration/adoption unchanged; close migration sessions and revoke all privilege windows; no implicit fresh for existing history",
+    "4 explicit INSPECTION role private credentials; exactly selected own runtime/or metadata original login, actual core native inspectors with external expected hashes/history policy; no schema/role config/grant broadening and no owner rows under reader",
+    "5 close/restore probe, deny/invalidate private credential, foreign sessions0; return ACTIVE owner-only final verification: full COUNT/MAX/history rows+source/checksum+engine+inventory/definition/ACL/native empty/adoption/current old external seals/predecessors unchanged",
+    "6 construct exact all9 CompositeV2 proof (retain previous globally approved immutable vector, replacing only changed verified resources under ordered generation checks; missing prior9 means first bundle must verify all9, no placeholder/count-only receipt); sign not yet available own/metadata bundle using pre-sign approved manifest; persist STAGED+readback",
+    "7 restore current expected normal-role CONNECT and service credentials only after all probes/owner proof success; strict ACTIVE is not renamed/relaxed; gates offline/no permits; fail any source -> no serving and all touched sources fail-closed best-effort with recovery receipt",
+    "8 external ledger transaction re-lock full resource/current approvals and consumer deployment; exact restored ack and operationId/source pin/current artifact/key/clock -> publication CURRENT + resource SERVING + approved per-instance startup_permit ISSUED; no separate transaction check-then-activate",
+    "9 external output publication references/content-addressed bytes after commit; app fetch uses independent registry/trust anchor not values discovered in returned JSON; publication/mount failure -> explicit revoke/drain or unavailable, no false readiness",
+    "10 runtime-only P3 app own reserve -> native own inspection -> activate; Provider initial signed own-current + signed exact metadata nonce/vector -> native active4 -> post signed own/current + afterprovider clock checks; required missing unavailable fails before opens",
+    "11 any source drain before/after inspection atomically revokes dependent current publication/permits and monotonic source epochs; final issuer refuses stale vector; no cached ownlease loophole, no signed current=responseState boolean"
+  ],
+  "racesAndCrashCases": [
+    {
+      "id": "RACE01",
+      "at": "source Auth drain vs Provider metadata-current",
+      "must": "Same resource row serializes: current-before-drain gets bounded old proof, drain-before-current rejects; subsequent post-inspection current rejects old generation. No old-current claim protects bytes already read."
+    },
+    {
+      "id": "RACE02",
+      "at": "reserve -> native own -> source drain -> activate",
+      "must": "activate sees consumer/source new epoch and revoked publication, no ACTIVE lease"
+    },
+    {
+      "id": "RACE03",
+      "at": "both source updates lock overlapping metadata vector",
+      "must": "deterministic order or bounded lock timeout denial; no deadlock hidden by increased timeout"
+    },
+    {
+      "id": "CRASH01",
+      "at": "drain committed, native fence not acquired",
+      "must": "durable DRAINING, old permits denied; no offline proof asserted"
+    },
+    {
+      "id": "CRASH02",
+      "at": "inspection CONNECT granted, probe not opened/close failed",
+      "must": "invalidate private credential/revoke CONNECT and reject; recovery reacquires native fence and session exact0; grants never persist serving"
+    },
+    {
+      "id": "CRASH03",
+      "at": "some source resources restored, another failed",
+      "must": "publication STAGED, all resources unavailable; explicit best-effort deny/invalidate and exact recovery; no distributed rollback fiction"
+    },
+    {
+      "id": "CRASH04",
+      "at": "publication STAGED then process restart",
+      "must": "same operation+request hash returns exact pending docs only after new live native revalidation; not native proof by old row"
+    },
+    {
+      "id": "CRASH05",
+      "at": "publication CURRENT commit then external file/transport unavailable",
+      "must": "app cannot open startup barrier; authorized recovery exact immutable output or revoke/drain; no mint different docs under same permit"
+    },
+    {
+      "id": "CRASH06",
+      "at": "Service original credential restore before SERVING",
+      "must": "trusted gates/orchestrator prevent relaunch; old running sessions must be actual0. No assertion that lease checks alone prevent arbitrary JDBC direct use; credential-generation hardening and P3 request/secret boundary remain open."
+    }
+  ],
+  "plannedNegatives": [
+    "N01 old runtime/migration credentials 28P01 and private rotated runtime 42501 while ACTIVE unchanged",
+    "N02 original metadata credential cannot connect during inspection; only one private selected metadata login native current=session allowed",
+    "N03 unselected role CONNECT/PUBLIC/unknown grantee/grantoption or foreign active backend prevents transition",
+    "N04 RESET ROLE does not elevate; SET SESSION AUTH admin/SET ROLE owner denied; no original-login manufacture",
+    "N05 native role/schema/history/foreign CONNECT/parameter mutation/body+defaultPUBLIC+PG18MAINTAIN grant drifts rejected before sign",
+    "N06 compiled expected hash from current DB observation or caller key/source/manifest/current=true rejected before sign/open",
+    "N07 higher-rank row/all-row COUNT/MAX mismatch, same-consistent wrong engine, failed/foreign installed_by/checksum/source closure rejected",
+    "N08 native history0 with staged nonempty/absent relation/incorrect definition/opaque empty marker denied; actual People performance0 valid only exact empty source manifest/native relation",
+    "N09 existing adoption previous external/DB asymmetry, provenance boundary/installed_on/checksum/rank rewrites, missing predecessor or post-boundary bootstrap rows deny; actual adopted restart cannot open runtime while ACTIVE",
+    "N10 Provider own good lease but one Auth/People/Platform source epoch DRAINING/new generation/current approval missing -> metadata current unavailable",
+    "N11 same-valid signed own lease hash substituted, stale nonce/evidence slot/qualifier/source revision/remote snapshot or invalid cross-instance metadata tuple denies",
+    "N12 initial current expiry hits during native inspection, final current comes later cannot revive; provider issued-later healthy progressive clock accepted, clock/null/error/rollback redacted no cause",
+    "N13 strict JSON unknown/duplicate/coerce/trailing/oversize/noncanonical/purpose namespace/domain/key-revision mismatch deny",
+    "N14 crash at each state keeps old permits denied; no unconditional restore or reseal; operation same request replay exact, different request conflict",
+    "N15 AUTHORITY V1 check-then-delegate not accepted as native race solution; source drain between its transactions demonstrated",
+    "N16 actual all-active source bundle valid with four genuine metadata pools and own runtime; disabled optional zero pool construction/open/locks; missing required denies before open",
+    "N17 Notification approved managed roles successful; elevated owner/history/foreign CONNECT/grantor/admin/inherit/set/body surface drift rejects",
+    "N18 P3 real app context/runtime environment/artifact verifies migration passwords/DS/Flyway0, required ports missing0open, startup barrier before any EMF/runner/scheduler/HTTP business work; direct stale/missing/tampered JAR deny and healthy restart"
+  ],
+  "verificationPlan": {
+    "status": "NOT_EXECUTED_THIS_PLAN",
+    "hostSemaphore": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+    "execution": "Peer complete source-freeze -> focused unit -> PG16 -> PG18.4; exact bounded timeouts no arbitrary increase; no parallel BE heavy; fresh XML/argv/UTC/elapsed/SHA+decimalNs before-after; own container IDs only exact cleanup; first FAIL preserved separate.",
+    "proposedCommands": [
+      "DWP_CONTROL_POSTGRES_TEST_IMAGE=postgres:16-alpine ./gradlew :dwp-migration-control:test --tests com.dwp.migration.control.ControlInspectionFenceBridgeV1PostgresTest --rerun-tasks --no-daemon",
+      "DWP_CONTROL_POSTGRES_TEST_IMAGE=postgres:18.4-alpine ./gradlew :dwp-migration-control:test --tests com.dwp.migration.control.ControlInspectionFenceBridgeV1PostgresTest --rerun-tasks --no-daemon",
+      "./gradlew :dwp-migration-control:test --tests com.dwp.migration.control.startup.v1.ControlRuntimePublicationSignerV1Test --rerun-tasks --no-daemon",
+      "DWP_CONTROL_POSTGRES_TEST_IMAGE=postgres:16-alpine ./gradlew :dwp-migration-control:test --tests com.dwp.migration.control.startup.v1.ControlStartupPublicationV1PostgresTest --rerun-tasks --no-daemon",
+      "DWP_CONTROL_POSTGRES_TEST_IMAGE=postgres:18.4-alpine ./gradlew :dwp-migration-control:test --tests com.dwp.migration.control.startup.v1.ControlStartupPublicationV1PostgresTest --rerun-tasks --no-daemon",
+      "./gradlew checkSourceSize checkTestSourceSize checkJavaDependencyCycles --rerun-tasks --no-daemon"
+    ],
+    "actualPlanChecks": "Only JSON parse/source SHA+ns/frozen historical input preservation/design link consistency planned now; no actual producer test count/PASS invented."
+  },
+  "transportKeyBoundary": {
+    "authenticatedCaller": "Mutually authenticated workload identity verified by external trusted transport; service/deployment/instance/challenge must equal typed Invocation resolved independently, not JSON role/header/threadlocal raw string. Startup challenge allocation by trusted orchestrator.",
+    "permittedOperations": [
+      "fetch immutable approved publication",
+      "reserve",
+      "activate",
+      "current own lease",
+      "release",
+      "current metadata vector"
+    ],
+    "trustedControlOnly": [
+      "begin source drain",
+      "native INSPECTION/restore",
+      "approve artifact/policy",
+      "bootstrap ledger",
+      "issue/publish permit",
+      "rotate signing keys"
+    ],
+    "routePlan": "Separate /control/startup/v1/workload/* and /control/startup/v1/admin/* typed transport registrations only after approval; unavailable endpoint identity fails before app pool open. Not HRIS business Gateway route or client-selected URL.",
+    "privateKey": "External signer/key provider only, independently pinned public key/revision/algorithm; absent/revoked/wrong namespace/keypair denies; root current_deployments key_revision + resource source approval revisions checked same transaction. No key from seal JSON selftrust.",
+    "freshness": "Own 30-second CURRENT does not renew; metadata vector valid <= own remaining lease, evidence<=5minutes, published output exact snapshot. Long-running renewal/request/task/drain enforcement requires explicit next source implementation, not cache indefinitely.",
+    "trustLimit": "Native fence prevents normal trusted Control migration paths racing approved startup. Privileged DBA/host/key compromise and already-issued/consumed bytes are not retroactively blocked; old alternate Main bypasses must be removed from production approval route."
+  },
+  "remainingOpen": [
+    {
+      "id": "P2-OPEN-A",
+      "priority": "P0",
+      "scope": "Actual Main INSPECTION transition/metadata password rotation/native multi-source locks",
+      "state": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "P2-OPEN-B",
+      "priority": "P0",
+      "scope": "Independent source-native proof/empty+adopted CompositeV2 producer + deployment approval publication",
+      "state": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "P2-OPEN-C",
+      "priority": "P0",
+      "scope": "Durable resource-generation binding/currentV2 authority/authenticated transport/key lifecycle",
+      "state": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "P3-OPEN-D",
+      "priority": "P0",
+      "scope": "Eight runtime-only app migrationDS/secret/Flyway removal and source barrier actual wiring",
+      "state": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "P3-OPEN-E",
+      "priority": "P0",
+      "scope": "Request/task continuing admission/renewal/drain-offline + safe credential-generation publication",
+      "state": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "P4-OPEN-F",
+      "priority": "P0",
+      "scope": "Approved active supplemental empty histories/distinct roles/People scalar alias cutover/13-stream Control/bootstrap",
+      "state": "REGISTERED_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "P2-OPEN-G",
+      "priority": "P1",
+      "scope": "Native adopted restart collision and complete definition/ACL guarantees corresponding attack evidence",
+      "state": "SOURCE_OBSERVED_NATIVE_REPLAY_NOT_EXECUTED_HERE"
+    }
+  ]
+}

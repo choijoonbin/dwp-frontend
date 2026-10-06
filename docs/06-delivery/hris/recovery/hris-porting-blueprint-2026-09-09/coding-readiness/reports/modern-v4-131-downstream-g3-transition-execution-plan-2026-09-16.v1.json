@@ -1,0 +1,552 @@
+{
+  "reportId": "dwp.hris.modern-v4-131-downstream-g3-transition-execution-plan.2026-09-16.v1",
+  "schemaVersion": 1,
+  "status": "FINAL_SELF_SEALED_READ_ONLY_EXECUTION_PLAN",
+  "verdict": "PLAN_COMPLETE_EXECUTION_BLOCKED_GATE_REMAINS_CLOSED",
+  "generatedAt": "2026-09-16T01:01:23Z",
+  "reviewer": "independent-downstream-transition-planner",
+  "reviewBoundary": {
+    "mode": "READ_ONLY_INVENTORY_AND_EXECUTION_ORDER",
+    "writesAllowed": [
+      "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-2026-09-16.v1.json"
+    ],
+    "writesForbidden": [
+      "live canonical artifacts",
+      "candidate directories",
+      "physical tools",
+      "module worktrees",
+      "integration worktrees",
+      "Gate decision and transition register",
+      "historical evidence"
+    ],
+    "gateAuthorityGranted": false,
+    "candidatePromotionGranted": false,
+    "worktreeFastForwardGranted": false
+  },
+  "authoritativeInputPins": {
+    "tablePolicyV2": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+      "fileSha256": "64bc16def08c4a87750a656a039588db67bba5ec5fad6fac0dbd1bed638e6444",
+      "sealedPayloadSha256": "36229b77ea56f94d61e9beee431b74d0413263853bb7e3b82951ae68534bfe86",
+      "sealVerified": true,
+      "disposition": "IMMUTABLE_TRANSITIVE_PREDECESSOR"
+    },
+    "tablePolicyV3": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+      "fileSha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+      "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+      "sealVerified": true,
+      "disposition": "IMMUTABLE_DIRECT_PREDECESSOR"
+    },
+    "tablePolicyV4": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "fileSha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+      "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+      "sealVerified": true,
+      "disposition": "CURRENT_131_SCOPE_ACCEPTANCE_POLICY"
+    },
+    "architectureSourceReview": {
+      "path": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v2.json",
+      "fileSha256": "3c6aef861603588d558c3836ed517bfffd3a5284539bb85eb43212d5833a8cb8",
+      "sealedPayloadSha256": "9e57dabbd19ea1e0aa7a649b996e76db00dbdb1c9f6c5bc78df1a03cb142c6c8",
+      "sealVerified": true,
+      "verdict": "ARCH_FINAL_PASS",
+      "candidateEmitAuthorized": false
+    },
+    "physicalToolReview": {
+      "path": "coding-readiness/reports/modern-physical-candidate-tools-independent-audit-2026-09-16.v4.json",
+      "fileSha256": "ab3f780c9ea240ce90e4293a27b0c3ed517aea2792690c0543f1670cb37fe8a7",
+      "sealedPayloadSha256": "42bc6e94008a92968dcb138e5a53ab9a9cbe654fb483914256feb07a0c2d028e",
+      "sealVerified": true,
+      "status": "PASS_DUAL_SCOPE_TOOL_UPGRADE_CANONICAL_SUCCESSOR_NOT_YET_ACCEPTED"
+    },
+    "currentGateDecision": {
+      "path": "g0/current-g3-gate-decision.json",
+      "fileSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+      "effectiveGate": "CLOSED_FAIL_SAFE",
+      "currentState": "VALIDATOR_CONTROLLED_BLOCKED",
+      "productionActivation": "NOT_AUTHORIZED_G6"
+    }
+  },
+  "targetClosure": {
+    "canonicalCounts": {
+      "publicOperations": 199,
+      "commands": 133,
+      "queries": 66,
+      "systemHandlers": 27,
+      "publicEvents": 157,
+      "tableSpecifications": 131,
+      "ownerPortOperationContracts": 18,
+      "ownerDependencyContracts": 1
+    },
+    "ownerTableArithmetic": {
+      "baseOwnerTables": 163,
+      "modernOwnerTables": 131,
+      "authoritativeOwnerTables": 294,
+      "payConsumerMaterializations": 2,
+      "deploymentPhysicalObjects": 296,
+      "formula": "163+131=294;294+2=296"
+    },
+    "tableScopeDelta": {
+      "frozenBaseline": 115,
+      "added": 17,
+      "removed": 1,
+      "net": 16,
+      "final": 131,
+      "removedTable": "sys_hris_listening_export_receipts",
+      "replacementOwnerTable": "sys_hris_analytics_export_receipts"
+    },
+    "listening": {
+      "streams": 4,
+      "publicOperations": 10,
+      "ownerPorts": 18,
+      "ownerDependencies": 1,
+      "ownerLocalHandlers": 9,
+      "tables": 23,
+      "publicEvents": 7,
+      "internalMessages": 6
+    },
+    "g3DerivedTargets": {
+      "baseSlices": 86,
+      "modernSlices": 16,
+      "totalSlices": 102,
+      "primaryOwnershipRows": 695,
+      "primaryOwnershipFormula": "PUBLIC_PEP175+INTERNAL_SERVICE_PEP11+XCON21+SYS_G2_CONTRACT84+BASE_EVENT48+MODERN_OPERATION199+MODERN_EVENT157"
+    }
+  },
+  "observedInventoryEvidence": {
+    "dependencyScan": {
+      "scannerPath": "coding-readiness/modern-independent-successor/audit_successor_dependency_dag.py",
+      "scannerSha256": "578a92feec073bb3d58a249507661e4fd7bdb731527b828075d4875179d8d710",
+      "method": "scanner-equivalent active classification with reports, candidates, historical proposals and scanner-owned directory excluded before stale-line evaluation",
+      "activeConsumerFiles": 62,
+      "activeStaleLiteralFiles": 15,
+      "activeStaleLiteralOccurrences": 76,
+      "activePredecessorOracleReferenceFiles": 8,
+      "externallyReproducedConsumerFailures": 4,
+      "blockers": 88,
+      "blockerFormula": "76+8+4=88",
+      "sealedPriorDag": {
+        "path": "coding-readiness/modern-independent-successor/reports/modern-successor-dependency-dag-latest.v1.json",
+        "fileSha256": "0e9f4a79e22fa88dac85892e428b2a132ba15ea848b4ce69149dd201b440baa9",
+        "priorActiveConsumers": 60,
+        "deltaReason": "two dual-profile physical candidate tools are now active consumers"
+      }
+    },
+    "reproducedConsumerFailures": [
+      {
+        "path": "coding-readiness/validate_information_architecture.py",
+        "status": "FAIL",
+        "evidence": "22 generated modern node API-ref drifts plus two unknown modern operations"
+      },
+      {
+        "path": "coding-readiness/validate_modern_capability_authorization.py",
+        "status": "FAIL",
+        "evidence": "26 exact-operation route closure defects"
+      },
+      {
+        "path": "coding-readiness/validate_cross_module_schema_contracts.py",
+        "status": "FAIL",
+        "evidence": "XCON-021 producer evidence field-set drift"
+      },
+      {
+        "path": "coding-readiness/validate_physical_owner_prefixes.py",
+        "status": "FAIL",
+        "evidence": "current data is base163+modern115=278 plus PAY2=280 while validator still expects base163+modern91=254 plus PAY2=256; final v4 must be 294/296"
+      },
+      {
+        "path": "coding-readiness/validate_g3_slice_code_go.py",
+        "status": "FAIL",
+        "evidence": "Listening canonical composition markers and owner-local handler set are not materialized downstream"
+      },
+      {
+        "path": "coding-readiness/validate_sys_exact_business_start.py",
+        "status": "FAIL",
+        "evidence": "current SYS exact successor, pin, lineage, module contract, Listening authority and G3 slice register are mutually stale"
+      }
+    ],
+    "sysMigrationRange": {
+      "authoritativeCurrentRange": "MIG-SYS-PLATFORM-262-290",
+      "staleRange": "MIG-SYS-PLATFORM-261-289",
+      "staleRowsInG3SliceRegister": 14,
+      "affectedSlices": [
+        "BASE-TFR-SYS-001",
+        "BASE-TFR-SYS-002",
+        "BASE-TFR-SYS-003",
+        "BASE-TFR-SYS-005",
+        "BASE-TFR-SYS-006",
+        "BASE-TFR-SYS-007",
+        "BASE-TFR-SYS-008",
+        "BASE-TFR-SYS-009",
+        "BASE-TFR-SYS-010",
+        "BASE-TFR-SYS-011",
+        "BASE-TFR-SYS-012",
+        "BASE-TFR-HRM-015",
+        "MOD-SYS-ANALYTICS",
+        "MOD-SYS-AI"
+      ],
+      "generatorAlreadyTargetsCurrentRange": true,
+      "historicalExceptionsToPreserve": [
+        "g0/checkpoint-register.csv G2 SYS row",
+        "immutable predecessor fields in g0/migration-successor-register.v1.json",
+        "historical G2 migration references explicitly labeled predecessor"
+      ]
+    },
+    "worktrees": {
+      "registerSha256": "131bc185fcc61658a8da7614eb53dc8071ca8180ae944183f87c0c48ea0540f9",
+      "integration": {
+        "backend": {
+          "head": "299336eacb52de29a85366318a08151ea691eb5e",
+          "tree": "d5277fabaa2315ddc28a4220fa8075875be28920",
+          "dirtyCount": 0
+        },
+        "frontend": {
+          "head": "cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca",
+          "tree": "29a8ed87a323bfc318043b2171d39fb73129fe28",
+          "dirtyCount": 0
+        }
+      },
+      "modulePairs": {
+        "count": 5,
+        "worktreeCount": 10,
+        "allClean": true,
+        "backendCurrentHead": "787f25753a72dc5f0fbbb06783205c0bff6635a5",
+        "backendTargetHead": "299336eacb52de29a85366318a08151ea691eb5e",
+        "backendFastForwardCommitCount": 1,
+        "backendAncestorVerified": true,
+        "frontendCurrentHead": "c658679ef377f43ec4f9fec7e7433eb98f46970e",
+        "frontendTargetHead": "cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca",
+        "frontendFastForwardCommitCount": 1,
+        "frontendAncestorVerified": true
+      },
+      "currentRegisterState": "STALE_OLD_ENTRY_SEAL"
+    },
+    "executionEvidence": {
+      "integrationBaselineManifestSha256": "ee0175e172ac873a0e415eaf30a150d696ae78559874206c7f2c5985c46f8967",
+      "integrationBaselineManifestState": "STALE_OLD_ENTRY_SEAL",
+      "targetBackendEvidence": {
+        "path": "g0/target-command-evidence-backend.json",
+        "sha256": "0ce023a21096a737154880e38381e77dd0beacd67f5e283cdabf9a3ff2103deb",
+        "allPassed": false,
+        "checkCount": 4,
+        "failedChecks": ["CHK-BE-FULL", "CHK-BE-TIM"],
+        "baselineHead": "787f25753a72dc5f0fbbb06783205c0bff6635a5"
+      },
+      "targetFrontendEvidence": {
+        "path": "g0/target-command-evidence-frontend.json",
+        "sha256": "ca89f9bf6186aea36f2af64714fad8dbe7e1df3f70da795f562d013c597cf196",
+        "allPassed": false,
+        "checkCount": 13,
+        "failedChecks": ["CHK-FE-CONTRACT"],
+        "baselineHead": "7635ce4223000ed83cb4965f8374d8a8433f1a62"
+      },
+      "sessionEnvironmentEvidence": {
+        "path": "g0/session-environment-evidence.json",
+        "exists": false
+      }
+    },
+    "gate": {
+      "effectiveGate": "CLOSED_FAIL_SAFE",
+      "transitionRegisterRows": 0,
+      "moduleStartAuthorized": false
+    },
+    "fiveScopedPreflightDefinitions": {
+      "source": "g0/independent-session-environment-verification.md",
+      "sessions": ["HRIS-HRM", "HRIS-PER", "HRIS-PAY", "HRIS-TIM", "HRIS-SYS"],
+      "gateAuthorityOccurrences": 5,
+      "publishedSealOccurrences": 5,
+      "sessionCheckpointOccurrencesPerSession": 1,
+      "sessionFullReadinessOccurrencesPerSession": 1,
+      "sequencePerSession": [
+        "python3 g0/gate_authority.py --check-open --compact",
+        "python3 coding-readiness/validate_published_gate_truth.py --verify-seal-only --compact",
+        "python3 g0/validate_code_checkpoint.py --check-live --session HRIS-<MODULE>",
+        "python3 coding-readiness/validate_full_coding_readiness.py --check-live --session HRIS-<MODULE>"
+      ],
+      "currentExecutionDisposition": "DO_NOT_RUN_AS_PASS_CLAIM_UNTIL_GATE_OPEN"
+    }
+  },
+  "activeConsumerInventory": [
+    {"path": "coding-readiness/07-modern-capability-coding-contract.md", "expectedDisposition": "UPDATE_CURRENT_COUNTS_AND_SUCCESSOR_ORACLE_PATHS"},
+    {"path": "coding-readiness/README.md", "expectedDisposition": "UPDATE_CURRENT_COUNTS_AND_SUCCESSOR_ORACLE_PATHS"},
+    {"path": "coding-readiness/architecture-decision-register.csv", "expectedDisposition": "ADD_VERSIONED_SUCCESSOR_DECISIONS_AND_PRESERVE_PREDECESSORS"},
+    {"path": "coding-readiness/audit_sys_exact_business_start.cjs", "expectedDisposition": "POINT_TO_SYS_EXACT_V2_AND_LISTENING_V2_WITH_131_COUNTS"},
+    {"path": "coding-readiness/build_modern_causal_independent_oracle.py", "expectedDisposition": "SUPERSEDE_WITH_VERSIONED_V4_ORACLE_BUILDER"},
+    {"path": "coding-readiness/g3-contract-primary-ownership-register.csv", "expectedDisposition": "REGENERATE_TO_695_EXACT_ROWS"},
+    {"path": "coding-readiness/g3-slice-code-go-register.csv", "expectedDisposition": "REGENERATE_102_SLICES_AND_REPLACE_14_STALE_SYS_RANGE_ROWS"},
+    {"path": "coding-readiness/generate_g3_slice_code_go_register.py", "expectedDisposition": "CONSUME_LISTENING_V2_AND_FINAL_CANONICAL_COUNTS"},
+    {"path": "coding-readiness/generate_modern_causal_successor.py", "expectedDisposition": "REMOVE_FROM_ACTIVE_GATE_OR_VERSION_AS_SUCCESSOR_ONLY"},
+    {"path": "coding-readiness/generate_modern_event_successor_lineage.py", "expectedDisposition": "GENERATE_NEW_VERSIONED_EVENT_LINEAGE_FROM_FINAL_CANONICAL"},
+    {"path": "coding-readiness/generate_modern_semantic_field_lineage.py", "expectedDisposition": "REMOVE_LEGACY_100_OPERATION_PATH_FROM_ACTIVE_GATE"},
+    {"path": "coding-readiness/modern-capability-event-successor-lineage.v2.json", "expectedDisposition": "PRESERVE_AND_CREATE_V3_SUCCESSOR"},
+    {"path": "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py", "expectedDisposition": "USE_ONLY_EXPLICIT_V4_131_SUCCESSOR_PROFILE"},
+    {"path": "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py", "expectedDisposition": "REQUIRE_EXPLICIT_V4_131_PROFILE_AND_PG16_PG18_RECEIPTS"},
+    {"path": "coding-readiness/modern_causal_candidate_projection.py", "expectedDisposition": "REMOVE_LEGACY_100_81_19_71_ASSERTIONS_FROM_ACTIVE_GATE"},
+    {"path": "coding-readiness/modern_causal_successor.py", "expectedDisposition": "REMOVE_LEGACY_81_COMMAND_ASSERTION_FROM_ACTIVE_GATE"},
+    {"path": "coding-readiness/prepare_modern_causal_final_endorsement.py", "expectedDisposition": "WRITE_NEW_VERSIONED_SUCCESSOR_ENDORSEMENT_ONLY"},
+    {"path": "coding-readiness/run_modern_causal_independent_pg_fixtures.py", "expectedDisposition": "RUN_SUCCESSOR_FIXTURES_ON_POSTGRESQL_16_AND_18"},
+    {"path": "coding-readiness/semantic-remediation/common-allocation-successor.v1.json", "expectedDisposition": "REVALIDATE_AND_VERSION_IF_BYTES_CHANGE"},
+    {"path": "coding-readiness/semantic-remediation/hrm-modern-native-identity-successor.v1.json", "expectedDisposition": "REVALIDATE_AND_VERSION_IF_BYTES_CHANGE"},
+    {"path": "coding-readiness/semantic-remediation/hrm-modern-remediation.v1.json", "expectedDisposition": "REVALIDATE_AND_VERSION_IF_BYTES_CHANGE"},
+    {"path": "coding-readiness/semantic-remediation/sys-tim-modern-remediation.v1.json", "expectedDisposition": "REVALIDATE_AND_VERSION_IF_BYTES_CHANGE"},
+    {"path": "coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.evidence.json", "expectedDisposition": "REVALIDATE_REFERENCES_WITHOUT_RELABELING_HISTORY"},
+    {"path": "coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.stable-manifest.json", "expectedDisposition": "REVALIDATE_REFERENCES_WITHOUT_RELABELING_HISTORY"},
+    {"path": "coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.table-dependencies.json", "expectedDisposition": "REVALIDATE_REFERENCES_WITHOUT_RELABELING_HISTORY"},
+    {"path": "coding-readiness/semantic-remediation/tim_cross_context_successor_v4.py", "expectedDisposition": "REVALIDATE_OR_SUPERSEDE_IF_IT_PINS_PREDECESSOR_CANONICAL"},
+    {"path": "coding-readiness/sys-exact-business-start-pin.v1.json", "expectedDisposition": "PRESERVE_AND_CREATE_V2_PIN"},
+    {"path": "coding-readiness/sys-exact-business-start-successor.v1.json", "expectedDisposition": "PRESERVE_AND_CREATE_V2_SUCCESSOR_WITH_262_290"},
+    {"path": "coding-readiness/sys-listening-stream-authority-successor.v1.json", "expectedDisposition": "PRESERVE_AS_PREDECESSOR_AND_PUBLISH_V2_AS_CURRENT"},
+    {"path": "coding-readiness/sys_listening_canonical_design.py", "expectedDisposition": "KEEP_AS_SOURCE_ONLY_AND_PIN_V2_CURRENT_AUTHORITY"},
+    {"path": "coding-readiness/test_modern_semantic_field_lineage.py", "expectedDisposition": "UPDATE_TO_199_OPERATION_SUCCESSOR_SEMANTICS"},
+    {"path": "coding-readiness/validate_compensation_snapshot_v2_authority.py", "expectedDisposition": "SWITCH_ACTIVE_LISTENING_REFERENCE_TO_V2"},
+    {"path": "coding-readiness/validate_cross_module_schema_contracts.py", "expectedDisposition": "CLOSE_XCON_021_AND_RUN_NORMAL_SELFTEST"},
+    {"path": "coding-readiness/validate_full_coding_readiness.py", "expectedDisposition": "REQUIRE_FINAL_COUNTS_SUCCESSOR_ORACLE_PHYSICAL_PG_AND_CURRENT_ENTRY_HEADS"},
+    {"path": "coding-readiness/validate_g3_slice_code_go.py", "expectedDisposition": "REQUIRE_102_SLICES_695_OWNERSHIP_ROWS_AND_CURRENT_SYS_RANGE"},
+    {"path": "coding-readiness/validate_information_architecture.py", "expectedDisposition": "CLOSE_22_MODERN_NODE_BINDINGS_AND_TWO_UNKNOWN_OPERATION_REFS"},
+    {"path": "coding-readiness/validate_modern_capability_authorization.py", "expectedDisposition": "CLOSE_ALL_199_EXACT_OPERATION_ROUTE_BINDINGS"},
+    {"path": "coding-readiness/validate_modern_capability_contracts.py", "expectedDisposition": "REQUIRE_199_133_66_27_157_131_18_1"},
+    {"path": "coding-readiness/validate_modern_causal_final_endorsement.py", "expectedDisposition": "VERIFY_NEW_VERSIONED_SUCCESSOR_ENDORSEMENT"},
+    {"path": "coding-readiness/validate_modern_causal_independent_oracle.py", "expectedDisposition": "VERIFY_NEW_VERSIONED_SUCCESSOR_ORACLE_AND_PG_RECEIPTS"},
+    {"path": "coding-readiness/validate_modern_causal_state_contracts.py", "expectedDisposition": "REQUIRE_FINAL_CAUSAL_AND_HANDLER_CLOSED_SET"},
+    {"path": "coding-readiness/validate_modern_semantic_field_lineage.py", "expectedDisposition": "REQUIRE_FINAL_CANONICAL_SEMANTIC_AND_IDENTITY_PINS"},
+    {"path": "coding-readiness/validate_physical_owner_prefixes.py", "expectedDisposition": "REQUIRE_BASE163_MODERN131_OWNER294_PAY2_DEPLOY296"},
+    {"path": "coding-readiness/validate_published_gate_truth.py", "expectedDisposition": "PUBLISH_AND_SEAL_ONLY_SUCCESSOR_CHAIN_AND_CURRENT_ENTRY_GENERATION"},
+    {"path": "coding-readiness/validate_sys_exact_business_start.py", "expectedDisposition": "VERIFY_SYS_EXACT_V2_LISTENING_V2_FINAL_COUNTS_AND_262_290"},
+    {"path": "coding-readiness/validate_sys_listening_stream_authority_successor.py", "expectedDisposition": "VERIFY_V2_ACTIVE_AND_V1_PREDECESSOR_WITHOUT_REVERSE_AUTHORITY"},
+    {"path": "g0/blueprint-central-snapshot-manifest.v1.json", "expectedDisposition": "REGENERATE_LAST_AFTER_ALL_STATIC_CURRENT_POINTERS_ARE_FINAL"},
+    {"path": "g0/validate_blueprint_artifact_lineage.py", "expectedDisposition": "EXPAND_VERSIONED_SUCCESSOR_CLOSED_SET_AND_PRESERVE_ALL_PREDECESSOR_BYTES"},
+    {"path": "g0/validate_code_checkpoint.py", "expectedDisposition": "UPDATE_ACTIVE_ENTRY_HEADS_ONLY_AND_KEEP_HISTORICAL_G2_AND_MIGRATION_BASELINE_CONSTANTS"},
+    {"path": "g0/validate_contract_publication_bootstrap.py", "expectedDisposition": "REQUIRE_695_PRIMARY_OWNERSHIP_AND_SUCCESSOR_PUBLICATION"},
+    {"path": "session-evidence/hrm/g3-modern-capability-contracts.v1.json", "expectedDisposition": "PRESERVE_AND_CREATE_HRM_V2_SUCCESSOR"},
+    {"path": "session-evidence/per/g3-modern-capability-contracts.v2.json", "expectedDisposition": "PRESERVE_AND_CREATE_PER_V3_SUCCESSOR"},
+    {"path": "session-evidence/sys/g3-modern-capability-contracts.v1.json", "expectedDisposition": "PRESERVE_AND_CREATE_SYS_V2_SUCCESSOR"},
+    {"path": "session-evidence/tim/g3-modern-capability-contracts.v1.json", "expectedDisposition": "PRESERVE_AND_CREATE_TIM_V2_SUCCESSOR"},
+    {"path": "session-prompts/00-common-session-contract.md", "expectedDisposition": "POINT_TO_CURRENT_SUCCESSORS_AND_KEEP_FOUR_COMMAND_SCOPED_PREFLIGHT"},
+    {"path": "session-prompts/01-cloudhr-hrm-session.md", "expectedDisposition": "POINT_TO_HRM_V2_AND_CURRENT_ENTRY_HEADS"},
+    {"path": "session-prompts/02-cloudhr-per-session.md", "expectedDisposition": "POINT_TO_PER_V3_AND_CURRENT_ENTRY_HEADS"},
+    {"path": "session-prompts/03-cloudhr-pay-session.md", "expectedDisposition": "POINT_TO_PAY_CONSUMER_V2_AND_CURRENT_ENTRY_HEADS"},
+    {"path": "session-prompts/04-cloudhr-tim-session.md", "expectedDisposition": "POINT_TO_TIM_V2_AND_CURRENT_ENTRY_HEADS"},
+    {"path": "session-prompts/05-cloudhr-sys-session.md", "expectedDisposition": "POINT_TO_SYS_V2_V3_SUCCESSORS_LISTENING_V2_AND_262_290"},
+    {"path": "session-prompts/06-hris-integration-control.md", "expectedDisposition": "POINT_TO_CURRENT_SUCCESSOR_PUBLICATION_AND_ENTRY_GENERATION"},
+    {"path": "session-prompts/07-g3-full-coding-execution-contract.md", "expectedDisposition": "POINT_TO_CURRENT_SUCCESSOR_PUBLICATION_AND_KEEP_GATE_SEPARATION"}
+  ],
+  "additionalControlAndVersionedSuccessorFiles": [
+    {"path": "coding-readiness/03-backend-service-architecture.md", "expectedDisposition": "UPDATE_CURRENT_LISTENING_AUTHORITY_TO_V2"},
+    {"path": "coding-readiness/generate_modern_causal_module_successor.py", "expectedDisposition": "MUST_NOT_OVERWRITE_G1_G2_SEALED_MODULE_CONTRACTS;EMIT_VERSIONED_SUCCESSORS"},
+    {"path": "coding-readiness/hris-information-architecture-register.csv", "expectedDisposition": "REGENERATE_FROM_FINAL_CANONICAL"},
+    {"path": "coding-readiness/generate_information_architecture_register.py", "expectedDisposition": "UPDATE_EXACT_OPERATION_BINDINGS_THEN_CHECK_BEFORE_WRITE"},
+    {"path": "coding-readiness/modern-capability-authorization-register.csv", "expectedDisposition": "UPDATE_48_CAPABILITY_ROWS_TO_COVER_EXACT_199_OPERATIONS"},
+    {"path": "coding-readiness/cross-module-canonical-schemas.v1.json", "expectedDisposition": "VERSION_IF_XCON_021_BYTES_CHANGE"},
+    {"path": "coding-readiness/cross-module-schema-binding-register.csv", "expectedDisposition": "CLOSE_XCON_021_PRODUCER_EVIDENCE"},
+    {"path": "coding-readiness/physical-owner-prefix-register.csv", "expectedDisposition": "KEEP_14_BINDINGS_AND_REBASE_EXPECTED_TOTALS_TO_294_296"},
+    {"path": "coding-readiness/sys-exact-business-successor-lineage.v1.json", "expectedDisposition": "PRESERVE_AND_CREATE_V2_LINEAGE_TO_SYS_EXACT_V2"},
+    {"path": "session-evidence/pay/g3-modern-capability-consumer-contracts.v1.json", "expectedDisposition": "PRESERVE_AND_CREATE_PAY_V2_CONSUMER_SUCCESSOR"},
+    {"path": "session-evidence/sys/g2-implementation-contract.v2.md", "expectedDisposition": "PRESERVE_AND_CREATE_V3_CURRENT_SUCCESSOR_IF_CURRENT_AUTHORITY_TEXT_CHANGES"},
+    {"path": "session-evidence/sys/validate_sys_readiness.v2.py", "expectedDisposition": "PRESERVE_AND_CREATE_V3_VALIDATOR_FOR_CURRENT_SUCCESSORS"},
+    {"path": "g0/validate_migration_successor.py", "expectedDisposition": "REQUIRE_CURRENT_G3_262_290_WHILE_PRESERVING_261_289_AS_TYPED_PREDECESSOR_ONLY"},
+    {"path": "g0/blueprint-artifact-successor-lineage.csv", "expectedDisposition": "APPEND_CLOSED_VERSIONED_LINEAGES_WITH_EXACT_HASHES"},
+    {"path": "g0/current-blueprint-artifact-pointer.csv", "expectedDisposition": "SWITCH_ONLY_AFTER_SUCCESSOR_BYTES_AND_VALIDATORS_PASS"},
+    {"path": "g0/integration-baseline-manifest.csv", "expectedDisposition": "UPDATE_TO_BACKEND_299336_AND_FRONTEND_CD0DCF_AFTER_MODULE_FAST_FORWARD"},
+    {"path": "g0/worktree-branch-register.csv", "expectedDisposition": "UPDATE_ALL_12_CONTROL_AND_MODULE_ROWS_TO_CURRENT_CLEAN_HEADS"},
+    {"path": "g0/code-entry-baseline-lineage.csv", "expectedDisposition": "REGENERATE_TO_BACKEND_COMMIT_COUNT17_AND_FRONTEND_COMMIT_COUNT19"},
+    {"path": "g0/build-matrix.csv", "expectedDisposition": "REBASE_ACTIVE_COMMAND_SUMMARIES_AND_BACKEND_CONTRACT_REVISION_TO_CURRENT_ENTRY_HEADS"},
+    {"path": "g0/target-command-evidence-backend.json", "expectedDisposition": "RECAPTURE_ALL_PASS_AT_BACKEND_299336"},
+    {"path": "g0/target-command-evidence-frontend.json", "expectedDisposition": "RECAPTURE_ALL_PASS_AT_FRONTEND_CD0DCF"},
+    {"path": "g0/session-environment-evidence.json", "expectedDisposition": "CREATE_FRESH_AFTER_ALL_12_WORKTREES_AND_18_SUPPORT_WORKTREES_VALIDATE"},
+    {"path": "g0/current-g3-gate-decision.json", "expectedDisposition": "MUTATE_ONLY_THROUGH_TRANSITION_G3_GATE_AFTER_ALL_REQUIRED_PASSES"},
+    {"path": "g0/g3-gate-transition-register.csv", "expectedDisposition": "APPEND_ONLY_THROUGH_TRANSITION_G3_GATE"}
+  ],
+  "immutablePreservationSet": [
+    "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+    "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+    "coding-readiness/modern-canonical-candidate.Qs4ngh/**",
+    "coding-readiness/modern-canonical-candidate.2eZCXW/**",
+    "coding-readiness/modern-canonical-candidate.q0mnJg/**",
+    "coding-readiness/modern-canonical-candidate.ZorhI5/**",
+    "coding-readiness/modern-causal-independent-oracle.v1.json",
+    "coding-readiness/modern-causal-independent-pg-fixtures.v1.json",
+    "coding-readiness/modern-causal-independent-review-inventory.v1.json",
+    "coding-readiness/modern-causal-independent-reviewed-finalization.v1.json",
+    "coding-readiness/reports/** historical reports",
+    "g0/checkpoint-register.csv",
+    "g0/migration-successor-register.v1.json predecessor fields",
+    "g0/pre-g3-common-foundation-migration-allocation.v1.json",
+    "session-evidence/hrm/g3-modern-capability-contracts.v1.json",
+    "session-evidence/per/g3-modern-capability-contracts.v1.json",
+    "session-evidence/per/g3-modern-capability-contracts.v2.json",
+    "session-evidence/pay/g3-modern-capability-consumer-contracts.v1.json",
+    "session-evidence/tim/g3-modern-capability-contracts.v1.json",
+    "session-evidence/sys/g3-modern-capability-contracts.v1.json"
+  ],
+  "findings": [
+    {"id": "P0-01", "severity": "P0", "state": "OPEN", "finding": "No distinct v4/131 canonical plus physical candidate has completed independent static, hostile, PostgreSQL 16/18 and atomic live promotion."},
+    {"id": "P0-02", "severity": "P0", "state": "OPEN", "finding": "The active downstream DAG has 88 blockers: 76 stale assertions, 8 predecessor-oracle reference files and 4 reproduced consumer failures."},
+    {"id": "P0-03", "severity": "P0", "state": "OPEN", "finding": "The active causal oracle, PG fixture, source-authority and final endorsement chain still resolves to predecessor artifacts."},
+    {"id": "P0-04", "severity": "P0", "state": "OPEN", "finding": "The module successor generator currently targets sealed HRM/TIM/SYS v1 and PER v2 paths; running write mode would destroy historical byte identity unless versioned output paths and lineage are added first."},
+    {"id": "P0-05", "severity": "P0", "state": "OPEN", "finding": "Fourteen G3 slice rows and SYS exact successor v1 still authorize MIG-SYS-PLATFORM-261-289 instead of the current 262-290 range."},
+    {"id": "P0-06", "severity": "P0", "state": "OPEN", "finding": "Physical ownership consumers are not closed at base163+modern131=294 plus PAY2=296."},
+    {"id": "P0-07", "severity": "P0", "state": "OPEN", "finding": "All ten module worktrees remain at the old clean entry seal even though both clean integration successors are one fast-forward commit ahead."},
+    {"id": "P0-08", "severity": "P0", "state": "OPEN", "finding": "Integration baseline, worktree register, code-entry lineage, build matrix and target evidence are stale; session-environment-evidence.json is absent."},
+    {"id": "P0-09", "severity": "P0", "state": "OPEN", "finding": "G3 is CLOSED_FAIL_SAFE with zero committed transition rows, so no module coding start is authorized."},
+    {"id": "P0-10", "severity": "P0", "state": "OPEN", "finding": "IA, authorization, cross-module, physical ownership, G3 slice and SYS exact validators reproduce fail-closed results."},
+    {"id": "P1-01", "severity": "P1", "state": "OPEN", "finding": "Operator documents and session prompts mix current authority wording with predecessor v1 paths and counts; they must distinguish current successor from immutable history."},
+    {"id": "P1-02", "severity": "P1", "state": "OPEN", "finding": "The dependency DAG scanner expected successor tuple is 199/133/66/25/155/115 and must be advanced to 199/133/66/27/157/131/18/1 before the final zero-blocker rerun."},
+    {"id": "P1-03", "severity": "P1", "state": "OPEN", "finding": "Historical reports and rejected candidates must remain byte-preserved and must never be relabeled as current PASS evidence."}
+  ],
+  "executionPlan": [
+    {
+      "order": 0,
+      "name": "FREEZE_AND_FAIL_CLOSED",
+      "actions": [
+        "Hold the hris-verification semaphore for each Control-owned mutation window.",
+        "Keep current-g3-gate-decision CLOSED_FAIL_SAFE.",
+        "Record exact preimages and never reuse, delete or promote rejected/incomplete candidate directories.",
+        "Do not mutate any file in immutablePreservationSet."
+      ],
+      "exitCriteria": ["Gate remains closed", "all mutation targets have exact preimage hashes", "historical bytes unchanged"]
+    },
+    {
+      "order": 1,
+      "name": "DISTINCT_CANONICAL_CANDIDATE_AND_INDEPENDENT_STATIC_GATE",
+      "actions": [
+        "Create a new unique candidate directory from the exact v4 source pins, never ZorhI5 or another prior candidate.",
+        "Emit manifest, Listening v2 authority, canonical five and causal successor in the prescribed order.",
+        "Require exact 199/133/66/27/157/131/18/1 counts, zero physical-closure mismatch, zero P0/P1, idempotent bytes and all hostile mutations rejected.",
+        "Require operation semantic, route taxonomy, owner-stream-boundary and global acceptance validators to pass against candidate bytes only."
+      ],
+      "exitCriteria": ["candidate complete", "independent static PASS", "hostile PASS", "no live byte changed"]
+    },
+    {
+      "order": 2,
+      "name": "DISTINCT_PHYSICAL_CANDIDATE_AND_POSTGRESQL_MATRIX",
+      "actions": [
+        "Invoke both physical tools with the explicit v4-131-successor profile.",
+        "Require 131 table specs, 27 handlers, exact owner/schema/migrator/ACL/RLS/temporal fixtures and zero dangling reference to the removed table.",
+        "Execute PostgreSQL 16 and 18 using immutable image IDs and require normalized result equality.",
+        "Seal a new independent physical candidate audit; the tool audit alone is not candidate acceptance."
+      ],
+      "exitCriteria": ["physical preflight PASS", "PG16 PASS", "PG18 PASS", "normalized equality PASS", "independent physical candidate audit PASS"]
+    },
+    {
+      "order": 3,
+      "name": "ATOMIC_CANONICAL_AUTHORITY_PHYSICAL_PROMOTION",
+      "actions": [
+        "Promote the seven canonical artifacts, Listening v2 authority and six physical artifacts as one Control-owned transaction.",
+        "Verify every promoted byte equals the accepted candidate and every payload seal is valid.",
+        "Preserve rejected candidates, predecessor policies, predecessor Listening v1 and all historical reports."
+      ],
+      "exitCriteria": ["live bytes equal accepted candidate", "no mixed generation", "live validator normal and hostile PASS"]
+    },
+    {
+      "order": 4,
+      "name": "VERSIONED_ORACLE_PG_ENDORSEMENT_SUCCESSOR",
+      "actions": [
+        "Create new immutable successor paths for review inventory, reviewed finalization, oracle, PG fixtures, design findings, source authority, PG evidence, final hostile review and Control intake.",
+        "Recommended collision-free allocation is v2 for current v1 artifacts, v3 for current PG evidence v2, and v2 for current final-review/control-intake v1 artifacts.",
+        "Update build, run, prepare and validate scripts plus full readiness and published truth to consume only the new chain.",
+        "Preserve every predecessor oracle and report byte; remove predecessor paths only from the active Gate dependency graph."
+      ],
+      "exitCriteria": ["successor oracle PASS", "successor PG16/18 PASS", "successor final endorsement P0=0 P1=0", "active predecessor oracle refs=0"]
+    },
+    {
+      "order": 5,
+      "name": "VERSIONED_MODULE_AND_SYS_DERIVATIVES",
+      "actions": [
+        "Harden generate_modern_causal_module_successor.py so write mode cannot overwrite sealed predecessors.",
+        "Create HRM v2, PER v3, TIM v2, SYS v2 and PAY consumer v2 contracts, plus a new event-successor-lineage version.",
+        "Create SYS exact successor/pin/lineage v2 and, if current G2 SYS implementation or readiness text changes, version them to v3 rather than editing v2.",
+        "Append exact predecessor-successor hashes to blueprint-artifact-successor-lineage.csv and move current pointers only after independent validation."
+      ],
+      "exitCriteria": ["sealed G1/G2 bytes unchanged", "all current module pointers resolve to final canonical generation", "SYS 262-290 current", "lineage validator PASS"]
+    },
+    {
+      "order": 6,
+      "name": "PRODUCT_AND_GATE_CONSUMER_CLOSURE",
+      "actions": [
+        "Regenerate/check IA and close all 22 modern node bindings and two unknown-operation references.",
+        "Close the 48 authorization rows over all exact 199 operations.",
+        "Close XCON-021 producer evidence and all module producer/consumer pins.",
+        "Update physical ownership to 163/131/294/2/296.",
+        "Regenerate 102 slice rows and 695 primary ownership rows; replace all 14 stale SYS migration references.",
+        "Update exact, causal, semantic, SYS, G3, full-readiness, bootstrap and publication validators to final successor paths and counts."
+      ],
+      "exitCriteria": ["IA PASS+self-test", "authorization PASS", "cross-module PASS+self-test", "physical owner PASS+self-test", "G3 slice PASS+self-test", "SYS exact PASS+self-test"]
+    },
+    {
+      "order": 7,
+      "name": "DEPENDENCY_DAG_ZERO_AND_DOCUMENTATION_CLOSURE",
+      "actions": [
+        "Advance the independent DAG scanner target to 199/133/66/27/157/131/18/1.",
+        "Resolve all 76 stale active assertions and all eight active predecessor-oracle references.",
+        "Update operator documents and eight session prompts while retaining explicit historical labels.",
+        "Rerun the DAG and require stale literal occurrences=0, active predecessor oracle ref files=0 and reproduced consumer failures=0."
+      ],
+      "exitCriteria": ["DAG blockers=0", "historical artifacts still classified preserve-bytes", "no current authority points to v1 predecessor chain"]
+    },
+    {
+      "order": 8,
+      "name": "MODULE_WORKTREE_FAST_FORWARD_AND_ENTRY_SEAL_REFRESH",
+      "actions": [
+        "Recheck all ten module worktrees are clean and old heads are ancestors of the accepted integration heads.",
+        "Fast-forward five backend branches to 299336eacb52de29a85366318a08151ea691eb5e and five frontend branches to cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca.",
+        "Update integration-baseline-manifest.csv and all 12 worktree rows with exact heads, trees, zero dirty counts and capture time.",
+        "Regenerate code-entry-baseline-lineage.csv and update active BACKEND_SHA/TREE and FRONTEND_SHA/TREE constants only.",
+        "Do not change HISTORICAL_G2_* constants, checkpoint-register.csv, MIGRATION_SUCCESSOR_BASELINE_SHA or predecessor migration receipts."
+      ],
+      "exitCriteria": ["12 registered worktrees clean", "all five pairs at exact current heads", "backend lineage commit count 17", "frontend lineage commit count 19", "historical checkpoint hash unchanged"]
+    },
+    {
+      "order": 9,
+      "name": "STATIC_LINEAGE_SNAPSHOT_AND_FRESH_RUNTIME_EVIDENCE",
+      "actions": [
+        "Complete all versioned blueprint artifact lineage and current pointers.",
+        "Regenerate blueprint-central-snapshot-manifest.v1.json only after every static central artifact is final.",
+        "Rebase build-matrix.csv active summaries and official backend contract revision.",
+        "Capture backend and frontend target command evidence and require all checks PASS at the new entry heads.",
+        "Capture fresh session-environment-evidence.json for 12 target worktrees and 18 support worktrees."
+      ],
+      "exitCriteria": ["artifact lineage PASS+self-test", "canonical snapshot check PASS", "target backend all_passed=true", "target frontend all_passed=true", "session environment PASS+self-test"]
+    },
+    {
+      "order": 10,
+      "name": "GLOBAL_STATIC_LIVE_AND_ATOMIC_GATE_OPEN",
+      "actions": [
+        "Run all static validators and self-tests under the global hris-verification semaphore.",
+        "Run unscoped validate_code_checkpoint.py --check-live and validate_full_coding_readiness.py --check-live without claiming G6.",
+        "Invoke transition_g3_gate.py --open as the only Gate mutation path.",
+        "Require gate_authority.py --check-open --compact to verify the COMMITTED_OPEN_AUTHORITATIVE_LIVE row and matching publication digests."
+      ],
+      "exitCriteria": ["global G0 live PASS", "global full live PASS", "published truth normal+self-test PASS", "OPEN transition committed", "authority check PASS"]
+    },
+    {
+      "order": 11,
+      "name": "FIVE_INDEPENDENT_SCOPED_PREFLIGHTS",
+      "actions": [
+        "For HRIS-HRM, HRIS-PER, HRIS-PAY, HRIS-TIM and HRIS-SYS, execute the four-command sequence recorded in fiveScopedPreflightDefinitions.",
+        "Do not combine scoped full readiness with --write-report.",
+        "Require each session to validate only the published global seal plus its own paired clean worktrees."
+      ],
+      "exitCriteria": ["HRIS-HRM PASS", "HRIS-PER PASS", "HRIS-PAY PASS", "HRIS-TIM PASS", "HRIS-SYS PASS", "moduleStartAuthorization=OPEN_G3_CODE_ONLY", "productionActivation=NOT_AUTHORIZED_G6"]
+    }
+  ],
+  "completionContract": {
+    "codingReadyOnlyWhen": [
+      "all P0 findings CLOSED",
+      "all P1 findings CLOSED or explicitly historical/non-active",
+      "DAG blockers=0",
+      "canonical and physical candidate evidence accepted and live bytes match",
+      "five independent scoped preflights PASS after authoritative Gate open"
+    ],
+    "notEquivalentTo": [
+      "G4 functional completion",
+      "G5A design acceptance",
+      "country pack activation",
+      "connector activation",
+      "tenant cutover",
+      "production approval G6"
+    ],
+    "currentConclusion": "THE_DOWNSTREAM_EXECUTION_PLAN_IS_COMPLETE_BUT_THE_FIVE_MODULE_CODE_GATE_IS_NOT_READY_OR_OPEN"
+  },
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "6496c84bd1a4d08a4b255fa9e980cc9b4080af9790a3666bfecd320489431ec3"
+}

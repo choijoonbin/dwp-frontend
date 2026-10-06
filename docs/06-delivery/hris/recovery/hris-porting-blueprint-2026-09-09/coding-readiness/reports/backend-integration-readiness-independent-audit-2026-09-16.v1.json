@@ -1,0 +1,2482 @@
+{
+  "authorCloseout": {
+    "byteLength": 17841,
+    "declaredStatus": "BACKEND_PASS_EXTERNAL_CANONICAL_CONSUMER_PENDING",
+    "independentConsistency": {
+      "controlArtifactPinsMatch": true,
+      "migrationSetMatches": true,
+      "moduleTotalsMatch": true,
+      "pgFilePinsMatch": true,
+      "quarantinePinMatches": true,
+      "sourceMatches": true,
+      "testTotalsMatch": true,
+      "moduleNameNormalization": {
+        "dwp-audit": "dwp-audit-server"
+      }
+    },
+    "path": "coding-readiness/reports/backend-integration-readiness-closeout-2026-09-16.v1.json",
+    "sha256": "fadee86b3e3ccd3c86c3fafdfe3da0aa5e96ff2557fa5f13a99850aa15802ad3"
+  },
+  "backendBlockers": [],
+  "boundedControlCommands": {
+    "captureRunnerHostileSelfTest": {
+      "command": "python3 g0/capture_pre_g3_common_foundation_postgres_evidence.py --self-test",
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"failed\":[],\"passed\":44,\"schema\":\"dwp.hris.pre-g3-postgres-capture-self-test.v1\",\"status\":\"PASS\",\"total\":44}"
+    },
+    "migrationSuccessorDeterministicCheck": {
+      "command": "python3 g0/generate_migration_successor_register.py --check --compact",
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"action\":\"CHECKED\",\"allocationCount\":6,\"preG3Lineage\":\"dwp.hris.migration-successor.pre-g3-foundation-lineage.v1\",\"schema\":\"dwp.hris.migration-successor-generation.v1\",\"sourceCommit\":\"299336eacb52de29a85366318a08151ea691eb5e\",\"sourceTree\":\"d5277fabaa2315ddc28a4220fa8075875be28920\",\"status\":\"PASS\"}"
+    },
+    "migrationSuccessorHostileSelfTest": {
+      "command": "python3 g0/validate_migration_successor.py --check-live --self-test --compact",
+      "exitCode": 1,
+      "stderr": "",
+      "stdout": "{\"schema\":\"dwp.hris.migration-successor-c1.validation.v1\",\"status\":\"FAIL\",\"gate\":\"CLOSED_FAIL_SAFE\",\"moduleStartAuthorization\":\"NONE\",\"sourceCommit\":\"299336eacb52de29a85366318a08151ea691eb5e\",\"sourceTree\":\"d5277fabaa2315ddc28a4220fa8075875be28920\",\"allocationCount\":6,\"streamCount\":8,\"exactRenameCount\":11,\"peopleFoundationCount\":4,\"selfTest\":{\"executed\":true,\"caseCount\":25,\"rejectedCount\":25,\"cases\":{\"duplicate-allocation\":\"REJECTED\",\"overlap\":\"REJECTED\",\"stale-high-water\":\"REJECTED\",\"private-to-public-leakage\":\"REJECTED\",\"lineage-byte-mutation\":\"REJECTED\",\"lineage-path-mutation\":\"REJECTED\",\"stale-source-pin\":\"REJECTED\",\"gate-open-bypass\":\"REJECTED\",\"pre-g3-lineage-missing\":\"REJECTED\",\"pre-g3-reciprocal-pin\":\"REJECTED\",\"pre-g3-review-pin-drift\":\"REJECTED\",\"g2-allocation-reactivated\":\"REJECTED\",\"sys-capacity-drift\":\"REJECTED\",\"platform-foundation-high-water-rollback\":\"REJECTED\",\"exact-six-foundation-count-drift\":\"REJECTED\",\"notification-foundation-high-water-rollback\":\"REJECTED\",\"notification-v31-protection-removed\":\"REJECTED\",\"external-identity-claim\":\"REJECTED\",\"g6-authorization-claim\":\"REJECTED\",\"notification-policy-row-cannot-substitute-exact-allocation\":\"REJECTED\",\"notification-v31-hole-cannot-be-allocated\":\"REJECTED\",\"notification-exact-owner-cannot-be-policy-only\":\"REJECTED\",\"ownership-range-drift\":\"REJECTED\",\"g3-file-allocation-range-drift\":\"REJECTED\",\"g3-owner-reference-drift\":\"REJECTED\"}},\"errors\":[\"coding-readiness/g3-slice-code-go-register.csv still authorizes stale id MIG-SYS-PLATFORM-261-289\"]}"
+    },
+    "migrationSuccessorNormalLiveValidation": {
+      "command": "python3 g0/validate_migration_successor.py --check-live --compact",
+      "exitCode": 1,
+      "stderr": "",
+      "stdout": "{\"schema\":\"dwp.hris.migration-successor-c1.validation.v1\",\"status\":\"FAIL\",\"gate\":\"CLOSED_FAIL_SAFE\",\"moduleStartAuthorization\":\"NONE\",\"sourceCommit\":\"299336eacb52de29a85366318a08151ea691eb5e\",\"sourceTree\":\"d5277fabaa2315ddc28a4220fa8075875be28920\",\"allocationCount\":6,\"streamCount\":8,\"exactRenameCount\":11,\"peopleFoundationCount\":4,\"selfTest\":{\"executed\":false,\"caseCount\":0,\"rejectedCount\":0,\"cases\":{}},\"errors\":[\"coding-readiness/g3-slice-code-go-register.csv still authorizes stale id MIG-SYS-PLATFORM-261-289\"]}"
+    },
+    "receiptMaterializerHostileSelfTest": {
+      "command": "python3 g0/materialize_pre_g3_common_foundation_migration_receipts.py --self-test",
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"failed\":[],\"passed\":9,\"status\":\"PASS\",\"total\":9}"
+    },
+    "receiptValidatorHostileSelfTest": {
+      "command": "python3 g0/validate_pre_g3_common_foundation_migrations.py --self-test --compact",
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"errors\":[],\"migrationFileCount\":6,\"postgresEvidenceCount\":2,\"schema\":\"dwp.hris.pre-g3-common-foundation-migration-validation.v1\",\"scope\":\"PRE_G3_TECHNICAL_ONLY_NO_G6_NO_EXTERNAL_IDENTITY\",\"selfTests\":{\"passed\":75,\"total\":75},\"status\":\"PASS\"}"
+    }
+  },
+  "changedPaths": {
+    "count": 137,
+    "entries": [
+      {
+        "paths": [
+          "build.gradle"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "contracts/hris/canonical/hris-contract-codegen-manifest.v1.json"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/java/com/dwp/services/approval/config/ApprovalDatabaseMigrationConfiguration.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalCommandRepository.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalQueryRepository.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalService.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalSystemSlaNativeSource.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalTaskQueryPlanner.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/java/com/dwp/services/approval/systemslaauthority/SystemSlaSourceProofIssuer.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/resources/db/migration/V36__close_remaining_approval_trigger_execution_boundaries.sql"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/resources/db/migration/V37__close_approval_seed_execution_boundary.sql"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/main/resources/db/migration/V38__bind_retention_aware_trigger_entrypoints_to_owner.sql"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/attachment/ApprovalAttachmentClamAvInteropTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/attachment/ApprovalAttachmentClamAvTest.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/config/ApprovalTriggerExecutionBoundaryPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalQueryRepositoryTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalServiceTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowPinnedDraftRuntimePostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/informationreplay/InformationReceiptDefaultBootPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/policyimpactsource/PolicyImpactSourceDefaultBootPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalAttachmentProducerWiringPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalDocumentV8PepRegistryTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalExtensionV9PepRegistryTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalFormReferenceNormalizerPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalHighRiskCommandPostgresIntegrationTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalManagementScopeArchitecturePostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalPilotAcceptanceMatrixTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease9FilterTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease9JsonPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRetentionDefaultBootPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/signatures/ApprovalSignatureDefaultBootPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/signatures/ApprovalSignatureHighRiskPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalApplicationContextPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalAttachmentOpenApiPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalFormLifecycleOpenApiPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalFormLifecycleUnknownFieldPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalFormPayloadNormalizationWiringPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalFormUserRuntimeWiringPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalFormVersionPolicyWiringPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/support/ApprovalIsolatedMigrationControlContextInitializer.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/systemslaauthority/SystemSlaDefaultBootPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/systemslaauthority/SystemSlaSourceProofIssuerTimeBoundaryTest.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/workflowplanning/WorkflowPlanningDefaultBootPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/java/com/dwp/services/approval/workflowplanning/WorkflowPlanningSelectionDefaultBootPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-approval-server/src/test/resources/db/migration/beforeClean__drop_approval_retention_internal.sql"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-auth-server/build.gradle"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-auth-server/src/test/java/com/dwp/services/auth/systemslaauthority/SystemSlaNativeInteropPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/AuxiliaryRoleAclGuard.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/AuxiliaryRoleOwnershipGuard.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptedPredecessorControllerVerifier.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionControlMetadataGuard.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionEvidence.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/MigrationControlRunReceiptGuard.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/OwnerTriggerExecutionBoundaryGuard.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/ProtectedSchemaObjectInventory.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/RuntimeAuxiliaryAuthorityGuard.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/RuntimeAuxiliaryAuthorityPolicySupport.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/RuntimeLoginRoleGuard.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/RuntimeMigrationDatabaseGuard.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/RuntimeMigrationDatabaseTypes.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/main/java/com/dwp/core/database/ServiceRoleDdlBoundaryGuard.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/test/java/com/dwp/core/database/AuxiliaryRoleAclGuardPostgresTest.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-core/src/test/java/com/dwp/core/database/MigrationAdoptionGuardPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/test/java/com/dwp/core/database/OwnerTriggerExecutionBoundaryGuardPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-core/src/test/java/com/dwp/core/database/RuntimeMigrationDatabaseGuardPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GatewayProductSurfaceOpenApiContractTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/README.md"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/build.gradle"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlContracts.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPlan.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ControlPreflight.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseConnectionFence.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseControl.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseCreateMigration.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseCreateMigrationControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/DatabaseCreateMigrationSourceControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/DomainPrivilegeControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/FlywayControl.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ManagedDatabaseRole.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ManagedDatabaseRoleControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ManagedDatabaseRoleOwnershipControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/PlatformBridgeSchemaControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/PlatformInventoryBridgeControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ProtectedObjectOwnershipControl.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ProtectedSchemaAclControl.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ServiceConnectionControl.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/ServiceRoleDdlBoundaryControl.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/SessionReplicationRoleControl.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/main/java/com/dwp/migration/control/SystemCatalogAuthorityControl.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1PostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/ControlMetadataInspectionCompositionV1PostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/ManagedDatabaseRoleControlPostgresTest.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/ManagedDatabaseRoleGrantorCompatibilityPostgresTest.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlAdoptionActiveFenceV1PostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlMainTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformInventoryBridgeControlPostgresTest.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformMigrationObservationSidecar.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/testFixtures/java/com/dwp/migration/testing/ControlFixtureProvisioning.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-migration-control/src/testFixtures/java/com/dwp/migration/testing/IsolatedMigrationControlDatabase.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-notification-server/src/main/resources/db/migration/V32__close_approval_sla_delivery_trigger_execution_boundary.sql"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationMigrationObservationSidecar.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationTriggerExecutionBoundaryPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1PostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/NativeSelfPersonQueryReaderV1PostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon021ApprovedCompensationPlanSnapshotPublishedV2.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon021CompensationPlanApprovedV1.java"
+        ],
+        "status": "D"
+      },
+      {
+        "paths": [
+          "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Xcon021CompensationSnapshotPublicationV2Test.java"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/main/java/com/dwp/services/platform/config/PlatformDatabaseMigrationConfiguration.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/WorkplaceExperienceFacilitiesRetention.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/main/resources/db/migration/V254_1__bridge_platform_trigger_inventory_before_v255.sql"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/main/resources/db/migration/V261__close_platform_trigger_and_facility_retention_boundaries.sql"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/calendar/CalendarP0GovernancePostgresIntegrationTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/config/AuditRetentionAuthorityPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/config/PartitionMaintenanceAuthorityPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/config/PlatformDatabaseMigrationConfigurationTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/workplace/WorkplaceExperienceFacilitiesRetentionPostgresTest.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-time-server/build.gradle"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-time-server/src/test/java/com/dwp/services/time/absence/contracts/v4/AbsOwnerResponseV4Test.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-time-server/src/test/java/com/dwp/services/time/absence/ports/AbsOwnerSnapshotRefetchPortV4Test.java"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "dwp-time-server/src/test/resources/com/dwp/services/time/absence/contracts/v4/tim-cross-context-boundary-successor.v4.fixtures.json.gz.b64"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "dwp-time-server/src/test/resources/com/dwp/services/time/absence/contracts/v4/tim-cross-context-boundary-successor.v4.schemas.json.gz.b64"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "scripts/check-approval-projection-schemas.py"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "scripts/check-service-boundaries.py"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "scripts/devctl.py"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "scripts/generate-hris-contracts.py"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "scripts/tests/test_approval_projection_schemas.py"
+        ],
+        "status": "A"
+      },
+      {
+        "paths": [
+          "scripts/tests/test_devctl.py"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "scripts/tests/test_generate_hris_contracts.py"
+        ],
+        "status": "M"
+      },
+      {
+        "paths": [
+          "scripts/tests/test_service_boundaries.py"
+        ],
+        "status": "M"
+      }
+    ],
+    "nameStatusManifestSha256": "7be7958302294fcd5aed1b03e6e626bccfaf4d855cf100b054c17099eceda7e8"
+  },
+  "checks": {
+    "allocationReviewOneWayLineage": true,
+    "b260Absent": true,
+    "changedMandatoryTestsPresentAndPassing": true,
+    "closeoutClaimsMatchIndependentEvidence": true,
+    "commitTreeCleanAncestry": true,
+    "exactChangedPathCount": true,
+    "exactSixMigrationAdds": true,
+    "fullXmlTotals": true,
+    "immutablePredecessorsEqual": true,
+    "migrationPinsMatchAllocation": true,
+    "notificationV31Absent": true,
+    "oldMigrationSqlModifiedCountZero": true,
+    "pgIntakeUnchangedByBoundedRerun": true,
+    "postgresReceipts": true,
+    "quarantineRetention": true,
+    "runnerMaterializerValidatorAndSuccessorSelftests": true,
+    "skipSetExact": true,
+    "successorOwnSeal": true
+  },
+  "conclusion": "No backend failure remains; the single current fail-closed condition belongs to the shared canonical SYS G3 slice consumer.",
+  "externalDownstreamBlockers": [
+    {
+      "backendDefect": false,
+      "backendImpact": "NONE",
+      "gateImpact": "MIGRATION_SUCCESSOR_NORMAL_VALIDATION_FAILS_CLOSED",
+      "id": "EXTERNAL-CANONICAL-CONSUMER-SYS-PLATFORM-RANGE",
+      "observed": "MIG-SYS-PLATFORM-261-289",
+      "owner": "CANONICAL_SUCCESSOR_ATOMIC_REFRESH",
+      "path": "coding-readiness/g3-slice-code-go-register.csv",
+      "required": "MIG-SYS-PLATFORM-262-290",
+      "validatorError": "coding-readiness/g3-slice-code-go-register.csv still authorizes stale id MIG-SYS-PLATFORM-261-289"
+    }
+  ],
+  "independenceBoundary": {
+    "authorCloseoutUsedAsClaimOnly": true,
+    "backendModified": false,
+    "boundedFullModuleRerunPerformed": true,
+    "boundedRerunCommand": "./gradlew :dwp-migration-control:test :dwp-notification-server:test --rerun-tasks --no-daemon --max-workers=1",
+    "boundedRerunResult": {
+      "actionableTasks": 22,
+      "duration": "4m53s",
+      "executedTasks": 22,
+      "status": "PASS"
+    },
+    "hourLongRootSuiteRerun": false,
+    "mainDirtyCheckoutsTouched": false,
+    "receiptsRegistersHistoricalArtifactsModified": false
+  },
+  "migrationClosure": {
+    "b260Artifacts": [],
+    "exactAddCount": 6,
+    "exactSix": [
+      {
+        "byteLength": 6965,
+        "fileMode": "100644",
+        "gitBlobOid": "56b4332a05e1731757ec364be26dc651690f9696",
+        "path": "dwp-approval-server/src/main/resources/db/migration/V36__close_remaining_approval_trigger_execution_boundaries.sql",
+        "sha256": "0224d0666ded2fc79c1771c532a653ad3717aa08a1440419d7a22a6199e4add9",
+        "type": "blob"
+      },
+      {
+        "byteLength": 540,
+        "fileMode": "100644",
+        "gitBlobOid": "09de859442b50afe22cb3caa2a424c90817fe480",
+        "path": "dwp-approval-server/src/main/resources/db/migration/V37__close_approval_seed_execution_boundary.sql",
+        "sha256": "c3e631680b4560e887bb1d7ebf20fb80d60ddbbb0c353b86095ad84e6e861325",
+        "type": "blob"
+      },
+      {
+        "byteLength": 2544,
+        "fileMode": "100644",
+        "gitBlobOid": "a90028e65872a54a18aeb9a0c64374450ee59fe5",
+        "path": "dwp-approval-server/src/main/resources/db/migration/V38__bind_retention_aware_trigger_entrypoints_to_owner.sql",
+        "sha256": "9c676f86e53b885308e88766d91ec453122f0033f1077c46a33d8231084c58f9",
+        "type": "blob"
+      },
+      {
+        "byteLength": 8749,
+        "fileMode": "100644",
+        "gitBlobOid": "9b10b03e6e7f9181bb558f5b554fe1dcd22bc43c",
+        "path": "dwp-platform-server/src/main/resources/db/migration/V254_1__bridge_platform_trigger_inventory_before_v255.sql",
+        "sha256": "ee9d299d9f394dc54c7dda14fa0189442f3bb1ebd125d2f129f7af9983e5e7a0",
+        "type": "blob"
+      },
+      {
+        "byteLength": 29348,
+        "fileMode": "100644",
+        "gitBlobOid": "bee08fe4935794a9db2a55440ce988eec73c4a2e",
+        "path": "dwp-platform-server/src/main/resources/db/migration/V261__close_platform_trigger_and_facility_retention_boundaries.sql",
+        "sha256": "4b0a973b2b649f1ae0540b702bb88805dc6d38c321d3664a6ef098be7353f353",
+        "type": "blob"
+      },
+      {
+        "byteLength": 7017,
+        "fileMode": "100644",
+        "gitBlobOid": "37ce8f4d00bbae7bad384d80035c6ba9d5c761fd",
+        "path": "dwp-notification-server/src/main/resources/db/migration/V32__close_approval_sla_delivery_trigger_execution_boundary.sql",
+        "sha256": "b5a90a0e822b3f161dc85a4adcacc7c1032afe93897bed8c626762f5abde75ba",
+        "type": "blob"
+      }
+    ],
+    "immutablePredecessorSets": {
+      "approval-main": {
+        "fileCount": 35,
+        "headByteModeBlobEquality": true,
+        "manifestSha256": "4ac9d2323460ac2e1b929f026e0fc891bab075ed3adcc21441a3e55708215488"
+      },
+      "notification-main": {
+        "fileCount": 30,
+        "headByteModeBlobEquality": true,
+        "manifestSha256": "1fa482133c603244a0130ce8658f00734b7c5fac87eab5e63fc9c3f50333f39d"
+      },
+      "platform-main": {
+        "fileCount": 211,
+        "headByteModeBlobEquality": true,
+        "manifestSha256": "d0d063e979e9c02747d887fbff30d813af5018b53968ac757a4bdda48137d67e"
+      }
+    },
+    "notificationV31Artifacts": [],
+    "oldMigrationSqlModifiedOrDeleted": []
+  },
+  "migrationSuccessor": {
+    "artifact": {
+      "byteLength": 15580,
+      "calculatedSeal": "436476b62fbcb9a627942af375d47b65a868e0ec0117e14f9f1ff0be62f33bfe",
+      "declaredSeal": "436476b62fbcb9a627942af375d47b65a868e0ec0117e14f9f1ff0be62f33bfe",
+      "fileMode": "0600",
+      "path": "g0/migration-successor-register.v1.json",
+      "regularFile": true,
+      "sealMatch": true,
+      "sha256": "f0fa1caf02de0634d812a4c18c7fe8e8095fdea5e977251b976371af3d5e3106",
+      "symlink": false
+    },
+    "deterministicCheck": {
+      "command": "python3 g0/generate_migration_successor_register.py --check --compact",
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"action\":\"CHECKED\",\"allocationCount\":6,\"preG3Lineage\":\"dwp.hris.migration-successor.pre-g3-foundation-lineage.v1\",\"schema\":\"dwp.hris.migration-successor-generation.v1\",\"sourceCommit\":\"299336eacb52de29a85366318a08151ea691eb5e\",\"sourceTree\":\"d5277fabaa2315ddc28a4220fa8075875be28920\",\"status\":\"PASS\"}"
+    },
+    "expectedExternalFailureOnly": true,
+    "hostileCases": {
+      "caseCount": 25,
+      "cases": {
+        "duplicate-allocation": "REJECTED",
+        "exact-six-foundation-count-drift": "REJECTED",
+        "external-identity-claim": "REJECTED",
+        "g2-allocation-reactivated": "REJECTED",
+        "g3-file-allocation-range-drift": "REJECTED",
+        "g3-owner-reference-drift": "REJECTED",
+        "g6-authorization-claim": "REJECTED",
+        "gate-open-bypass": "REJECTED",
+        "lineage-byte-mutation": "REJECTED",
+        "lineage-path-mutation": "REJECTED",
+        "notification-exact-owner-cannot-be-policy-only": "REJECTED",
+        "notification-foundation-high-water-rollback": "REJECTED",
+        "notification-policy-row-cannot-substitute-exact-allocation": "REJECTED",
+        "notification-v31-hole-cannot-be-allocated": "REJECTED",
+        "notification-v31-protection-removed": "REJECTED",
+        "overlap": "REJECTED",
+        "ownership-range-drift": "REJECTED",
+        "platform-foundation-high-water-rollback": "REJECTED",
+        "pre-g3-lineage-missing": "REJECTED",
+        "pre-g3-reciprocal-pin": "REJECTED",
+        "pre-g3-review-pin-drift": "REJECTED",
+        "private-to-public-leakage": "REJECTED",
+        "stale-high-water": "REJECTED",
+        "stale-source-pin": "REJECTED",
+        "sys-capacity-drift": "REJECTED"
+      },
+      "executed": true,
+      "rejectedCount": 25
+    },
+    "hostileSelfTest": {
+      "command": "python3 g0/validate_migration_successor.py --check-live --self-test --compact",
+      "exitCode": 1,
+      "stderr": "",
+      "stdout": "{\"schema\":\"dwp.hris.migration-successor-c1.validation.v1\",\"status\":\"FAIL\",\"gate\":\"CLOSED_FAIL_SAFE\",\"moduleStartAuthorization\":\"NONE\",\"sourceCommit\":\"299336eacb52de29a85366318a08151ea691eb5e\",\"sourceTree\":\"d5277fabaa2315ddc28a4220fa8075875be28920\",\"allocationCount\":6,\"streamCount\":8,\"exactRenameCount\":11,\"peopleFoundationCount\":4,\"selfTest\":{\"executed\":true,\"caseCount\":25,\"rejectedCount\":25,\"cases\":{\"duplicate-allocation\":\"REJECTED\",\"overlap\":\"REJECTED\",\"stale-high-water\":\"REJECTED\",\"private-to-public-leakage\":\"REJECTED\",\"lineage-byte-mutation\":\"REJECTED\",\"lineage-path-mutation\":\"REJECTED\",\"stale-source-pin\":\"REJECTED\",\"gate-open-bypass\":\"REJECTED\",\"pre-g3-lineage-missing\":\"REJECTED\",\"pre-g3-reciprocal-pin\":\"REJECTED\",\"pre-g3-review-pin-drift\":\"REJECTED\",\"g2-allocation-reactivated\":\"REJECTED\",\"sys-capacity-drift\":\"REJECTED\",\"platform-foundation-high-water-rollback\":\"REJECTED\",\"exact-six-foundation-count-drift\":\"REJECTED\",\"notification-foundation-high-water-rollback\":\"REJECTED\",\"notification-v31-protection-removed\":\"REJECTED\",\"external-identity-claim\":\"REJECTED\",\"g6-authorization-claim\":\"REJECTED\",\"notification-policy-row-cannot-substitute-exact-allocation\":\"REJECTED\",\"notification-v31-hole-cannot-be-allocated\":\"REJECTED\",\"notification-exact-owner-cannot-be-policy-only\":\"REJECTED\",\"ownership-range-drift\":\"REJECTED\",\"g3-file-allocation-range-drift\":\"REJECTED\",\"g3-owner-reference-drift\":\"REJECTED\"}},\"errors\":[\"coding-readiness/g3-slice-code-go-register.csv still authorizes stale id MIG-SYS-PLATFORM-261-289\"]}"
+    },
+    "normalLiveValidation": {
+      "command": "python3 g0/validate_migration_successor.py --check-live --compact",
+      "exitCode": 1,
+      "stderr": "",
+      "stdout": "{\"schema\":\"dwp.hris.migration-successor-c1.validation.v1\",\"status\":\"FAIL\",\"gate\":\"CLOSED_FAIL_SAFE\",\"moduleStartAuthorization\":\"NONE\",\"sourceCommit\":\"299336eacb52de29a85366318a08151ea691eb5e\",\"sourceTree\":\"d5277fabaa2315ddc28a4220fa8075875be28920\",\"allocationCount\":6,\"streamCount\":8,\"exactRenameCount\":11,\"peopleFoundationCount\":4,\"selfTest\":{\"executed\":false,\"caseCount\":0,\"rejectedCount\":0,\"cases\":{}},\"errors\":[\"coding-readiness/g3-slice-code-go-register.csv still authorizes stale id MIG-SYS-PLATFORM-261-289\"]}"
+    }
+  },
+  "postgresEvidence": {
+    "crossImageEquality": {
+      "notificationCaseSetsEqual": true,
+      "notificationObservationsEqual": true,
+      "platformCaseSetsEqual": true,
+      "platformObservationsEqual": true,
+      "resolvedImageDigestsDistinct": true
+    },
+    "images": [
+      {
+        "allSubordinateRefsMatch": true,
+        "imageBinding": {
+          "commandEnvironmentMatches": true,
+          "notificationObservationImageMatches": true,
+          "platformObservationImageMatches": true,
+          "receiptImageMatches": true,
+          "requestedMatches": true,
+          "resolvedDigestPinned": true
+        },
+        "notificationJunit": {
+          "byteLength": 119448,
+          "caseIdsMatchReceipt": true,
+          "errors": 0,
+          "failures": 0,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification.junit.xml",
+          "regularFile": true,
+          "sha256": "a5dbb405de03fd4c052a4d678cf3058a997dc4681b674e58d82f5bbf3df360c5",
+          "skipped": 0,
+          "suiteName": "com.dwp.services.notification.migration.NotificationTriggerExecutionBoundaryPostgresTest",
+          "symlink": false,
+          "tests": 5
+        },
+        "notificationObservation": {
+          "byteLength": 722,
+          "fileMode": "0600",
+          "matchesReceiptPayload": true,
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification-observations.v1.json",
+          "payload": {
+            "directRuntimeExecuteGrantCount": 0,
+            "failedV32HistoryCount": 0,
+            "failureRollbackFunctionStateUnchanged": true,
+            "fixedSearchPathFunctionCount": 2,
+            "securityDefinerFunctionCount": 2,
+            "successfulV32HistoryCount": 1,
+            "triggerBoundaryTupleCount": 3,
+            "triggerBoundaryTupleSha256": "f00383323e062fdb4f1c92f4ecadf8e6e33cbf5a0290b5fd7cb3054449e181ef",
+            "triggerFunctionCount": 2,
+            "verifiedScenarioIds": [
+              "runtime-dml-through-hardened-triggers",
+              "runtime-transaction-audit-idempotency",
+              "v32-failure-repair-retry",
+              "v32-fresh-trigger-boundary",
+              "v32-upgrade-v30-trigger-boundary"
+            ]
+          },
+          "regularFile": true,
+          "sha256": "c3757d3e629c8b9aca9894a052f70ba901022425b54213b925824f9bd1a176be",
+          "symlink": false
+        },
+        "platformJunit": {
+          "byteLength": 906583,
+          "caseIdsMatchReceipt": true,
+          "errors": 0,
+          "failures": 0,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.junit.xml",
+          "regularFile": true,
+          "sha256": "397f384b49aed039bf83f8a564dbf1665f0dfc98c8eeb87ddaeb8ecd688851cb",
+          "skipped": 0,
+          "suiteName": "com.dwp.migration.control.PlatformInventoryBridgeControlPostgresTest",
+          "symlink": false,
+          "tests": 21
+        },
+        "platformObservation": {
+          "byteLength": 1117,
+          "fileMode": "0600",
+          "matchesReceiptPayload": true,
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.observations.v1.json",
+          "payload": {
+            "bridgedMappingCount": 8,
+            "bridgedMappingSha256": "342b41d9d6d39450b750bbdf63415fa98bb28e133d0138fa435bd82221c0d2af",
+            "finalBridgeSchemaCount": 0,
+            "migrationPrincipalDatabaseCreateAtEntry": false,
+            "migrationPrincipalDatabaseCreateAtExit": false,
+            "triggerFunctionCount": 50,
+            "triggerMappingCount": 68,
+            "triggerMappingSha256": "cade7c2964b47a298bedc9c9d26f5185e5418ec0736db3b0d6ba5a5e7bc2bd8d",
+            "verifiedScenarioIds": [
+              "bridge-failure-retry",
+              "bridge-partial-state-retry",
+              "control-254",
+              "control-260",
+              "control-fresh",
+              "fresh-ordered",
+              "historyless-nonempty-bridge-schema",
+              "historyless-nonempty-relation",
+              "historyless-nonempty-routine",
+              "historyless-nonempty-schema",
+              "historyless-nonempty-sequence",
+              "historyless-nonempty-trigger",
+              "historyless-nonempty-type",
+              "immutable-predecessors",
+              "source-digest-drift",
+              "unexpected-ignored",
+              "upgrade-191",
+              "upgrade-254",
+              "upgrade-255",
+              "upgrade-260",
+              "v261-failure-retry"
+            ]
+          },
+          "regularFile": true,
+          "sha256": "d5683be1148700e4cbfeeae00f16e263c35f681bbc3bf1058723dc9ce1769420",
+          "symlink": false
+        },
+        "postgresImage": "postgres:16-alpine",
+        "receipt": {
+          "byteLength": 8248,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.v1.json",
+          "regularFile": true,
+          "sha256": "063224138449aabea0512731a324180b3199e661225e7c6dc5d59a7109ce0303",
+          "symlink": false
+        },
+        "receiptOwnSeal": {
+          "calculated": "fdbe7a594fced98f77aa6061668cbdc90de5b6fca0e59bcbf3b720d61b3dfe84",
+          "declared": "fdbe7a594fced98f77aa6061668cbdc90de5b6fca0e59bcbf3b720d61b3dfe84",
+          "match": true
+        },
+        "resolvedRepositoryDigest": "postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685",
+        "source": {
+          "commit": "299336eacb52de29a85366318a08151ea691eb5e",
+          "repository": "DWP_BACKEND",
+          "tree": "d5277fabaa2315ddc28a4220fa8075875be28920"
+        },
+        "sourcePins": [
+          {
+            "actual": {
+              "byteLength": 41549,
+              "fileMode": "100644",
+              "gitBlobOid": "a4fc023b5257684d0232b1da116a29abf21868e5",
+              "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformInventoryBridgeControlPostgresTest.java",
+              "sha256": "e4e1611acc6b606b67826fa4f09477f2f4fedff57e5d891db5acb38de650e905"
+            },
+            "declared": {
+              "byteLength": 41549,
+              "fileMode": "100644",
+              "gitBlobOid": "a4fc023b5257684d0232b1da116a29abf21868e5",
+              "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformInventoryBridgeControlPostgresTest.java",
+              "sha256": "e4e1611acc6b606b67826fa4f09477f2f4fedff57e5d891db5acb38de650e905"
+            },
+            "kind": "testSource",
+            "match": true
+          },
+          {
+            "actual": {
+              "byteLength": 29325,
+              "fileMode": "100644",
+              "gitBlobOid": "7c853fef642db1d729a0129cd3558f7dd04b3fc6",
+              "path": "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationTriggerExecutionBoundaryPostgresTest.java",
+              "sha256": "f0ed0e90f95fffede510e5a1f849a124166e1d1d9b635b04481341819d405e74"
+            },
+            "declared": {
+              "byteLength": 29325,
+              "fileMode": "100644",
+              "gitBlobOid": "7c853fef642db1d729a0129cd3558f7dd04b3fc6",
+              "path": "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationTriggerExecutionBoundaryPostgresTest.java",
+              "sha256": "f0ed0e90f95fffede510e5a1f849a124166e1d1d9b635b04481341819d405e74"
+            },
+            "kind": "notificationTestSource",
+            "match": true
+          }
+        ]
+      },
+      {
+        "allSubordinateRefsMatch": true,
+        "imageBinding": {
+          "commandEnvironmentMatches": true,
+          "notificationObservationImageMatches": true,
+          "platformObservationImageMatches": true,
+          "receiptImageMatches": true,
+          "requestedMatches": true,
+          "resolvedDigestPinned": true
+        },
+        "notificationJunit": {
+          "byteLength": 119438,
+          "caseIdsMatchReceipt": true,
+          "errors": 0,
+          "failures": 0,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.notification.junit.xml",
+          "regularFile": true,
+          "sha256": "d8ae3aa4d4a68a4ca1d083ca8e987a7f19173d60f4e4bfa699675f7a1036dcf1",
+          "skipped": 0,
+          "suiteName": "com.dwp.services.notification.migration.NotificationTriggerExecutionBoundaryPostgresTest",
+          "symlink": false,
+          "tests": 5
+        },
+        "notificationObservation": {
+          "byteLength": 724,
+          "fileMode": "0600",
+          "matchesReceiptPayload": true,
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.notification-observations.v1.json",
+          "payload": {
+            "directRuntimeExecuteGrantCount": 0,
+            "failedV32HistoryCount": 0,
+            "failureRollbackFunctionStateUnchanged": true,
+            "fixedSearchPathFunctionCount": 2,
+            "securityDefinerFunctionCount": 2,
+            "successfulV32HistoryCount": 1,
+            "triggerBoundaryTupleCount": 3,
+            "triggerBoundaryTupleSha256": "f00383323e062fdb4f1c92f4ecadf8e6e33cbf5a0290b5fd7cb3054449e181ef",
+            "triggerFunctionCount": 2,
+            "verifiedScenarioIds": [
+              "runtime-dml-through-hardened-triggers",
+              "runtime-transaction-audit-idempotency",
+              "v32-failure-repair-retry",
+              "v32-fresh-trigger-boundary",
+              "v32-upgrade-v30-trigger-boundary"
+            ]
+          },
+          "regularFile": true,
+          "sha256": "0b3a22b0c4b660cbd9c18c022f8c8b396087818488e2850027ae0f96ffd181dd",
+          "symlink": false
+        },
+        "platformJunit": {
+          "byteLength": 905726,
+          "caseIdsMatchReceipt": true,
+          "errors": 0,
+          "failures": 0,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.junit.xml",
+          "regularFile": true,
+          "sha256": "1e5108ccbc317033e42ad6857c5e6e3671645680ee1ac63020bace276452d38f",
+          "skipped": 0,
+          "suiteName": "com.dwp.migration.control.PlatformInventoryBridgeControlPostgresTest",
+          "symlink": false,
+          "tests": 21
+        },
+        "platformObservation": {
+          "byteLength": 1119,
+          "fileMode": "0600",
+          "matchesReceiptPayload": true,
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.observations.v1.json",
+          "payload": {
+            "bridgedMappingCount": 8,
+            "bridgedMappingSha256": "342b41d9d6d39450b750bbdf63415fa98bb28e133d0138fa435bd82221c0d2af",
+            "finalBridgeSchemaCount": 0,
+            "migrationPrincipalDatabaseCreateAtEntry": false,
+            "migrationPrincipalDatabaseCreateAtExit": false,
+            "triggerFunctionCount": 50,
+            "triggerMappingCount": 68,
+            "triggerMappingSha256": "cade7c2964b47a298bedc9c9d26f5185e5418ec0736db3b0d6ba5a5e7bc2bd8d",
+            "verifiedScenarioIds": [
+              "bridge-failure-retry",
+              "bridge-partial-state-retry",
+              "control-254",
+              "control-260",
+              "control-fresh",
+              "fresh-ordered",
+              "historyless-nonempty-bridge-schema",
+              "historyless-nonempty-relation",
+              "historyless-nonempty-routine",
+              "historyless-nonempty-schema",
+              "historyless-nonempty-sequence",
+              "historyless-nonempty-trigger",
+              "historyless-nonempty-type",
+              "immutable-predecessors",
+              "source-digest-drift",
+              "unexpected-ignored",
+              "upgrade-191",
+              "upgrade-254",
+              "upgrade-255",
+              "upgrade-260",
+              "v261-failure-retry"
+            ]
+          },
+          "regularFile": true,
+          "sha256": "80863f9782b177bdd12c3a6ea4a7571c7211927f7aeb2d48b5e0b381a7d9220d",
+          "symlink": false
+        },
+        "postgresImage": "postgres:18.4-alpine",
+        "receipt": {
+          "byteLength": 8254,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-18.v1.json",
+          "regularFile": true,
+          "sha256": "84d553c45dd36593f2f48625cda0d6bc624f6d2288a3fdfeab57c237b0d83556",
+          "symlink": false
+        },
+        "receiptOwnSeal": {
+          "calculated": "25e1143d8cb5dded05a4d69218e46d9dd45dfea946f9af154c15e09fc363a1b9",
+          "declared": "25e1143d8cb5dded05a4d69218e46d9dd45dfea946f9af154c15e09fc363a1b9",
+          "match": true
+        },
+        "resolvedRepositoryDigest": "postgres@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15",
+        "source": {
+          "commit": "299336eacb52de29a85366318a08151ea691eb5e",
+          "repository": "DWP_BACKEND",
+          "tree": "d5277fabaa2315ddc28a4220fa8075875be28920"
+        },
+        "sourcePins": [
+          {
+            "actual": {
+              "byteLength": 41549,
+              "fileMode": "100644",
+              "gitBlobOid": "a4fc023b5257684d0232b1da116a29abf21868e5",
+              "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformInventoryBridgeControlPostgresTest.java",
+              "sha256": "e4e1611acc6b606b67826fa4f09477f2f4fedff57e5d891db5acb38de650e905"
+            },
+            "declared": {
+              "byteLength": 41549,
+              "fileMode": "100644",
+              "gitBlobOid": "a4fc023b5257684d0232b1da116a29abf21868e5",
+              "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/PlatformInventoryBridgeControlPostgresTest.java",
+              "sha256": "e4e1611acc6b606b67826fa4f09477f2f4fedff57e5d891db5acb38de650e905"
+            },
+            "kind": "testSource",
+            "match": true
+          },
+          {
+            "actual": {
+              "byteLength": 29325,
+              "fileMode": "100644",
+              "gitBlobOid": "7c853fef642db1d729a0129cd3558f7dd04b3fc6",
+              "path": "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationTriggerExecutionBoundaryPostgresTest.java",
+              "sha256": "f0ed0e90f95fffede510e5a1f849a124166e1d1d9b635b04481341819d405e74"
+            },
+            "declared": {
+              "byteLength": 29325,
+              "fileMode": "100644",
+              "gitBlobOid": "7c853fef642db1d729a0129cd3558f7dd04b3fc6",
+              "path": "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationTriggerExecutionBoundaryPostgresTest.java",
+              "sha256": "f0ed0e90f95fffede510e5a1f849a124166e1d1d9b635b04481341819d405e74"
+            },
+            "kind": "notificationTestSource",
+            "match": true
+          }
+        ]
+      }
+    ],
+    "intakeUnchangedByBoundedRerun": {
+      "after": {
+        "pre-g3-common-foundation-postgres-16.junit.xml": {
+          "byteLength": 906583,
+          "mode": "0600",
+          "sha256": "397f384b49aed039bf83f8a564dbf1665f0dfc98c8eeb87ddaeb8ecd688851cb"
+        },
+        "pre-g3-common-foundation-postgres-16.notification-observations.v1.json": {
+          "byteLength": 722,
+          "mode": "0600",
+          "sha256": "c3757d3e629c8b9aca9894a052f70ba901022425b54213b925824f9bd1a176be"
+        },
+        "pre-g3-common-foundation-postgres-16.notification.junit.xml": {
+          "byteLength": 119448,
+          "mode": "0600",
+          "sha256": "a5dbb405de03fd4c052a4d678cf3058a997dc4681b674e58d82f5bbf3df360c5"
+        },
+        "pre-g3-common-foundation-postgres-16.observations.v1.json": {
+          "byteLength": 1117,
+          "mode": "0600",
+          "sha256": "d5683be1148700e4cbfeeae00f16e263c35f681bbc3bf1058723dc9ce1769420"
+        },
+        "pre-g3-common-foundation-postgres-16.v1.json": {
+          "byteLength": 8248,
+          "mode": "0600",
+          "sha256": "063224138449aabea0512731a324180b3199e661225e7c6dc5d59a7109ce0303"
+        },
+        "pre-g3-common-foundation-postgres-18.junit.xml": {
+          "byteLength": 905726,
+          "mode": "0600",
+          "sha256": "1e5108ccbc317033e42ad6857c5e6e3671645680ee1ac63020bace276452d38f"
+        },
+        "pre-g3-common-foundation-postgres-18.notification-observations.v1.json": {
+          "byteLength": 724,
+          "mode": "0600",
+          "sha256": "0b3a22b0c4b660cbd9c18c022f8c8b396087818488e2850027ae0f96ffd181dd"
+        },
+        "pre-g3-common-foundation-postgres-18.notification.junit.xml": {
+          "byteLength": 119438,
+          "mode": "0600",
+          "sha256": "d8ae3aa4d4a68a4ca1d083ca8e987a7f19173d60f4e4bfa699675f7a1036dcf1"
+        },
+        "pre-g3-common-foundation-postgres-18.observations.v1.json": {
+          "byteLength": 1119,
+          "mode": "0600",
+          "sha256": "80863f9782b177bdd12c3a6ea4a7571c7211927f7aeb2d48b5e0b381a7d9220d"
+        },
+        "pre-g3-common-foundation-postgres-18.v1.json": {
+          "byteLength": 8254,
+          "mode": "0600",
+          "sha256": "84d553c45dd36593f2f48625cda0d6bc624f6d2288a3fdfeab57c237b0d83556"
+        }
+      },
+      "before": {
+        "pre-g3-common-foundation-postgres-16.junit.xml": {
+          "byteLength": 906583,
+          "mode": "0600",
+          "sha256": "397f384b49aed039bf83f8a564dbf1665f0dfc98c8eeb87ddaeb8ecd688851cb"
+        },
+        "pre-g3-common-foundation-postgres-16.notification-observations.v1.json": {
+          "byteLength": 722,
+          "mode": "0600",
+          "sha256": "c3757d3e629c8b9aca9894a052f70ba901022425b54213b925824f9bd1a176be"
+        },
+        "pre-g3-common-foundation-postgres-16.notification.junit.xml": {
+          "byteLength": 119448,
+          "mode": "0600",
+          "sha256": "a5dbb405de03fd4c052a4d678cf3058a997dc4681b674e58d82f5bbf3df360c5"
+        },
+        "pre-g3-common-foundation-postgres-16.observations.v1.json": {
+          "byteLength": 1117,
+          "mode": "0600",
+          "sha256": "d5683be1148700e4cbfeeae00f16e263c35f681bbc3bf1058723dc9ce1769420"
+        },
+        "pre-g3-common-foundation-postgres-16.v1.json": {
+          "byteLength": 8248,
+          "mode": "0600",
+          "sha256": "063224138449aabea0512731a324180b3199e661225e7c6dc5d59a7109ce0303"
+        },
+        "pre-g3-common-foundation-postgres-18.junit.xml": {
+          "byteLength": 905726,
+          "mode": "0600",
+          "sha256": "1e5108ccbc317033e42ad6857c5e6e3671645680ee1ac63020bace276452d38f"
+        },
+        "pre-g3-common-foundation-postgres-18.notification-observations.v1.json": {
+          "byteLength": 724,
+          "mode": "0600",
+          "sha256": "0b3a22b0c4b660cbd9c18c022f8c8b396087818488e2850027ae0f96ffd181dd"
+        },
+        "pre-g3-common-foundation-postgres-18.notification.junit.xml": {
+          "byteLength": 119438,
+          "mode": "0600",
+          "sha256": "d8ae3aa4d4a68a4ca1d083ca8e987a7f19173d60f4e4bfa699675f7a1036dcf1"
+        },
+        "pre-g3-common-foundation-postgres-18.observations.v1.json": {
+          "byteLength": 1119,
+          "mode": "0600",
+          "sha256": "80863f9782b177bdd12c3a6ea4a7571c7211927f7aeb2d48b5e0b381a7d9220d"
+        },
+        "pre-g3-common-foundation-postgres-18.v1.json": {
+          "byteLength": 8254,
+          "mode": "0600",
+          "sha256": "84d553c45dd36593f2f48625cda0d6bc624f6d2288a3fdfeab57c237b0d83556"
+        }
+      },
+      "match": true
+    }
+  },
+  "quarantine": {
+    "backendCommit": "299336eacb52de29a85366318a08151ea691eb5e",
+    "backendTree": "d5277fabaa2315ddc28a4220fa8075875be28920",
+    "entries": [
+      {
+        "actual": {
+          "byteLength": 906584,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.junit.xml",
+          "regularFile": true,
+          "sha256": "67e29fbfe0d776cb2edd8345748f45149ff496a07742dc2133a1cee804eac7ba",
+          "symlink": false
+        },
+        "declared": {
+          "byteLength": 906584,
+          "mode": "0600",
+          "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.junit.xml",
+          "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.junit.xml",
+          "sha256": "67e29fbfe0d776cb2edd8345748f45149ff496a07742dc2133a1cee804eac7ba"
+        },
+        "match": true
+      },
+      {
+        "actual": {
+          "byteLength": 722,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.notification-observations.v1.json",
+          "regularFile": true,
+          "sha256": "c3757d3e629c8b9aca9894a052f70ba901022425b54213b925824f9bd1a176be",
+          "symlink": false
+        },
+        "declared": {
+          "byteLength": 722,
+          "mode": "0600",
+          "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification-observations.v1.json",
+          "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.notification-observations.v1.json",
+          "sha256": "c3757d3e629c8b9aca9894a052f70ba901022425b54213b925824f9bd1a176be"
+        },
+        "match": true
+      },
+      {
+        "actual": {
+          "byteLength": 119445,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.notification.junit.xml",
+          "regularFile": true,
+          "sha256": "46fa4cf07e6ae5a79b043f27e17f84c5f069e1d8365ca104e957a86e604eb982",
+          "symlink": false
+        },
+        "declared": {
+          "byteLength": 119445,
+          "mode": "0600",
+          "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.notification.junit.xml",
+          "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.notification.junit.xml",
+          "sha256": "46fa4cf07e6ae5a79b043f27e17f84c5f069e1d8365ca104e957a86e604eb982"
+        },
+        "match": true
+      },
+      {
+        "actual": {
+          "byteLength": 1117,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.observations.v1.json",
+          "regularFile": true,
+          "sha256": "d5683be1148700e4cbfeeae00f16e263c35f681bbc3bf1058723dc9ce1769420",
+          "symlink": false
+        },
+        "declared": {
+          "byteLength": 1117,
+          "mode": "0600",
+          "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.observations.v1.json",
+          "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.observations.v1.json",
+          "sha256": "d5683be1148700e4cbfeeae00f16e263c35f681bbc3bf1058723dc9ce1769420"
+        },
+        "match": true
+      },
+      {
+        "actual": {
+          "byteLength": 8248,
+          "fileMode": "0600",
+          "path": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.v1.json",
+          "regularFile": true,
+          "sha256": "87c556398cb83112ac080d0bdc67cb5a2e83bdb3e16b68baff92f428c94b78e0",
+          "symlink": false
+        },
+        "declared": {
+          "byteLength": 8248,
+          "mode": "0600",
+          "originalPath": "g0/control-evidence-intake/pre-g3-common-foundation-postgres-16.v1.json",
+          "quarantinePath": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/pre-g3-common-foundation-postgres-16.v1.json",
+          "sha256": "87c556398cb83112ac080d0bdc67cb5a2e83bdb3e16b68baff92f428c94b78e0"
+        },
+        "match": true
+      }
+    ],
+    "manifest": {
+      "byteLength": 2676,
+      "fileMode": "0600",
+      "path": "g0/control-evidence-quarantine/pg16-pre-final-runner-20260916T004234KST/quarantine-manifest.v1.json",
+      "regularFile": true,
+      "sha256": "cb992866ceb9c2b9bd9b9ce4d09e0691c1a963182734f71c81ca310982debc30",
+      "symlink": false
+    },
+    "reason": "The PostgreSQL 16 proof was valid for the requested image but was captured before the final runner added an explicit Notification image binding. The five files are retained byte-for-byte and excluded from intake before final-runner recapture.",
+    "retentionStatus": "PASS"
+  },
+  "receiptLineage": {
+    "allocation": {
+      "byteLength": 6509,
+      "calculatedSeal": "a1811253ab193143a03d30cfaf752d00b837f5b14cfaa58278cc251705d1e163",
+      "declaredSeal": "a1811253ab193143a03d30cfaf752d00b837f5b14cfaa58278cc251705d1e163",
+      "fileMode": "0600",
+      "path": "g0/pre-g3-common-foundation-migration-allocation.v1.json",
+      "regularFile": true,
+      "sealMatch": true,
+      "sha256": "f3335dfaf2c8666d4576d487f4907ea004d5c905ad9081dd1031afef25e998a6",
+      "status": "SEALED_TECHNICAL_ALLOCATION_NO_START_AUTHORITY",
+      "symlink": false
+    },
+    "allocationHasNoReviewBackReference": true,
+    "direction": "ALLOCATION_TO_TECHNICAL_REVIEW_TO_MIGRATION_SUCCESSOR_ONLY",
+    "migrationSuccessorExactAllocationAndReviewReferences": true,
+    "technicalReview": {
+      "byteLength": 2912,
+      "calculatedSeal": "cae40b660061cdfce06956b52fd38f433e1f366eab3f370ed944138f6f25ae7d",
+      "declaredSeal": "cae40b660061cdfce06956b52fd38f433e1f366eab3f370ed944138f6f25ae7d",
+      "fileMode": "0600",
+      "path": "g0/pre-g3-common-foundation-migration-technical-review.v1.json",
+      "regularFile": true,
+      "sealMatch": true,
+      "sha256": "ca455525875ae6096f8836fa5cea73a8d47c5fae8e6a125e3482508274bd08c7",
+      "status": "INTERNAL_TECHNICAL_REVIEW_PASS_G3_ENTRY_ONLY",
+      "symlink": false
+    },
+    "technicalReviewExactAllocationReference": true,
+    "technicalReviewExactPostgresReferences": true
+  },
+  "recordedAtUtc": "2026-09-15T18:18:07.198086Z",
+  "schema": "dwp.hris.backend-integration-readiness-independent-audit/v1",
+  "sealedPayloadSha256": "09e2f1c6242c0873d5f0435588edf8a0f2ad37c4e6b58201785862cfc38f51f6",
+  "source": {
+    "baselineAncestor": true,
+    "baselineCommit": "787f25753a72dc5f0fbbb06783205c0bff6635a5",
+    "commit": "299336eacb52de29a85366318a08151ea691eb5e",
+    "indexClean": true,
+    "repository": "DWP_BACKEND",
+    "subject": "fix(hris): close backend readiness boundaries",
+    "tree": "d5277fabaa2315ddc28a4220fa8075875be28920",
+    "unstagedClean": true,
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "worktreeClean": true
+  },
+  "status": "BACKEND_PASS_EXTERNAL_CANONICAL_CONSUMER_PENDING",
+  "testEvidence": {
+    "boundedRerun": {
+      "command": "./gradlew :dwp-migration-control:test :dwp-notification-server:test --rerun-tasks --no-daemon --max-workers=1",
+      "duration": "4m53s",
+      "status": "PASS"
+    },
+    "changedExecutableTestClasses": [
+      {
+        "class": "com.dwp.services.approval.attachment.ApprovalAttachmentClamAvInteropTest",
+        "classification": "EXTERNAL_OPT_IN",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 1,
+        "status": "M",
+        "tests": 1,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.attachment.ApprovalAttachmentClamAvTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "A",
+        "tests": 1,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.config.ApprovalTriggerExecutionBoundaryPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 9,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.domain.ApprovalQueryRepositoryTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.domain.ApprovalServiceTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 16,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.domain.ApprovalWorkflowPinnedDraftRuntimePostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 7,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.informationreplay.InformationReceiptDefaultBootPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.policyimpactsource.PolicyImpactSourceDefaultBootPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalAttachmentProducerWiringPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalDocumentV8PepRegistryTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 4,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalExtensionV9PepRegistryTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 4,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalFormReferenceNormalizerPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 6,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalHighRiskCommandPostgresIntegrationTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 9,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalManagementScopeArchitecturePostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 16,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalPilotAcceptanceMatrixTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 19,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalRelease9FilterTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 384,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalRelease9JsonPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 6,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.security.ApprovalRetentionDefaultBootPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.signatures.ApprovalSignatureDefaultBootPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 4,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.signatures.ApprovalSignatureHighRiskPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.support.ApprovalApplicationContextPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 4,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.support.ApprovalAttachmentOpenApiPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 16,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.support.ApprovalFormLifecycleOpenApiPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.support.ApprovalFormLifecycleUnknownFieldPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 4,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.support.ApprovalFormPayloadNormalizationWiringPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 1,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.support.ApprovalFormUserRuntimeWiringPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 1,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.support.ApprovalFormVersionPolicyWiringPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 1,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.systemslaauthority.SystemSlaDefaultBootPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 3,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.systemslaauthority.SystemSlaSourceProofIssuerTimeBoundaryTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "A",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.workflowplanning.WorkflowPlanningDefaultBootPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.approval.workflowplanning.WorkflowPlanningSelectionDefaultBootPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 30,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.auth.systemslaauthority.SystemSlaNativeInteropPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 8,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.core.database.AuxiliaryRoleAclGuardPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "A",
+        "tests": 1,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.core.database.MigrationAdoptionGuardPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 7,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.core.database.OwnerTriggerExecutionBoundaryGuardPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.core.database.RuntimeMigrationDatabaseGuardPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 39,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.gateway.productsurface.GatewayProductSurfaceOpenApiContractTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 6,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.ControlInspectionFenceBridgeV1PostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 20,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.ControlMetadataInspectionCompositionV1PostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 14,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.ManagedDatabaseRoleControlPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "A",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.ManagedDatabaseRoleGrantorCompatibilityPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "A",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.MigrationControlAdoptionActiveFenceV1PostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 21,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.MigrationControlMainTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 11,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.MigrationControlPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 14,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.migration.control.PlatformInventoryBridgeControlPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "A",
+        "tests": 21,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.notification.migration.NotificationTriggerExecutionBoundaryPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.people.hris.identity.v1.NativeSelfContextQueryReaderV1PostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 24,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.people.hris.identity.v1.NativeSelfPersonQueryReaderV1PostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 8,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.platform.contract.Xcon021CompensationSnapshotPublicationV2Test",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "A",
+        "tests": 2,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.platform.calendar.CalendarP0GovernancePostgresIntegrationTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 14,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.platform.config.AuditRetentionAuthorityPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 6,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.platform.config.PartitionMaintenanceAuthorityPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.platform.config.PlatformDatabaseMigrationConfigurationTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 5,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.platform.workplace.WorkplaceExperienceFacilitiesRetentionPostgresTest",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 7,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.time.absence.contracts.v4.AbsOwnerResponseV4Test",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 17,
+        "xmlPresent": true
+      },
+      {
+        "class": "com.dwp.services.time.absence.ports.AbsOwnerSnapshotRefetchPortV4Test",
+        "classification": "MANDATORY_CHANGED_TEST",
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "status": "M",
+        "tests": 3,
+        "xmlPresent": true
+      }
+    ],
+    "changedExternalOptInTestClassCount": 1,
+    "changedMandatoryScopeSkipped": 0,
+    "changedMandatoryTestClassCount": 56,
+    "composition": "15 module XML sets preserved from the commit-wide rerun plus independent bounded full reruns for dwp-migration-control and dwp-notification-server at the identical clean commit",
+    "modules": [
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-approval-server",
+        "skipped": 1,
+        "suiteFiles": 182,
+        "tests": 2056
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-audit",
+        "skipped": 0,
+        "suiteFiles": 1,
+        "tests": 1
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-auth-server",
+        "skipped": 0,
+        "suiteFiles": 178,
+        "tests": 945
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-core",
+        "skipped": 0,
+        "suiteFiles": 52,
+        "tests": 642
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-gateway",
+        "skipped": 1,
+        "suiteFiles": 41,
+        "tests": 311
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-meeting-server",
+        "skipped": 2,
+        "suiteFiles": 113,
+        "tests": 674
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-messaging-server",
+        "skipped": 58,
+        "suiteFiles": 44,
+        "tests": 193
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-migration-control",
+        "skipped": 0,
+        "suiteFiles": 14,
+        "tests": 149
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-notification-server",
+        "skipped": 31,
+        "suiteFiles": 62,
+        "tests": 332
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-observability",
+        "skipped": 0,
+        "suiteFiles": 1,
+        "tests": 4
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-payroll-server",
+        "skipped": 0,
+        "suiteFiles": 6,
+        "tests": 10
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-people-server",
+        "skipped": 0,
+        "suiteFiles": 67,
+        "tests": 472
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-platform-contracts",
+        "skipped": 0,
+        "suiteFiles": 8,
+        "tests": 198
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-platform-server",
+        "skipped": 1,
+        "suiteFiles": 230,
+        "tests": 1259
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-provider-server",
+        "skipped": 0,
+        "suiteFiles": 56,
+        "tests": 284
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-space-server",
+        "skipped": 0,
+        "suiteFiles": 5,
+        "tests": 24
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "module": "dwp-time-server",
+        "skipped": 0,
+        "suiteFiles": 10,
+        "tests": 53
+      }
+    ],
+    "rootCommandNotRerun": "./gradlew test --rerun-tasks --no-daemon --max-workers=1",
+    "skippedClasses": [
+      {
+        "class": "com.dwp.services.approval.attachment.ApprovalAttachmentClamAvInteropTest",
+        "count": 1
+      },
+      {
+        "class": "com.dwp.services.meeting.videomeeting.domain.MeetingParticipantWebhookLocalOperationalTest",
+        "count": 1
+      },
+      {
+        "class": "com.dwp.services.meeting.videomeeting.provider.LiveKitLocalOperationalSmokeTest",
+        "count": 1
+      },
+      {
+        "class": "com.dwp.services.messaging.attachment.AttachmentRepositoryIntegrationTest",
+        "count": 2
+      },
+      {
+        "class": "com.dwp.services.messaging.collaboration.CollaborationRepositoryIntegrationTest",
+        "count": 4
+      },
+      {
+        "class": "com.dwp.services.messaging.collaboration.ConversationMembershipRepositoryIntegrationTest",
+        "count": 4
+      },
+      {
+        "class": "com.dwp.services.messaging.domain.MessagingHistoryVisibilityIntegrationTest",
+        "count": 4
+      },
+      {
+        "class": "com.dwp.services.messaging.domain.MessagingHomeMetricsPostgresIntegrationTest",
+        "count": 2
+      },
+      {
+        "class": "com.dwp.services.messaging.domain.MessagingReadReceiptPostgresIntegrationTest",
+        "count": 10
+      },
+      {
+        "class": "com.dwp.services.messaging.domain.MessagingRepositoryIntegrationTest",
+        "count": 11
+      },
+      {
+        "class": "com.dwp.services.messaging.home.MessagingHomeAssetPostgresIntegrationTest",
+        "count": 8
+      },
+      {
+        "class": "com.dwp.services.messaging.security.MessagingProductSurfacePepPostgresIntegrationTest",
+        "count": 13
+      },
+      {
+        "class": "com.dwp.services.notification.domain.NotificationReasonQueryPostgresIntegrationTest",
+        "count": 6
+      },
+      {
+        "class": "com.dwp.services.notification.integration.ApprovalSlaDeliveryJournalPostgresIntegrationTest",
+        "count": 17
+      },
+      {
+        "class": "com.dwp.services.notification.integration.ApprovalSlaMaterializationPostgresIntegrationTest",
+        "count": 8
+      },
+      {
+        "class": "com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest",
+        "count": 1
+      },
+      {
+        "class": "com.dwp.services.provider.rollout.FeatureRolloutKafkaGatewayRehearsalTest",
+        "count": 1
+      }
+    ],
+    "totals": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 94,
+      "tests": 7607
+    }
+  },
+  "verdict": {
+    "backendIntegration": "PASS",
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "moduleStartAuthorization": "NONE",
+    "productionAuthorization": "NOT_AUTHORIZED_G6",
+    "scopeSeparation": "The stale SYS G3 slice allocation consumer is not a backend source, migration, test, PostgreSQL evidence, receipt, or worktree defect.",
+    "sharedCanonicalDownstream": "PENDING_ONE_STALE_CONSUMER"
+  }
+}

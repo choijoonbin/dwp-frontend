@@ -1,0 +1,23 @@
+{
+  "bundleRef": "",
+  "bundleSha256": "",
+  "candidateCheckpointRegisterSha256": "875b3f8f9096bc4840e07a9d4a412f8342950bbad0c05e0312a4b9f703790cea",
+  "candidateDependencyRegisterSha256": "70610ed9b0e23f3985a873e7ca408941006754a28b17eceb73cdebe6a772e368",
+  "checkpointId": "",
+  "checkpointRecordedAt": null,
+  "checkpointSeq": 0,
+  "committedAt": null,
+  "controlCheckpointProjectionSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "dependencyId": "",
+  "dependencyRegisterSha256": "70610ed9b0e23f3985a873e7ca408941006754a28b17eceb73cdebe6a772e368",
+  "dependencySeq": 0,
+  "lastDependencyId": "",
+  "phase": "COMMITTED",
+  "preparedAt": null,
+  "priorState": null,
+  "priorCheckpointRegisterSha256": "875b3f8f9096bc4840e07a9d4a412f8342950bbad0c05e0312a4b9f703790cea",
+  "priorDependencyRegisterSha256": "70610ed9b0e23f3985a873e7ca408941006754a28b17eceb73cdebe6a772e368",
+  "schema": "dwp.hris.g3.control-checkpoint-transaction-state.v1",
+  "status": "CONTROL_CHECKPOINT_TRANSACTION_COMMITTED",
+  "transactionSeq": 0
+}

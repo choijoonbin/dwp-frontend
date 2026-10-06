@@ -1,0 +1,78 @@
+{
+  "reportId": "dwp.hris.modern-independent-successor.approved-table-scope-change-oracle.v1",
+  "status": "FROZEN_APPROVED_TABLE_SCOPE_CHANGE",
+  "approvedAt": "2026-09-15",
+  "architectureDecision": "architecture-decision-register.csv#ADR-HRIS-034",
+  "predecessorTableCount": 106,
+  "successorTableCount": 115,
+  "deltaCount": 9,
+  "derivation": "106 predecessor tables + exact nine P0 remediation tables = 115 successor tables",
+  "missingOrExtraDisposition": "FAIL_CLOSED",
+  "delta": [
+    {
+      "tableId": "prf_grw_coaching_note_evidence_refs",
+      "session": "HRIS-PER",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.growth.coaching.record"
+    },
+    {
+      "tableId": "prf_grw_profile_revision_evidence_refs",
+      "session": "HRIS-PER",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.growth.profile.update"
+    },
+    {
+      "tableId": "prf_lrn_completion_skill_evidence_refs",
+      "session": "HRIS-PER",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.learning.completion.verify"
+    },
+    {
+      "tableId": "sys_hris_analytics_export_projection_refs",
+      "session": "HRIS-SYS",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "modern.analytics.export.create"
+    },
+    {
+      "tableId": "tme_wfm_schedule_candidate_time_group_refs",
+      "session": "HRIS-TIM",
+      "reason": "NORMALIZE_UUID_ARRAY_TO_TYPED_ORDERED_CHILD",
+      "producer": "internal.wfm.schedule-optimization.result.consume"
+    },
+    {
+      "tableId": "ppl_rec_requisition_publish_receipts",
+      "session": "HRIS-HRM",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.recruiting.requisition.publish"
+    },
+    {
+      "tableId": "prf_lrn_offering_publish_receipts",
+      "session": "HRIS-PER",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.learning.offering.publish"
+    },
+    {
+      "tableId": "prf_mkt_opportunity_publish_receipts",
+      "session": "HRIS-PER",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.opportunity.publish"
+    },
+    {
+      "tableId": "prf_suc_publish_receipts",
+      "session": "HRIS-PER",
+      "reason": "IMMUTABLE_PUBLICATION_APPROVAL_LEDGER",
+      "producer": "modern.succession.plan.publish"
+    }
+  ],
+  "invariants": {
+    "normalizedChildCount": 5,
+    "immutablePublicationLedgerCount": 4,
+    "uuidArraysAllowed": 0,
+    "countPaddingForbidden": true,
+    "producerlessDeltaTableAllowed": false,
+    "queryOrEventReentryRequired": true,
+    "physicalAllocationRequired": true,
+    "rlsAclOwnerClosureRequired": true
+  },
+  "sealedPayloadSha256": "f3dab1598b8274e806019a84f53a43a1d4539a9fa0ea811d4ecd5e5a4b22aa48"
+}

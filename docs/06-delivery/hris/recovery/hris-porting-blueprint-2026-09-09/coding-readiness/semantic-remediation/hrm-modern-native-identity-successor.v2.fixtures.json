@@ -1,0 +1,4271 @@
+{
+  "status": "AUTHOR_ONLY_CONCRETE_FIXTURES_NOT_NATIVE_PG_HTTP_OR_AUTH",
+  "cases": [
+    {
+      "caseId": "HR_NATIVE-CREATE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92001,
+        "userId": 80001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "personPublicId": "20000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92001,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92001,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000042",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-A",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92001,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-A",
+        "normalizedPersonMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "aggregate_version": 2
+      },
+      "ownerPersonRow": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReturning": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000043",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000099",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 0,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "HR_NATIVE-REUSE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92001,
+        "userId": 80001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "personPublicId": "20000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92001,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92001,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000042",
+          "personVersion": 19,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-A",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92001,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-A",
+        "normalizedPersonMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "aggregate_version": 2
+      },
+      "ownerPersonRow": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReturning": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000043",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000099",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 19,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "ATS_CASE-CREATE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92001,
+        "userId": 80001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "personPublicId": "20000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92001,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92001,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000042",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-A",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92001,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-A",
+        "normalizedPersonMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "aggregate_version": 7
+      },
+      "ownerPersonRow": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReturning": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000043",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+      "optional": {
+        "atsInstalled": true,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000099",
+      "expected": {
+        "atsCalls": 1,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 0,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "ATS_CASE-REUSE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92001,
+        "userId": 80001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "personPublicId": "20000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92001,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92001,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000042",
+          "personVersion": 19,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-A",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92001,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-A",
+        "normalizedPersonMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "aggregate_version": 7
+      },
+      "ownerPersonRow": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReturning": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000043",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+      "optional": {
+        "atsInstalled": true,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000099",
+      "expected": {
+        "atsCalls": 1,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 19,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "IMPORT-CREATE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92001,
+        "userId": 80001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "personPublicId": "20000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92001,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92001,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000042",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-A",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92001,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-A",
+        "normalizedPersonMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "aggregate_version": 5
+      },
+      "ownerPersonRow": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReturning": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000043",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000099",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 0,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "IMPORT-REUSE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92001,
+        "userId": 80001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "personPublicId": "20000000-0000-4000-8000-000000000002",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92001,
+        "principalPublicId": "20000000-0000-4000-8000-000000000001",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92001,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92001,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000042",
+          "personVersion": 19,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-A",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92001,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-A",
+        "normalizedPersonMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "aggregate_version": 5
+      },
+      "ownerPersonRow": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReturning": {
+        "person_id": 60001,
+        "tenant_id": 92001,
+        "public_id": "20000000-0000-4000-8000-000000000042",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-A",
+        "display_name": "Fixture native person A"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000043",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000099",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 19,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "HR_NATIVE-CREATE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92002,
+        "userId": 80101,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "personPublicId": "20000000-0000-4000-8000-000000000102",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92002,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92002,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-B",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92002,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-B",
+        "normalizedPersonMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "aggregate_version": 2
+      },
+      "ownerPersonRow": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReturning": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000143",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000199",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 0,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "HR_NATIVE-REUSE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92002,
+        "userId": 80101,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "personPublicId": "20000000-0000-4000-8000-000000000102",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92002,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92002,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "personVersion": 19,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-B",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92002,
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-B",
+        "normalizedPersonMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "aggregate_version": 2
+      },
+      "ownerPersonRow": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReturning": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000143",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000199",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 19,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "ATS_CASE-CREATE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92002,
+        "userId": 80101,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "personPublicId": "20000000-0000-4000-8000-000000000102",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92002,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92002,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-B",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92002,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-B",
+        "normalizedPersonMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "aggregate_version": 7
+      },
+      "ownerPersonRow": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReturning": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000143",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+      "optional": {
+        "atsInstalled": true,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000199",
+      "expected": {
+        "atsCalls": 1,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 0,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "ATS_CASE-REUSE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92002,
+        "userId": 80101,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "personPublicId": "20000000-0000-4000-8000-000000000102",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92002,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92002,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "personVersion": 19,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-B",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92002,
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-B",
+        "normalizedPersonMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "aggregate_version": 7
+      },
+      "ownerPersonRow": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReturning": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000143",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+      "optional": {
+        "atsInstalled": true,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000199",
+      "expected": {
+        "atsCalls": 1,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 19,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "IMPORT-CREATE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92002,
+        "userId": 80101,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "personPublicId": "20000000-0000-4000-8000-000000000102",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92002,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92002,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-B",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92002,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-B",
+        "normalizedPersonMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "aggregate_version": 5
+      },
+      "ownerPersonRow": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReturning": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 0,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000143",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000199",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 0,
+        "actorAuthStampsNotSubject": true
+      }
+    },
+    {
+      "caseId": "IMPORT-REUSE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+      "now": "2026-11-02T10:00:00Z",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "actorBinding": {
+        "tenantId": 92002,
+        "userId": 80101,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "personPublicId": "20000000-0000-4000-8000-000000000102",
+        "identityPlane": "TENANT",
+        "status": "ACTIVE",
+        "userRowVersion": 71,
+        "accessRevision": 113,
+        "capturedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "actorAuthority": {
+        "tenantId": 92002,
+        "principalPublicId": "20000000-0000-4000-8000-000000000101",
+        "authVersions": {
+          "userRowVersion": 71,
+          "accessRevision": 113
+        },
+        "purpose": "PERSON_ADMIT",
+        "audience": "HRIS_HRM",
+        "appEntitled": true,
+        "sodAllowed": true,
+        "stepUpSatisfied": true,
+        "permissionRevision": 17,
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "issuedAt": "2026-11-02T10:00:00Z",
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "creationPopulation": {
+        "tenantId": 92002,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "purpose": "PERSON_ADMIT",
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "decisionRevision": 23,
+        "authorized": true,
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectPopulation": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "personVersion": 19,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "ownerSubjectAuthorized": true,
+      "ownerArtifacts": [
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "payload": {
+            "allowedSourceKinds": [
+              "HR_NATIVE",
+              "ATS_CASE",
+              "IMPORT"
+            ],
+            "createAllowed": true,
+            "reuseAllowed": true,
+            "version": 4
+          }
+        },
+        {
+          "reference": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "payload": {
+            "allowedFields": [
+              "PERSON_IDENTITY",
+              "ADMISSION_RESULT",
+              "EMPLOYMENT_CONTEXT"
+            ],
+            "version": 8
+          }
+        },
+        {
+          "reference": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          },
+          "payload": {
+            "vaultSubjectKey": "fixture-person-B",
+            "consentedPurposes": [
+              "PERSON_ADMIT"
+            ],
+            "verified": true
+          }
+        },
+        {
+          "reference": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "payload": {
+            "businessPurpose": "CONTINGENT_CREATE",
+            "authorized": true,
+            "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+            "workspaceVersion": 2
+          }
+        },
+        {
+          "reference": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "payload": {
+            "fields": {
+              "personKey": "normalized.employeeKey",
+              "displayName": "normalized.displayName"
+            },
+            "version": 6
+          }
+        }
+      ],
+      "ownerSourceRow": {
+        "tenant_id": 92002,
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "status": "AUTHORIZED",
+        "vaultSubjectKey": "fixture-person-B",
+        "normalizedPersonMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "aggregate_version": 5
+      },
+      "ownerPersonRow": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReturning": {
+        "person_id": 60101,
+        "tenant_id": 92002,
+        "public_id": "20000000-0000-4000-8000-000000000142",
+        "version": 19,
+        "lifecycle_state": "ACTIVE",
+        "person_key": "PERSON-B",
+        "display_name": "Fixture native person B"
+      },
+      "ownerReceiptReturning": {
+        "public_id": "20000000-0000-4000-8000-000000000143",
+        "owner_revision": 1,
+        "recorded_at": "2026-11-02T10:00:00Z"
+      },
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+      "optional": {
+        "atsInstalled": false,
+        "connectorInstalled": false,
+        "admissionAdapterPresent": true,
+        "targetAdapterPresent": true,
+        "actorAdapterPresent": true
+      },
+      "targetAuthAccountExists": false,
+      "traceId": "20000000-0000-4000-8000-000000000199",
+      "expected": {
+        "atsCalls": 0,
+        "connectorCalls": 0,
+        "targetAuthCalls": 0,
+        "personVersion": 19,
+        "actorAuthStampsNotSubject": true
+      }
+    }
+  ],
+  "optionalConnectorCase": {
+    "caseId": "IMPORT-CREATE_NATIVE_PERSON-B-OPTIONAL_CONNECTOR",
+    "scope": "CONCRETE_SYNTHETIC_API_OWNER_ROW_FIXTURE_NOT_NATIVE_AUTH_OR_DB",
+    "now": "2026-11-02T10:00:00Z",
+    "request": {
+      "requestPublicId": "20000000-0000-4000-8000-000000000141",
+      "source": {
+        "kind": "IMPORT",
+        "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+        "batchVersion": 3,
+        "itemPublicId": "20000000-0000-4000-8000-000000000140",
+        "itemVersion": 5,
+        "mappingVersion": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000135",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "sourceRecordKey": "IMPORT-B",
+        "importMode": "OPTIONAL_CONNECTOR"
+      },
+      "personMutation": {
+        "disposition": "CREATE_NATIVE_PERSON",
+        "facts": {
+          "personKey": "PERSON-B",
+          "displayName": "Fixture native person B",
+          "preferredLocale": "fr-CA"
+        },
+        "identityEvidence": {
+          "owner": "Privacy",
+          "publicId": "20000000-0000-4000-8000-000000000132",
+          "version": 2,
+          "schemaVersion": "fixture-Privacy-v2",
+          "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+        }
+      },
+      "admissionPolicy": {
+        "owner": "Configuration",
+        "publicId": "20000000-0000-4000-8000-000000000130",
+        "version": 4,
+        "schemaVersion": "fixture-Configuration-v2",
+        "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+      }
+    },
+    "actorBinding": {
+      "tenantId": 92002,
+      "userId": 80101,
+      "principalPublicId": "20000000-0000-4000-8000-000000000101",
+      "personPublicId": "20000000-0000-4000-8000-000000000102",
+      "identityPlane": "TENANT",
+      "status": "ACTIVE",
+      "userRowVersion": 71,
+      "accessRevision": 113,
+      "capturedAt": "2026-11-02T10:00:00Z",
+      "expiresAt": "2026-11-02T10:00:20Z"
+    },
+    "actorAuthority": {
+      "tenantId": 92002,
+      "principalPublicId": "20000000-0000-4000-8000-000000000101",
+      "authVersions": {
+        "userRowVersion": 71,
+        "accessRevision": 113
+      },
+      "purpose": "PERSON_ADMIT",
+      "audience": "HRIS_HRM",
+      "appEntitled": true,
+      "sodAllowed": true,
+      "stepUpSatisfied": true,
+      "permissionRevision": 17,
+      "populationPolicy": {
+        "owner": "Configuration",
+        "publicId": "20000000-0000-4000-8000-000000000130",
+        "version": 4,
+        "schemaVersion": "fixture-Configuration-v2",
+        "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+      },
+      "fieldPolicy": {
+        "owner": "Configuration",
+        "publicId": "20000000-0000-4000-8000-000000000131",
+        "version": 8,
+        "schemaVersion": "fixture-Configuration-v2",
+        "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+      },
+      "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+      "issuedAt": "2026-11-02T10:00:00Z",
+      "expiresAt": "2026-11-02T10:00:20Z"
+    },
+    "creationPopulation": {
+      "tenantId": 92002,
+      "source": {
+        "kind": "IMPORT",
+        "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+        "batchVersion": 3,
+        "itemPublicId": "20000000-0000-4000-8000-000000000140",
+        "itemVersion": 5,
+        "mappingVersion": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000135",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "sourceRecordKey": "IMPORT-B",
+        "importMode": "OPTIONAL_CONNECTOR"
+      },
+      "purpose": "PERSON_ADMIT",
+      "populationPolicy": {
+        "owner": "Configuration",
+        "publicId": "20000000-0000-4000-8000-000000000130",
+        "version": 4,
+        "schemaVersion": "fixture-Configuration-v2",
+        "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+      },
+      "fieldPolicy": {
+        "owner": "Configuration",
+        "publicId": "20000000-0000-4000-8000-000000000131",
+        "version": 8,
+        "schemaVersion": "fixture-Configuration-v2",
+        "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+      },
+      "decisionRevision": 23,
+      "authorized": true,
+      "expiresAt": "2026-11-02T10:00:20Z"
+    },
+    "ownerSubjectPopulation": {
+      "tenantId": 92002,
+      "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+      "subject": {
+        "kind": "PERSON",
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "personState": "ACTIVE",
+        "capturedAt": "2026-11-02T10:00:00Z"
+      },
+      "populationPolicy": {
+        "owner": "Configuration",
+        "publicId": "20000000-0000-4000-8000-000000000130",
+        "version": 4,
+        "schemaVersion": "fixture-Configuration-v2",
+        "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+      },
+      "fieldPolicy": {
+        "owner": "Configuration",
+        "publicId": "20000000-0000-4000-8000-000000000131",
+        "version": 8,
+        "schemaVersion": "fixture-Configuration-v2",
+        "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+      },
+      "purpose": "PERSON_ADMIT",
+      "decisionRevision": 27,
+      "authorizedFields": [
+        "PERSON_IDENTITY",
+        "ADMISSION_RESULT"
+      ],
+      "expiresAt": "2026-11-02T10:00:20Z"
+    },
+    "ownerSubjectAuthorized": true,
+    "ownerArtifacts": [
+      {
+        "reference": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "payload": {
+          "allowedSourceKinds": [
+            "HR_NATIVE",
+            "ATS_CASE",
+            "IMPORT"
+          ],
+          "createAllowed": true,
+          "reuseAllowed": true,
+          "version": 4
+        }
+      },
+      {
+        "reference": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "payload": {
+          "allowedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT",
+            "EMPLOYMENT_CONTEXT"
+          ],
+          "version": 8
+        }
+      },
+      {
+        "reference": {
+          "owner": "Privacy",
+          "publicId": "20000000-0000-4000-8000-000000000132",
+          "version": 2,
+          "schemaVersion": "fixture-Privacy-v2",
+          "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+        },
+        "payload": {
+          "vaultSubjectKey": "fixture-person-B",
+          "consentedPurposes": [
+            "PERSON_ADMIT"
+          ],
+          "verified": true
+        }
+      },
+      {
+        "reference": {
+          "owner": "People",
+          "publicId": "20000000-0000-4000-8000-000000000133",
+          "version": 3,
+          "schemaVersion": "fixture-People-v2",
+          "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+        },
+        "payload": {
+          "businessPurpose": "CONTINGENT_CREATE",
+          "authorized": true,
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2
+        }
+      },
+      {
+        "reference": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000135",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "payload": {
+          "fields": {
+            "personKey": "normalized.employeeKey",
+            "displayName": "normalized.displayName"
+          },
+          "version": 6
+        }
+      }
+    ],
+    "ownerSourceRow": {
+      "tenant_id": 92002,
+      "source": {
+        "kind": "IMPORT",
+        "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+        "batchVersion": 3,
+        "itemPublicId": "20000000-0000-4000-8000-000000000140",
+        "itemVersion": 5,
+        "mappingVersion": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000135",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "sourceRecordKey": "IMPORT-B",
+        "importMode": "OPTIONAL_CONNECTOR"
+      },
+      "status": "AUTHORIZED",
+      "vaultSubjectKey": "fixture-person-B",
+      "normalizedPersonMutation": {
+        "disposition": "CREATE_NATIVE_PERSON",
+        "facts": {
+          "personKey": "PERSON-B",
+          "displayName": "Fixture native person B",
+          "preferredLocale": "fr-CA"
+        },
+        "identityEvidence": {
+          "owner": "Privacy",
+          "publicId": "20000000-0000-4000-8000-000000000132",
+          "version": 2,
+          "schemaVersion": "fixture-Privacy-v2",
+          "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+        }
+      },
+      "aggregate_version": 5
+    },
+    "ownerPersonRow": {
+      "person_id": 60101,
+      "tenant_id": 92002,
+      "public_id": "20000000-0000-4000-8000-000000000142",
+      "version": 0,
+      "lifecycle_state": "ACTIVE",
+      "person_key": "PERSON-B",
+      "display_name": "Fixture native person B"
+    },
+    "ownerReturning": {
+      "person_id": 60101,
+      "tenant_id": 92002,
+      "public_id": "20000000-0000-4000-8000-000000000142",
+      "version": 0,
+      "lifecycle_state": "ACTIVE",
+      "person_key": "PERSON-B",
+      "display_name": "Fixture native person B"
+    },
+    "ownerReceiptReturning": {
+      "public_id": "20000000-0000-4000-8000-000000000143",
+      "owner_revision": 1,
+      "recorded_at": "2026-11-02T10:00:00Z"
+    },
+    "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+    "optional": {
+      "atsInstalled": false,
+      "connectorInstalled": true,
+      "admissionAdapterPresent": true,
+      "targetAdapterPresent": true,
+      "actorAdapterPresent": true
+    },
+    "targetAuthAccountExists": false,
+    "traceId": "20000000-0000-4000-8000-000000000199",
+    "expected": {
+      "atsCalls": 0,
+      "connectorCalls": 1,
+      "targetAuthCalls": 0,
+      "personVersion": 0,
+      "actorAuthStampsNotSubject": true
+    }
+  },
+  "negativeBoundaryCases": [
+    {
+      "caseId": "ATS_DISABLED_ZERO_CALLS",
+      "expectedError": "ATS_DISABLED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "OPTIONAL_CONNECTOR_DISABLED_ZERO_CALLS",
+      "expectedError": "CONNECTOR_DISABLED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "MISSING_ADAPTER_ZERO_SOURCE_CALLS",
+      "expectedError": "MISSING_ADAPTER",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "MISSING_TARGET_ADAPTER_ZERO_SOURCE_CALLS",
+      "expectedError": "MISSING_ADAPTER",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "ACTOR_AUTH2_STALE",
+      "expectedError": "ACTOR_AUTH_STALE",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "ACTOR_AUTH_EXPIRED",
+      "expectedError": "ACTOR_EXPIRED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "ACTOR_REVOKED",
+      "expectedError": "ACTOR_REVOKED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "SELF_PROFILE_NOT_ADMISSION_ACTION",
+      "expectedError": "ACTOR_PURPOSE_OR_SOD",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "ACTOR_SOD_DENIED",
+      "expectedError": "ACTOR_PURPOSE_OR_SOD",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "HRIS_ENTITLEMENT_DENIED_NOT_AUTOGRANT",
+      "expectedError": "ACTOR_PURPOSE_OR_SOD",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "CURRENT_FIELD_POLICY_DENIED",
+      "expectedError": "FIELD_POLICY_DENIED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "SOURCE_POPULATION_DENIED",
+      "expectedError": "SOURCE_POPULATION_DENIED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "CURRENT_TARGET_POPULATION_DENIED",
+      "expectedError": "TARGET_POPULATION_DENIED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "TARGET_PEOPLE_PROOF_STALE",
+      "expectedError": "TARGET_POPULATION_DENIED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "TARGET_PROOF_ACTOR_AUTH_IS_NOT_SUBJECT_VERSION",
+      "expectedError": "TARGET_POPULATION_DENIED",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "ARTIFACT_DIGEST_TAMPER",
+      "expectedError": "ARTIFACT_VERSION_OR_DIGEST_STALE",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "SOURCE_PARENT_OR_VERSION_MISMATCH",
+      "expectedError": "SOURCE_TENANT_VERSION_OR_PARENT",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "SOURCE_TENANT_MISMATCH",
+      "expectedError": "SOURCE_TENANT_VERSION_OR_PARENT",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "PRIVACY_SUBJECT_MISMATCH",
+      "expectedError": "PRIVACY_IDENTITY_MISMATCH",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "NATIVE_PERSON_RETURNING_NOT_TRACE",
+      "expectedError": "RETURNING_NATIVE_IDENTITY_MISMATCH",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "BODY_NORMALIZED_MUTATION_MISMATCH",
+      "expectedError": "NORMALIZED_MUTATION_MISMATCH",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "REUSE_TARGET_PEOPLE_VERSION_STALE",
+      "expectedError": "TARGET_PEOPLE_STALE_OR_TENANT",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "REUSE_TARGET_TENANT_MISMATCH",
+      "expectedError": "TARGET_PEOPLE_STALE_OR_TENANT",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "ACTOR_AUTH_STAMP_IS_NOT_PERSON_VERSION",
+      "expectedError": "TARGET_PEOPLE_STALE_OR_TENANT",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "IMPORT_NORMALIZED_MUTATION_MISMATCH",
+      "expectedError": "IMPORT_NORMALIZED_MUTATION_MISMATCH",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "CHANGED_IMMUTABLE_REQUEST_REPLAY",
+      "expectedError": "CHANGED_REQUEST_REPLAY",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    },
+    {
+      "caseId": "ACTOR_UUID_NOT_TARGET_PERSON_UUID",
+      "expectedError": "TARGET_PEOPLE_STALE_OR_TENANT",
+      "apiPayload": "Mutated concrete case; schema validation recorded before model execution",
+      "scope": "AUTHOR_G3_BOUNDARY_MODEL_NOT_PRODUCTION_AUTH"
+    }
+  ],
+  "all83RequestWitnessBoundary": "Inherited operation schema witnesses are shape only; concrete cases cover bounded admission/target source guards, not83 domain journeys."
+}

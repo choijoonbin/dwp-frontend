@@ -1,0 +1,113 @@
+{
+  "schema": "dwp.hris.workforce-s1-frozen-base-verdict.v1",
+  "recordedAt": "2026-09-14T12:19:46.300Z",
+  "scope": "S1_AUTH_READ_ONLY_NATIVE_TEST_ONLY",
+  "base": {
+    "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "supersededByObservedDwpDevHead": "315e1b2",
+    "latestBaselineMustBeReverified": true
+  },
+  "execution": {
+    "postgresImage": "postgres:16-alpine",
+    "javaHome": "/Users/a10697/Library/Java/JavaVirtualMachines/corretto-23.0.2/Contents/Home",
+    "class": "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest",
+    "argv": ["./gradlew", ":dwp-auth-server:test", "--rerun", "--tests", "com.dwp.services.auth.service.WorkforcePolicyGovernanceAuthorityAdapterV1PostgresTest", "--no-daemon", "--max-workers=1"],
+    "timeoutSeconds": 120,
+    "startedAt": "2026-09-14T12:13:10.182512+00:00",
+    "finishedAt": "2026-09-14T12:13:32.435277+00:00",
+    "durationSeconds": 22.253664666,
+    "exitCode": 1,
+    "timedOut": false,
+    "hostSemaphore": {
+      "name": "hris-verification",
+      "requestedAt": "2026-09-14T12:13:09.449Z",
+      "acquiredAt": "2026-09-14T12:13:09.449Z",
+      "releasedAt": "2026-09-14T12:13:34.013Z",
+      "status": "RELEASED"
+    }
+  },
+  "result": {
+    "status": "FAIL",
+    "tests": 28,
+    "unique": 28,
+    "passed": 27,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failedCase": {
+      "name": "[4] op=POLICY_REVOKE_PREFLIGHT_AUTH_READ",
+      "actual": "Failure(MALFORMED_REQUEST)",
+      "expected": "Success with LegacySubjectFact",
+      "message": "Expected Success but was Failure code=MALFORMED_REQUEST",
+      "requestCharacteristic": "80-character historical ROLE code A followed by 79 B characters",
+      "classification": "POST_DECODE_END_TO_END_CARRIER_COUNTEREXAMPLE",
+      "reasoning": "The existing allFourServerOperationsHaveAnExactTypedCandidate unit case accepts the identical 80-character revoke request. The native failure is therefore not the request fixture decode and is isolated to the later legacy revoke evidence/carrier response path."
+    },
+    "passedCases": [
+      "[1] row=ACTOR_INACTIVE",
+      "[2] row=TENANT_INACTIVE",
+      "[3] row=ROW_STALE",
+      "[4] row=ACCESS_STALE",
+      "[5] row=PERSON_RELABEL",
+      "[6] row=FOREIGN_TENANT",
+      "[7] row=SESSION_REVOKED",
+      "[8] row=SESSION_EXPIRED",
+      "[9] row=DUTY_MISSING",
+      "[10] row=SOD_MISSING",
+      "[11] row=SCOPE_STALE",
+      "[12] row=ROLE_INACTIVE",
+      "[13] row=TARGET_FOREIGN",
+      "[14] row=TARGET_STALE",
+      "[15] row=DIGEST_WRONG",
+      "ownerCallbackClockProgressionExpiryRegressionAndFailuresDoNotLeakPayload()",
+      "separateContextsFindNativeRowChangeEvenIfPublicRoleCodesDoNotChange()",
+      "nativeReadRoleCannotWriteCreateTempReadHistoryOrSetMigrationRole()",
+      "[1] op=POLICY_LIST_AUTH_READ",
+      "[2] op=ORGANIZATION_OPTIONS_AUTH_READ",
+      "[3] op=POLICY_CREATE_PREFLIGHT_AUTH_READ",
+      "baselineNativeUnregisteredCapabilityNeverBecomesBroadManagePermit()",
+      "secondOwnerContextSourceChangesAreNotSameAuthRevisionAuthority()",
+      "exactHttpChainUsesActualCurrentNativeSessionAndRepeatedReadRefetchesAfterRevoke()",
+      "nativeSupersededGraceAndStrictJwtExpiryAreNotDecoderSkewPermissions()",
+      "inactiveUserRevocationExpectationAndSelfSubjectRemainReadNotPeopleCommandAuthorization()",
+      "nativeOneLetterDotHyphenAndFiftyCharacterRoleTargetsAreActualCatalogRows()"
+    ]
+  },
+  "sourceIntegrity": {
+    "sourceEntries": 3068,
+    "sourceStableAcrossExecution": true,
+    "contractSha256": "d943478c91b82943bc2684885da442a7f0a58d6fb0d50e25e973faf500e9ceef",
+    "adapterSha256": "430fec043235f47f21d9546e2926b2ba2f13474442b54a451e2c09a318678cb9",
+    "testSha256": "7fff8bacff5f38a63c194be8c57928f829e654f37039bde0a42d8672b69d8713",
+    "productionChangedByThisRecovery": false,
+    "expectationWeakenedByThisRecovery": false,
+    "testOnlyFixtureChanges": [
+      "Reserved maker/checker/target IDs 941010/941011/941012 avoid V40 provider seed PK collision",
+      "Clean-database product-surfaces v5 draft is promoted as v6 using pointer revision 0 when absent",
+      "Tenant inactive counterexample uses supported SUSPENDED lifecycle state while retaining TENANT_INACTIVE expectation",
+      "Success helper prints the actual Failure code"
+    ]
+  },
+  "evidence": {
+    "losslessEnvelope": "workforce-policy-s1-native-diagnostic-failure-code-lossless-2026-09-14.json",
+    "losslessEnvelopeSha256": "a5ad605d7d70f72f6d285a0a98a032eb3f055da9e69b419c32d479d918102837",
+    "receiptSha256": "3846aab29be3450595ef499dadae1914c4aa52d99b1f716d01e7b8b8782f7400",
+    "archiveSha256": "38bf68cfd75322ebe93802308cdb0d3104b587adcfca3ffa9df3cc7fd097b520",
+    "xmlSha256": "f77b01f26732c1d529af41e22884d97e6cc73701abe381c4e4aeab6cbe98fe70",
+    "xmlMtimeNs": "1789388011988827911",
+    "dockerEventsSha256": "3ab81aa63463bcef8a401a9afe3822bfe7f8b315f4a54713680d2f42f61982b2"
+  },
+  "cleanup": {
+    "manualServerOrContainerStop": 0,
+    "ownedPostgres": "70b164038a9463f64832cd9269e1b0c8b1c9b3947ade0dd4913efddafbb4cc4f",
+    "ownedRyuk": "2107e22b789da0a9c7d50c02cce938a1fa19b59bfe2969fba45a111be08972a6",
+    "postInspectionAt": "2026-09-14T12:19:46.300Z",
+    "postInspection": "BOTH_ABSENT"
+  },
+  "gateBoundary": {
+    "g3Approved": false,
+    "moduleCodingGateOpened": false,
+    "meaning": "This is native S1 Auth read-only TEST_ONLY evidence. It is not a People command permit, durable fence, production registration, module coding authorization, or whole-HRIS readiness approval.",
+    "nextRequired": "After controlled integration of dwp-dev 315e1b2, reproduce the 80-character historical-role revoke carrier case on the latest catalog and validator baseline; correct the production carrier/response path without reducing historical compatibility, then rerun the same native class losslessly."
+  }
+}

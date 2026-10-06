@@ -1,0 +1,228 @@
+{
+  "reportId": "dwp.hris.modern-v5-validator-policy-author-verification.2026-09-16.v1",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T12:07:04+09:00",
+  "status": "PASS_SOURCE_POLICY_VALIDATOR_REPAIR_WITH_POST_SEAL_CANDIDATE_REJECTION",
+  "decision": "SOURCE_AND_REVIEW_INFRASTRUCTURE_READY_FOR_FRESH_CONTROL_RECOMPOSITION;NO_EXISTING_CANDIDATE_MAY_BE_PROMOTED",
+  "authorityBoundary": "AUTHOR_SELF_VERIFICATION_NOT_INDEPENDENT_APPROVAL_NOT_G3_AUTHORITY",
+  "scope": {
+    "classificationAuthority": {
+      "path": "coding-readiness/reports/modern-v4-preflight-finding-triage-independent-2026-09-16.v1.json",
+      "sha256": "03f8e2a967e052a7096b0bc837b5ccb9c7faee6a30920717a1f438647f5e953c",
+      "sealedPayloadSha256": "e930be1e35d7987a1373c6e16133cc196a62e80fce9e50e685e81820fffbaa8e"
+    },
+    "closedClassifications": {
+      "VALIDATOR_FALSE_POSITIVE": {
+        "count": 27,
+        "groups": [
+          "G02",
+          "G04",
+          "G06",
+          "G09",
+          "G12",
+          "G13",
+          "G14"
+        ]
+      },
+      "STALE_POLICY_METADATA": {
+        "count": 8,
+        "groups": [
+          "G03",
+          "G05",
+          "G07",
+          "G08",
+          "G11"
+        ]
+      }
+    },
+    "excludedClassification": "G01_AND_G10_TRUE_POSITIVE_SOURCE_REPAIRS_ARE_RECORDED_IN_THE_SEPARATE_V4_TRUE_POSITIVE_AUTHOR_REPORT",
+    "writeBoundary": [
+      "coding-readiness/modern_closed_set_design.py",
+      "coding-readiness/generate_modern_closed_set_manifest.py",
+      "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+      "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py",
+      "coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py",
+      "coding-readiness/modern-independent-successor/audit_global_hcm_v5_validator_hostile.py",
+      "coding-readiness/reports/modern-v5-validator-policy-author-verification-2026-09-16.v1.json"
+    ]
+  },
+  "sealedSuccessorPolicy": {
+    "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+    "policyId": "DWP-HRIS-GLOBAL-HCM-NONREPLACEABLE-TABLE-EXPANSION-V5",
+    "sha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+    "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2",
+    "predecessor": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+      "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+      "disposition": "IMMUTABLE_NOT_REWRITTEN"
+    },
+    "successorScope": {
+      "tableCount": 131,
+      "baselineTableCount": 115,
+      "addedRows": 17,
+      "removedRows": 1,
+      "netDelta": 16,
+      "removedTableId": "sys_hris_listening_export_receipts"
+    }
+  },
+  "finalSourcePins": {
+    "closedSetDesign": {
+      "path": "coding-readiness/modern_closed_set_design.py",
+      "sha256": "61e5588caf114cf444396446b245b4f32ddf945de32a29dcaa6f87090b5aad66"
+    },
+    "manifestGenerator": {
+      "path": "coding-readiness/generate_modern_closed_set_manifest.py",
+      "sha256": "d497c31df6a1023ba6ebea1c325eea05d081aa9b345337218a54acb46ee63e29"
+    },
+    "globalAcceptanceValidator": {
+      "path": "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py",
+      "sha256": "f4080d54aba62ec1b2a7d9c0838a4f5510edf8187efe09c102c9c636fb787611"
+    },
+    "ownerStreamValidator": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py",
+      "sha256": "77c14ed3a4b6feb495e3238b3ab66c64be907987db1d1fd63e35e4ce19dbbdcb"
+    },
+    "globalHostileAudit": {
+      "path": "coding-readiness/modern-independent-successor/audit_global_hcm_v5_validator_hostile.py",
+      "sha256": "a41b6134833d5e453366d1eecbbad8d9f38248f797d3095ffc5a359584f45532"
+    }
+  },
+  "repairProfiles": [
+    {
+      "groupId": "G02",
+      "closure": "Anonymous signed-credential queries use a closed tenant/purpose/population/field-policy PEP with exact audience and offline non-revocation proof; authenticated-principal capability coupling is forbidden."
+    },
+    {
+      "groupId": "G03",
+      "closure": "Listening cohort response and physical projection use privacy-safe suppression, budget receipt and separate exact lineage receipt metadata; raw respondent buckets and inline lineage blobs remain forbidden."
+    },
+    {
+      "groupId": "G04",
+      "closure": "Protected erasure is validated as the exact lease, KMS destruction and terminal TX2 multi-phase owner-local saga; one-transaction fiction, failure tombstones and public/broker outbox writes are forbidden."
+    },
+    {
+      "groupId": "G05",
+      "closure": "The workforce simulation result handler has an exact signed result tuple, terminal CAS, receipt proof assignments, ordered DML and FORBIDDEN refetch contract without wildcard handler exemption."
+    },
+    {
+      "groupId": "G06",
+      "closure": "Event conditions are parsed through a closed POST_STATE or signed-status-plus-root-CAS grammar; unknown free-form syntax fails closed."
+    },
+    {
+      "groupId": "G07",
+      "closure": "Contingent and succession revision commands reject client effectiveTo, require NULL-only non-authoritative storage, derive the visible boundary server-side and forbid prior history mutation or latest fallback."
+    },
+    {
+      "groupId": "G08",
+      "closure": "Protected Listening submit accepts only route surveyId plus signedParticipationCredential, responseToken and answers; duplicate unsigned admission/envelope fields, identity fields, public events and broker outbox are forbidden."
+    },
+    {
+      "groupId": "G09",
+      "closure": "Qualified physical lineage accepts exactly one approved arbitration qualifier and then validates exact table, existing column, response target, distinct direct source minimum and closed selection-mode sources without latest fallback."
+    },
+    {
+      "groupId": "G11",
+      "closure": "The 131-table successor metadata declares exact current readers, including the life-event collection reader and cycle/proposal detail and collection readers; every reader still requires executable table read, projection physical source and durable direct lineage."
+    },
+    {
+      "groupId": "G12",
+      "closure": "Temporal query resolution validates query.systemAsOf structurally, applies system-time filtering before distinct state/content arbitration and forbids authoritative persisted effectiveTo or latest fallback."
+    },
+    {
+      "groupId": "G13",
+      "closure": "Owner-stream control DML is derived from the exact pinned owner-port contract: protected submit requires receipt/token/response/answer writes and rejects public/broker outbox, without a broad no-outbox exemption."
+    },
+    {
+      "groupId": "G14",
+      "closure": "Manifest-to-sealed-v2 and sealed-v2-to-v1 Listening authority edges are validated separately; a duplicate manifest predecessor field cannot substitute for reading and sealing either authority."
+    }
+  ],
+  "verification": {
+    "pythonCompile": {
+      "status": "PASS",
+      "files": 5
+    },
+    "globalValidator": {
+      "status": "PASS_DIAGNOSTIC_ON_PRE_INCIDENT_BYTES",
+      "findingCount": 0,
+      "selfTests": "35/35"
+    },
+    "globalHostileAudit": {
+      "status": "PASS",
+      "tests": "50/50",
+      "positiveControlFindingCount": 0,
+      "candidateBytesUnchangedDuringHostileAudit": true,
+      "coveredGroups": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G11",
+        "G12",
+        "POLICY_CHAIN"
+      ]
+    },
+    "ownerStreamValidator": {
+      "status": "PASS_DIAGNOSTIC_ON_PRE_INCIDENT_BYTES",
+      "findingCount": 0,
+      "successorSelfTests": "20/20",
+      "legacyQ0Regression": "EXPECTED_HISTORICAL_FAIL_77_FINDINGS_WITH_SELFTESTS_14_OF_14_PASS"
+    },
+    "sourceCompositionDiagnostics": {
+      "status": "PASS_DIAGNOSTIC_ONLY_NOT_PROMOTION_AUTHORITY",
+      "counts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "publicEvents": 157,
+        "tables": 131
+      },
+      "operationSemantics": "PASS_FINDING_COUNT_0_SELFTESTS_24_OF_24",
+      "routeTaxonomy": "PASS_FINDING_COUNT_0_OPERATIONS_199",
+      "exactEventFixedPoint": "PASS_OPERATIONS_199_TABLES_131_EVENTS_157",
+      "semanticFixedPoint": "PASS_EXPLICIT_BINDINGS_13297_TYPE_FALLBACKS_0_EVENT_FALLBACKS_0",
+      "causalHostileSelfTests": "PASS_22_OF_22"
+    }
+  },
+  "postSealCandidateIncident": {
+    "occurred": true,
+    "candidatePath": "coding-readiness/modern-canonical-candidate.v5p1363-final",
+    "cause": "The causal generator --candidate-dir mode was invoked as a presumed check, but that mode stages and atomically replaces the candidate causal file.",
+    "affectedFile": "modern-capability-causal-state-contracts.v2.json",
+    "observedSha256AfterReplace": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+    "contentImpact": "The rendered bytes and SHA remained identical to the previously declared value, but the post-seal replace still violates immutable-candidate procedure.",
+    "candidateDisposition": "NO_PROMOTION_NO_REUSE_POST_SEAL_REWRITE",
+    "linkedPhysicalDisposition": "NO_PROMOTION_NO_REUSE_POST_SEAL_REWRITE",
+    "subsequentUse": "STOPPED;no later result in this report authorizes this candidate or any connected physical derivative",
+    "requiredRecovery": "After every source and tool owner freezes final bytes, Control must compose a new uniquely named canonical candidate and physical candidate from scratch, then run only read-only validators or validate an explicitly disposable copy."
+  },
+  "boundaryAssertions": [
+    "Immutable v4 policy bytes and its report history were not changed.",
+    "No live canonical artifact, Gate register or decision was changed.",
+    "No broad exemption, wildcard reader, wildcard handler or substring-only temporal/condition acceptance was introduced.",
+    "Protected Listening submit still has no unsigned duplicate admission fields, worker identity fields, broker outbox or public event.",
+    "Client effectiveTo and one-database-transaction crypto erasure remain forbidden.",
+    "The sealed v5 policy bytes are final at the pinned file hash and payload seal above.",
+    "The post-seal candidate replace is explicitly disclosed and prevents using otherwise passing diagnostics as promotion authority."
+  ],
+  "finalAssertion": {
+    "validatorFalsePositivesClosedInSource": 27,
+    "stalePolicyMetadataFindingsClosedBySealedSuccessor": 8,
+    "immutableV4Preserved": true,
+    "sealedV5ReadyForFreshComposition": true,
+    "reviewToolsReadyForFreshReadOnlyValidation": true,
+    "existingCandidateReady": false,
+    "existingPhysicalCandidateReady": false,
+    "independentReviewRequired": true,
+    "canonicalPromotionAuthorized": false,
+    "physicalEmissionAuthorized": false,
+    "g3GateMayOpen": false
+  },
+  "sealedPayloadSha256": "5821479214eee98067251d84f77a9e6d5ab3d95ac6256b9683e6aff676aa5e84"
+}

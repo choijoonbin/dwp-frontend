@@ -1,0 +1,193 @@
+{
+  "reportId": "dwp.hris.modern-operation-semantics-source-repair-independent-audit.2026-09-16.v1",
+  "generatedAt": "2026-09-16T01:46:08Z",
+  "status": "FAIL_VALIDATOR_NOT_FAIL_CLOSED",
+  "decision": "BLOCK_DISTINCT_CANONICAL_CANDIDATE_UNTIL_REVIEWER_ORACLE_REPAIR_AND_REAUDIT",
+  "scope": {
+    "sourceOnly": true,
+    "temporaryProjectionOnly": "/tmp/hris-operation-independent-v5.qOSNzv",
+    "workspaceCandidateCreated": false,
+    "liveCanonicalModified": false,
+    "gateModified": false,
+    "reviewedSourceModified": false,
+    "onlyDurableArtifactWritten": "coding-readiness/reports/modern-operation-semantics-source-repair-independent-audit-2026-09-16.v1.json"
+  },
+  "independence": {
+    "reviewer": "operation_repair_independent_audit",
+    "authorGeneratorImportedByReviewerOracle": false,
+    "authorValidatorImportedByReviewerOracle": false,
+    "candidateUsedAsUntrustedEvidenceOnly": true,
+    "reviewerMutationSetDefinedOutsideAuthorSelftests": true,
+    "authorDeterministicReprojectionDisposition": "USEFUL_AUTHOR_INVARIANT_BUT_IMPLEMENTATION_COUPLED_AND_NOT_A_SUBSTITUTE_FOR_AN_INDEPENDENT_ORACLE",
+    "conclusion": "The reviewer oracle is structurally independent, but two semantic coverage gaps allow three hostile instances to pass. Therefore it is not fail-closed."
+  },
+  "inputs": {
+    "operationGenerator": {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256": "e01f93f182dce49d4265be918d0c81761e71da3590e55995c5f6d7a9dbe8fb00"
+    },
+    "operationReviewerOracle": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256": "612c2287f971711dfa9ad039f664d47aaa303ee3427bd92bb7367cbc4e7dd10f"
+    },
+    "routeReviewerOracle": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py",
+      "sha256": "21d1e68138a3c961780d540e5fbb2c7b2bd1b2a86d872d43b934fb40eaa946ea"
+    },
+    "listeningAuthority": {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+    },
+    "authorRepairReport": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v1.json",
+      "sha256": "ad636740594732385f7b128008a99a8432f8df20699f69d1a58a3af0a4cd894b"
+    }
+  },
+  "temporaryV5Projection": {
+    "status": "PASS_AUTHOR_COMPOSITION_AND_VALIDATION",
+    "sourceProjectionVersion": "modern-operation-causal-source-v5-2026-09-16",
+    "manifestSeal": "65994ba2adf9c5ada6490562d28ff4ece2d7818df6e0819dd0a9f6413585181d",
+    "manifestSha256": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3",
+    "operationSha256": "ff951d124c04f233c8bf2f7515012ad9a421b7162cc998ddb52c1dc4b4e56290",
+    "exactSchemaSha256": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88",
+    "counts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 27,
+      "publicEvents": 157,
+      "tableSpecifications": 131
+    },
+    "repeatability": "operation bytes equal the earlier author temporary v5 projection hash ff951d124c04f233c8bf2f7515012ad9a421b7162cc998ddb52c1dc4b4e56290"
+  },
+  "baselineReviewerResults": {
+    "operationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "affectedOperationCount": 0,
+      "reportSha256": "1977833c786e6c5a8502241932af0835da20aae56f80a9084bde8b469b3ba24e"
+    },
+    "officialMutationSelftests": {
+      "status": "PASS",
+      "testsRun": 18,
+      "testsPassed": 18,
+      "reportSha256": "69ea8b150dc83f89ed6bd974b0f55814bd7756a88123eae657e1c5e69fa6c290"
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "findingCount": 0,
+      "reportSha256": "92b5dfe494f92af6c5d940163c96316fb5e3fe4ddfa82707e3f696aa899c11f2"
+    },
+    "disposition": "BASELINE_ZERO_AND_AUTHOR_SELFTESTS_DO_NOT_PROVE_FAIL_CLOSED_COVERAGE"
+  },
+  "authorityAlignment": {
+    "listeningProtectedSubmitAuthority": {
+      "expected": "closed signed credential plus offline non-revocation proof, nested admission and protected-audience selectors, route-survey to signed-claim to locked-admission equality, exact seven-step owner-local transaction, private response only, no broker/public outbox",
+      "reviewerImplementation": "aligned for every independently removed proof leg and for forbidden broker/public dispatch",
+      "independentMutations": 67,
+      "rejected": 67,
+      "escaped": 0
+    },
+    "learningOwnerProofAuthority": {
+      "expected": "both typed child-reference assignments derive only from ownerProof.body.evidencePublicId.skillEvidenceIds[*]",
+      "reviewerImplementation": "generic undeclared-body scanning rejects the legacy body source but does not assert the exact nested owner-proof member",
+      "independentMutations": 3,
+      "rejected": 2,
+      "escaped": 1
+    },
+    "workforcePlanningTerminalProofAuthority": {
+      "expected": "FORBIDDEN aggregate lookup and latest fallback, no refetch hints, exact resultReceiptId+resultReceiptRevision+resultSchemaVersion+resultDigest tuple, exact signed-owner validation, deny on unavailable",
+      "reviewerImplementation": "rejects hints, tuple membership, event membership, tuple identity, lookup/fallback and deny drift but never validates resultOwnerContract.validation",
+      "independentMutations": 24,
+      "rejected": 22,
+      "escaped": 2
+    }
+  },
+  "independentHostileCampaign": {
+    "status": "FAIL",
+    "testsRun": 94,
+    "hostilesRejected": 91,
+    "hostilesEscaped": 3,
+    "rawHarnessExpectedCodeMatches": 90,
+    "rawHarnessExpectedCodeMismatches": 4,
+    "note": "One expected-code mismatch was nevertheless rejected by UNDECLARED_BODY_SOURCE_USED and is not an escape; the three PASS/zero-finding cases below are the actual escapes.",
+    "temporaryEvidenceSha256": "7d482abee6badc170712a80bb812236fd5d857e40116359545cc6a76c17fcb33",
+    "escapedMutations": [
+      {
+        "id": "ESCAPE-LEARNING-OWNER-PROOF-MEMBER-DRIFT",
+        "subject": "modern.learning.completion.verify orderedDml assignments skill_evidence_public_id and worker_skill_evidence_id",
+        "mutation": "replace ownerProof.body.evidencePublicId.skillEvidenceIds[*] with ownerProof.body.evidencePublicId.unreviewedSkillEvidenceIds[*]",
+        "expected": "independent LEARNING_OWNER_PROOF_DERIVATION_DRIFT or equivalent P0",
+        "actual": {
+          "status": "PASS",
+          "findingCount": 0,
+          "findingCodes": []
+        },
+        "rootCause": "ghost_body_findings validates only the top-level declared body token and has no exact nested owner-proof derivation invariant"
+      },
+      {
+        "id": "ESCAPE-WFP-SUCCESS-OWNER-VALIDATION-DRIFT",
+        "subject": "internal.workforceplan.simulation-result.consume WorkforceScenarioSimulated.v2 resultOwnerContract.validation",
+        "mutation": "replace SIGNED_OWNER_RESULT_MATCHES_LOCKED_REQUEST_ID_REVISION_AND_DIGEST with TRUST_UNVERIFIED_RESULT",
+        "expected": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "actual": {
+          "status": "PASS",
+          "findingCount": 0,
+          "findingCodes": []
+        },
+        "rootCause": "handler_refetch_findings checks requiredFields, identity and denyOnUnavailable but omits the validation literal"
+      },
+      {
+        "id": "ESCAPE-WFP-FAILURE-OWNER-VALIDATION-DRIFT",
+        "subject": "internal.workforceplan.simulation-result.consume WorkforceScenarioSimulationFailed.v2 resultOwnerContract.validation",
+        "mutation": "replace SIGNED_OWNER_RESULT_MATCHES_LOCKED_REQUEST_ID_REVISION_AND_DIGEST with TRUST_UNVERIFIED_RESULT",
+        "expected": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE",
+        "actual": {
+          "status": "PASS",
+          "findingCount": 0,
+          "findingCodes": []
+        },
+        "rootCause": "same omitted validation invariant on the second terminal event"
+      }
+    ]
+  },
+  "historicalTruePositiveRetention": {
+    "candidate": "coding-readiness/modern-canonical-candidate.uaHfXj",
+    "status": "FAIL",
+    "findingCount": 3,
+    "affectedOperationCount": 1,
+    "reportSha256": "8dc36a5924afda7bd3850c4eac37c7d44a6aae55a7670062ba9064df193a8da1",
+    "findings": [
+      {
+        "code": "UNDECLARED_BODY_SOURCE_USED",
+        "operationId": "modern.learning.completion.verify",
+        "field": "body.skillEvidenceIds"
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulated.v2",
+        "table": "ppl_wfp_simulation_requests"
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulationFailed.v2",
+        "table": "ppl_wfp_simulation_requests"
+      }
+    ],
+    "disposition": "TRUE_POSITIVES_REMAIN_REPRODUCIBLE"
+  },
+  "requiredRepair": [
+    "Add an independent exact derivation check for modern.learning.completion.verify that requires both child-reference assignments to use only ownerProof.body.evidencePublicId.skillEvidenceIds[*], with no broad ownerProof prefix exemption.",
+    "Require resultOwnerContract.validation to equal SIGNED_OWNER_RESULT_MATCHES_LOCKED_REQUEST_ID_REVISION_AND_DIGEST for both Workforce Planning terminal events.",
+    "Add reviewer-owned mutations for both escaped classes; do not rely on author deterministic reprojection as evidence of independent rejection.",
+    "Rerun baseline audit=0, official mutations=18/18, route=0, all 94 reviewer mutations=94 rejected, and uaHfXj=the same three true positives before this block can close."
+  ],
+  "immutabilityEvidence": {
+    "liveOperationSsotSha256BeforeAndAfter": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+    "g3GateDecisionSha256BeforeAndAfter": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "gateDisposition": "UNCHANGED_CLOSED_FAIL_SAFE"
+  },
+  "sealedPayloadSha256": "7ca70f841578ba4d5c4ed89ff1004d39ec6ae5ef9cefedfb9331c27f7108f81c"
+}

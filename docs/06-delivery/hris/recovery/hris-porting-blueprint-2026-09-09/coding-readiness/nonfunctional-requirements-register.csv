@@ -1,0 +1,31 @@
+nfr_id,area,requirement,code_gate_evidence,activation_evidence,owner,status
+NFR-001,TENANCY,"Every query/command/event/job is tenant-bound and cross-tenant negative-tested","repository/RLS and HTTP tests","production DB-role review",ROLE.SECURITY_AUTHORITY,DECIDED
+NFR-002,AUTHORIZATION,"App entitlement plus atomic capability/scope/field/SoD is fail-closed","negative matrix and PEP tests","production policy inventory",ROLE.SECURITY_AUTHORITY,DECIDED
+NFR-003,IDEMPOTENCY,"High-impact commands replay same result and reject payload mismatch","command contract/property tests","provider idempotency certification",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-004,CONCURRENCY,"Mutable aggregates use expected version/CAS","409/428 and concurrent update tests","production conflict telemetry",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-005,TEMPORAL,"Published effective ranges cannot overlap","DDL exclusion and boundary tests","tenant calendar/timezone review",ROLE.DBA_AUTHORITY,DECIDED
+NFR-006,LEDGER,"Time/leave/payroll records correct by append/reversal not overwrite","migration invariant and golden tests","retention/legal-hold approval",ROLE.DBA_AUTHORITY,DECIDED
+NFR-007,EVENTING,"Outbox/inbox handles duplicates, ordering and worker crash","Testcontainers resilience tests","broker capacity/DR test",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-008,PRIVACY,"Restricted values are tokenized/masked and absent from logs/events","leakage and field projection tests","DPIA/privacy signoff",ROLE.PRIVACY_AUTHORITY,DECIDED
+NFR-009,FILES,"Imports are quarantined/scanned/size-type validated and exports are purpose-bound","malicious file and formula tests","object-store/AV/retention review",ROLE.SECURITY_AUTHORITY,DECIDED
+NFR-010,API,"Versioned OpenAPI uses bounded pagination and stable errors","schema/compatibility tests","API consumer certification",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-011,ACCESSIBILITY,"Keyboard, focus, labels, errors and live status work at semantic scaffold","component/axe/manual smoke","G5C WCAG acceptance",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-012,RESPONSIVE,"Core journeys support 1440 and 390 without hiding critical state","responsive component/E2E smoke","G5C visual acceptance",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-013,I18N,"Locale/timezone/currency/name/address formatting is policy-aware","locale and DST boundary tests","tenant locale pack approval",ROLE.PROGRAM_OWNER,DECIDED
+NFR-014,PERFORMANCE_READ,"Reference interactive read p95 target is 500ms","S/M benchmark and query plan","tenant-tier load test",ROLE.QA_EVIDENCE,DECIDED
+NFR-015,PERFORMANCE_COMMAND,"Reference command acceptance p95 target is 800ms","S/M benchmark","tenant-tier load test",ROLE.QA_EVIDENCE,DECIDED
+NFR-016,HOME,"Home shell target p95 1.5s with module partial-failure isolation","materialized read-model benchmark","production telemetry/capacity",ROLE.HRIS_SYS_PRODUCT_OWNER,DECIDED
+NFR-017,SCALE,"Generators cover S/M/L reference profiles","fixture generator and bounded-memory tests","contracted tenant volume test",ROLE.QA_EVIDENCE,DECIDED
+NFR-018,AVAILABILITY,"Dependency failure degrades by widget/adapter and unsafe commands fail closed","timeout/circuit/chaos tests","tier SLO and failover exercise",ROLE.HRIS_SYS_ENGINEERING,DECIDED
+NFR-019,RECOVERY,"Jobs expose lease/heartbeat/retry/DLQ/reconciliation receipts","worker crash/replay tests and runbook","RTO/RPO and DR exercise",ROLE.HRIS_SYS_ENGINEERING,DECIDED
+NFR-020,OBSERVABILITY,"Metrics/traces/logs correlate without high-cardinality PII","telemetry schema/leak tests","dashboard/alert/on-call validation",ROLE.HRIS_SYS_ENGINEERING,DECIDED
+NFR-021,DATA_QUALITY,"Invalid/orphan/overlap values become explicit exceptions not silent defaults","migration/golden tests","tenant reconciliation approval",ROLE.DBA_AUTHORITY,DECIDED
+NFR-022,SECURE_CONFIG,"Secrets are references and formulas/configs cannot execute arbitrary code/SQL","schema/signature/injection tests","KMS/secret/egress review",ROLE.SECURITY_AUTHORITY,DECIDED
+NFR-023,SUPPLY_CHAIN,"High vulnerabilities are zero and licenses/SBOM are governed","audit/license/SBOM CI","release attestation",ROLE.OSS_COMPLIANCE,DECIDED
+NFR-024,COMPATIBILITY,"API/event/schema changes are additive or versioned","producer/consumer and migration tests","deprecation-window approval",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-025,RELEASE,"Tenant/module/country flags support dark launch/canary/rollback","flag and rollback tests","pilot/canary evidence",ROLE.INTEGRATION_CONTROL,DECIDED
+NFR-026,AUDIT,"High-risk read/write/export/config/job actions emit durable evidence","audit-outbox atomicity tests","auditor retention/search validation",ROLE.SECURITY_AUTHORITY,DECIDED
+NFR-027,AI,"AI output is advisory with provenance and human confirmation for high impact","policy/negative tests","AI governance use-case approval",ROLE.PRIVACY_AUTHORITY,DECIDED
+NFR-028,MAINTAINABILITY,"Service/feature boundaries, cycles, source size and unreachable code are ratcheted","existing architecture gates","quarterly architecture review",ROLE.ARCHITECTURE_AUTHORITY,DECIDED
+NFR-029,MIGRATION,"Loads are idempotent, resumable and fully reconciled","synthetic dry-run/cutover tests","tenant rehearsal/signoff",ROLE.DBA_AUTHORITY,DECIDED
+NFR-030,DESIGN,"Visual replacement preserves route/permission/state/API/a11y contracts","validate_g5a_design_ai_packages.py planned contract and 9-case fail-closed self-test; actual package NOT_DUE before G4","post-G4 package manifest/hash/PII-secret/OCR/G4-surface/98-IA-owner/ZIP parity then G5B/G5C acceptance",ROLE.PROGRAM_OWNER,DECIDED

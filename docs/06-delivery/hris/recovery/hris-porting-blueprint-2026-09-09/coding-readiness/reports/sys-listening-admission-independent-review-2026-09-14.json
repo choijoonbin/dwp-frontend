@@ -1,0 +1,331 @@
+{
+  "reportId": "SYS_LISTENING_ADMISSION_INDEPENDENT_PRIVACY_SECURITY_REVIEW_2026_09_14",
+  "status": "INDEPENDENT_LIMITED_PROPOSAL_REVIEW_G3_BLOCKED",
+  "reviewedAtUtc": "2026-09-14T02:05:34Z",
+  "sourcePins": {
+    "semantic-remediation/sys-listening-admission-exact.proposal.v1.json": "ed13ab82bb6e625fbf915e7b8b87981b2e737994e04cbbb647da66501ab0d614",
+    "semantic-remediation/sys-listening-admission-exact.proposal.v1.md": "2a32ff328954f5f6941bfb2e3fd6b20856cb4f8ea271f0fc8818d9487d0fc89d",
+    "semantic-remediation/validate_sys_listening_admission_proposal.cjs": "2a09a4fe9d45287fdc92cb4d21067bff16ffa9aed36b81855f338a2ae11171b2",
+    "semantic-remediation/sys-stream-authority-decision.proposal.v1.md": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1"
+  },
+  "scope": {
+    "included": [
+      "15 proposed Draft07 schemas",
+      "9 planned private table/FK boundaries",
+      "9 public+owner SPI operations",
+      "issuer/protected separation",
+      "submit-close fencing",
+      "erased payload-HMAC replay semantics",
+      "non-atomic key erasure protocol",
+      "fixed cohort epoch/budget/measure confidentiality"
+    ],
+    "excluded": [
+      "Full Survey/Form/Audience/Action business contract",
+      "BASE86 semantic integrity",
+      "Actual cryptography/keys/HTTP PEP/log redaction/SQL ACL/Control/runtime/domain execution",
+      "Author analytics/AI fragment independent approval"
+    ],
+    "canonicalChanges": "NONE",
+    "backendChanges": "NONE",
+    "g3Authorization": "NONE"
+  },
+  "credited": [
+    {
+      "pointer": "/scope",
+      "result": "Boundary subset is honestly declared NOT full Survey/Action contract; no misleading G3 READY."
+    },
+    {
+      "pointer": "/tableSpecifications/7",
+      "result": "Auth issuer identity link is in hris_participation_issuer; protected schema has no principal/worker columns and no cross-owner local FK."
+    },
+    {
+      "pointer": "/tableSpecifications/1/foreignKeys/0",
+      "result": "Response admission_id resolves the protected owner local admission version; configuration survey BIGINT is not copied."
+    },
+    {
+      "pointer": "/operations/0/guards/1",
+      "result": "Submit/close use same admission fence and atomic response/answers/token consumption/receipt; principal-bound G2 receipt excluded."
+    },
+    {
+      "pointer": "/operations/0/guards/2",
+      "result": "After payload HMAC deletion, any payload for the same valid consumed token returns same ERASED receipt; no answer comparison/resubmission oracle."
+    },
+    {
+      "pointer": "/operations/2/guards",
+      "result": "PENDING erasure ticket fences access first; key request persisted before dispatch; external key/SQL non-atomicity and unknown outcome explicit."
+    },
+    {
+      "pointer": "/operations/7/guards",
+      "result": "COMPLETED only after authenticated matching REVOKED key authority result+final SQL; rejected/unknown stays fenced, backups not declared erased by SQL delete."
+    },
+    {
+      "pointer": "/privacyRules/0",
+      "result": "Same-JVM/collusion/timing/free-text residual reidentification is explicitly NOT absolute anonymity."
+    }
+  ],
+  "executableEvidence": {
+    "engine": {
+      "name": "Ajv",
+      "version": "6.12.6",
+      "options": {
+        "coerceTypes": false,
+        "useDefaults": false,
+        "removeAdditional": false,
+        "allErrors": true
+      }
+    },
+    "rootCheckerReproduction": {
+      "command": "node coding-readiness/semantic-remediation/validate_sys_listening_admission_proposal.cjs /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+      "exitCode": 0,
+      "schemas": 15,
+      "shapeCases": 74,
+      "selectedBoundaryChecks": 96,
+      "crypto": "NOT_VERIFIED",
+      "actualDomainExecution": "NOT_EXECUTED_G4",
+      "independentApproval": "NONE"
+    },
+    "independentInMemorySchemaProbes": [
+      {
+        "probeId": "PROBE-LIS-OWNER-SWAP",
+        "schema": "SYS.ListeningAdmissionControlRequest.proposal.v1",
+        "mutation": {
+          "formVersionRefOwner": "SYS.ListeningPrivacyVersion.proposal.v1",
+          "privacyVersionRefOwner": "SYS.ListeningRetentionVersion.proposal.v1",
+          "retentionVersionRefOwner": "SYS.ListeningFormVersion.proposal.v1"
+        },
+        "accepted": true,
+        "errors": []
+      },
+      {
+        "probeId": "PROBE-LIS-SUPPRESSED-LEAK",
+        "schema": "SYS.ListeningCohortResult.proposal.v1",
+        "mutation": {
+          "status": "SUPPRESSED",
+          "adequacyCategory": "ADEQUATE",
+          "measures": [
+            {
+              "questionKey": "q",
+              "meanValue": "4",
+              "unit": "SCALE_POINT"
+            }
+          ]
+        },
+        "accepted": true,
+        "errors": []
+      },
+      {
+        "probeId": "PROBE-LIS-DUPLICATE-MEAN",
+        "schema": "SYS.ListeningCohortResult.proposal.v1",
+        "mutation": {
+          "status": "COMPLETED",
+          "measures": [
+            {
+              "questionKey": "q",
+              "meanValue": "1",
+              "unit": "SCALE_POINT"
+            },
+            {
+              "questionKey": "q",
+              "meanValue": "5",
+              "unit": "SCALE_POINT"
+            }
+          ]
+        },
+        "accepted": true,
+        "errors": []
+      },
+      {
+        "probeId": "PROBE-LIS-LEADING-ZERO",
+        "schema": "SYS.ListeningAnswer.proposal.v1",
+        "mutation": {
+          "questionKey": "q",
+          "kind": "SCALE",
+          "value": "04.0000"
+        },
+        "accepted": true,
+        "errors": []
+      },
+      {
+        "probeId": "PROBE-LIS-SIGNED-ZERO",
+        "schema": "SYS.ListeningAnswer.proposal.v1",
+        "mutation": {
+          "questionKey": "q",
+          "kind": "SCALE",
+          "value": "-0.0000"
+        },
+        "accepted": true,
+        "errors": []
+      }
+    ],
+    "evidenceLimit": "Schema acceptance demonstrates missing wire constraints, NOT successful cryptographic/DB data-exfiltration execution. Budget/sparse-answer cases below are static contract counterexamples, not executed handlers."
+  },
+  "findings": [
+    {
+      "findingId": "LIS-P0-001",
+      "severity": "P0",
+      "stage": "G3_EXACT_DESIGN_SHARED_CONTRACT",
+      "status": "OPEN",
+      "title": "Form/privacy/retention ref의 owner 종류가 교환 가능한 generic union",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningAdmissionControlRequest.proposal.v1/properties/formVersionRef/properties/ownerContractId",
+        "/jsonSchemas/SYS.ListeningAdmissionControlRequest.proposal.v1/properties/privacyVersionRef/properties/ownerContractId",
+        "/jsonSchemas/SYS.ListeningAdmissionControlRequest.proposal.v1/properties/retentionVersionRef/properties/ownerContractId",
+        "/jsonSchemas/SYS.ListeningCohortRequest.proposal.v1/properties/privacyVersionRef"
+      ],
+      "evidence": "세 필드 모두 동일3-owner enum이다. 종류를 순환 교환한 request도 Ajv accepted=true. 'exact source refetch' label만으로 expected semantic entity를 고정한 schema/binding이 아니다.",
+      "risk": "Wrong typed privacy/retention/form snapshot를 valid signed owner object라는 이유로 설치/사용할 수 있는 설계 여지. 실제 handler가 거부했다는 증거는 없음.",
+      "repair": "필드마다 별도 typed VersionRef 또는 ownerContractId const+entityType/referenceContract+tenant/revision/schema/digest owner validation. Form ref는 Form only, privacy는 Privacy only, retention은 Retention only; source projection complete fields를 actual owner schema에 bind.",
+      "negativeAcceptance": [
+        "서명 자체 valid이나 form 자리에 Privacy version 넣으면 owner refetch/adapter 전에422",
+        "privacy/retention 서로 swap, stale/wrongtenant/unknown schema/ref->deny",
+        "정상3refs exact provider/consumer generated schema+compile succeeds"
+      ],
+      "notRequiredBeforeG3": "전체 survey CRUD implementation은 G4; exact shared schema/binding/fail-closed adapter negative tests는 G3."
+    },
+    {
+      "findingId": "LIS-P0-002",
+      "severity": "P0",
+      "stage": "G3_EXACT_DESIGN_SHARED_CONTRACT",
+      "status": "OPEN",
+      "title": "SUPPRESSED/adequacy/measure matrix와 question uniqueness가 wire에서 닫히지 않음",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningCohortResult.proposal.v1/properties/status",
+        "/jsonSchemas/SYS.ListeningCohortResult.proposal.v1/properties/adequacyCategory",
+        "/jsonSchemas/SYS.ListeningCohortResult.proposal.v1/properties/measures",
+        "/tableSpecifications/6/checks/1"
+      ],
+      "evidence": "SUPPRESSED+ADEQUATE+meanValue4와 동일 question q 평균1/5가 둘다 schema accepted=true. Table/prose에는 suppressed empty라지만 exact shared wire binding은 허용한다.",
+      "risk": "Fail-closed consumer가 no raw SELECT라도 잘못된 suppression payload를 성과/지표로 표시할 수 있음. 선택한74shape cases는 이 matrix를 검사하지 않음.",
+      "repair": "Draft07 oneOf/if-then으로 SUPPRESSED=>INSUFFICIENT+measures maxItems0; COMPLETED=>ADEQUATE+exact requested approved SCALE question set; complete measurable values/undefined noanswers semantics를 폐쇄 union으로 정의. Canonical questionKey order/unique validation을 schema+generated constructor/stream deserializer+adapter에서 수행.",
+      "negativeAcceptance": [
+        "SUPPRESSED with any measure ->reject",
+        "status/adequacy mismatch ->reject",
+        "duplicate/out-of-order/unknown/unrequested question key ->reject",
+        "COMPLETED with permitted undefined/noanswer semantics exact ->bounded positive"
+      ],
+      "notRequiredBeforeG3": "전체 실제 cohort 계산은 G4; typed boundary shape/adapter negative는 G3."
+    },
+    {
+      "findingId": "LIS-P0-003",
+      "severity": "P0",
+      "stage": "G3_EXACT_DESIGN_PRIVACY_BUDGET",
+      "status": "OPEN",
+      "title": "Distinct query별 budget row로 shared epoch cap을 우회할 수 있는 계약",
+      "pointers": [
+        "/tableSpecifications/5/uniqueKeys/2",
+        "/tableSpecifications/5/columns/4",
+        "/tableSpecifications/5/columns/5",
+        "/tableSpecifications/5/checks/1",
+        "/operations/5/guards/1",
+        "/tableSpecifications/0/columns/13"
+      ],
+      "evidence": "Budget unique key=(tenant,admission,queryEpoch,canonicalQueryDigest); spent_budget는 해당 row에 있다. 서로 다른 intersecting query digests가 각각 새로운 row/budget_limit을 얻는 것을 막는 parent population/batch epoch ledger가 없음. 'evaluated fixed policy budget'은 정확한 debit/overlap algorithm이나 shared source가 아니다. Erasure advances privacy epoch; fresh epoch를 새 공개 예산으로 해석하면 이전에 이미 본 결과와의 before-after inference는 stale refetch 차단만으로 소거되지 않음.",
+      "risk": "허용 cohort/question 조합의 반복/교집합 또는 삭제 전후 publication으로 재식별. 정확한 인원 metadata를 안 내도 이전 공개 지식과 결합될 수 있음.",
+      "repair": "Budget parent key는 owner-stable admitted publication batch/window/privacy policy epoch로 고정하고 query fingerprint는 child dedup receipt로 분리. Parent row lock+all query debit atomic. 안전한 최소 기본값은 fixed complete approved package per sealed batch/epoch1개+exact replay only; alternative aliases/narrowed subsets/new epochs는 permission 없이 fail closed. Erasure/epoch bump은 prior disclosures를 잊게 만들지 않으므로 new changed result publication은 cross-epoch cumulative budget/rigorously reviewed mechanism 또는 deny until separately authorized fixed publication plan.",
+      "negativeAcceptance": [
+        "두 distinct digest가 각각한도1인 새 row를 만들어도 parent total>1이면deny",
+        "cohort/snapshot UUID alias와question subset으로 cap reset 불가",
+        "parallel last budget unit claims onlyone succeeds",
+        "previous result known+erasure+new source epoch changed mean publication denies absent explicit cumulative privacy approval",
+        "exact same fingerprint/result replay0debit"
+      ],
+      "notRequiredBeforeG3": "실제 domain aggregate execution은 G4; parent/child exact design+shared privacy-owner budget guard/counterexample test allocation은 G3."
+    },
+    {
+      "findingId": "LIS-P0-004",
+      "severity": "P0",
+      "stage": "G3_EXACT_DESIGN_MEASURE_PRIVACY",
+      "status": "OPEN",
+      "title": "전체 cohort threshold가 sparse optional question의 실제 contributor threshold를 보장하지 않음",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningSubmitRequest.proposal.v1/properties/answers/minItems",
+        "/jsonSchemas/SYS.ListeningCohortRequest.proposal.v1/properties/questionKeys",
+        "/operations/5/transition/outcomes/0/guard",
+        "/tableSpecifications/6/columns/4"
+      ],
+      "evidence": "answers minItems0이고 question별필수/결측규칙은 full form schema OPEN이다. cohort10명 중 q를1명만 응답해도 전체 cohort adequacy로 q mean을 내는 counterexample를 배제하는 정확한 denominator source/threshold rule이 없음.",
+      "risk": "한 사람의 SCALE value가 safe aggregate로 나갈 수 있음. CHOICE/RESTRICTED_TEXT 요청에 SCALE-only response를 적용하는 measure type/bucket suppression도 아직 정확히 연결되지 않음.",
+      "repair": "질문별 frozen kind/required/missing policy를 actual form source에 bind. 반환하는 각 question/cell에 ACTIVE non-fenced distinct consumed responses의 실제 contributing population>=k를 independently enforce; sparse cell suppress. CHOICE는 bounded approved bucket+complementary suppression/denominator rules, restricted text는 individual answer 공개금지+별도 moderated aggregate policy 또는 unsupported. Threshold denominator를 synthetic config에서 exact private source로 명시, public count는노출하지않음.",
+      "negativeAcceptance": [
+        "cohort10, q contributor1 ->q mean absent/suppressed evenoverall adequate",
+        "q contributor k-1/k boundary +missing/erased/fenced exclusions",
+        "same answer duplicate token cannotinflate denominator",
+        "CHOICE/text question requested against SCALE measure schema rejects/unavailable not average0"
+      ],
+      "notRequiredBeforeG3": "실제allquestion CRUD/aggregation은 G4; exact source/measure policy/fixture allocation 및 shared failclosed DTO boundary는 G3."
+    },
+    {
+      "findingId": "LIS-P1-005",
+      "severity": "P1",
+      "stage": "G3_EXACT_DDL_PLANNING",
+      "status": "OPEN",
+      "title": "Response/receipt/consumption의 same-admission 3-way FK closure 부족",
+      "pointers": [
+        "/tableSpecifications/1/foreignKeys/1",
+        "/tableSpecifications/3/foreignKeys/1",
+        "/tableSpecifications/4/foreignKeys/1"
+      ],
+      "evidence": "각 FK는 같은 tenant만 묶고 admission_id를 reference tuple에 포함하지 않는다. Row들이 다른 admission_id인데도 cyclic responsePublicId/receiptPublicId FK만으로 연결될 수 있다. 앱의 same-lock/atomic guard는 의도지만 planned DDL은그 불변성을 강제하지 않음.",
+      "risk": "동일 tenant의 다른 survey/admission receipt/consumption을 잘못 연결하는 구현오류를 DB가 수용. Cross-tenant leak가 실험되었다는 뜻은아님.",
+      "repair": "(tenant_id,public_id,admission_id) target unique keys를 response/receipt에 정의하고 reciprocal response/receipt/consumption FKs를 admission_id까지 묶어 deferredsame-ownertransaction 유지.",
+      "negativeAcceptance": [
+        "same tenant but receipt/admission mismatched cyclic inserts ->FKfailure",
+        "correct response/receipt/token sameadmission deferredcommit positive",
+        "foreign tenant remainsdenied"
+      ],
+      "notRequiredBeforeG3": "Business table CREATE/transaction execution은 G4; exact DDL plan/negative fixture source allocation은 G3."
+    },
+    {
+      "findingId": "LIS-P1-006",
+      "severity": "P1",
+      "stage": "G3_SHARED_CANONICAL_WIRE",
+      "status": "OPEN",
+      "title": "SCALE canonical decimal/token framing의 semantic aliases가 허용됨",
+      "pointers": [
+        "/jsonSchemas/SYS.ListeningAnswer.proposal.v1/oneOf/0/properties/value/pattern",
+        "/jsonSchemas/SYS.ListeningSubmitRequest.proposal.v1/properties/responseToken/pattern",
+        "/jsonSchemas/SYS.ListeningCohortResult.proposal.v1/properties/measures/items/properties/meanValue/pattern",
+        "/privacyRules/3"
+      ],
+      "evidence": "04.0000/-0.0000가 shape accepted=true. Answer/payload HMAC의 exact canonical scalar normalization/precision/scale/order framing은 shared protocol OPEN. Token43char regex는 canonical32bytebase64url decode/re-encode를 자체보장하지않음.",
+      "risk": "동일 semantic answer의 lexical alias가 payload mismatch oracle/duplicate conflict를 만들거나 provider-codec wire 계약과 drift. Entropy/signature 취약성 exploit을 실행한 결과는아님.",
+      "repair": "SCALE min/max/precision/scale/allowedrounding exact frozen form policy; canonical decimal codec/exponent/plus/leadingzero/-0 처리, question/choice ordering/HMAC domain+length framing, base64url decode exact32byte/reencode equality. Typed signed claims binding도 actual shared envelope protocol에 봉인.",
+      "negativeAcceptance": [
+        "leadingzero/exponent/+ /space/numericJSON scalar rejects",
+        "signedzero canonical0 strategy explicitandbyte-equivalent",
+        "same semanticcanonical answer replay sameHMAC/receipt",
+        "noncanonical finalbase64urlbits reject",
+        "wrongtoken commitment/domain/tenant/survey/admission/form binding denies"
+      ]
+    }
+  ],
+  "acknowledgedOpenG3": [
+    {
+      "pointer": "/remainingOpenG3/0",
+      "status": "OPEN",
+      "issue": "Full Survey/Form/Audience/Action exact lifecycle/source/IA/PEP not completed; this report does not certify them."
+    },
+    {
+      "pointer": "/remainingOpenG3/2",
+      "status": "OPEN",
+      "issue": "Real issuer crypto/status DTO/SPI/envelope PEP/log redaction/fail-closed adapters/consumer compile/common pilot missing. 15/74/96 author shapes are not those proofs."
+    },
+    {
+      "pointer": "/remainingOpenG3/3",
+      "status": "OPEN",
+      "issue": "Key erasure request closed schema/refetch/fence/revoked acknowledgement/access fencing protocol + real shared negative pilot still proposed, not executed."
+    },
+    {
+      "pointer": "/remainingOpenG3/5",
+      "status": "OPEN",
+      "issue": "13-stream composite authority/qualifier+readOnly/purpose role bootstrap/current native/adopted seals/ACL evidence; historical8/9not sufficient."
+    }
+  ],
+  "stageConclusion": {
+    "G3": "BLOCKED: exact shared contract/privacy design + actual shared scaffold tests/compile/current common pilot required; no all-business-implementation circular prerequisite.",
+    "G4": "Actual Survey/Form/Action/crypto/domainSQL/API aggregate+erasure fixture execution remains NOT_EXECUTED.",
+    "G5": "Mandatory full-screen DesignAI handoff followup.",
+    "G6": "Customer identity/privacy/country/process isolation/key authority/provider activation; no absoluteanonymity claim."
+  },
+  "recommendedParentAction": "Root author repairs separate proposal files/version; reports retain this exact ed13... snapshot. No direct canonical/proposal edits by reviewer. Independent re-review follows stable successor."
+}

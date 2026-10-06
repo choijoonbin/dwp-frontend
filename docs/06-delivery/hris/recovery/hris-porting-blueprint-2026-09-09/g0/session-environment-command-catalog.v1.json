@@ -1,0 +1,204 @@
+{
+  "schema": "dwp.hris.session-environment-command-catalog.v1",
+  "policy": {
+    "modulePurpose": "PROVE_EACH_REGISTERED_WORKTREE_CAN_RESOLVE_AND_VERIFY_ITS_TARGET_RUNTIME",
+    "integrationHeavyEvidenceRefs": [
+      "g0/target-command-evidence-backend.json",
+      "g0/target-command-evidence-frontend.json"
+    ],
+    "notRepeatedPerModule": [
+      "BACKEND_ROOT_CHECK",
+      "FRONTEND_FULL_TEST",
+      "FRONTEND_BUILD",
+      "FRONTEND_SECURITY_AUDIT",
+      "FRONTEND_SBOM"
+    ]
+  },
+  "profiles": [
+    {
+      "sessionId": "HRIS-HRM",
+      "backendCommands": [
+        {
+          "commandKey": "people-service-test",
+          "workingDirectory": ".",
+          "argv": ["./gradlew", ":dwp-people-server:test", "--no-daemon"]
+        },
+        {
+          "commandKey": "runtime-topology",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=hrm", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/hrm/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "topology"]
+        },
+        {
+          "commandKey": "runtime-doctor",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=hrm", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/hrm/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "doctor", "--profile", "hrm"]
+        }
+      ],
+      "frontendCommands": [
+        {
+          "commandKey": "package-manager",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "package-manager:check"]
+        },
+        {
+          "commandKey": "architecture",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]
+        },
+        {
+          "commandKey": "typecheck",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]
+        }
+      ]
+    },
+    {
+      "sessionId": "HRIS-PER",
+      "backendCommands": [
+        {
+          "commandKey": "people-service-test",
+          "workingDirectory": ".",
+          "argv": ["./gradlew", ":dwp-people-server:test", "--no-daemon"]
+        },
+        {
+          "commandKey": "runtime-topology",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=per", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/per/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "topology"]
+        },
+        {
+          "commandKey": "runtime-doctor",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=per", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/per/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "doctor", "--profile", "per"]
+        }
+      ],
+      "frontendCommands": [
+        {
+          "commandKey": "package-manager",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "package-manager:check"]
+        },
+        {
+          "commandKey": "architecture",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]
+        },
+        {
+          "commandKey": "typecheck",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]
+        }
+      ]
+    },
+    {
+      "sessionId": "HRIS-TIM",
+      "backendCommands": [
+        {
+          "commandKey": "time-service-boot-test",
+          "workingDirectory": ".",
+          "argv": ["./gradlew", ":dwp-time-server:bootJar", ":dwp-time-server:test", "--no-daemon"]
+        },
+        {
+          "commandKey": "runtime-topology",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=tim", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/tim/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "topology"]
+        },
+        {
+          "commandKey": "runtime-doctor",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=tim", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/tim/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "doctor", "--profile", "tim"]
+        }
+      ],
+      "frontendCommands": [
+        {
+          "commandKey": "package-manager",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "package-manager:check"]
+        },
+        {
+          "commandKey": "architecture",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]
+        },
+        {
+          "commandKey": "typecheck",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]
+        }
+      ]
+    },
+    {
+      "sessionId": "HRIS-PAY",
+      "backendCommands": [
+        {
+          "commandKey": "payroll-service-boot-test",
+          "workingDirectory": ".",
+          "argv": ["./gradlew", ":dwp-payroll-server:bootJar", ":dwp-payroll-server:test", "--no-daemon"]
+        },
+        {
+          "commandKey": "runtime-topology",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=pay", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/pay/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "topology"]
+        },
+        {
+          "commandKey": "runtime-doctor",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=pay", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/pay/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "doctor", "--profile", "pay"]
+        }
+      ],
+      "frontendCommands": [
+        {
+          "commandKey": "package-manager",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "package-manager:check"]
+        },
+        {
+          "commandKey": "architecture",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]
+        },
+        {
+          "commandKey": "typecheck",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]
+        }
+      ]
+    },
+    {
+      "sessionId": "HRIS-SYS",
+      "backendCommands": [
+        {
+          "commandKey": "auth-platform-service-test",
+          "workingDirectory": ".",
+          "argv": ["./gradlew", ":dwp-auth-server:test", ":dwp-platform-server:test", "--no-daemon"]
+        },
+        {
+          "commandKey": "runtime-topology",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=sys", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/sys/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "topology"]
+        },
+        {
+          "commandKey": "runtime-doctor",
+          "workingDirectory": ".",
+          "argv": ["env", "DWP_DEV_INSTANCE=sys", "DWP_FRONTEND_ROOT=/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-20260910/sys/frontend", "DWP_NODE_BIN=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "python3", "scripts/devctl.py", "doctor", "--profile", "sys"]
+        }
+      ],
+      "frontendCommands": [
+        {
+          "commandKey": "package-manager",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "package-manager:check"]
+        },
+        {
+          "commandKey": "architecture",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]
+        },
+        {
+          "commandKey": "typecheck",
+          "workingDirectory": ".",
+          "argv": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]
+        }
+      ]
+    }
+  ]
+}

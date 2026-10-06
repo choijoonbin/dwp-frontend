@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.integration-gate-receipt.v1",
+  "gate": "G0_RECOVERY_BASELINE",
+  "observedAt": "2026-10-06T12:00:29Z",
+  "status": "COMPLETE_WITH_DECLARED_GAPS",
+  "sourcePins": {
+    "frontendBase": "930b8469eabce8e1878b82c390fe5732b82ac620",
+    "backendBase": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "agentBase": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+    "frontendReconciled": "7f39d12cd10b8827c67355a7f445973d05373cc9",
+    "backendReconciled": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294"
+  },
+  "recovery": {
+    "blueprintHistoricalArtifactCount": 757,
+    "blueprintMetadataCount": 2,
+    "blueprintEventChainCompleteCount": 722,
+    "blueprintHashVerifiedNumberedEvidenceCount": 4,
+    "blueprintPartialCount": 31,
+    "blueprintMissingWithFileChangeHistoryCount": 10,
+    "blueprintReferenceOnlyCount": 337,
+    "scopedControlExpectedOriginalCount": 20,
+    "scopedControlExactlyRecoveredCount": 19,
+    "scopedControlMissingOriginalCount": 1,
+    "contractBindingOccurrencePassCount": 49,
+    "contractBindingOccurrenceTotalCount": 50,
+    "contractBindingUniquePathPassCount": 21,
+    "contractBindingUniquePathTotalCount": 22
+  },
+  "checks": [
+    {
+      "checkId": "versioned-copy-byte-equivalence",
+      "status": "PASS",
+      "detail": "Blueprint, scoped control and recovery audit copies match their recovered source trees."
+    },
+    {
+      "checkId": "blueprint-manifest-integrity",
+      "status": "PASS",
+      "detail": "757/757 historical artifact paths, byte lengths and SHA-256 values match."
+    },
+    {
+      "checkId": "scoped-contract-bindings",
+      "status": "PASS_WITH_DECLARED_GAP",
+      "detail": "49/50 binding occurrences and 21/22 unique paths match; the HRM API/Event contract remains partial."
+    },
+    {
+      "checkId": "recovered-format-validation",
+      "status": "PASS_WITH_DECLARED_GAP",
+      "detail": "JSON 291/292, CSV 86/86, Python 149/149 and JavaScript 23/23; one historical JSON contains a truncation marker."
+    },
+    {
+      "checkId": "high-confidence-secret-pattern-scan",
+      "status": "PASS",
+      "detail": "No private-key, common provider-token or embedded PostgreSQL credential URI pattern was found in the versioned recovery tree."
+    },
+    {
+      "checkId": "w1-sanitized-evidence",
+      "status": "PASS",
+      "detail": "The pinned W1 run reports BACKEND_RUNTIME_SUBGATE_PASS with 15/15 assertions; it does not cover a future integrated head."
+    }
+  ],
+  "digests": {
+    "blueprintRecoveryManifestSha256": "3db0bae17ff7f50368e0dca051dee7de29f365d1b7149297fb66feb8e8a7341c",
+    "blueprintRecoveryInventorySha256": "a6f5b076504cea5dea2b2e7fab82dfb73c526da9ab960681ca764610ad491b9a",
+    "scopedControlRecoveryInventorySha256": "8d6ffe9a61cf7847ad115b771d248b8a56b10503f89d690727f663390a974cb6",
+    "recoveryVerificationSha256": "8e82c8db60cfa651654710ada59b11ec87fa2906e166c2c579836a48b4ce7c71",
+    "scopedBindingAuditSha256": "31a6b2589ab6a58709caf9bd6583cfa297a242f728717470e764582aa91b305e",
+    "w1SanitizedManifestSha256": "a8e400e7bf247843e7558c8f21153e1ba93d13b81485cc798989ce87f1da96cf"
+  },
+  "knownGaps": [
+    "The recovered HRM api-event-contracts.v1.json does not match the historical packet final digest.",
+    "One recovered IA projection schema JSON contains an evidence-source truncation marker.",
+    "Ten files with fileChange history and 337 reference-only paths have no recoverable full bytes.",
+    "The scoped authoring materializer source is incomplete and was not reconstructed.",
+    "Historical authoring worktrees no longer exist; current-state preflight must be reissued."
+  ],
+  "authority": {
+    "moduleDevelopmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "nextGate": "G1_INTEGRATION_LOCK_AND_PACKET_ISSUANCE"
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "per-golden.v1",
+  "syntheticOnly": true,
+  "tenant": {
+    "tenantId": 900001,
+    "tenantKey": "SYNTHETIC-PER-A"
+  },
+  "policy": {
+    "decimalScale": 6,
+    "rounding": "HALF_UP",
+    "weightTotal": "1.000000",
+    "minimumAnonymousResponses": 3,
+    "timezone": "Asia/Seoul"
+  },
+  "workers": [
+    {
+      "workerPublicId": "10000000-0000-0000-0000-000000000001",
+      "assignmentPublicId": "20000000-0000-0000-0000-000000000001",
+      "organizationPublicId": "18200000-0000-0000-0000-000000000101",
+      "managerWorkerPublicId": "10000000-0000-0000-0000-000000000010",
+      "active": true
+    },
+    {
+      "workerPublicId": "10000000-0000-0000-0000-000000000002",
+      "assignmentPublicId": "18200000-0000-0000-0000-000000000002",
+      "organizationPublicId": "18200000-0000-0000-0000-000000000101",
+      "managerWorkerPublicId": "10000000-0000-0000-0000-000000000010",
+      "active": true
+    },
+    {
+      "workerPublicId": "10000000-0000-0000-0000-000000000003",
+      "assignmentPublicId": "18200000-0000-0000-0000-000000000003",
+      "organizationPublicId": "18200000-0000-0000-0000-000000000102",
+      "managerWorkerPublicId": "10000000-0000-0000-0000-000000000011",
+      "active": false
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "PER-GOLDEN-CYCLE-001",
+      "kind": "CYCLE_VALIDATION",
+      "input": {
+        "cycleKey": "SYN-2030-ANNUAL",
+        "effectiveFrom": "2030-01-01T00:00:00+09:00",
+        "effectiveTo": "2031-01-01T00:00:00+09:00",
+        "stages": [
+          {"stageKey": "GOAL", "sequenceNo": 1, "opensAt": "2030-01-01T09:00:00+09:00", "closesAt": "2030-02-01T18:00:00+09:00"},
+          {"stageKey": "SELF", "sequenceNo": 2, "opensAt": "2030-11-01T09:00:00+09:00", "closesAt": "2030-11-10T18:00:00+09:00"},
+          {"stageKey": "MANAGER", "sequenceNo": 3, "opensAt": "2030-11-11T09:00:00+09:00", "closesAt": "2030-11-20T18:00:00+09:00"}
+        ]
+      },
+      "expected": {"valid": true, "issueCodes": []}
+    },
+    {
+      "caseId": "PER-GOLDEN-CYCLE-002",
+      "kind": "CYCLE_VALIDATION",
+      "input": {
+        "stages": [
+          {"stageKey": "SELF", "sequenceNo": 1, "opensAt": "2030-11-01T09:00:00+09:00", "closesAt": "2030-11-12T18:00:00+09:00"},
+          {"stageKey": "MANAGER", "sequenceNo": 2, "opensAt": "2030-11-10T09:00:00+09:00", "closesAt": "2030-11-20T18:00:00+09:00"}
+        ]
+      },
+      "expected": {"valid": false, "issueCodes": ["PER_STAGE_OVERLAP"]}
+    },
+    {
+      "caseId": "PER-GOLDEN-WEIGHT-001",
+      "kind": "WEIGHTED_REVIEW",
+      "input": {
+        "items": [
+          {"itemKey": "DELIVERY", "weight": "0.400000", "score": "4.000000"},
+          {"itemKey": "COLLABORATION", "weight": "0.600000", "score": "3.500000"}
+        ]
+      },
+      "expected": {
+        "weightTotal": "1.000000",
+        "intermediate": ["1.600000", "2.100000"],
+        "overallScore": "3.700000",
+        "valid": true
+      }
+    },
+    {
+      "caseId": "PER-GOLDEN-WEIGHT-002",
+      "kind": "WEIGHTED_REVIEW",
+      "input": {
+        "items": [
+          {"itemKey": "DELIVERY", "weight": "0.500000", "score": "4.000000"},
+          {"itemKey": "COLLABORATION", "weight": "0.400000", "score": "3.500000"}
+        ]
+      },
+      "expected": {
+        "weightTotal": "0.900000",
+        "valid": false,
+        "issueCodes": ["PER_WEIGHT_TOTAL_INVALID"]
+      }
+    },
+    {
+      "caseId": "PER-GOLDEN-POPULATION-001",
+      "kind": "POPULATION_FREEZE",
+      "input": {
+        "workforceSnapshotId": "20000000-0000-0000-0000-000000000001",
+        "workforceSnapshotRevision": 42,
+        "includeActiveOnly": true,
+        "organizationPublicIds": [
+          "18200000-0000-0000-0000-000000000101"
+        ]
+      },
+      "expected": {
+        "participantWorkerPublicIds": [
+          "10000000-0000-0000-0000-000000000001",
+          "10000000-0000-0000-0000-000000000002"
+        ],
+        "participantCount": 2,
+        "reviewerAssignments": [
+          {"participantWorkerPublicId": "10000000-0000-0000-0000-000000000001", "reviewerWorkerPublicId": "10000000-0000-0000-0000-000000000010", "reviewerType": "MANAGER"},
+          {"participantWorkerPublicId": "10000000-0000-0000-0000-000000000002", "reviewerWorkerPublicId": "10000000-0000-0000-0000-000000000010", "reviewerType": "MANAGER"}
+        ],
+        "frozenMembershipUnaffectedByLaterOrgChange": true
+      }
+    },
+    {
+      "caseId": "PER-GOLDEN-REVIEW-001",
+      "kind": "REVIEW_STATE",
+      "input": {
+        "actorWorkerPublicId": "10000000-0000-0000-0000-000000000010",
+        "participantWorkerPublicId": "10000000-0000-0000-0000-000000000001",
+        "assigned": true,
+        "from": "IN_PROGRESS",
+        "command": "SUBMIT",
+        "expectedVersion": 3,
+        "actualVersion": 3
+      },
+      "expected": {"allowed": true, "to": "SUBMITTED", "submissionNo": 1, "immutable": true}
+    },
+    {
+      "caseId": "PER-GOLDEN-REVIEW-002",
+      "kind": "AUTHORIZATION_NEGATIVE",
+      "input": {
+        "actorWorkerPublicId": "10000000-0000-0000-0000-000000000011",
+        "participantWorkerPublicId": "10000000-0000-0000-0000-000000000001",
+        "currentlyManager": true,
+        "assignedInFreeze": false,
+        "command": "READ_REVIEW"
+      },
+      "expected": {"allowed": false, "status": 403, "code": "ASSIGNED_POPULATION_DENIED"}
+    },
+    {
+      "caseId": "PER-GOLDEN-CALIBRATION-001",
+      "kind": "CALIBRATION_APPEND",
+      "input": {
+        "baselineHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "previousValue": "3.700000",
+        "adjustedValue": "3.900000",
+        "previousGrade": "B",
+        "adjustedGrade": "A",
+        "reasonCode": "EVIDENCE_REVIEW",
+        "reasonPresent": true,
+        "stepUpValid": true
+      },
+      "expected": {"allowed": true, "appendSequenceNo": 1, "priorResultUnchanged": true}
+    },
+    {
+      "caseId": "PER-GOLDEN-CALIBRATION-002",
+      "kind": "SOD_NEGATIVE",
+      "input": {
+        "actorUserId": "30000000-0000-0000-0000-000000000001",
+        "calibratedSameCycle": true,
+        "command": "PUBLISH_RESULTS"
+      },
+      "expected": {"allowed": false, "status": 403, "code": "SOD_HRIS_PERFORMANCE_CALIBRATE_PUBLISH"}
+    },
+    {
+      "caseId": "PER-GOLDEN-FEEDBACK-001",
+      "kind": "ANONYMOUS_FEEDBACK_RELEASE",
+      "input": {"anonymityMode": "ANONYMOUS_AGGREGATE", "submittedCount": 2, "minimumReleaseCount": 3},
+      "expected": {"released": false, "identityVisible": false, "exactSuppressedCountVisible": false, "code": "MINIMUM_COHORT_NOT_MET"}
+    },
+    {
+      "caseId": "PER-GOLDEN-FEEDBACK-002",
+      "kind": "ANONYMOUS_FEEDBACK_RELEASE",
+      "input": {"anonymityMode": "ANONYMOUS_AGGREGATE", "submittedCount": 3, "minimumReleaseCount": 3},
+      "expected": {"released": true, "identityVisible": false}
+    },
+    {
+      "caseId": "PER-GOLDEN-IDEMPOTENCY-001",
+      "kind": "IDEMPOTENCY",
+      "input": {
+        "tenantId": 900001,
+        "idempotencyKey": "synthetic-review-submit-0001",
+        "firstRequestHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "secondRequestHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "expected": {"effectCount": 1, "sameReceipt": true, "status": 200}
+    },
+    {
+      "caseId": "PER-GOLDEN-IDEMPOTENCY-002",
+      "kind": "IDEMPOTENCY",
+      "input": {
+        "tenantId": 900001,
+        "idempotencyKey": "synthetic-review-submit-0002",
+        "firstRequestHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "secondRequestHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "expected": {"effectCount": 1, "sameReceipt": false, "status": 409, "code": "IDEMPOTENCY_KEY_REUSED"}
+    },
+    {
+      "caseId": "PER-GOLDEN-TENANT-NEGATIVE-001",
+      "kind": "TENANT_ISOLATION",
+      "input": {"authenticatedTenantId": 900002, "resourceTenantId": 900001, "knownResourceId": true},
+      "expected": {"allowed": false, "status": 404, "existenceDisclosed": false}
+    },
+    {
+      "caseId": "PER-GOLDEN-HOME-001",
+      "kind": "HOME_PARTIAL_FAILURE",
+      "input": {"taskWidgetAvailable": true, "goalWidgetAvailable": false, "resultWidgetAvailable": true},
+      "expected": {"pageAvailable": true, "successfulWidgetsRendered": ["tasks", "results"], "failedWidget": "goals", "retryScope": "goals", "menuCatalogRendered": false}
+    },
+    {
+      "caseId": "PER-GOLDEN-IMPORT-001",
+      "kind": "IMPORT_RECONCILIATION",
+      "input": {"totalCount": 5, "validCount": 3, "invalidCount": 2, "atomicPublish": true},
+      "expected": {"runState": "PARTIAL", "acceptedCount": 3, "rejectedCount": 2, "appliedCount": 0, "published": false, "rowIssueCount": 2}
+    },
+    {
+      "caseId": "PER-GOLDEN-POPULATION-OVERLAP-001",
+      "kind": "POPULATION_RULE_CONCURRENT_PUBLISH",
+      "input": {
+        "first": {"scopeKey": "TENANT:GLOBAL", "ruleKey": "annual-review-population", "effectiveFrom": "2030-01-01T00:00:00+09:00", "effectiveTo": "2030-07-01T00:00:00+09:00"},
+        "second": {"scopeKey": "TENANT:GLOBAL", "ruleKey": "annual-review-population", "effectiveFrom": "2030-06-01T00:00:00+09:00", "effectiveTo": null},
+        "transactions": 2
+      },
+      "expected": {"committedCount": 1, "rejectedCount": 1, "sqlState": "23P01", "httpStatus": 409, "partialPublish": false}
+    },
+    {
+      "caseId": "PER-GOLDEN-POPULATION-BOUNDARY-002",
+      "kind": "POPULATION_RULE_HALF_OPEN_SUCCESSOR",
+      "input": {
+        "first": {"scopeKey": "TENANT:GLOBAL", "ruleKey": "annual-review-population", "effectiveFrom": "2030-01-01T00:00:00+09:00", "effectiveTo": "2030-07-01T00:00:00+09:00"},
+        "successor": {"scopeKey": "TENANT:GLOBAL", "ruleKey": "annual-review-population", "effectiveFrom": "2030-07-01T00:00:00+09:00", "effectiveTo": null}
+      },
+      "expected": {"committedCount": 2, "rejectedCount": 0, "halfOpen": "[)"}
+    }
+  ]
+}

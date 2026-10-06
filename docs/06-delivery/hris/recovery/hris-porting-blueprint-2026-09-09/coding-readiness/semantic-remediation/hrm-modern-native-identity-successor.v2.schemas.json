@@ -1,0 +1,1058 @@
+{
+  "status": "AUTHOR_ONLY_FULL_DRAFT07_LOCAL_PROJECTION_NOT_CANONICAL",
+  "inheritedProjection": {
+    "baseJsonSha256": "f8ccc88f646e13d2a3a37d49af636eda4a9a60bc822055056283f36e2c4b0b79",
+    "definitionCount": 381,
+    "sha256": "19b5853b137f637493b431ef0eca9adc9b0f6a5deef6bbedd390d3ff8fd7cb2b",
+    "compiledFrom": "Frozen v1 through structural V2 materialization in memory; not published canonical dialect"
+  },
+  "definitions": {
+    "ArtifactReference": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:ArtifactReference",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "enum": [
+            "People",
+            "Privacy",
+            "Configuration",
+            "Integration",
+            "Auth"
+          ]
+        },
+        "publicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "owner",
+        "publicId",
+        "version",
+        "schemaVersion",
+        "digest"
+      ]
+    },
+    "ActorAuthVersionStamp": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:ActorAuthVersionStamp",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "userRowVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "accessRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "userRowVersion",
+        "accessRevision"
+      ]
+    },
+    "PeopleEmploymentVersions": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:PeopleEmploymentVersions",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "personVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "workerVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "relationshipVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "assignmentVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "personVersion",
+        "workerVersion",
+        "relationshipVersion",
+        "assignmentVersion"
+      ]
+    },
+    "EmploymentSelector": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:EmploymentSelector",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workerPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "workRelationshipPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "assignmentPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
+      "required": [
+        "workerPublicId",
+        "workRelationshipPublicId",
+        "assignmentPublicId"
+      ]
+    },
+    "AdmissionSource": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:AdmissionSource",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "HR_NATIVE"
+            },
+            "workspacePublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "workspaceVersion": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "decisionReceipt": {
+              "$ref": "urn:hrm-native-v2:ArtifactReference"
+            },
+            "businessPurpose": {
+              "type": "string",
+              "enum": [
+                "MANUAL_HIRE",
+                "CONTINGENT_CREATE",
+                "PREHIRE_ONBOARDING"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "workspacePublicId",
+            "workspaceVersion",
+            "decisionReceipt",
+            "businessPurpose"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "ATS_CASE"
+            },
+            "candidateCasePublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "candidateCaseVersion": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "requisitionPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "sourceSystemPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "sourceCandidateKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "candidatePersonToken": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "consentReceipt": {
+              "$ref": "urn:hrm-native-v2:ArtifactReference"
+            }
+          },
+          "required": [
+            "kind",
+            "candidateCasePublicId",
+            "candidateCaseVersion",
+            "requisitionPublicId",
+            "sourceSystemPublicId",
+            "sourceCandidateKey",
+            "candidatePersonToken",
+            "consentReceipt"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "IMPORT"
+            },
+            "acceptedBatchPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "batchVersion": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "itemPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "itemVersion": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "mappingVersion": {
+              "$ref": "urn:hrm-native-v2:ArtifactReference"
+            },
+            "sourceRecordKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "importMode": {
+              "type": "string",
+              "enum": [
+                "NATIVE_STAGED",
+                "OPTIONAL_CONNECTOR"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "acceptedBatchPublicId",
+            "batchVersion",
+            "itemPublicId",
+            "itemVersion",
+            "mappingVersion",
+            "sourceRecordKey",
+            "importMode"
+          ]
+        }
+      ]
+    },
+    "PersonMutation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:PersonMutation",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "const": "CREATE_NATIVE_PERSON"
+            },
+            "facts": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "personKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "displayName": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "preferredLocale": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 35
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "personKey",
+                "displayName",
+                "preferredLocale"
+              ]
+            },
+            "identityEvidence": {
+              "$ref": "urn:hrm-native-v2:ArtifactReference"
+            }
+          },
+          "required": [
+            "disposition",
+            "facts",
+            "identityEvidence"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "const": "REUSE_NATIVE_PERSON"
+            },
+            "existingPersonPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "expectedPersonVersion": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "identityEvidence": {
+              "$ref": "urn:hrm-native-v2:ArtifactReference"
+            }
+          },
+          "required": [
+            "disposition",
+            "existingPersonPublicId",
+            "expectedPersonVersion",
+            "identityEvidence"
+          ]
+        }
+      ]
+    },
+    "AdmissionRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:AdmissionRequest",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requestPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "source": {
+          "$ref": "urn:hrm-native-v2:AdmissionSource"
+        },
+        "personMutation": {
+          "$ref": "urn:hrm-native-v2:PersonMutation"
+        },
+        "admissionPolicy": {
+          "$ref": "urn:hrm-native-v2:ArtifactReference"
+        }
+      },
+      "required": [
+        "requestPublicId",
+        "source",
+        "personMutation",
+        "admissionPolicy"
+      ]
+    },
+    "ActorAuthority": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:ActorAuthority",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "principalPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "authVersions": {
+          "$ref": "urn:hrm-native-v2:ActorAuthVersionStamp"
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "PERSON_ADMIT",
+            "WORKER_HIRE",
+            "CONTINGENT_WORKER_CREATE",
+            "ONBOARDING_ASSIGN",
+            "ONBOARDING_BIND",
+            "HRM_POPULATION_QUERY"
+          ]
+        },
+        "audience": {
+          "const": "HRIS_HRM"
+        },
+        "appEntitled": {
+          "type": "boolean"
+        },
+        "sodAllowed": {
+          "type": "boolean"
+        },
+        "stepUpSatisfied": {
+          "type": "boolean"
+        },
+        "permissionRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "populationPolicy": {
+          "$ref": "urn:hrm-native-v2:ArtifactReference"
+        },
+        "fieldPolicy": {
+          "$ref": "urn:hrm-native-v2:ArtifactReference"
+        },
+        "authorityReceiptPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "tenantId",
+        "principalPublicId",
+        "authVersions",
+        "purpose",
+        "audience",
+        "appEntitled",
+        "sodAllowed",
+        "stepUpSatisfied",
+        "permissionRevision",
+        "populationPolicy",
+        "fieldPolicy",
+        "authorityReceiptPublicId",
+        "issuedAt",
+        "expiresAt"
+      ]
+    },
+    "SubjectPopulation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:SubjectPopulation",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ownerSnapshotPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "subject": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "PERSON"
+                },
+                "personPublicId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "not": {
+                    "const": "00000000-0000-0000-0000-000000000000"
+                  }
+                },
+                "personVersion": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "personState": {
+                  "type": "string",
+                  "enum": [
+                    "ACTIVE",
+                    "INACTIVE"
+                  ]
+                },
+                "capturedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "kind",
+                "personPublicId",
+                "personVersion",
+                "personState",
+                "capturedAt"
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "EMPLOYMENT"
+                },
+                "personPublicId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "not": {
+                    "const": "00000000-0000-0000-0000-000000000000"
+                  }
+                },
+                "selector": {
+                  "$ref": "urn:hrm-native-v2:EmploymentSelector"
+                },
+                "versions": {
+                  "$ref": "urn:hrm-native-v2:PeopleEmploymentVersions"
+                },
+                "legalEmployerPublicId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "not": {
+                    "const": "00000000-0000-0000-0000-000000000000"
+                  }
+                },
+                "relationshipStartDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "relationshipEndDate": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "assignmentStartDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "assignmentEndDate": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "effectiveSequence": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "workZone": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "asOf": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "capturedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "kind",
+                "personPublicId",
+                "selector",
+                "versions",
+                "legalEmployerPublicId",
+                "relationshipStartDate",
+                "relationshipEndDate",
+                "assignmentStartDate",
+                "assignmentEndDate",
+                "effectiveSequence",
+                "workZone",
+                "asOf",
+                "capturedAt"
+              ]
+            }
+          ]
+        },
+        "populationPolicy": {
+          "$ref": "urn:hrm-native-v2:ArtifactReference"
+        },
+        "fieldPolicy": {
+          "$ref": "urn:hrm-native-v2:ArtifactReference"
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "PERSON_ADMIT",
+            "WORKER_HIRE",
+            "CONTINGENT_WORKER_CREATE",
+            "ONBOARDING_ASSIGN",
+            "ONBOARDING_BIND",
+            "HRM_POPULATION_QUERY"
+          ]
+        },
+        "decisionRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "authorizedFields": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "PERSON_IDENTITY",
+              "EMPLOYMENT_CONTEXT",
+              "ADMISSION_RESULT"
+            ]
+          }
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "tenantId",
+        "ownerSnapshotPublicId",
+        "subject",
+        "populationPolicy",
+        "fieldPolicy",
+        "purpose",
+        "decisionRevision",
+        "authorizedFields",
+        "expiresAt"
+      ]
+    },
+    "TargetQuery": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:TargetQuery",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "PERSON"
+            },
+            "personPublicId": {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "expectedPersonVersion": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "purpose": {
+              "type": "string",
+              "enum": [
+                "PERSON_ADMIT",
+                "WORKER_HIRE",
+                "CONTINGENT_WORKER_CREATE",
+                "ONBOARDING_ASSIGN",
+                "HRM_POPULATION_QUERY"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "personPublicId",
+            "expectedPersonVersion",
+            "purpose"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "EMPLOYMENT"
+            },
+            "selector": {
+              "$ref": "urn:hrm-native-v2:EmploymentSelector"
+            },
+            "expectedVersions": {
+              "$ref": "urn:hrm-native-v2:PeopleEmploymentVersions"
+            },
+            "asOf": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "purpose": {
+              "type": "string",
+              "enum": [
+                "ONBOARDING_BIND",
+                "ONBOARDING_ASSIGN",
+                "HRM_POPULATION_QUERY"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "selector",
+            "expectedVersions",
+            "asOf",
+            "purpose"
+          ]
+        }
+      ]
+    },
+    "CreationPopulation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:CreationPopulation",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "source": {
+          "$ref": "urn:hrm-native-v2:AdmissionSource"
+        },
+        "purpose": {
+          "const": "PERSON_ADMIT"
+        },
+        "populationPolicy": {
+          "$ref": "urn:hrm-native-v2:ArtifactReference"
+        },
+        "fieldPolicy": {
+          "$ref": "urn:hrm-native-v2:ArtifactReference"
+        },
+        "decisionRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "authorized": {
+          "type": "boolean"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "tenantId",
+        "source",
+        "purpose",
+        "populationPolicy",
+        "fieldPolicy",
+        "decisionRevision",
+        "authorized",
+        "expiresAt"
+      ]
+    },
+    "AdmissionReceipt": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:AdmissionReceipt",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "receiptPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "tenantId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "requestPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "source": {
+          "$ref": "urn:hrm-native-v2:AdmissionSource"
+        },
+        "personPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "personVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "CREATED_NATIVE_PERSON",
+            "REUSED_NATIVE_PERSON"
+          ]
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actorAuthority": {
+          "$ref": "urn:hrm-native-v2:ActorAuthority"
+        },
+        "subjectPopulation": {
+          "$ref": "urn:hrm-native-v2:SubjectPopulation"
+        },
+        "inputDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "receiptPublicId",
+        "tenantId",
+        "requestPublicId",
+        "source",
+        "personPublicId",
+        "personVersion",
+        "disposition",
+        "ownerRevision",
+        "recordedAt",
+        "actorAuthority",
+        "subjectPopulation",
+        "inputDigest"
+      ]
+    },
+    "NativeAdmissionEvent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:NativeAdmissionEvent",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "eventType": {
+          "const": "People.NativePersonAdmitted.proposal.v2"
+        },
+        "aggregatePublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "aggregateVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "personPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "personVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sourceKind": {
+          "type": "string",
+          "enum": [
+            "HR_NATIVE",
+            "ATS_CASE",
+            "IMPORT"
+          ]
+        },
+        "actorAuthorityReceiptPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "eventPublicId",
+        "eventType",
+        "aggregatePublicId",
+        "aggregateVersion",
+        "personPublicId",
+        "personVersion",
+        "sourceKind",
+        "actorAuthorityReceiptPublicId",
+        "recordedAt"
+      ]
+    },
+    "HrmEventIdentityBinding": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "urn:hrm-native-v2:HrmEventIdentityBinding",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "businessAggregatePublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        "businessAggregateVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "nativeAdmissionReceiptPublicId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid",
+              "not": {
+                "const": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subjectPopulation": {
+          "anyOf": [
+            {
+              "$ref": "urn:hrm-native-v2:SubjectPopulation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actorAuthorityReceiptPublicId": {
+          "type": "string",
+          "format": "uuid",
+          "not": {
+            "const": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
+      "required": [
+        "schemaId",
+        "businessAggregatePublicId",
+        "businessAggregateVersion",
+        "nativeAdmissionReceiptPublicId",
+        "subjectPopulation",
+        "actorAuthorityReceiptPublicId"
+      ]
+    }
+  }
+}

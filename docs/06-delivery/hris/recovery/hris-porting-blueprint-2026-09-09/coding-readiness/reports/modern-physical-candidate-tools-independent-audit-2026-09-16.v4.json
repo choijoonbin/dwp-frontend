@@ -1,0 +1,203 @@
+{
+  "schema": "dwp.hris.modern-physical-candidate-tools-independent-audit/v4",
+  "status": "PASS_DUAL_SCOPE_TOOL_UPGRADE_CANONICAL_SUCCESSOR_NOT_YET_ACCEPTED",
+  "recordedAtUtc": "2026-09-16T00:49:21Z",
+  "authority": "INDEPENDENT_RECOVERY_REVIEWER_TOOL_QUALITY_ONLY_NOT_G3_NOT_G6",
+  "scope": {
+    "toolDirectory": "coding-readiness/modern-physical-candidate-tools",
+    "reviewedFiles": [
+      "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py",
+      "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py",
+      "coding-readiness/modern-physical-candidate-tools/README.md"
+    ],
+    "allowedWrites": "THE_THREE_REVIEWED_TOOL_FILES_AND_THIS_DISTINCT_V4_REPORT_ONLY",
+    "canonicalOrPhysicalCandidatePublication": "FORBIDDEN_AND_NOT_PERFORMED",
+    "liveCanonicalPhysicalGateWorktreeMutation": "FORBIDDEN_AND_NOT_PERFORMED"
+  },
+  "immutablePredecessorAudit": {
+    "path": "coding-readiness/reports/modern-physical-candidate-tools-independent-audit-2026-09-16.v2.json",
+    "sha256": "d3cfefe6653be49e1d431b8aead15c265ebb2a45a66501c7ae60beb64c4d7936",
+    "sealedPayloadSha256": "1169c800b4005391563aafbc6b90c583fbbdd2b947503f91a4e2a462f0945870",
+    "selfSealValid": true,
+    "bytesMutatedByThisUpgrade": false,
+    "disposition": "IMMUTABLE_HARDENED_V3_Q0_TOOL_AUDIT_PRESERVED"
+  },
+  "toolPins": {
+    "generatorSha256": "0700d9f1b7f539c01b8f3aa9b6b9e34cdecfc7b79fff7aaffd7c1ccc38c96b0b",
+    "validatorSha256": "fc7ed38c22f859b9e983747f30d7b6318db95f0e668d8651842676a672bace0b",
+    "readmeSha256": "1100d75ae2df5065bf34608c10cc7a6137fe210faad7b064e11a00197213a8bf",
+    "modes": {
+      "generate_modern_physical_candidate.py": "0755",
+      "validate_modern_physical_candidate.py": "0755",
+      "README.md": "0644"
+    }
+  },
+  "scopeProfiles": {
+    "v3-132-historical": {
+      "selection": "DEFAULT_ONLY_FOR_BACKWARD_COMPATIBLE_Q0_REPRODUCTION",
+      "canonicalCounts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 25,
+        "events": 155,
+        "tables": 132
+      },
+      "expansionPolicy": {
+        "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+        "sha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+        "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a"
+      },
+      "removedTables": [],
+      "listeningPlannedTables": 24,
+      "ownerPortOperations": 18
+    },
+    "v4-131-successor": {
+      "selection": "EXPLICIT_SCOPE_PROFILE_REQUIRED",
+      "canonicalCounts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "events": 157,
+        "tables": 131
+      },
+      "expansionPolicy": {
+        "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+        "policyId": "DWP-HRIS-GLOBAL-HCM-NONREPLACEABLE-TABLE-EXPANSION-V4",
+        "schemaVersion": 4,
+        "sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+        "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63"
+      },
+      "scopeReductionReview": {
+        "path": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v1.json",
+        "sha256": "99e96abe87d7141f3d7ff6a0185db5f1820a8385e700d34d0df3b8e11a322604",
+        "sealedPayloadSha256": "39a27f6c0362ca52eddfb19c8ac2b31981d98755de5d911e15ea2791b4242bcd"
+      },
+      "scopeEquation": "FROZEN_115_PLUS_EXACT_17_MINUS_EXACT_1_EQUALS_131_NET_DELTA_16",
+      "removedTables": [
+        "sys_hris_listening_export_receipts"
+      ],
+      "listeningPlannedTables": 23,
+      "ownerPortOperations": 18,
+      "requiredBindings": [
+        "exact policy filename, policyId, schemaVersion, file SHA-256 and self-seal",
+        "manifest tableScopeChange acceptancePolicy byte authority",
+        "manifest to actual sealed Listening v2 authority file/hash/seal",
+        "exact source and physical absence of the removed table outside reviewed removal provenance"
+      ]
+    }
+  },
+  "checks": [
+    {
+      "id": "PY_COMPILE",
+      "status": "PASS",
+      "command": "PYTHONPYCACHEPREFIX=/tmp/dwp-hris-v4-pycache python3 -m py_compile coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py"
+    },
+    {
+      "id": "GENERATOR_TOOL_HOSTILE_SELF_TEST",
+      "status": "PASS",
+      "command": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --tool-self-test",
+      "passed": 12,
+      "total": 12,
+      "sealedPayloadSha256": "d6b2eeb33a2d0c1d57a0875c5edeb330ed626e9d1c869272e54686a87da644ae"
+    },
+    {
+      "id": "VALIDATOR_TOOL_HOSTILE_SELF_TEST",
+      "status": "PASS",
+      "command": "python3 coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --tool-self-test",
+      "passed": 13,
+      "total": 13,
+      "sealedPayloadSha256": "ec30cd091235eb6362d4246cf56ac53f462c98f3b5a2d3d59a531d20cb34d9e4"
+    },
+    {
+      "id": "Q0_V3_EXACT_38_REGRESSION",
+      "status": "PASS_EXPECTED_BLOCK",
+      "command": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --scope-profile v3-132-historical --canonical-dir coding-readiness/modern-canonical-candidate.q0mnJg --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --preflight-only",
+      "exitCode": 3,
+      "findingCount": 38,
+      "storedV5CategoryCodeSubjectTupleEquality": true,
+      "storedV5Report": {
+        "path": "coding-readiness/reports/modern-physical-q0mnJg-rejected-preflight-2026-09-16.v5.json",
+        "sha256": "01e3d81bf2e1a58589fd6f9f1c24c5b8a88aea0e12f95debc6f4242bd1a4bcaa",
+        "sealedPayloadSha256": "87b6823e335d2b50a1b412cef9bcb4579bf2ec07ff094136cfca0d3097418f47"
+      },
+      "categories": {
+        "PHYSICAL_OWNER_BOUNDARY": 4,
+        "PHYSICAL_SCHEMA_DDL": 4,
+        "TABLE_EXPANSION_PRODUCER_READER_CLOSURE": 16,
+        "TEMPORAL_REVISION_ARBITRATION": 14
+      }
+    },
+    {
+      "id": "V3_V4_DIRECTORY_PROFILE_CONFUSION",
+      "status": "PASS_EXPECTED_BLOCK",
+      "exitCode": 3,
+      "findingCodes": {
+        "SOURCE_LOAD_FAILURE": 1
+      }
+    },
+    {
+      "id": "V4_PROFILE_POLICY_MANIFEST_COUNT_AND_REMOVAL_GUARDS",
+      "status": "PASS",
+      "assertions": [
+        "v3 bytes under v4 profile fail before semantic validation",
+        "v3 policy under v4 profile emits SCOPE_PROFILE_POLICY_IDENTITY_DRIFT",
+        "manifest declared counts must equal source-derived exact counts",
+        "v4 scope must equal +17 additions, one explicit removal, netDelta 16 and active tables 131",
+        "Listening plannedTables must be 23 and ownerPortOperations must be 18 in manifest and sealed authority",
+        "removed table token is rejected in every non-provenance canonical document and every physical output file"
+      ]
+    },
+    {
+      "id": "KNOWN_REJECTED_V4_SHAPE_PROBE",
+      "status": "PASS_EXPECTED_BLOCK_NOT_A_SUCCESSOR_ACCEPTANCE",
+      "candidate": "coding-readiness/modern-canonical-candidate.ZorhI5",
+      "observedCounts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "events": 157,
+        "tables": 131
+      },
+      "findingCount": 24,
+      "disposition": "REJECTED_HISTORICAL_CANDIDATE_USED_ONLY_TO_PROVE_V4_PROFILE_LOADING;NOT_PUBLISHED_OR_MUTATED"
+    },
+    {
+      "id": "IMMUTABLE_PREDECESSOR_ARTIFACTS",
+      "status": "PASS",
+      "assertions": [
+        "sealed v2 tool audit file SHA and self-seal unchanged",
+        "sealed policy v3 file SHA and self-seal unchanged",
+        "stored q0 v5 report file SHA and self-seal unchanged"
+      ]
+    }
+  ],
+  "independentExecutionCommands": {
+    "historicalQ0": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --scope-profile v3-132-historical --canonical-dir coding-readiness/modern-canonical-candidate.q0mnJg --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --preflight-only",
+    "v4GeneratePreflight": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --scope-profile v4-131-successor --canonical-dir <new-zero-static-seven-file-canonical-candidate> --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --preflight-only",
+    "v4Generate": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --scope-profile v4-131-successor --canonical-dir <same-canonical-candidate> --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --output-dir <new-absent-physical-candidate-directory>",
+    "v4Validate": "python3 coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --scope-profile v4-131-successor --canonical-dir <same-canonical-candidate> --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --physical-dir <generated-physical-candidate> --self-test --docker-postgres all --report <new-absent-report-file>"
+  },
+  "residualBlockers": [
+    {
+      "type": "CANONICAL_SOURCE",
+      "count": 1,
+      "detail": "A new independently accepted zero-static v4/131 canonical candidate has not yet been supplied to these tools.",
+      "toolDefect": false,
+      "g3CodeGate": "CLOSED"
+    },
+    {
+      "type": "PHYSICAL_EXECUTION_EVIDENCE",
+      "count": 1,
+      "detail": "No physical candidate or PostgreSQL 16/18 execution evidence is authorized until the new canonical candidate reaches zero static findings.",
+      "toolDefect": false,
+      "g3CodeGate": "CLOSED"
+    }
+  ],
+  "toolBlockers": [],
+  "conclusion": "THE_THREE_PHYSICAL_CANDIDATE_TOOL_FILES_NOW_FAIL_CLOSED_ACROSS_EXPLICIT_V3_132_HISTORICAL_AND_V4_131_SUCCESSOR_PROFILES;Q0_REMAINS_EXACTLY_REJECTED_AT_38;THE_SEALED_V2_AUDIT_REMAINS_IMMUTABLE;NO_CANONICAL_OR_PHYSICAL_CANDIDATE_WAS_PUBLISHED",
+  "productionState": "NOT_AUTHORIZED_G6",
+  "sealedPayloadSha256": "42bc6e94008a92968dcb138e5a53ab9a9cbe654fb483914256feb07a0c2d028e"
+}

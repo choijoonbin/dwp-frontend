@@ -1,0 +1,318 @@
+{
+  "reportId": "DWP-HRIS-MODERN-TABLE-SCOPE-132-INDEPENDENT-REVIEW-V1",
+  "schemaVersion": 1,
+  "reviewAuthority": "INDEPENDENT_TABLE_SCOPE_REVIEW_NOT_G3_AUTHORITY",
+  "status": "FAIL_POLICY_V2_NOT_APPROVED_TABLE_IDENTITIES_CONDITIONALLY_ACCEPTED",
+  "scope": "Frozen reviewed 115-table modern HRIS schema plus the proposed exact 17 additions only; no canonical, generator, physical-successor, worktree, v1-oracle or v2-policy mutation.",
+  "inputs": {
+    "frozenGlobalAudit": {
+      "path": "coding-readiness/reports/global-hcm-semantic-closure-independent-audit-2026-09-16.v1.json",
+      "sha256": "af0ad56a400abd361fc8f14164f417b28d66a7daa1dd475a9f2926856ab51ba6"
+    },
+    "acceptancePolicyV2": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+      "sha256": "64bc16def08c4a87750a656a039588db67bba5ec5fad6fac0dbd1bed638e6444",
+      "mutatedByReviewer": false
+    },
+    "frozen115ExactSchema": {
+      "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730"
+    }
+  },
+  "baselineProof": {
+    "tableCount": 115,
+    "uniqueTableCount": 115,
+    "canonicalization": "SHA256(UTF8(JSON(sorted tableName array), ensure_ascii=false, sort_keys=true, separators=(',',':'))))",
+    "computedTableSetSha256": "7a8805795efade4334baa3a6f91d6180b1a0bb4ecec118688e25e86cebd2f2cd",
+    "matchesPolicy": true
+  },
+  "scopeDecision": {
+    "proposedTableCount": 132,
+    "proposedDeltaCount": 17,
+    "identitySetCount": 17,
+    "removedTableIds": [],
+    "missingTableIds": [],
+    "extraTableIds": [],
+    "tableIdentityVerdict": "CONDITIONALLY_ACCEPT_EXACT_17_NO_18TH_TABLE_REQUIRED",
+    "policyAcceptanceVerdict": "REJECT_UNTIL_THREE_P0_CONTROL_GAPS_CLOSE",
+    "qualification": "The exact 17 identities are the minimal relational additions if the existing 115 tables are enriched as required and workforce simulation uses the proposed request table as its complete request/result/cancellation lifecycle. This does not accept current producer or reader metadata and does not accept any live candidate implementation."
+  },
+  "findings": [
+    {
+      "id": "P0-TS132-PRODUCER-001",
+      "severity": "P0",
+      "subject": "ppl_wfp_simulation_requests",
+      "decision": "REJECT_CURRENT_PRODUCER_SET",
+      "evidence": "Policy v2 names only modern.workforceplan.scenario.simulate, while its own non-replaceability claim requires an immutable result-receipt lifecycle and the frozen P0-WFP-001 minimum contract requires a simulation-result handler. A REQUESTED row cannot become COMPLETED/FAILED, and a pending run cannot become CANCELLED, from that producer set.",
+      "requiredClosure": "Either (preferred for scalable HRIS) declare exactly modern.workforceplan.scenario.simulate, internal.workforceplan.simulation-result.consume and modern.workforceplan.scenario.cancel as producers with request/result/cancel CAS rules; or formally remodel it as a synchronous immutable COMPLETED simulation-run fact and remove REQUESTED/FAILED/CANCELLED lifecycle claims. Do not claim an async request with a single creator."
+    },
+    {
+      "id": "P0-TS132-PRODUCER-002",
+      "severity": "P0",
+      "subject": "sys_hris_ai_assistance_reviews",
+      "decision": "REJECT_CURRENT_PRODUCER_SET",
+      "evidence": "The frozen 199-operation surface contains modern.ai.assist.revoke. Human confirmation/rejection and later revocation have the same restricted decision/audit boundary; updating only the mutable assistance root loses the immutable revocation actor/reason/source proof.",
+      "requiredClosure": "Producer set must be exactly modern.ai.assist.review plus modern.ai.assist.revoke. Review appends CONFIRMED or REJECTED; revoke appends REVOKED linked to the prior review and then changes the assistance root in the same transaction."
+    },
+    {
+      "id": "P0-TS132-CONSUMER-003",
+      "severity": "P0",
+      "subject": "acceptanceRules[3]",
+      "decision": "REJECT_TEN_TABLE_SHORTCUT",
+      "evidence": "Every one of the 17 policy rows declares at least one durable query consumer, but the acceptance rule requires physical read-plan/projection/lineage proof for only ten tables. Seven additions could therefore pass while being unqueryable or digest-only.",
+      "requiredClosure": "Apply reader closure to all 17 additions: every declared detail/list reader must include the table in readPlan.tables and projectionTuple.physicalSources, bind every exposed durable field to exact table.column lineage, apply field-policy classification/redaction, and prove historical refetch where an event names the fact."
+    }
+  ],
+  "circularAssumptionsRejected": [
+    "A table name appearing in the author generator or temporary candidate is not evidence that the table is necessary or implementable.",
+    "A non-empty nonReplaceability string is not proof; the review below identifies the conflicting baseline table and the integrity or lifecycle fact it cannot retain.",
+    "A creator operation is not a complete producer set for an async lifecycle or a reversible human decision.",
+    "A digest is not a typed historical result unless an immutable artifact ID, schema version, owner, digest and exact refetch contract all exist.",
+    "Generic APPEND_ONLY_REVISION_OR_TERMINAL_ASYNC_STATUS text is not a substitute for table-specific state, interval, predecessor, immutability and reversal rules.",
+    "Declaring only ten query-bearing additions does not override the readers declared on all 17 policy rows."
+  ],
+  "tableReviews": [
+    {
+      "tableId": "ppl_rec_offer_decisions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.recruiting.offer.respond"],
+      "reversalCancelDisposition": "modern.recruiting.offer.withdraw is an issuer lifecycle action before response and must remain an offer-root/outbox fact; it must not rewrite or fabricate a subject response row.",
+      "parentAndIntegrity": "FK tenant+offer_public_id to ppl_rec_offers; unique tenant+offer+decision_revision; actorMode SELF|AUTHORIZED_PROXY; proxy requires delegation/source receipt pair and reason; exactly one terminal ACCEPTED or DECLINED response.",
+      "stateEffectiveImmutability": "Append-only response decision at ownerClock; no SUPERSEDED state unless a future explicit reversal operation and predecessor link are added.",
+      "retentionAndFieldPolicy": "Recruiting/candidate retention; restricted candidate/actor/subject and confidential offer context; response query redacts by candidate field policy.",
+      "readConsumers": ["modern.recruiting.candidate.query"],
+      "eventConsumers": ["CandidateOfferAccepted.v2", "CandidateOfferDeclined.v2"],
+      "why115CannotAbsorb": "ppl_rec_offers is mutable current state and ppl_rec_candidate_stage_history has a different candidate parent and purpose; neither preserves response actor/delegation/source evidence."
+    },
+    {
+      "tableId": "ppl_rec_requisition_versions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.recruiting.requisition.create", "modern.recruiting.requisition.revise"],
+      "reversalCancelDisposition": "lifecycle.change changes current operational status only; it does not rewrite version content. Closure/pausing remains on root plus outbox. Content correction/supersession always appends a version.",
+      "parentAndIntegrity": "FK tenant+requisition_public_id to ppl_rec_requisitions; unique parent+version; predecessor must reference the same parent; CORRECTION|SUPERSEDE checks; exclusion/non-overlap for effective intervals.",
+      "stateEffectiveImmutability": "Initial CREATE version plus append-only corrections/supersessions; correction reason mandatory; no published historical row update.",
+      "retentionAndFieldPolicy": "Recruiting definition retention; internal content and restricted owner references; as-of query selects exact effective version.",
+      "readConsumers": ["modern.recruiting.requisition.query"],
+      "eventConsumers": ["RequisitionCreated.v2", "RequisitionRevised.v2"],
+      "why115CannotAbsorb": "The root must keep stable identity/current lifecycle; overwriting root content_digest/validity destroys correction and future-effective lineage."
+    },
+    {
+      "tableId": "ppl_jny_template_task_definitions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.onboarding.template.create", "modern.onboarding.template.revise"],
+      "reversalCancelDisposition": "Template retire/publish changes version/root publication status and never deletes task definitions; journey cancellation affects materialized assignment tasks, not template children.",
+      "parentAndIntegrity": "FK to exact ppl_jny_template_versions public identity; unique parent+task_key and parent+ordinal; bounded count; actor rule, due anchor/offset, applicability-condition version and completion/evidence schema refs are required.",
+      "stateEffectiveImmutability": "Children are immutable under their template version; replacement means a new template version and a new complete ordered child set.",
+      "retentionAndFieldPolicy": "Onboarding configuration retention; task definition fields internal; assignment projection exposes only the materialized worker-safe subset.",
+      "readConsumers": ["modern.onboarding.template.query", "modern.onboarding.assignment.query"],
+      "eventConsumers": [],
+      "why115CannotAbsorb": "The baseline JSONB task_definitions cannot enforce task-key/ordinal uniqueness, relational schema references, bounded cardinality or per-field durable lineage; assignment tasks are instances, not definitions."
+    },
+    {
+      "tableId": "ppl_wfp_simulation_requests",
+      "verdict": "NON_REPLACEABLE_ACCEPTED_BUT_PRODUCER_P0_OPEN",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.workforceplan.scenario.simulate", "internal.workforceplan.simulation-result.consume", "modern.workforceplan.scenario.cancel"],
+      "reversalCancelDisposition": "Cancel may close only a still-pending run and appends/records cancellation proof; it cannot erase a completed result.",
+      "parentAndIntegrity": "FK to scenario and exact scenario revision; unique request identity/idempotency tuple; pin input snapshot, assumption/rule revisions, unit/currency/horizon, result receipt ID+revision+schema+digest; result fields all-null or all-present by terminal state.",
+      "stateEffectiveImmutability": "REQUESTED -> COMPLETED|FAILED|CANCELLED by exact CAS; immutable input pins and terminal receipt; attempts/retries do not overwrite the first accepted result.",
+      "retentionAndFieldPolicy": "Workforce-planning model retention; population/result fields restricted/aggregated; exact result-artifact refetch with suppression rules.",
+      "readConsumers": ["modern.workforceplan.scenario.query", "modern.workforceplan.scenarios.query"],
+      "eventConsumers": ["WorkforceScenarioSimulationRequested.v2", "WorkforceScenarioSimulated.v2", "WorkforceScenarioSimulationFailed.v2"],
+      "why115CannotAbsorb": "ppl_wfp_scenario_revisions mixes scenario design history with result digests and cannot represent multiple independent runs, request retries, terminal receipts or cancellation without conflating design and execution."
+    },
+    {
+      "tableId": "ppl_bnf_enrollment_eligibility_receipts",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.benefits.enrollment.submit"],
+      "reversalCancelDisposition": "Enrollment cancel leaves the historical eligibility fact intact; a later election is a new enrollment/revision and receipt.",
+      "parentAndIntegrity": "FK to enrollment; exact plan version, eligibility policy version, population snapshot and decision receipt ID+revision+outcome; unique enrollment+eligibility revision; cross-owner proof revalidated before insert.",
+      "stateEffectiveImmutability": "Append-only ELIGIBLE|INELIGIBLE fact at submission effective time; no recomputation from latest policy.",
+      "retentionAndFieldPolicy": "Benefits/legal election retention; worker and population proofs restricted; query exposes eligibility outcome and audit-safe receipt reference only.",
+      "readConsumers": ["modern.benefits.enrollment.query", "modern.benefits.enrollments.query"],
+      "eventConsumers": ["BenefitEnrollmentSubmitted.v2"],
+      "why115CannotAbsorb": "The mutable enrollment state and separate administrative enrollment_decisions ledger cannot prove the pre-submit policy/snapshot eligibility decision."
+    },
+    {
+      "tableId": "ppl_bnf_dependent_elections",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.benefits.enrollment.submit"],
+      "reversalCancelDisposition": "Cancellation preserves elected rows; replacement election creates a new parent/version rather than mutating or deleting dependent rows.",
+      "parentAndIntegrity": "FK to enrollment; unique parent+ordinal and parent+tokenized relationship; exact plan version+coverage option/version proof; bounded cardinality and no raw dependent identity.",
+      "stateEffectiveImmutability": "Immutable ordered child set for one election revision; no in-place REMOVED state unless a new explicit election revision is linked.",
+      "retentionAndFieldPolicy": "Benefits election retention; relationship token restricted and non-reversible; list/detail queries suppress dependent identity.",
+      "readConsumers": ["modern.benefits.enrollment.query", "modern.benefits.enrollments.query"],
+      "eventConsumers": [],
+      "why115CannotAbsorb": "ppl_bnf_enrollments.dependent_tokens JSONB cannot enforce uniqueness/order, bind each relationship to an option/version, or provide per-row field-policy lineage."
+    },
+    {
+      "tableId": "ppl_bnf_life_event_decisions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.benefits.lifeevent.decide"],
+      "reversalCancelDisposition": "Expiry is a system lifecycle outcome on the life-event root, not a fabricated human decision; a future reversal must append a linked SUPERSEDED decision.",
+      "parentAndIntegrity": "FK to life event; unique event+decision revision; actorMode, actor, subject, delegation/source receipt all-or-none checks; allowed VERIFIED|REJECTED outcomes.",
+      "stateEffectiveImmutability": "Append-only consequential decision; source/delegation and reason frozen.",
+      "retentionAndFieldPolicy": "Benefits evidence retention; subject/actor/evidence restricted; query exposes audit-safe outcome only by purpose.",
+      "readConsumers": ["modern.benefits.lifeevent.query"],
+      "eventConsumers": ["BenefitLifeEventDecisionRecorded.v2"],
+      "why115CannotAbsorb": "ppl_bnf_life_events stores mutable current status/evidence, while enrollment_decisions has the wrong parent and purpose; neither preserves life-event actor authority."
+    },
+    {
+      "tableId": "ppl_cwk_access_receipts",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["internal.contingent.access-grant-result.consume", "internal.contingent.access-revoke-result.consume"],
+      "reversalCancelDisposition": "Revoke appends its own terminal receipt linked to the access request/grant; expiry uses the existing ppl_cwk_access_expiry_receipts and does not overwrite grant proof.",
+      "parentAndIntegrity": "FK to access request and exact engagement; unique request+result revision; signed owner request/version/digest match; grant ID/revision required for GRANTED/REVOKED.",
+      "stateEffectiveImmutability": "Append-only GRANTED|DENIED|REVOKED|FAILED owner results; access-request CAS and engagement transition occur in the same inbox transaction.",
+      "retentionAndFieldPolicy": "Contingent access/security retention; grant and worker/vendor context restricted; reader reauthorizes every call.",
+      "readConsumers": ["modern.contingent.engagement.query"],
+      "eventConsumers": ["ContingentAccessGrantResultRecorded.v2", "ContingentAccessRevokeResultRecorded.v2"],
+      "why115CannotAbsorb": "The mutable access request retains only the latest result and the expiry receipt proves a different event; engagement status cannot prove signed grant/revoke outcomes."
+    },
+    {
+      "tableId": "ppl_cwk_engagement_versions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-HRM",
+      "completeProducers": ["modern.contingent.engagement.create", "modern.contingent.engagement.revise"],
+      "reversalCancelDisposition": "Reject/offboard update root lifecycle and append their existing domain events; they never erase effective versions. A correction/reversal is a new linked version.",
+      "parentAndIntegrity": "FK to engagement; unique parent+version; predecessor same parent; CORRECTION|SUPERSEDE; effective interval exclusion; classification policy/decision and access-package intent pins.",
+      "stateEffectiveImmutability": "Initial CREATE plus append-only effective corrections/supersessions; root owns current workflow state.",
+      "retentionAndFieldPolicy": "Contingent worker/access retention; worker/vendor/classification/access refs restricted; exact as-of projection.",
+      "readConsumers": ["modern.contingent.engagement.query", "modern.contingent.engagements.query"],
+      "eventConsumers": ["ContingentEngagementCreated.v2", "ContingentEngagementRevised.v2"],
+      "why115CannotAbsorb": "ppl_cwk_engagements must be the stable identity/current lifecycle root; overwriting classification, access intent or dates destroys effective-time history."
+    },
+    {
+      "tableId": "prf_lrn_offering_versions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-PER",
+      "completeProducers": ["modern.learning.offering.create", "modern.learning.offering.revise"],
+      "reversalCancelDisposition": "Publish/retire changes root publication lifecycle and leaves all executable versions immutable; a content correction is a new version.",
+      "parentAndIntegrity": "FK to offering; unique parent+version; predecessor/effective non-overlap; typed content artifact ID+revision+schema, delivery/session, capacity, eligibility policy and skill-taxonomy mappings.",
+      "stateEffectiveImmutability": "CREATE plus append-only CORRECTION|SUPERSEDE versions; publication receipt pins exact version.",
+      "retentionAndFieldPolicy": "Learning catalog/completion retention; content internal, learner eligibility restricted; catalog exposes only publishable fields.",
+      "readConsumers": ["modern.learning.offering.query", "modern.learning.catalog.query"],
+      "eventConsumers": ["LearningOfferingCreated.v2", "LearningOfferingRevised.v2", "LearningOfferingPublished.v2"],
+      "why115CannotAbsorb": "prf_lrn_offerings is mutable current catalog state and content_digest alone cannot reproduce executable content, capacity, sessions, eligibility or skill mapping as-of."
+    },
+    {
+      "tableId": "prf_lrn_capacity_ledger",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-PER",
+      "completeProducers": ["modern.learning.assignment.create", "modern.learning.self.enroll", "modern.learning.assignment.cancel"],
+      "reversalCancelDisposition": "Cancel appends RELEASED for a prior reservation; it never updates/deletes RESERVED or WAITLISTED. Retry uses the original idempotency identity.",
+      "parentAndIntegrity": "FK to exact offering version and assignment; unique offering-version+entry-sequence and reservation idempotency key; quantity positive; RELEASED references the prior entry; waitlist order monotonic.",
+      "stateEffectiveImmutability": "Append-only RESERVED|WAITLISTED|RELEASED ledger under row/advisory lock with server-derived availability.",
+      "retentionAndFieldPolicy": "Learning assignment retention; worker/assignment restricted; catalog never exposes learner identities.",
+      "readConsumers": ["modern.learning.assignment.query", "modern.learning.assignments.query"],
+      "eventConsumers": ["LearningAssignmentCreated.v2", "LearningSelfEnrollmentRecorded.v2", "LearningAssignmentCancelled.v2"],
+      "why115CannotAbsorb": "An offering counter or assignment status cannot replay concurrent reserve/release ordering, waitlist priority or idempotent capacity outcomes."
+    },
+    {
+      "tableId": "prf_mkt_opportunity_versions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-PER",
+      "completeProducers": ["modern.opportunity.create", "modern.opportunity.revise"],
+      "reversalCancelDisposition": "Cancel/close affects root lifecycle; applications and explanations keep their pinned opportunity version. No historical criteria row is deleted.",
+      "parentAndIntegrity": "FK to opportunity; unique parent+version; criteria artifact ID+revision+schema, capacity and typed skill mappings; application pins exact version; effective interval non-overlap if dated.",
+      "stateEffectiveImmutability": "Append-only version content; root owns DRAFT|OPEN|CLOSED|CANCELLED lifecycle.",
+      "retentionAndFieldPolicy": "Talent-market retention; criteria internal, applicants/explanations restricted; catalog projection strips protected factors.",
+      "readConsumers": ["modern.opportunity.query", "modern.opportunity.catalog.query"],
+      "eventConsumers": ["TalentOpportunityCreated.v2", "TalentOpportunityRevised.v2", "TalentOpportunityPublished.v2"],
+      "why115CannotAbsorb": "Mutable opportunity content_digest cannot preserve the exact criteria/capacity/skill version used for applications and human explanations."
+    },
+    {
+      "tableId": "prf_suc_plan_versions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-PER",
+      "completeProducers": ["modern.succession.plan.create", "modern.succession.plan.revise"],
+      "reversalCancelDisposition": "Reject/retire changes root workflow; restricted version content and audience policy remain immutable. Correction/supersession appends a predecessor-linked version.",
+      "parentAndIntegrity": "FK to plan; unique parent+version; effective non-overlap; audience policy ID+revision, key position, content artifact ID+revision+digest; specialized restricted-audience PEP on every read.",
+      "stateEffectiveImmutability": "CREATE plus append-only CORRECTION|SUPERSEDE; publication receipt pins exact version/audience approval.",
+      "retentionAndFieldPolicy": "Restricted succession retention/legal hold; no employee self exposure by default; evidence/nomination readers require exact audience revision.",
+      "readConsumers": ["modern.succession.plan.query", "modern.succession.plans.query"],
+      "eventConsumers": ["SuccessionPlanCreated.v2", "SuccessionPlanRevised.v2", "SuccessionPlanPublished.v2"],
+      "why115CannotAbsorb": "The plan root is current workflow state and its mutable audience/content columns cannot preserve authorization policy and content as-of."
+    },
+    {
+      "tableId": "prf_cmp_proposal_versions",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-PER",
+      "completeProducers": ["modern.compplan.proposal.upsert"],
+      "reversalCancelDisposition": "Submit/plan approval/cycle cancellation change workflow or freeze references; they do not mutate frozen proposal Money. A changed proposal uses CAS and appends a new version.",
+      "parentAndIntegrity": "FK to proposal; unique parent+proposal_version; worker+assignment, component catalog revision, Money/currency/frequency/basis, FX snapshot when needed, effective date and reason required; Money checks.",
+      "stateEffectiveImmutability": "Each upsert appends a complete immutable value version; root owns current workflow status.",
+      "retentionAndFieldPolicy": "Compensation/legal retention; Money and worker identity confidential/encrypted; manager population and field policy applied on every query.",
+      "readConsumers": ["modern.compplan.proposal.query", "modern.compplan.proposals.query"],
+      "eventConsumers": ["CompensationProposalUpserted.v2", "CompensationProposalSubmitted.v2"],
+      "why115CannotAbsorb": "The mutable proposal root cannot reconstruct the exact Money/component/effective values reviewed and later frozen by approval."
+    },
+    {
+      "tableId": "prf_cmp_plan_proposal_refs",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-PER",
+      "completeProducers": ["modern.compplan.plan.approve"],
+      "reversalCancelDisposition": "A later plan revision creates a new immutable membership set; snapshot publication consumes, never rewrites, approved membership.",
+      "parentAndIntegrity": "FK to plan and composite exact proposal+version; unique plan-revision+ordinal and plan-revision+proposal; bounded non-empty set; approved snapshot lines derive server-side from these refs.",
+      "stateEffectiveImmutability": "Append-only ordered membership frozen in the approval transaction.",
+      "retentionAndFieldPolicy": "Compensation approval retention; IDs restricted and Money resolved only under compensation field policy.",
+      "readConsumers": ["modern.compplan.cycle.query", "modern.compplan.proposal.query"],
+      "eventConsumers": ["CompensationPlanApproved.v2", "CompensationSnapshotPublished.v2"],
+      "why115CannotAbsorb": "A plan digest cannot enforce membership/cardinality/FKs or let the server prove which exact proposal versions generated snapshot lines."
+    },
+    {
+      "tableId": "tme_wfm_approval_receipts",
+      "verdict": "NON_REPLACEABLE_ACCEPTED",
+      "ownerSession": "HRIS-TIM",
+      "completeProducers": ["internal.wfm.approval-result.consume"],
+      "reversalCancelDisposition": "schedule.cancel after approval is a distinct schedule lifecycle event and must not erase the earlier approval; approval-request cancellation remains on the existing request/cancellation receipt contract.",
+      "parentAndIntegrity": "FK to exact tme_wfm_approval_requests and schedule candidate; unique approval-request+result revision and candidate+candidate revision; signed decision receipt ID+revision/outcome/input digest.",
+      "stateEffectiveImmutability": "Append-only APPROVED|REJECTED result in the same inbox/CAS transaction; publish admission requires matching APPROVED receipt.",
+      "retentionAndFieldPolicy": "Time/scheduling approval retention; workforce identities restricted; candidate detail/list expose audit-safe approval state only.",
+      "readConsumers": ["modern.wfm.candidate.query", "modern.wfm.candidates.query"],
+      "eventConsumers": ["WorkforceScheduleApprovalResultRecorded.v2", "WorkforceSchedulePublished.v2"],
+      "why115CannotAbsorb": "The mutable approval request and candidate state can retain only the current outcome and cannot independently prove the signed decision used by publish admission."
+    },
+    {
+      "tableId": "sys_hris_ai_assistance_reviews",
+      "verdict": "NON_REPLACEABLE_ACCEPTED_BUT_PRODUCER_P0_OPEN",
+      "ownerSession": "HRIS-SYS",
+      "completeProducers": ["modern.ai.assist.review", "modern.ai.assist.revoke"],
+      "reversalCancelDisposition": "assist.cancel before production has no review row; assist.revoke after confirmation appends a REVOKED decision linked to the prior review and never mutates the original confirmation.",
+      "parentAndIntegrity": "FK to assistance request and prior review on revoke; unique assistance+review_revision; subject/requester ownership, actor mode, actor, reason, delegation/source receipt all-or-none; human decision cannot target another subject.",
+      "stateEffectiveImmutability": "Append-only CONFIRMED|REJECTED|REVOKED human decisions; mutable assistance root reflects current state only.",
+      "retentionAndFieldPolicy": "AI decision/provenance retention is separately configurable; subject/actor/reason restricted; raw prompts/results remain forbidden from review events.",
+      "readConsumers": ["modern.ai.assistance.query", "modern.ai.assistances.query"],
+      "eventConsumers": ["GovernedAiAssistanceConfirmed.v2", "GovernedAiAssistanceRejected.v2", "GovernedAiAssistanceRevoked.v2"],
+      "why115CannotAbsorb": "AI provenance proves model generation, not the separate human action; the mutable assistance root cannot retain actor/delegation/reason or a later immutable revocation."
+    }
+  ],
+  "allTableControlRequirements": {
+    "rowSecurity": "ENABLE and FORCE tenant RLS; NO BYPASSRLS service role; no default grants.",
+    "retention": "Every table pins a named owner-session retention policy version; legal hold and purge/tombstone behavior are explicit; decision/evidence/config lifecycles are not conflated.",
+    "fieldPolicy": "Every direct durable response field has exact table.column lineage and sensitivity/tokenization; unknown field/purpose/population is denied; list and detail readers are both checked when declared.",
+    "foreignKeys": "All same-owner parent identities and exact child-version identities use tenant-scoped local FKs; cross-owner identities use typed public-ID/revision contracts with fail-closed owner refetch, never database cross-service FKs.",
+    "immutability": "Append-only facts reject UPDATE/DELETE except narrowly defined terminal CAS on true async request roots; reversals append predecessor-linked facts.",
+    "effectiveTime": "Effective-dated versions have predecessor integrity, CORRECTION|SUPERSEDE semantics and non-overlap/exclusion checks; as-of reads never fall back to latest.",
+    "events": "Events contain exact durable IDs/revisions and audit-safe state, never raw sensitive content; every refetch points to an exact historical reader or is explicitly forbidden with sufficient immutable payload."
+  },
+  "acceptanceConditions": [
+    "Revise the policy successor (without rewriting v2) so WFP and AI producer sets equal the complete sets in this report.",
+    "Replace the ten-table reader shortcut with all-17 reader/lineage/field-policy closure.",
+    "Generate a 132-table candidate whose table set is exactly frozen115 union exact17 and whose removed set is empty.",
+    "Prove every table-specific parent/FK/state/effective/immutability/retention/field-policy rule in this report in exact schema, operations/handlers, events and physical PostgreSQL evidence.",
+    "Run the independent validator and its mutation self-tests, then run the global live acceptance and physical PG16/PG18 validators. This report alone never opens G3."
+  ],
+  "reproducibility": {
+    "validator": "coding-readiness/modern-independent-successor/validate_table_scope_132_independent_review.py",
+    "expectedCurrentResult": "FAIL with exactly three P0 findings: incomplete WFP producer set, incomplete AI producer set, and ten-of-seventeen reader shortcut.",
+    "selfTestMutationCount": 5
+  }
+}

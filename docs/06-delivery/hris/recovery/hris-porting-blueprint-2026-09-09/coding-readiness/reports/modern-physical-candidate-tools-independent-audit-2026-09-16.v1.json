@@ -1,0 +1,273 @@
+{
+  "schema": "dwp.hris.modern-physical-candidate-tools-independent-audit/v1",
+  "status": "PASS_TOOL_HARDENING_CANONICAL_SOURCE_REMAINS_BLOCKED",
+  "recordedAtUtc": "2026-09-15T20:02:26Z",
+  "authority": "INDEPENDENT_REVIEWER_TOOL_QUALITY_ONLY_NOT_G3_NOT_G6",
+  "scope": {
+    "toolDirectory": "coding-readiness/modern-physical-candidate-tools",
+    "canonicalCandidate": "coding-readiness/modern-canonical-candidate.q0mnJg",
+    "reviewedFiles": [
+      "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py",
+      "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py",
+      "coding-readiness/modern-physical-candidate-tools/README.md"
+    ],
+    "allowedWrites": "THREE_REVIEWED_TOOL_FILES_PLUS_DISTINCT_INDEPENDENT_REPORTS_ONLY",
+    "canonicalCandidateMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "liveCanonicalPhysicalGateWorktreePolicyMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "candidatePublication": "NOT_PERFORMED_TEMPORARY_MATERIALIZATION_ONLY"
+  },
+  "failBeforeEvidence": {
+    "path": "coding-readiness/reports/modern-physical-candidate-tools-independent-fail-before-2026-09-16.v1.json",
+    "sha256": "dc0341b10124c6c675ab69b1e43dbcd3a5c283602fa651966d05afcc3ac0f5f4",
+    "sealedPayloadSha256": "5396f5d3bbc0b3faecea286e2534f07c08768c8806517813a5a92cf9c4e98854",
+    "status": "FAIL_TOOL_HARDENING_REQUIRED",
+    "preservedBeforeToolModification": true
+  },
+  "toolPins": {
+    "before": {
+      "generatorSha256": "e3d7eef87c9c23f01f03f64674214e5302915679cfdd81b906b79857c7acbd0d",
+      "validatorSha256": "5c86854fbf648a2de7b1538fdc20a00a9b071044f893d891b6ea3ae3b394bea7",
+      "readmeSha256": "b446282a85a24735400938430782f1668e9f0d686259ec40d29bbfa2a1fead4b"
+    },
+    "after": {
+      "generatorSha256": "c6a5936c63a9fe8cb5e45e57433fed83501bed1eb55f0130b19007c2de5bbd43",
+      "validatorSha256": "80ac7a31b7b1a34aa8d80ffcd4da9f3231c7b8c8a9e222b9e3c4d531bfbc151f",
+      "readmeSha256": "b3260fe9a78ff240b28cd8310f0eb06b915f769cb4acf972f348752e6c960599"
+    },
+    "modes": {
+      "generate_modern_physical_candidate.py": "0755",
+      "validate_modern_physical_candidate.py": "0755",
+      "README.md": "0644"
+    }
+  },
+  "protectedInputPins": {
+    "storedQ0V5Report": {
+      "path": "coding-readiness/reports/modern-physical-q0mnJg-rejected-preflight-2026-09-16.v5.json",
+      "sha256": "01e3d81bf2e1a58589fd6f9f1c24c5b8a88aea0e12f95debc6f4242bd1a4bcaa",
+      "sealedPayloadSha256": "87b6823e335d2b50a1b412cef9bcb4579bf2ec07ff094136cfca0d3097418f47"
+    },
+    "expansionPolicySha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+    "ownerPrefixRegisterSha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49",
+    "canonicalFileSha256": {
+      "modern-capability-causal-state-contracts.v2.json": "1bf81301c577ab35a39971fa4518464b92353f8aca1dc5a276872df636cde20a",
+      "modern-capability-closed-set-manifest.v3.json": "cd1305145a41217f73e5aebf66833a4077279a231712aaccdcab6e661fc94a94",
+      "modern-capability-event-payload-contracts.v1.json": "2a69ac195f4e2e9795a8efb52a31d93dc85e8816a318b5263c9033f2a03023a8",
+      "modern-capability-exact-schema-contracts.v1.json": "9de24132f582ee2ac9d3564f1d2c87425b9a507a6a1f19bcdb57390c102c9e10",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "46ee398c3b0fca0e6cc39d966ea3c7ff7c427d954d0d4b5851695604f8ae31ce",
+      "modern-capability-public-identity-registry.v1.json": "6bf72a0cd7a7982d445baeb27afefedf23e3e6ea7126e8e6c03c2815116b9d8c",
+      "modern-capability-semantic-bindings.v1.json": "39d32729ff6ab3046407b38ee53a7c778bd72abe11ffb83709bd05677fa1fc01"
+    },
+    "matchesStoredQ0V5Pins": true
+  },
+  "q0Reproduction": {
+    "command": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --canonical-dir coding-readiness/modern-canonical-candidate.q0mnJg --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --preflight-only",
+    "exitCode": 3,
+    "status": "FAIL_BLOCKED_SOURCE",
+    "findingCount": 38,
+    "storedV5SortedCategoryCodeSubjectTupleEquality": true,
+    "livePreflightSealedPayloadSha256": "5ba860a5713e07730afdb37c2d7dd53d99040ec04ef679a1a9531ff0dfa0e2da",
+    "note": "The live seal differs from preserved v5 only because requiredClosure capitalization changed before this audit; all 38 sorted category/code/subject tuples are byte-equal.",
+    "categories": {
+      "PHYSICAL_OWNER_BOUNDARY": 4,
+      "PHYSICAL_SCHEMA_DDL": 4,
+      "TABLE_EXPANSION_PRODUCER_READER_CLOSURE": 16,
+      "TEMPORAL_REVISION_ARBITRATION": 14
+    },
+    "codes": {
+      "COMMAND_CROSS_DEPLOYMENT_LOCAL_SELECTOR": 2,
+      "CONSTRAINT_COLUMN_MISSING": 4,
+      "CROSS_DEPLOYMENT_LOCAL_FOREIGN_KEY": 1,
+      "EXPANSION_DECLARED_READER_NOT_PHYSICAL": 3,
+      "EXPANSION_PRODUCER_CLOSURE_MISMATCH": 2,
+      "EXPANSION_READER_DIRECT_LINEAGE_INCOMPLETE": 11,
+      "HANDLER_OWNER_LOCAL_TRANSACTION_INVALID": 1,
+      "REVISION_TEMPORAL_ARBITRATION_MISSING": 7,
+      "REVISION_TEMPORAL_CONCURRENCY_ROOT_AGGREGATE_DRIFT": 2,
+      "REVISION_TEMPORAL_CORRECTION_COLUMNS_MISSING": 1,
+      "REVISION_TEMPORAL_EFFECTIVE_START_NULLABLE": 1,
+      "REVISION_TEMPORAL_INSERT_EFFECTIVE_ASSIGNMENT_MISSING": 1,
+      "TEMPORAL_NULL_SEMANTICS_DRIFT": 2
+    },
+    "observedCounts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 25,
+      "events": 155,
+      "tables": 132
+    },
+    "postgresExecution": "CORRECTLY_NOT_RUN_STATIC_FINDINGS_NONZERO"
+  },
+  "checks": [
+    {
+      "id": "PY_COMPILE",
+      "command": "python3 -m py_compile coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "GENERATOR_TOOL_HOSTILE_SELF_TEST",
+      "command": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --tool-self-test",
+      "exitCode": 0,
+      "status": "PASS",
+      "passed": 8,
+      "total": 8,
+      "sealedPayloadSha256": "c6040fc4a5e27be698b2d30e05680dca7fa0d5bf4f52d4c7ecad5ec000cc8ccd"
+    },
+    {
+      "id": "VALIDATOR_TOOL_HOSTILE_SELF_TEST",
+      "command": "python3 coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --tool-self-test",
+      "exitCode": 0,
+      "status": "PASS",
+      "passed": 9,
+      "total": 9,
+      "sealedPayloadSha256": "37f6824638d37bf9bb84c72f721e0025c44a009033d2499c69af778101889409"
+    },
+    {
+      "id": "Q0_EXACT_38_REPRODUCTION",
+      "command": "bounded subprocess invocation of generator --preflight-only plus exact comparison to preserved q0 v5",
+      "exitCode": 3,
+      "expectedExitCode": 3,
+      "status": "PASS_EXPECTED_BLOCK",
+      "findingCount": 38,
+      "tupleEquality": true
+    },
+    {
+      "id": "DETERMINISTIC_TEMPORARY_MATERIALIZATION",
+      "command": "independent in-memory import; build the same q0 context into two fresh workspace-local temporary directories; compare all eight file SHA-256 values",
+      "exitCode": 0,
+      "status": "PASS",
+      "allFileHashesEqual": true,
+      "publishedCandidate": false
+    },
+    {
+      "id": "VALIDATOR_BASELINE_ON_TEMPORARY_MATERIALIZATION",
+      "command": "validate_candidate_data against temporary q0-derived materialization without PostgreSQL execution",
+      "exitCode": 0,
+      "status": "PASS_TOOL_OUTPUT_ZERO_ADDITIONAL_FINDINGS",
+      "sourceFindings": 38,
+      "nonSourceFindings": 0,
+      "sqlTables": 132,
+      "operations": 199,
+      "queryProjections": 66,
+      "handlers": 25,
+      "physicalFiles": 8
+    },
+    {
+      "id": "RESEALED_CANDIDATE_HOSTILE_SELF_TEST",
+      "command": "validator self_test against temporary q0-derived materialization; compare each mutation with the 38-finding baseline",
+      "exitCode": 0,
+      "status": "PASS",
+      "passed": 14,
+      "total": 14,
+      "allCasesAddedDistinctFindings": true,
+      "selfSealValid": true
+    },
+    {
+      "id": "OWNER_PREFIX_AND_LISTENING_AUTHORITY_HOSTILE",
+      "command": "in-memory owner-prefix and listening stream authority mutations through independent source validator",
+      "exitCode": 0,
+      "status": "PASS",
+      "ownerPrefixMutationRejected": true,
+      "listeningStreamMutationRejected": true
+    },
+    {
+      "id": "INDEPENDENCE_AND_NO_IMPLICIT_LIVE_PATH_STATIC_AUDIT",
+      "command": "Python AST plus exact text scan of reviewed tools",
+      "exitCode": 0,
+      "status": "PASS",
+      "validatorImportsAuthorGenerator": false,
+      "pathResolveCalls": 0,
+      "generatorOsReplaceCalls": 0,
+      "implicitQ0OrLivePhysicalPathDefaults": 0
+    }
+  ],
+  "hostileCoverage": {
+    "generatorToolCases": [
+      "required canonical seal removal",
+      "arbitrary CHECK function",
+      "arbitrary DEFAULT function",
+      "accepted canonical CHECK/default grammar",
+      "existing destination no-replace",
+      "symlink destination no-replace",
+      "symlink directory rejection"
+    ],
+    "validatorToolCases": [
+      "missing seal rejection",
+      "arbitrary CHECK/default function rejection",
+      "accepted canonical CHECK/default grammar",
+      "seal round trip",
+      "immutable PostgreSQL image-ID run binding",
+      "PostgreSQL evidence row self-seal and input hash",
+      "symlink directory rejection"
+    ],
+    "candidateMutationCases": [
+      "handler seal mutation",
+      "handler removal",
+      "SQL table removal",
+      "FORCE RLS removal",
+      "cross-owner read mislabeled local",
+      "canonical byte-pin drift",
+      "required canonical self-seal removal",
+      "closed-set manifest reference drift",
+      "table owner/schema drift",
+      "query side-effect guard removal",
+      "resealed query method drift",
+      "resealed handler trigger drift",
+      "resealed SQL column type drift",
+      "resealed runtime grant drift"
+    ]
+  },
+  "remediationsClosed": {
+    "authorGeneratorIndependence": "PASS_VALIDATOR_RECONSTRUCTS_WITHOUT_IMPORTING_OR_INVOKING_GENERATOR",
+    "implicitLivePaths": "PASS_ALL_AUTHORITY_INPUTS_AND_OUTPUTS_EXPLICIT",
+    "inputSymlinkAndToctou": "PASS_COMPONENTWISE_OPENAT_NOFOLLOW_PLUS_REGULAR_INODE_BINDING",
+    "outputOverwriteSymlinkAndToctou": "PASS_KERNEL_RENAME_NOREPLACE_NO_FALLBACK_PLUS_EXCLUSIVE_REPORT_WRITES",
+    "canonicalSealsAndManifestPins": "PASS_ALL_DECLARED_SEALS_VERIFIED_FOUR_AUTHORITY_SEALS_REQUIRED_AND_CLOSED_SET_REFS_CHECKED",
+    "sqlIdentifierTypeAndExpressionSafety": "PASS_CLOSED_IDENTIFIER_TYPE_DEFAULT_AND_SCALAR_CHECK_GRAMMARS",
+    "ownerSchemaFkCandidateKeyType": "PASS_INDEPENDENT_132_TABLE_OWNER_PREFIX_SCHEMA_LOCAL_FK_TARGET_UNIQUE_AND_TYPE_PROOFS",
+    "handlerQueryExactAgreement": "PASS_FULL_CANONICAL_RECONSTRUCTION_SELF_SEAL_AND_DETERMINISTIC_PRETTY_BYTE_COMPARISON",
+    "sqlFullShape": "PASS_EXACT_COLUMN_TYPE_DEFAULT_NULLABILITY_IDENTITY_AND_COMPLETE_CONSTRAINT_SECURITY_MARKERS",
+    "roleRlsAcl": "PASS_MIGRATION_OWNER_RUNTIME_NOINHERIT_NOBYPASSRLS_SCHEMA_TABLE_SEQUENCE_LEAST_PRIVILEGE_CONTRACT_AND_RUNTIME_RLS_ASSERTIONS",
+    "temporalFixtures": "PASS_SAME_INTERVAL_CORRECTION_SYSTEM_ASOF_FUTURE_SUPERSEDE_BUSINESS_ASOF_IMMUTABLE_PREDECESSOR_AND_CONCURRENT_CAS_CASES_PRESENT_AND_PINNED",
+    "postgresImageBinding": "PASS_PULL_INSPECT_IMMUTABLE_IMAGE_ID_AND_REPOSITORY_DIGEST_RUN_BY_ID_CONTAINER_IMAGE_EQUALITY",
+    "postgresEvidenceSealing": "PASS_INPUT_FILE_HASHES_FIXTURE_HASHES_PER_VERSION_ROW_SELF_SEAL_FINAL_REPORT_SELF_SEAL",
+    "postgresCrossVersionEquality": "PASS_CODE_REQUIRES_EXACT_CASE_SET_AND_NORMALIZED_PG16_PG18_OBSERVATION_EQUALITY"
+  },
+  "postgresExecutionReadiness": {
+    "status": "READY_BUT_NOT_EXECUTED_BY_POLICY",
+    "reason": "The supplied q0 canonical candidate has 38 nonzero static findings. The tool's own policy forbids PostgreSQL execution until a new canonical candidate reaches static zero.",
+    "actualPg16Evidence": "NOT_RUN_EXPECTED",
+    "actualPg18Evidence": "NOT_RUN_EXPECTED",
+    "mockedImmutableBindingAndRowSeal": "PASS_2_CASES",
+    "futureZeroCandidateRequiredAssertions": [
+      "postgres:16 and postgres:18 tags resolve to recorded sha256 image IDs and repository digests",
+      "containers run by image ID and inspected container image ID equals the resolved ID",
+      "all five DDL units execute in four databases as their migration roles",
+      "schema/table/identity-sequence ownership, runtime ACL and runtime RLS assertions pass",
+      "three exact temporal case IDs all pass",
+      "normalized PostgreSQL 16 and 18 observations are equal",
+      "each PostgreSQL evidence row and the final report self-seal"
+    ],
+    "temporalFixtureSha256": {
+      "setup": "cb869ad5e4b24d0e64b368dd3431de794c2b6cf351bd0371a5c42fdedbf3f180",
+      "raceWinner": "c4aecc60b09c0e7746240583c8718ef77d42a9e8bc99715c092ee97833decbfb",
+      "raceLoser": "8e22d5c407e2569541b2f74f3cc90bf7b8011996ab6990cb9dc80944242a3adc",
+      "raceAssert": "351a309cce83733b354bc1a9f4e05bd1aab93dc564f0ef0332f6a042fa6b17a9"
+    }
+  },
+  "residualBlockers": [
+    {
+      "type": "CANONICAL_SOURCE",
+      "candidate": "modern-canonical-candidate.q0mnJg",
+      "count": 38,
+      "disposition": "UNCHANGED_CANONICAL_AUTHOR_MUST_REPAIR_AND_SUBMIT_A_NEW_CANDIDATE",
+      "toolDefect": false,
+      "g3CodeGate": "CLOSED"
+    }
+  ],
+  "toolBlockers": [],
+  "conclusion": "THE_THREE_PHYSICAL_CANDIDATE_TOOLS_ARE_HARDENED_AND_INDEPENDENTLY_READY_TO_EVALUATE_A_NEW_ZERO_STATIC_CANONICAL_CANDIDATE;Q0_REMAINS_CORRECTLY_REJECTED_AT_38_AND_NO_CANDIDATE_WAS_PUBLISHED",
+  "productionState": "NOT_AUTHORIZED_G6",
+  "sealedPayloadSha256": "PENDING"
+}

@@ -1,0 +1,246 @@
+{
+  "destinationRoot": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+  "evidencePolicy": {
+    "historicalCommandsExecuted": false,
+    "inventedMissingContent": false,
+    "skkfReanalysis": false,
+    "sources": [
+      "fileChange events",
+      "captured complete file readbacks",
+      "captured path listings"
+    ]
+  },
+  "formatChecks": {
+    "csv": {
+      "failed": 0,
+      "failures": [],
+      "passed": 86,
+      "total": 86
+    },
+    "embeddedTruncationMarkers": {
+      "failed": 1,
+      "paths": [
+        "coding-readiness/ia-entry-query-projection-schemas.v1.json"
+      ]
+    },
+    "javascriptSyntax": {
+      "available": true,
+      "failed": 0,
+      "failures": [],
+      "passed": 23,
+      "total": 23
+    },
+    "json": {
+      "failed": 1,
+      "failures": [
+        {
+          "error": "Expecting value: line 1 column 1 (char 0)",
+          "path": "coding-readiness/ia-entry-query-projection-schemas.v1.json"
+        }
+      ],
+      "passed": 291,
+      "total": 292
+    },
+    "jsonl": {
+      "failed": 0,
+      "failures": [],
+      "passed": 0,
+      "total": 0
+    },
+    "pythonSyntax": {
+      "failed": 0,
+      "failures": [],
+      "passed": 149,
+      "total": 149
+    }
+  },
+  "fullHistoricalValidatorRun": {
+    "reason": "The recovered surface contains partial and reference-only artifacts; running historical generators or validators could mutate or misrepresent evidence.",
+    "status": "NOT_RUN"
+  },
+  "historicalRoot": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+  "inventory": {
+    "eventHistoryButNotRestored": [
+      "coding-readiness/g3-contract-primary-ownership-register.csv",
+      "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+      "coding-readiness/modern-causal-independent-reviewed-finalization.v1.json",
+      "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+      "coding-readiness/optional-capability-admission-contract.v1.json",
+      "coding-readiness/validate_g3_slice_code_go.py",
+      "coding-readiness/validate_g4_functional_gate.py",
+      "g0/validate_code_checkpoint.py",
+      "readiness-tools/generate_sys_g1.py",
+      "session-evidence/sys/g2-physical-schema.sql"
+    ],
+    "eventHistoryButNotRestoredCount": 10,
+    "fileCount": 757,
+    "pathReferenceCount": 1144,
+    "referenceOnlyByEvidenceClass": {
+      "BLUEPRINT_ARTIFACT": 103,
+      "CACHE_OR_OS_METADATA": 15,
+      "REPORT_OR_RECEIPT": 134,
+      "TEMP_OR_CANDIDATE": 85
+    },
+    "referenceOnlyCount": 337,
+    "referencedDirectoryCount": 52,
+    "referencedFileOrLeafCount": 1092,
+    "statusCounts": {
+      "HISTORICALLY_DELETED": 6,
+      "RECOVERED_EVENT_CHAIN_COMPLETE": 722,
+      "RECOVERED_HASH_VERIFIED_NUMBERED_EVIDENCE": 4,
+      "RECOVERED_PARTIAL_EVENT_CHAIN": 31,
+      "REFERENCE_ONLY": 337
+    },
+    "supplementalEvidence": {
+      "coding-readiness/g3-slice-code-go-register.csv": {
+        "report": "/Users/a10697/Work/DWP/session-recovery/codex-session-recovery-20261001-105256-KST/reports/hris-porting-blueprint-2026-09-09/g3-slice-code-go-register-line-recovery.json",
+        "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+      },
+      "session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql": {
+        "report": "/Users/a10697/Work/DWP/session-recovery/codex-session-recovery-20261001-105256-KST/reports/hris-porting-blueprint-2026-09-09/hrm-physical-schema-numbered-recovery.json",
+        "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969"
+      },
+      "session-evidence/pay/g2-physical-schema.sql": {
+        "report": "/Users/a10697/Work/DWP/session-recovery/codex-session-recovery-20261001-105256-KST/reports/hris-porting-blueprint-2026-09-09/pay-physical-schema-numbered-recovery.json",
+        "sha256": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0"
+      },
+      "session-evidence/per/g2-readiness/api-event-contracts.yaml": {
+        "report": "/Users/a10697/Work/DWP/session-recovery/codex-session-recovery-20261001-105256-KST/reports/hris-porting-blueprint-2026-09-09/per-api-event-contracts-numbered-recovery.json",
+        "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a"
+      }
+    },
+    "supplementalHashVerifiedCount": 4
+  },
+  "manifest": {
+    "actualFileCount": 757,
+    "exactMatch": true,
+    "expectedFileCount": 757,
+    "hashOrSizeMismatch": [],
+    "missingFromDestination": [],
+    "stagingFileCount": 756,
+    "supplementalFileCount": 4,
+    "unexpectedInDestination": []
+  },
+  "replay": {
+    "failureCount": 845,
+    "failurePathCount": 90,
+    "hunkResolutions": {
+      "already": 6,
+      "declared": 6611,
+      "empty": 8,
+      "relocated": 7000
+    },
+    "operationCount": 8604,
+    "operationResults": {
+      "add": 751,
+      "delete": 63,
+      "failed": 845,
+      "snapshot": 1322,
+      "update": 5623
+    }
+  },
+  "schema": "dwp.hris.blueprint.recovery-verification.v1",
+  "scopedContractBindings": {
+    "failed": 1,
+    "failures": [
+      {
+        "actual_bytes": 25944,
+        "actual_sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+        "expected_bytes": 35196,
+        "expected_sha256": "5390eac887c06d33e744252ddf013183f2f1e55198f8a28d341197b6a6336e65",
+        "path": "output/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+        "session": "HRIS-HRM",
+        "status": "FAIL"
+      }
+    ],
+    "passed": 49,
+    "summary": {
+      "HRIS-HRM": {
+        "failed": 1,
+        "passed": 9,
+        "total": 10
+      },
+      "HRIS-PAY": {
+        "failed": 0,
+        "passed": 10,
+        "total": 10
+      },
+      "HRIS-PER": {
+        "failed": 0,
+        "passed": 10,
+        "total": 10
+      },
+      "HRIS-SYS": {
+        "failed": 0,
+        "passed": 10,
+        "total": 10
+      },
+      "HRIS-TIM": {
+        "failed": 0,
+        "passed": 10,
+        "total": 10
+      }
+    },
+    "total": 50
+  },
+  "scopedValidator": {
+    "exitCode": 1,
+    "result": {
+      "results": [
+        {
+          "blockers": [
+            "backend-worktree-exact-clean",
+            "frontend-worktree-exact-clean",
+            "canonical-contract-fixture-digests"
+          ],
+          "developmentStarted": false,
+          "result": "PREFLIGHT_FAIL",
+          "sessionId": "HRIS-HRM",
+          "startCommandIssued": false
+        },
+        {
+          "blockers": [
+            "backend-worktree-exact-clean",
+            "frontend-worktree-exact-clean"
+          ],
+          "developmentStarted": false,
+          "result": "PREFLIGHT_FAIL",
+          "sessionId": "HRIS-PER",
+          "startCommandIssued": false
+        },
+        {
+          "blockers": [
+            "backend-worktree-exact-clean",
+            "frontend-worktree-exact-clean"
+          ],
+          "developmentStarted": false,
+          "result": "PREFLIGHT_FAIL",
+          "sessionId": "HRIS-PAY",
+          "startCommandIssued": false
+        },
+        {
+          "blockers": [
+            "backend-worktree-exact-clean",
+            "frontend-worktree-exact-clean"
+          ],
+          "developmentStarted": false,
+          "result": "PREFLIGHT_FAIL",
+          "sessionId": "HRIS-TIM",
+          "startCommandIssued": false
+        },
+        {
+          "blockers": [
+            "backend-worktree-exact-clean",
+            "frontend-worktree-exact-clean"
+          ],
+          "developmentStarted": false,
+          "result": "PREFLIGHT_FAIL",
+          "sessionId": "HRIS-SYS",
+          "startCommandIssued": false
+        }
+      ],
+      "status": "FAIL"
+    },
+    "stderr": ""
+  }
+}

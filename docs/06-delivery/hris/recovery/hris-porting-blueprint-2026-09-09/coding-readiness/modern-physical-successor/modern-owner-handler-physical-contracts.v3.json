@@ -1,0 +1,1216 @@
+{
+  "contractId": "dwp.hris.modern.owner-handler-physical-contracts.v3",
+  "schemaVersion": 3,
+  "status": "REVIEWED_PRE_G3_PHYSICAL_DESIGN_NOT_IMPLEMENTED",
+  "sourceManifest": {
+    "path": "../modern-capability-closed-set-manifest.v3.json",
+    "fileSha256": "be4e5fc198af218db740d46b6a264644f2fd9cae686ca35c3b0cd430541f04b6",
+    "sealedPayloadSha256": "00bb8fba8b91addbc9dea24d0441bc70f6e6833db9997bd89e85da26984f9a0a"
+  },
+  "invariants": {
+    "exactHandlerCount": 25,
+    "atomicity": "INBOX_CLAIM_DOMAIN_CAS_CLOSED_ACK_OUTBOX_ARE_ONE_OWNER_LOCAL_COMMIT",
+    "crossDatabaseTransactions": "FORBIDDEN",
+    "sameMessageSameDigest": "SEALED_FIRST_ACK_NO_SECOND_EFFECT",
+    "sameMessageDifferentDigest": "CONFLICT_NO_MUTATION",
+    "acknowledgementPublication": "OUTBOX_AFTER_COMMIT_ONLY",
+    "erasure": "RAW_OR_LINKABLE_PUBLIC_EVENT_FORBIDDEN"
+  },
+  "inheritedInfrastructure": {
+    "HRIS-HRM": {
+      "inbox": "ppl_domain_inbox_receipts",
+      "outbox": "sys_people_outbox_events",
+      "scope": "SEALED_G2_SHARED_INFRASTRUCTURE_NOT_PART_OF_106"
+    },
+    "HRIS-PER": {
+      "inbox": "prf_inbox_receipts",
+      "outbox": "prf_outbox_events",
+      "scope": "SEALED_G2_SHARED_INFRASTRUCTURE_NOT_PART_OF_106"
+    },
+    "HRIS-TIM": {
+      "inbox": "tme_inbox_receipts",
+      "outbox": "tme_outbox_events",
+      "scope": "SEALED_G2_SHARED_INFRASTRUCTURE_NOT_PART_OF_106"
+    },
+    "HRIS-SYS": {
+      "inbox": "sys_domain_event_inbox",
+      "outbox": "sys_domain_event_outbox",
+      "scope": "SERVICE_LOCAL_EXISTING_INFRASTRUCTURE_OR_EXACT_LISTENING_STREAM_TABLE"
+    }
+  },
+  "handlers": [
+    {
+      "handlerId": "internal.ai.assistance-result.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 1,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_domain_event_inbox",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_ai_assistance_requests",
+        "sys_hris_ai_provenance_receipts"
+      ],
+      "acknowledgementTable": "sys_hris_ai_provenance_receipts",
+      "outboxTable": "sys_domain_event_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "ASSISTANCE_REQUEST_CAS_AND_PROVENANCE_APPEND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.ai.policy-evaluation-result.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 2,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_domain_event_inbox",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_ai_evaluation_requests",
+        "sys_hris_ai_evaluation_receipts"
+      ],
+      "acknowledgementTable": "sys_hris_ai_evaluation_receipts",
+      "outboxTable": "sys_domain_event_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "EVALUATION_REQUEST_CAS_AND_RESULT_APPEND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.analytics.export.expire",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 3,
+      "trigger": "OWNER_LOCAL_DUE_MESSAGE_OR_SIGNED_MESSAGE",
+      "inputInboxTable": "sys_domain_event_inbox",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_analytics_export_receipts"
+      ],
+      "acknowledgementTable": "sys_hris_analytics_export_receipts",
+      "outboxTable": "sys_domain_event_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "EXPORT_REQUEST_CAS_TO_EXPIRED",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.analytics.export.result.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 4,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_domain_event_inbox",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_analytics_export_receipts"
+      ],
+      "acknowledgementTable": "sys_hris_analytics_export_receipts",
+      "outboxTable": "sys_domain_event_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "EXPORT_REQUEST_CAS_AND_RESULT_FIELDS",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.analytics.metric-projection.result.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 5,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_domain_event_inbox",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_metric_projection_requests",
+        "sys_hris_metric_projections"
+      ],
+      "acknowledgementTable": "sys_hris_metric_projections",
+      "outboxTable": "sys_domain_event_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "PROJECTION_REQUEST_CAS_AND_IMMUTABLE_PROJECTION_APPEND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.benefits.life-event.expire",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 6,
+      "trigger": "OWNER_LOCAL_DUE_MESSAGE_OR_SIGNED_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_bnf_life_events"
+      ],
+      "acknowledgementTable": "ppl_domain_inbox_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "LIFE_EVENT_CAS_TO_EXPIRED",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.benefits.provider-result.consume",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 7,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_bnf_provider_requests",
+        "ppl_bnf_provider_receipts",
+        "ppl_bnf_enrollments"
+      ],
+      "acknowledgementTable": "ppl_bnf_provider_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "PROVIDER_REQUEST_CAS_RECEIPT_APPEND_ENROLLMENT_REDUCTION",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.contingent.access-expiry.initiate",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 8,
+      "trigger": "OWNER_LOCAL_DUE_MESSAGE_OR_SIGNED_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_cwk_access_requests",
+        "ppl_cwk_engagements"
+      ],
+      "acknowledgementTable": "ppl_domain_inbox_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "EXPIRY_REQUEST_INSERT_AND_ENGAGEMENT_CAS",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.contingent.access-grant-result.consume",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 9,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_cwk_access_requests",
+        "ppl_cwk_engagements"
+      ],
+      "acknowledgementTable": "ppl_domain_inbox_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "GRANT_REQUEST_AND_ENGAGEMENT_CAS",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.contingent.access-revoke-result.consume",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 10,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_cwk_access_requests",
+        "ppl_cwk_engagements"
+      ],
+      "acknowledgementTable": "ppl_domain_inbox_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "REVOKE_REQUEST_AND_ENGAGEMENT_CAS",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.growth.portability-export.expire",
+      "ownerSession": "HRIS-PER",
+      "handlerOrdinal": 11,
+      "trigger": "OWNER_LOCAL_DUE_MESSAGE_OR_SIGNED_MESSAGE",
+      "inputInboxTable": "prf_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "prf_grw_portability_export_receipts"
+      ],
+      "acknowledgementTable": "prf_grw_portability_export_receipts",
+      "outboxTable": "prf_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "EXPORT_RECEIPT_CAS_TO_EXPIRED",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.growth.portability-export.result.consume",
+      "ownerSession": "HRIS-PER",
+      "handlerOrdinal": 12,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "prf_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "prf_grw_portability_export_receipts"
+      ],
+      "acknowledgementTable": "prf_grw_portability_export_receipts",
+      "outboxTable": "prf_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "EXPORT_RECEIPT_CAS_AND_RESULT_BIND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.hrservice.sla-milestone.consume",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 13,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_hrs_cases",
+        "ppl_hrs_sla_receipts"
+      ],
+      "acknowledgementTable": "ppl_hrs_sla_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "SLA_RECEIPT_APPEND_AND_CASE_CAS",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.configuration.admission-close-receipt.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 14,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_hris_listening_operation_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_surveys",
+        "sys_hris_listening_survey_versions"
+      ],
+      "acknowledgementTable": "sys_hris_listening_operation_receipts",
+      "outboxTable": "sys_hris_listening_domain_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "CONFIGURATION_CLOSE_FINALIZATION",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.configuration.admission-install-receipt.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 15,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_hris_listening_operation_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_surveys",
+        "sys_hris_listening_survey_versions"
+      ],
+      "acknowledgementTable": "sys_hris_listening_operation_receipts",
+      "outboxTable": "sys_hris_listening_domain_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "CONFIGURATION_PUBLISH_FINALIZATION",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.insights.cohort-package.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 16,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_hris_listening_insights_inbox",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_cohort_projections",
+        "sys_hris_listening_lineage_receipts"
+      ],
+      "acknowledgementTable": "sys_hris_listening_lineage_receipts",
+      "outboxTable": "sys_hris_listening_insights_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "MINIMIZED_COHORT_PROJECTION_APPEND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.protected.admission-close.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 17,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_hris_listening_protected_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_admission_versions"
+      ],
+      "acknowledgementTable": "sys_hris_listening_protected_receipts",
+      "outboxTable": "sys_hris_listening_protected_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "PROTECTED_ADMISSION_CLOSE_CAS",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.protected.admission-install.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 18,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_hris_listening_protected_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_admission_versions"
+      ],
+      "acknowledgementTable": "sys_hris_listening_protected_receipts",
+      "outboxTable": "sys_hris_listening_protected_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "PROTECTED_ADMISSION_VERSION_APPEND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.protected.cohort-projection-receipt.consume",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 19,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "sys_hris_listening_protected_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_cohort_packages"
+      ],
+      "acknowledgementTable": "sys_hris_listening_protected_receipts",
+      "outboxTable": "sys_hris_listening_protected_outbox",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "PROTECTED_PACKAGE_CAS_TO_PROJECTED",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.protected.erasure.process",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 25,
+      "trigger": "OWNER_LOCAL_LEASED_DUE_TICKET",
+      "inputInboxTable": "sys_hris_listening_erasure_tickets",
+      "messageIdentity": [
+        "tenant_id",
+        "ticket_public_id",
+        "lease_revision"
+      ],
+      "messageDigestColumn": "request_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_responses",
+        "sys_hris_listening_answer_values",
+        "sys_hris_listening_erasure_tickets",
+        "sys_hris_listening_protected_receipts"
+      ],
+      "acknowledgementTable": "sys_hris_listening_protected_receipts",
+      "outboxTable": "sys_hris_listening_protected_outbox",
+      "atomicStages": [
+        "CLAIM",
+        "ERASE_OR_CRYPTO_SHRED",
+        "TOMBSTONE",
+        "SEALED_ACK"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "TICKET_SKIP_LOCKED",
+        "RESPONSE",
+        "ANSWER_VALUES",
+        "KEY_MATERIAL",
+        "TOMBSTONE_RECEIPT"
+      ],
+      "expectedRowCounts": {
+        "claim": "EXACTLY_ONE_DUE_REQUESTED",
+        "erasure": "EXACT_TARGET_SET_OR_ALREADY_ERASED_REPLAY",
+        "tombstone": "EXACTLY_ONE",
+        "sealedAcknowledgement": "EXACTLY_ONE"
+      },
+      "domainEffect": "DESTROY_KEY_MATERIAL_CLEAR_LINKABLE_PAYLOAD_RETAIN_NON_LINKABLE_TOMBSTONE",
+      "sameDigestReplay": "RETURN_SEALED_COMPLETION_RECEIPT_NO_SECOND_ERASURE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "LEASE_LOST_NO_MUTATION",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_UNLESS_KEY_DESTRUCTION_IS_ATOMIC_PROVIDER_COMMIT",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "OWNER_LOCAL_CRYPTO_SHRED_WITH_STABLE_NON_LINKABLE_REPLAY_RECEIPT",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.listening.protected.erasure.request",
+      "ownerSession": "HRIS-SYS",
+      "handlerOrdinal": 24,
+      "trigger": "SIGNED_PRIVACY_OR_RETENTION_REQUEST_OR_OWNER_LOCAL_DUE_MESSAGE",
+      "inputInboxTable": "sys_hris_listening_protected_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "idempotency_key"
+      ],
+      "messageDigestColumn": "request_sha256",
+      "domainWriteTables": [
+        "sys_hris_listening_erasure_tickets"
+      ],
+      "acknowledgementTable": "sys_hris_listening_protected_receipts",
+      "outboxTable": "sys_hris_listening_protected_outbox",
+      "atomicStages": [
+        "CLAIM",
+        "DOMAIN_INSERT",
+        "SEALED_ACK",
+        "OUTBOX"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "RECEIPT_BY_IDEMPOTENCY_KEY",
+        "RESPONSE_BY_TENANT_PUBLIC_ID",
+        "TICKET",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "claim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainInsert": "EXACTLY_ONE_FIRST_ATTEMPT",
+        "sealedAcknowledgement": "EXACTLY_ONE",
+        "outbox": "ZERO_RAW_PUBLIC_EVENTS_EXACTLY_ONE_MINIMIZED_INTERNAL_ACK"
+      },
+      "domainEffect": "ERASURE_TICKET_REQUESTED_WITH_DUE_AT_AND_RETENTION_REVISION",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_TICKET_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "REQUEST_ONLY_NO_RAW_IDENTITY_EGRESS",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.recruiting.hire-handoff.result.consume",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 20,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_rec_hire_requests",
+        "ppl_rec_hire_handoff_receipts",
+        "ppl_rec_candidate_cases"
+      ],
+      "acknowledgementTable": "ppl_rec_hire_handoff_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "HANDOFF_REQUEST_CAS_RECEIPT_APPEND_CANDIDATE_REDUCTION",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.recruiting.offer.expire",
+      "ownerSession": "HRIS-HRM",
+      "handlerOrdinal": 21,
+      "trigger": "OWNER_LOCAL_DUE_MESSAGE_OR_SIGNED_MESSAGE",
+      "inputInboxTable": "ppl_domain_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "ppl_rec_offers",
+        "ppl_rec_candidate_cases"
+      ],
+      "acknowledgementTable": "ppl_domain_inbox_receipts",
+      "outboxTable": "sys_people_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "OFFER_AND_CANDIDATE_CAS_TO_EXPIRED",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.wfm.approval-result.consume",
+      "ownerSession": "HRIS-TIM",
+      "handlerOrdinal": 22,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "tme_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "tme_wfm_approval_requests",
+        "tme_wfm_schedule_candidate_versions",
+        "tme_wfm_schedule_candidates"
+      ],
+      "acknowledgementTable": "tme_inbox_receipts",
+      "outboxTable": "tme_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "APPROVAL_CAS_AND_CANDIDATE_REVISION_APPEND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    },
+    {
+      "handlerId": "internal.wfm.schedule-optimization.result.consume",
+      "ownerSession": "HRIS-TIM",
+      "handlerOrdinal": 23,
+      "trigger": "SIGNED_INTERNAL_PORT_MESSAGE",
+      "inputInboxTable": "tme_inbox_receipts",
+      "messageIdentity": [
+        "tenant_id",
+        "consumer_key",
+        "message_public_id"
+      ],
+      "messageDigestColumn": "message_sha256",
+      "domainWriteTables": [
+        "tme_wfm_optimization_requests",
+        "tme_wfm_schedule_candidate_versions",
+        "tme_wfm_schedule_candidates",
+        "tme_wfm_candidate_shift_lines"
+      ],
+      "acknowledgementTable": "tme_inbox_receipts",
+      "outboxTable": "tme_outbox_events",
+      "atomicStages": [
+        "INBOX_CLAIM",
+        "DOMAIN_CAS",
+        "CLOSED_ACK",
+        "OUTBOX_APPEND"
+      ],
+      "transactionBoundary": "ONE_OWNER_LOCAL_DATABASE_TRANSACTION",
+      "lockOrder": [
+        "INBOX_BY_MESSAGE_ID",
+        "AGGREGATE_ROOT_BY_TENANT_PUBLIC_ID",
+        "IMMUTABLE_CHILD_ORDINAL",
+        "ACK",
+        "OUTBOX"
+      ],
+      "expectedRowCounts": {
+        "inboxClaim": "ZERO_ON_IDENTICAL_REPLAY_OR_EXACTLY_ONE",
+        "domainCas": "EXACTLY_ONE_OR_FIRST_RESULT_INSERT",
+        "closedAcknowledgement": "EXACTLY_ONE",
+        "outboxAppend": "EXACTLY_ONE_PER_CANONICAL_EVENT"
+      },
+      "domainEffect": "ENGINE_RESULT_NORMALIZE_AND_CANDIDATE_APPEND",
+      "sameDigestReplay": "RETURN_SEALED_FIRST_ACK_NO_DOMAIN_OR_OUTBOX_WRITE",
+      "differentDigestReplay": "CONFLICT_NO_MUTATION",
+      "staleVersion": "CONFLICT_ROLLBACK_ALL_STAGES",
+      "faultInjection": "AFTER_EVERY_STAGE_MUST_ROLL_BACK_INBOX_DOMAIN_ACK_OUTBOX",
+      "externalCallInsideTransaction": false,
+      "erasureMode": "NOT_APPLICABLE",
+      "productionState": "NOT_AUTHORIZED_G6"
+    }
+  ],
+  "sealedPayloadSha256": "ecfad562ba36fc9dd838f4f3fe229586226737be4c863cf0ad27fe72923c237f"
+}

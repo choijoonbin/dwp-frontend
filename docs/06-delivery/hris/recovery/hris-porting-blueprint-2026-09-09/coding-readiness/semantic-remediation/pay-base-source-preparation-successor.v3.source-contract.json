@@ -1,0 +1,110 @@
+{
+  "status": "EXACT_NATIVE_SOURCE_CARRIERS_AND_PLANNED_PORTS_TRANSPORT_PEP_OPEN",
+  "nativePins": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+      "bytes": "27320",
+      "mtimeNs": "1788935965796121926"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+      "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+      "bytes": "918",
+      "mtimeNs": "1789360448778031618"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+      "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+      "bytes": "9105",
+      "mtimeNs": "1789360393439338720"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+      "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+      "bytes": "1496",
+      "mtimeNs": "1789354991078381067"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+      "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+      "bytes": "4887",
+      "mtimeNs": "1789359261552529839"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+      "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+      "bytes": "1833",
+      "mtimeNs": "1788935965800010744"
+    }
+  ],
+  "legalEmployerPort": {
+    "contractId": "HRM.NativeLegalEmployerSnapshot.proposal.v3",
+    "CURRENT_PUBLISHED": false,
+    "ownerService": "people",
+    "ownerStream": "people-main",
+    "ownerSchema": "public",
+    "request": {
+      "publicId": "body.legalEmployerRef.publicId typed People.LegalEmployer publicUUID",
+      "expectedVersion": "body.legalEmployerRef.expectedVersion",
+      "asOf": "body.legalEmployerRef.asOf",
+      "tenant": "current verified actor.tenantId, not body",
+      "actor": "current verified acting Auth principal"
+    },
+    "query": "SELECT tenant_id,public_id,version,lifecycle_state,country_code FROM public.ppl_legal_employers WHERE tenant_id=:trustedTenant AND public_id=:validatedEmployerPublicUUID; zero/duplicate/stale/inactive deny; authorization current purpose/population employer scope and field intersection required",
+    "fieldSources": {
+      "tenantId": "ppl_legal_employers.tenant_id",
+      "publicId": "ppl_legal_employers.public_id actual commonV49",
+      "version": "ppl_legal_employers.version actualV1",
+      "lifecycleState": "ppl_legal_employers.lifecycle_state actualV1 ACTIVE/INACTIVE",
+      "countryCode": "ppl_legal_employers.country_code nullable actualV1",
+      "capturedAt": "owner.currentClock",
+      "expiresAt": "current owner policy bounded expiry; no unregistered default"
+    },
+    "requestToResultBindings": [
+      "tenant exact",
+      "publicUUID exact",
+      "version exact",
+      "ACTIVE state",
+      "asOf/effectivity policy OPEN legalEmployer currently no start/end DATE columns; do not invent employer interval"
+    ],
+    "OPEN": [
+      "native purpose/nonself employer population PEP/current signed authority",
+      "exact transport/DTO/shared producer+consumer compile and source registry",
+      "asOf validity owner policy for master without effective dates"
+    ]
+  },
+  "employmentCarrierSources": {
+    "personPublicId": "ppl_persons.public_id",
+    "personVersion": "ppl_persons.version",
+    "workerPublicId": "ppl_workers.public_id",
+    "workerVersion": "ppl_workers.version",
+    "relationshipPublicId": "ppl_work_relationships.public_id",
+    "relationshipVersion": "ppl_work_relationships.version",
+    "assignmentPublicId": "ppl_assignments.public_id",
+    "assignmentVersion": "ppl_assignments.version",
+    "legalEmployerPublicId": "ppl_legal_employers.public_id",
+    "workZone": "ppl_locations.time_zone"
+  },
+  "parentQuery": "People tenant same owner joins worker.person_id=person.person_id, relationship.worker_id=worker.worker_id, assignment.work_relationship_id=relationship.work_relationship_id, relationship.legal_employer_id=employer.legal_employer_id; public UUIDs only in cross-owner DTO; internalBIGINT not converted to UUID",
+  "readerLimit": "actual NativeSelfContextQueryReaderV1 requires SELF guard-issued lookup; raw DTO/columns reused only. PAY nonself current population producer must be separately defined/registered and cannot claim this reader as admission",
+  "actorAuthority": {
+    "authStamps": [
+      "com_users.version",
+      "com_users.access_revision"
+    ],
+    "nativeRevisionTokens": "exact native STRING proof tokens, not PAY or SYS numeric counters; versioned current authority adapter publication OPEN",
+    "subjectStamps": [
+      "ppl_persons.version",
+      "ppl_workers.version",
+      "ppl_work_relationships.version",
+      "ppl_assignments.version"
+    ],
+    "noTargetAuthRequired": true
+  },
+  "optionalPorts": {
+    "PER_APPROVED_PLAN": "unselected calls0; selected exact approved effective plan/revision/full payload owner query publication OPEN",
+    "COUNTRY_PACK": "unselected calls0, no country law constants in core; selected version/asOf/schema/full payload refetch publication OPEN",
+    "BANK_CONNECTOR": "manual recorded path requires no connector; selected activation/token/provider result unknown receipt contracts OPEN, no fallback to manual as bank ACK"
+  }
+}

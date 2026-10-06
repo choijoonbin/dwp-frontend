@@ -1,0 +1,764 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "status": "TYPED_FOUNDATION_REQUEST_DELTA_PLANNED_NOT_CANONICAL_WIRE",
+  "$defs": {
+    "PAYV2.GovernanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "enum": [
+            "ENTITY",
+            "PAYGROUP",
+            "CALENDAR",
+            "ROUNDING",
+            "ELIGIBILITY",
+            "ELEMENT",
+            "FORMULA",
+            "GL_MAPPING"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V2"
+        },
+        "expectedPolicyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expectedPayloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedOwnerRevision",
+        "expectedPayloadDigest"
+      ]
+    },
+    "PAYV2.NativeLegalEmployerRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "publicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "publicId",
+        "expectedVersion",
+        "asOf"
+      ]
+    },
+    "PAYV2.EntityCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entityKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "jurisdictionCode": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}(?:-[A-Z0-9]{1,8})?$"
+        },
+        "baseCurrency": {
+          "$ref": "#/$defs/PAY.Currency"
+        },
+        "timeZone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ENTITY"
+                }
+              }
+            }
+          ]
+        },
+        "legalEmployerRef": {
+          "$ref": "#/$defs/PAYV2.NativeLegalEmployerRef"
+        }
+      },
+      "required": [
+        "entityKey",
+        "jurisdictionCode",
+        "baseCurrency",
+        "timeZone",
+        "validFrom",
+        "validTo",
+        "governance",
+        "legalEmployerRef"
+      ]
+    },
+    "PAYV2.PayGroupCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "groupKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "legalPayrollEntityId": {
+          "$ref": "#/$defs/PAY.Uuid",
+          "referenceContract": {
+            "entityType": "PAY.LegalPayrollEntity",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "HOURLY",
+            "DAILY",
+            "WEEKLY",
+            "BIWEEKLY",
+            "SEMIMONTHLY",
+            "MONTHLY",
+            "ANNUAL",
+            "CUSTOM"
+          ]
+        },
+        "currency": {
+          "$ref": "#/$defs/PAY.Currency"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": [
+            "MANUAL_RECORDED",
+            "BANK_CONNECTOR"
+          ]
+        },
+        "eligibilityArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "calendarArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "PAYGROUP"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "groupKey",
+        "legalPayrollEntityId",
+        "frequency",
+        "currency",
+        "paymentMethod",
+        "eligibilityArtifact",
+        "calendarArtifact",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV2.CalendarCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "calendarKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAY.ConfigScope"
+        },
+        "periods": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 366,
+          "items": {
+            "$ref": "#/$defs/PAY.CalendarPeriod"
+          }
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "CALENDAR"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "calendarKey",
+        "scope",
+        "periods",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV2.RoundingCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policyKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/PAY.RoundingRule"
+          }
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ROUNDING"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "policyKey",
+        "rules",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV2.EligibilityCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policyKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/PAY.InputDeclaration"
+          }
+        },
+        "expression": {
+          "$ref": "#/$defs/PAY.AstNode"
+        },
+        "outputType": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "valueType": {
+              "const": "BOOLEAN"
+            },
+            "unit": {
+              "const": "BOOLEAN"
+            },
+            "currency": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "valueType",
+            "unit",
+            "currency"
+          ]
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ELIGIBILITY"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "policyKey",
+        "inputs",
+        "expression",
+        "outputType",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV2.ElementCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "elementKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "nameKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "elementType": {
+          "type": "string",
+          "enum": [
+            "EARNING",
+            "DEDUCTION",
+            "EMPLOYER_COST",
+            "INFORMATION",
+            "BALANCE"
+          ]
+        },
+        "valueType": {
+          "$ref": "#/$defs/PAY.TypeDescriptor"
+        },
+        "processingPriority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "eligibilityArtifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.LocalArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "formulaArtifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.LocalArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "roundingArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "sourceInput": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.InputDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "classification": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "taxCode": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.Code"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "insuranceCode": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.Code"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "accountingCode": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.Code"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "countryPackRef": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.OwnerSelector"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "taxCode",
+            "insuranceCode",
+            "accountingCode",
+            "countryPackRef"
+          ]
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ELEMENT"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "elementKey",
+        "nameKey",
+        "elementType",
+        "valueType",
+        "processingPriority",
+        "eligibilityArtifact",
+        "formulaArtifact",
+        "roundingArtifact",
+        "sourceInput",
+        "classification",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV2.FormulaCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "formulaKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "languageVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/PAY.InputDeclaration"
+          }
+        },
+        "outputType": {
+          "$ref": "#/$defs/PAY.TypeDescriptor"
+        },
+        "expression": {
+          "$ref": "#/$defs/PAY.AstNode"
+        },
+        "decisionTables": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/PAY.DecisionTable"
+          }
+        },
+        "dependencyArtifacts": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/PAY.LocalArtifactRef"
+          }
+        },
+        "roundingArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "maxNodes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            },
+            "maxDepth": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "maxCollectionItems": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000
+            },
+            "timeoutMillis": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            },
+            "memoryBytes": {
+              "type": "integer",
+              "minimum": 4096,
+              "maximum": 16777216
+            }
+          },
+          "required": [
+            "maxNodes",
+            "maxDepth",
+            "maxCollectionItems",
+            "timeoutMillis",
+            "memoryBytes"
+          ]
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "FORMULA"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "formulaKey",
+        "languageVersion",
+        "inputs",
+        "outputType",
+        "expression",
+        "decisionTables",
+        "dependencyArtifacts",
+        "roundingArtifact",
+        "limits",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV2.GlMappingCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mappingKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAY.ConfigScope"
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10000,
+          "items": {
+            "$ref": "#/$defs/PAY.GlMappingLine"
+          }
+        },
+        "accountRegistrySnapshot": {
+          "$ref": "#/$defs/PAY.OwnerSelector"
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV2.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "GL_MAPPING"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "mappingKey",
+        "scope",
+        "lines",
+        "accountRegistrySnapshot",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    }
+  }
+}

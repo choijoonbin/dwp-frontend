@@ -1,0 +1,99 @@
+{
+  "reportId": "dwp.hris.modern-candidate-validator-coherence-repair.2026-09-16.v1",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-16T01:59:10Z",
+  "status": "PASS_REPAIR_VERIFIED",
+  "verdict": "CANDIDATE_AND_FUTURE_LIVE_FIXED_POINT_VALIDATION_COHERENT_NOT_A_GATE_DECISION",
+  "authorityBoundary": "SOURCE_AND_VALIDATOR_REPAIR_ONLY_NO_CANONICAL_PROMOTION_NO_GATE_MUTATION",
+  "rootCauses": [
+    {
+      "id": "IMPLICIT_LIVE_REPROJECTION_INPUTS",
+      "finding": "The exact/event validator accepted candidate documents as arguments but its final deterministic oracle reread the module-global live SSOT, exact and event files.",
+      "repair": "The validator now requires explicit source_ssot, source_exact and source_events objects; candidate CLI validation resolves all candidate roles from one directory and reciprocal registries from the same byte set."
+    },
+    {
+      "id": "RECIPROCAL_REGISTRY_OVERLAY_NOT_REPRODUCED",
+      "finding": "The raw exact/event projector precedes semantic and identity registry enrichment, so a canonical-five exact document could not be compared directly to the raw projection.",
+      "repair": "Expected reciprocal references and core pins are recomputed from independently sealed semantic and identity registry bytes, and both registries must pin the candidate exact/event byte hashes."
+    },
+    {
+      "id": "LEGACY_CALLER_APPROVAL_FIELD_ASSUMPTION",
+      "finding": "The historical semantic materializer indexed approvalReceiptId, effectiveFrom and contentDigest even after the accepted frozen-proof model removed those caller fields.",
+      "repair": "The historical bootstrap distinguishes the complete historical request triple from the frozen approved-plan proof model and requires the full seven-column locked-plan to snapshot proof chain; partial shapes fail explicitly."
+    },
+    {
+      "id": "LEGACY_SEMANTIC_PATH_IN_ACTIVE_GATE",
+      "finding": "The full-readiness path invoked a 100-operation heuristic materializer against the 199-operation successor.",
+      "repair": "Successor mode validates the canonical-five exact/event/semantic/identity fixed point and derives the exact binding count from current canonical bytes; legacy constants no longer authorize successor readiness."
+    }
+  ],
+  "sourcePins": {
+    "coding-readiness/generate_modern_exact_event_successor.py": "486f42e3041dc3134ebd166f3a3bc88e893cf51fd4e847bc51f0ed36c228fc12",
+    "coding-readiness/generate_modern_semantic_identity_successor.py": "14efcf5b8d50e36e047cef8234abecdaf910aa81818d8927b7cace445573abc4",
+    "coding-readiness/generate_modern_semantic_field_lineage.py": "7145e882e5a450c1d058672f90d4ca2fc65e2cc3452c56c3ef0f496b7d2f306a",
+    "coding-readiness/modern_causal_successor.py": "0a92d122a5db58fe4a9dbed8eaab876c65edb4e5c9a51e02aa09a4fffb976f14",
+    "coding-readiness/validate_full_coding_readiness.py": "3d915158805f0d51e353d24fcf30f3b4f21ec8c87a8f40b53640c1fb8fa55db5",
+    "coding-readiness/test_modern_candidate_validator_coherence.py": "8c87804d9eb0fe2ac31f95d5560023d617915136d45ec0e1ee1a676d2e539ceb"
+  },
+  "ephemeralCandidate": {
+    "locationClass": "SYSTEM_TEMPORARY_DIRECTORY_NOT_A_WORKSPACE_OR_PROMOTION_AUTHORITY",
+    "workspaceCandidateCreated": false,
+    "canonicalOrLiveModified": false,
+    "counts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 27,
+      "publicEvents": 157,
+      "tables": 131,
+      "explicitSemanticBindings": 13295
+    },
+    "fileSha256": {
+      "modern-capability-closed-set-manifest.v3.json": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "2d048ddf51a7177dc76abefc6f613312cebdee0b619a7fd4f57ddbf48429e50b",
+      "modern-capability-exact-schema-contracts.v1.json": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88",
+      "modern-capability-event-payload-contracts.v1.json": "3e9e4c1ca92c823853fdbf0afe8b03bd66b3074b2691b0aa35acd883d90e851c",
+      "modern-capability-semantic-bindings.v1.json": "246b96c0a2dcf9945fc631f573210d82ac0a3400850a0e2617028e5663f40c34",
+      "modern-capability-public-identity-registry.v1.json": "383e3ff40e655b0ef47177cc517ab122ead637a97e2c0f58de61e4c34c5df720"
+    }
+  },
+  "verification": {
+    "pythonCompile": {
+      "status": "PASS",
+      "files": 6
+    },
+    "exactCandidateCli": {
+      "status": "PASS",
+      "output": "MODERN_EXACT_EVENT_CANDIDATE_CHECK=PASS operations=199 tables=131 events=157"
+    },
+    "semanticCandidateFixedPoint": {
+      "status": "PASS",
+      "output": "MODERN_SEMANTIC_LINEAGE_GENERATOR_CHECK=PASS typeFallbacks=0 eventFallbacks=0 explicitBindings=13295 operations=199 events=157 tables=131 mode=SUCCESSOR_CANONICAL_FIXED_POINT"
+    },
+    "hostileTests": {
+      "status": "PASS",
+      "passed": 5,
+      "total": 5,
+      "cases": [
+        "baseline candidate acceptance",
+        "implicit live reread refusal",
+        "candidate/live event mixing rejection",
+        "reciprocal registry pin drift rejection",
+        "missing compensation approvalReceiptId durable source rejection"
+      ]
+    },
+    "currentLiveDisposition": {
+      "status": "EXPECTED_FAIL_CLOSED_PRE_PROMOTION",
+      "detail": "Current live predecessor/partial projection is rejected with an explicit protected commitment column finding rather than an uncaught approvalReceiptId KeyError."
+    }
+  },
+  "gateFence": {
+    "path": "g0/current-g3-gate-decision.json",
+    "fileSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "gateModified": false,
+    "canonicalPromoted": false,
+    "readyForGateClaim": false,
+    "reason": "This report closes only candidate validator coherence; all independent candidate, physical, downstream lineage and scoped preflight gates remain authoritative."
+  },
+  "sealedPayloadSha256": "64bdc56e94a3c065b3b2f253188a5bdcd47227f1f5809baf5c96298ccb1c50be"
+}

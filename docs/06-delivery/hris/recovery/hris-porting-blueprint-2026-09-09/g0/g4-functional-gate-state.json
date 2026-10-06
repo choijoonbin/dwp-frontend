@@ -1,0 +1,15 @@
+{
+  "schema": "dwp.hris.g4-functional-gate-control-state.v2",
+  "transactionSeq": 0,
+  "phase": "COMMITTED",
+  "priorRegisterSha256": "74bd845c344aecf174f5734b465cf6f96faf1f6f30f78113c9097056d93e0b8a",
+  "candidateRegisterSha256": "74bd845c344aecf174f5734b465cf6f96faf1f6f30f78113c9097056d93e0b8a",
+  "gateId": "",
+  "aggregateRef": "",
+  "aggregateSha256": "",
+  "recordedAt": null,
+  "preparedAt": null,
+  "committedAt": null,
+  "priorState": null,
+  "status": "CONTROL_REGISTER_INITIALIZED"
+}

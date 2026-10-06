@@ -1,0 +1,349 @@
+{
+  "reportId": "DWP-HRIS-MODERN-CLOSED-SET-LISTENING-PRE-EMIT-INDEPENDENT-DESIGN-REVIEW-2026-09-16-V2",
+  "schemaVersion": 2,
+  "status": "FINAL_SELF_SEALED_READ_ONLY_SOURCE_REAUDIT",
+  "verdict": "ARCH_FINAL_PASS",
+  "reviewedAt": "2026-09-16T09:44:21+09:00",
+  "reviewer": {
+    "reviewerId": "/root/v4_architecture_report_recovery",
+    "reviewerRole": "INDEPENDENT_ARCHITECTURE_RECOVERY_AND_HOSTILE_REVIEW_AGENT",
+    "independence": "SOURCE_AUTHOR_AND_REVIEWER_TASKS_WERE_DISTINCT",
+    "externalIdentityAttestation": "EXTERNAL_IDENTITY_ATTESTATION_NOT_CLAIMED"
+  },
+  "scope": {
+    "reviewMode": "SOURCE_ONLY_NO_WRITE_PRE_EMIT_RECOVERY",
+    "candidateOrLiveArtifactsEmitted": false,
+    "candidateOrLiveArtifactsModified": false,
+    "gateModified": false,
+    "reviewedDomains": [
+      "A_SEVEN_DUAL_CHAIN_TEMPORAL_VERSION_FAMILIES",
+      "B_LISTENING_FOUR_STREAM_PRIVACY_AND_OWNER_BOUNDARY",
+      "V4_TO_V3_TO_V2_TABLE_SCOPE_POLICY_LINEAGE",
+      "ORPHAN_TABLE_REMOVAL_AND_REPLACEMENT_OWNER_CONTINUITY"
+    ],
+    "excludedClaims": [
+      "G3_OR_G4_USER_JOURNEY_IMPLEMENTATION_COMPLETE",
+      "G6_PRODUCTION_ACTIVATION",
+      "REAL_IDENTITY_OR_PROCESS_ISOLATION_PROVEN",
+      "EXTERNAL_REVIEWER_PKI_OR_IDENTITY_ATTESTED"
+    ]
+  },
+  "priorReportDisposition": {
+    "path": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v1.json",
+    "fileSha256": "99e96abe87d7141f3d7ff6a0185db5f1820a8385e700d34d0df3b8e11a322604",
+    "sealedPayloadSha256": "39a27f6c0362ca52eddfb19c8ac2b31981d98755de5d911e15ea2791b4242bcd",
+    "classification": "HISTORICAL_PRE_LINEAGE_CORRECTION_EVIDENCE_NOT_CURRENT_SOURCE_AUTHORITY",
+    "reason": "V1 remains immutable evidence for the reviewed orphan-removal decision but predates the current manifest-generator and Listening-design source bytes.",
+    "sourceHashDrift": {
+      "coding-readiness/generate_modern_closed_set_manifest.py": {
+        "v1PinnedSha256": "8e9695a69c521412dc9d7e9b6c9b1a0800847579e913e3b00b79ff69d5ae2c27",
+        "currentSha256": "0e98c782cbecb04204f8d97359d3adda5e57b20bf0f778be78205bc8bb07dec8"
+      },
+      "coding-readiness/sys_listening_canonical_design.py": {
+        "v1PinnedSha256": "abf27d3a4e71663b28b18a72bb7d012ec7b6e3ac4a193bd01a40047ec702be46",
+        "currentSha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+      }
+    },
+    "activeSourceAuthorityClaim": "FORBIDDEN_V1_IS_NOT_CURRENT_SOURCE_AUTHORITY"
+  },
+  "sourcePins": [
+    {
+      "path": "coding-readiness/modern_closed_set_design.py",
+      "sha256": "53282661fd973816e27c9e95ff74091d62da2982f24060d15a56fae9a16e43d6"
+    },
+    {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+    },
+    {
+      "path": "coding-readiness/generate_sys_listening_stream_authority_successor.py",
+      "sha256": "fc4d9e69c8ad5bc2b359b8b1e8e01cd9b123523b0ced675cba80142e29c2c3c8"
+    },
+    {
+      "path": "coding-readiness/generate_modern_closed_set_manifest.py",
+      "sha256": "0e98c782cbecb04204f8d97359d3adda5e57b20bf0f778be78205bc8bb07dec8"
+    },
+    {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256": "32d049194e262fab8ec99bef64ad25738ceae4757df7dc2bf286fce15a01d6e9"
+    },
+    {
+      "path": "coding-readiness/generate_modern_exact_event_successor.py",
+      "sha256": "046baafd255b9eafc4459c23a1e627c3dbe7dc61493b43e3629d762cbf98683c"
+    },
+    {
+      "path": "coding-readiness/generate_modern_semantic_identity_successor.py",
+      "sha256": "b1ebf5b285b6bf2c3ccbe07eda6f6ee58c1a9647e34813b04822443e7d95e058"
+    },
+    {
+      "path": "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+      "sha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+      "role": "SEALED_COMPOSITION_INPUT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730",
+      "role": "SEALED_COMPOSITION_INPUT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+      "sha256": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b",
+      "role": "SEALED_COMPOSITION_INPUT"
+    },
+    {
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v1.json",
+      "sha256": "62f110f36a4d26dab7dda3051e6baf1a5872a475b8f2a83cee19f2cd950496b1",
+      "role": "IMMUTABLE_FAILED_AUTHORITY_PREDECESSOR"
+    }
+  ],
+  "policyLineage": {
+    "verdict": "PASS",
+    "canonicalization": "UTF8_JSON_SORT_KEYS_TRUE_SEPARATORS_COMMA_COLON_ENSURE_ASCII_FALSE_EXCLUDING_TOP_LEVEL_sealedPayloadSha256",
+    "v2": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+      "fileSha256": "64bc16def08c4a87750a656a039588db67bba5ec5fad6fac0dbd1bed638e6444",
+      "sealedPayloadSha256": "36229b77ea56f94d61e9beee431b74d0413263853bb7e3b82951ae68534bfe86",
+      "payloadSealRecomputed": true,
+      "disposition": "IMMUTABLE_FAILED_REVIEW_INPUT_SUPERSEDED_NOT_REWRITTEN"
+    },
+    "v3": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+      "fileSha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+      "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+      "payloadSealRecomputed": true,
+      "predecessorV2FilePinExact": true,
+      "predecessorV2SealPinExact": true
+    },
+    "v4": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "fileSha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+      "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+      "payloadSealRecomputed": true,
+      "predecessorV3FilePinExact": true,
+      "predecessorV3SealPinExact": true,
+      "scopeReductionReviewV1FilePinExact": true,
+      "scopeReductionReviewV1SealPinExact": true,
+      "scopeReductionReviewV1Use": "HISTORICAL_DECISION_EVIDENCE_ONLY_NOT_CURRENT_SOURCE_AUTHORITY"
+    }
+  },
+  "derivedPins": {
+    "modernClosedSetManifest": {
+      "sealedPayloadSha256": "65994ba2adf9c5ada6490562d28ff4ece2d7818df6e0819dd0a9f6413585181d",
+      "renderedFileSha256": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3",
+      "materializationState": "IN_MEMORY_SOURCE_DERIVED_NOT_EMITTED"
+    },
+    "listeningStaticDesign": {
+      "sealedPayloadSha256": "1b426275a1c191d2ebafcecf53eea5f1352e02d7a6df026ebeae556c5ba44136",
+      "materializationState": "IN_MEMORY_SOURCE_DERIVED"
+    },
+    "listeningStreamAuthorityV2": {
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v2.json",
+      "renderedFileSha256": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00",
+      "sealedPayloadSha256": "950217094f49e8761245e56c171948b074846beff8eb00602838d82e6138e66c",
+      "manifestPinExactMatch": true,
+      "materializationState": "IN_MEMORY_SOURCE_DERIVED_NOT_EMITTED"
+    },
+    "canonicalFiveProjection": {
+      "operationCausalSha256": "27cae6ed93c084bb5f489a3d3c0996a4eebf9b0e2faabd68839614c5343b7a2a",
+      "exactSchemasSha256": "248a40ab0fdc82b59681344f7d400a025f0d0171df43496e9011e0151893cb23",
+      "eventPayloadsSha256": "6b3b3352d20a6573695df9ed9377faef6b01e9e94dbdf22d3adb3c5dc697b3d0",
+      "semanticBindingsSha256": "330366ba898c52c08f85d3d30480419b7e46e77ac29d63b0c406bdd065038de7",
+      "publicIdentitiesSha256": "a95518840d4f7d62eda95607554f0923d6e828b6cb81884b267fafa63b7afab7",
+      "materializationState": "IN_MEMORY_SOURCE_DERIVED_NOT_EMITTED"
+    }
+  },
+  "compositionInventory": {
+    "operations": 199,
+    "commands": 133,
+    "queries": 66,
+    "systemHandlers": 27,
+    "publicEvents": 157,
+    "tableSpecifications": 131,
+    "ownerPortOperationContracts": 18,
+    "ownerDependencyContracts": 1,
+    "physicalClosureMismatches": 0,
+    "physicalClosureCoverage": {
+      "aggregateRootsChecked": 154,
+      "commandsChecked": 133,
+      "dmlAssignmentsChecked": 5902,
+      "eventSourcesChecked": 1740,
+      "generatedResponseSourcesChecked": 3128,
+      "handlersChecked": 27,
+      "ownerPortResponseSourcesChecked": 81,
+      "ownerPortsChecked": 18,
+      "querySourcesChecked": 233,
+      "selectorsChecked": 142,
+      "stateSinksChecked": 133
+    }
+  },
+  "determinismAndIdempotence": {
+    "verdict": "PASS",
+    "manifestSourceCompositionValidated": true,
+    "operationSecondPassByteEquivalent": true,
+    "exactSecondPassByteEquivalent": true,
+    "eventSecondPassByteEquivalent": true,
+    "semanticSecondPassByteEquivalent": true,
+    "identitySecondPassByteEquivalent": true,
+    "physicalExactSecondPassByteEquivalent": true,
+    "physicalEventSecondPassByteEquivalent": true,
+    "sourcePinsUnchangedBeforeAndAfterHostileExecution": true
+  },
+  "temporalReview": {
+    "verdict": "PASS",
+    "versionTableCount": 7,
+    "additionalTemporalTableRequired": false,
+    "versionToRootTable": {
+      "ppl_bnf_plan_versions": "ppl_bnf_plans",
+      "ppl_cwk_engagement_versions": "ppl_cwk_engagements",
+      "ppl_jny_template_versions": "ppl_jny_templates",
+      "ppl_rec_requisition_versions": "ppl_rec_requisitions",
+      "prf_lrn_offering_versions": "prf_lrn_offerings",
+      "prf_mkt_opportunity_versions": "prf_mkt_opportunities",
+      "prf_suc_plan_versions": "prf_suc_plans"
+    },
+    "writerClosedSet": {
+      "publicCreates": 7,
+      "publicRevises": 7,
+      "publicLifecycleMutations": 24,
+      "publicTotal": 38,
+      "contingentSystemHandlerMutations": 3
+    },
+    "queryClosedSet": {
+      "stableParentDetailQueries": 7,
+      "collectionQueries": 10,
+      "detailModes": [
+        "UNQUALIFIED",
+        "STATE_HISTORY",
+        "CONTENT_HISTORY"
+      ],
+      "collectionExactSelectors": "FORBIDDEN_WITHOUT_STABLE_PARENT_IDENTITY"
+    },
+    "validatedInvariants": [
+      "PUBLIC_REVISE_ALLOWS_ONLY_CORRECTION_OR_SUPERSEDE_AND_NEVER_LIFECYCLE",
+      "ROOT_CAS_OR_CREATE_AND_EXACTLY_ONE_VERSION_APPEND_SHARE_ONE_TRANSACTION",
+      "ROOT_VERSION_AND_SEGMENT_REVISION_CHAINS_ARE_DISTINCT_AND_MONOTONIC",
+      "CORRECTION_REUSES_EXACT_SEGMENT_TIP_AND_SUPERSEDE_CREATES_SEGMENT_REVISION_ONE",
+      "LIFECYCLE_IS_SERVER_DERIVED_AND_COPIES_CONTENT_POINTER_FROM_LOCKED_SEGMENT_TIP",
+      "DETAIL_REENTRY_REQUIRES_SYSTEM_AS_OF_AND_EXACT_STATE_OR_CONTENT_IDENTITY",
+      "COLLECTIONS_FORBID_PARENTLESS_EXACT_REVISION_SELECTORS",
+      "PERSISTED_EFFECTIVE_TO_IS_NULL_ONLY_AND_NON_AUTHORITATIVE",
+      "EVENT_AGGREGATE_IS_STABLE_ROOT_WITH_EXACT_STATE_AND_CONTENT_REVISION_IDENTITIES",
+      "CONTINGENT_ASYNC_LIFECYCLE_HANDLER_ROOT_CAS_AND_VERSION_APPEND_ARE_ATOMIC"
+    ]
+  },
+  "listeningReview": {
+    "verdict": "PASS",
+    "exactCounts": {
+      "streams": 4,
+      "ownerServices": 2,
+      "runtimePurposes": 5,
+      "publicOperations": 10,
+      "ownerPortOperations": 18,
+      "ownerDependencyContracts": 1,
+      "ownerLocalHandlers": 9,
+      "plannedTables": 23,
+      "canonicalPublicEvents": 7,
+      "internalPortMessages": 6,
+      "privateReceiptTypes": 5,
+      "migrationReservations": 4,
+      "streamFileAllocationTriples": 4,
+      "verificationProfiles": 5
+    },
+    "validatedInvariants": [
+      "FOUR_STREAMS_HAVE_DISTINCT_SCHEMA_HISTORY_LOCATION_MIGRATION_AND_RUNTIME_PRINCIPALS",
+      "CROSS_SCHEMA_FOREIGN_KEYS_FOREIGN_LOCAL_IDS_AND_FOREIGN_REPOSITORY_IMPORTS_ARE_FORBIDDEN",
+      "EIGHTEEN_OWNER_PORTS_HAVE_CLOSED_TYPED_REQUEST_RESPONSE_SELECTOR_DML_ERROR_RECEIPT_AND_OUTBOX_PLANS",
+      "ONE_SIGNED_PARTICIPATION_OFFER_DEPENDENCY_IS_SEALED_READ_ONLY_AND_HAS_NO_WRITES",
+      "SIX_INTERNAL_MESSAGES_HAVE_EXACT_SIGNED_ENVELOPES_ONE_PRODUCER_AND_OWNER_LOCAL_INBOX_OUTBOX",
+      "SEVEN_PUBLIC_EVENTS_EXCLUDE_RAW_RESPONSE_ANSWER_TOKEN_PRINCIPAL_AND_ISSUER_TRACE_DATA",
+      "ANONYMOUS_ACTIVE_AND_SUBMIT_ROUTES_HAVE_NO_AUTHENTICATED_PRINCIPAL_OR_CORRELATION_ID",
+      "ERASURE_RETENTION_FENCE_IS_OWNER_LOCAL_AND_REPLAY_STABLE",
+      "COHORT_BUILD_AND_INGEST_ENFORCE_ANONYMITY_THRESHOLD_SUPPRESSION_AND_PRIVACY_BUDGET",
+      "CANONICAL_FIVE_HAVE_EXACT_LISTENING_MARKERS_AND_NO_REVERSE_AUTHORITY_REFERENCE"
+    ]
+  },
+  "orphanRemovalReview": {
+    "verdict": "PASS",
+    "frozenBaselineTables": 115,
+    "addedRows": 17,
+    "removedRows": 1,
+    "netDelta": 16,
+    "activeTables": 131,
+    "arithmetic": "115+17-1=131",
+    "removedTableId": "sys_hris_listening_export_receipts",
+    "removedTableActiveAtomCounts": {
+      "staticDesign": 0,
+      "operationProjection": 0,
+      "exactProjection": 0
+    },
+    "removedTableForeignKeyReferences": 0,
+    "replacementOwnerTable": "sys_hris_analytics_export_receipts",
+    "replacementWriters": [
+      "internal.analytics.export.expire",
+      "internal.analytics.export.result.consume",
+      "modern.analytics.export.cancel",
+      "modern.analytics.export.create"
+    ],
+    "replacementReaders": [
+      "modern.analytics.export.query",
+      "modern.analytics.exports.query"
+    ],
+    "decision": "REMOVED_ORPHAN_WITH_NO_ACTIVE_PRODUCER_CONSUMER_OR_FOREIGN_KEY_AND_RETAINED_EXISTING_ANALYTICS_OWNER_EXPORT_LIFECYCLE"
+  },
+  "hostileValidation": {
+    "temporalSuiteA": {
+      "executedMutations": 155,
+      "rejected": 155,
+      "accepted": 0,
+      "classes": [
+        "A_ROOT_SELECTOR",
+        "A_ROOT_VERSION",
+        "A_EVENT_STABLE_ROOT",
+        "A_PUBLIC_LIFECYCLE",
+        "A_QUERY_ARBITRATION",
+        "A_DETAIL_SYSTEM_ASOF",
+        "A_EFFECTIVE_TO",
+        "A_HANDLER_LIFECYCLE"
+      ]
+    },
+    "listeningSuiteB": {
+      "executedMutations": 80,
+      "rejected": 80,
+      "accepted": 0,
+      "classes": [
+        "B_OWNER_PORT_SEAL",
+        "B_PUBLIC_OPERATION",
+        "B_OWNER_HANDLER",
+        "B_SIGNED_MESSAGE",
+        "B_PUBLIC_EVENT",
+        "B_TABLE_OWNER_SCHEMA",
+        "B_CANONICAL_MARKER",
+        "B_ORPHAN_REINTRODUCTION_MANIFEST",
+        "B_REPLACEMENT_OWNER_REMOVAL"
+      ]
+    },
+    "combined": {
+      "executedMutations": 235,
+      "rejected": 235,
+      "accepted": 0
+    }
+  },
+  "findings": {
+    "p0": [],
+    "p1": []
+  },
+  "severityTotals": {
+    "p0": 0,
+    "p1": 0
+  },
+  "closureDecision": {
+    "sourceDesignReadyForCandidateEmit": true,
+    "candidateEmitAuthorizedByThisReport": false,
+    "livePromotionAuthorizedByThisReport": false,
+    "gateOpenAuthorizedByThisReport": false,
+    "reason": "THE_EXACT_PINNED_SOURCE_COMPOSES_DETERMINISTICALLY_WITH_ZERO_P0_P1_AND_REJECTS_ALL_A_B_HOSTILE_MUTATIONS;CANDIDATE_PHYSICAL_LIVE_AND_GATE_STEPS_REMAIN_SEPARATE_CONTROL_OWNED_BOUNDARIES",
+    "nextBoundary": "CONTROL_MAY_CREATE_A_DISTINCT_CANDIDATE_ONLY_FROM_THE_EXACT_SOURCE_AND_POLICY_PINS_IN_THIS_REPORT_AND_MUST_RUN_THE_FULL_INDEPENDENT_GATE"
+  },
+  "sealCanonicalization": "UTF8_JSON_SORT_KEYS_TRUE_SEPARATORS_COMMA_COLON_ENSURE_ASCII_FALSE_EXCLUDING_TOP_LEVEL_sealedPayloadSha256",
+  "sealedPayloadSha256": "9e57dabbd19ea1e0aa7a649b996e76db00dbdb1c9f6c5bc78df1a03cb142c6c8"
+}

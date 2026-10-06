@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contractId": "dwp.hris.decimal-value-types.v1",
+  "schemaVersion": 1,
+  "status": "READY_FOR_G3_CODE",
+  "serialization": {
+    "wireType": "STRING",
+    "exponentNotation": "FORBIDDEN",
+    "localeFormatting": "FORBIDDEN",
+    "plusSign": "FORBIDDEN",
+    "negativeZero": "NORMALIZE_TO_ZERO",
+    "databaseRounding": "FORBIDDEN",
+    "floatingPoint": "FORBIDDEN"
+  },
+  "canonicalization": {
+    "parse": "Parse only the complete JSON string into an arbitrary-precision base-10 decimal; a JSON number, NaN, infinity, exponent notation, locale separator, whitespace or leading plus is rejected before domain evaluation.",
+    "signedZero": "Normalize every numerically zero input to positive zero before comparison, hashing, persistence and response serialization.",
+    "unquantized": "Emit plain base-10 notation without a leading plus, redundant integer leading zeroes, a trailing decimal point or redundant fractional trailing zeroes; zero is exactly 0.",
+    "quantized": "After an explicitly named rounding stage, emit exactly the declared scale (scale 0 has no decimal point); a zero result contains no minus sign.",
+    "digest": "Canonical JSON hashes decimal values only after the applicable unquantized or quantized normalization; semantically equal accepted inputs therefore produce byte-identical decimal tokens.",
+    "persistence": "Validate precision and scale and perform declared quantization in the application decimal domain before SQL bind; PostgreSQL coercion must never be used as the rounding operation."
+  },
+  "valueTypes": {
+    "CalculationDecimal": {
+      "precision": 24,
+      "scale": 8,
+      "sqlType": "NUMERIC(24,8)",
+      "jsonPattern": "^-?(?:0|[1-9][0-9]{0,15})(?:\\.[0-9]{1,8})?$",
+      "usage": "formula intermediates and deterministic calculation trace before posted rounding"
+    },
+    "InputAmount": {
+      "precision": 19,
+      "scale": 6,
+      "sqlType": "NUMERIC(19,6)",
+      "jsonPattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+      "usage": "HRM compensation basis, imported/manual payroll monetary inputs and retro input deltas"
+    },
+    "RateDecimal": {
+      "precision": 19,
+      "scale": 8,
+      "sqlType": "NUMERIC(19,8)",
+      "jsonPattern": "^-?(?:0|[1-9][0-9]{0,10})(?:\\.[0-9]{1,8})?$",
+      "usage": "rates, ratios, percentages represented as decimal ratios"
+    },
+    "QuantityDecimal": {
+      "precision": 19,
+      "scale": 6,
+      "sqlType": "NUMERIC(19,6)",
+      "jsonPattern": "^-?(?:0|[1-9][0-9]{0,12})(?:\\.[0-9]{1,6})?$",
+      "usage": "hours, units and balances with an explicit unit code"
+    },
+    "PostedMoney": {
+      "precision": 19,
+      "scale": 4,
+      "sqlType": "NUMERIC(19,4)",
+      "jsonPattern": "^-?(?:0|[1-9][0-9]{0,14})(?:\\.[0-9]{1,4})?$",
+      "usage": "immutable payroll result, payment, GL, statement and reconciliation amounts after declared rounding"
+    }
+  },
+  "currencyPolicy": {
+    "code": "ISO-4217 uppercase alpha-3 or an explicitly test-only TST fixture code",
+    "ledgerScaleRange": [0, 4],
+    "settlementScaleRange": [0, 4],
+    "source": "effective-dated signed country/currency pack plus tenant-approved policy",
+    "hardcodedMinorUnits": "FORBIDDEN",
+    "crossCurrencyArithmetic": "FORBIDDEN_WITHOUT_VERSIONED_FX_CONTRACT"
+  },
+  "unitPolicy": {
+    "canonicalCodes": ["MINUTE", "HOUR", "DAY", "COUNT", "AMOUNT"],
+    "quantity": "QuantityDecimal requires one explicit canonical unit and arithmetic is same-unit only unless a versioned conversion policy is resolved and included in the digest.",
+    "rate": "RateDecimal is a dimensionless decimal ratio with canonical unit RATIO; percentage display conversion is a presentation concern and is not persisted in the rate value.",
+    "money": "InputAmount and PostedMoney always require exactly one currency code. AMOUNT handoff values require currency; non-AMOUNT handoff quantities forbid a currency value on the wire and persist the XXX non-currency sentinel only inside the owning service.",
+    "crossUnitArithmetic": "FORBIDDEN_WITHOUT_VERSIONED_CONVERSION_CONTRACT"
+  },
+  "roundingPipeline": [
+    "SOURCE_NORMALIZE",
+    "FORMULA_DECLARED",
+    "ELEMENT",
+    "WORKER_RESULT",
+    "SETTLEMENT_OR_STATUTORY"
+  ],
+  "rules": {
+    "intermediate": "Evaluate with decimal arithmetic and CalculationDecimal bounds; each formula declares scale 0..8 and rounding mode when quantization occurs.",
+    "posted": "Quantize to the effective currency ledger scale before writing PostedMoney; payment/GL/provider output additionally quantizes once to settlement or statutory scale.",
+    "noDoubleRounding": "A downstream stage consumes the prior exact rounded value and records before/after values, stage, scale, mode and policy digest in the calculation trace.",
+    "overflow": "Reject with DECIMAL_OVERFLOW before persistence; never truncate, saturate or delegate rounding to PostgreSQL.",
+    "division": "Division requires an explicit formula scale and rounding mode; divide-by-zero is a typed worker calculation failure.",
+    "comparison": "Compare normalized values of the same value type, unit and currency only."
+  },
+  "requiredRoundingModes": [
+    "HALF_UP",
+    "HALF_EVEN",
+    "DOWN",
+    "UP",
+    "FLOOR",
+    "CEILING"
+  ],
+  "requiredGoldenAssertions": [
+    "positive and negative midpoint for every enabled rounding mode",
+    "scale 0 and scale 4 currency cases",
+    "InputAmount to CalculationDecimal to PostedMoney stage trace",
+    "overflow and exponent-notation rejection",
+    "JSON-number and signed-negative-zero normalization cases",
+    "cross-currency and unit mismatch rejection",
+    "same inputs and policy digests produce byte-identical canonical decimal output"
+  ]
+}

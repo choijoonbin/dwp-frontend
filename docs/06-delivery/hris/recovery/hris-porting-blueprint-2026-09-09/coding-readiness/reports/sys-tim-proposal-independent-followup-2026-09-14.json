@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "reportId": "SYS_TIM_PROPOSAL_INDEPENDENT_FOLLOWUP_2026_09_14",
+  "status": "INDEPENDENT_PROPOSAL_REVIEW_G3_BLOCKED",
+  "asOfUtc": "2026-09-14T01:10:38.706976+00:00",
+  "reviewer": "final_architecture_adversarial_audit",
+  "authorIndependence": "ROOT SYS/TIM design independently reviewed; reviewer-authored PER proposal is not independently approved",
+  "reviewedInputs": [
+    {
+      "path": "semantic-remediation/sys-tim-modern-remediation.v1.json",
+      "sha256": "2f72d06ac4e17e7436ddb0a25d9ac9cdef5e81526f765b3cfdb770d751dc6d54"
+    },
+    {
+      "path": "semantic-remediation/sys-tim-synthetic-acceptance.v1.json",
+      "sha256": "9f6eaaeac689a6f98242c1e18f8482b32292d64293f8921810a3ea2a4c17d2b2"
+    },
+    {
+      "path": "semantic-remediation/validate_sys_tim_fixture_expectations.py",
+      "sha256": "40dbdebedf1bdb64aab901da38c4513efffa5a23a4d7fbb0d87e2d8ca820f34b"
+    },
+    {
+      "path": "semantic-remediation/remediation-integration-plan.md",
+      "sha256": "39dd65760749eaef493ff94b534a4406cd951fca6189462951423765c4c1012d"
+    }
+  ],
+  "scope": {
+    "capabilities": 4,
+    "operations": 46,
+    "commands": 34,
+    "queries": 12,
+    "genericCallerBoundReceipts": 33,
+    "exactMethodAndPathPairs": 0,
+    "emptyQueryFieldLists": 12,
+    "canonicalChanges": false,
+    "runtimeOrAttackExperiments": false,
+    "base86SemanticIntegrityCertified": false,
+    "g3Authorization": "NONE",
+    "g4Execution": "NOT_EXECUTED",
+    "g6Activation": "NOT_AUTHORIZED"
+  },
+  "resolvedAtDesignLevel": [
+    {
+      "id": "ST001",
+      "change": "WFM sourceMode and AI instructionMode have discriminated required/forbidden branches. Both incompatible input modes are no longer required together.",
+      "evidence": [
+        "/capabilities/0/operations/1/bodySchema/discriminatedOneOf",
+        "modern.ai.request.assist/bodySchema/discriminatedOneOf"
+      ],
+      "state": "DESIGN_ONLY_NOT_CANONICAL"
+    },
+    {
+      "id": "ST002",
+      "change": "WFM skillPublicId identifies PER.Skill; PerArtifactRef.v1 pins SKILL_TAXONOMY. minimumProficiencyCode is a closed pinned taxonomy band and comparison uses owner-defined ordinal.",
+      "evidence": [
+        "/recordSchemas/1",
+        "/externalSchemaImports"
+      ],
+      "state": "DESIGN_ONLY_OWNER_PORT_UNPUBLISHED"
+    },
+    {
+      "id": "ST003",
+      "change": "Anonymous submit excludes caller-bound G2 receipt/interceptor. Exact token-consumption and protected-receipt table proposals, tenant-bound survey PK resolution, atomic admission, keyed payload HMAC and same-token replay rules are present.",
+      "evidence": [
+        "modern.listening.response.submit",
+        "sys_hris_listening_token_consumptions",
+        "sys_hris_listening_protected_response_receipts"
+      ],
+      "state": "DESIGN_ONLY_PEP_ACL_RETENTION_UNALLOCATED"
+    },
+    {
+      "id": "ST005_PUBLIC_COUNT",
+      "change": "Public participantCountPublic is null for both suppressed and adequate synthetic cohorts; proposal disclaims absolute anonymity and identifies privileged/network/free-text correlation risk.",
+      "evidence": [
+        "LISTEN_4_VS_5_COHORT",
+        "sys_hris_listening_protected_response_receipts/access/privilegedCorrelationRisk"
+      ],
+      "state": "DESIGN_ONLY_NOT_PRIVACY_EXECUTION"
+    },
+    {
+      "id": "RECEIPT_SOURCE_STATUS",
+      "change": "33 generic receipts now bind owner public_id, not command_receipt_id, and exact persisted/public six-state identity mapping. Both referenced historical TIM/SYS SQL files exist.",
+      "evidence": [
+        "/commandReceiptSourceContract"
+      ],
+      "state": "DESIGN_BINDING_NOT_RUNTIME_IMPLEMENTATION"
+    }
+  ],
+  "findings": [
+    {
+      "id": "P0-STF-001",
+      "severity": "P0",
+      "status": "OPEN_CANONICAL_INTEGRATION_BLOCKER",
+      "title": "46-operation executable semantic/API publication is incomplete",
+      "evidence": [
+        {
+          "file": "semantic-remediation/sys-tim-modern-remediation.v1.json",
+          "line": 41,
+          "pointer": "/commandReceiptSourceContract/operationSpecificResultRefProjection"
+        },
+        {
+          "file": "semantic-remediation/sys-tim-modern-remediation.v1.json",
+          "line": 3959,
+          "pointer": "/remainingBeforeCanonicalSuccessor"
+        }
+      ],
+      "observed": "No operation has exact method/path; all12 queries have empty field lists. Exact operation result_ref entity/source, response/event schema field graphs, object columns/child payload writes and authoritative owner snapshot contracts are still explicitly required, not published by this proposal.",
+      "repair": "Publish a lineage-linked exact successor with every operation request/path/query/response, concrete column-level write/read sets, event payloads, independently resolvable typedSources and entity-specific tenant/purpose-authorized owner refetch ports. Register every added operation/event/schema/slice/PEP/dependency; do not retain100 as a target.",
+      "acceptance": [
+        "All46 proposed operations or reviewed replacements have exact route/request/query/response/event/source closure against real FK/column oracle.",
+        "Every business UUID resolves to intended entity under tenant; snapshot schema/version/owner/refetch and digest are independently registered.",
+        "No pending/unknown/failed command exposes completed artifact; result_ref source/entity pinned per operation."
+      ]
+    },
+    {
+      "id": "P0-STF-002",
+      "severity": "P0",
+      "status": "OPEN_CANONICAL_SECURITY_BLOCKER",
+      "title": "Anonymous envelope/PEP/role/privacy retention boundary is still proposed only",
+      "evidence": [
+        {
+          "file": "semantic-remediation/sys-tim-modern-remediation.v1.json",
+          "line": 1737,
+          "pointer": "modern.listening.response.submit/transaction/publishedPepInterceptorAllocation"
+        },
+        {
+          "file": "semantic-remediation/sys-tim-modern-remediation.v1.json",
+          "line": 2385,
+          "pointer": "sys_hris_listening_protected_response_receipts/access/g3Required"
+        }
+      ],
+      "observed": "New exact table proposals fix the former missing-table issue, but verified issuer envelope schema/validation, no-principal route interceptor, separate identity/protected/analysis database roles, response-safe logging/audit, key/retention owner contracts and actual duties/slices/commands are not allocated. HMAC algorithm/domain-tag declarations are not yet executable byte framing or key lifecycle.",
+      "repair": "Publish exact envelope and generated schema plus typed ingestion adapter; allocate no caller-bound audit/idempotency interception on submit; define role/schema ACLs and key-versioned canonical HMAC framing, legal-hold/replay expiry and governed retention duties. Keep identity issuer unable to read protected responses/receipts; analysis only cohort projections. Avoid absolute anonymity claim.",
+      "acceptance": [
+        "Foreign tenant/survey/form, forged or expired envelope, wrong token/key version and concurrent duplicate fail safely without a second response.",
+        "Issuer/analysis/general runtime cannot query or join token/receipt/identity tables; principal/token/raw answers/precise counts absent from telemetry/public projection.",
+        "Same-token same-payload returns one receipt; different payload is opaque mismatch; key rotation/replay expiry/legal hold tests use concrete bytes and roles.",
+        "Repeated/differencing cohort queries and free-text identifiers undergo explicitly allocated privacy review."
+      ]
+    },
+    {
+      "id": "P0-STF-003",
+      "severity": "P0",
+      "status": "OPEN_PROPOSAL_LIFECYCLE_CONFLICT",
+      "title": "Erasure/replay protected receipt state is not closed",
+      "evidence": [
+        {
+          "file": "semantic-remediation/sys-tim-modern-remediation.v1.json",
+          "line": 2190,
+          "pointer": "modern.listening.response.erase"
+        },
+        {
+          "file": "semantic-remediation/sys-tim-modern-remediation.v1.json",
+          "line": 2340,
+          "pointer": "sys_hris_listening_protected_response_receipts"
+        }
+      ],
+      "observed": "Receipt retention requires ERASED and tombstone preservation, but response.erase businessWrites names only responses/answer_values, not protected receipt. Anonymous submit receipt responseStates lists only ACCEPTED, while persisted protected receipt status permits ACCEPTED and ERASED. Same-token replay after erase/window closure lacks an exact cross-object outcome/order.",
+      "repair": "Specify atomic erase write set including protected receipt ERASED and intact token tombstone; define replay-before-new-admission ordering and exact public ERASED versus opaque expired projection. Erasure must not reopen token or create second response; avoid returning stale ACCEPTED as if live content remained.",
+      "acceptance": [
+        "Submit -> erase -> same token/same payload: zero new responses, no erased answer refetch, correct ERASED or opaque expiry output.",
+        "Erase concurrent with replay/retention purge and same-token different payload yields one linearized safe outcome.",
+        "Parent survey lifecycle unaffected by individual erasure."
+      ]
+    },
+    {
+      "id": "P0-STF-004",
+      "severity": "P0",
+      "status": "OPEN_CARRIED_COMMON_BASELINE_BLOCKER",
+      "title": "Common migrations occupy historical module reservations",
+      "evidence": [
+        {
+          "file": "semantic-remediation/remediation-integration-plan.md",
+          "line": 49,
+          "pointer": "current common migration and module allocation conflict"
+        }
+      ],
+      "observed": "Integration plan correctly records People47/48, Auth211/212 and Platform231..237 occupying old HRM47..69/SYS211..239/231..259 ranges. A proposal inventory and revised reservations are not yet authoritative delivery instructions.",
+      "repair": "Inventory committed Git SQL blobs from historical6f1ed92 to clean current common successor; preserve immutable files and historical G2 allocations. Review capacity and publish exact successor reservations, slice filenames, instructions and validators together. SYS configuration/insights stream/schema bootstrap must be explicitly allocated.",
+      "acceptance": [
+        "No occupied version/file collision and exact capacity per service/schema/stream.",
+        "Current five-session instructions, module slice filenames, checkpoint/create gates and common baseline dependency share the reviewed successor allocation.",
+        "Historical high-water/count checks remain historical; current G0 count/lineage checks independently certify successor."
+      ]
+    },
+    {
+      "id": "P1-STF-005",
+      "severity": "P1",
+      "status": "OPEN_ACCEPTANCE_EVIDENCE_COVERAGE",
+      "title": "Fixture checker is deliberately bounded and does not validate typed request/replay outcomes",
+      "evidence": [
+        {
+          "file": "semantic-remediation/validate_sys_tim_fixture_expectations.py",
+          "line": 2,
+          "pointer": "module docstring"
+        },
+        {
+          "file": "semantic-remediation/validate_sys_tim_fixture_expectations.py",
+          "line": 18,
+          "pointer": "FIXTURES"
+        }
+      ],
+      "observed": "10 self-tests pass arithmetic/aliases and selected isolation expectations. Validator loads fixture JSON only, not proposal schemas. In-memory changing same-token expected output to sameProtectedReceipt=false/newResponseCount=1 returns no errors; adding UNKNOWN sourceMode to WFM fixture also returns no errors. Therefore PASS cannot evidence mode/HMAC/concurrent replay or exact schema validity.",
+      "repair": "Bridge each fixture to exact operation request/owner artifact schema and column/event/receipt expectations; add independent fixture mutations for every discriminated branch and replay/erase/expiry/denied/correction outcome. Keep arithmetic checks and NOT_EXECUTED_G4 wording; collect actual implementations in G4.",
+      "acceptance": [
+        "Healthy concrete requests for native/snapshot and bounded-text/template each validate; missing/mixed/unknown mode and malformed nested payload reject.",
+        "Same-token replay/erase/expiry expected-result corruption is detected by fixture validator.",
+        "ConfigA/B inputs determine expected row/state/event/result rather than hard-coded success labels; actual G4 evidence records exact tests/commands."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "command": "python3 semantic-remediation/validate_sys_tim_fixture_expectations.py --self-test",
+      "exitCode": 0,
+      "tests": 10,
+      "failures": 0,
+      "observed": "SYNTHETIC_PROPOSAL_EXPECTATIONS=PASS; DOMAIN_EXECUTION=NOT_EXECUTED_G4; G3_AUTHORIZATION=NONE"
+    },
+    {
+      "check": "Independent read-only proposal shape assertions",
+      "assertions": 34,
+      "errors": 0,
+      "meaning": "Presence/branch/skill entity/artifact band/anonymous caller/HMAC declarations/public-count shape only, not runtime schema validation."
+    },
+    {
+      "check": "In-memory fixture limitation probes",
+      "cases": 2,
+      "detectedErrors": 0,
+      "expectedLimitation": true,
+      "meaning": "No source/fixture files modified; both deliberately uncovered changes accepted by bounded expectation checker."
+    }
+  ],
+  "limitations": [
+    "No source code, canonical contracts, historical seals or stable PER proposal changed.",
+    "No actual runtime/PG/adversarial security execution performed in this bounded review.",
+    "Not an independent approval of reviewer-authored PER proposal; unchanged PER JSON SHA256 c81d9a69bf123c801e81953447e39c9529b47d4f572570a4372be4820df3ae56.",
+    "Not certification of base86 families, five-session capacity/runtime readiness, G3 or G6."
+  ],
+  "nextGate": "G3 must remain closed until canonical successor publication, independent semantic/security/privacy review, current common allocation and actual paired five-session evidence close these blockers."
+}

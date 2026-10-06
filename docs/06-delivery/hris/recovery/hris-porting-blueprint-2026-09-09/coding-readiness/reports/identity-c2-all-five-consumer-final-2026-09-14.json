@@ -1,0 +1,178 @@
+{
+  "schema": "dwp.hris.identity-c2-all-five-consumer-final.v1",
+  "generatedAt": "2026-09-14T23:14:00+09:00",
+  "status": "PASS_C2_FIVE_CONSUMER_START_EVIDENCE_ONLY",
+  "authority": "COMPILE_AND_FAIL_CLOSED_WITNESS_ONLY_NO_PRODUCTION_WIRING_AUTHORITY",
+  "backend": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "baseHead": "b6d1f23e54e04b86d2b068e47b8bf6c9db608b5f",
+    "commit": "fc8fbfd38103f7fb2b47adaea861e5327450a74e",
+    "tree": "a1cdb7ebd07e540bad0d09914db369943f9f3a05",
+    "commitCount": 1,
+    "worktreeCleanAfterCommit": true
+  },
+  "boundary": {
+    "implemented": "Five distinct consumer compile/no-fallback witnesses over the owner-neutral dwp-platform-contracts identity ABI",
+    "notImplemented": [
+      "production HTTP adapter",
+      "Spring registration",
+      "production PEP integration",
+      "module business handler integration",
+      "customer or provider activation"
+    ],
+    "migrationSqlChanged": false,
+    "optionalPackageChanged": false,
+    "frontendChanged": false
+  },
+  "additiveAbi": {
+    "file": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+    "sha256": "893993c2f9ec01f5d97f40fbf07347f6bc0ed180ebc73786758560b0ff3f2413",
+    "added": [
+      {"purpose": "SELF_PERFORMANCE_READ", "audience": "HRIS_PER"},
+      {"purpose": "SELF_HRIS_HOME_READ", "audience": "HRIS_SYS"}
+    ],
+    "preserved": [
+      {"purpose": "SELF_PROFILE_READ", "audience": "HRIS_HRM"},
+      {"purpose": "SELF_ATTENDANCE_READ", "audience": "HRIS_TIM"},
+      {"purpose": "SELF_PAY_READ", "audience": "HRIS_PAY"}
+    ]
+  },
+  "consumers": [
+    {
+      "module": "HRM",
+      "service": "dwp-people-server",
+      "boundedContext": "com.dwp.services.people.hris.identity.v1",
+      "audience": "HRIS_HRM",
+      "purpose": "SELF_PROFILE_READ",
+      "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+      "sha256": "f1b39380f0e46b437a245ec8b653e8195d812029bd835de7c83af0d8fbeff68b",
+      "tests": 3
+    },
+    {
+      "module": "PER",
+      "service": "dwp-people-server",
+      "boundedContext": "com.dwp.services.people.hris.performance.identity.v1",
+      "audience": "HRIS_PER",
+      "purpose": "SELF_PERFORMANCE_READ",
+      "test": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/identity/v1/PerformanceIdentitySelfContextConsumerCompileTest.java",
+      "sha256": "efb06b489343ef01ab60714a1d8239a9e4102ee936adbfe05c3426d6bf318ae2",
+      "tests": 3,
+      "sameServiceDifferentBoundedContextFromHrm": true
+    },
+    {
+      "module": "PAY",
+      "service": "dwp-payroll-server",
+      "boundedContext": "com.dwp.services.payroll.hris.identity.v1",
+      "audience": "HRIS_PAY",
+      "purpose": "SELF_PAY_READ",
+      "test": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+      "sha256": "ef18080ea3ffdc694dc073d6d8abe676f07ac19d66f74bd37de7c82d4247cd56",
+      "tests": 3
+    },
+    {
+      "module": "TIM",
+      "service": "dwp-time-server",
+      "boundedContext": "com.dwp.services.time.hris.identity.v1",
+      "audience": "HRIS_TIM",
+      "purpose": "SELF_ATTENDANCE_READ",
+      "test": "dwp-time-server/src/test/java/com/dwp/services/time/hris/identity/v1/TimeIdentitySelfContextConsumerCompileTest.java",
+      "sha256": "0b2c97cec9009cff582d95f0715aaa2db3fe6c73355f0d9475c9271f2dfcacc3",
+      "tests": 3
+    },
+    {
+      "module": "SYS",
+      "service": "dwp-platform-server",
+      "boundedContext": "com.dwp.services.platform.hris.identity.v1",
+      "audience": "HRIS_SYS",
+      "purpose": "SELF_HRIS_HOME_READ",
+      "test": "dwp-platform-server/src/test/java/com/dwp/services/platform/hris/identity/v1/PlatformIdentitySelfContextConsumerCompileTest.java",
+      "sha256": "9b79e5bd151d2582d3be881d0a2d210d36f66e85d05825374b1a4ba6dd44ea43",
+      "tests": 3,
+      "platformConsumerWitness": true
+    }
+  ],
+  "consumerTestContract": {
+    "selectedPath": "verifier -> Auth owner binding -> People native context; one call each; only guard-minted IDs and revisions are projected",
+    "missingAdapter": "ADAPTER_UNAVAILABLE before any provider call; no fallback",
+    "ownerUnavailable": "OWNER_UNAVAILABLE after verifier attempt; Auth and People providers are not called; no fallback",
+    "perConsumerTests": 3,
+    "consumerTestsTotal": 15
+  },
+  "sharedFailClosedMatrix": [
+    {"case": "wrong tenant", "result": "AUTH_BINDING_INVALID or OWNER_RESPONSE_INVALID", "calls": "verifier=1, auth=1, people=0/1 according to failing owner layer"},
+    {"case": "missing employment", "result": "SELF_SCOPE_UNRESOLVED", "calls": "1/1/1"},
+    {"case": "ambiguous employment", "result": "SELECTION_REQUIRED with no implicit first selection", "calls": "1/1/1"},
+    {"case": "stale user row or access revision", "result": "AUTH_BINDING_STALE", "calls": "1/1/0"},
+    {"case": "owner unavailable", "result": "OWNER_UNAVAILABLE", "calls": "1/0/0"},
+    {"case": "adapter missing", "result": "ADAPTER_UNAVAILABLE", "calls": "0/0/0"}
+  ],
+  "ownerNativeAndGuardPreservation": [
+    {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java", "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12"},
+    {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java", "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749"},
+    {"path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java", "sha256": "c665723f366527687c9e3dec55cefd4534defdc8b0aecc596ada3ab15eb40735"},
+    {"path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfPersonPortV1.java", "sha256": "fc8c01dfe60de405b37fa363b4f727ec3681dc67fda17b43daae93b82260a8b7"},
+    {"path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v2/GuardedCurrentHrisAuthorizationPortV2.java", "sha256": "b87b2cc6d461a8b23bbbb87596bcc2abc6d256593644b5364c67b976b771eb33"},
+    {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v2/NativeHrisUserPolicyAdmissionPilotV2.java", "sha256": "99ffbc173fbf56b7d662efe47100bad7c12839959642797e17c8a81d7fb8920f"},
+    {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v3/NativeHrisUserRolePolicyAdmissionPilotV3.java", "sha256": "63eb1bc46a3d41489707b5994cbed099c34f8c78eb4bcfd0234735567d5fd72c"}
+  ],
+  "staticBoundaryValidation": {
+    "validator": "coding-readiness/validate_identity_c2_consumers.py",
+    "sha256": "8687bb5bd621f727efc1e5d00828a80146a66d9d3042d85568a97f9843b999c7",
+    "status": "PASS",
+    "consumerFiles": 5,
+    "abiOnlyDwpImports": true,
+    "directCrossOwnerDatabaseAccessCount": 0,
+    "ownerPinsVerified": 7,
+    "selfTestsRejected": "5/5",
+    "fullRepositoryServiceBoundaryScan": "PASS"
+  },
+  "verification": {
+    "hostSemaphore": {
+      "name": "hris-verification",
+      "focusedTestsWaitMilliseconds": 0,
+      "focusedTestsElapsedSeconds": 44.533,
+      "qualityChecksWaitMilliseconds": 0,
+      "qualityChecksElapsedSeconds": 8.28
+    },
+    "focusedTests": {
+      "status": "PASS",
+      "tests": 75,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "breakdown": {
+        "sharedSelfContextContract": 59,
+        "progressClockRegression": 1,
+        "fiveConsumers": 15
+      }
+    },
+    "quality": {
+      "serviceBoundaryRatchetTests": 72,
+      "serviceBoundaryScan": "PASS",
+      "productionSourceSizeFiles": 2172,
+      "productionSourceSize": "PASS",
+      "testSourceSizeFiles": 1108,
+      "testSourceSize": "PASS"
+    },
+    "commands": [
+      "five module-scoped Gradle test invocations plus dwp-platform-contracts identity tests, serialized under hris-verification with --no-daemon --max-workers=1",
+      "./gradlew checkServiceBoundaries checkSourceSize checkTestSourceSize --no-daemon --max-workers=1 under hris-verification",
+      "python3 -B coding-readiness/validate_identity_c2_consumers.py --self-test --compact"
+    ]
+  },
+  "changedFiles": [
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+    "dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+    "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/identity/v1/PerformanceIdentitySelfContextConsumerCompileTest.java",
+    "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+    "dwp-time-server/src/test/java/com/dwp/services/time/hris/identity/v1/TimeIdentitySelfContextConsumerCompileTest.java",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/hris/identity/v1/PlatformIdentitySelfContextConsumerCompileTest.java"
+  ],
+  "finalDecision": {
+    "c2FiveConsumerEvidence": "PASS",
+    "consumerIsolation": "PASS",
+    "failClosedNoFallback": "PASS",
+    "productionIntegrationClaimed": false,
+    "startAuthorizationClaimed": false
+  }
+}

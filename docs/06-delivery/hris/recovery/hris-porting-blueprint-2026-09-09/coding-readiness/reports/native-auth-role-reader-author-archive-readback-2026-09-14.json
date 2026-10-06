@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "1.0",
+  "status": "AUTHOR_ARCHIVE_READBACK_NOT_INSTALLATION_OR_G3_APPROVAL",
+  "verifiedAt": "2026-09-14T08:37:56.144186+00:00",
+  "reportSha256": "c06a3ee3041fc2bbdbce7cbac708ba83699af4531c5aa25bec5d361f1415c9c7",
+  "reportBytes": 356999,
+  "reportMtimeNs": "1789375052684189125",
+  "sourceManifestsVerified": 3,
+  "all205PinsEqualAcrossFinal3": true,
+  "currentFourShaAndNsMatch": true,
+  "xml": [
+    {
+      "run": "initialUnit",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xmlSha256": "fe9bbd1047f9588d5a5ebefbed38f14f4af74bc866148b766ba1ac1c90c1a999",
+      "ownedContainerIdsFromXml": []
+    },
+    {
+      "run": "initialNativeFixture",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "xmlSha256": "2f0e69e6666b2af16b4c43f8ddc804903bcda997a5a34ace9fda8a9ff151d66b",
+      "ownedContainerIdsFromXml": [
+        "bec53f8032124893a205cd0c8e27f7b8b462c8a6c211626f8fcfab26a9663f67",
+        "23832e5a9230e22cef716f003a89e38cf5d152afef9c8cafef5c9357a69a8e1f"
+      ]
+    },
+    {
+      "run": "finalNativePg16",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xmlSha256": "502c62d4fbf86aa2ac10b9a86e07c3cfbd351e0df3c792f05b401d1175ebe441",
+      "ownedContainerIdsFromXml": [
+        "a9e1412dd995d4ba3b5c5211570d93dab61dcb8f1459d9c17d09ea42c3da2666",
+        "61968fe2c3421de9a2157841f572f2b8111892305cc4d240a83b6abc3847eb9d"
+      ]
+    },
+    {
+      "run": "finalNativePg18",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xmlSha256": "71717c52dabb88d7ade79aa0e0a1e482c5d9394a338baf706827e4c27a954946",
+      "ownedContainerIdsFromXml": [
+        "6e779ddc02b7c77a0b7fc896d8e88c4b7c3b902aff6a9f55be81c49c14593fee",
+        "0bb2fe5d2d43eecb7580d0f11e1f304dd64f730b1e24c95fb2aa7835f9f1d300"
+      ]
+    },
+    {
+      "run": "finalUnit",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xmlSha256": "8c4ec89d239e37c1b438aaaf440b63856f42b2aff7cfe793bf7844e1d89a4b3b",
+      "ownedContainerIdsFromXml": []
+    }
+  ],
+  "ownedContainerReadOnlyInspection": {
+    "checkedAt": "2026-09-14T08:38:25.933295+00:00",
+    "inspections": [
+      {
+        "id": "0bb2fe5d2d43eecb7580d0f11e1f304dd64f730b1e24c95fb2aa7835f9f1d300",
+        "exit": 1,
+        "safeOutput": "",
+        "safeError": "error: no such object: 0bb2fe5d2d43eecb7580d0f11e1f304dd64f730b1e24c95fb2aa7835f9f1d300",
+        "absent": true
+      },
+      {
+        "id": "23832e5a9230e22cef716f003a89e38cf5d152afef9c8cafef5c9357a69a8e1f",
+        "exit": 1,
+        "safeOutput": "",
+        "safeError": "error: no such object: 23832e5a9230e22cef716f003a89e38cf5d152afef9c8cafef5c9357a69a8e1f",
+        "absent": true
+      },
+      {
+        "id": "61968fe2c3421de9a2157841f572f2b8111892305cc4d240a83b6abc3847eb9d",
+        "exit": 1,
+        "safeOutput": "",
+        "safeError": "error: no such object: 61968fe2c3421de9a2157841f572f2b8111892305cc4d240a83b6abc3847eb9d",
+        "absent": true
+      },
+      {
+        "id": "6e779ddc02b7c77a0b7fc896d8e88c4b7c3b902aff6a9f55be81c49c14593fee",
+        "exit": 1,
+        "safeOutput": "",
+        "safeError": "error: no such object: 6e779ddc02b7c77a0b7fc896d8e88c4b7c3b902aff6a9f55be81c49c14593fee",
+        "absent": true
+      },
+      {
+        "id": "a9e1412dd995d4ba3b5c5211570d93dab61dcb8f1459d9c17d09ea42c3da2666",
+        "exit": 1,
+        "safeOutput": "",
+        "safeError": "error: no such object: a9e1412dd995d4ba3b5c5211570d93dab61dcb8f1459d9c17d09ea42c3da2666",
+        "absent": true
+      },
+      {
+        "id": "bec53f8032124893a205cd0c8e27f7b8b462c8a6c211626f8fcfab26a9663f67",
+        "exit": 1,
+        "safeOutput": "",
+        "safeError": "error: no such object: bec53f8032124893a205cd0c8e27f7b8b462c8a6c211626f8fcfab26a9663f67",
+        "absent": true
+      }
+    ],
+    "allOwnedIdsAbsent": true,
+    "stopRemoveActions": 0,
+    "dockerPsReadOnly": "35b0819fbad6 postgres:16-alpine dazzling_lamarr\n40e435e01c95 testcontainers/ryuk:0.12.0 testcontainers-ryuk-df58d708-363a-435a-b82d-508fb409e6a5\nf3334230e2b5 postgres:18.4-alpine dwp-postgres\n01527469d628 redis:7.4-alpine dwp-redis\n2a064dbbbe12 apache/kafka:4.3.1 dwp-kafka\n"
+  },
+  "noStopRemoveOrServerMutation": true,
+  "firstInspectionClassificationCorrection": "Docker emits lowercase 'error: no such object'. The first case-sensitive diagnostic did not classify absence; this fresh safe inspection verifies actual absence. No stop/remove action performed.",
+  "sourceDescriptionCorrection": {
+    "correctsReportSha256": "c06a3ee3041fc2bbdbce7cbac708ba83699af4531c5aa25bec5d361f1415c9c7",
+    "sourcePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v2/NativeHrisUserPolicyAdmissionPilotV2.java",
+    "line": 148,
+    "actualFrozenRegex": "[A-Z][A-Z0-9_]{1,79}",
+    "incorrectAuthorSummaryRegex": "[A-Z][A-Z0-9_]{0,49}",
+    "meaning": "The author summary of frozen People7 regex was incorrect. Actual source still rejects dot/hyphen and additionally single-letter native codes. Source bytes, SHA/ns and 42-unique author executions are unaffected. Original report is preserved, not silently rewritten."
+  }
+}

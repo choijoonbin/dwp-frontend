@@ -1,0 +1,540 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "FrontendHttpBodyLifecycleIndependentReview.v1",
+  "reviewedAtUtc": "2026-09-14 10:08:12 UTC",
+  "role": "INDEPENDENT_READ_ONLY_REVIEW",
+  "verdict": "HISTORICAL_EVIDENCE_VERIFIED_BOUNDED_REMEDIATION_ACCEPTED_WITH_OPEN_RACE_AND_TRANSPORT_SCOPE",
+  "readinessPass": false,
+  "g3Open": false,
+  "scope": {
+    "productionSourceWrites": 0,
+    "newTestWritesAtReview": 0,
+    "heavyTestRunsAtReview": 0,
+    "nativeApiCalls": 0,
+    "reviewedRootReports": 3,
+    "decodedAndVerifiedArchives": 12,
+    "historicalSourceNamespace": 251
+  },
+  "historicalEvidence": {
+    "checkedAtUtc": "2026-09-14T10:03:34.600827+00:00",
+    "reports": {
+      "before": {
+        "integrity": {
+          "reportSha256": "0dc9c963787a43a6996d4705b09533ee524c3f18b947e0c7682de4253e5fa61e",
+          "reportNs": "1789378714714494940",
+          "archiveProofs": {
+            "sourceManifestArchive": {
+              "sha256": "9a228ff3b5ec9551dda42e2324065c3177ac01eb23508903733cd8a931738b60",
+              "uncompressedBytes": 86290,
+              "gzipBytes": 27404,
+              "gzipSha256": "cfba391ca78edf15e8bceeea5ead92e3114efc65fa650d5c845a151a9bebb8a0",
+              "verified": true
+            },
+            "selectedSourceSnapshotArchive": {
+              "sha256": "f7691605ca303c468f6a8265953e181c118acca435f7fb046920792d9aa2ec58",
+              "uncompressedBytes": 44886,
+              "gzipBytes": 9075,
+              "gzipSha256": "b95d83f03ebd3432c0e5ff5c9785f59fbbe0f63f3431ab8038a45b9e48e87382",
+              "verified": true
+            },
+            "stdoutArchive": {
+              "sha256": "a90042e8baf25dd2bc671c627f2f5b3f01f3aa46b64796ea340367aed598a8a7",
+              "uncompressedBytes": 23422,
+              "gzipBytes": 2886,
+              "gzipSha256": "94136a4982eb545cd84ce7e9cbb3d944e10e0cc5d1cefe210d83f99e94da06ed",
+              "verified": true
+            },
+            "stderrArchive": {
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "uncompressedBytes": 0,
+              "gzipBytes": 20,
+              "gzipSha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+              "verified": true
+            }
+          },
+          "prePost251Exact": true,
+          "rawCasesExact": true,
+          "caseRecordCount": 47,
+          "distinctFullNames": 44,
+          "rawSuiteFileCount": 2,
+          "caseIdentityByFileOrdinal": true,
+          "currentDriftFromHistoricalNamespace": [
+            {
+              "path": "libs/shared-utils/src/axios-instance.ts",
+              "thenSha256": "10f50b25c9e42df4b4bad9af323a920dc31e21de927a0bf5f6d9216d9a163f4e",
+              "currentSha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+              "thenNs": "1789093133325983483",
+              "currentNs": "1789378714720758289"
+            },
+            {
+              "path": "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+              "thenSha256": "ba5a5757d96c11015674aac3ed960efe4dcfc16f4521becb97863ac90254dbb6",
+              "currentSha256": "d36f567a590eb25ed2f020a71a2064758ba9ff19107e603037c8f63f2c5cd0ae",
+              "thenNs": "1789378578154819566",
+              "currentNs": "1789380018651990004"
+            }
+          ]
+        },
+        "status": "ACTUAL_FAIL_BEFORE_PRESERVED",
+        "counts": {
+          "numTotalTests": 47,
+          "numPassedTests": 41,
+          "numFailedTests": 6,
+          "numPendingTests": 0,
+          "numTotalTestSuites": 4,
+          "numPassedTestSuites": 2,
+          "numFailedTestSuites": 2
+        },
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "libs/shared-utils/vitest.config.ts",
+          "axios-instance.test.ts",
+          "axios-response-lifecycle.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAt": "2026-09-14T09:38:01.266448+00:00",
+        "finishedAt": "2026-09-14T09:38:02.910618+00:00",
+        "durationSeconds": 1.6442010839818977,
+        "limits": {
+          "nativeSourceCalls": 0,
+          "mockFetchBody": true,
+          "g3Open": false
+        },
+        "hostLock": {
+          "schema": "dwp.hris.host-semaphore-receipt.v1",
+          "name": "hris-verification",
+          "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+          "requestedAt": "2026-09-14T09:38:01.226Z",
+          "acquiredAt": "2026-09-14T09:38:01.226Z",
+          "releasedAt": "2026-09-14T09:38:02.938Z",
+          "waitMilliseconds": 0,
+          "status": "RELEASED"
+        }
+      },
+      "after": {
+        "integrity": {
+          "reportSha256": "930334114b462786b06dc3911789f3ad0204b7d7ae05183eb7554370bc1eeaad",
+          "reportNs": "1789378879774055348",
+          "archiveProofs": {
+            "sourceManifestArchive": {
+              "sha256": "7a1d872856e4de71f4ef05224d7fbd24359b45b42de66ad026685623a2299f47",
+              "uncompressedBytes": 86290,
+              "gzipBytes": 27410,
+              "gzipSha256": "b733b5d75ac80c0b0c1ed809113b2ca200e2e4b133ab9562c01049b09f6b2bcb",
+              "verified": true
+            },
+            "selectedSourceSnapshotArchive": {
+              "sha256": "be506280ff9eb90fd03a238bd717cf29a453698690bbc10190d1ff779f835150",
+              "uncompressedBytes": 45143,
+              "gzipBytes": 9180,
+              "gzipSha256": "f3cfebf36f1bacd7edd97e0ac0754df47deb522279228e74eadeb6cf8508b456",
+              "verified": true
+            },
+            "stdoutArchive": {
+              "sha256": "eb312366ac70095c3ae2e99ff9ef87d553482f27a94a3067bba01572f38c6c86",
+              "uncompressedBytes": 18036,
+              "gzipBytes": 2287,
+              "gzipSha256": "26c4ee9769c3fd103b514ac19bd57a63a371bfea9195bea88da69496a8a63cac",
+              "verified": true
+            },
+            "stderrArchive": {
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "uncompressedBytes": 0,
+              "gzipBytes": 20,
+              "gzipSha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+              "verified": true
+            }
+          },
+          "prePost251Exact": true,
+          "rawCasesExact": true,
+          "caseRecordCount": 47,
+          "distinctFullNames": 44,
+          "rawSuiteFileCount": 2,
+          "caseIdentityByFileOrdinal": true,
+          "currentDriftFromHistoricalNamespace": [
+            {
+              "path": "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+              "thenSha256": "ba5a5757d96c11015674aac3ed960efe4dcfc16f4521becb97863ac90254dbb6",
+              "currentSha256": "d36f567a590eb25ed2f020a71a2064758ba9ff19107e603037c8f63f2c5cd0ae",
+              "thenNs": "1789378578154819566",
+              "currentNs": "1789380018651990004"
+            }
+          ]
+        },
+        "status": "ACTUAL_PASS",
+        "counts": {
+          "numTotalTests": 47,
+          "numPassedTests": 47,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTotalTestSuites": 4,
+          "numPassedTestSuites": 4,
+          "numFailedTestSuites": 0
+        },
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "libs/shared-utils/vitest.config.ts",
+          "axios-instance.test.ts",
+          "axios-response-lifecycle.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAt": "2026-09-14T09:40:58.873283+00:00",
+        "finishedAt": "2026-09-14T09:41:00.518661+00:00",
+        "durationSeconds": 1.64540479099378,
+        "limits": {
+          "nativeSourceCalls": 0,
+          "mockFetchBody": true,
+          "g3Open": false
+        },
+        "hostLock": {
+          "schema": "dwp.hris.host-semaphore-receipt.v1",
+          "name": "hris-verification",
+          "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+          "requestedAt": "2026-09-14T09:40:58.817Z",
+          "acquiredAt": "2026-09-14T09:40:58.817Z",
+          "releasedAt": "2026-09-14T09:41:00.558Z",
+          "waitMilliseconds": 0,
+          "status": "RELEASED"
+        }
+      },
+      "whole": {
+        "integrity": {
+          "reportSha256": "cac0a19e1ff4af1efeb2efc5a670d947d9c94381d5ab3f7c90f3f5802dda0638",
+          "reportNs": "1789379326900456479",
+          "archiveProofs": {
+            "sourceManifestArchive": {
+              "sha256": "7a1d872856e4de71f4ef05224d7fbd24359b45b42de66ad026685623a2299f47",
+              "uncompressedBytes": 86290,
+              "gzipBytes": 27410,
+              "gzipSha256": "b733b5d75ac80c0b0c1ed809113b2ca200e2e4b133ab9562c01049b09f6b2bcb",
+              "verified": true
+            },
+            "selectedSourceSnapshotArchive": {
+              "sha256": "be506280ff9eb90fd03a238bd717cf29a453698690bbc10190d1ff779f835150",
+              "uncompressedBytes": 45143,
+              "gzipBytes": 9180,
+              "gzipSha256": "f3cfebf36f1bacd7edd97e0ac0754df47deb522279228e74eadeb6cf8508b456",
+              "verified": true
+            },
+            "stdoutArchive": {
+              "sha256": "a9a525357e4bc69469647db8997c1ef8c31a1519de9d52789a134b54ccab213a",
+              "uncompressedBytes": 367858,
+              "gzipBytes": 38713,
+              "gzipSha256": "f0ae047ef39474c6cbd005f3943bc34b89b6580b8ba5cef304d4ed2e0e65d6bb",
+              "verified": true
+            },
+            "stderrArchive": {
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "uncompressedBytes": 0,
+              "gzipBytes": 20,
+              "gzipSha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+              "verified": true
+            }
+          },
+          "prePost251Exact": true,
+          "rawCasesExact": true,
+          "caseRecordCount": 991,
+          "distinctFullNames": 963,
+          "rawSuiteFileCount": 94,
+          "caseIdentityByFileOrdinal": true,
+          "currentDriftFromHistoricalNamespace": [
+            {
+              "path": "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+              "thenSha256": "ba5a5757d96c11015674aac3ed960efe4dcfc16f4521becb97863ac90254dbb6",
+              "currentSha256": "d36f567a590eb25ed2f020a71a2064758ba9ff19107e603037c8f63f2c5cd0ae",
+              "thenNs": "1789378578154819566",
+              "currentNs": "1789380018651990004"
+            }
+          ]
+        },
+        "status": "ACTUAL_PASS",
+        "counts": {
+          "numTotalTests": 991,
+          "numPassedTests": 991,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTotalTestSuites": 192,
+          "numPassedTestSuites": 192,
+          "numFailedTestSuites": 0
+        },
+        "argv": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "libs/shared-utils/vitest.config.ts",
+          "--maxWorkers=1",
+          "--reporter=json"
+        ],
+        "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+        "startedAt": "2026-09-14T09:43:26.843798+00:00",
+        "finishedAt": "2026-09-14T09:44:52.432392+00:00",
+        "durationSeconds": 85.68740362499375,
+        "limits": {
+          "nativeSourceCalls": 0,
+          "mockFetchBody": true,
+          "g3Open": false
+        },
+        "hostLock": {
+          "schema": "dwp.hris.host-semaphore-receipt.v1",
+          "name": "hris-verification",
+          "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+          "requestedAt": "2026-09-14T09:43:26.634Z",
+          "acquiredAt": "2026-09-14T09:43:26.738Z",
+          "releasedAt": "2026-09-14T09:44:52.513Z",
+          "waitMilliseconds": 103,
+          "status": "RELEASED"
+        }
+      }
+    },
+    "beforeAfterOnlyChangedSource": [
+      "libs/shared-utils/src/axios-instance.ts"
+    ],
+    "afterWhole251Exact": true,
+    "old41CasesExactPreserved": true,
+    "old41SourceExactPreserved": true,
+    "selectedSourcePins": {
+      "before": [
+        {
+          "path": "libs/shared-utils/src/axios-instance.ts",
+          "sha256": "10f50b25c9e42df4b4bad9af323a920dc31e21de927a0bf5f6d9216d9a163f4e",
+          "mtimeNs": "1789093133325983483"
+        },
+        {
+          "path": "libs/shared-utils/src/axios-instance.test.ts",
+          "sha256": "cc39a6395776979904a80c84c146d2a7907399df9440aaa8e27406c24a0485f3",
+          "mtimeNs": "1789093133325163525"
+        },
+        {
+          "path": "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+          "sha256": "ba5a5757d96c11015674aac3ed960efe4dcfc16f4521becb97863ac90254dbb6",
+          "mtimeNs": "1789378578154819566"
+        }
+      ],
+      "after": [
+        {
+          "path": "libs/shared-utils/src/axios-instance.ts",
+          "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+          "mtimeNs": "1789378714720758289"
+        },
+        {
+          "path": "libs/shared-utils/src/axios-instance.test.ts",
+          "sha256": "cc39a6395776979904a80c84c146d2a7907399df9440aaa8e27406c24a0485f3",
+          "mtimeNs": "1789093133325163525"
+        },
+        {
+          "path": "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+          "sha256": "ba5a5757d96c11015674aac3ed960efe4dcfc16f4521becb97863ac90254dbb6",
+          "mtimeNs": "1789378578154819566"
+        }
+      ],
+      "whole": [
+        {
+          "path": "libs/shared-utils/src/axios-instance.ts",
+          "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+          "mtimeNs": "1789378714720758289"
+        },
+        {
+          "path": "libs/shared-utils/src/axios-instance.test.ts",
+          "sha256": "cc39a6395776979904a80c84c146d2a7907399df9440aaa8e27406c24a0485f3",
+          "mtimeNs": "1789093133325163525"
+        },
+        {
+          "path": "libs/shared-utils/src/axios-response-lifecycle.test.ts",
+          "sha256": "ba5a5757d96c11015674aac3ed960efe4dcfc16f4521becb97863ac90254dbb6",
+          "mtimeNs": "1789378578154819566"
+        }
+      ]
+    },
+    "axiosMinimalUnifiedDiff": "--- before/libs/shared-utils/src/axios-instance.ts\n+++ after/libs/shared-utils/src/axios-instance.ts\n@@ -309,6 +309,7 @@\n         }, config.timeoutMs)\n       : undefined;\n   let response: Response;\n+  let payload: unknown;\n   try {\n     try {\n       response = await fetch(API_URL + scopedUrl, {\n@@ -324,6 +325,10 @@\n         signal: controller?.signal,\n         keepalive: config.keepalive,\n       });\n+      // A response's headers do not finish the request: retain cancellation and\n+      // timeout ownership until its body has been consumed, including downloads.\n+      payload = await parseBody(response, response.ok ? config.responseType : 'json');\n+      if (controller?.signal.aborted) throw controller.signal.reason;\n     } catch (cause) {\n       throw new HttpTransportError(\n         timedOut ? 'TIMEOUT' : controller?.signal.aborted ? 'ABORT' : 'NETWORK',\n@@ -334,8 +339,6 @@\n     if (timeout !== undefined) globalThis.clearTimeout(timeout);\n     config.signal?.removeEventListener('abort', abortFromCaller);\n   }\n-  const payload = await parseBody(response, response.ok ? config.responseType : 'json');\n-\n   if (!response.ok) {\n     const csrfRejected = response.status === 403 && isMutation(method) && payload === undefined;\n     if (csrfRejected) {",
+    "postWholeTypeOnlyDiff": "--- whole-pinned/axios-response-lifecycle.test.ts\n+++ current/axios-response-lifecycle.test.ts\n@@ -33,7 +33,7 @@\n       status: 200,\n       headers: new Headers(),\n       [responseType === 'json' ? 'text' : 'blob']: read,\n-    } as Response;\n+    } as unknown as Response;\n   });\n   vi.stubGlobal('fetch', fetchMock);\n   return { body, started, fetchMock, signal: () => signal };",
+    "newSixCasesBefore": [
+      {
+        "name": "HTTP response-body cancellation lifespan keeps caller cancellation connected while reading the json body",
+        "status": "failed",
+        "messages": [
+          "Error: expected { data: { data: 'old-scope' }, …(1) } to be an instance of HttpTransportError\n    at _Assertion.__VITEST_RESOLVES__ (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/expect/dist/index.js:1710:17)\n    at _Assertion.propertyGetter (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1570:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1659:22)\n    at /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-response-lifecycle.test.ts:62:28\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan keeps caller cancellation connected while reading the blob body",
+        "status": "failed",
+        "messages": [
+          "Error: expected { data: Blob{ …(1) }, …(1) } to be an instance of HttpTransportError\n    at _Assertion.__VITEST_RESOLVES__ (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/expect/dist/index.js:1710:17)\n    at _Assertion.propertyGetter (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1570:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1659:22)\n    at /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-response-lifecycle.test.ts:62:28\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan keeps the configured timeout active until body parsing completes",
+        "status": "failed",
+        "messages": [
+          "Error: expected { data: { data: 'late-body' }, …(1) } to be an instance of HttpTransportError\n    at _Assertion.__VITEST_RESOLVES__ (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/expect/dist/index.js:1710:17)\n    at _Assertion.propertyGetter (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1570:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1659:22)\n    at /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-response-lifecycle.test.ts:78:26\n    at file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan does not publish a body that resolves after its caller has cancelled",
+        "status": "failed",
+        "messages": [
+          "Error: expected { …(2) } to be an instance of HttpTransportError\n    at _Assertion.__VITEST_RESOLVES__ (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/expect/dist/index.js:1710:17)\n    at _Assertion.propertyGetter (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1570:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1659:22)\n    at /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-response-lifecycle.test.ts:93:26\n    at file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan classifies a body-read network failure without notifying the session boundary",
+        "status": "failed",
+        "messages": [
+          "Error: expected TypeError: Body stream failed. to be an instance of HttpTransportError\n    at _Assertion.__VITEST_RESOLVES__ (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/expect/dist/index.js:1710:17)\n    at _Assertion.propertyGetter (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1570:27)\n    at Reflect.get (<anonymous>)\n    at Object.proxyGetter [as get] (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1659:22)\n    at /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-response-lifecycle.test.ts:105:26\n    at file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan removes its caller listener and timer only after successful body completion",
+        "status": "failed",
+        "messages": [
+          "AssertionError: expected \"removeEventListener\" to not be called at all, but actually been called 1 times\n\nReceived:\n\n  1st removeEventListener call:\n\n    Array [\n      \"abort\",\n      [Function abortFromCaller],\n    ]\n\n\nNumber of calls: 1\n\n    at Proxy.<anonymous> (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/expect/dist/index.js:1467:10)\n    at Proxy.<anonymous> (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/expect/dist/index.js:1156:15)\n    at Proxy.methodWrapper (file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/chai/index.js:1700:25)\n    at /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-response-lifecycle.test.ts:117:24\n    at file:///Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      }
+    ],
+    "newSixCasesAfter": [
+      {
+        "name": "HTTP response-body cancellation lifespan keeps caller cancellation connected while reading the json body",
+        "status": "passed",
+        "messages": []
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan keeps caller cancellation connected while reading the blob body",
+        "status": "passed",
+        "messages": []
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan keeps the configured timeout active until body parsing completes",
+        "status": "passed",
+        "messages": []
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan does not publish a body that resolves after its caller has cancelled",
+        "status": "passed",
+        "messages": []
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan classifies a body-read network failure without notifying the session boundary",
+        "status": "passed",
+        "messages": []
+      },
+      {
+        "name": "HTTP response-body cancellation lifespan removes its caller listener and timer only after successful body completion",
+        "status": "passed",
+        "messages": []
+      }
+    ]
+  },
+  "completeWholeAssertionManifest": {
+    "archive": {
+      "sha256": "3dcfe78545988a84501a5d67547a83db624f91aa0437ca6dfef8eaeb8616b698",
+      "uncompressedBytes": 182771,
+      "gzipSha256": "e5f7d18389e132c8c203105aad3566fde6583539e0109fab9fdf759ab3e8dc47",
+      "gzipBytes": 24488,
+      "gzipBase64": "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"
+    },
+    "caseRecordCount": 991,
+    "fileCount": 94,
+    "distinctFullNames": 963,
+    "fileOrdinalUnique": 991
+  },
+  "typeOnlySuccessor": {
+    "historicalTestSha256": "ba5a5757d96c11015674aac3ed960efe4dcfc16f4521becb97863ac90254dbb6",
+    "currentTestSha256": "d36f567a590eb25ed2f020a71a2064758ba9ff19107e603037c8f63f2c5cd0ae",
+    "change": "as Response -> as unknown as Response",
+    "typescriptVersion": "6.0.3",
+    "inMemoryEmittedJavaScriptEqual": true,
+    "emittedSha256": "1d3be9be6bed57b13ec5ce16a04f38e3572d156cc4be533d9ae7ac572d9bf3b6",
+    "limitations": "Transpile-only equivalence is not current whole991 execution or complete TypeScript typecheck. Historical reports retain their original source SHA/ns."
+  },
+  "findings": [
+    {
+      "id": "HTTP-IR-001",
+      "priority": "P1",
+      "status": "SOURCE_ONLY_CANDIDATE_PENDING_SEPARATE_ACTUAL_REPRO",
+      "source": "libs/shared-utils/src/axios-instance.ts:303",
+      "title": "Caller-first cancellation can be relabeled TIMEOUT by a later deadline",
+      "mechanism": "A caller aborts the controller first; an unsettled/non-cooperative body continues waiting. The deadline sets timedOut=true even though abort() cannot replace the first signal reason. The eventual catch selects TIMEOUT over ABORT.",
+      "counterexamplePlan": {
+        "callerAbortAtMs": 5,
+        "deadlineAtMs": 25,
+        "lateBodySettlementAtMs": 30,
+        "expectedReason": "ABORT",
+        "expectedSignalReason": "scope-replaced",
+        "lateSettlementKinds": [
+          "resolved JSON",
+          "resolved blob",
+          "rejected body"
+        ]
+      },
+      "executed": false,
+      "limit": "No native-fetch exploit or new failing test execution is claimed by this historical evidence review."
+    },
+    {
+      "id": "HTTP-IR-002",
+      "priority": "P1_SCOPE",
+      "status": "OPEN_NOT_PROVEN_BY_SIX_BODY_TESTS",
+      "source": "libs/shared-utils/src/axios-instance.ts:330",
+      "title": "Abort propagation and stale-payload rejection do not prove prompt settlement of a non-cooperative body",
+      "mechanism": "The non-cooperative test explicitly resolves the body after abort. An indefinitely pending body can leave the await/finally pending. Cooperative browser body cancellation remains to be checked with delayed native JSON/blob bodies.",
+      "requiredTests": [
+        "Native browser abort after headers before body completion, bounded rejection without manually completing the body",
+        "Success and error cleanup assertions for listener and timeout"
+      ]
+    },
+    {
+      "id": "HTTP-IR-003",
+      "priority": "FOLLOWUP_SCOPE",
+      "status": "OPEN_UNCHANGED_CSRF_BOUNDARY",
+      "source": "libs/shared-utils/src/axios-instance.ts:245",
+      "title": "Shared CSRF bootstrap precedes request cancellation/deadline ownership",
+      "mechanism": "loadCsrfToken is awaited before request controller/catch/timer. Bootstrap fetch/text failures can escape the typed transport wrapper. A cancelled waiter must not cancel shared bootstrap needed by another caller.",
+      "requiredTests": [
+        "Caller-local cancellation while shared CSRF promise is pending; other waiter survives",
+        "Explicit bootstrap/request deadline contract and typed failure surface",
+        "Cache/promise generation replacement race"
+      ]
+    },
+    {
+      "id": "HTTP-IR-004",
+      "priority": "FOLLOWUP_SCOPE",
+      "status": "OPEN_UNCHANGED_SSE_BOUNDARY",
+      "source": "libs/shared-utils/src/axios-instance.ts:streamRequest",
+      "title": "SSE has a separate raw exception and reader lifecycle",
+      "mechanism": "streamRequest is unchanged by the body fix. It does not use the same HttpTransportError classification and finally does not explicitly cancel/release its reader on callback failure.",
+      "requiredTests": [
+        "Native stream abort/deadline after open and no late frame delivery",
+        "onOpen/onMessage failure cleanup",
+        "Chunk-split CRLF framing and EOF"
+      ]
+    },
+    {
+      "id": "HTTP-IR-005",
+      "priority": "LIMITATION",
+      "status": "NO_REDACTION_OR_SERVER_ROLLBACK_CLAIM",
+      "source": "libs/shared-utils/src/http-error.ts",
+      "title": "Generic transport message retains native cause; abort is not server effect cancellation",
+      "mechanism": "HttpTransportError keeps cause. The reviewed code rejects client payload delivery after observed abort; it does not undo a mutation, cancel a server effect, or certify telemetry redaction."
+    }
+  ],
+  "acceptance": {
+    "before": "Actual47:41PASS/6FAIL preserved, including the original unchanged41.",
+    "after": "Actual47PASS: cancellation/deadline owns body parsing; body read failure receives typed transport classification; aborted late body is not published.",
+    "whole": "All991 assertion records from94 raw test files verified. 192 is Vitest suite count, not file count.963 distinct fullName values reflect legitimate parameterized duplicate labels; case identity uses suite index plus assertion ordinal.",
+    "limits": [
+      "The 991 run is historical before the type-only cast successor.",
+      "Mock fetch/body coverage is not native API, CSRF/SSE whole lifecycle, production adoption, G3/G4/G6 approval.",
+      "Six tests do not cover caller-first/deadline-later delayed settlement."
+    ]
+  }
+}

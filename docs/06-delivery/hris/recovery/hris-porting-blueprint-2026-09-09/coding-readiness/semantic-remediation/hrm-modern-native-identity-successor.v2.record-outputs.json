@@ -1,0 +1,3522 @@
+{
+  "status": "AUTHOR_CHECK_PASS_NOT_G3",
+  "sourceBoundary": "ACTUAL_AUTHOR_MODEL_OUTPUTS_FROM_CONCRETE_FIXTURES_NOT_NATIVE_DB_HTTP_AUTH",
+  "records": [
+    {
+      "caseId": "HR_NATIVE-CREATE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 0,
+        "personInsert": 1,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "c70db47829d8e05bb8d0c49afb9337574c9fd5d46b5d48f21badc47c46eaf9dc"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000090",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000043",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "sourceKind": "HR_NATIVE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "owner INSERT RETURNING ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "owner INSERT RETURNING ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "owner INSERT RETURNING ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "HR_NATIVE-REUSE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 1,
+        "personInsert": 0,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 19,
+        "disposition": "REUSED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 19,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "97d4695a64a0b1880f91d297d41eb2a6ebfc92cc7e79da8cad40caab4208c7d9"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000090",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000043",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 19,
+        "sourceKind": "HR_NATIVE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "tenant-bound SELECT existing ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "tenant-bound existing ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "tenant-bound existing ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "ATS_CASE-CREATE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 1,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 0,
+        "personInsert": 1,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "fd2875681e2451c4d09a33ad317094da7018af72eae38e42423c85448d375c73"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000090",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000043",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "sourceKind": "ATS_CASE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "owner INSERT RETURNING ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "owner INSERT RETURNING ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "owner INSERT RETURNING ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "ATS_CASE-REUSE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 1,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 1,
+        "personInsert": 0,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 19,
+        "disposition": "REUSED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 19,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "65819f725d0b40b41e8d0d25319607225aaa61e1d384709a5960afc4e3173a70"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000090",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000043",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 19,
+        "sourceKind": "ATS_CASE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000036",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000037",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000038",
+          "sourceCandidateKey": "ATS-A",
+          "candidatePersonToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "tenant-bound SELECT existing ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "tenant-bound existing ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "tenant-bound existing ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "IMPORT-CREATE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 0,
+        "personInsert": 1,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "46a273d1240a388bec8c783b3f87fbb38aea0e759fb2ff57ac92b2640af64741"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000090",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000043",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "sourceKind": "IMPORT",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "owner INSERT RETURNING ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "owner INSERT RETURNING ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "owner INSERT RETURNING ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "IMPORT-REUSE_NATIVE_PERSON-A-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 1,
+        "personInsert": 0,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 19,
+        "disposition": "REUSED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 19,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "381b8cb8751b53e3873eb1dc786c313f191653e0b4e7673e8144ab63f1919545"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000090",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000043",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 19,
+        "sourceKind": "IMPORT",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000039",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000040",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000035",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-A",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000042",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "tenant-bound SELECT existing ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "tenant-bound existing ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "tenant-bound existing ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "HR_NATIVE-CREATE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 0,
+        "personInsert": 1,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "7ac5f37e50c0fffca30a280f0b997804e47a937d9d350b987df30c94ffccf81b"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000190",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000143",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "sourceKind": "HR_NATIVE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "owner INSERT RETURNING ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "owner INSERT RETURNING ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "owner INSERT RETURNING ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "HR_NATIVE-REUSE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 1,
+        "personInsert": 0,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 19,
+        "disposition": "REUSED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 19,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "61b2527ddcb218b87b52166d0c3f02906e1aba991e8b165a7331558c052eac6b"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000190",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000143",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 19,
+        "sourceKind": "HR_NATIVE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "tenant-bound SELECT existing ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "tenant-bound existing ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "tenant-bound existing ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "ATS_CASE-CREATE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 1,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 0,
+        "personInsert": 1,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "afcb77fdfc17fe3cb0f058a499c9980d17da3294e879def98cc0687f90899df0"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000190",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000143",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "sourceKind": "ATS_CASE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "owner INSERT RETURNING ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "owner INSERT RETURNING ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "owner INSERT RETURNING ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "ATS_CASE-REUSE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 1,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 1,
+        "personInsert": 0,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 19,
+        "disposition": "REUSED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 19,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "95fe97a926c4ac1163f348d16754a3d0d7eaddf2c483d4f1fdc47e609106f9dc"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000190",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000143",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 19,
+        "sourceKind": "ATS_CASE",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "ATS_CASE",
+          "candidateCasePublicId": "20000000-0000-4000-8000-000000000136",
+          "candidateCaseVersion": 7,
+          "requisitionPublicId": "20000000-0000-4000-8000-000000000137",
+          "sourceSystemPublicId": "20000000-0000-4000-8000-000000000138",
+          "sourceCandidateKey": "ATS-B",
+          "candidatePersonToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+          "consentReceipt": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "tenant-bound SELECT existing ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "tenant-bound existing ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "tenant-bound existing ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "IMPORT-CREATE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 0,
+        "personInsert": 1,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "2e34e311c53eda0eb2b51ac5d783b9b010543c3ea8b3dbcf2e0228f86b4bd660"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000190",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000143",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "sourceKind": "IMPORT",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "owner INSERT RETURNING ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "owner INSERT RETURNING ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "owner INSERT RETURNING ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "IMPORT-REUSE_NATIVE_PERSON-B-NATIVE_STAGED",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 0,
+        "targetAuth": 0,
+        "peopleTarget": 1,
+        "personInsert": 0,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 19,
+        "disposition": "REUSED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 19,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "9384d78abb26dedd49af0e07bddfb9456f39733390224fda4ae2b570005c33d3"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000190",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000143",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 19,
+        "sourceKind": "IMPORT",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "NATIVE_STAGED"
+        },
+        "personMutation": {
+          "disposition": "REUSE_NATIVE_PERSON",
+          "existingPersonPublicId": "20000000-0000-4000-8000-000000000142",
+          "expectedPersonVersion": 19,
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "tenant-bound SELECT existing ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "tenant-bound existing ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "tenant-bound existing ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    },
+    {
+      "caseId": "IMPORT-CREATE_NATIVE_PERSON-B-OPTIONAL_CONNECTOR",
+      "sourceBoundary": "MODEL_EXECUTION_FROM_CONCRETE_OWNER_ROW_FIXTURE_NOT_NATIVE_DB",
+      "calls": {
+        "actorAuth": 1,
+        "ats": 0,
+        "connector": 1,
+        "targetAuth": 0,
+        "peopleTarget": 0,
+        "personInsert": 1,
+        "workerWrites": 0,
+        "authRelinks": 0,
+        "grants": 0
+      },
+      "receipt": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "OPTIONAL_CONNECTOR"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "7a9f05266d89e6c3dee5acd91c9d1c5ebfffea8838e4ee064c48b44626fe4ff8"
+      },
+      "event": {
+        "eventPublicId": "20000000-0000-4000-8000-000000000190",
+        "eventType": "People.NativePersonAdmitted.proposal.v2",
+        "aggregatePublicId": "20000000-0000-4000-8000-000000000143",
+        "aggregateVersion": 1,
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "sourceKind": "IMPORT",
+        "actorAuthorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+        "recordedAt": "2026-11-02T10:00:00Z"
+      },
+      "normalizedRequest": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "IMPORT",
+          "acceptedBatchPublicId": "20000000-0000-4000-8000-000000000139",
+          "batchVersion": 3,
+          "itemPublicId": "20000000-0000-4000-8000-000000000140",
+          "itemVersion": 5,
+          "mappingVersion": {
+            "owner": "Integration",
+            "publicId": "20000000-0000-4000-8000-000000000135",
+            "version": 6,
+            "schemaVersion": "fixture-Integration-v2",
+            "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+          },
+          "sourceRecordKey": "IMPORT-B",
+          "importMode": "OPTIONAL_CONNECTOR"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "replayed": false,
+      "columnSources": {
+        "ppl_person_admission_receipts.person_id": "owner INSERT RETURNING ppl_persons.person_id",
+        "ppl_person_admission_receipts.person_public_id": "owner INSERT RETURNING ppl_persons.public_id",
+        "ppl_person_admission_receipts.person_version": "owner INSERT RETURNING ppl_persons.version",
+        "ppl_person_admission_receipts.actor_user_row_version": "current ACTING Auth com_users.version",
+        "ppl_person_admission_receipts.actor_access_revision": "current ACTING Auth com_users.access_revision",
+        "sys_people_outbox_events.aggregate_id": "actual admission receipt RETURNING public_id, NOT person/candidate/correlation ID"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "asOf": "2026-11-02T09:59:50Z",
+      "calls": {
+        "targetAuth": 0,
+        "peopleTarget": 1
+      },
+      "subject": {
+        "kind": "EMPLOYMENT",
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "selector": {
+          "workerPublicId": "20000000-0000-4000-8000-000000000150",
+          "workRelationshipPublicId": "20000000-0000-4000-8000-000000000151",
+          "assignmentPublicId": "20000000-0000-4000-8000-000000000152"
+        },
+        "versions": {
+          "personVersion": 19,
+          "workerVersion": 29,
+          "relationshipVersion": 31,
+          "assignmentVersion": 37
+        },
+        "legalEmployerPublicId": "20000000-0000-4000-8000-000000000153",
+        "relationshipStartDate": "2026-01-01",
+        "relationshipEndDate": "2026-11-02",
+        "assignmentStartDate": "2026-01-01",
+        "assignmentEndDate": "2026-11-02",
+        "effectiveSequence": 2,
+        "workZone": "America/New_York",
+        "asOf": "2026-11-02T09:59:50Z",
+        "capturedAt": "2026-11-02T10:00:00Z"
+      },
+      "actorAuthVersions": {
+        "userRowVersion": 71,
+        "accessRevision": 113
+      },
+      "population": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000900",
+        "subject": {
+          "kind": "EMPLOYMENT",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "selector": {
+            "workerPublicId": "20000000-0000-4000-8000-000000000150",
+            "workRelationshipPublicId": "20000000-0000-4000-8000-000000000151",
+            "assignmentPublicId": "20000000-0000-4000-8000-000000000152"
+          },
+          "versions": {
+            "personVersion": 19,
+            "workerVersion": 29,
+            "relationshipVersion": 31,
+            "assignmentVersion": 37
+          },
+          "legalEmployerPublicId": "20000000-0000-4000-8000-000000000153",
+          "relationshipStartDate": "2026-01-01",
+          "relationshipEndDate": "2026-11-02",
+          "assignmentStartDate": "2026-01-01",
+          "assignmentEndDate": "2026-11-02",
+          "effectiveSequence": 2,
+          "workZone": "America/New_York",
+          "asOf": "2026-11-02T09:59:50Z",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "ONBOARDING_BIND",
+        "decisionRevision": 23,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "EMPLOYMENT_CONTEXT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      }
+    },
+    {
+      "asOf": "2026-11-01T05:30:00Z",
+      "calls": {
+        "targetAuth": 0,
+        "peopleTarget": 1
+      },
+      "subject": {
+        "kind": "EMPLOYMENT",
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "selector": {
+          "workerPublicId": "20000000-0000-4000-8000-000000000150",
+          "workRelationshipPublicId": "20000000-0000-4000-8000-000000000151",
+          "assignmentPublicId": "20000000-0000-4000-8000-000000000152"
+        },
+        "versions": {
+          "personVersion": 19,
+          "workerVersion": 29,
+          "relationshipVersion": 31,
+          "assignmentVersion": 37
+        },
+        "legalEmployerPublicId": "20000000-0000-4000-8000-000000000153",
+        "relationshipStartDate": "2026-01-01",
+        "relationshipEndDate": "2026-11-02",
+        "assignmentStartDate": "2026-01-01",
+        "assignmentEndDate": "2026-11-02",
+        "effectiveSequence": 2,
+        "workZone": "America/New_York",
+        "asOf": "2026-11-01T05:30:00Z",
+        "capturedAt": "2026-11-02T10:00:00Z"
+      },
+      "actorAuthVersions": {
+        "userRowVersion": 71,
+        "accessRevision": 113
+      },
+      "population": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000900",
+        "subject": {
+          "kind": "EMPLOYMENT",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "selector": {
+            "workerPublicId": "20000000-0000-4000-8000-000000000150",
+            "workRelationshipPublicId": "20000000-0000-4000-8000-000000000151",
+            "assignmentPublicId": "20000000-0000-4000-8000-000000000152"
+          },
+          "versions": {
+            "personVersion": 19,
+            "workerVersion": 29,
+            "relationshipVersion": 31,
+            "assignmentVersion": 37
+          },
+          "legalEmployerPublicId": "20000000-0000-4000-8000-000000000153",
+          "relationshipStartDate": "2026-01-01",
+          "relationshipEndDate": "2026-11-02",
+          "assignmentStartDate": "2026-01-01",
+          "assignmentEndDate": "2026-11-02",
+          "effectiveSequence": 2,
+          "workZone": "America/New_York",
+          "asOf": "2026-11-01T05:30:00Z",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "ONBOARDING_BIND",
+        "decisionRevision": 23,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "EMPLOYMENT_CONTEXT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      }
+    },
+    {
+      "asOf": "2026-11-01T06:30:00Z",
+      "calls": {
+        "targetAuth": 0,
+        "peopleTarget": 1
+      },
+      "subject": {
+        "kind": "EMPLOYMENT",
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "selector": {
+          "workerPublicId": "20000000-0000-4000-8000-000000000150",
+          "workRelationshipPublicId": "20000000-0000-4000-8000-000000000151",
+          "assignmentPublicId": "20000000-0000-4000-8000-000000000152"
+        },
+        "versions": {
+          "personVersion": 19,
+          "workerVersion": 29,
+          "relationshipVersion": 31,
+          "assignmentVersion": 37
+        },
+        "legalEmployerPublicId": "20000000-0000-4000-8000-000000000153",
+        "relationshipStartDate": "2026-01-01",
+        "relationshipEndDate": "2026-11-02",
+        "assignmentStartDate": "2026-01-01",
+        "assignmentEndDate": "2026-11-02",
+        "effectiveSequence": 2,
+        "workZone": "America/New_York",
+        "asOf": "2026-11-01T06:30:00Z",
+        "capturedAt": "2026-11-02T10:00:00Z"
+      },
+      "actorAuthVersions": {
+        "userRowVersion": 71,
+        "accessRevision": 113
+      },
+      "population": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000900",
+        "subject": {
+          "kind": "EMPLOYMENT",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "selector": {
+            "workerPublicId": "20000000-0000-4000-8000-000000000150",
+            "workRelationshipPublicId": "20000000-0000-4000-8000-000000000151",
+            "assignmentPublicId": "20000000-0000-4000-8000-000000000152"
+          },
+          "versions": {
+            "personVersion": 19,
+            "workerVersion": 29,
+            "relationshipVersion": 31,
+            "assignmentVersion": 37
+          },
+          "legalEmployerPublicId": "20000000-0000-4000-8000-000000000153",
+          "relationshipStartDate": "2026-01-01",
+          "relationshipEndDate": "2026-11-02",
+          "assignmentStartDate": "2026-01-01",
+          "assignmentEndDate": "2026-11-02",
+          "effectiveSequence": 2,
+          "workZone": "America/New_York",
+          "asOf": "2026-11-01T06:30:00Z",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "ONBOARDING_BIND",
+        "decisionRevision": 23,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "EMPLOYMENT_CONTEXT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      }
+    }
+  ],
+  "ownerApi": [
+    {
+      "fixture": "A",
+      "operationId": "people.native.personadmission.prepare.proposal.v2",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "response": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "c70db47829d8e05bb8d0c49afb9337574c9fd5d46b5d48f21badc47c46eaf9dc"
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "A",
+      "operationId": "people.native.personadmission.receipt.query.proposal.v2",
+      "request": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "expectedOwnerRevision": 1,
+        "purpose": "PERSON_ADMIT"
+      },
+      "response": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000043",
+        "tenantId": 92001,
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000033",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92001,
+          "principalPublicId": "20000000-0000-4000-8000-000000000001",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000003",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92001,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000042",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000030",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000031",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "c70db47829d8e05bb8d0c49afb9337574c9fd5d46b5d48f21badc47c46eaf9dc"
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "A",
+      "operationId": "people.authorizedsubject.snapshot.query.proposal.v2",
+      "request": {
+        "kind": "PERSON",
+        "personPublicId": "20000000-0000-4000-8000-000000000042",
+        "expectedPersonVersion": 0,
+        "purpose": "PERSON_ADMIT"
+      },
+      "response": {
+        "tenantId": 92001,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000044",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000042",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000030",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000031",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "A",
+      "operationId": "people.native.admissionworkspace.create.proposal.v2",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        }
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000034",
+        "version": 2,
+        "status": "DRAFT",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        }
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "A",
+      "operationId": "people.native.admissionworkspace.authorize.proposal.v2",
+      "request": {
+        "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+        "expectedVersion": 2,
+        "decisionReceipt": {
+          "owner": "People",
+          "publicId": "20000000-0000-4000-8000-000000000033",
+          "version": 3,
+          "schemaVersion": "fixture-People-v2",
+          "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+        }
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000034",
+        "version": 3,
+        "status": "AUTHORIZED",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        }
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "A",
+      "operationId": "people.native.admissionworkspace.cancel.proposal.v2",
+      "request": {
+        "workspacePublicId": "20000000-0000-4000-8000-000000000034",
+        "expectedVersion": 2,
+        "reasonCode": "MANUAL_CANCEL"
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000034",
+        "version": 3,
+        "status": "CANCELLED",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-A",
+            "displayName": "Fixture native person A",
+            "preferredLocale": "en-US"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000032",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+          }
+        }
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "A",
+      "operationId": "people.native.admissionimport.batch.stage.proposal.v2",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000041",
+        "mapping": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000035",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "importMode": "NATIVE_STAGED",
+        "items": [
+          {
+            "sourceRecordKey": "IMPORT-A",
+            "personMutation": {
+              "disposition": "CREATE_NATIVE_PERSON",
+              "facts": {
+                "personKey": "PERSON-A",
+                "displayName": "Fixture native person A",
+                "preferredLocale": "en-US"
+              },
+              "identityEvidence": {
+                "owner": "Privacy",
+                "publicId": "20000000-0000-4000-8000-000000000032",
+                "version": 2,
+                "schemaVersion": "fixture-Privacy-v2",
+                "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+              }
+            }
+          }
+        ]
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000039",
+        "version": 3,
+        "status": "VALIDATED",
+        "mapping": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000035",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "importMode": "NATIVE_STAGED",
+        "items": [
+          {
+            "itemPublicId": "20000000-0000-4000-8000-000000000040",
+            "itemVersion": 5,
+            "sourceRecordKey": "IMPORT-A",
+            "personMutation": {
+              "disposition": "CREATE_NATIVE_PERSON",
+              "facts": {
+                "personKey": "PERSON-A",
+                "displayName": "Fixture native person A",
+                "preferredLocale": "en-US"
+              },
+              "identityEvidence": {
+                "owner": "Privacy",
+                "publicId": "20000000-0000-4000-8000-000000000032",
+                "version": 2,
+                "schemaVersion": "fixture-Privacy-v2",
+                "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+              }
+            }
+          }
+        ]
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "A",
+      "operationId": "people.native.admissionimport.batch.accept.proposal.v2",
+      "request": {
+        "batchPublicId": "20000000-0000-4000-8000-000000000039",
+        "expectedBatchVersion": 3,
+        "decisionReceipt": {
+          "owner": "People",
+          "publicId": "20000000-0000-4000-8000-000000000033",
+          "version": 3,
+          "schemaVersion": "fixture-People-v2",
+          "digest": "f9dd765325b6df2177e802c895a68556d6ee89192144be5304146cafd6aaa0da"
+        }
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000039",
+        "version": 4,
+        "status": "ACCEPTED",
+        "mapping": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000035",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "importMode": "NATIVE_STAGED",
+        "items": [
+          {
+            "itemPublicId": "20000000-0000-4000-8000-000000000040",
+            "itemVersion": 5,
+            "sourceRecordKey": "IMPORT-A",
+            "personMutation": {
+              "disposition": "CREATE_NATIVE_PERSON",
+              "facts": {
+                "personKey": "PERSON-A",
+                "displayName": "Fixture native person A",
+                "preferredLocale": "en-US"
+              },
+              "identityEvidence": {
+                "owner": "Privacy",
+                "publicId": "20000000-0000-4000-8000-000000000032",
+                "version": 2,
+                "schemaVersion": "fixture-Privacy-v2",
+                "digest": "782537d236def050a1aef3a9785ce300c190eae05fd8a2388420bf2b70d79719"
+              }
+            }
+          }
+        ]
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.native.personadmission.prepare.proposal.v2",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        },
+        "admissionPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        }
+      },
+      "response": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "7ac5f37e50c0fffca30a280f0b997804e47a937d9d350b987df30c94ffccf81b"
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.native.personadmission.receipt.query.proposal.v2",
+      "request": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "expectedOwnerRevision": 1,
+        "purpose": "PERSON_ADMIT"
+      },
+      "response": {
+        "receiptPublicId": "20000000-0000-4000-8000-000000000143",
+        "tenantId": 92002,
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "source": {
+          "kind": "HR_NATIVE",
+          "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+          "workspaceVersion": 2,
+          "decisionReceipt": {
+            "owner": "People",
+            "publicId": "20000000-0000-4000-8000-000000000133",
+            "version": 3,
+            "schemaVersion": "fixture-People-v2",
+            "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+          },
+          "businessPurpose": "CONTINGENT_CREATE"
+        },
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "personVersion": 0,
+        "disposition": "CREATED_NATIVE_PERSON",
+        "ownerRevision": 1,
+        "recordedAt": "2026-11-02T10:00:00Z",
+        "actorAuthority": {
+          "tenantId": 92002,
+          "principalPublicId": "20000000-0000-4000-8000-000000000101",
+          "authVersions": {
+            "userRowVersion": 71,
+            "accessRevision": 113
+          },
+          "purpose": "PERSON_ADMIT",
+          "audience": "HRIS_HRM",
+          "appEntitled": true,
+          "sodAllowed": true,
+          "stepUpSatisfied": true,
+          "permissionRevision": 17,
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "authorityReceiptPublicId": "20000000-0000-4000-8000-000000000103",
+          "issuedAt": "2026-11-02T10:00:00Z",
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "subjectPopulation": {
+          "tenantId": 92002,
+          "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+          "subject": {
+            "kind": "PERSON",
+            "personPublicId": "20000000-0000-4000-8000-000000000142",
+            "personVersion": 0,
+            "personState": "ACTIVE",
+            "capturedAt": "2026-11-02T10:00:00Z"
+          },
+          "populationPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000130",
+            "version": 4,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+          },
+          "fieldPolicy": {
+            "owner": "Configuration",
+            "publicId": "20000000-0000-4000-8000-000000000131",
+            "version": 8,
+            "schemaVersion": "fixture-Configuration-v2",
+            "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+          },
+          "purpose": "PERSON_ADMIT",
+          "decisionRevision": 27,
+          "authorizedFields": [
+            "PERSON_IDENTITY",
+            "ADMISSION_RESULT"
+          ],
+          "expiresAt": "2026-11-02T10:00:20Z"
+        },
+        "inputDigest": "7ac5f37e50c0fffca30a280f0b997804e47a937d9d350b987df30c94ffccf81b"
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.authorizedsubject.snapshot.query.proposal.v2",
+      "request": {
+        "kind": "PERSON",
+        "personPublicId": "20000000-0000-4000-8000-000000000142",
+        "expectedPersonVersion": 0,
+        "purpose": "PERSON_ADMIT"
+      },
+      "response": {
+        "tenantId": 92002,
+        "ownerSnapshotPublicId": "20000000-0000-4000-8000-000000000144",
+        "subject": {
+          "kind": "PERSON",
+          "personPublicId": "20000000-0000-4000-8000-000000000142",
+          "personVersion": 0,
+          "personState": "ACTIVE",
+          "capturedAt": "2026-11-02T10:00:00Z"
+        },
+        "populationPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000130",
+          "version": 4,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "85af61a5ed71862c6e1578567649ea75e8972c93c2204fda3bc2090ddacfa467"
+        },
+        "fieldPolicy": {
+          "owner": "Configuration",
+          "publicId": "20000000-0000-4000-8000-000000000131",
+          "version": 8,
+          "schemaVersion": "fixture-Configuration-v2",
+          "digest": "467e35ff4fd35281c4f93560637a68961a90ab73627770c73776716887c30126"
+        },
+        "purpose": "PERSON_ADMIT",
+        "decisionRevision": 27,
+        "authorizedFields": [
+          "PERSON_IDENTITY",
+          "ADMISSION_RESULT"
+        ],
+        "expiresAt": "2026-11-02T10:00:20Z"
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.native.admissionworkspace.create.proposal.v2",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        }
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000134",
+        "version": 2,
+        "status": "DRAFT",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        }
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.native.admissionworkspace.authorize.proposal.v2",
+      "request": {
+        "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+        "expectedVersion": 2,
+        "decisionReceipt": {
+          "owner": "People",
+          "publicId": "20000000-0000-4000-8000-000000000133",
+          "version": 3,
+          "schemaVersion": "fixture-People-v2",
+          "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+        }
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000134",
+        "version": 3,
+        "status": "AUTHORIZED",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        }
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.native.admissionworkspace.cancel.proposal.v2",
+      "request": {
+        "workspacePublicId": "20000000-0000-4000-8000-000000000134",
+        "expectedVersion": 2,
+        "reasonCode": "MANUAL_CANCEL"
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000134",
+        "version": 3,
+        "status": "CANCELLED",
+        "businessPurpose": "CONTINGENT_CREATE",
+        "personMutation": {
+          "disposition": "CREATE_NATIVE_PERSON",
+          "facts": {
+            "personKey": "PERSON-B",
+            "displayName": "Fixture native person B",
+            "preferredLocale": "fr-CA"
+          },
+          "identityEvidence": {
+            "owner": "Privacy",
+            "publicId": "20000000-0000-4000-8000-000000000132",
+            "version": 2,
+            "schemaVersion": "fixture-Privacy-v2",
+            "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+          }
+        }
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.native.admissionimport.batch.stage.proposal.v2",
+      "request": {
+        "requestPublicId": "20000000-0000-4000-8000-000000000141",
+        "mapping": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000135",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "importMode": "NATIVE_STAGED",
+        "items": [
+          {
+            "sourceRecordKey": "IMPORT-B",
+            "personMutation": {
+              "disposition": "CREATE_NATIVE_PERSON",
+              "facts": {
+                "personKey": "PERSON-B",
+                "displayName": "Fixture native person B",
+                "preferredLocale": "fr-CA"
+              },
+              "identityEvidence": {
+                "owner": "Privacy",
+                "publicId": "20000000-0000-4000-8000-000000000132",
+                "version": 2,
+                "schemaVersion": "fixture-Privacy-v2",
+                "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+              }
+            }
+          }
+        ]
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000139",
+        "version": 3,
+        "status": "VALIDATED",
+        "mapping": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000135",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "importMode": "NATIVE_STAGED",
+        "items": [
+          {
+            "itemPublicId": "20000000-0000-4000-8000-000000000140",
+            "itemVersion": 5,
+            "sourceRecordKey": "IMPORT-B",
+            "personMutation": {
+              "disposition": "CREATE_NATIVE_PERSON",
+              "facts": {
+                "personKey": "PERSON-B",
+                "displayName": "Fixture native person B",
+                "preferredLocale": "fr-CA"
+              },
+              "identityEvidence": {
+                "owner": "Privacy",
+                "publicId": "20000000-0000-4000-8000-000000000132",
+                "version": 2,
+                "schemaVersion": "fixture-Privacy-v2",
+                "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+              }
+            }
+          }
+        ]
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    },
+    {
+      "fixture": "B",
+      "operationId": "people.native.admissionimport.batch.accept.proposal.v2",
+      "request": {
+        "batchPublicId": "20000000-0000-4000-8000-000000000139",
+        "expectedBatchVersion": 3,
+        "decisionReceipt": {
+          "owner": "People",
+          "publicId": "20000000-0000-4000-8000-000000000133",
+          "version": 3,
+          "schemaVersion": "fixture-People-v2",
+          "digest": "2579364ff9cda03155411047e55b89a2caa2a4c9f2b1c646c8b897ed4e473b15"
+        }
+      },
+      "response": {
+        "publicId": "20000000-0000-4000-8000-000000000139",
+        "version": 4,
+        "status": "ACCEPTED",
+        "mapping": {
+          "owner": "Integration",
+          "publicId": "20000000-0000-4000-8000-000000000135",
+          "version": 6,
+          "schemaVersion": "fixture-Integration-v2",
+          "digest": "a48ec8f425a72dda8d9e6d5b0b3bcd50d6c9a6143cd6b0c62788ca05ce0fdaea"
+        },
+        "importMode": "NATIVE_STAGED",
+        "items": [
+          {
+            "itemPublicId": "20000000-0000-4000-8000-000000000140",
+            "itemVersion": 5,
+            "sourceRecordKey": "IMPORT-B",
+            "personMutation": {
+              "disposition": "CREATE_NATIVE_PERSON",
+              "facts": {
+                "personKey": "PERSON-B",
+                "displayName": "Fixture native person B",
+                "preferredLocale": "fr-CA"
+              },
+              "identityEvidence": {
+                "owner": "Privacy",
+                "publicId": "20000000-0000-4000-8000-000000000132",
+                "version": 2,
+                "schemaVersion": "fixture-Privacy-v2",
+                "digest": "c4ed5c32cdc2c9ae8d3aebeb3b5b17da8091d59f16e1997477fcbbbc6f52e7a2"
+              }
+            }
+          }
+        ]
+      },
+      "sourceTruth": "SYNTHETIC_API_VALID_BOUNDARY_NOT_NATIVE_PRODUCER_OR_DECISION_APPROVAL"
+    }
+  ],
+  "modernApi": [
+    {
+      "letter": "A",
+      "operationId": "modern.contingent.worker.proposal.create",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native-v2:A",
+          "X-Correlation-ID": "20000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "workerProposal": {
+            "personToken": "7b68102bfa848da7ac47f0d08e998a22c3c22e3cfd430fcc21a2c50fe5044f56",
+            "classificationPolicyVersionId": "20000000-0000-4000-8000-000000000800",
+            "workerType": "CONTINGENT",
+            "positionPublicId": "20000000-0000-4000-8000-000000000801",
+            "organizationPublicId": "20000000-0000-4000-8000-000000000802",
+            "effectiveFrom": "2026-11-10",
+            "effectiveTo": "2027-02-10",
+            "sourceSystemId": "20000000-0000-4000-8000-000000000803",
+            "sourceRecordKey": "NATIVE-WORKSPACE-20000000-0000-4000-8000-000000000034",
+            "personAdmissionReceiptId": "20000000-0000-4000-8000-000000000043",
+            "identityDisposition": "CREATE_NEW_WORKER",
+            "reusePolicyVersionId": "20000000-0000-4000-8000-000000000804",
+            "expectedAdmissionRevision": 1
+          }
+        }
+      },
+      "nativeReceipt": "20000000-0000-4000-8000-000000000043",
+      "prerequisites": "Synthetic explicit owner-issued classification/position/org/source/reuse/template/calendar fixtures. Template task HR_PREHIRE_REVIEW binds actual HR_AGENT Auth principal. No candidate/account/worker for target. Real owner PEP/refetch publication OPEN.",
+      "nativeHttpExecuted": false
+    },
+    {
+      "letter": "A",
+      "operationId": "modern.onboarding.journey.assign",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native-v2:A:onboarding",
+          "X-Correlation-ID": "20000000-0000-4000-8000-000000000099"
+        },
+        "body": {
+          "templateVersionId": "20000000-0000-4000-8000-000000000805",
+          "dueAt": "2026-11-08T17:00:00Z",
+          "calendarVersionId": "20000000-0000-4000-8000-000000000806",
+          "assigneeBindings": [
+            {
+              "taskKey": "HR_PREHIRE_REVIEW",
+              "principalPublicId": "20000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "subject": {
+            "kind": "PREHIRE_PERSON",
+            "personAdmissionReceiptId": "20000000-0000-4000-8000-000000000043",
+            "expectedAdmissionRevision": 1
+          },
+          "identityAsOf": "2026-11-02T10:00:00Z",
+          "onboardingZone": "Europe/London",
+          "tzdbVersion": "2026a"
+        }
+      },
+      "nativeReceipt": "20000000-0000-4000-8000-000000000043",
+      "prerequisites": "Synthetic explicit owner-issued classification/position/org/source/reuse/template/calendar fixtures. Template task HR_PREHIRE_REVIEW binds actual HR_AGENT Auth principal. No candidate/account/worker for target. Real owner PEP/refetch publication OPEN.",
+      "nativeHttpExecuted": false
+    },
+    {
+      "letter": "B",
+      "operationId": "modern.contingent.worker.proposal.create",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native-v2:B",
+          "X-Correlation-ID": "20000000-0000-4000-8000-000000000199"
+        },
+        "body": {
+          "workerProposal": {
+            "personToken": "74c7e48e3f5471ef0411f07e99eb72996b70a66d91567a905aeb880e29f2a9fd",
+            "classificationPolicyVersionId": "20000000-0000-4000-8000-000000000800",
+            "workerType": "CONTINGENT",
+            "positionPublicId": "20000000-0000-4000-8000-000000000801",
+            "organizationPublicId": "20000000-0000-4000-8000-000000000802",
+            "effectiveFrom": "2026-11-10",
+            "effectiveTo": "2027-02-10",
+            "sourceSystemId": "20000000-0000-4000-8000-000000000803",
+            "sourceRecordKey": "NATIVE-WORKSPACE-20000000-0000-4000-8000-000000000134",
+            "personAdmissionReceiptId": "20000000-0000-4000-8000-000000000143",
+            "identityDisposition": "CREATE_NEW_WORKER",
+            "reusePolicyVersionId": "20000000-0000-4000-8000-000000000804",
+            "expectedAdmissionRevision": 1
+          }
+        }
+      },
+      "nativeReceipt": "20000000-0000-4000-8000-000000000143",
+      "prerequisites": "Synthetic explicit owner-issued classification/position/org/source/reuse/template/calendar fixtures. Template task HR_PREHIRE_REVIEW binds actual HR_AGENT Auth principal. No candidate/account/worker for target. Real owner PEP/refetch publication OPEN.",
+      "nativeHttpExecuted": false
+    },
+    {
+      "letter": "B",
+      "operationId": "modern.onboarding.journey.assign",
+      "request": {
+        "pathParameters": {},
+        "queryParameters": {},
+        "headers": {
+          "Idempotency-Key": "native-v2:B:onboarding",
+          "X-Correlation-ID": "20000000-0000-4000-8000-000000000199"
+        },
+        "body": {
+          "templateVersionId": "20000000-0000-4000-8000-000000000805",
+          "dueAt": "2026-11-08T17:00:00Z",
+          "calendarVersionId": "20000000-0000-4000-8000-000000000806",
+          "assigneeBindings": [
+            {
+              "taskKey": "HR_PREHIRE_REVIEW",
+              "principalPublicId": "20000000-0000-4000-8000-000000000101"
+            }
+          ],
+          "subject": {
+            "kind": "PREHIRE_PERSON",
+            "personAdmissionReceiptId": "20000000-0000-4000-8000-000000000143",
+            "expectedAdmissionRevision": 1
+          },
+          "identityAsOf": "2026-11-02T10:00:00Z",
+          "onboardingZone": "America/New_York",
+          "tzdbVersion": "2026a"
+        }
+      },
+      "nativeReceipt": "20000000-0000-4000-8000-000000000143",
+      "prerequisites": "Synthetic explicit owner-issued classification/position/org/source/reuse/template/calendar fixtures. Template task HR_PREHIRE_REVIEW binds actual HR_AGENT Auth principal. No candidate/account/worker for target. Real owner PEP/refetch publication OPEN.",
+      "nativeHttpExecuted": false
+    }
+  ]
+}

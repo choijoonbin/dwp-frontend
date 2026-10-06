@@ -1,0 +1,143 @@
+{
+  "schema": "dwp.hris.modern-physical-candidate-tools-independent-audit/v1",
+  "status": "FAIL_TOOL_HARDENING_REQUIRED",
+  "recordedAtUtc": "2026-09-15T19:25:00Z",
+  "authority": "REVIEWER_TOOL_QUALITY_ONLY_NOT_G3_NOT_G6",
+  "scope": {
+    "toolDirectory": "coding-readiness/modern-physical-candidate-tools",
+    "canonicalCandidate": "coding-readiness/modern-canonical-candidate.q0mnJg",
+    "canonicalCandidateMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "liveCanonicalPhysicalGateWorktreePolicyMutation": "FORBIDDEN_AND_NOT_PERFORMED"
+  },
+  "sourcePins": {
+    "generatorSha256": "e3d7eef87c9c23f01f03f64674214e5302915679cfdd81b906b79857c7acbd0d",
+    "validatorSha256": "5c86854fbf648a2de7b1538fdc20a00a9b071044f893d891b6ea3ae3b394bea7",
+    "readmeSha256": "b446282a85a24735400938430782f1668e9f0d686259ec40d29bbfa2a1fead4b",
+    "q0V5Report": {
+      "path": "coding-readiness/reports/modern-physical-q0mnJg-rejected-preflight-2026-09-16.v5.json",
+      "sha256": "01e3d81bf2e1a58589fd6f9f1c24c5b8a88aea0e12f95debc6f4242bd1a4bcaa",
+      "sealedPayloadSha256": "87b6823e335d2b50a1b412cef9bcb4579bf2ec07ff094136cfca0d3097418f47"
+    }
+  },
+  "q0Reproduction": {
+    "command": "python3 coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --canonical-dir coding-readiness/modern-canonical-candidate.q0mnJg --expansion-policy coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json --owner-prefix-register coding-readiness/physical-owner-prefix-register.csv --preflight-only",
+    "exitCode": 3,
+    "status": "FAIL_BLOCKED_SOURCE",
+    "findingCount": 38,
+    "findingTupleSha256": "6db2822210d036161e216d71601e9d82d5db0e06fe0b84f824ae3180d7486c8b",
+    "categories": {
+      "PHYSICAL_OWNER_BOUNDARY": 4,
+      "PHYSICAL_SCHEMA_DDL": 4,
+      "TABLE_EXPANSION_PRODUCER_READER_CLOSURE": 16,
+      "TEMPORAL_REVISION_ARBITRATION": 14
+    },
+    "observedCounts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 25,
+      "events": 155,
+      "tables": 132
+    },
+    "postgresExecution": "CORRECTLY_NOT_RUN_STATIC_FINDINGS_NONZERO",
+    "storedV5TupleEquality": true,
+    "note": "Current tool wording capitalization differs from the preserved v5 bytes, but all 38 category/code/subject tuples are identical."
+  },
+  "hostileReproductions": [
+    {
+      "id": "MISSING_CANONICAL_SELF_SEALS",
+      "severity": "P0",
+      "generatorRejected": false,
+      "validatorRejected": false,
+      "finding": "All seven canonical sealedPayloadSha256 members can be removed without a seal finding."
+    },
+    {
+      "id": "UNSAFE_SQL_EXPRESSION_GRAMMAR",
+      "severity": "P0",
+      "generatorAccepted": [
+        "pg_read_file('/etc/passwd') IS NOT NULL",
+        "nextval('attacker.sequence')"
+      ],
+      "validatorAccepted": [
+        "pg_read_file('/etc/passwd') IS NOT NULL",
+        "nextval('attacker.sequence')"
+      ]
+    },
+    {
+      "id": "QUERY_EXACT_BYTE_AGREEMENT_GAP",
+      "severity": "P0",
+      "mutation": "operationPhysicalContracts[0].method=TRACE; reseal query and generation inventory",
+      "newValidatorFindings": []
+    },
+    {
+      "id": "HANDLER_EXACT_BYTE_AGREEMENT_GAP",
+      "severity": "P0",
+      "mutation": "handlers[0].trigger replaced; reseal handler and generation inventory",
+      "newValidatorFindings": []
+    },
+    {
+      "id": "SQL_COLUMN_TYPE_AGREEMENT_GAP",
+      "severity": "P0",
+      "mutation": "first HRM tenant_id BIGINT changed to INTEGER; inventory and report resealed",
+      "newValidatorFindings": []
+    },
+    {
+      "id": "CANONICAL_DIRECTORY_SYMLINK_ACCEPTED",
+      "severity": "P0",
+      "accepted": true
+    },
+    {
+      "id": "OUTPUT_EXCLUSIVE_RENAME_TOCTOU",
+      "severity": "P0",
+      "reproduction": "Destination absent at check, attacker creates empty directory, os.replace replaces it.",
+      "existingDestinationReplaced": true
+    }
+  ],
+  "staticFindings": [
+    {
+      "id": "INPUT_CHECK_OPEN_TOCTOU",
+      "severity": "P0",
+      "detail": "is_file/is_symlink followed by path read reopens the input without descriptor-level O_NOFOLLOW/fstat binding."
+    },
+    {
+      "id": "VALIDATION_REPORT_NOT_SELF_SEALED",
+      "severity": "P0",
+      "detail": "The validator report has no sealedPayloadSha256 and PostgreSQL evidence rows are not independently sealed."
+    },
+    {
+      "id": "POSTGRES_IMAGE_NOT_CONTENT_BOUND",
+      "severity": "P0",
+      "detail": "Execution uses mutable postgres:16/postgres:18 tags and records neither image ID nor repository digest nor container image equality."
+    },
+    {
+      "id": "DDL_ROLE_OWNERSHIP_ACL_INCOMPLETE",
+      "severity": "P0",
+      "detail": "DDL revokes PUBLIC but does not encode or independently verify schema/table owner, migrator/runtime role, NOBYPASSRLS, or positive least-privilege ACL bindings."
+    },
+    {
+      "id": "VALIDATOR_SQL_MARKER_PARSING_NOT_STRUCTURAL",
+      "severity": "P0",
+      "detail": "Marker searches and column-name-only parsing do not bind exact column types, nullability, defaults, complete constraints, or role semantics."
+    },
+    {
+      "id": "REPORT_AND_OUTPUT_PARENT_PATH_HARDENING",
+      "severity": "P1",
+      "detail": "Resolved parent paths and recursive mkdir allow implicit symlink ancestry; report publication lacks directory fsync and exclusive rename discipline."
+    }
+  ],
+  "requiredRemediation": [
+    "Require and verify all seven canonical seals plus closed-set manifest file/seal references independently.",
+    "Open every input through descriptor-level no-follow regular-file checks and reject symlink roots/ancestors.",
+    "Replace check-then-os.replace with OS-level exclusive no-replace directory publication.",
+    "Use an allowlisted SQL expression/default grammar and hostile payload tests.",
+    "Independently reconstruct handler/query candidate bytes and expected SQL physical shape; compare exact bytes.",
+    "Add owner/migrator/runtime role, NOBYPASSRLS, schema/table ownership, ACL and RLS behavior contracts and checks.",
+    "Resolve PostgreSQL tags to immutable image IDs/digests, run by ID, verify container binding, seal each evidence row and the final report.",
+    "Add hostile tool self-tests that run independently of a zero-static canonical candidate."
+  ],
+  "candidateSourceBlockersRemain": {
+    "count": 38,
+    "disposition": "UNCHANGED_CANONICAL_SOURCE_MUST_BE_REPAIRED_BY_CANONICAL_AUTHOR;NOT_A_TOOL_FIX"
+  },
+  "sealedPayloadSha256": "5396f5d3bbc0b3faecea286e2534f07c08768c8806517813a5a92cf9c4e98854"
+}

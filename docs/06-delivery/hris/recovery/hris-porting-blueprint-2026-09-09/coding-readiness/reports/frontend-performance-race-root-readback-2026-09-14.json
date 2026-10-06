@@ -1,0 +1,57 @@
+{
+  "after": {
+    "archiveSha256": "0f2c7958226e60c7bcfdf0d54b9aa7dc2e63841f5982885bb8639fe1866824a5",
+    "counts": {
+      "numFailedTestSuites": 0,
+      "numFailedTests": 0,
+      "numPassedTestSuites": 8,
+      "numPassedTests": 62,
+      "numPendingTests": 0,
+      "numTotalTestSuites": 8,
+      "numTotalTests": 62
+    },
+    "finishedAt": "2026-09-14T11:56:52.796115+00:00",
+    "receiptSha256": "df2fdddfc38957dd1887c34b27ecd8cf9195bc273a1bd9febcf28be4bfa87ba7",
+    "sourceStable": true,
+    "startedAt": "2026-09-14T11:56:47.492859+00:00"
+  },
+  "before": {
+    "archiveSha256": "2bea97c26f8a68e5dd99881d538e855960a9fe96ca38d6f2a4c7393ae2445232",
+    "counts": {
+      "numFailedTestSuites": 2,
+      "numFailedTests": 2,
+      "numPassedTestSuites": 6,
+      "numPassedTests": 60,
+      "numPendingTests": 0,
+      "numTotalTestSuites": 8,
+      "numTotalTests": 62
+    },
+    "finishedAt": "2026-09-14T11:54:13.242276+00:00",
+    "receiptSha256": "49c635dead946a9131a0f2d7142d56c64fecd41f30167e1ea60c06063a0519c5",
+    "sourceStable": true,
+    "startedAt": "2026-09-14T11:54:07.724679+00:00"
+  },
+  "limits": {
+    "authorityContractChanged": false,
+    "g3Open": false,
+    "nativeSourceCalls": 0
+  },
+  "newCounterexamples": [
+    "HRIS performance Phase 1 runtime prevents a pre-mutation GET from replacing a newer mutation response",
+    "HRIS performance Phase 1 runtime rejects a late mutation from an earlier visit after the scope returns from A to B to A"
+  ],
+  "oldSixtyPreserved": true,
+  "readbackAt": "2026-09-14T11:58:26.417695+00:00",
+  "schema": "dwp.hris.performance-race-readback.v1",
+  "sourceDelta": {
+    "currentMatchesPassSnapshot": true,
+    "failBeforeToPassAfter": [
+      "apps/dwp/src/features/hris/performance/hooks/use-hris-performance-workspace.ts"
+    ],
+    "fullUtf8Snapshots": 10,
+    "oldPassToFailBefore": [
+      "apps/dwp/src/features/hris/performance/testing/hris-performance-workspace.runtime.test.tsx"
+    ]
+  },
+  "status": "PASS"
+}

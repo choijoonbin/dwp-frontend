@@ -1,0 +1,1645 @@
+{
+  "status": "SYNTHETIC_TYPED_EIGHT_FOUNDATION_API_AB_NOT_NATIVE_BOOTSTRAP",
+  "fixtures": [
+    {
+      "fixtureId": "PAY_CONFIG_A_ENTITY",
+      "operationId": "pay.entity.version.create",
+      "bodySchemaRef": "PAYV2.EntityCreate",
+      "body": {
+        "entityKey": "NATIVE_ENTITY_0",
+        "jurisdictionCode": "ZZ",
+        "baseCurrency": "TST",
+        "timeZone": "Etc/UTC",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "legalEmployerRef": {
+          "publicId": "00000000-0000-4000-8000-000000001006",
+          "expectedVersion": 8,
+          "asOf": "2026-09-14T00:00:00Z"
+        },
+        "governance": {
+          "artifactKind": "ENTITY",
+          "scope": {
+            "legalPayrollEntityId": null,
+            "payGroupId": null
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "5320bdfcbf8e42ecddf3d7bd2dc9107a02a475eb49ff751d17f509c091aa7643",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ENTITY",
+        "scope": {
+          "legalPayrollEntityId": null,
+          "payGroupId": null
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001020",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ENTITY",
+        "scope": {
+          "legalPayrollEntityId": null,
+          "payGroupId": null
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "ENTITY"
+        ],
+        "payloadDigest": "5320bdfcbf8e42ecddf3d7bd2dc9107a02a475eb49ff751d17f509c091aa7643"
+      },
+      "ownerNativeLegalEmployer": {
+        "tenantId": 1,
+        "publicId": "00000000-0000-4000-8000-000000001006",
+        "version": 8,
+        "lifecycleState": "ACTIVE",
+        "countryCode": null,
+        "capturedAt": "2026-09-14T00:00:00Z",
+        "expiresAt": "2026-09-14T01:00:00Z"
+      },
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_A_PAYGROUP",
+      "operationId": "pay.paygroup.version.create",
+      "bodySchemaRef": "PAYV2.PayGroupCreate",
+      "body": {
+        "groupKey": "NATIVE_GROUP_0",
+        "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+        "frequency": "MONTHLY",
+        "currency": "TST",
+        "paymentMethod": "MANUAL_RECORDED",
+        "eligibilityArtifact": {
+          "artifactType": "ELIGIBILITY",
+          "artifactId": "00000000-0000-4000-8000-000000001041",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "509ed749e386e1ed5ef5c96369d5ad87ea6b9c9ffededbcb8ce2615e6f467bc9"
+        },
+        "calendarArtifact": {
+          "artifactType": "CALENDAR",
+          "artifactId": "00000000-0000-4000-8000-000000001042",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "9c2efd37b8d2df7095204747fc4a9e6eaa5a265be64d2cdc749f0ca38cc07417"
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "PAYGROUP",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+            "payGroupId": "00000000-0000-4000-8000-000000001011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "b38879c2c557264a68fe84c137b83c192ee181ba10d7c9c6938336f7bd4aab25",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "PAYGROUP",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001021",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "PAYGROUP",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "PAYGROUP"
+        ],
+        "payloadDigest": "b38879c2c557264a68fe84c137b83c192ee181ba10d7c9c6938336f7bd4aab25"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_A_CALENDAR",
+      "operationId": "pay.calendar.version.create",
+      "bodySchemaRef": "PAYV2.CalendarCreate",
+      "body": {
+        "calendarKey": "NATIVE_MONTH",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "periods": [
+          {
+            "periodKey": "SEP_2026",
+            "startsOn": "2026-09-01",
+            "endsBefore": "2026-10-01",
+            "inputCutoffAt": "2026-09-29T17:00:00Z",
+            "payDate": "2026-09-30",
+            "timeZone": "Etc/UTC",
+            "tzdbVersion": "2026a"
+          }
+        ],
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "CALENDAR",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+            "payGroupId": "00000000-0000-4000-8000-000000001011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "29fc46314c7c27a791a16d990ec906d0fe354a079fc8cad8046ed33b0cf140f6",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "CALENDAR",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001022",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "CALENDAR",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "CALENDAR"
+        ],
+        "payloadDigest": "29fc46314c7c27a791a16d990ec906d0fe354a079fc8cad8046ed33b0cf140f6"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_A_ROUNDING",
+      "operationId": "pay.rounding.version.create",
+      "bodySchemaRef": "PAYV2.RoundingCreate",
+      "body": {
+        "policyKey": "ROUND_NATIVE",
+        "rules": [
+          {
+            "stage": "SOURCE_NORMALIZE",
+            "scale": 6,
+            "mode": "DOWN",
+            "currency": "TST"
+          },
+          {
+            "stage": "FORMULA_DECLARED",
+            "scale": 8,
+            "mode": "HALF_EVEN",
+            "currency": "TST"
+          },
+          {
+            "stage": "ELEMENT",
+            "scale": 2,
+            "mode": "HALF_UP",
+            "currency": "TST"
+          },
+          {
+            "stage": "WORKER_RESULT",
+            "scale": 4,
+            "mode": "HALF_UP",
+            "currency": "TST"
+          },
+          {
+            "stage": "SETTLEMENT_OR_STATUTORY",
+            "scale": 4,
+            "mode": "HALF_UP",
+            "currency": "TST"
+          }
+        ],
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "ROUNDING",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+            "payGroupId": "00000000-0000-4000-8000-000000001011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "75e16972215380bb6284fcd4f4df0e3ef88d73c09c02d4350dc823c3c8a35ea4",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ROUNDING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001023",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ROUNDING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "ROUNDING"
+        ],
+        "payloadDigest": "75e16972215380bb6284fcd4f4df0e3ef88d73c09c02d4350dc823c3c8a35ea4"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_A_ELIGIBILITY",
+      "operationId": "pay.eligibility.version.create",
+      "bodySchemaRef": "PAYV2.EligibilityCreate",
+      "body": {
+        "policyKey": "ACTIVE_EMPLOYMENT",
+        "inputs": [
+          {
+            "inputKey": "EMPLOYMENT_STATUS",
+            "type": {
+              "valueType": "CODE",
+              "unit": "CODE",
+              "currency": null
+            },
+            "sourceKind": "WORKFORCE_FACT",
+            "sourceField": "employmentStatus",
+            "required": true,
+            "absencePolicy": "ERROR",
+            "absenceValue": null,
+            "sourceBinding": {
+              "kind": "WORKFORCE_FACT",
+              "contractRef": "HRM.PayrollWorkforceManifest.proposal.v1",
+              "field": "employmentStatus",
+              "selection": "EXACT_WORKER_ASSIGNMENT_AS_OF"
+            }
+          }
+        ],
+        "expression": {
+          "op": "COMPARE_EQ",
+          "nodeId": "ELIGIBLE_EQ",
+          "left": {
+            "op": "INPUT",
+            "nodeId": "EMPLOYMENT_REF",
+            "inputKey": "EMPLOYMENT_STATUS"
+          },
+          "right": {
+            "op": "LITERAL",
+            "nodeId": "ACTIVE_LITERAL",
+            "value": {
+              "valueType": "CODE",
+              "unit": "CODE",
+              "value": "ACTIVE",
+              "currency": null
+            }
+          }
+        },
+        "outputType": {
+          "valueType": "BOOLEAN",
+          "unit": "BOOLEAN",
+          "currency": null
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "ELIGIBILITY",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+            "payGroupId": "00000000-0000-4000-8000-000000001011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "d302fb4338952b397c1450c6420f8bb94c0c41968473abaa23beb9cc5e60795a",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ELIGIBILITY",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001024",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ELIGIBILITY",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "ELIGIBILITY"
+        ],
+        "payloadDigest": "d302fb4338952b397c1450c6420f8bb94c0c41968473abaa23beb9cc5e60795a"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_A_ELEMENT",
+      "operationId": "element.version.create",
+      "bodySchemaRef": "PAYV2.ElementCreate",
+      "body": {
+        "elementKey": "BASE",
+        "nameKey": "pay.synthetic.base",
+        "elementType": "EARNING",
+        "valueType": {
+          "valueType": "MONEY",
+          "unit": "CURRENCY",
+          "currency": "TST"
+        },
+        "processingPriority": 51,
+        "eligibilityArtifact": {
+          "artifactType": "ELIGIBILITY",
+          "artifactId": "00000000-0000-4000-8000-000000001041",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "509ed749e386e1ed5ef5c96369d5ad87ea6b9c9ffededbcb8ce2615e6f467bc9"
+        },
+        "formulaArtifact": null,
+        "roundingArtifact": {
+          "artifactType": "ROUNDING",
+          "artifactId": "00000000-0000-4000-8000-000000001040",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "4a868364fe0e03d4b903f3b6753694c6dd64f3880d57f7dc44271783ef195c6f"
+        },
+        "sourceInput": {
+          "inputKey": "BASE_VALUE",
+          "type": {
+            "valueType": "MONEY",
+            "unit": "CURRENCY",
+            "currency": "TST"
+          },
+          "sourceKind": "WORKER_ENTRY",
+          "sourceField": "amount",
+          "required": true,
+          "absencePolicy": "ERROR",
+          "absenceValue": null,
+          "sourceBinding": {
+            "kind": "CURRENT_ELEMENT_INPUT",
+            "contractRef": "PAY.WorkerEntry.v1",
+            "thisElement": true,
+            "selection": "SINGLE_EXACT_EFFECTIVE_ENTRY"
+          }
+        },
+        "classification": {
+          "taxCode": null,
+          "insuranceCode": null,
+          "accountingCode": "BASE",
+          "countryPackRef": null
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "ELEMENT",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+            "payGroupId": "00000000-0000-4000-8000-000000001011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "59569623e856b5916dc53ca4d0428956f451be725fb790bcf3413d656a016d66",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ELEMENT",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001025",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ELEMENT",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "ELEMENT"
+        ],
+        "payloadDigest": "59569623e856b5916dc53ca4d0428956f451be725fb790bcf3413d656a016d66"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_A_FORMULA",
+      "operationId": "formula.version.create",
+      "bodySchemaRef": "PAYV2.FormulaCreate",
+      "body": {
+        "formulaKey": "NATIVE_RATE_ALLOWANCE",
+        "languageVersion": "PAY_RULE_AST_V1",
+        "inputs": [
+          {
+            "inputKey": "BASE_FOR_ALLOWANCE",
+            "type": {
+              "valueType": "MONEY",
+              "unit": "CURRENCY",
+              "currency": "TST"
+            },
+            "sourceKind": "WORKER_ENTRY",
+            "sourceField": "amount",
+            "required": true,
+            "absencePolicy": "ERROR",
+            "absenceValue": null,
+            "sourceBinding": {
+              "kind": "WORKER_ENTRY",
+              "contractRef": "PAY.WorkerEntry.v1",
+              "elementArtifact": {
+                "artifactType": "ELEMENT",
+                "artifactId": "00000000-0000-4000-8000-000000001054",
+                "versionNo": 1,
+                "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+                "payloadDigest": "e944e5210bd40e8de73521fb95407e8e3df4aecb556ca216fb79a41fc07cb65c"
+              },
+              "selection": "SINGLE_EXACT_EFFECTIVE_ENTRY"
+            }
+          }
+        ],
+        "outputType": {
+          "valueType": "MONEY",
+          "unit": "CURRENCY",
+          "currency": "TST"
+        },
+        "expression": {
+          "op": "MULTIPLY",
+          "nodeId": "ALLOWANCE_MULTIPLY",
+          "left": {
+            "op": "INPUT",
+            "nodeId": "BASE_INPUT",
+            "inputKey": "BASE_FOR_ALLOWANCE"
+          },
+          "right": {
+            "op": "LITERAL",
+            "nodeId": "CONFIGURED_RATE",
+            "value": {
+              "valueType": "RATE",
+              "unit": "RATIO",
+              "value": "0.12500000",
+              "currency": null
+            }
+          }
+        },
+        "decisionTables": [],
+        "dependencyArtifacts": [],
+        "roundingArtifact": {
+          "artifactType": "ROUNDING",
+          "artifactId": "00000000-0000-4000-8000-000000001040",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "4a868364fe0e03d4b903f3b6753694c6dd64f3880d57f7dc44271783ef195c6f"
+        },
+        "limits": {
+          "maxNodes": 32,
+          "maxDepth": 8,
+          "maxCollectionItems": 100,
+          "timeoutMillis": 100,
+          "memoryBytes": 65536
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "FORMULA",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+            "payGroupId": "00000000-0000-4000-8000-000000001011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "8fb4c4d9914a99fcd2c281b95dbde2b5ebd4da6081525357e22a0cc024b6abb3",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "FORMULA",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001026",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "FORMULA",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "FORMULA"
+        ],
+        "payloadDigest": "8fb4c4d9914a99fcd2c281b95dbde2b5ebd4da6081525357e22a0cc024b6abb3"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_A_GL_MAPPING",
+      "operationId": "pay.gl-mapping.version.create",
+      "bodySchemaRef": "PAYV2.GlMappingCreate",
+      "body": {
+        "mappingKey": "NATIVE_GL_0",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "lines": [
+          {
+            "elementArtifact": {
+              "artifactType": "ELEMENT",
+              "artifactId": "00000000-0000-4000-8000-000000001051",
+              "versionNo": 1,
+              "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+              "payloadDigest": "3298e0b944a6ac4ed4f6a99d7ca4ce6056f09df7a44492688c562b4fef247693"
+            },
+            "debitAccountRef": "00000000-0000-4000-8000-000000001400",
+            "creditAccountRef": "00000000-0000-4000-8000-000000001401",
+            "costObjectMode": "NONE",
+            "fixedCostObjectRef": null
+          }
+        ],
+        "accountRegistrySnapshot": {
+          "contractRef": "Finance.AccountRegistrySnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000001402",
+          "ownerRevision": 1,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "GL_MAPPING",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+            "payGroupId": "00000000-0000-4000-8000-000000001011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "dc361d215997663d5d6397c7d7a1bc135566f6c19bdd70bf48ef7a0951770f5b",
+          "expectedOwnerRevision": 8
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "GL_MAPPING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000001027",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "GL_MAPPING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000001010",
+          "payGroupId": "00000000-0000-4000-8000-000000001011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 8,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "Etc/UTC"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000001030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000001031",
+        "allowedArtifactKinds": [
+          "GL_MAPPING"
+        ],
+        "payloadDigest": "dc361d215997663d5d6397c7d7a1bc135566f6c19bdd70bf48ef7a0951770f5b"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_ENTITY",
+      "operationId": "pay.entity.version.create",
+      "bodySchemaRef": "PAYV2.EntityCreate",
+      "body": {
+        "entityKey": "NATIVE_ENTITY_1",
+        "jurisdictionCode": "ZZ",
+        "baseCurrency": "TST",
+        "timeZone": "America/New_York",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "legalEmployerRef": {
+          "publicId": "00000000-0000-4000-8000-000000002006",
+          "expectedVersion": 8,
+          "asOf": "2026-09-14T00:00:00Z"
+        },
+        "governance": {
+          "artifactKind": "ENTITY",
+          "scope": {
+            "legalPayrollEntityId": null,
+            "payGroupId": null
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "cbb597135cb2fd21b6c131490b004bee7c6b9c46fc56b745288d546c925a113e",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ENTITY",
+        "scope": {
+          "legalPayrollEntityId": null,
+          "payGroupId": null
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002020",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ENTITY",
+        "scope": {
+          "legalPayrollEntityId": null,
+          "payGroupId": null
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "ENTITY"
+        ],
+        "payloadDigest": "cbb597135cb2fd21b6c131490b004bee7c6b9c46fc56b745288d546c925a113e"
+      },
+      "ownerNativeLegalEmployer": {
+        "tenantId": 2,
+        "publicId": "00000000-0000-4000-8000-000000002006",
+        "version": 8,
+        "lifecycleState": "ACTIVE",
+        "countryCode": null,
+        "capturedAt": "2026-09-14T00:00:00Z",
+        "expiresAt": "2026-09-14T01:00:00Z"
+      },
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_PAYGROUP",
+      "operationId": "pay.paygroup.version.create",
+      "bodySchemaRef": "PAYV2.PayGroupCreate",
+      "body": {
+        "groupKey": "NATIVE_GROUP_1",
+        "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+        "frequency": "MONTHLY",
+        "currency": "TST",
+        "paymentMethod": "MANUAL_RECORDED",
+        "eligibilityArtifact": {
+          "artifactType": "ELIGIBILITY",
+          "artifactId": "00000000-0000-4000-8000-000000002041",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "d46e080468e4c1b250f0875346a2678357768e28a53999bc6c6ddce0239241fb"
+        },
+        "calendarArtifact": {
+          "artifactType": "CALENDAR",
+          "artifactId": "00000000-0000-4000-8000-000000002042",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "809101608a10b98a2023da0e8b1c49040f90290fa4105c8cea560202ae8def40"
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "PAYGROUP",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+            "payGroupId": "00000000-0000-4000-8000-000000002011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "90924b67fe94eaf0e01cbbd77ce5ed6f4aaecb87444085dd3124096f95e8590d",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "PAYGROUP",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002021",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "PAYGROUP",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "PAYGROUP"
+        ],
+        "payloadDigest": "90924b67fe94eaf0e01cbbd77ce5ed6f4aaecb87444085dd3124096f95e8590d"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_CALENDAR",
+      "operationId": "pay.calendar.version.create",
+      "bodySchemaRef": "PAYV2.CalendarCreate",
+      "body": {
+        "calendarKey": "NATIVE_MONTH",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "periods": [
+          {
+            "periodKey": "SEP_2026",
+            "startsOn": "2026-09-01",
+            "endsBefore": "2026-10-01",
+            "inputCutoffAt": "2026-09-29T17:00:00Z",
+            "payDate": "2026-09-30",
+            "timeZone": "Etc/UTC",
+            "tzdbVersion": "2026a"
+          }
+        ],
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "CALENDAR",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+            "payGroupId": "00000000-0000-4000-8000-000000002011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "3c6da32bd34a9cb85d0589cab97a116722b6ea8267b693a3655bdccf9f18ea29",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "CALENDAR",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002022",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "CALENDAR",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "CALENDAR"
+        ],
+        "payloadDigest": "3c6da32bd34a9cb85d0589cab97a116722b6ea8267b693a3655bdccf9f18ea29"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_ROUNDING",
+      "operationId": "pay.rounding.version.create",
+      "bodySchemaRef": "PAYV2.RoundingCreate",
+      "body": {
+        "policyKey": "ROUND_NATIVE",
+        "rules": [
+          {
+            "stage": "SOURCE_NORMALIZE",
+            "scale": 6,
+            "mode": "DOWN",
+            "currency": "TST"
+          },
+          {
+            "stage": "FORMULA_DECLARED",
+            "scale": 8,
+            "mode": "HALF_EVEN",
+            "currency": "TST"
+          },
+          {
+            "stage": "ELEMENT",
+            "scale": 2,
+            "mode": "HALF_EVEN",
+            "currency": "TST"
+          },
+          {
+            "stage": "WORKER_RESULT",
+            "scale": 4,
+            "mode": "HALF_EVEN",
+            "currency": "TST"
+          },
+          {
+            "stage": "SETTLEMENT_OR_STATUTORY",
+            "scale": 4,
+            "mode": "HALF_EVEN",
+            "currency": "TST"
+          }
+        ],
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "ROUNDING",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+            "payGroupId": "00000000-0000-4000-8000-000000002011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "f519b2b787c94c18601186c0e27c91a4e283d694f0bbb3f8d5eeb38930a58193",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ROUNDING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002023",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ROUNDING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "ROUNDING"
+        ],
+        "payloadDigest": "f519b2b787c94c18601186c0e27c91a4e283d694f0bbb3f8d5eeb38930a58193"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_ELIGIBILITY",
+      "operationId": "pay.eligibility.version.create",
+      "bodySchemaRef": "PAYV2.EligibilityCreate",
+      "body": {
+        "policyKey": "ACTIVE_EMPLOYMENT",
+        "inputs": [
+          {
+            "inputKey": "EMPLOYMENT_STATUS",
+            "type": {
+              "valueType": "CODE",
+              "unit": "CODE",
+              "currency": null
+            },
+            "sourceKind": "WORKFORCE_FACT",
+            "sourceField": "employmentStatus",
+            "required": true,
+            "absencePolicy": "ERROR",
+            "absenceValue": null,
+            "sourceBinding": {
+              "kind": "WORKFORCE_FACT",
+              "contractRef": "HRM.PayrollWorkforceManifest.proposal.v1",
+              "field": "employmentStatus",
+              "selection": "EXACT_WORKER_ASSIGNMENT_AS_OF"
+            }
+          }
+        ],
+        "expression": {
+          "op": "COMPARE_EQ",
+          "nodeId": "ELIGIBLE_EQ",
+          "left": {
+            "op": "INPUT",
+            "nodeId": "EMPLOYMENT_REF",
+            "inputKey": "EMPLOYMENT_STATUS"
+          },
+          "right": {
+            "op": "LITERAL",
+            "nodeId": "ACTIVE_LITERAL",
+            "value": {
+              "valueType": "CODE",
+              "unit": "CODE",
+              "value": "ACTIVE",
+              "currency": null
+            }
+          }
+        },
+        "outputType": {
+          "valueType": "BOOLEAN",
+          "unit": "BOOLEAN",
+          "currency": null
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "ELIGIBILITY",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+            "payGroupId": "00000000-0000-4000-8000-000000002011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "2919e627beaa219384a8a012dce78f84bf002005172305b0bd9324772612b53b",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ELIGIBILITY",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002024",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ELIGIBILITY",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "ELIGIBILITY"
+        ],
+        "payloadDigest": "2919e627beaa219384a8a012dce78f84bf002005172305b0bd9324772612b53b"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_ELEMENT",
+      "operationId": "element.version.create",
+      "bodySchemaRef": "PAYV2.ElementCreate",
+      "body": {
+        "elementKey": "BASE",
+        "nameKey": "pay.synthetic.base",
+        "elementType": "EARNING",
+        "valueType": {
+          "valueType": "MONEY",
+          "unit": "CURRENCY",
+          "currency": "TST"
+        },
+        "processingPriority": 51,
+        "eligibilityArtifact": {
+          "artifactType": "ELIGIBILITY",
+          "artifactId": "00000000-0000-4000-8000-000000002041",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "d46e080468e4c1b250f0875346a2678357768e28a53999bc6c6ddce0239241fb"
+        },
+        "formulaArtifact": null,
+        "roundingArtifact": {
+          "artifactType": "ROUNDING",
+          "artifactId": "00000000-0000-4000-8000-000000002040",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "4f8ff05a8a23da30aa71b9a9b88df2dd78e35efc70cb2004409d2d6dec1fb5af"
+        },
+        "sourceInput": {
+          "inputKey": "BASE_VALUE",
+          "type": {
+            "valueType": "MONEY",
+            "unit": "CURRENCY",
+            "currency": "TST"
+          },
+          "sourceKind": "WORKER_ENTRY",
+          "sourceField": "amount",
+          "required": true,
+          "absencePolicy": "ERROR",
+          "absenceValue": null,
+          "sourceBinding": {
+            "kind": "CURRENT_ELEMENT_INPUT",
+            "contractRef": "PAY.WorkerEntry.v1",
+            "thisElement": true,
+            "selection": "SINGLE_EXACT_EFFECTIVE_ENTRY"
+          }
+        },
+        "classification": {
+          "taxCode": null,
+          "insuranceCode": null,
+          "accountingCode": "BASE",
+          "countryPackRef": null
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "ELEMENT",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+            "payGroupId": "00000000-0000-4000-8000-000000002011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "02870eb62a8e7cbefcbb9189791811b2221480cfd74ae5016a86a6297a8394d4",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "ELEMENT",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002025",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "ELEMENT",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "ELEMENT"
+        ],
+        "payloadDigest": "02870eb62a8e7cbefcbb9189791811b2221480cfd74ae5016a86a6297a8394d4"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_FORMULA",
+      "operationId": "formula.version.create",
+      "bodySchemaRef": "PAYV2.FormulaCreate",
+      "body": {
+        "formulaKey": "NATIVE_RATE_ALLOWANCE",
+        "languageVersion": "PAY_RULE_AST_V1",
+        "inputs": [
+          {
+            "inputKey": "BASE_FOR_ALLOWANCE",
+            "type": {
+              "valueType": "MONEY",
+              "unit": "CURRENCY",
+              "currency": "TST"
+            },
+            "sourceKind": "WORKER_ENTRY",
+            "sourceField": "amount",
+            "required": true,
+            "absencePolicy": "ERROR",
+            "absenceValue": null,
+            "sourceBinding": {
+              "kind": "WORKER_ENTRY",
+              "contractRef": "PAY.WorkerEntry.v1",
+              "elementArtifact": {
+                "artifactType": "ELEMENT",
+                "artifactId": "00000000-0000-4000-8000-000000002054",
+                "versionNo": 1,
+                "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+                "payloadDigest": "d4e9b7c366fd33fd99a31bb59d3ee08fcba77943f5bca922a4e7c78f0db21f7f"
+              },
+              "selection": "SINGLE_EXACT_EFFECTIVE_ENTRY"
+            }
+          }
+        ],
+        "outputType": {
+          "valueType": "MONEY",
+          "unit": "CURRENCY",
+          "currency": "TST"
+        },
+        "expression": {
+          "op": "MULTIPLY",
+          "nodeId": "ALLOWANCE_MULTIPLY",
+          "left": {
+            "op": "INPUT",
+            "nodeId": "BASE_INPUT",
+            "inputKey": "BASE_FOR_ALLOWANCE"
+          },
+          "right": {
+            "op": "LITERAL",
+            "nodeId": "CONFIGURED_RATE",
+            "value": {
+              "valueType": "RATE",
+              "unit": "RATIO",
+              "value": "0.20000000",
+              "currency": null
+            }
+          }
+        },
+        "decisionTables": [],
+        "dependencyArtifacts": [],
+        "roundingArtifact": {
+          "artifactType": "ROUNDING",
+          "artifactId": "00000000-0000-4000-8000-000000002040",
+          "versionNo": 1,
+          "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+          "payloadDigest": "4f8ff05a8a23da30aa71b9a9b88df2dd78e35efc70cb2004409d2d6dec1fb5af"
+        },
+        "limits": {
+          "maxNodes": 32,
+          "maxDepth": 8,
+          "maxCollectionItems": 100,
+          "timeoutMillis": 100,
+          "memoryBytes": 65536
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "FORMULA",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+            "payGroupId": "00000000-0000-4000-8000-000000002011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "1058113a8813b87f3c407c0f3305612c486ff72aa86f45dcaba50c8a12849719",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "FORMULA",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002026",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "FORMULA",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "FORMULA"
+        ],
+        "payloadDigest": "1058113a8813b87f3c407c0f3305612c486ff72aa86f45dcaba50c8a12849719"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    },
+    {
+      "fixtureId": "PAY_CONFIG_B_GL_MAPPING",
+      "operationId": "pay.gl-mapping.version.create",
+      "bodySchemaRef": "PAYV2.GlMappingCreate",
+      "body": {
+        "mappingKey": "NATIVE_GL_1",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "lines": [
+          {
+            "elementArtifact": {
+              "artifactType": "ELEMENT",
+              "artifactId": "00000000-0000-4000-8000-000000002051",
+              "versionNo": 1,
+              "schemaVersion": "PAY_BASE_PROPOSAL_V1",
+              "payloadDigest": "c030acad9b166124d84e73abb1ac16c17f90955d603546ea4666d8a65570bb5e"
+            },
+            "debitAccountRef": "00000000-0000-4000-8000-000000002400",
+            "creditAccountRef": "00000000-0000-4000-8000-000000002401",
+            "costObjectMode": "NONE",
+            "fixedCostObjectRef": null
+          }
+        ],
+        "accountRegistrySnapshot": {
+          "contractRef": "Finance.AccountRegistrySnapshot.proposal.v1",
+          "ownerObjectId": "00000000-0000-4000-8000-000000002402",
+          "ownerRevision": 1,
+          "asOf": "2026-09-14T00:00:00Z",
+          "payloadDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "governance": {
+          "artifactKind": "GL_MAPPING",
+          "scope": {
+            "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+            "payGroupId": "00000000-0000-4000-8000-000000002011"
+          },
+          "asOf": "2026-09-14T00:00:00Z",
+          "validFrom": "2026-09-01",
+          "validTo": "2026-10-01",
+          "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+          "expectedPolicyRevision": 7,
+          "expectedPayloadDigest": "3ecf433ac2b5f4ddb8ba9c304447bf8b4fe87b10f1fa4038b656fb500a78894e",
+          "expectedOwnerRevision": 9
+        }
+      },
+      "ownerGovernanceRequest": {
+        "artifactKind": "GL_MAPPING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expectedSchemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "expectedPolicyRevision": 7,
+        "expectedPayloadDigest": null
+      },
+      "ownerGovernanceResponse": {
+        "snapshotId": "00000000-0000-4000-8000-000000002027",
+        "schemaVersion": "PAYROLL_CONFIG_GOVERNANCE_V2",
+        "artifactKind": "GL_MAPPING",
+        "scope": {
+          "legalPayrollEntityId": "00000000-0000-4000-8000-000000002010",
+          "payGroupId": "00000000-0000-4000-8000-000000002011"
+        },
+        "policyRevision": 7,
+        "ownerRevision": 9,
+        "asOf": "2026-09-14T00:00:00Z",
+        "validFrom": "2026-09-01",
+        "validTo": "2026-10-01",
+        "expiresAt": "2026-09-14T01:00:00Z",
+        "operatorRegistryVersion": "PAY_RULE_AST_V1",
+        "currencyRegistry": [
+          "TST"
+        ],
+        "timeZoneRegistry": [
+          "America/New_York"
+        ],
+        "approvalPolicyId": "00000000-0000-4000-8000-000000002030",
+        "retentionPolicyId": "00000000-0000-4000-8000-000000002031",
+        "allowedArtifactKinds": [
+          "GL_MAPPING"
+        ],
+        "payloadDigest": "3ecf433ac2b5f4ddb8ba9c304447bf8b4fe87b10f1fa4038b656fb500a78894e"
+      },
+      "ownerNativeLegalEmployer": null,
+      "syntheticOnly": true,
+      "actualNativeBootstrap": false,
+      "prerequisiteNativeLocalArtifactRestoration": "typed fixture UUID allocated output and immutable dependency payloads; actual producer/query/materialization independently OPEN"
+    }
+  ]
+}

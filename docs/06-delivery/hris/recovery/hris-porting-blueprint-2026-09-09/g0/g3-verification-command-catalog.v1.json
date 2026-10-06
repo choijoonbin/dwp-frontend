@@ -1,0 +1,193 @@
+{
+  "schema": "dwp.hris.g3.verification-command-catalog.v1",
+  "profiles": [
+    {
+      "profileId": "G3CMD-HRM-BE",
+      "ownerSessionId": "HRIS-HRM",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-people-server:test", "--tests", "*HrmG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-people-server:test", "--tests", "*HrmMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-people-server:test", "--tests", "*HrmWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3CMD-PER-BE",
+      "ownerSessionId": "HRIS-PER",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-people-server:test", "--tests", "*PerformanceG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-people-server:test", "--tests", "*PerformanceMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-people-server:test", "--tests", "*PerformanceWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3CMD-TIM-BE",
+      "ownerSessionId": "HRIS-TIM",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-time-server:test", "--tests", "*TimeG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-time-server:test", "--tests", "*TimeMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-time-server:test", "--tests", "*TimeWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3CMD-PAY-BE",
+      "ownerSessionId": "HRIS-PAY",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-payroll-server:test", "--tests", "*PayrollG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-payroll-server:test", "--tests", "*PayrollMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-payroll-server:test", "--tests", "*PayrollWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3CMD-SYS-BE",
+      "ownerSessionId": "HRIS-SYS",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "auth-slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-auth-server:test", "--tests", "*HrisAuthorizationG3SliceTest", "-PhrisSlice={slice_id}"], "appliesToMigrationAllocationIds": ["MIG-SYS-AUTH-217-245"]},
+        {"commandKey": "auth-migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-auth-server:test", "--tests", "*HrisAuthMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"], "appliesToMigrationAllocationIds": ["MIG-SYS-AUTH-217-245"]},
+        {"commandKey": "auth-worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-auth-server:test", "--tests", "*HrisAuthWorkerRecoveryTest", "-PhrisSlice={slice_id}"], "appliesToMigrationAllocationIds": ["MIG-SYS-AUTH-217-245"]},
+        {"commandKey": "platform-slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisPlatformG3SliceContractTest", "-PhrisSlice={slice_id}"], "appliesToMigrationAllocationIds": ["MIG-SYS-PLATFORM-262-290"]},
+        {"commandKey": "platform-migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisPlatformMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"], "appliesToMigrationAllocationIds": ["MIG-SYS-PLATFORM-262-290"]},
+        {"commandKey": "platform-worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisPlatformWorkerRecoveryTest", "-PhrisSlice={slice_id}"], "appliesToMigrationAllocationIds": ["MIG-SYS-PLATFORM-262-290"]}
+      ]
+    },
+    {
+      "profileId": "G3CMD-HRM-FE",
+      "ownerSessionId": "HRIS-HRM",
+      "repository": "DWP_FRONTEND",
+      "commands": [
+        {"commandKey": "architecture", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]},
+        {"commandKey": "typecheck", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]},
+        {"commandKey": "frontend-slice-test", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_frontend_slice_test_gate.py", "--project-dir", ".", "--node", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "--yarn", "/opt/homebrew/opt/node@20/bin/yarn", "--test-path", "{frontend_test_path}", "--slice-id", "{slice_id}"], "receiptType": "FRONTEND_SLICE_TEST_GATE_V1"}
+      ]
+    },
+    {
+      "profileId": "G3CMD-PER-FE",
+      "ownerSessionId": "HRIS-PER",
+      "repository": "DWP_FRONTEND",
+      "commands": [
+        {"commandKey": "architecture", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]},
+        {"commandKey": "typecheck", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]},
+        {"commandKey": "frontend-slice-test", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_frontend_slice_test_gate.py", "--project-dir", ".", "--node", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "--yarn", "/opt/homebrew/opt/node@20/bin/yarn", "--test-path", "{frontend_test_path}", "--slice-id", "{slice_id}"], "receiptType": "FRONTEND_SLICE_TEST_GATE_V1"}
+      ]
+    },
+    {
+      "profileId": "G3CMD-TIM-FE",
+      "ownerSessionId": "HRIS-TIM",
+      "repository": "DWP_FRONTEND",
+      "commands": [
+        {"commandKey": "architecture", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]},
+        {"commandKey": "typecheck", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]},
+        {"commandKey": "frontend-slice-test", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_frontend_slice_test_gate.py", "--project-dir", ".", "--node", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "--yarn", "/opt/homebrew/opt/node@20/bin/yarn", "--test-path", "{frontend_test_path}", "--slice-id", "{slice_id}"], "receiptType": "FRONTEND_SLICE_TEST_GATE_V1"}
+      ]
+    },
+    {
+      "profileId": "G3CMD-PAY-FE",
+      "ownerSessionId": "HRIS-PAY",
+      "repository": "DWP_FRONTEND",
+      "commands": [
+        {"commandKey": "architecture", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]},
+        {"commandKey": "typecheck", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]},
+        {"commandKey": "frontend-slice-test", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_frontend_slice_test_gate.py", "--project-dir", ".", "--node", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "--yarn", "/opt/homebrew/opt/node@20/bin/yarn", "--test-path", "{frontend_test_path}", "--slice-id", "{slice_id}"], "receiptType": "FRONTEND_SLICE_TEST_GATE_V1"}
+      ]
+    },
+    {
+      "profileId": "G3CMD-SYS-FE",
+      "ownerSessionId": "HRIS-SYS",
+      "repository": "DWP_FRONTEND",
+      "commands": [
+        {"commandKey": "architecture", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]},
+        {"commandKey": "typecheck", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]},
+        {"commandKey": "frontend-slice-test", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_frontend_slice_test_gate.py", "--project-dir", ".", "--node", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "--yarn", "/opt/homebrew/opt/node@20/bin/yarn", "--test-path", "{frontend_test_path}", "--slice-id", "{slice_id}"], "receiptType": "FRONTEND_SLICE_TEST_GATE_V1"}
+      ]
+    },
+    {
+      "profileId": "G3-SYS-LISTEN-CONFIGURATION-BE",
+      "ownerSessionId": "HRIS-SYS",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "configuration-slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningConfigurationG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "configuration-migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningConfigurationMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "configuration-worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningConfigurationWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3-SYS-LISTEN-PROTECTED-BE",
+      "ownerSessionId": "HRIS-SYS",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "protected-slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningProtectedG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "protected-migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningProtectedMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "protected-worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningProtectedWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3-SYS-LISTEN-INSIGHTS-BE",
+      "ownerSessionId": "HRIS-SYS",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "insights-slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningInsightsG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "insights-migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningInsightsMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "insights-worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-platform-server:test", "--tests", "*HrisListeningInsightsWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3-SYS-LISTEN-ISSUER-BE",
+      "ownerSessionId": "HRIS-SYS",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "issuer-slice-contract", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-auth-server:test", "--tests", "*HrisListeningIssuerG3SliceContractTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "issuer-migration-clean-upgrade", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-auth-server:test", "--tests", "*HrisListeningIssuerMigrationCleanUpgradeTest", "-PhrisSlice={slice_id}"]},
+        {"commandKey": "issuer-worker-recovery", "workingDirectory": ".", "argvTemplate": ["./gradlew", ":dwp-auth-server:test", "--tests", "*HrisListeningIssuerWorkerRecoveryTest", "-PhrisSlice={slice_id}"]}
+      ]
+    },
+    {
+      "profileId": "G3-SYS-LISTEN-FE",
+      "ownerSessionId": "HRIS-SYS",
+      "repository": "DWP_FRONTEND",
+      "commands": [
+        {"commandKey": "architecture", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "architecture:check"]},
+        {"commandKey": "typecheck", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "typecheck"]},
+        {"commandKey": "frontend-slice-test", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_frontend_slice_test_gate.py", "--project-dir", ".", "--node", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "--yarn", "/opt/homebrew/opt/node@20/bin/yarn", "--test-path", "{frontend_test_path}", "--slice-id", "{slice_id}"], "receiptType": "FRONTEND_SLICE_TEST_GATE_V1"}
+      ]
+    },
+    {
+      "profileId": "G3CMD-CONTROL-BE",
+      "ownerSessionId": "CONTROL",
+      "repository": "DWP_BACKEND",
+      "commands": [
+        {"commandKey": "root-check", "workingDirectory": ".", "argvTemplate": ["./gradlew", "check", "--no-daemon"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["*"]},
+        {"commandKey": "authorization-contract-gates", "workingDirectory": ".", "argvTemplate": ["./gradlew", "productAuthorizationRegistryCheck", "approvalProjectionSchemaCheck", "pilotFixturesCheck", "authorizationNegativeMatrixCheck", "--no-daemon"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE"], "appliesToFileAllocationIds": ["G3-CTL-BE-CONTRACTS", "G3-CTL-BE-GATEWAY"]},
+        {"commandKey": "openapi-exporter-unit", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "-m", "unittest", "discover", "-s", "scripts/tests", "-p", "test_export_openapi_contracts.py", "-v"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE"], "appliesToFileAllocationIds": ["G3-CTL-BE-CONTRACT-VERIFIER", "G3-CTL-BE-CONTRACTS", "G3-CTL-BE-RUNTIME"]},
+        {"commandKey": "contract-publication-verifier-unit", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "-m", "unittest", "discover", "-s", "scripts/tests", "-p", "test_verify_hris_contract_publication.py", "-v"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE"], "appliesToFileAllocationIds": ["G3-CTL-BE-CONTRACT-VERIFIER", "G3-CTL-BE-CONTRACTS"]},
+        {"commandKey": "contract-publication-source-bound", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "scripts/verify-hris-contract-publication.py", "--check"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE"], "appliesToFileAllocationIds": ["G3-CTL-BE-CONTRACTS"]},
+        {"commandKey": "domain-event-runtime-contracts", "workingDirectory": ".", "argvTemplate": ["./gradlew", "--no-daemon", ":dwp-core:test", "--tests", "*DomainEventContractRegistryTest", "--tests", "*DomainEventOrderingPolicyTest", "--tests", "*IdempotentDomainEventConsumerTest", "--tests", "*DomainEventOutboxRelayTest"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE"], "appliesToFileAllocationIds": ["G3-CTL-BE-CONTRACTS"]},
+        {"commandKey": "shared-workforce-abi-contract", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-people-server:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#publicQueryContainsNoCallerSuppliedTenantOrCallerAuthority", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#queryAndVerifiedRequestFailClosedOnInvalidOrMismatchedValues", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#guardVerifiesAuthorityBeforeProviderAndIssuedCursorAfterPage", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#issuedCursorMustBindTheLastEmittedCanonicalKey", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#authenticatedCursorReplayOrTamperIsRejectedBeforeProviderAccess", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#forgedVerifierOutputIsRejectedBeforeProviderAccess", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#pageIsContentAddressedBoundAndDefensivelyCopied", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#ownerExtensionApiIsPublicButConsumerPackagesCannotUseIt", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#recordsAndCanonicalSchemaHaveExactlyTheRegisteredSemantics", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest#neutralContractSourcesHaveNoFrameworkPersistenceOrDomainImports", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#canonicalOrderAndUniqueAssignmentKeysAreMandatory", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#requestLimitRevisionAndContinuationPositionBindEveryPage", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#cursorAndStatusCodesFailClosedOnNonCanonicalValues", "--required-test", "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest#orderingVersionIsSealedIntoTheAuthenticatedPageDigest"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-SHARED-WORKFORCE-ABI"]},
+        {"commandKey": "generated-contract-check", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "scripts/generate-hris-contracts.py", "--check"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-contract-generator-unit", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "-m", "unittest", "discover", "-s", "scripts/tests", "-p", "test_generate_hris_contracts.py", "-v"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-contract-java", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-platform-contracts:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#snapshotsMutableCollectionsAtTheGeneratedBoundary", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#rejectsMissingRequiredValuesAndInvalidCanonicalConstraints", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#rejectsCanonicalInvalidArrayItems", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#serializesCanonicalDecimalStringsAndRoundTripsAllGeneratedValueTypes", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#rejectsNonCanonicalDecimalWireTokensAndCanonicalizesSignedZero", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#rejectsMissingNullCoercedDuplicateAdditionalAndInvalidNestedWireValues", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#serializesRequiredNullTemporalAndUuidFieldsCanonicallyWithHostileMapperSettings", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#mapsCanonicalFormatsAndNumericWidthsToStableJavaTypes", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#enforcesClosedTimeUnitCurrencyBinding", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#enforcesClosedTimeHeaderLineCount", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#enforcesCompensationPlanLineCountSequenceAndIdentity", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#enforcesConfigurationScopeEffectiveRangeAndPublishedApproval", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#enforcesConnectorFourEyesActiveEvidenceAndEffectiveRange", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#enforcesReconciliationCountBalanceAndPartialErrorReference", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#enforcesNotificationRecipientStateRetryAndAuditFailureInvariants", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#notificationReceiptStateMatrixIsClosedAndExact", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#notificationAndAuditContractsRemainStrictAndPrivacyMinimizedOnWire", "--required-test", "com.dwp.platform.contract.GeneratedHrisContractTest#packagesCanonicalSchemasAndRuntimePolicyClassifications"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-pdx-notification-providers", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-notification-server:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.services.notification.hriscontracts.HrisNotificationIntentV1ProviderContractTest#admitsOnlyThePrivacyMinimizedEffectiveRecipientSet", "--required-test", "com.dwp.services.notification.hriscontracts.HrisNotificationReceiptV1ProviderContractTest#bindsReceiptToExactIntentTenantEventCorrelationAndRecipient"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-pdx-audit-provider", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-core:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.core.audit.hriscontracts.HrisAuditOutboxEventV1ProviderContractTest#projectsOnlyBoundedEvidenceIntoTheLegacyAuditEnvelope"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-pdx-people-consumers", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-people-server:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.services.people.hris.core.HrisNotificationIntentV1ConsumerContractTest#consumesCanonicalIntentAbi", "--required-test", "com.dwp.services.people.hris.core.HrisNotificationReceiptV1ConsumerContractTest#consumesCanonicalReceiptAbi", "--required-test", "com.dwp.services.people.hris.core.HrisAuditOutboxEventV1ConsumerContractTest#consumesCanonicalAuditEvidenceAbi", "--required-test", "com.dwp.services.people.hris.performance.HrisNotificationIntentV1ConsumerContractTest#consumesCanonicalIntentAbi", "--required-test", "com.dwp.services.people.hris.performance.HrisNotificationReceiptV1ConsumerContractTest#consumesCanonicalReceiptAbi", "--required-test", "com.dwp.services.people.hris.performance.HrisAuditOutboxEventV1ConsumerContractTest#consumesCanonicalAuditEvidenceAbi"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-pdx-time-consumers", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-time-server:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.services.time.hris.HrisNotificationIntentV1ConsumerContractTest#consumesCanonicalIntentAbi", "--required-test", "com.dwp.services.time.hris.HrisNotificationReceiptV1ConsumerContractTest#consumesCanonicalReceiptAbi", "--required-test", "com.dwp.services.time.hris.HrisAuditOutboxEventV1ConsumerContractTest#consumesCanonicalAuditEvidenceAbi"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-pdx-payroll-consumers", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-payroll-server:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.services.payroll.hris.HrisNotificationIntentV1ConsumerContractTest#consumesCanonicalIntentAbi", "--required-test", "com.dwp.services.payroll.hris.HrisNotificationReceiptV1ConsumerContractTest#consumesCanonicalReceiptAbi", "--required-test", "com.dwp.services.payroll.hris.HrisAuditOutboxEventV1ConsumerContractTest#consumesCanonicalAuditEvidenceAbi"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "generated-pdx-platform-consumers", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-platform-server:test", "--runtime-preflight", "NONE", "--required-test", "com.dwp.services.platform.hrisconfiguration.HrisNotificationIntentV1ConsumerContractTest#consumesCanonicalIntentAbi", "--required-test", "com.dwp.services.platform.hrisconfiguration.HrisNotificationReceiptV1ConsumerContractTest#consumesCanonicalReceiptAbi", "--required-test", "com.dwp.services.platform.hrisconfiguration.HrisAuditOutboxEventV1ConsumerContractTest#consumesCanonicalAuditEvidenceAbi"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-BE-GENERATED-HRIS-CONTRACTS"]},
+        {"commandKey": "per-stream-required-postgres", "workingDirectory": ".", "argvTemplate": ["/usr/bin/python3", "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/run_required_gradle_test_gate.py", "--project-dir", ".", "--task", ":dwp-people-server:test", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#applicationConfigurationPinsBothMigrationStreams", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#performanceFlywayUsesItsOwnSchemaHistoryAndClosedSettings", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#bootMigrationStrategyRunsPeopleThenPerformanceAndPropagatesFailures", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#performanceFailurePropagatesAndPreventsStartupCompletion", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#configurationKeepsBootPrimaryFlywayAndInitializerInControl", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#smallContextLoadsStrategyAndRequiresBootMigrationInfrastructure", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#propertiesRejectConfigurationDrift", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#peoplePropertiesRejectDisabledOrDriftedPrimaryMigrationStream", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#guardClassifiesEverySpringBootFlywayPropertyExactly", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#guardRejectsInstalledByProvenanceSpoofBeforeMigration", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#guardRejectsPreviouslyUnclassifiedBootProperties", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamConfigurationTest#performanceEffectiveConfigurationRejectsInstalledByDrift", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamPostgresTest#bootstrapsAndRevalidatesSeparatePeopleAndPerformanceHistories", "--required-test", "com.dwp.services.people.hris.migrationstream.PerformanceMigrationStreamPostgresTest#rejectsFutureAppliedPerformanceMigrationThenRetriesCleanlyAfterRepair", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationStartsOnlyAfterBothPinnedMigrationStreamsExist", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationRejectsGloballyDisabledFlyway", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationRejectsWrongPrimaryLocation", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationRejectsPartialMigrationTarget", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationRejectsFlywayAutoConfigurationExclusion", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationRejectsUnmanagedNonemptyPerformanceSchema", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationRejectsInstalledByProvenanceOverride", "--required-test", "com.dwp.services.people.hris.migrationstream.PeopleMigrationStreamStartupPostgresTest#fullApplicationRejectsPrimaryFlywayCustomizerPlaceholderMutation"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["G3-CTL-PER-MIGRATION-STREAM"]}
+      ]
+    },
+    {
+      "profileId": "G3CMD-CONTROL-FE",
+      "ownerSessionId": "CONTROL",
+      "repository": "DWP_FRONTEND",
+      "commands": [
+        {"commandKey": "full-test-serialized", "workingDirectory": ".", "argvTemplate": ["/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "test", "--maxWorkers=4", "--maxConcurrency=2"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["*"]},
+        {"commandKey": "build", "workingDirectory": ".", "argvTemplate": ["env", "DWP_AGENT_OPENAPI=/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/dwp_agent_contract/contracts/openapi/agent-public.json", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "build"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE", "CONTROL_BASELINE_SYNC"], "appliesToFileAllocationIds": ["*"]},
+        {"commandKey": "official-contract-test", "workingDirectory": ".", "argvTemplate": ["env", "DWP_OFFICIAL_BACKEND_CONTRACTS_DIR=/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts", "DWP_BACKEND_CHECKOUT=/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend", "DWP_BACKEND_REVISION={dependency_head_sha}", "DWP_BACKEND_TREE={dependency_tree_sha}", "DWP_BACKEND_CONTRACT_MANIFEST={dependency_manifest_ref}", "DWP_BACKEND_CONTRACT_BUNDLE_SHA256={dependency_bundle_sha256}", "DWP_BACKEND_CONTRACT_CHECKPOINT_ID={dependency_checkpoint_id}", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "release:contracts:test"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE"], "appliesToFileAllocationIds": ["G3-CTL-FE-CONTRACTS"]},
+        {"commandKey": "official-contract-check", "workingDirectory": ".", "argvTemplate": ["env", "DWP_OFFICIAL_BACKEND_CONTRACTS_DIR=/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts", "DWP_BACKEND_CHECKOUT=/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend", "DWP_BACKEND_REVISION={dependency_head_sha}", "DWP_BACKEND_TREE={dependency_tree_sha}", "DWP_BACKEND_CONTRACT_MANIFEST={dependency_manifest_ref}", "DWP_BACKEND_CONTRACT_BUNDLE_SHA256={dependency_bundle_sha256}", "DWP_BACKEND_CONTRACT_CHECKPOINT_ID={dependency_checkpoint_id}", "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node", "/opt/homebrew/opt/node@20/bin/yarn", "release:contracts:check"], "checkpointKinds": ["CENTRAL_MATERIALIZATION", "INTEGRATION_MERGE"], "appliesToFileAllocationIds": ["G3-CTL-FE-CONTRACTS"]}
+      ]
+    }
+  ]
+}

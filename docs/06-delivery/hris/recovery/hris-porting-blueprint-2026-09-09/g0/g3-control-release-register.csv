@@ -1,0 +1,1 @@
+release_seq,release_id,artifact_classification_id,producer_checkpoint_id,predecessor_release_id,repository,source_head_sha,source_tree_sha,path_manifest_ref,path_manifest_sha256,release_commit_sha,consumer_session_ids,recorded_at,status

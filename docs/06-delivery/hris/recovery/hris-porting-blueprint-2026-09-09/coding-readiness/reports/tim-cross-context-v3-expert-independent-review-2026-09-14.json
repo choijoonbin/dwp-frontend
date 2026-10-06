@@ -1,0 +1,990 @@
+{
+  "schemaVersion": "dwp.hris.tim-context-v3-expert-independent-review.v1",
+  "status": "INDEPENDENT_BOUNDED_REVIEW_NOT_WHOLE_SOURCE_APPROVAL",
+  "reviewDate": "2026-09-14",
+  "author": "current_backend_readiness_recheck",
+  "candidateAuthor": "root",
+  "CURRENT_PUBLISHED": false,
+  "G3Gate": "CLOSED_FAIL_SAFE",
+  "wholeBusinessSourceApproved": false,
+  "nativeExecution": false,
+  "operatingDDL": false,
+  "correctionApplied": false,
+  "independentBoundedStructuralReplay": "PASS_20_CASES",
+  "scope": {
+    "allowedWrites": "Only this new independent JSON/MD report pair",
+    "excluded": [
+      "Frozen TIM original/review/root candidate",
+      "All canonical registries/CSV/Gate",
+      "BE/main/SQL/server/runtime/containers",
+      "Frozen PAY v3 fourteen files/HRM v2 eleven files"
+    ],
+    "structuralResultNotMeaningApproval": true,
+    "source112UnfixedOperations": 112,
+    "detailed4StillUnclosed": true
+  },
+  "execution": {
+    "startedAt": "2026-09-14T08:39:23.549763+00:00",
+    "finishedAt": "2026-09-14T08:39:24.198792+00:00",
+    "argv": [
+      "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_cross_context_successor_v3.py"
+    ],
+    "pythonVersion": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+    "exitCode": 0,
+    "uniqueCases": 20,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "rawArchive": {
+      "encoding": "gzip+base64",
+      "sha256": "99c36de4f97cb026dc7598b687068a6a4e770faf9c6fbd5e2956d1fcc15d68c2",
+      "uncompressedBytes": 2763,
+      "payload": "H4sIAAAAAAACE61VPXPbMAzd/Ss0tkN9aa9D944detdkx1EkbKGmQIUEFbu/vqCV2JWucSRdPHgR8d7D14NgEjB1AqEWoc6JGFOCp0iCQAki/kYr6KoPAK0hBtg+UPs9sOBR7rO1+jrEB0VJW5mJ9bHabrdVOGwuAb3x5IxQYDDsYB96jGzYIpiI5xfhiReKmIk5EeM9hA7jEEcOWUgI0zmmi5gw9uhAJYToMM4XtAx3LMrGoGW0AzrsDlpIYonBZTvArWjTAsyxGJc7T9ZoR8XU/jmDxfQ3UcaEO3PQEul3FkghR7tuLm/DTChpJ4gMeDRWoA6ZnYmlWxwEAvsTNJQkRM3AgzQUy+v5StagTwQeQE4dQkupNWKbdRW5ATKhi+GPCibusgytKlLbLGYR3y2UMeG+TIY1XB7UWDZnyfb/N3pMQNzrIIR4AhdDt6p8r0OMqa5rv5rqdYgJVaQ9sU5Nsg22RuvLnL0vG6b18FgGDfS/IFxMZ76KNehjgRHbUHzueQFrYke8X1WTt6HG1EW0y764bSjfSzUbo0pzrU50sYTBmU+a3HDF1BTL2fCwC+qQe4YDnmZrfEfOSTJ0fIl+9s/G9NqF0HYey7Flrb5cisKmxTRf9QrwibwhukXD5YXpNH89x//sZHHj+b2eiTcR8ejVYtHmc9mvT4foJexvAI1p1c3RenU393JtMtNjxtLEVYM+F3AqQzcw+P4a5VB9UEfNllNzzaIh5xYcr4W4F1GbT+/y2/wyXH25q4qWVBFXd9uvn7+lzebnj81feinoOssKAAA="
+    },
+    "caseNames": [
+      "test_abs_time_business_write_is_rejected",
+      "test_abs_validation_and_governance_are_abs_owned",
+      "test_all_operation_identities_are_preserved_in_order",
+      "test_cross_context_fk_reintroduction_is_rejected",
+      "test_duplicate_tables_are_rejected",
+      "test_fake_parent_source_is_rejected",
+      "test_fifteen_exact_boundaries_not_only_historical_thirteen",
+      "test_fk_type_mismatch_is_rejected",
+      "test_frozen_inputs_are_not_mutated",
+      "test_gate_cannot_be_opened",
+      "test_inventory_drop_is_rejected",
+      "test_operation_drop_is_rejected",
+      "test_original_schema_nonnullable_calendar_end_is_preserved",
+      "test_removed_source_binding_is_rejected",
+      "test_schedule_projection_has_public_source_identity_no_time_internal_foreign_key",
+      "test_six_source_tables_have_complete_insert_binding_names",
+      "test_source_meaning_approval_cannot_be_faked",
+      "test_sql_execution_cannot_be_approved",
+      "test_undeclared_parent_unique_key_is_rejected",
+      "test_unresolved_parent_dependencies_cannot_be_hidden"
+    ],
+    "sqlRefusal": {
+      "argv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+        "--sql"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "SQL export refused: external parent source/key contracts remain OPEN\n"
+    },
+    "mutationStartedAt": "2026-09-14T08:40:34.181653+00:00",
+    "mutationFinishedAt": "2026-09-14T08:40:35.125436+00:00",
+    "mutationNature": "In-memory copies only; validate() calls, not modified file CLI or native domain execution",
+    "preciseMutationProbes": [
+      {
+        "id": "ABS_validate_unmapped_TIME_write",
+        "validatorResult": "ACCEPTED",
+        "error": null,
+        "mutation": "append tme_time_cards to tim.leave-policy.validate.writesTables"
+      },
+      {
+        "id": "ABS_validate_stale_TIME_read",
+        "validatorResult": "ACCEPTED",
+        "error": null,
+        "mutation": "append old tme_owner_artifact_snapshots to tim.leave-policy.validate.readsTables"
+      },
+      {
+        "id": "ABS_fabricated_source_keeps_names",
+        "validatorResult": "ACCEPTED",
+        "error": null,
+        "mutation": "replace abs_entitlement_input_versions.input_payload with actor/tenant-only string"
+      },
+      {
+        "id": "ABS_gate_open_control",
+        "validatorResult": "REJECTED",
+        "error": "bounded physical plan cannot approve G3",
+        "mutation": "G3Gate OPEN"
+      },
+      {
+        "id": "local_fk_type_mismatch_control",
+        "validatorResult": "REJECTED",
+        "error": "FK source/SQL type mismatch",
+        "mutation": "existing local BIGINT FK child TEXT"
+      }
+    ],
+    "additionalValidateOnlyProbes": [
+      {
+        "id": "native_execution_true",
+        "validatorResult": "ACCEPTED",
+        "error": null
+      },
+      {
+        "id": "empty_source_value",
+        "validatorResult": "ACCEPTED",
+        "error": null
+      },
+      {
+        "id": "boundary_inventory_fabricated",
+        "validatorResult": "ACCEPTED",
+        "error": null
+      },
+      {
+        "id": "external_fk_unknown_child_empty_parent",
+        "validatorResult": "ACCEPTED",
+        "error": null
+      },
+      {
+        "id": "synchronized_operation_oracle_drop",
+        "validatorResult": "ACCEPTED",
+        "error": null
+      },
+      {
+        "id": "required_open_catalog_erased",
+        "validatorResult": "ACCEPTED",
+        "error": null
+      }
+    ],
+    "inspectionFailuresPreserved": [
+      {
+        "type": "Python command quoting SyntaxError",
+        "effect": "Inspection command failed before reading report; no writes/native tests"
+      },
+      {
+        "type": "Independent helper KeyError table",
+        "effect": "Helper expected wrong tableName key after unit process; no candidate mutation/output retained; final helper corrected and actual20 cases rerun with raw archive"
+      }
+    ]
+  },
+  "sourceEvidence": {
+    "sourcePinsBefore": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+        "sha256": "b524d4b51ed62c5630a01ebf72e4df18a387369ef0b9baca6cd6cc175128c88f",
+        "mtimeNs": "1789374268687511462",
+        "bytes": 23000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_cross_context_successor_v3.py",
+        "sha256": "8bcce6235f14a1cf030cc35375bebd4dc2bb5860c4d4808d0c686490c64edaf9",
+        "mtimeNs": "1789374320155499078",
+        "bytes": 6696
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v3.md",
+        "sha256": "cc25cad8b769f30209859fe29a3de6b5819e17e785274b9052580e2460e51889",
+        "mtimeNs": "1789374445361825197",
+        "bytes": 5924
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+        "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+        "mtimeNs": "1789352926476163369",
+        "bytes": 10707168
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.md",
+        "sha256": "32fa6514408faf690de707ca7c585fb957df8b3cfc1145b035f87a3079d5ddbb",
+        "mtimeNs": "1789353050333481717",
+        "bytes": 56445
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+        "sha256": "04a4785e199b9babc92ae71c0a35df282194bb97adccc7eb31579a602d2cc448",
+        "mtimeNs": "1789356809098400292",
+        "bytes": 961484
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.md",
+        "sha256": "8289dea17e2d593882973768ea999374ef85f62d52f3cca485091b5a3274c600",
+        "mtimeNs": "1789357012232871367",
+        "bytes": 16326
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+        "sha256": "76d2c5b45098062def03ceaa3ad71dfa271a9160cdfc8deebc5d688f87dbc3e4",
+        "mtimeNs": "1789357012216608943",
+        "bytes": 34257
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.json",
+        "sha256": "d61723e26d9830ac634d2ae06ec44c758633519d80d95701d4cc30c901d52b11",
+        "mtimeNs": "1789353445007866272",
+        "bytes": 205514
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.md",
+        "sha256": "4291c17ab598367e7ee5e96813052b6d2a43ca0b5d29dcba0bd8302f0a2575a6",
+        "mtimeNs": "1789353795123785397",
+        "bytes": 8741
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-cross-context-boundary-v3-author-candidate-2026-09-14.json",
+        "sha256": "827a7ea602ff80daa27446534f540b61a28f2cb2469be0d46856713e7d9bca91",
+        "mtimeNs": "1789374445361611696",
+        "bytes": 60880
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-cross-context-v3-initial-author-probe-2026-09-14.md",
+        "sha256": "120e68827b715a20647634ecb6429e618c244c2fa953b49a8133df06af1d52d9",
+        "mtimeNs": "1789374908953963639",
+        "bytes": 2800
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv",
+        "sha256": "7413f9d227b889f7b86949d8998f40823d953ab097047646a34a00cc023c9cba",
+        "mtimeNs": "1789054095274304138",
+        "bytes": 2015
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-physical-schema.sql",
+        "sha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+        "mtimeNs": "1789048173239496293",
+        "bytes": 45482
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-transport-schemas.v1.json",
+        "sha256": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc",
+        "mtimeNs": "1789040573817850694",
+        "bytes": 28885
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json",
+        "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f",
+        "mtimeNs": "1789039925774777028",
+        "bytes": 19564
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/decimal-value-types.v1.json",
+        "sha256": "8597640fa5cf5051cccc14fe4b83a4f179d54dfe36f0ffdaa319dc1149b5c6a6",
+        "mtimeNs": "1789030395989818747",
+        "bytes": 5766
+      }
+    ],
+    "sourcePinsAfter": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+        "sha256": "b524d4b51ed62c5630a01ebf72e4df18a387369ef0b9baca6cd6cc175128c88f",
+        "mtimeNs": "1789374268687511462",
+        "bytes": 23000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_cross_context_successor_v3.py",
+        "sha256": "8bcce6235f14a1cf030cc35375bebd4dc2bb5860c4d4808d0c686490c64edaf9",
+        "mtimeNs": "1789374320155499078",
+        "bytes": 6696
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v3.md",
+        "sha256": "cc25cad8b769f30209859fe29a3de6b5819e17e785274b9052580e2460e51889",
+        "mtimeNs": "1789374445361825197",
+        "bytes": 5924
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+        "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+        "mtimeNs": "1789352926476163369",
+        "bytes": 10707168
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.md",
+        "sha256": "32fa6514408faf690de707ca7c585fb957df8b3cfc1145b035f87a3079d5ddbb",
+        "mtimeNs": "1789353050333481717",
+        "bytes": 56445
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+        "sha256": "04a4785e199b9babc92ae71c0a35df282194bb97adccc7eb31579a602d2cc448",
+        "mtimeNs": "1789356809098400292",
+        "bytes": 961484
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.md",
+        "sha256": "8289dea17e2d593882973768ea999374ef85f62d52f3cca485091b5a3274c600",
+        "mtimeNs": "1789357012232871367",
+        "bytes": 16326
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+        "sha256": "76d2c5b45098062def03ceaa3ad71dfa271a9160cdfc8deebc5d688f87dbc3e4",
+        "mtimeNs": "1789357012216608943",
+        "bytes": 34257
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.json",
+        "sha256": "d61723e26d9830ac634d2ae06ec44c758633519d80d95701d4cc30c901d52b11",
+        "mtimeNs": "1789353445007866272",
+        "bytes": 205514
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.md",
+        "sha256": "4291c17ab598367e7ee5e96813052b6d2a43ca0b5d29dcba0bd8302f0a2575a6",
+        "mtimeNs": "1789353795123785397",
+        "bytes": 8741
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-cross-context-boundary-v3-author-candidate-2026-09-14.json",
+        "sha256": "827a7ea602ff80daa27446534f540b61a28f2cb2469be0d46856713e7d9bca91",
+        "mtimeNs": "1789374445361611696",
+        "bytes": 60880
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-cross-context-v3-initial-author-probe-2026-09-14.md",
+        "sha256": "120e68827b715a20647634ecb6429e618c244c2fa953b49a8133df06af1d52d9",
+        "mtimeNs": "1789374908953963639",
+        "bytes": 2800
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv",
+        "sha256": "7413f9d227b889f7b86949d8998f40823d953ab097047646a34a00cc023c9cba",
+        "mtimeNs": "1789054095274304138",
+        "bytes": 2015
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-physical-schema.sql",
+        "sha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+        "mtimeNs": "1789048173239496293",
+        "bytes": 45482
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-transport-schemas.v1.json",
+        "sha256": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc",
+        "mtimeNs": "1789040573817850694",
+        "bytes": 28885
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json",
+        "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f",
+        "mtimeNs": "1789039925774777028",
+        "bytes": 19564
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/decimal-value-types.v1.json",
+        "sha256": "8597640fa5cf5051cccc14fe4b83a4f179d54dfe36f0ffdaa319dc1149b5c6a6",
+        "mtimeNs": "1789030395989818747",
+        "bytes": 5766
+      }
+    ],
+    "shaAndDecimalNsUnchanged": true,
+    "rootFourCandidatePins": [
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+        "sha256": "b524d4b51ed62c5630a01ebf72e4df18a387369ef0b9baca6cd6cc175128c88f",
+        "mtimeNs": "1789374268687511462",
+        "bytes": 23000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_cross_context_successor_v3.py",
+        "sha256": "8bcce6235f14a1cf030cc35375bebd4dc2bb5860c4d4808d0c686490c64edaf9",
+        "mtimeNs": "1789374320155499078",
+        "bytes": 6696
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v3.md",
+        "sha256": "cc25cad8b769f30209859fe29a3de6b5819e17e785274b9052580e2460e51889",
+        "mtimeNs": "1789374445361825197",
+        "bytes": 5924
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-cross-context-boundary-v3-author-candidate-2026-09-14.json",
+        "sha256": "827a7ea602ff80daa27446534f540b61a28f2cb2469be0d46856713e7d9bca91",
+        "mtimeNs": "1789374445361611696",
+        "bytes": 60880
+      }
+    ],
+    "authorArchives": {
+      "unitRawArchive": {
+        "digestMatches": true,
+        "bytesMatch": true,
+        "sha256": "9087817a6d0a9eb7c882f6bb5ceb01833ad20123db9cfd3e7adf7a456f0aaf99",
+        "uncompressedBytes": 2763,
+        "caseLines": 20
+      },
+      "tablePlansArchive": {
+        "digestMatches": true,
+        "bytesMatch": true,
+        "sha256": "c962b4c3aa0ea9f258ed509bcf2e02bfc3200d535e4b870b8db1a9ae1426dfcf",
+        "uncompressedBytes": 427761,
+        "tableCount": 52
+      }
+    },
+    "regeneratedPlanDigest": {
+      "sha256": "3550d5600c5acff8c3f6924584089909e21eab9c01aa498c1d93f9e3d8d669cc",
+      "bytes": 1070750
+    },
+    "regeneratedMatchesSavedAuthorSha": true,
+    "initialAuthorFailedProbesPreserved": "Read existing initial-author-probe MD; its missing pre/post capture not retroactively certified.",
+    "nativeSourceSnapshot": "Read saved G2 SQL and current WFM proposal only; no native DB lookup/replay by this reviewer"
+  },
+  "verifiedStructuralFacts": {
+    "tables": 52,
+    "columns": 723,
+    "operations": 116,
+    "affectedAbsOperations": 45,
+    "originalCrossFks": 13,
+    "reviewedCrossFks": 15,
+    "currentCrossFks": 0,
+    "foreignKeys": 108,
+    "explicitBindingNames": 95,
+    "externalParents": [
+      "tme_close_periods",
+      "tme_command_receipts",
+      "tme_wfm_schedule_candidates"
+    ],
+    "newAbsParents": [
+      "abs_owner_artifact_snapshots",
+      "abs_policy_evaluation_reports",
+      "abs_policy_governance_bindings",
+      "abs_calendar_version_snapshots",
+      "abs_time_schedule_segment_snapshots"
+    ],
+    "originalAndReviewedInputsRemainUnchanged": true,
+    "all116IdOrderEqualsReviewed": true,
+    "sqlExecutionAllowed": false
+  },
+  "intentionalDesignBoundaries": {
+    "leaveGovernance": "ABS owns leave policy validation/simulation/governance parents; TIME owns work rule/shift/pattern governance.",
+    "calendar": "Direct SYS calendar must work without optional WFM; exact conditional adapter/absence-only canonical availability orchestration unverified.",
+    "immutableInput": {
+      "revisionSchema": {
+        "const": 1
+      },
+      "inputTableChecks": [
+        "revision=1",
+        "selected_count>0"
+      ],
+      "editableInputOps": []
+    },
+    "inputRevisionConclusion": "No input.edit/update/revise operation found in reviewed116; document const1 and new-run-only correction are aligned. Do not invent an existing-edit defect. Run recovery/constructor/branch/source semantics remain unverified.",
+    "nativeParentConclusion": "Existing G2 public composite keys for receipt/close are real; complete dependency import and WFM native publication still OPEN.",
+    "gateBoundary": "G3 requires exact planned schemas/SQL/read-write/state/source/fixtures/test allocation plus shared DTO/SPI/fail-closed adapters/consumer compile/current pilot. G4 full-domain DML/CRUD/native journeys and G6 customer/country/provider activation are not prerequisites for coding-preparation design."
+  },
+  "findings": [
+    {
+      "id": "TIM-V3-EXPERT-P0-001",
+      "title": "Termination treatment enum source mismatch",
+      "classification": "DEFINITE_DESIGN_SOURCE_DEFECT",
+      "severity": "P0",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 80
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 83
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+          "line": null,
+          "pointer": "RFC-applied/$defs/TIM.LeavePolicyContent.v1/properties/terminationTreatment/enum"
+        }
+      ],
+      "observed": {
+        "rootSource": "actual immutable published leavePolicyContent.terminationTreatment; STOP_ONLY/PRORATE_FINAL_PERIOD/OWNER_APPROVED_SETTLEMENT exact supported branch",
+        "actualReviewedEnum": [
+          "PRORATE_FINAL_PERIOD",
+          "STOP_FUTURE_ONLY",
+          "OWNER_APPROVED_SETTLEMENT"
+        ],
+        "matchedSTOP_ONLY": false
+      },
+      "closingCondition": "Use exact STOP_FUTURE_ONLY/PRORATE_FINAL_PERIOD/OWNER_APPROVED_SETTLEMENT branches in the next pinned successor; compare every source/transition/fixture enum against the closed owner schema and include STOP_ONLY rejection. Do not silently coerce or relabel the old pin."
+    },
+    {
+      "id": "TIM-V3-EXPERT-P0-002",
+      "title": "ABS schedule clone is not an owner-only typed projection",
+      "classification": "DEFINITE_RETAINED_SOURCE_DEFECT_AND_DECLARED_OPEN",
+      "severity": "P0",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 191
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 198
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 203
+        }
+      ],
+      "observed": {
+        "ruleDigest": "exact immutable loaded tme_work_rule_set_versions.content_digest",
+        "lineKey": "validated per row body.segments[].lineKey or WFM lineKey+segment ordinal deterministic local key",
+        "ownerFieldSources": {
+          "source_segment_public_id": "trusted exact TIME schedule owner snapshot selected segment.source_segment_public_id; never caller or TIME internal key",
+          "assignment_public_id": "trusted exact TIME schedule owner snapshot selected segment.assignment_public_id; never caller or TIME internal key",
+          "source_revision": "trusted exact TIME schedule owner snapshot selected segment.source_revision; never caller or TIME internal key"
+        },
+        "responseProjectionBindings": [],
+        "historicalWorkerDisposition": {
+          "sourceColumn": "worker_public_id",
+          "sourceSqlType": "UUID",
+          "decision": "HISTORICAL_SOURCE_RESTORATION_MAPPING_REQUIRES_OWNER_APPROVAL_NOT_SILENT_DROP",
+          "target": null,
+          "approvalState": "DESIGN_PROPOSED; all historical blobs preserved; generic formula/legacy source cannot be automatically guessed"
+        }
+      },
+      "closingCondition": "Define closed published TIME schedule snapshot/header/segment DTOs, operation, typed adapter fieldSources and exact snapshot-level versus segment-level locations. All ABS imported business columns, including ruleDigest/lineKey/paid/zone/DST fields, come from this immutable owner response, not caller/body or direct TIME repository. Retain provenance/native UUID membership and reconcile historical disposition metadata. Disabled schedule capability requires zero adapter calls; installed missing/stale/purpose mismatch denies."
+    },
+    {
+      "id": "TIM-V3-EXPERT-P0-003",
+      "title": "Executable source/read/query/event remap is incomplete",
+      "classification": "DECLARED_REQUIRED_G3_OPEN_WITH_VALIDATOR_BLIND_SPOTS",
+      "severity": "P0",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 231
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 244
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 283
+        }
+      ],
+      "observed": {
+        "omittedSections": [
+          "$defs",
+          "stateMachines",
+          "procedureContracts",
+          "ruleRegistry",
+          "ownerContractDeltas",
+          "ownerCommandRequirements",
+          "eventSchemas",
+          "operationFieldLineage",
+          "derivationRules",
+          "configurationFixtures",
+          "negativeCaseCatalog",
+          "migrationPlan",
+          "testAllocation"
+        ],
+        "mutationProbes": [
+          {
+            "id": "ABS_validate_unmapped_TIME_write",
+            "validatorResult": "ACCEPTED",
+            "error": null,
+            "mutation": "append tme_time_cards to tim.leave-policy.validate.writesTables"
+          },
+          {
+            "id": "ABS_validate_stale_TIME_read",
+            "validatorResult": "ACCEPTED",
+            "error": null,
+            "mutation": "append old tme_owner_artifact_snapshots to tim.leave-policy.validate.readsTables"
+          }
+        ]
+      },
+      "closingCondition": "Make exact disposition and graph deltas for every executable old table reference in schemas/referenceContract/request/record/query/state/procedure/owner-command/event/operationFieldLineage/derivation/config fixtures/negative/test allocation. Classify neutral infrastructure separately. Validate both reads and writes against explicit bounded-context ownership and immutable owner imports; reject stale five-map reads and any unauthorized other TIME business write."
+    },
+    {
+      "id": "TIM-V3-EXPERT-P0-004",
+      "title": "95 source binding names are not value/type/parent/hash closure",
+      "classification": "DECLARED_REQUIRED_G3_OPEN_AND_ACTUAL_VALIDATION_BLIND_SPOT",
+      "severity": "P0",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 218
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 268
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_cross_context_successor_v3.py",
+          "line": 58
+        }
+      ],
+      "observed": {
+        "bindingNames": 95,
+        "fabricatedSourceProbe": {
+          "id": "ABS_fabricated_source_keeps_names",
+          "validatorResult": "ACCEPTED",
+          "error": null,
+          "mutation": "replace abs_entitlement_input_versions.input_payload with actor/tenant-only string"
+        },
+        "emptySourceAccepted": {
+          "id": "empty_source_value",
+          "validatorResult": "ACCEPTED",
+          "error": null
+        }
+      },
+      "closingCondition": "Closed typed source graph/assembler contracts must derive each column from actual body paths, normalized mutations, tenant/CAS-loaded parent tuples, owner snapshot fields, invocation/clock, secure allocator, INSERT/UPDATE RETURNING and guarded receipt/event projection. Validate leaf SQL types/nullability/parent version/digest and every branch. Empty/filler actor+tenant sources are fatal. Counts/string rule labels never certify business source closure."
+    },
+    {
+      "id": "TIM-V3-EXPERT-P0-005",
+      "title": "Three external native parents are missing from executable dependency plan",
+      "classification": "DECLARED_REQUIRED_G3_DEPENDENCY_OPEN_NOT_BLANKET_MISSING_NATIVE_KEYS",
+      "severity": "P0",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 43
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 270
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-physical-schema.sql",
+          "line": 709
+        }
+      ],
+      "observed": {
+        "externalForeignKeys": [
+          {
+            "child": "tme_schedule_publication_receipts",
+            "columns": [
+              "tenant_id",
+              "native_command_receipt_public_id"
+            ],
+            "targetTable": "tme_command_receipts",
+            "targetColumns": [
+              "tenant_id",
+              "public_id"
+            ],
+            "kind": "TENANT_LOCAL",
+            "onDelete": "RESTRICT",
+            "deferrable": false
+          },
+          {
+            "child": "tme_schedule_publication_receipts",
+            "columns": [
+              "tenant_id",
+              "wfm_candidate_id"
+            ],
+            "targetTable": "tme_wfm_schedule_candidates",
+            "targetColumns": [
+              "tenant_id",
+              "schedule_candidate_id"
+            ],
+            "kind": "TENANT_LOCAL",
+            "onDelete": "RESTRICT",
+            "deferrable": false
+          },
+          {
+            "child": "tme_time_cards",
+            "columns": [
+              "tenant_id",
+              "close_period_public_id"
+            ],
+            "targetTable": "tme_close_periods",
+            "targetColumns": [
+              "tenant_id",
+              "public_id"
+            ],
+            "kind": "TENANT_LOCAL",
+            "onDelete": "RESTRICT",
+            "deferrable": false
+          }
+        ],
+        "malformedExternalProbe": {
+          "id": "external_fk_unknown_child_empty_parent",
+          "validatorResult": "ACCEPTED",
+          "error": null
+        },
+        "receiptNativeUniquePublic": [
+          "tenant_id",
+          "public_id"
+        ],
+        "receiptNativeInternalPrimaryKey": "command_receipt_id BIGSERIAL PRIMARY KEY; no UNIQUE(tenant_id,command_receipt_id)",
+        "closeNativeUniquePublic": [
+          "tenant_id",
+          "public_id"
+        ],
+        "wfmCandidateProposalUniqueInternal": [
+          "tenant_id",
+          "schedule_candidate_id"
+        ]
+      },
+      "closingCondition": "Pin and import exact native dependency metadata for each external parent: table/schema/owner/id SQL type/tenant/public and internal composite UK/immutability/RLS/availability. Present FKs use receipt.public_id and close_periods.public_id, which already have G2 composite public UKs; do not falsely require new internal UK for those edges. An internal receipt FK would require explicit additive composite key planning. WFM candidate's composite internal UK exists in an unpublished proposal, not native execution. Unknown child, arity, SQL type and tenant tuple must be rejected even for known unresolved parent names. Keep --sql denied until approved complete dependency closure; no arbitrary Flyway version."
+    },
+    {
+      "id": "TIM-V3-EXPERT-P0-006",
+      "title": "Planned SQL excludes all business CHECK metadata",
+      "classification": "DECLARED_SQL_SEMANTIC_OPEN_NOT_NATIVE_EXECUTION",
+      "severity": "P0",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 126
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 140
+        }
+      ],
+      "observed": {
+        "declaredBusinessChecks": 106,
+        "emittedBusinessChecks": 0,
+        "rlsWithCheckExcludedFromCount": true
+      },
+      "closingCondition": "Separate SQL-checkable constraints from non-SQL owner semantic requirements; translate the former with exact safe grammar and compare generated SQL to metadata, preserve defer/FK/index/immutability requirements. Current106 metadata checks are not emitted by plannedCreateSql and must not be interpreted as executable physical constraints. Full G4 DML is not needed to complete this planned SQL design."
+    },
+    {
+      "id": "TIM-V3-EXPERT-P0-007",
+      "title": "New closed DTOs and native authority revision adaptation remain undefined",
+      "classification": "DECLARED_REQUIRED_G3_ABI_SOURCE_OPEN",
+      "severity": "P0",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 180
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 246
+        }
+      ],
+      "observed": {
+        "plannedButUndefinedSchemas": [
+          "TIM.Record.abs_time_schedule_segment_snapshots.v3",
+          "TIM.SqlBind.abs_time_schedule_segment_snapshots.v3",
+          "TIM.TerminationInstruction.v3"
+        ],
+        "ownerSnapshotRevision": "snapshot_revision/source_revision BIGINT may remain genuine business counters; must not copy auth-/policy-/psc-/psr- opaque authority tokens into numeric columns",
+        "authoritySemantics": "Actor Auth userRowVersion/accessRevision and subject People person/worker/relationship/assignment versions are separate from current purpose/population/field/SoD evidence. Raw DTO labels are not PEP."
+      },
+      "closingCondition": "Publish planned closed record/bind/owner response schemas plus actual owner operation and typed field adapter contracts; distinguish local business revisions from native opaque authority types. Wire shared DTO/SPI/fail-closed guard and consumer compile/pilot evidence in G3; transport/native current authority publication remains OPEN until real sources are integrated, not assumed from enum or historical numeric fixtures."
+    },
+    {
+      "id": "TIM-V3-EXPERT-P1-008",
+      "title": "Validator metadata and catalog self-consistency are weaker than independent oracle",
+      "classification": "ACTUAL_VALIDATE_ONLY_BLIND_SPOT_NO_CLI_GATE_OPEN",
+      "severity": "P1",
+      "evidence": [
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 257
+        },
+        {
+          "file": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+          "line": 286
+        }
+      ],
+      "observed": [
+        {
+          "id": "native_execution_true",
+          "validatorResult": "ACCEPTED",
+          "error": null
+        },
+        {
+          "id": "boundary_inventory_fabricated",
+          "validatorResult": "ACCEPTED",
+          "error": null
+        },
+        {
+          "id": "synchronized_operation_oracle_drop",
+          "validatorResult": "ACCEPTED",
+          "error": null
+        },
+        {
+          "id": "required_open_catalog_erased",
+          "validatorResult": "ACCEPTED",
+          "error": null
+        }
+      ],
+      "closingCondition": "Freeze independent expected116 IDs/order and exact15 boundary tuples/dispositions outside candidate-mutated input; enforce required OPEN registry keys and false native evidence flags. load_inputs should verify pinned delta/loader as well as base in the next approved source. Synchronized operation drop accepts validate() alone, whereas current20 unit tests compare independent reviewed length/order; report these scopes separately."
+    }
+  ],
+  "remainingSourceRegistry": {
+    "boundedDetailedOperationIds": [
+      "tim.rule.create",
+      "tim.leave.entitlement.run",
+      "tim.leave.enrollment.cancel",
+      "tim.leave.entitlement.input.get"
+    ],
+    "unfixedExactOperationIds": [
+      "tim.rule.query",
+      "tim.rule.get",
+      "tim.rule.validate",
+      "tim.rule.simulate",
+      "tim.rule.submit",
+      "tim.rule.publish",
+      "tim.rule.cancel",
+      "tim.rule.retire",
+      "tim.rule.governance.receive",
+      "tim.shift.create",
+      "tim.shift.query",
+      "tim.shift.get",
+      "tim.shift.validate",
+      "tim.shift.simulate",
+      "tim.shift.submit",
+      "tim.shift.publish",
+      "tim.shift.cancel",
+      "tim.shift.retire",
+      "tim.shift.governance.receive",
+      "tim.pattern.create",
+      "tim.pattern.query",
+      "tim.pattern.get",
+      "tim.pattern.validate",
+      "tim.pattern.simulate",
+      "tim.pattern.submit",
+      "tim.pattern.publish",
+      "tim.pattern.cancel",
+      "tim.pattern.retire",
+      "tim.pattern.governance.receive",
+      "tim.leave-policy.create",
+      "tim.leave-policy.query",
+      "tim.leave-policy.get",
+      "tim.leave-policy.validate",
+      "tim.leave-policy.simulate",
+      "tim.leave-policy.submit",
+      "tim.leave-policy.publish",
+      "tim.leave-policy.cancel",
+      "tim.leave-policy.retire",
+      "tim.leave-policy.governance.receive",
+      "tim.group.create",
+      "tim.group.members.assign",
+      "tim.group.members.query",
+      "tim.schedule.create",
+      "tim.schedule.query",
+      "tim.schedule.get",
+      "tim.schedule.assign",
+      "tim.schedule.assignments.query",
+      "tim.schedule.segments.query",
+      "tim.schedule.validate",
+      "tim.schedule.evaluation.get",
+      "tim.schedule.submit",
+      "tim.schedule.withdraw",
+      "tim.schedule.approval.receive",
+      "tim.schedule.publish",
+      "tim.schedule.publication.get",
+      "tim.schedule.amend",
+      "tim.schedule.cancel",
+      "tim.schedule.approval.reconcile",
+      "tim.schedule.published-cancel.create",
+      "tim.leave.enrollment.create",
+      "tim.leave.enrollment.query",
+      "tim.leave.enrollment.get",
+      "tim.leave.enrollment.terminate",
+      "tim.leave.enrollment.reassess",
+      "tim.leave.entitlement.query",
+      "tim.leave.entitlement.get",
+      "tim.leave.entitlement.items.query",
+      "tim.leave.entitlement.cancel",
+      "tim.leave.entitlement.lease",
+      "tim.leave.entitlement.execute-item",
+      "tim.leave.entitlement.finalize",
+      "tim.leave.entitlement.mark-unknown",
+      "tim.leave.entitlement.reconcile",
+      "tim.leave.request.create",
+      "tim.leave.request.query",
+      "tim.leave.request.get",
+      "tim.leave.request.segments.query",
+      "tim.leave.request.submit",
+      "tim.leave.request.decide",
+      "tim.leave.request.approval.receive",
+      "tim.leave.request.withdraw",
+      "tim.leave.request.cancel",
+      "tim.leave.request.cancel-reconcile",
+      "tim.leave.request.amend",
+      "tim.leave.ledger.query",
+      "tim.leave.balance.query",
+      "tim.leave.ledger.reverse",
+      "tim.leave.lots.expiry-carryover",
+      "tim.leave.balance.restore",
+      "tim.timecard.query",
+      "tim.timecard.correct",
+      "tim.timecard.submit",
+      "tim.timecard.decide",
+      "tim.timecard.lock-from-close",
+      "tim.timecard.reopen-successor",
+      "tim.availability.schedule.capture",
+      "tim.availability.schedule.get",
+      "tim.availability.absence.capture",
+      "tim.availability.absence.get",
+      "tim.availability.composed.capture",
+      "tim.availability.composed.get",
+      "tim.schedule.wfm-publish-transaction",
+      "tim.schedule.wfm-publication.query",
+      "tim.rule.withdraw",
+      "tim.shift.withdraw",
+      "tim.pattern.withdraw",
+      "tim.leave-policy.withdraw",
+      "tim.policy.evaluation.get",
+      "tim.timecard.materialize",
+      "tim.effective-calendar.get",
+      "tim.effective-work-rule.get",
+      "tim.leave.termination.reconcile"
+    ],
+    "unfixedSubtargetsWithinDetailed": [
+      {
+        "operationId": "tim.leave.entitlement.run",
+        "targets": [
+          "abs_entitlement_input_versions.input_payload",
+          "abs_entitlement_input_versions.content_digest",
+          "abs_entitlement_selected_items.selected_payload",
+          "abs_entitlement_selected_items.content_digest",
+          "tme_owner_artifact_snapshots.content",
+          "tme_owner_artifact_snapshots.content_digest"
+        ],
+        "reason": "real registered owner item schemas/full field projection and canonical unsigned-input/selection assembler/hash implementation remain OPEN; symbolic expression plus actual base selector is design, not verified source graph"
+      },
+      {
+        "operationIds": [
+          "tim.rule.create",
+          "tim.leave.entitlement.run",
+          "tim.leave.enrollment.cancel"
+        ],
+        "targets": [
+          "tme_command_receipts.request_digest",
+          "tme_outbox_events.payload",
+          "tme_outbox_events.payload_digest"
+        ],
+        "reason": "registered schema-guided decimal canonical request/event projection constructor and same-transaction RETURNING/CAS integration remain OPEN; declarative leaves do not prove runtime source validation"
+      },
+      {
+        "operationId": "tim.leave.entitlement.input.get",
+        "targets": [
+          "loaded.input.input_payload",
+          "loaded.selected payload comparison"
+        ],
+        "reason": "actual owner-private DTO/SPI and canonical source graph registration/typed field projection compile remain OPEN"
+      }
+    ],
+    "canonicalSourceActualPass": false,
+    "independentWholeScopeRegistryApproved": false
+  },
+  "nextBoundedSuccessorTasks": [
+    {
+      "task": "Exact enum and structural validator correction",
+      "owner": "Root next successor writer with expert replay",
+      "deliverables": "New pinned correction + STOP branch schema oracle negative; source empty/filler/read/write/external FK/required OPEN/native flag/candidate catalog adversarial tests",
+      "frozenCandidateEdits": "Only after explicit parent assignment; old failures/report preserved"
+    },
+    {
+      "task": "External3 and neutral infrastructure dependency contract",
+      "owner": "TIM+internal Auth/Control/architecture code-owner experts",
+      "deliverables": "Exact dependency metadata/source SQL/public/internal tenant composite keys; receipt/outbox/inbox neutral role/transaction/visibility/access contract; noncolliding planned manifest; no blanket cross-context FK exception",
+      "externalOrCustomerApprovalRequired": false
+    },
+    {
+      "task": "ABS owner projection and closed schemas",
+      "owner": "TIM TIME/ABS module design writer",
+      "deliverables": "Closed schedule snapshot/header/segment, directSYS-calendar branch, ABS leave-governance/report DTOs; typed owner-response field adapters, refetch/digest/purpose/native UUID membership/optional zero-call negative fixtures"
+    },
+    {
+      "task": "Six tables actual source graphs and immutable assembler",
+      "owner": "TIM module source-contract writer",
+      "deliverables": "All95 exact typed column/parent/RETURNING/outcome dependencies, full input/selected/termination/settlement constructor/hash and guard branch; match SQL CHECKable constraints versus semantic guards; installed schema engine/API-valid A+B+mutations"
+    },
+    {
+      "task": "116 expected catalog and112 remaining operation source families",
+      "owner": "TIM module writer plus independent expected-scope reviewer",
+      "deliverables": "Preserve frozen114+new2 IDs/order; peroperation source/SQL/read-write/query/record/event/receipt/state/test deltas; explicit unclosed targets; shared compile/pilot proof separately",
+      "domainCrudFirstRequired": false
+    }
+  ],
+  "formatValidation": {
+    "status": "ACTUAL_SAVED_REPORT_PARSE_AND_EVIDENCE_CHECKS_PASS",
+    "actualExitCode": 0,
+    "actualChecks": 43,
+    "raw20CaseArchiveVerified": true,
+    "source17ShaAndDecimalNsStable": true,
+    "schemaEngineClaim": "No new closed schema engine/domain semantic approval claimed; this task replayed root structural Python unit tests."
+  }
+}

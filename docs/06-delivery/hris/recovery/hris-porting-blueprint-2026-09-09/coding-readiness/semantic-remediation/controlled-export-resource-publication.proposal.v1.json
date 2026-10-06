@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "contractId": "CONTROLLED_EXPORT_RESOURCE_PUBLICATION_V1",
+  "status": "DESIGN_PROPOSED_ARTIFACT_ONLY_NOT_APPLIED",
+  "authorValidationOnly": true,
+  "readinessPass": false,
+  "g3Authorization": "NONE",
+  "productionExportActivation": "NOT_AUTHORIZED",
+  "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+  "inputPins": [
+    {
+      "path": "coding-readiness/reports/workforce-controlled-export-registration-diagnostic-2026-09-14.json",
+      "sha256": "32630c2b23f886c0da98b02e4e7f421dde61fa01ff8d11d99d99478f2cef7729"
+    },
+    {
+      "path": "coding-readiness/reports/workforce-controlled-export-registration-diagnostic-2026-09-14.md",
+      "sha256": "e85b91a7eea4ab1f65ced46251713f3a3a2594d6a79f91a465b984ac02f193c6"
+    }
+  ],
+  "source": {
+    "repository": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "committedHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "gitPins": [
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+        "gitBlobOid": "02647fdedb06da02c1a6564984ca8a405ed60003",
+        "sha256": "3ae35ffdd8416955bd4373409caa48fd92770e65f7efd4dc407ba2468fe290fb"
+      },
+      {
+        "path": "dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+        "gitBlobOid": "2e4af662f2ddba23de8b739a763705ccb3b649a8",
+        "sha256": "6ac326bf0b59bb32ce2eb7f9e80f204bc7e986fa9f78c1d1e81939c1886a7f8c"
+      },
+      {
+        "path": "dwp-auth-server/src/main/resources/db/migration/V90__normalize_product_authorization_resource_set_keys.sql",
+        "gitBlobOid": "b70ffea14d8e274d397f9a7e7fd1b21459a6952a",
+        "sha256": "a4aa8c0fc629ca957b842c7f7fda0a39a7e80110ca271d7e1d024f0919db1ff0"
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+        "gitBlobOid": "3cf7c91226eb08d48d29e0fe52ae1a28f8eed009",
+        "sha256": "072e82d5d0a5103dd731c540c719fc296ffc74392141badb7f267103d3dab65f"
+      }
+    ]
+  },
+  "allocation": {
+    "proposal": "common-allocation-successor.v1.json#/commonReservations/0",
+    "reservationId": "SC-WCE-REGISTRY",
+    "streamKey": "auth-main",
+    "version": 213,
+    "exactFutureFilename": "dwp-auth-server/src/main/resources/db/migration/V213__publish_workforce_controlled_export_resource_catalog_only.sql",
+    "state": "DESIGN_RESERVATION_NOT_APPROVED_NOT_MATERIALIZED",
+    "requires": [
+      "EXACT_COMMITTED_INVENTORY_AND_COMMON_PRIVATE_SLOT_COLLISION_CHECK",
+      "INDEPENDENT_TECHNICAL_REVIEW_AND_PUBLISHED_SUCCESSOR_OWNER_CREATE_TOKEN",
+      "REVALIDATE_LATEST_COMMITTED_SQL_HIGHWATER_BEFORE_CREATE"
+    ]
+  },
+  "lifecycle": {
+    "descriptorState": "CURRENT_BUNDLES_DRAFT_IMPORT_ONLY_PRESERVED",
+    "currentResourceEnabledTrue": "PRESERVE_EXACT_EXISTING_ROW_AND_ALL_GRANTS_NOT_EVIDENCE_OF_EXPORT_ACCESS",
+    "adminDisabledFalse": "PRESERVE_EXACT_EXISTING_ROW_NEVER_AUTOREENABLE_NO_METADATA_TOUCH",
+    "missingResource": "CREATE_DISABLED_ONLY_FOR_ACTIVE_TENANT_ENABLED_APP_HCM_EXACT_ACTIVE_RS_HCM_CONFIG_ROOT",
+    "missingAdminBoundary": "SKIP_CONFIGURATION_REQUIRED_NO_SYNTHETIC_ROOT_MEMBER_OR_DUTY",
+    "legacyFactory": {
+      "table": "sys_tenant_resource_templates",
+      "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+      "policy": "NO_NEW_FACTORY_ROW_NO_STATE_CHANGE",
+      "currentAbsent": "PRESERVE_ABSENT",
+      "currentRetired": "PRESERVE_EXISTING_BYTES_NOT_DESCRIPTOR_STAGING",
+      "currentActive": "FAIL_CLOSED_REQUIRES_REVIEWED_UPGRADE",
+      "activateFactory": false,
+      "reason": "ACTIVE_SYNC_CONFLICT_REENABLES_ADMIN_DISABLED_AND_BUILTIN_PERMISSION_DELETE_USES_TEMPLATE_EXISTENCE_WITHOUT_ACTIVE_FILTER"
+    },
+    "existingActiveFactory": "FAIL_CLOSED_REQUIRES_REVIEWED_UPGRADE_NOT_SILENT_RETIRE_OR_RESYNC"
+  },
+  "authorization": {
+    "noAutomaticPermissionGrants": true,
+    "noDefaultUserOrRoleAssignment": true,
+    "noAppGrantCloning": true,
+    "noDutiesOrPackages": true,
+    "noActivationPointers": true,
+    "noGuardChanges": true,
+    "managementRoot": {
+      "appResource": "APP.HCM",
+      "resourceSet": "RS_HCM_CONFIG",
+      "sameTenant": true,
+      "rootMember": "EXISTING_ACTIVE_APP_HCM_ONLY_NO_NEW_ACTION_CHILD_MEMBER",
+      "configurationResponsibility": "EXPLICIT_EFFECTIVE_APP_CONFIG_ADMIN_OR_APP_OWNER_WITH_INDEPENDENT_GOVERNED_CHANGE_PURPOSE_REVIEW",
+      "scopeMeaning": "ADMIN_REGISTRY_CONFIG_ONLY_NOT_ACTION_EXPORT_ALLOW",
+      "businessExportCapability": "ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT_EXACT_EXPLICIT_SCOPED_TIMEBOUND_GRANT_AND_DENY_SOD_PEP_STILL_REQUIRED"
+    },
+    "unconfiguredEntitlement": "NO_ENABLE_CURRENT_APP_HCM_TRUE_IS_NOT_CURRENT_SIGNED_CORE_PEOPLE_ENTITLEMENT_PROOF",
+    "pendingPolicies": [
+      "ADMIN_RESOURCE_LIFECYCLE_OWNER_PORT_PEP_NOT_PUBLISHED",
+      "EXACT_RESOURCE_VISIBILITY_TO_APP_HCM_ADMIN_DISCOVERY_NOT_IMPLEMENTED",
+      "EXPLICIT_RESOURCE_GRANT_REVIEW_PURPOSE_POPULATION_FIELD_VERSION_EXPIRY_DENY_SOD_APPROVER_CANNOT_BE_INFERRED_FROM_APP_HCM"
+    ]
+  },
+  "existingTenantProtocol": {
+    "mode": "INSERT_MISSING_ONLY_NEVER_UPDATE_EXISTING_ENABLED_ROW",
+    "transaction": "CONTROL_FENCED_TEMPLATE_READ_LOCK_AND_RESOURCE_INSERT_LOCK_NO_OTHER_WRITES",
+    "stableKey": [
+      "tenant_id",
+      "type",
+      "key"
+    ],
+    "idempotency": "ON_CONFLICT_DO_NOTHING_EXISTING_ID_ENABLED_METADATA_GRANTS_POINTERS_UNCHANGED",
+    "concurrentAdminDisable": "CONTROL_FENCE_PLUS_LOCK_CURRENT_ROW_CAS_FOR_LATER_EXPLICIT_REENABLE_REQUIRED",
+    "externalBeforeAfterReceipt": [
+      "TEMPLATE_ROW_INITIAL_EXISTENCE_AND_BYTES",
+      "RESOURCE_ROWS_EXISTENCE_ID_ENABLED_METADATA",
+      "ALL_PERMISSION_GRANTS_TEMPLATES_USERS_GROUPS_ROLES_DUTIES_PACKAGES",
+      "DRAFT_APPROVAL_ACTIVE_POINTERS",
+      "PEOPLE_ELIGIBILITY_SIGNING_ARTIFACT_WRITER_AND_D09_D12_POLICY",
+      "APP_HCM_RS_HCM_CONFIG_ROOT_MEMBER_AND_ADMIN_ASSIGNMENTS"
+    ]
+  },
+  "newTenantProtocol": {
+    "mode": "REQUIRES_INSERT_ONLY_POST_APP_HCM_BOUNDARY_OWNER_HOOK_NOT_IMPLEMENTED",
+    "input": [
+      "AUTH_NATIVE_TENANT_ID_AND_CURRENT_STATE",
+      "EXACT_EXISTING_APP_HCM_ROW_ID_ENABLED",
+      "EXACT_RS_HCM_CONFIG_ROOT_ID_MEMBERSHIP_CURRENT_STATE",
+      "OWNER_PUBLICATION_REFERENCE_AND_CURRENT_POLICY_REVISION"
+    ],
+    "writes": "ONE_MISSING_DISABLED_ACTION_RESOURCE_ONLY_ON_CONFLICT_DO_NOTHING",
+    "noExistingDisabledFlip": true,
+    "noRolePermissionFactoryTemplate": true,
+    "skippedNewTenants": "BOUNDED_OWNER_RECONCILIATION_ENUMERATES_EXACT_TENANT_IDS_AND_RETRIES_AFTER_BOUNDARY_EXISTS_NO_AUTOGRANT",
+    "reenable": "SEPARATE_EXPLICIT_GOVERNED_OWNER_COMMAND_NOT_THIS_MIGRATION"
+  },
+  "explicitReenableFutureContract": {
+    "status": "PROPOSED_NOT_IMPLEMENTED_NOT_AUTHORIZED",
+    "required": [
+      "TENANT_BOUND_APP_HCM_RS_HCM_CONFIG_EFFECTIVE_ADMIN_SCOPE",
+      "CURRENT_PRODUCT_ENTITLEMENT_AND_PEOPLE_ELIGIBILITY_UNLESS_DISCOVERY_ONLY",
+      "EXACT_RESOURCE_ID_UPDATED_AT_ENABLED_FALSE_CAS_AND_CURRENT_POLICY_REVISION",
+      "GOVERNED_REASON_CHANGE_APPROVAL_SOD_AND_APPEND_ONLY_MINIMIZED_AUDIT",
+      "EXPECTED_OLD_ENABLED_FALSE_TO_TRUE_EXPLICIT_CHANGE_NO_PERMISSION_OR_ACTIVE_BUNDLE_WRITE"
+    ],
+    "physicalCas": "com_resources lacks dedicated resource row_version in current inspected schema; updated_at plus locked full row is a proposed minimum, not native implemented CAS or complete owner lifecycle. Exact successor timestamp/row-version policy review OPEN."
+  },
+  "artifact": {
+    "path": "controlled-export-resource-publication.plan.v1.sql",
+    "executed": false,
+    "backendFlywayFileCreated": false,
+    "sqlAuthorization": "NONE",
+    "intendedWrites": [
+      "public.com_resources INSERT_DISABLED_DO_NOTHING"
+    ],
+    "forbiddenWrites": [
+      "sys_tenant_resource_templates",
+      "com_role_permissions",
+      "sys_tenant_role_permission_templates",
+      "com_principal_resource_grants",
+      "com_roles",
+      "com_users",
+      "com_admin_role_assignments",
+      "com_admin_resource_set_members",
+      "auth_product_authorization_active",
+      "auth_product_authorization_bundle",
+      "auth_product_capability_contract"
+    ],
+    "containsSchemaOrRoleDdl": false,
+    "placeholders": [
+      "authCatalog",
+      "authMigrationPrincipal",
+      "publicationReference"
+    ],
+    "currentNativeControlIntegration": "NOT_IMPLEMENTED"
+  },
+  "rollback": {
+    "ordinary": "NO_DESTRUCTIVE_DOWN_MIGRATION_OR_HISTORY_EDIT;stop owner publication and preserve existing resources. New rows already disabled; safe rollback is no-op until reviewed forward correction.",
+    "afterExplicitEnable": "SEPARATE_GOVERNED_FORWARD_DISABLE_WITH_CURRENT_ROW_CAS_AND_AUDIT_NO_SYNTHETIC_GRANT_REVOKE",
+    "removeInsertedRows": "NOT_ALLOWED_WITHOUT_EXTERNAL_PROVEN_NEW_ID_INVENTORY_NO_REFERENCES_NO_LATER_CHANGES_AND_INDEPENDENT_TECHNICAL_REVIEW",
+    "replay": "Same registration does not change timestamps/IDs/enabled existing grants or DRAFT/active pointers",
+    "crash": "Transactional all-or-nothing native Control receipt/source closure and restart reconcile remain future actual proof, not a simulated model guarantee."
+  },
+  "futureNativeEvidence": {
+    "executed": false,
+    "requires": [
+      "CLEAN_AUTH_UPGRADE_AND_RESTART_UNDER_REAL_EXTERNAL_CONTROL",
+      "LATEST_SOURCE_REFERENCE_AND_IMMUTABLE_CHECKSUM_INSTALLEDBY_HISTORY",
+      "EXACT_EXISTING_TRUE_FALSE_MISSING_ACTIVE_INACTIVE_CROSS_TENANT_TYPE_COLLISION_FIXTURES",
+      "CONCURRENT_ADMIN_DISABLE_AND_RECONCILE_TRANSACTION_RACE",
+      "NEW_TENANT_POST_ROOT_HOOK_REPLAY_AND_UNCONFIGURED_BOUNDARY_SKIP",
+      "ALL_GRANT_DEFAULT_TEMPLATE_DUTY_POINTER_BYTES_BEFORE_AFTER_EQUAL",
+      "CATALOG_ONLY_APP_VIEW_VIEW_OTHER_ACTION_MANAGE_REVOKED_DENY_EXPIRED_SOD_AND_CROSS_TENANT_EXPORT_DENIAL",
+      "PEOPLE_ELIGIBILITY_SIGNING_UNAVAILABLE_CALLS_ZERO_D09_D12_DISABLED_WRITER_INTACT"
+    ]
+  },
+  "openIssues": [
+    {
+      "id": "WCEP-P0-01",
+      "stage": "G3",
+      "state": "OPEN",
+      "issue": "Independent allocation/policy/SQL review and canonical successor materialization not done; no backend migration has been created or executed."
+    },
+    {
+      "id": "WCEP-P0-02",
+      "stage": "G3",
+      "state": "OPEN",
+      "issue": "Safe new-tenant insert-only owner hook and explicit admin-disabled lifecycle/CAS/PEP/source disclosure implementation absent. No factory template is published: ACTIVE sync reenables conflicts and even RETIRED factory existence can cause later built-in grant deletion."
+    },
+    {
+      "id": "WCEP-P0-03",
+      "stage": "G3",
+      "state": "OPEN",
+      "issue": "Native clean/upgrade/restart/concurrency/resource-only no-grant/no-pointer proofs not run. The dedicated model/string check cannot certify real SQL or production Auth authority."
+    },
+    {
+      "id": "WCEP-P0-04",
+      "stage": "G3",
+      "state": "OPEN",
+      "issue": "Exact APP.HCM management discovery/owner visibility/entitlement and governed action grant authority required, not inferred or changed."
+    },
+    {
+      "id": "WCEP-G6-01",
+      "stage": "G6",
+      "state": "NOT_AUTHORIZED",
+      "issue": "D09/D12 KMS/artifact/People signing/customer activation remain blocked; catalog publication never authorizes production export."
+    }
+  ]
+}

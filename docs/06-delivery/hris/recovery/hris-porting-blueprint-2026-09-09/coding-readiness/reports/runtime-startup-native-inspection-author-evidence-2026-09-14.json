@@ -1,0 +1,1107 @@
+{
+  "contractId": "RuntimeStartupNativeInspectionAuthorEvidence.v1",
+  "schemaVersion": "1.0",
+  "status": "FROZEN_AUTHOR_TEST_EVIDENCE_NOT_INDEPENDENT_APPROVAL",
+  "reportDate": "2026-09-14",
+  "reviewedNamespace": "com.dwp.core.database.authority",
+  "compilerVersion": "DWP_RUNTIME_PRIVILEGE_SURFACE_V1",
+  "backend": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "committedHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "newFilesUntrackedAtCapture": true,
+    "commitCreated": false
+  },
+  "readiness": {
+    "g3StartAuthorized": false,
+    "g4DomainExecution": false,
+    "g6ProductionActivation": false,
+    "providerRegistered": false,
+    "eightServiceWiringComplete": false,
+    "thirteenStreamNativeReady": false
+  },
+  "scope": {
+    "newProductionFiles": 2,
+    "newTestFiles": 3,
+    "newUniqueCases": 65,
+    "unchangedGuardCases": 28,
+    "uniqueCombinedCases": 93,
+    "engineInvocations": 186,
+    "uniqueCasesNot186": true
+  },
+  "sourcePins": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1.java",
+      "sha256": "41e1e2aae659a97a14225281b18d832c9e4bc6751ab8b1ccc4930ed74aa01072",
+      "lines": 331
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1.java",
+      "sha256": "6bff3ec29240d1e89f50dcee9a819aea495436869441e77ab95d8a97a94aa2c9",
+      "lines": 328
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/test/java/com/dwp/core/database/authority/PrivilegeSurfaceCompilerV1Test.java",
+      "sha256": "3100d88ae885777793df9c0545d3100b7e1e2cde07aa2efb7139090a6043dbce",
+      "lines": 87
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1Test.java",
+      "sha256": "c337f040942c55e1e90fddb0b0586f140b1f0e2987fa729ae3700672fee80eb0",
+      "lines": 82
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/test/java/com/dwp/core/database/authority/JdbcRuntimePoolInspectionV1PostgresTest.java",
+      "sha256": "9f896da90db0cee4bab0a0d75552f36e68c8c93374542036acc8b52154e1dcff",
+      "lines": 391
+    }
+  ],
+  "preservedTenPins": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupValues.java",
+      "sha256": "e72e96409f4dbe752aa40887b1dd2d274f0ce9c6cc5d9799d05d349855f93a7a",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStreamStartupSeal.java",
+      "sha256": "beac0ed3725ab0a46db57cc988d1cac68a7695a636485011751f1ef6daf99140",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupLease.java",
+      "sha256": "75fbacf35b050fe0a4d7ff91ba60f1f3bacb0338ebbd8cdbfb37ae87d52b3642",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealJson.java",
+      "sha256": "7593c4549b8c94bc7feb2a351937262ee3700cea72d16acbff3fbd0edb040d95",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupSealSignatureVerifier.java",
+      "sha256": "cfbf934b016f42a503ebc6645cb3012888805a40ca29076edc0e49f55dba4e8a",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupTrustAnchor.java",
+      "sha256": "cc0fbd59fd1ba6b5c2b049584d0a2858bb6a448a22f031a7f0cfbb5873db6220",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java",
+      "sha256": "4b31b7cc63b8515d17f979e9e35448d84172cfc0d0f61fbc6bf7942622a7c5df",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimePoolInspectionPort.java",
+      "sha256": "e8274e838ec8db96e21c86525ec472cdd3b1d150a11cdce6b3b07bf4f48ebf73",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java",
+      "sha256": "122110d87e929896a6478a3583d8a3cd5d2a93b961c85d5e1b5ee6fb6e7518cc",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/src/test/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuardTest.java",
+      "sha256": "8b0efed8ba94a3b29262d268a2878a52eb4034b31b522732a30f5d1c0d29922a",
+      "unchanged": true
+    }
+  ],
+  "lock": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+    "mode": "fcntl.LOCK_EX|fcntl.LOCK_NB",
+    "fileOpenMode": "r+",
+    "subprocessTimeoutSeconds": 300,
+    "timeoutExtended": false,
+    "finallyUnlocked": true
+  },
+  "runs": [
+    {
+      "id": "FINAL_PG16",
+      "evidenceOrigin": "Fresh XML metadata read immediately after this run; XML subsequently overwritten by PG18. Case names below are the identical final-source case manifest, individual PG16 case durations were not captured.",
+      "configuredImage": "postgres:16-alpine",
+      "env": {
+        "DWP_TEST_POSTGRES_IMAGE": "postgres:16-alpine"
+      },
+      "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+      "argv": [
+        "./gradlew",
+        ":dwp-core:test",
+        "--tests",
+        "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+        "--tests",
+        "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+        "--tests",
+        "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+        "--tests",
+        "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+        "--rerun-tasks",
+        "--no-daemon",
+        "--max-workers=1",
+        "--console=plain"
+      ],
+      "exitCode": 0,
+      "gradleElapsedSeconds": 110,
+      "gradleStdoutSummary": "BUILD SUCCESSFUL in 1m 50s\\n11 actionable tasks: 11 executed\\nNATIVE_PIN_PG16_LOCK_RELEASED",
+      "wrapperExactStartedAtUtc": null,
+      "wrapperExactFinishedAtUtc": null,
+      "suiteTotal": 93,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sourcePins": [
+        "41e1e2aae659a97a14225281b18d832c9e4bc6751ab8b1ccc4930ed74aa01072",
+        "6bff3ec29240d1e89f50dcee9a819aea495436869441e77ab95d8a97a94aa2c9",
+        "3100d88ae885777793df9c0545d3100b7e1e2cde07aa2efb7139090a6043dbce",
+        "c337f040942c55e1e90fddb0b0586f140b1f0e2987fa729ae3700672fee80eb0",
+        "9f896da90db0cee4bab0a0d75552f36e68c8c93374542036acc8b52154e1dcff"
+      ],
+      "suites": [
+        {
+          "name": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+          "tests": 49,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlTimestampRaw": "2026-09-14T05:26:17",
+          "reportedSeconds": "85.346",
+          "caseManifest": [
+            "direct native escape ALTER ROLE inspection_runtime CREATEDB",
+            "direct native escape ALTER ROLE inspection_runtime CREATEROLE",
+            "direct native escape ALTER ROLE inspection_runtime BYPASSRLS",
+            "direct native escape ALTER ROLE inspection_runtime REPLICATION",
+            "direct native escape GRANT CREATE ON DATABASE $DB TO inspection_runtime",
+            "direct native escape GRANT TEMPORARY ON DATABASE $DB TO inspection_runtime",
+            "direct native escape GRANT CONNECT ON DATABASE postgres TO inspection_runtime",
+            "direct native escape GRANT CREATE ON SCHEMA pg_catalog TO inspection_runtime",
+            "direct native escape ALTER TABLE public.domain_data OWNER TO inspection_runtime",
+            "direct native escape GRANT SELECT(secret) ON public.flyway_schema_history TO inspection_runtime",
+            "direct native escape GRANT INSERT ON hris_performance.flyway_schema_history TO inspection_runtime",
+            "direct native escape GRANT SELECT ON pg_catalog.pg_authid TO inspection_runtime",
+            "direct native escape GRANT SET ON PARAMETER session_replication_role TO inspection_runtime",
+            "missingApprovedHistoryCannotBeReplacedByLiveSelfDiscovery()",
+            "benignSetOnlyManagedRoleIsNotAutomaticallyElevated()",
+            "predefinedRoleIsNotEquivalentToABenignManagedGroup()",
+            "sessionAuthorizationChangeCannotHideOriginalLogin()",
+            "readonlyRuntimePostureIsObservedAfterNativeTransactionBegins()",
+            "userMappingAuthorityCannotBypassGlobalOwnershipCheck()",
+            "directRuntimeNativeInspectionReadsOnlyCatalogAndNoHistoryContent()",
+            "originalBootstrapLoginIsRejectedBeforeAnyCatalogStatement()",
+            "foreignServerAclAndOptionsAreSealedAndCredentialsAreNotReturned()",
+            "largeObjectAclIsSealedWithoutReadingLargeObjectPayload()",
+            "historyMaintainAndEveryLegacyHistoryPrivilegeAreDenied()",
+            "routineAndRoleConfigurationLiteralsAreHashedNotReturnedAsEvidence()",
+            "SET ROLE escape ALTER ROLE inspection_scope CREATEDB",
+            "SET ROLE escape ALTER ROLE inspection_scope LOGIN",
+            "SET ROLE escape GRANT CREATE ON DATABASE $DB TO inspection_scope",
+            "SET ROLE escape GRANT TEMPORARY ON DATABASE $DB TO inspection_scope",
+            "SET ROLE escape GRANT CONNECT ON DATABASE postgres TO inspection_scope",
+            "SET ROLE escape GRANT CREATE ON SCHEMA pg_catalog TO inspection_scope",
+            "SET ROLE escape ALTER FUNCTION public.safe_fn(uuid) OWNER TO inspection_scope",
+            "SET ROLE escape CREATE TYPE public.owned_composite AS (value integer); ALTER TYPE public.owned_composite OWNER TO inspection_scope",
+            "SET ROLE escape CREATE TYPE public.owned_range AS RANGE(subtype=integer); ALTER TYPE public.owned_range OWNER TO inspection_scope",
+            "SET ROLE escape GRANT UPDATE ON public.flyway_schema_history TO inspection_scope",
+            "SET ROLE escape GRANT SELECT ON pg_catalog.pg_authid TO inspection_scope",
+            "SET ROLE escape GRANT SET ON PARAMETER session_replication_role TO inspection_scope",
+            "privilege fingerprint mutation GRANT SELECT(payload) ON public.domain_data TO inspection_scope",
+            "privilege fingerprint mutation GRANT SELECT ON public.domain_data TO inspection_runtime WITH GRANT OPTION",
+            "privilege fingerprint mutation ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO inspection_runtime",
+            "privilege fingerprint mutation CREATE OR REPLACE FUNCTION public.safe_fn(arg uuid) RETURNS integer LANGUAGE sql AS 'SELECT 2'",
+            "privilege fingerprint mutation ALTER FUNCTION public.safe_fn(uuid) SECURITY DEFINER",
+            "privilege fingerprint mutation CREATE FUNCTION public.safe_fn(arg text) RETURNS integer LANGUAGE sql AS 'SELECT 1'",
+            "privilege fingerprint mutation ALTER FUNCTION public.safe_fn(uuid) SET search_path TO public,pg_catalog",
+            "privilege fingerprint mutation REVOKE EXECUTE ON FUNCTION public.safe_fn(uuid) FROM inspection_runtime",
+            "privilege fingerprint mutation GRANT UPDATE ON SEQUENCE public.domain_sequence TO inspection_runtime",
+            "privilege fingerprint mutation REVOKE USAGE ON TYPE public.domain_status FROM PUBLIC",
+            "privilege fingerprint mutation CREATE FUNCTION public.public_default_fn() RETURNS integer LANGUAGE sql SECURITY DEFINER AS 'SELECT 1'",
+            "approvedPeopleScalarAliasCoversBothHistoriesWithoutInventingAnotherPool()"
+          ]
+        },
+        {
+          "name": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlTimestampRaw": "2026-09-14T05:27:43",
+          "reportedSeconds": "0.014",
+          "caseManifest": [
+            "missingRuntimePoolAndPolicyCannotBeInventedAtStartup()",
+            "invalidTrustedEndpointAndSearchPathAreNotSelfDiscovered()",
+            "wrongQualifierOrUnapprovedHistoryScopeOpensNoConnection()",
+            "uncheckedProviderFailureAlsoFailsClosedWithoutExposingDriverText()",
+            "wrongDataSourceInstanceIsRejectedBeforeOpeningEitherPool()",
+            "unavailableRuntimePoolIsRedactedAndFailsClosed()",
+            "duplicateBindingsDoNotTurnScalarAliasesIntoDistinctPools()"
+          ]
+        },
+        {
+          "name": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlTimestampRaw": "2026-09-14T05:27:43",
+          "reportedSeconds": "0.004",
+          "caseManifest": [
+            "independentlyApprovedHistoryInventoryIsRequiredAndUnique()",
+            "fieldsAreDefensivelyCopied()",
+            "duplicateObjectIdentitiesCannotBeOverwritten()",
+            "allSecurityRelevantDimensionsAlterTheSurface()",
+            "canonicalOrderIsIndependentOfCaptureOrder()",
+            "emptyCaptureCannotCertifyAnEmptySurface()",
+            "unknownCompilerIsNotAcceptedAsAnEquivalentPolicy()",
+            "nullMetadataAndNulIdentitiesAreRejected()",
+            "compilerDomainAndLengthFramingDoNotAlias()"
+          ]
+        },
+        {
+          "name": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+          "tests": 28,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlTimestampRaw": "2026-09-14T05:27:43",
+          "reportedSeconds": "0.476",
+          "caseManifest": [
+            "sealExpiresDuringActivateProviderCallCannotReuseEarlierValidationTime()",
+            "clockRegressionAfterProviderResponseCannotActivateOrAdmit()",
+            "leaseExpiresFutureTooLongOrBeyondSealWindowRejects()",
+            "parserRejectsDuplicateUnknownNullBooleanEpochFractionOverflowTrailingAndNoncanonicalBytes()",
+            "disabledOptionalForeignMigrationRegistryEntriesAreRejectedWithZeroOpens()",
+            "forgedOrWrongPhaseLeaseCannotOpenRuntimeInspection()",
+            "forgedSelfSignedOrUnknownKeyRejectsBeforeProviders()",
+            "nativeInspectorUnavailableCannotBeReplacedBySignedSealAssertion()",
+            "expiredReservationDuringNativeInspectionCannotActivateEvenWithFreshSignedActiveResponse()",
+            "missingNativeOrFreshnessProviderCannotOpenAnyPoolOrCreateDefaultApproval()",
+            "signedNativeInventoryHistoryOrOwnerDriftCannotRedefineIndependentExpectedEvidence()",
+            "roleElevationTemporaryCreateForeignMembershipOwnershipAndHistoryLeakReject()",
+            "existingScalarAliasIsExplicitlyPinnedAndDoesNotPretendThirteenDistinctPrincipals()",
+            "controlEpochAdvanceBetweenInspectionAndActivationFailsAndReleasesReservation()",
+            "crossProtocolSignatureCannotTurnSealIntoFreshLeaseProof()",
+            "expiredFutureOrOverlongSealRejectsWithoutClockSkewFallback()",
+            "signedRuntimeOnlyStartupUsesReserveInspectActivateWithoutMigrationOrPoolFactory()",
+            "freshnessUnavailableRejectsBeforeNativeInspectorAndPool()",
+            "trustedButWrongSourceControlManifestReceiptEpochInstanceOrPurposeRejects()",
+            "signatureEncodingRejectsPaddingNoncanonicalLastBitsMissingAndWrongLength()",
+            "legitimatelyEmptyPreappliedStreamNeedsExactZeroRankAndNoPendingMigrations()",
+            "originalLoginCurrentUserSessionUserEndpointVersionReadOnlySearchPathSurfaceMustMatch()",
+            "ownerPrincipalIsNeverAcceptedAsRuntimeEvenInTrustedSignedDocument()",
+            "providerErrorsAndCancelFailureNeverLeakDriverOrCredentialMessages()",
+            "nativeAdoptionModeCannotMixMissingOrUnexpectedReceiptDigest()",
+            "progressiveClockAcceptsProviderIssuedLaterAfterReserveAndActivateReturn()",
+            "missingPrimaryPoolCannotFallbackToOptionalOrForeignPool()",
+            "reservationExpiresDuringActivateProviderCallMustRejectAfterResponse()"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FINAL_PG18_4",
+      "evidenceOrigin": "Fresh XML SHA256/attributes/full testcase results captured from actual current build output before independent root replay.",
+      "configuredImage": "postgres:18.4-alpine",
+      "env": {
+        "DWP_TEST_POSTGRES_IMAGE": "postgres:18.4-alpine"
+      },
+      "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+      "argv": [
+        "./gradlew",
+        ":dwp-core:test",
+        "--tests",
+        "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+        "--tests",
+        "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+        "--tests",
+        "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+        "--tests",
+        "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+        "--rerun-tasks",
+        "--no-daemon",
+        "--max-workers=1",
+        "--console=plain"
+      ],
+      "exitCode": 0,
+      "gradleElapsedSeconds": 89,
+      "gradleStdoutSummary": "BUILD SUCCESSFUL in 1m 29s\\n11 actionable tasks: 11 executed\\nNATIVE_PIN_PG18_LOCK_RELEASED",
+      "wrapperExactStartedAtUtc": null,
+      "wrapperExactFinishedAtUtc": null,
+      "postCompletionClockObservedUtc": "2026-09-14 05:29:51 UTC",
+      "suiteTotal": 93,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sourcePins": [
+        "41e1e2aae659a97a14225281b18d832c9e4bc6751ab8b1ccc4930ed74aa01072",
+        "6bff3ec29240d1e89f50dcee9a819aea495436869441e77ab95d8a97a94aa2c9",
+        "3100d88ae885777793df9c0545d3100b7e1e2cde07aa2efb7139090a6043dbce",
+        "c337f040942c55e1e90fddb0b0586f140b1f0e2987fa729ae3700672fee80eb0",
+        "9f896da90db0cee4bab0a0d75552f36e68c8c93374542036acc8b52154e1dcff"
+      ],
+      "freshXml": [
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest.xml",
+          "sha256": "f8f261c345007e8f4fb136f4b6cbb94cf0a9564712dfd35432ac27bff50dff22",
+          "attributes": {
+            "name": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+            "tests": "49",
+            "skipped": "0",
+            "failures": "0",
+            "errors": "0",
+            "timestamp": "2026-09-14T05:28:20",
+            "hostname": "MacBook-Pro",
+            "time": "77.855"
+          },
+          "cases": [
+            {
+              "name": "direct native escape ALTER ROLE inspection_runtime CREATEDB",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.512",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape ALTER ROLE inspection_runtime CREATEROLE",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.96",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape ALTER ROLE inspection_runtime BYPASSRLS",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.176",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape ALTER ROLE inspection_runtime REPLICATION",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.928",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT CREATE ON DATABASE $DB TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.087",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT TEMPORARY ON DATABASE $DB TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.015",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT CONNECT ON DATABASE postgres TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.954",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT CREATE ON SCHEMA pg_catalog TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.014",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape ALTER TABLE public.domain_data OWNER TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.081",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT SELECT(secret) ON public.flyway_schema_history TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.908",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT INSERT ON hris_performance.flyway_schema_history TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.881",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT SELECT ON pg_catalog.pg_authid TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.834",
+              "status": "PASS"
+            },
+            {
+              "name": "direct native escape GRANT SET ON PARAMETER session_replication_role TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.797",
+              "status": "PASS"
+            },
+            {
+              "name": "missingApprovedHistoryCannotBeReplacedByLiveSelfDiscovery()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.777",
+              "status": "PASS"
+            },
+            {
+              "name": "benignSetOnlyManagedRoleIsNotAutomaticallyElevated()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.647",
+              "status": "PASS"
+            },
+            {
+              "name": "predefinedRoleIsNotEquivalentToABenignManagedGroup()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.741",
+              "status": "PASS"
+            },
+            {
+              "name": "sessionAuthorizationChangeCannotHideOriginalLogin()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.835",
+              "status": "PASS"
+            },
+            {
+              "name": "readonlyRuntimePostureIsObservedAfterNativeTransactionBegins()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.872",
+              "status": "PASS"
+            },
+            {
+              "name": "userMappingAuthorityCannotBypassGlobalOwnershipCheck()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.908",
+              "status": "PASS"
+            },
+            {
+              "name": "directRuntimeNativeInspectionReadsOnlyCatalogAndNoHistoryContent()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.837",
+              "status": "PASS"
+            },
+            {
+              "name": "originalBootstrapLoginIsRejectedBeforeAnyCatalogStatement()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "0.045",
+              "status": "PASS"
+            },
+            {
+              "name": "foreignServerAclAndOptionsAreSealedAndCredentialsAreNotReturned()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "3.274",
+              "status": "PASS"
+            },
+            {
+              "name": "largeObjectAclIsSealedWithoutReadingLargeObjectPayload()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.623",
+              "status": "PASS"
+            },
+            {
+              "name": "historyMaintainAndEveryLegacyHistoryPrivilegeAreDenied()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "7.397",
+              "status": "PASS"
+            },
+            {
+              "name": "routineAndRoleConfigurationLiteralsAreHashedNotReturnedAsEvidence()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.647",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape ALTER ROLE inspection_scope CREATEDB",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.535",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape ALTER ROLE inspection_scope LOGIN",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.533",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape GRANT CREATE ON DATABASE $DB TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.571",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape GRANT TEMPORARY ON DATABASE $DB TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.539",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape GRANT CONNECT ON DATABASE postgres TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.699",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape GRANT CREATE ON SCHEMA pg_catalog TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.516",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape ALTER FUNCTION public.safe_fn(uuid) OWNER TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.655",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape CREATE TYPE public.owned_composite AS (value integer); ALTER TYPE public.owned_composite OWNER TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.68",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape CREATE TYPE public.owned_range AS RANGE(subtype=integer); ALTER TYPE public.owned_range OWNER TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.618",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape GRANT UPDATE ON public.flyway_schema_history TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.57",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape GRANT SELECT ON pg_catalog.pg_authid TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.765",
+              "status": "PASS"
+            },
+            {
+              "name": "SET ROLE escape GRANT SET ON PARAMETER session_replication_role TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.788",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation GRANT SELECT(payload) ON public.domain_data TO inspection_scope",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.658",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation GRANT SELECT ON public.domain_data TO inspection_runtime WITH GRANT OPTION",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.72",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.67",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation CREATE OR REPLACE FUNCTION public.safe_fn(arg uuid) RETURNS integer LANGUAGE sql AS 'SELECT 2'",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.718",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation ALTER FUNCTION public.safe_fn(uuid) SECURITY DEFINER",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.753",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation CREATE FUNCTION public.safe_fn(arg text) RETURNS integer LANGUAGE sql AS 'SELECT 1'",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.888",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation ALTER FUNCTION public.safe_fn(uuid) SET search_path TO public,pg_catalog",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "2.044",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation REVOKE EXECUTE ON FUNCTION public.safe_fn(uuid) FROM inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "2.632",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation GRANT UPDATE ON SEQUENCE public.domain_sequence TO inspection_runtime",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "2.279",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation REVOKE USAGE ON TYPE public.domain_status FROM PUBLIC",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "2.328",
+              "status": "PASS"
+            },
+            {
+              "name": "privilege fingerprint mutation CREATE FUNCTION public.public_default_fn() RETURNS integer LANGUAGE sql SECURITY DEFINER AS 'SELECT 1'",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "2.64",
+              "status": "PASS"
+            },
+            {
+              "name": "approvedPeopleScalarAliasCoversBothHistoriesWithoutInventingAnotherPool()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+              "time": "1.286",
+              "status": "PASS"
+            }
+          ]
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test.xml",
+          "sha256": "c6b1127d56e10c896f331ed7894f8678e1a5e907a6621bb123ed770f16b3a248",
+          "attributes": {
+            "name": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+            "tests": "7",
+            "skipped": "0",
+            "failures": "0",
+            "errors": "0",
+            "timestamp": "2026-09-14T05:29:38",
+            "hostname": "MacBook-Pro",
+            "time": "0.017"
+          },
+          "cases": [
+            {
+              "name": "missingRuntimePoolAndPolicyCannotBeInventedAtStartup()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "invalidTrustedEndpointAndSearchPathAreNotSelfDiscovered()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            },
+            {
+              "name": "wrongQualifierOrUnapprovedHistoryScopeOpensNoConnection()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "uncheckedProviderFailureAlsoFailsClosedWithoutExposingDriverText()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+              "time": "0.006",
+              "status": "PASS"
+            },
+            {
+              "name": "wrongDataSourceInstanceIsRejectedBeforeOpeningEitherPool()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "unavailableRuntimePoolIsRedactedAndFailsClosed()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+              "time": "0.004",
+              "status": "PASS"
+            },
+            {
+              "name": "duplicateBindingsDoNotTurnScalarAliasesIntoDistinctPools()",
+              "classname": "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1Test",
+              "time": "0.001",
+              "status": "PASS"
+            }
+          ]
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test.xml",
+          "sha256": "71f6283438ff9ced93744ee0ea20ec0448cddafb33ff1bc221b778e2f8a2084f",
+          "attributes": {
+            "name": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+            "tests": "9",
+            "skipped": "0",
+            "failures": "0",
+            "errors": "0",
+            "timestamp": "2026-09-14T05:29:38",
+            "hostname": "MacBook-Pro",
+            "time": "0.004"
+          },
+          "cases": [
+            {
+              "name": "independentlyApprovedHistoryInventoryIsRequiredAndUnique()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "fieldsAreDefensivelyCopied()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            },
+            {
+              "name": "duplicateObjectIdentitiesCannotBeOverwritten()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            },
+            {
+              "name": "allSecurityRelevantDimensionsAlterTheSurface()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            },
+            {
+              "name": "canonicalOrderIsIndependentOfCaptureOrder()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            },
+            {
+              "name": "emptyCaptureCannotCertifyAnEmptySurface()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            },
+            {
+              "name": "unknownCompilerIsNotAcceptedAsAnEquivalentPolicy()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "nullMetadataAndNulIdentitiesAreRejected()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            },
+            {
+              "name": "compilerDomainAndLengthFramingDoNotAlias()",
+              "classname": "com.dwp.core.database.authority.PrivilegeSurfaceCompilerV1Test",
+              "time": "0.0",
+              "status": "PASS"
+            }
+          ]
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-core/build/test-results/test/TEST-com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest.xml",
+          "sha256": "10b80e0abc85978d6805f96b8302f9694d89a073a902aaafd919ff4dd7f4cc1a",
+          "attributes": {
+            "name": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+            "tests": "28",
+            "skipped": "0",
+            "failures": "0",
+            "errors": "0",
+            "timestamp": "2026-09-14T05:29:38",
+            "hostname": "MacBook-Pro",
+            "time": "0.57"
+          },
+          "cases": [
+            {
+              "name": "sealExpiresDuringActivateProviderCallCannotReuseEarlierValidationTime()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.219",
+              "status": "PASS"
+            },
+            {
+              "name": "clockRegressionAfterProviderResponseCannotActivateOrAdmit()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.013",
+              "status": "PASS"
+            },
+            {
+              "name": "leaseExpiresFutureTooLongOrBeyondSealWindowRejects()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.02",
+              "status": "PASS"
+            },
+            {
+              "name": "parserRejectsDuplicateUnknownNullBooleanEpochFractionOverflowTrailingAndNoncanonicalBytes()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.008",
+              "status": "PASS"
+            },
+            {
+              "name": "disabledOptionalForeignMigrationRegistryEntriesAreRejectedWithZeroOpens()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.006",
+              "status": "PASS"
+            },
+            {
+              "name": "forgedOrWrongPhaseLeaseCannotOpenRuntimeInspection()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.008",
+              "status": "PASS"
+            },
+            {
+              "name": "forgedSelfSignedOrUnknownKeyRejectsBeforeProviders()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.005",
+              "status": "PASS"
+            },
+            {
+              "name": "nativeInspectorUnavailableCannotBeReplacedBySignedSealAssertion()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.006",
+              "status": "PASS"
+            },
+            {
+              "name": "expiredReservationDuringNativeInspectionCannotActivateEvenWithFreshSignedActiveResponse()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.007",
+              "status": "PASS"
+            },
+            {
+              "name": "missingNativeOrFreshnessProviderCannotOpenAnyPoolOrCreateDefaultApproval()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "signedNativeInventoryHistoryOrOwnerDriftCannotRedefineIndependentExpectedEvidence()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.019",
+              "status": "PASS"
+            },
+            {
+              "name": "roleElevationTemporaryCreateForeignMembershipOwnershipAndHistoryLeakReject()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.032",
+              "status": "PASS"
+            },
+            {
+              "name": "existingScalarAliasIsExplicitlyPinnedAndDoesNotPretendThirteenDistinctPrincipals()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.01",
+              "status": "PASS"
+            },
+            {
+              "name": "controlEpochAdvanceBetweenInspectionAndActivationFailsAndReleasesReservation()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.009",
+              "status": "PASS"
+            },
+            {
+              "name": "crossProtocolSignatureCannotTurnSealIntoFreshLeaseProof()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.004",
+              "status": "PASS"
+            },
+            {
+              "name": "expiredFutureOrOverlongSealRejectsWithoutClockSkewFallback()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.006",
+              "status": "PASS"
+            },
+            {
+              "name": "signedRuntimeOnlyStartupUsesReserveInspectActivateWithoutMigrationOrPoolFactory()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.01",
+              "status": "PASS"
+            },
+            {
+              "name": "freshnessUnavailableRejectsBeforeNativeInspectorAndPool()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.004",
+              "status": "PASS"
+            },
+            {
+              "name": "trustedButWrongSourceControlManifestReceiptEpochInstanceOrPurposeRejects()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.065",
+              "status": "PASS"
+            },
+            {
+              "name": "signatureEncodingRejectsPaddingNoncanonicalLastBitsMissingAndWrongLength()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.002",
+              "status": "PASS"
+            },
+            {
+              "name": "legitimatelyEmptyPreappliedStreamNeedsExactZeroRankAndNoPendingMigrations()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "originalLoginCurrentUserSessionUserEndpointVersionReadOnlySearchPathSurfaceMustMatch()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.045",
+              "status": "PASS"
+            },
+            {
+              "name": "ownerPrincipalIsNeverAcceptedAsRuntimeEvenInTrustedSignedDocument()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.001",
+              "status": "PASS"
+            },
+            {
+              "name": "providerErrorsAndCancelFailureNeverLeakDriverOrCredentialMessages()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.006",
+              "status": "PASS"
+            },
+            {
+              "name": "nativeAdoptionModeCannotMixMissingOrUnexpectedReceiptDigest()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.002",
+              "status": "PASS"
+            },
+            {
+              "name": "progressiveClockAcceptsProviderIssuedLaterAfterReserveAndActivateReturn()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.008",
+              "status": "PASS"
+            },
+            {
+              "name": "missingPrimaryPoolCannotFallbackToOptionalOrForeignPool()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.002",
+              "status": "PASS"
+            },
+            {
+              "name": "reservationExpiresDuringActivateProviderCallMustRejectAfterResponse()",
+              "classname": "com.dwp.core.database.authority.RuntimeOnlyStartupGuardTest",
+              "time": "0.006",
+              "status": "PASS"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "timestampPolicy": "JUnit XML timestamp strings have no explicit zone; original values are preserved. UTC interpretation is the Gradle report/run convention corroborated by the UTC tool clock. Exact wrapper UTC start/end was not instrumented and is not reconstructed.",
+  "firstFailure": {
+    "id": "INITIAL_PG16_PRE_NATIVE_INPUT_FAILURE",
+    "configuredImage": "postgres:16-alpine",
+    "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "argv": [
+      "./gradlew",
+      ":dwp-core:test",
+      "--tests",
+      "com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest",
+      "--rerun-tasks",
+      "--no-daemon",
+      "--max-workers=1",
+      "--console=plain"
+    ],
+    "env": {
+      "DWP_TEST_POSTGRES_IMAGE": "postgres:16-alpine"
+    },
+    "exitCode": 1,
+    "gradleElapsedSeconds": 15,
+    "xmlTimestampRaw": "2026-09-14T05:15:19",
+    "reportedSeconds": "2.667",
+    "tests": 45,
+    "failures": 45,
+    "errors": 0,
+    "skipped": 0,
+    "nativeInspectionInvocationCount": 0,
+    "exactFailureMessage": "java.lang.IllegalStateException: Runtime startup: invalid trusted server identity",
+    "exactStackExcerpt": [
+      "at com.dwp.core.database.authority.RuntimeStartupValues.failure(RuntimeStartupValues.java:18)",
+      "at com.dwp.core.database.authority.RuntimeStartupValues.require(RuntimeStartupValues.java:15)",
+      "at com.dwp.core.database.authority.RuntimeStreamStartupSeal$RuntimePurpose.<init>(RuntimeStreamStartupSeal.java:105)",
+      "at com.dwp.core.database.authority.JdbcRuntimePoolInspectionV1PostgresTest.purpose(JdbcRuntimePoolInspectionV1PostgresTest.java:283)"
+    ],
+    "exactStdoutTail": "45 tests completed, 45 failed\\n> Task :dwp-core:test FAILED\\nBUILD FAILED in 15s\\nNATIVE_PG16_LOCK_RELEASED",
+    "evidenceOrigin": "Actual tool stdout and actual XML excerpt read at the time. Full old XML and SHA256 were not archived before Gradle overwrote them; this is NOT a reconstructed full XML.",
+    "cause": "Fixture used inet_server_addr()::text, which includes the inet CIDR mask (/32); the frozen RuntimePurpose IP grammar rejected it before inspect() was called.",
+    "repairBoundary": {
+      "changedOnlyNewInspectorAndNewFixture": true,
+      "oldExpression": "pg_catalog.inet_server_addr()::text",
+      "newExpression": "pg_catalog.host(pg_catalog.inet_server_addr())",
+      "frozenTenChanged": false,
+      "ipGrammarWeakened": false,
+      "rolePrivilegePolicyWeakened": false
+    },
+    "notCountedAsNativeSuccess": true,
+    "notCountedAsIndependentApproval": true
+  },
+  "staticChecks": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/check-source-size.py"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS source-size budget: 1645 production files checked; exceptions are exact and new files are limited to 700 lines."
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/check-test-source-size.py"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS test source-size budget: 810 Java test files checked; 7 exact legacy exception(s); new files are limited to 1000 lines."
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/check-java-dependency-cycles.py"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS Java dependency cycles: 1645 production classes, 12 exact legacy SCCs, 0 Spring constructor cycles."
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/check-unused-private-methods.py"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS unused private methods: no trivially unreachable unannotated private methods."
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": ""
+    }
+  ],
+  "containerEvidence": {
+    "strategy": "Testcontainers random task-owned PostgreSQL and Ryuk; no broad docker cleanup or primary service reset.",
+    "automaticCleanup": true,
+    "taskOwnedFinalContainerIds": null,
+    "finalExactInspectRemovedReceiptAvailable": false,
+    "priorTaskContainer": {
+      "id": "b3d359d1ebf7",
+      "image": "postgres:16-alpine",
+      "reportedRemoved": true,
+      "origin": "Intermediate successful PG16 run; not reused as final-run identity"
+    },
+    "finalDockerPsArgv": [
+      "docker",
+      "ps",
+      "--format",
+      "{{.ID}} {{.Image}} {{.Status}} {{.Names}}"
+    ],
+    "finalLiveListing": [
+      "f3334230e2b5 postgres:18.4-alpine Up 5 minutes (healthy) dwp-postgres",
+      "01527469d628 redis:7.4-alpine Up 5 minutes (healthy) dwp-redis",
+      "2a064dbbbe12 apache/kafka:4.3.1 Up 5 minutes (healthy) dwp-kafka"
+    ],
+    "taskPgOrRyukVisibleAfterFinalRun": false,
+    "primaryContainerTerminationPerformed": false,
+    "otherUnknownContainersTerminated": false,
+    "limitation": "Final docker ps shows absence of task PG/Ryuk but exact final IDs/StartedAt/image digests were not instrumented. This is absence evidence, not an exact ID-bound destruction receipt."
+  },
+  "implementedEvidence": [
+    "Trusted qualifier plus exact DataSource object identity and independently approved endpoint/role/schema/path binding before open.",
+    "ORIGINAL JDBC login check aborts a bootstrap login before catalog SQL; native current_user/session_user/TCP endpoint/version/posture.",
+    "MEMBER closure intentionally conservative, includes NOINHERIT; benign managed role accepted; options/grantor included in hash.",
+    "Database CREATE/TEMP/foreign CONNECT, every-schema CREATE, global owner dependency/user mapping, catalog/parameter authority and every materialized history relation/column privilege incl PG17+MAINTAIN.",
+    "Table/sequence/column/routine/default-PUBLIC/security-definer/args/body/config/type/default-ACL/grant-option/reachable-role surfaces.",
+    "Large-object metadata ACL and foreign wrapper/server/user-mapping metadata/options; payload, history rows, routine/GUC/remote credential literals are not returned.",
+    "Expected privilege hash remains external signed trust-anchor input; native capture is not an approval baseline."
+  ],
+  "limitations": [
+    "AUTHOR_ONLY; root independent initial-clock counterexample and full security review are pending; these successful cases cannot refute an untested counterexample.",
+    "No provider registration, eight-service runtime-only wiring, thirteen-stream bootstrap, actual external native definition/provenance producer or active lease/offline fence integration.",
+    "Privilege hash is not a complete table constraint/default/RLS-expression/trigger semantic fingerprint. Full definition/provenance native proof must remain a separately independently approved producer/fence obligation.",
+    "Inspection is a startup snapshot, not continuous monitoring or proof against privileged DBA/host compromise.",
+    "Policy historyInventory must enumerate actually materialized histories in relevant catalogs. Future registered-only optional reservations are not discovered or activated as required histories.",
+    "No production SQL, G0/G2 historical register/DDL, source wiring, migration role grants, server reset, commit or G3 authorization performed.",
+    "Frozen-source tests use controlled fixture DDL/roles, not a production/customer adoption or end-to-end domain acceptance claim.",
+    "The final engine tags are recorded; actual final image digest and minor server-version text were not separately persisted."
+  ]
+}

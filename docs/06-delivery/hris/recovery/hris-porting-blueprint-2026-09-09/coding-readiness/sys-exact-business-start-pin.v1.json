@@ -1,0 +1,375 @@
+{
+  "pinId": "dwp.hris.sys-exact-business-start-pin.v1",
+  "schemaVersion": 1,
+  "status": "SEALED_SYS_EXACT_BUSINESS_START_PIN",
+  "scope": "HRIS_SYS_G3_EXACT_BUSINESS_DESIGN_ONLY",
+  "exactOwnedSliceCount": 17,
+  "activeSliceCount": 16,
+  "retiredSliceCount": 1,
+  "currentArtifactPath": "coding-readiness/sys-exact-business-start-successor.v1.json",
+  "currentArtifactSha256": "aa4f82925a5a34132ed69844ca088111d551b7effbe1d70d8104846db82c44be",
+  "lineagePath": "coding-readiness/sys-exact-business-successor-lineage.v1.json",
+  "lineageSha256": "33fdb48e83677037ff25a34be705f9397227bc205531510bb45e5cf14bfb50dc",
+  "exactArtifactCount": 49,
+  "exactArtifactPaths": [
+    "coding-readiness/activation-gate-register.csv",
+    "coding-readiness/api-pep-binding-register.csv",
+    "coding-readiness/audit_sys_exact_business_start.cjs",
+    "coding-readiness/cross-module-contract-register.csv",
+    "coding-readiness/g3-contract-primary-ownership-register.csv",
+    "coding-readiness/g3-file-allocation-register.csv",
+    "coding-readiness/g3-slice-code-go-register.csv",
+    "coding-readiness/ia-entry-query-api-contract-register.csv",
+    "coding-readiness/ia-entry-query-projection-schemas.v1.json",
+    "coding-readiness/modern-capability-authorization-register.csv",
+    "coding-readiness/modern-capability-coding-contract-register.csv",
+    "coding-readiness/modern-capability-delivery-register.csv",
+    "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+    "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+    "coding-readiness/modern-capability-public-identity-registry.v1.json",
+    "coding-readiness/modern-capability-semantic-bindings.v1.json",
+    "coding-readiness/modern-capability-trace-register.csv",
+    "coding-readiness/module-exact-business-start-canonical.v1.json",
+    "coding-readiness/physical-owner-prefix-register.csv",
+    "coding-readiness/platform-integration-binding-register.csv",
+    "coding-readiness/service-api-auth-binding-register.csv",
+    "coding-readiness/shared-contract-catalog.csv",
+    "coding-readiness/sys-exact-business-start-successor.v1.json",
+    "coding-readiness/sys-exact-business-successor-lineage.v1.json",
+    "coding-readiness/sys-listening-stream-authority-successor.v1.json",
+    "coding-readiness/target-family-resolution-register.csv",
+    "coding-readiness/transport-schema-resolution-register.csv",
+    "coding-readiness/validate_sys_exact_business_start.py",
+    "g0/file-ownership-register.csv",
+    "g0/migration-allocation-register.csv",
+    "hris-atomic-duty-matrix.csv",
+    "hris-permission-group-matrix.csv",
+    "hris-sod-rule-matrix.csv",
+    "session-evidence/hrm/g1-decision-log.csv",
+    "session-evidence/sys/g1-decision-log.csv",
+    "session-evidence/sys/g2-auth-physical-schema.sql",
+    "session-evidence/sys/g2-contract-catalog.csv",
+    "session-evidence/sys/g2-golden-scenarios.csv",
+    "session-evidence/sys/g2-implementation-contract.md",
+    "session-evidence/sys/g2-implementation-contract.v2.md",
+    "session-evidence/sys/g2-platform-physical-schema.sql",
+    "session-evidence/sys/g2-state-machines.md",
+    "session-evidence/sys/g2-transport-schemas.v1.json",
+    "session-evidence/sys/g3-modern-capability-contracts.v1.json",
+    "session-evidence/sys/validate_sys_readiness.py",
+    "session-evidence/sys/validate_sys_readiness.v2.py",
+    "session-prompts/05-cloudhr-sys-session.md",
+    "session-registers/hris-hrm-source-coverage.csv",
+    "session-registers/hris-sys-source-coverage.csv"
+  ],
+  "artifactPins": [
+    {
+      "path": "coding-readiness/activation-gate-register.csv",
+      "sha256": "83f65e30f2382bf10fbd17fb63948c6bfd3ace66d401e615bae2691c76aada15",
+      "byteCount": 7234,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "byteCount": 126576,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/audit_sys_exact_business_start.cjs",
+      "sha256": "aba74fe5925129f6b8c5fb26167f6873022da14544179909865ab98f0f5ab288",
+      "byteCount": 77905,
+      "role": "INDEPENDENT_NODE_ORACLE"
+    },
+    {
+      "path": "coding-readiness/cross-module-contract-register.csv",
+      "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725",
+      "byteCount": 13108,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/g3-contract-primary-ownership-register.csv",
+      "sha256": "11f51f88e25ff01666f347467c82d2e825a81091926cff03f141fd750b476e9b",
+      "byteCount": 102456,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/g3-file-allocation-register.csv",
+      "sha256": "b9ea79073e021a94a6ae76c5059f36b5960bf438c5a6e585a846e72e675842ce",
+      "byteCount": 28987,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "2dee92d6bf2366f208cbc499e2e9bf58999d85322e459ea843b04f3e1df7880a",
+      "byteCount": 305301,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "cb8d5b5ff815ab5de960025c491d8ac0b565cfda644898dee019967a0fd85bbe",
+      "byteCount": 99982,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "byteCount": 1523618,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-authorization-register.csv",
+      "sha256": "c6e44f59f1ac258ddcb9e54a89fdbd5c5495aa8bb2f68f2029056ee6a9f15cac",
+      "byteCount": 35458,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-coding-contract-register.csv",
+      "sha256": "63793b25ca04b08931c3310fa2d23dd90a331161c329ac5ebcbc81cfd00e8672",
+      "byteCount": 12829,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-delivery-register.csv",
+      "sha256": "a15ecff207915aa046830c94a98ba60acb450f437b1fd110289a08e1888250ce",
+      "byteCount": 8151,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+      "sha256": "12a14952c99da6a8a1dd4d27fb3f46b9f0e3a36a02fa06530c170b66b9211cc3",
+      "byteCount": 722231,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "5c5fa702c137f879f83f6aa0af918f6ec3769b4c0171d5c2db43fd894ccee76a",
+      "byteCount": 3598184,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-public-identity-registry.v1.json",
+      "sha256": "91de0006d977fcc579f4ec49bed0aca14c4e71fc91a934e064e815cf9d7439b8",
+      "byteCount": 167555,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-semantic-bindings.v1.json",
+      "sha256": "89bf690a7087c878c81e84ce6fcda4c63c29f2a4a5fbd5a61fc45d7862ee360a",
+      "byteCount": 2371697,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/modern-capability-trace-register.csv",
+      "sha256": "c980e93cb586ad5b77307ee2263c1222f6e24e1cac7b7c52bcea0f1ac548ff19",
+      "byteCount": 12179,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "coding-readiness/module-exact-business-start-canonical.v1.json",
+      "sha256": "483ae9f1aefaa59ed2758a0d0fb0e0280b7e961fb0e1340a60e75d1bbec81b36",
+      "byteCount": 38400,
+      "role": "SEALED_FOUR_MODULE_PREDECESSOR"
+    },
+    {
+      "path": "coding-readiness/physical-owner-prefix-register.csv",
+      "sha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49",
+      "byteCount": 4017,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/platform-integration-binding-register.csv",
+      "sha256": "f7454ca7cd0c089e7fb609c452ba56b67f565850943d23a298a44409981c20a5",
+      "byteCount": 6172,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/service-api-auth-binding-register.csv",
+      "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa",
+      "byteCount": 14356,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/shared-contract-catalog.csv",
+      "sha256": "34ffec83a60a7cb369406807bb856755e7bb34cf2be5dacb67dac1b0f3a07118",
+      "byteCount": 3193,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/sys-exact-business-start-successor.v1.json",
+      "sha256": "aa4f82925a5a34132ed69844ca088111d551b7effbe1d70d8104846db82c44be",
+      "byteCount": 31406,
+      "role": "CURRENT_SYS_EXACT_SUCCESSOR"
+    },
+    {
+      "path": "coding-readiness/sys-exact-business-successor-lineage.v1.json",
+      "sha256": "33fdb48e83677037ff25a34be705f9397227bc205531510bb45e5cf14bfb50dc",
+      "byteCount": 3363,
+      "role": "SUCCESSOR_LINEAGE"
+    },
+    {
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v1.json",
+      "sha256": "c479af356c3d9fc190d12f0ca1adf01c7e6e1f1e3f8642d787b1d18829871c91",
+      "byteCount": 46420,
+      "role": "CURRENT_LISTENING_SUCCESSOR_AUTHORITY"
+    },
+    {
+      "path": "coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "byteCount": 38399,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/transport-schema-resolution-register.csv",
+      "sha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e",
+      "byteCount": 219704,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "coding-readiness/validate_sys_exact_business_start.py",
+      "sha256": "63917334682571291f850f2ca76b8bff548e5415ecda37bcd551389927218a8e",
+      "byteCount": 100044,
+      "role": "PRIMARY_FAIL_CLOSED_VALIDATOR"
+    },
+    {
+      "path": "g0/file-ownership-register.csv",
+      "sha256": "cd10a200b51e8ec3673f349f37d71cee90cf97481a2615de6d69efd0696815bf",
+      "byteCount": 17661,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "g0/migration-allocation-register.csv",
+      "sha256": "6d6c5a05006ffb9369d896d6130d8dcd371462a3abd1c3eda2d747bff3ce2f7e",
+      "byteCount": 8397,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "hris-atomic-duty-matrix.csv",
+      "sha256": "bc6a387b648be7ead865691653f647bd67f694b2bf3868e5d5eaad5dfab16caa",
+      "byteCount": 59593,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "hris-permission-group-matrix.csv",
+      "sha256": "9daf98e2b6c3eadec2a7e782516046f074cb0775c03bdc7fbd75c08adce33578",
+      "byteCount": 16515,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "hris-sod-rule-matrix.csv",
+      "sha256": "6f9153048d936ec8f4d3f888eaf1c297741a89b2128b379885ebd6cbed880c6f",
+      "byteCount": 10151,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/hrm/g1-decision-log.csv",
+      "sha256": "f27144be7bffc5d17b1adb0400e14cede7fb71b5bf8464554b3201866e4833fc",
+      "byteCount": 10420,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g1-decision-log.csv",
+      "sha256": "1e2af6d297333c7c2a7e4c525c74a2529d638410bf47ebfe3a55709b8633d07d",
+      "byteCount": 10456,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g2-auth-physical-schema.sql",
+      "sha256": "3443ed2acb85f26d32430a9091c00ce87dc8bbc0d80697747d03f372c6e220b6",
+      "byteCount": 26484,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g2-contract-catalog.csv",
+      "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206",
+      "byteCount": 17102,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g2-golden-scenarios.csv",
+      "sha256": "2476313506b65294ae8d67a052bb854b22d07c4101cceb144d0c45f3e34de76d",
+      "byteCount": 16979,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g2-implementation-contract.md",
+      "sha256": "2dbabebfc52c2175193821f72a3b9bf5b33b83110ed871f88e35ab07c8e0f871",
+      "byteCount": 15199,
+      "role": "SEALED_SYS_PREDECESSOR"
+    },
+    {
+      "path": "session-evidence/sys/g2-implementation-contract.v2.md",
+      "sha256": "69c80aefe574ec1bc84cfaf7d7b5fc3fd709b3087fd387a57cf86d7dfc2a7aac",
+      "byteCount": 15667,
+      "role": "CURRENT_SYS_V2_AUTHORITY"
+    },
+    {
+      "path": "session-evidence/sys/g2-platform-physical-schema.sql",
+      "sha256": "5bd0fe6877ea0fb5a545f701dba7847c173a52dbe415a2b642d2a6a138594aa8",
+      "byteCount": 58299,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g2-state-machines.md",
+      "sha256": "7ee14c1369945498029b00b119679f3f6dd9c1285df1f176b186bbd1b45b8f10",
+      "byteCount": 11847,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g2-transport-schemas.v1.json",
+      "sha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7",
+      "byteCount": 95808,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-evidence/sys/g3-modern-capability-contracts.v1.json",
+      "sha256": "cb770ad54b7a3c58eab3aa05ba5f88239941223e7645016dab071a5598bc584d",
+      "byteCount": 80221,
+      "role": "SEALED_MODERN_SYS_CONTRACT"
+    },
+    {
+      "path": "session-evidence/sys/validate_sys_readiness.py",
+      "sha256": "030fd2eb4189846da9385b47606468aaf545091032b4b134f902be52662fc823",
+      "byteCount": 52710,
+      "role": "SEALED_SYS_PREDECESSOR"
+    },
+    {
+      "path": "session-evidence/sys/validate_sys_readiness.v2.py",
+      "sha256": "9774ac9c91dd6f853ad8aa0822adfd023967a85154f571ddd37ace98c4fc4299",
+      "byteCount": 63008,
+      "role": "CURRENT_SYS_V2_AUTHORITY"
+    },
+    {
+      "path": "session-prompts/05-cloudhr-sys-session.md",
+      "sha256": "3f96b42b02211dbc36e0acc09450885d61a9eeef999e3f2061f6895b34350dc2",
+      "byteCount": 18209,
+      "role": "PINNED_SYS_SESSION_PROMPT"
+    },
+    {
+      "path": "session-registers/hris-hrm-source-coverage.csv",
+      "sha256": "8b9044ed595be8847fddab74075c5f308e61343f179da1da4e231e8ffe48e6c2",
+      "byteCount": 514029,
+      "role": "EXACT_CLOSURE_INPUT"
+    },
+    {
+      "path": "session-registers/hris-sys-source-coverage.csv",
+      "sha256": "a3097505a01f60e1a45d369fbbfb0f0c1fbb9f78b09b7beb31a336b814536ab4",
+      "byteCount": 154252,
+      "role": "EXACT_CLOSURE_INPUT"
+    }
+  ],
+  "validatorPolicy": {
+    "primary": "coding-readiness/validate_sys_exact_business_start.py",
+    "independent": "coding-readiness/audit_sys_exact_business_start.cjs",
+    "normalAndSelfTestRequired": true,
+    "minimumMutationCount": 21
+  },
+  "gateBoundary": {
+    "globalGateAuthorization": "NONE_VALIDATOR_CONTROLLED",
+    "runtimeImplemented": false,
+    "productionAuthorized": false,
+    "g3State": "DESIGN_READY_NOT_STARTED",
+    "g4State": "NOT_STARTED",
+    "g6State": "NOT_AUTHORIZED"
+  }
+}

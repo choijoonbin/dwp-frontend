@@ -1,0 +1,868 @@
+{
+  "reportId": "DWP-HRIS-MODERN-SUCCESSOR-READER-FENCE-REPAIR-AUTHOR-VERIFICATION-2026-09-16-V1",
+  "schema": "dwp.hris.modern-successor-reader-fence-repair-author-verification.v1",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-16T05:11:55Z",
+  "status": "PASS_WITH_P0_HISTORICAL_LINEAGE_QUARANTINE",
+  "scope": {
+    "purpose": "author-side completion of exact supported-reader inventory, shared reader fence, durable writer-death journal blocking, and legacy report overwrite prevention",
+    "qualificationBoundary": "SOURCE_AND_READ_ONLY_SELF_TESTS_ONLY_NO_PROMOTION_NO_GATE_CHANGE",
+    "candidateId": "A7K8Kj",
+    "canonicalDestinationCount": 8,
+    "physicalDestinationCount": 8,
+    "totalDestinationCount": 16
+  },
+  "decision": {
+    "readerFenceRepair": "GO_FOR_INDEPENDENT_REAUDIT",
+    "promotion": "NOT_EXECUTED_NOT_AUTHORIZED",
+    "gate": "NOT_OPENED_NOT_MODIFIED",
+    "legacyHistoricalAuthority": "FAIL_CLOSED_QUARANTINED_P0_EXACT_ORIGINAL_BYTES_UNAVAILABLE",
+    "publicationReadiness": "NOT_ASSERTED_INDEPENDENT_REAUDIT_REQUIRED",
+    "reason": "reader fence implementation and hostile tests pass, while the overwritten legacy design evidence cannot be restored without an exact preimage and is excluded from authority"
+  },
+  "inventoryLineage": {
+    "status": "PASS_EXACT_SELF_SEALED_CREATE_ONLY_CHAIN",
+    "activeVersion": 3,
+    "versions": [
+      {
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v1.json",
+        "dev": 16777234,
+        "inode": 47726449,
+        "mode": "0o644",
+        "size": 12633,
+        "mtimeNs": 1789531881177133082,
+        "ctimeNs": 1789531881177133082,
+        "sha256": "631adb66431d30003620f78ccdc0ad9ecc6136874728d66a8185a41a3b85d2a4",
+        "schema": "dwp.hris.modern-successor-supported-reader-inventory.v1",
+        "inventoryId": "DWP-HRIS-MODERN-SUCCESSOR-SUPPORTED-READERS-2026-09-16-V1",
+        "activeSourceCount": 43,
+        "dispositionCounts": {
+          "CONTROL_WRITER_SELF_GUARDED": 1,
+          "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+          "GUARDED_DIRECT_ENTRYPOINT": 38,
+          "GUARDED_LIBRARY_CALLERS_ONLY": 3
+        },
+        "sealedPayloadSha256": "309b5e68757d7c57672e67604783ec2d920deb59dd9a461e61f617b4c5bb6be1",
+        "predecessorInventory": null
+      },
+      {
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v2.json",
+        "dev": 16777234,
+        "inode": 47905229,
+        "mode": "0o644",
+        "size": 13418,
+        "mtimeNs": 1789535032599612349,
+        "ctimeNs": 1789535032599612349,
+        "sha256": "81438665462b6945ae867ed6dbed78eb6cfe4aad996518652971eec74f977868",
+        "schema": "dwp.hris.modern-successor-supported-reader-inventory.v2",
+        "inventoryId": "DWP-HRIS-MODERN-SUCCESSOR-SUPPORTED-READERS-2026-09-16-V2",
+        "activeSourceCount": 44,
+        "dispositionCounts": {
+          "CONTROL_WRITER_SELF_GUARDED": 1,
+          "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+          "GUARDED_DIRECT_ENTRYPOINT": 39,
+          "GUARDED_LIBRARY_CALLERS_ONLY": 3
+        },
+        "sealedPayloadSha256": "1b8371c83be5a622ff7f556a716bc1429776a9fdfe88190516c55b02d625f132",
+        "predecessorInventory": {
+          "disposition": "IMMUTABLE_SELF_SEALED_PREDECESSOR_SUPERSEDED_BY_V2_REFRESH",
+          "fileSha256": "631adb66431d30003620f78ccdc0ad9ecc6136874728d66a8185a41a3b85d2a4",
+          "path": "coding-readiness/modern-successor-supported-reader-inventory.v1.json",
+          "sealedPayloadSha256": "309b5e68757d7c57672e67604783ec2d920deb59dd9a461e61f617b4c5bb6be1"
+        }
+      },
+      {
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v3.json",
+        "dev": 16777234,
+        "inode": 47908662,
+        "mode": "0o644",
+        "size": 13508,
+        "mtimeNs": 1789535226384943363,
+        "ctimeNs": 1789535226384943363,
+        "sha256": "9cec05334b345e5d6cab7ad07c2963da42cac1e7409aa881419ba72618c8d5fe",
+        "schema": "dwp.hris.modern-successor-supported-reader-inventory.v3",
+        "inventoryId": "DWP-HRIS-MODERN-SUCCESSOR-SUPPORTED-READERS-2026-09-16-V3",
+        "activeSourceCount": 44,
+        "dispositionCounts": {
+          "CONTROL_WRITER_SELF_GUARDED": 1,
+          "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+          "GUARDED_DIRECT_ENTRYPOINT": 39,
+          "GUARDED_LIBRARY_CALLERS_ONLY": 3
+        },
+        "sealedPayloadSha256": "7f9e81a6d7b809e6e7b828c0912cfce2745c166c4e1d6c4b776dbb3f5b5bf225",
+        "predecessorInventory": {
+          "path": "coding-readiness/modern-successor-supported-reader-inventory.v2.json",
+          "fileSha256": "81438665462b6945ae867ed6dbed78eb6cfe4aad996518652971eec74f977868",
+          "sealedPayloadSha256": "1b8371c83be5a622ff7f556a716bc1429776a9fdfe88190516c55b02d625f132",
+          "disposition": "IMMUTABLE_SELF_SEALED_PREDECESSOR_SUPERSEDED_BY_V3_REFRESH"
+        }
+      }
+    ],
+    "v1OverwritePolicy": "PRESERVED_NEVER_REPLACED",
+    "v2Disposition": "IMMUTABLE_INTERMEDIATE_CREATED_BEFORE_P0_WRITER_REPAIR",
+    "v3Finality": "FINAL_FOR_THIS_AUTHOR_REPAIR_SUBJECT_TO_INDEPENDENT_REAUDIT",
+    "exactActiveReaderCount": 44,
+    "prepareFinalEndorsementEntry": {
+      "disposition": "GUARDED_DIRECT_ENTRYPOINT",
+      "language": "PYTHON",
+      "path": "coding-readiness/prepare_modern_causal_final_endorsement.py",
+      "sourceSha256": "63e8e42aaf779bc62858b18474ee948dcb27d64b8e5d8b4220ae2031c8e2515a"
+    }
+  },
+  "sourceChanges": [
+    {
+      "path": "coding-readiness/modern_successor_reader_guard.py",
+      "dev": 16777234,
+      "inode": 47715800,
+      "mode": "0o644",
+      "size": 19356,
+      "mtimeNs": 1789535198592339755,
+      "ctimeNs": 1789535198592339755,
+      "sha256": "4fd6daa023d1e510ebbb19b92bc718e4b6ed7f86a609baecf8dcd53447adf859",
+      "change": "route to v3 exact inventory, require self-seal and explicit v2 predecessor pin, retain shared lock plus durable terminal-journal check"
+    },
+    {
+      "path": "coding-readiness/validate_modern_successor_reader_coverage.py",
+      "dev": 16777234,
+      "inode": 47720732,
+      "mode": "0o644",
+      "size": 13236,
+      "mtimeNs": 1789535198592911672,
+      "ctimeNs": 1789535198592911672,
+      "sha256": "daccb21fecc8d166bbc2700a46313e79f9a053c128e9381bcbe4bf17d2283167",
+      "change": "discover direct basenames plus dynamic successor_paths readers; exact 44 coverage; execute actual direct reader under absent, PREPARED, COMMITTING, FINALIZING, malformed and COMMITTED journals"
+    },
+    {
+      "path": "coding-readiness/promote_modern_successor_bundle.py",
+      "dev": 16777234,
+      "inode": 47680134,
+      "mode": "0o644",
+      "size": 81564,
+      "mtimeNs": 1789535198593828964,
+      "ctimeNs": 1789535198593828964,
+      "sha256": "dfc003b8c5b64a40051ccd577db09e3da6fea52dd4d4813479506faba1a50592",
+      "change": "require self-sealed v3 reader inventory and exact v2 predecessor pin in promotion acceptance and fixtures"
+    },
+    {
+      "path": "coding-readiness/prepare_modern_causal_final_endorsement.py",
+      "dev": 16777234,
+      "inode": 46099895,
+      "mode": "0o644",
+      "size": 70550,
+      "mtimeNs": 1789534868295985818,
+      "ctimeNs": 1789534868295985818,
+      "sha256": "63e8e42aaf779bc62858b18474ee948dcb27d64b8e5d8b4220ae2031c8e2515a",
+      "change": "remove inventory bypass from all successor guarded reads, including self-test"
+    },
+    {
+      "path": "coding-readiness/validate_modern_causal_independent_oracle.py",
+      "dev": 16777234,
+      "inode": 45563493,
+      "mode": "0o644",
+      "size": 258099,
+      "mtimeNs": 1789535168792889370,
+      "ctimeNs": 1789535168792889370,
+      "sha256": "f4806b2ee689469ca46bf8770dca15b1da450a154d16daf5cd1055511adfe063",
+      "change": "all report writes are create-only; legacy design reproduction requires explicit unique --report; historical reproduction requires explicit distinct JSON/Markdown new paths and atomically creates the pair; canonical v1 targets are rejected"
+    }
+  ],
+  "tests": {
+    "status": "PASS",
+    "testCount": 12,
+    "tests": [
+      {
+        "actualExitCode": 0,
+        "command": "python3 -m py_compile coding-readiness/modern_successor_reader_guard.py coding-readiness/validate_modern_successor_reader_coverage.py coding-readiness/promote_modern_successor_bundle.py coding-readiness/prepare_modern_causal_final_endorsement.py coding-readiness/validate_modern_causal_independent_oracle.py",
+        "elapsedSeconds": 0.174,
+        "expectedExitCode": 0,
+        "name": "py_compile",
+        "status": "PASS",
+        "stderrLastLine": "",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutLastLine": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "actualExitCode": 0,
+        "command": "python3 -B coding-readiness/validate_modern_successor_reader_coverage.py --compact",
+        "elapsedSeconds": 0.193,
+        "expectedExitCode": 0,
+        "name": "coverage_exact_44",
+        "parsedStdout": {
+          "activeSourceCount": 44,
+          "dispositionCounts": {
+            "CONTROL_WRITER_SELF_GUARDED": 1,
+            "GUARDED_CJS_DIRECT_ENTRYPOINT": 1,
+            "GUARDED_DIRECT_ENTRYPOINT": 39,
+            "GUARDED_LIBRARY_CALLERS_ONLY": 3
+          },
+          "errors": [],
+          "inventoryEntryCount": 44,
+          "schema": "dwp.hris.modern-successor-reader-coverage-validation.v1",
+          "status": "PASS"
+        },
+        "status": "PASS",
+        "stderrLastLine": "",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutLastLine": "{\"activeSourceCount\":44,\"dispositionCounts\":{\"CONTROL_WRITER_SELF_GUARDED\":1,\"GUARDED_CJS_DIRECT_ENTRYPOINT\":1,\"GUARDED_DIRECT_ENTRYPOINT\":39,\"GUARDED_LIBRARY_CALLERS_ONLY\":3},\"errors\":[],\"inventoryEntryCount\":44,\"schema\":\"dwp.hris.modern-successor-reader-coverage-validation.v1\",\"status\":\"PASS\"}",
+        "stdoutSha256": "74c7cd7b06b2b14e7371b194f5ad03774e783a5af8f6b82d393d53271e63c1c4"
+      },
+      {
+        "actualExitCode": 0,
+        "command": "python3 -B coding-readiness/validate_modern_successor_reader_coverage.py --self-test --compact",
+        "elapsedSeconds": 0.472,
+        "expectedExitCode": 0,
+        "name": "coverage_hostile",
+        "parsedStdout": {
+          "caseCount": 9,
+          "cases": {
+            "actual-direct-reader-absent-journal-admitted": true,
+            "actual-direct-reader-committed-journal-admitted": true,
+            "actual-direct-reader-malformed-journal-blocked": true,
+            "actual-direct-reader-writer-death-committing-blocked": true,
+            "actual-direct-reader-writer-death-finalizing-blocked": true,
+            "actual-direct-reader-writer-death-prepared-blocked": true,
+            "current-exact-inventory-passes": true,
+            "guard-or-source-drift-rejected": true,
+            "new-uninventoried-reader-rejected": true
+          },
+          "failedCases": [],
+          "passedCount": 9,
+          "schema": "dwp.hris.modern-successor-reader-coverage-self-test.v1",
+          "status": "PASS"
+        },
+        "status": "PASS",
+        "stderrLastLine": "",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutLastLine": "{\"caseCount\":9,\"cases\":{\"actual-direct-reader-absent-journal-admitted\":true,\"actual-direct-reader-committed-journal-admitted\":true,\"actual-direct-reader-malformed-journal-blocked\":true,\"actual-direct-reader-writer-death-committing-blocked\":true,\"actual-direct-reader-writer-death-finalizing-blocked\":true,\"actual-direct-reader-writer-death-prepared-blocked\":true,\"current-exact-inventory-passes\":true,\"guard-or-source-drift-rejected\":true,\"new-uninventoried-reader-rejected\":true},\"failedCases\":[],\"passedCount\":9,\"schema\":\"dwp.hris.modern-successor-reader-coverage-self-test.v1\",\"status\":\"PASS\"}",
+        "stdoutSha256": "8c6064a7e360f874d857795e21a11d9676809b17b5e3d74ea471e3c1ab170756"
+      },
+      {
+        "actualExitCode": 0,
+        "command": "python3 -B coding-readiness/modern_successor_reader_guard.py --self-test --compact",
+        "elapsedSeconds": 0.196,
+        "expectedExitCode": 0,
+        "name": "guard_concurrency_hostile",
+        "parsedStdout": {
+          "caseCount": 10,
+          "cases": {
+            "absent-journal-admitted": true,
+            "active-shared-reader-excludes-writer-process": true,
+            "malformed-journal-blocked": true,
+            "same-thread-nested-reader-is-reentrant": true,
+            "terminal-committed-admitted": true,
+            "terminal-rolled_back-admitted": true,
+            "writer-death-committing-blocked": true,
+            "writer-death-finalizing-blocked": true,
+            "writer-death-prepared-blocked": true,
+            "writer-process-admitted-after-reader-release": true
+          },
+          "failedCases": [],
+          "passedCount": 10,
+          "schema": "dwp.hris.modern-successor-reader-guard-self-test.v1",
+          "status": "PASS"
+        },
+        "status": "PASS",
+        "stderrLastLine": "",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutLastLine": "{\"caseCount\":10,\"cases\":{\"absent-journal-admitted\":true,\"active-shared-reader-excludes-writer-process\":true,\"malformed-journal-blocked\":true,\"same-thread-nested-reader-is-reentrant\":true,\"terminal-committed-admitted\":true,\"terminal-rolled_back-admitted\":true,\"writer-death-committing-blocked\":true,\"writer-death-finalizing-blocked\":true,\"writer-death-prepared-blocked\":true,\"writer-process-admitted-after-reader-release\":true},\"failedCases\":[],\"passedCount\":10,\"schema\":\"dwp.hris.modern-successor-reader-guard-self-test.v1\",\"status\":\"PASS\"}",
+        "stdoutSha256": "0dd9418a380e321db544d062382b1080010d616bb9223824e6d75fc6e961a23d"
+      },
+      {
+        "actualExitCode": 0,
+        "command": "python3 -B coding-readiness/promote_modern_successor_bundle.py --self-test --compact",
+        "elapsedSeconds": 1.087,
+        "expectedExitCode": 0,
+        "name": "promotion_self_test",
+        "parsedStdout": {
+          "caseCount": 14,
+          "cases": {
+            "acceptance-tamper-rejected": true,
+            "candidate-extra-file-rejected": true,
+            "candidate-symlink-rejected": true,
+            "destination-cas-drift-rejected-before-journal": true,
+            "immutable-receipt-cannot-be-overwritten": true,
+            "injected-partial-crash-observed": true,
+            "missing-independent-reader-audit-rejected": true,
+            "partial-crash-exact-rollback": true,
+            "post-receipt-crash-observed": true,
+            "published-receipt-finalizes-exact-commit": true,
+            "read-only-preflight-passes": true,
+            "receipt-create-new-collision-rejected": true,
+            "same-bytes-source-rebinding-rejected": true,
+            "successful-commit-exact-sixteen-and-immutable-receipt": true
+          },
+          "failedCases": [],
+          "passedCount": 14,
+          "schema": "dwp.hris.modern-successor-promotion-self-test.v1",
+          "status": "PASS"
+        },
+        "status": "PASS",
+        "stderrLastLine": "",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutLastLine": "{\"caseCount\":14,\"cases\":{\"acceptance-tamper-rejected\":true,\"candidate-extra-file-rejected\":true,\"candidate-symlink-rejected\":true,\"destination-cas-drift-rejected-before-journal\":true,\"immutable-receipt-cannot-be-overwritten\":true,\"injected-partial-crash-observed\":true,\"missing-independent-reader-audit-rejected\":true,\"partial-crash-exact-rollback\":true,\"post-receipt-crash-observed\":true,\"published-receipt-finalizes-exact-commit\":true,\"read-only-preflight-passes\":true,\"receipt-create-new-collision-rejected\":true,\"same-bytes-source-rebinding-rejected\":true,\"successful-commit-exact-sixteen-and-immutable-receipt\":true},\"failedCases\":[],\"passedCount\":14,\"schema\":\"dwp.hris.modern-successor-promotion-self-test.v1\",\"status\":\"PASS\"}",
+        "stdoutSha256": "998361e32dbba4c65a295c33f1b3349b5fa112e9f15cd4518b93c8782a39c200"
+      },
+      {
+        "actualExitCode": 0,
+        "command": "python3 -B coding-readiness/prepare_modern_causal_final_endorsement.py --self-test --profile successor-v2 --compact",
+        "elapsedSeconds": 0.189,
+        "expectedExitCode": 0,
+        "name": "prepare_successor_self_test",
+        "parsedStdout": {
+          "canonicalCounts": {
+            "commands": 133,
+            "ownerDependencyContracts": 1,
+            "ownerPortOperationContracts": 18,
+            "publicEvents": 157,
+            "publicOperations": 199,
+            "queries": 66,
+            "systemHandlers": 27,
+            "tableSpecifications": 131
+          },
+          "cases": {
+            "existing-successor-pair-rejected": true,
+            "existing-successor-pair-unchanged": true,
+            "predecessor-pins-exact": true,
+            "profile-path-and-predecessor-controls": true,
+            "successor-inputs-pending": true,
+            "successor-stage-graph-acyclic": true,
+            "successor-targets-are-clean": true
+          },
+          "failures": [],
+          "policy": {
+            "fileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+            "path": "modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+            "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2"
+          },
+          "predecessorDisposition": "HISTORICAL_BYTES_PINNED_NOT_ACTIVE_GATE_AUTHORITY",
+          "profile": "successor-v2",
+          "schema": "dwp.hris.modern-causal-final-preparer-successor-self-test.v1",
+          "status": "PASS",
+          "tests": 9
+        },
+        "status": "PASS",
+        "stderrLastLine": "",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutLastLine": "{\"canonicalCounts\":{\"commands\":133,\"ownerDependencyContracts\":1,\"ownerPortOperationContracts\":18,\"publicEvents\":157,\"publicOperations\":199,\"queries\":66,\"systemHandlers\":27,\"tableSpecifications\":131},\"cases\":{\"existing-successor-pair-rejected\":true,\"existing-successor-pair-unchanged\":true,\"predecessor-pins-exact\":true,\"profile-path-and-predecessor-controls\":true,\"successor-inputs-pending\":true,\"successor-stage-graph-acyclic\":true,\"successor-targets-are-clean\":true},\"failures\":[],\"policy\":{\"fileSha256\":\"ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b\",\"path\":\"modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json\",\"sealedPayloadSha256\":\"4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2\"},\"predecessorDisposition\":\"HISTORICAL_BYTES_PINNED_NOT_ACTIVE_GATE_AUTHORITY\",\"profile\":\"successor-v2\",\"schema\":\"dwp.hris.modern-causal-final-preparer-successor-self-test.v1\",\"status\":\"PASS\",\"tests\":9}",
+        "stdoutSha256": "90e5ead818f86ad7785d617a8a9a080d3a7b34dc2f20b97ea9192a29ad289529"
+      },
+      {
+        "actualExitCode": 2,
+        "command": "python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --design-only --skip-self-tests --compact",
+        "elapsedSeconds": 0.124,
+        "expectedExitCode": 2,
+        "name": "legacy_design_default_blocked",
+        "status": "PASS",
+        "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: legacy --design-only requires an explicit unique --report path; the historical v1 report is immutable",
+        "stderrSha256": "3b5b6219b45458cc41be820800b60e61fa59b8b0c2bb43769dcc0e9c63bc605b",
+        "stdoutLastLine": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "actualExitCode": 2,
+        "command": "python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --design-only --skip-self-tests --compact --report coding-readiness/reports/modern-causal-independent-design-findings.v1.json",
+        "elapsedSeconds": 0.117,
+        "expectedExitCode": 2,
+        "name": "legacy_design_canonical_blocked",
+        "status": "PASS",
+        "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: legacy report output cannot target an immutable historical v1 path",
+        "stderrSha256": "dd7eabccd564dcb209f653a1b09722505916152b6a0ab84cb13b6c4061688777",
+        "stdoutLastLine": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "actualExitCode": 2,
+        "command": "python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --historical-fail --compact",
+        "elapsedSeconds": 0.119,
+        "expectedExitCode": 2,
+        "name": "legacy_historical_missing_explicit_paths_blocked",
+        "status": "PASS",
+        "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: --historical-fail requires both --historical-fail-json-report and --historical-fail-markdown-report at unique new paths",
+        "stderrSha256": "8f4aa31a4dfc34cc70efe25021d0e795376549db16646719d1c072de6237dd93",
+        "stdoutLastLine": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "actualExitCode": 2,
+        "command": "python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --historical-fail --compact --historical-fail-json-report coding-readiness/reports/modern-causal-independent-historical-fail.v1.json --historical-fail-markdown-report coding-readiness/reports/modern-causal-independent-historical-fail.v1.md",
+        "elapsedSeconds": 0.129,
+        "expectedExitCode": 2,
+        "name": "legacy_historical_canonical_paths_blocked",
+        "status": "PASS",
+        "stderrLastLine": "validate_modern_causal_independent_oracle.py: error: historical reproduction outputs must be distinct from immutable v1 paths",
+        "stderrSha256": "5bef7f149b52931672f98260ed8029844e32455148febbe2b58306e2a36fae1e",
+        "stdoutLastLine": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "actualExitCode": 1,
+        "command": "python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --design-only --skip-self-tests --compact --report /tmp/hris-reader-fence-repro.HLlQga/modern-causal-independent-design-findings.reproduction.v2.json",
+        "elapsedSeconds": 0.562,
+        "expectedExitCode": 1,
+        "name": "legacy_design_duplicate_create_only_blocked",
+        "status": "PASS",
+        "stderrLastLine": "FileExistsError: successor publication target already exists (occupied): /tmp/hris-reader-fence-repro.HLlQga/modern-causal-independent-design-findings.reproduction.v2.json",
+        "stderrSha256": "79e267694a26e8c348c826f3b347eb5594bf3958a25ac05a00ad10899c2ab9c1",
+        "stdoutLastLine": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "actualExitCode": 1,
+        "command": "python3 -B coding-readiness/validate_modern_causal_independent_oracle.py --historical-fail --compact --historical-fail-json-report /tmp/hris-reader-fence-repro.HLlQga/modern-causal-independent-historical-fail.reproduction.v2.json --historical-fail-markdown-report /tmp/hris-reader-fence-repro.HLlQga/modern-causal-independent-historical-fail.reproduction.v2.md",
+        "elapsedSeconds": 0.251,
+        "expectedExitCode": 1,
+        "name": "legacy_historical_duplicate_pair_blocked",
+        "status": "PASS",
+        "stderrLastLine": "FileExistsError: successor publication target already exists (occupied): /tmp/hris-reader-fence-repro.HLlQga/modern-causal-independent-historical-fail.reproduction.v2.json",
+        "stderrSha256": "69a79044160ac4bb43e92c82cac66b359649dd04a621b6e02751e96353fb64ad",
+        "stdoutLastLine": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "explicitHostileExpectations": {
+    "actualDirectReader": "coding-readiness/validate_modern_capability_contracts.py",
+    "writerDeathStatesBlocked": [
+      "PREPARED",
+      "COMMITTING",
+      "FINALIZING"
+    ],
+    "malformedJournalBlocked": true,
+    "absentJournalAdmitted": true,
+    "committedJournalAdmitted": true,
+    "sharedReaderExcludesWriter": true,
+    "writerAdmittedAfterReaderRelease": true,
+    "coverageHostileCases": 9,
+    "readerGuardCases": 10,
+    "promotionCases": 14
+  },
+  "exactEightPlusEightAddendum": {
+    "status": "PASS",
+    "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-physical-bundle-addendum-2026-09-16.v2.json",
+    "dev": 16777234,
+    "inode": 47732469,
+    "mode": "0o644",
+    "size": 2368,
+    "mtimeNs": 1789531813663102766,
+    "ctimeNs": 1789531813663102766,
+    "sha256": "9e8be5380327fb5da28870e53db6b41e9a403002d5d2bc2c42e156a8500ece21",
+    "sealedPayloadSha256": "77fe9530f0f3645d18e775a680b8aff32a839f08aed031297d8a6a46a2939a73",
+    "predecessorPlan": {
+      "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-2026-09-16.v1.json",
+      "fileSha256": "5b213caa17c1bdb09d33778c19d4478955c9309f67b34b768fe3dd08f1229887",
+      "sealedPayloadSha256": "6496c84bd1a4d08a4b255fa9e980cc9b4080af9790a3666bfecd320489431ec3",
+      "disposition": "IMMUTABLE_SEALED_PREDECESSOR_BYTES_PRESERVED"
+    },
+    "canonicalArtifactCount": 8,
+    "physicalArtifactCount": 8,
+    "totalDestinationCount": 16,
+    "physicalArtifacts": [
+      "hrm-modern-forward-ddl.v4.sql",
+      "per-modern-forward-ddl.v4.sql",
+      "tim-modern-forward-ddl.v4.sql",
+      "sys-auth-modern-forward-ddl.v4.sql",
+      "sys-platform-modern-forward-ddl.v4.sql",
+      "modern-owner-handler-physical-contracts.v4.json",
+      "modern-query-projection-physical-contracts.v4.json",
+      "physical-candidate-generation-report.v4.json"
+    ],
+    "promotionExecuted": false,
+    "gateAuthorityGranted": false,
+    "productionState": "NOT_AUTHORIZED_G6"
+  },
+  "protectedImmutability": {
+    "status": "PASS_EXACT_METADATA_AND_BYTES_UNCHANGED",
+    "protectedFileCount": 27,
+    "snapshotCanonicalSha256": "1197c5e2d552f7e87616bb8b3d880eef59a3cd7abc7dbe1d218eb37c77199191",
+    "comparedFields": [
+      "dev",
+      "inode",
+      "mode",
+      "size",
+      "mtimeNs",
+      "ctimeNs",
+      "sha256"
+    ],
+    "differences": [],
+    "files": [
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-causal-state-contracts.v2.json",
+        "dev": 16777234,
+        "inode": 47635963,
+        "mode": "0o600",
+        "size": 4790036,
+        "mtimeNs": 1789529754770713989,
+        "ctimeNs": 1789529754771598118,
+        "sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe"
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-closed-set-manifest.v3.json",
+        "dev": 16777234,
+        "inode": 47631719,
+        "mode": "0o600",
+        "size": 294333,
+        "mtimeNs": 1789529741603144818,
+        "ctimeNs": 1789529741613400356,
+        "sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612"
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-event-payload-contracts.v1.json",
+        "dev": 16777234,
+        "inode": 47635697,
+        "mode": "0o644",
+        "size": 1687439,
+        "mtimeNs": 1789529753300605189,
+        "ctimeNs": 1789529753312166242,
+        "sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4"
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-exact-schema-contracts.v1.json",
+        "dev": 16777234,
+        "inode": 47635696,
+        "mode": "0o644",
+        "size": 7912823,
+        "mtimeNs": 1789529753291935712,
+        "ctimeNs": 1789529753311934197,
+        "sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02"
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-operation-causal-contract-ssot.v2.json",
+        "dev": 16777234,
+        "inode": 47635693,
+        "mode": "0o644",
+        "size": 5279746,
+        "mtimeNs": 1789529753285236174,
+        "ctimeNs": 1789529753311676152,
+        "sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227"
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-public-identity-registry.v1.json",
+        "dev": 16777234,
+        "inode": 47635700,
+        "mode": "0o644",
+        "size": 759646,
+        "mtimeNs": 1789529753310138009,
+        "ctimeNs": 1789529753312616372,
+        "sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e"
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-semantic-bindings.v1.json",
+        "dev": 16777234,
+        "inode": 47635698,
+        "mode": "0o644",
+        "size": 5400337,
+        "mtimeNs": 1789529753303798726,
+        "ctimeNs": 1789529753312414328,
+        "sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598"
+      },
+      {
+        "path": "coding-readiness/modern-canonical-candidate.A7K8Kj/sys-listening-stream-authority-successor.v2.json",
+        "dev": 16777234,
+        "inode": 47631865,
+        "mode": "0o644",
+        "size": 298993,
+        "mtimeNs": 1789529742246644107,
+        "ctimeNs": 1789529742247008694,
+        "sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/hrm-modern-forward-ddl.v4.sql",
+        "dev": 16777234,
+        "inode": 47668112,
+        "mode": "0o644",
+        "size": 164079,
+        "mtimeNs": 1789530192953770846,
+        "ctimeNs": 1789530192953770846,
+        "sha256": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/modern-owner-handler-physical-contracts.v4.json",
+        "dev": 16777234,
+        "inode": 47668117,
+        "mode": "0o644",
+        "size": 461341,
+        "mtimeNs": 1789530192958405412,
+        "ctimeNs": 1789530192958405412,
+        "sha256": "1fe171c137b4f6df6dc973fe20a1370de9526de4b25d8f361eea8c84e34da9c6"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/modern-query-projection-physical-contracts.v4.json",
+        "dev": 16777234,
+        "inode": 47668118,
+        "mode": "0o644",
+        "size": 4047816,
+        "mtimeNs": 1789530192959582169,
+        "ctimeNs": 1789530192959582169,
+        "sha256": "f941057ffe080cde4c785571cf286dfcc492b81fc1f0636805f15999506a85b6"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/per-modern-forward-ddl.v4.sql",
+        "dev": 16777234,
+        "inode": 47668113,
+        "mode": "0o644",
+        "size": 160855,
+        "mtimeNs": 1789530192954467933,
+        "ctimeNs": 1789530192954467933,
+        "sha256": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/physical-candidate-generation-report.v4.json",
+        "dev": 16777234,
+        "inode": 47668119,
+        "mode": "0o644",
+        "size": 4512,
+        "mtimeNs": 1789530192964069901,
+        "ctimeNs": 1789530192964069901,
+        "sha256": "e699ae4a4f7b7e2b494d53a015333561ca5e0e376287f34b8c5516c232013c89"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/sys-auth-modern-forward-ddl.v4.sql",
+        "dev": 16777234,
+        "inode": 47668116,
+        "mode": "0o644",
+        "size": 19585,
+        "mtimeNs": 1789530192956541985,
+        "ctimeNs": 1789530192956541985,
+        "sha256": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/sys-platform-modern-forward-ddl.v4.sql",
+        "dev": 16777234,
+        "inode": 47668115,
+        "mode": "0o644",
+        "size": 127841,
+        "mtimeNs": 1789530192956049691,
+        "ctimeNs": 1789530192956049691,
+        "sha256": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6"
+      },
+      {
+        "path": "coding-readiness/modern-physical-candidate.A7K8Kj/tim-modern-forward-ddl.v4.sql",
+        "dev": 16777234,
+        "inode": 47668114,
+        "mode": "0o644",
+        "size": 52207,
+        "mtimeNs": 1789530192954875560,
+        "ctimeNs": 1789530192954875560,
+        "sha256": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27"
+      },
+      {
+        "path": "coding-readiness/modern-successor-supported-reader-inventory.v1.json",
+        "dev": 16777234,
+        "inode": 47726449,
+        "mode": "0o644",
+        "size": 12633,
+        "mtimeNs": 1789531881177133082,
+        "ctimeNs": 1789531881177133082,
+        "sha256": "631adb66431d30003620f78ccdc0ad9ecc6136874728d66a8185a41a3b85d2a4"
+      },
+      {
+        "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-physical-bundle-addendum-2026-09-16.v2.json",
+        "dev": 16777234,
+        "inode": 47732469,
+        "mode": "0o644",
+        "size": 2368,
+        "mtimeNs": 1789531813663102766,
+        "ctimeNs": 1789531813663102766,
+        "sha256": "9e8be5380327fb5da28870e53db6b41e9a403002d5d2bc2c42e156a8500ece21"
+      },
+      {
+        "path": "g0/current-g3-gate-decision.json",
+        "dev": 16777234,
+        "inode": 41742789,
+        "mode": "0o644",
+        "size": 876,
+        "mtimeNs": 1789089449181792431,
+        "ctimeNs": 1789089449181792431,
+        "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e"
+      },
+      {
+        "path": "g0/g3-gate-transition-register.csv",
+        "dev": 16777234,
+        "inode": 45989559,
+        "mode": "0o644",
+        "size": 202,
+        "mtimeNs": 1789447365120199705,
+        "ctimeNs": 1789447365120199705,
+        "sha256": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a"
+      },
+      {
+        "path": "coding-readiness/modern-capability-closed-set-manifest.v3.json",
+        "dev": 16777234,
+        "inode": 46758935,
+        "mode": "0o644",
+        "size": 68869,
+        "mtimeNs": 1789482534900653651,
+        "ctimeNs": 1789482534900653651,
+        "sha256": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4"
+      },
+      {
+        "path": "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+        "dev": 16777234,
+        "inode": 46907785,
+        "mode": "0o644",
+        "size": 3448189,
+        "mtimeNs": 1789482772896697185,
+        "ctimeNs": 1789482772912511769,
+        "sha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0"
+      },
+      {
+        "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+        "dev": 16777234,
+        "inode": 46907786,
+        "mode": "0o644",
+        "size": 4617575,
+        "mtimeNs": 1789482772900814571,
+        "ctimeNs": 1789482772913059645,
+        "sha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730"
+      },
+      {
+        "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+        "dev": 16777234,
+        "inode": 46907787,
+        "mode": "0o644",
+        "size": 1088230,
+        "mtimeNs": 1789482772905710584,
+        "ctimeNs": 1789482772913672314,
+        "sha256": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b"
+      },
+      {
+        "path": "coding-readiness/modern-capability-semantic-bindings.v1.json",
+        "dev": 16777234,
+        "inode": 46907788,
+        "mode": "0o644",
+        "size": 3168251,
+        "mtimeNs": 1789482772907575839,
+        "ctimeNs": 1789482772914353899,
+        "sha256": "834cd00e20148cded2765f1f41790926a479515afd0f23f6d95a0cea4ba389dd"
+      },
+      {
+        "path": "coding-readiness/modern-capability-public-identity-registry.v1.json",
+        "dev": 16777234,
+        "inode": 46907789,
+        "mode": "0o644",
+        "size": 282654,
+        "mtimeNs": 1789482772911252182,
+        "ctimeNs": 1789482772914675316,
+        "sha256": "d3c09697221660a35b6fd405182433d1dbbe6b36c4198fa5b08db088f9d00a06"
+      },
+      {
+        "path": "coding-readiness/modern-capability-causal-state-contracts.v2.json",
+        "dev": 16777234,
+        "inode": 45500433,
+        "mode": "0o644",
+        "size": 2994570,
+        "mtimeNs": 1789482779782482538,
+        "ctimeNs": 1789482779782482538,
+        "sha256": "4f604faf4593e765e3a10671a8577cfa3e43a250fc3d7f34d89759518a4d0b08"
+      }
+    ],
+    "includes": "canonical candidate 8, physical candidate 8, v1 reader inventory, exact-count addendum, Gate 2, live canonical 7"
+  },
+  "legacyOverwriteIncident": {
+    "severity": "P0",
+    "status": "CONTAINED_AND_QUARANTINED_ORIGINAL_DESIGN_PREIMAGE_NOT_RECOVERED",
+    "detectedAt": "2026-09-16T04:56:17Z",
+    "causalWriter": "coding-readiness/validate_modern_causal_independent_oracle.py legacy design/historical report paths used replace semantics before this repair",
+    "designEvidence": {
+      "path": "coding-readiness/reports/modern-causal-independent-design-findings.v1.json",
+      "protectedPreIncidentReference": {
+        "reportPath": "coding-readiness/reports/modern-causal-oracle-pg-final-endorsement-versioned-successor-source-repair-2026-09-16.v1.json",
+        "reportFileSha256": "ea90b449f84cbccca54212d7f882612dbf5a9f9b6fae5906d249fceb09ffbad0",
+        "reportSealedPayloadSha256": "63b7ac9b45e8ff517d69ce8ca62b7eb377fcf6c5b52440e4d60f9761d1dca804",
+        "fileSha256": "1201ad8b67035ae48697de2007e4af86d267c4980ecfb06c281b6e3049a40a75",
+        "inode": 46529937
+      },
+      "observedPostIncident": {
+        "path": "coding-readiness/reports/modern-causal-independent-design-findings.v1.json",
+        "dev": 16777234,
+        "inode": 47893169,
+        "mode": "0o644",
+        "size": 1356739,
+        "mtimeNs": 1789534577755867707,
+        "ctimeNs": 1789534577756646956,
+        "sha256": "308c18abc866e0b44ab6712e6c4172c6e641589e43c5ca76e6da493aac8ae8be"
+      },
+      "postIncidentReportStatus": "FAIL",
+      "postIncidentFindingCount": 1385,
+      "bytesChanged": true,
+      "exactOriginalPreimageAvailable": false,
+      "authorityDisposition": "QUARANTINED_NON_AUTHORITATIVE_DO_NOT_RESTORE_BY_GUESS"
+    },
+    "historicalFailEvidence": [
+      {
+        "path": "coding-readiness/reports/modern-causal-independent-historical-fail.v1.json",
+        "dev": 16777234,
+        "inode": 47893190,
+        "mode": "0o644",
+        "size": 593457,
+        "mtimeNs": 1789534578836931745,
+        "ctimeNs": 1789534578837803869,
+        "sha256": "6ef38e85da0b36a76dd5d41702810033d8658aa5091eb49d0a6677f0b059718a",
+        "sealedPayloadSha256": "c3c41c7b416d32be0bf5e9bfba9e727935454dcf8e3fabd20a135b5a5faf5fbc",
+        "preIncidentFileSha256": "UNKNOWN_NOT_CAPTURED",
+        "authorityDisposition": "QUARANTINED_REPRODUCTION_TRACE_NOT_HISTORICAL_AUTHORITY"
+      },
+      {
+        "path": "coding-readiness/reports/modern-causal-independent-historical-fail.v1.md",
+        "dev": 16777234,
+        "inode": 47893191,
+        "mode": "0o644",
+        "size": 2028,
+        "mtimeNs": 1789534578839198701,
+        "ctimeNs": 1789534578839694867,
+        "sha256": "168ddc0f6430271d97ad2e6a7df5520f57a09941581f21d3ad6f2fa18f0c1fca",
+        "preIncidentFileSha256": "UNKNOWN_NOT_CAPTURED",
+        "authorityDisposition": "QUARANTINED_REPRODUCTION_TRACE_NOT_HISTORICAL_AUTHORITY"
+      }
+    ],
+    "reproductionEvidence": {
+      "uniqueTempJsonSha256": "6ef38e85da0b36a76dd5d41702810033d8658aa5091eb49d0a6677f0b059718a",
+      "uniqueTempMarkdownSha256": "168ddc0f6430271d97ad2e6a7df5520f57a09941581f21d3ad6f2fa18f0c1fca",
+      "designUniqueTempSha256": "d3957beb5529c54a166c0518ca873e5d7d1369d3d5009574d9982c18f47abd05",
+      "uniqueCreateSucceeded": true,
+      "duplicateCreateRejectedWithoutByteChange": true,
+      "note": "matching reproduction bytes do not establish pre-incident authority or provenance"
+    },
+    "recurrencePrevention": [
+      "fixed canonical v1 paths rejected by CLI",
+      "implicit legacy design output rejected",
+      "historical reproduction requires two explicit distinct new paths",
+      "all outputs use no-replace create-only primitives",
+      "JSON/Markdown historical pair rolls back newly created first member on second-member failure",
+      "future evidence must use unique temporary or monotonically versioned paths"
+    ],
+    "remainingAction": "independent auditor must accept the quarantine/version-lineage boundary or require an externally supplied exact original preimage; current v1 bytes must never be promoted as historical authority"
+  },
+  "safetyAssertions": {
+    "candidateWrites": 0,
+    "liveWrites": 0,
+    "gateWrites": 0,
+    "promotionRuns": 0,
+    "candidateWriterRuns": 0,
+    "temporaryReproductionWritesOnly": true,
+    "noDestructiveRestorationAttempted": true,
+    "testRunWritesToProtectedWorkspacePaths": 0,
+    "authorizedWorkspaceChanges": [
+      "coding-readiness/modern_successor_reader_guard.py",
+      "coding-readiness/validate_modern_successor_reader_coverage.py",
+      "coding-readiness/promote_modern_successor_bundle.py",
+      "coding-readiness/prepare_modern_causal_final_endorsement.py",
+      "coding-readiness/validate_modern_causal_independent_oracle.py",
+      "coding-readiness/modern-successor-supported-reader-inventory.v2.json",
+      "coding-readiness/modern-successor-supported-reader-inventory.v3.json",
+      "coding-readiness/reports/modern-successor-reader-fence-repair-author-verification-2026-09-16.v1.json"
+    ]
+  },
+  "independentReauditRequirements": [
+    "recompute active-reader discovery and all 44 source hashes from source",
+    "verify v3 self-seal and v3->v2->v1 exact predecessor chain",
+    "repeat actual-direct-reader writer-death and malformed/terminal journal hostile tests",
+    "repeat shared-reader versus writer exclusion test",
+    "verify legacy canonical v1 output paths reject overwrite and unique outputs remain create-only",
+    "verify the 27 protected paths are unchanged from the embedded exact metadata snapshot",
+    "treat overwritten legacy evidence as quarantined, not accepted authority"
+  ],
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "cf0bc795a5fc9449523292dec3c53f4991ed21d636fa986f6c7876ab2da21d75"
+}

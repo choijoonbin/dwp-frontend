@@ -1,0 +1,4 @@
+artifact_id,lineage_id,current_path,current_sha256,pointer_state
+PER_MODERN_CAPABILITY_CONTRACT,BLUEPRINT-LINEAGE-PER-MODERN-V2,session-evidence/per/g3-modern-capability-contracts.v2.json,e4b221549aa80f34944a352e7466221dfb0ba4969ce5a2ddc24d8c4dd75bd92f,CURRENT_EXACT
+SYS_READINESS_VALIDATOR,BLUEPRINT-LINEAGE-SYS-VALIDATOR-V2,session-evidence/sys/validate_sys_readiness.v2.py,9774ac9c91dd6f853ad8aa0822adfd023967a85154f571ddd37ace98c4fc4299,CURRENT_EXACT
+SYS_IMPLEMENTATION_CONTRACT,BLUEPRINT-LINEAGE-SYS-IMPLEMENTATION-V2,session-evidence/sys/g2-implementation-contract.v2.md,8e5a97efc4cd4cf5ade1422976a9300b3dba7590014a5d2173a11eb66da74f30,CURRENT_EXACT

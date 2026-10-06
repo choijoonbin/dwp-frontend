@@ -1,0 +1,204 @@
+{
+  "fixtureSetId": "dwp-hris-payroll-core-golden-v1",
+  "status": "CODE_READY_PROPOSAL",
+  "syntheticOnly": true,
+  "statutoryAssertion": false,
+  "defaultTenant": "00000000-0000-0000-0000-000000000201",
+  "cases": [
+    {
+      "id": "PAY-GOLD-001",
+      "title": "deterministic regular payroll without statutory rules",
+      "layer": "GLOBAL_CORE",
+      "input": {"currency":"TST","entries":[{"element":"BASE","type":"EARNING","amount":"3000.00"},{"element":"ALLOWANCE","type":"EARNING","amount":"200.00"},{"element":"VOLUNTARY_DEDUCTION","type":"DEDUCTION","amount":"100.00"}]},
+      "expected": {"gross":"3200.00","deductions":"100.00","net":"3100.00","employerCost":"0.00","lineCount":3,"sameDigestOnReplay":true}
+    },
+    {
+      "id": "PAY-GOLD-002",
+      "title": "typed formula graph and rounding validation",
+      "layer": "TENANT_CONFIGURATION",
+      "input": {"validExpression":{"operation":"MULTIPLY","left":{"money":"100.00","currency":"TST"},"right":{"rate":"0.125"}},"rounding":{"stage":"ELEMENT","scale":2,"mode":"HALF_UP"},"invalidGraphs":["CYCLE","MONEY_PLUS_HOURS","UNKNOWN_FUNCTION"]},
+      "expected": {"validAmount":"12.50","CYCLE":"FORMULA_CYCLE","MONEY_PLUS_HOURS":"UNIT_MISMATCH","UNKNOWN_FUNCTION":"FUNCTION_NOT_ALLOWED"}
+    },
+    {
+      "id": "PAY-GOLD-003",
+      "title": "duplicate and crash-after-commit recover one run",
+      "layer": "GLOBAL_CORE",
+      "input": {"idempotencyKey":"synthetic-run-003","requestDigest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","firstResponse":"CONNECTION_LOST_AFTER_COMMIT","retrySameDigest":true},
+      "expected": {"logicalRunCount":1,"logicalAttemptCount":1,"receiptLookupStatus":"SUCCEEDED","duplicateResultLines":0}
+    },
+    {
+      "id": "PAY-GOLD-004",
+      "title": "retro run posts only differential and balance lineage",
+      "layer": "GLOBAL_CORE",
+      "input": {"original":{"base":"3000.00","net":"3000.00"},"corrected":{"base":"3100.00","net":"3100.00"},"currency":"TST"},
+      "expected": {"grossDelta":"100.00","netDelta":"100.00","originalMutations":0,"correctionRuns":1,"reversalLinksComplete":true}
+    },
+    {
+      "id": "PAY-GOLD-005",
+      "title": "off-cycle result is isolated from regular run",
+      "layer": "GLOBAL_CORE",
+      "input": {"regularNet":"3100.00","offCycleBonus":"500.00","currency":"TST"},
+      "expected": {"regularNetAfter":"3100.00","offCycleGross":"500.00","offCycleNet":"500.00","separateRunIds":true}
+    },
+    {
+      "id": "PAY-GOLD-006",
+      "title": "maker checker scope and version guards",
+      "layer": "GLOBAL_CORE",
+      "input": {"runMaker":"actor-A","approvalAttempts":[{"actor":"actor-A","version":4,"scope":"PAY_GROUP_A"},{"actor":"actor-B","version":3,"scope":"PAY_GROUP_A"},{"actor":"actor-B","version":4,"scope":"PAY_GROUP_B"},{"actor":"actor-B","version":4,"scope":"PAY_GROUP_A"}]},
+      "expected": {"results":["409_SOD_CONFLICT","409_STALE_OR_INVALID_STATE","404_OPAQUE","SUCCEEDED"],"finalVersion":5}
+    },
+    {
+      "id": "PAY-GOLD-007",
+      "title": "canonical payment reconciles unknown bank response",
+      "layer": "GLOBAL_CORE",
+      "input": {"instructions":[{"worker":"W1","amount":"3100.00","currency":"TST"}],"firstTransportResult":"TIMEOUT_AFTER_COMMIT","receiptLookup":"ACKNOWLEDGED"},
+      "expected": {"instructionCount":1,"batchTotal":"3100.00","logicalReleaseCount":1,"finalStatus":"ACKNOWLEDGED","plainBankAccountStored":false}
+    },
+    {
+      "id": "PAY-GOLD-008",
+      "title": "canonical GL is balanced and reversible",
+      "layer": "GLOBAL_CORE",
+      "input": {"lines":[{"side":"DEBIT","account":"PAY_EXPENSE","amount":"3200.00"},{"side":"CREDIT","account":"CASH_PAYABLE","amount":"3100.00"},{"side":"CREDIT","account":"DEDUCTION_PAYABLE","amount":"100.00"}],"currency":"TST"},
+      "expected": {"debitTotal":"3200.00","creditTotal":"3200.00","balanced":true,"sourceLineageComplete":true,"reversalBatchBalances":true}
+    },
+    {
+      "id": "PAY-GOLD-009",
+      "title": "payslip publication and access are immutable",
+      "layer": "GLOBAL_CORE",
+      "input": {"documentVersion":1,"resultDigest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","accesses":["VIEW","DOWNLOAD"],"revoke":true},
+      "expected": {"publishedVersions":1,"accessAuditEvents":2,"status":"REVOKED","downloadAfterRevoke":"409_INVALID_STATE","documentBytesInAudit":false}
+    },
+    {
+      "id": "PAY-GOLD-010",
+      "title": "optional KR pack and YEA provider do not block core",
+      "layer": "ACTIVATION_BOUNDARY",
+      "input": {"krPackInstalled":false,"yeaProviderInstalled":false,"commands":["CORE_REGULAR_RUN","KR_WITHHOLDING","YEA_PROVIDER_SUBMIT"]},
+      "expected": {"CORE_REGULAR_RUN":"SUCCEEDED","KR_WITHHOLDING":"422_COUNTRY_PACK_NOT_ACTIVE","YEA_PROVIDER_SUBMIT":"422_PROVIDER_NOT_ACTIVE"},
+      "activationGate": ["official-reference-effective-date-rounding-golden-for-kr","provider-contract-privacy-conformance-for-yea"]
+    },
+    {
+      "id": "PAY-GOLD-011",
+      "title": "YEA hybrid provider receipt is idempotent and correctable",
+      "layer": "PROVIDER_CONTRACT",
+      "input": {"provider":"CONFORMANCE_STUB","caseRevision":2,"idempotencyKey":"synthetic-yea-011","firstStatus":"RESULT_UNKNOWN","lookupStatus":"ACKNOWLEDGED","correctionRevision":3},
+      "expected": {"logicalSubmissionCount":1,"finalProviderStatus":"ACKNOWLEDGED","originalResponseMutations":0,"correctionLinked":true,"statutoryAmountAsserted":false}
+    },
+    {
+      "id": "PAY-GOLD-012",
+      "title": "sensitive authorization and inference controls fail closed",
+      "layer": "GLOBAL_CORE",
+      "input": {"checks":["CROSS_TENANT","CROSS_PAY_GROUP","TRACE_WITHOUT_PURPOSE","BANK_TOKEN_UNMASK","EXPORT_WITHOUT_STEP_UP","SMALL_GROUP_AGGREGATE"]},
+      "expected": {"CROSS_TENANT":"404_OPAQUE","CROSS_PAY_GROUP":"404_OPAQUE","TRACE_WITHOUT_PURPOSE":"403_FIELD_POLICY","BANK_TOKEN_UNMASK":"403_FIELD_POLICY","EXPORT_WITHOUT_STEP_UP":"403_STEP_UP_REQUIRED","SMALL_GROUP_AGGREGATE":"SUPPRESSED"}
+    },
+    {
+      "id": "PAY-GOLD-013",
+      "title": "receipt lookup cannot outlive or broaden originating authorization",
+      "layer": "GLOBAL_CORE",
+      "input": {"originatingAction":"PAY_RUN_FINALIZE","sealedPopulationScopeDigest":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","sealedPurposeCode":"PAYROLL_FINALIZATION","authorizationRevisionAtCommand":12,"lookupAuthorizationRevision":13,"currentEntitlement":"REVOKED"},
+      "expected": {"receiptPersisted":true,"lookupResult":"404_OPAQUE","originatingContextUnchanged":true,"callerScopeOverrideAccepted":false,"accessBroadened":false}
+    },
+    {
+      "id": "PAY-GOLD-014",
+      "title": "decimal precision rounding stages and overflow are deterministic",
+      "layer": "GLOBAL_CORE",
+      "input": {
+        "contract": "dwp.hris.decimal-value-types.v1",
+        "pipeline": ["SOURCE_NORMALIZE", "FORMULA_DECLARED", "ELEMENT", "WORKER_RESULT", "SETTLEMENT_OR_STATUTORY"],
+        "roundingCases": [
+          {"mode":"HALF_UP","scale":2,"values":["1.005","-1.005"],"outputs":["1.01","-1.01"]},
+          {"mode":"HALF_EVEN","scale":2,"values":["1.005","-1.005"],"outputs":["1.00","-1.00"]},
+          {"mode":"DOWN","scale":2,"values":["1.009","-1.009"],"outputs":["1.00","-1.00"]},
+          {"mode":"UP","scale":2,"values":["1.001","-1.001"],"outputs":["1.01","-1.01"]},
+          {"mode":"FLOOR","scale":2,"values":["1.001","-1.001"],"outputs":["1.00","-1.01"]},
+          {"mode":"CEILING","scale":2,"values":["1.001","-1.001"],"outputs":["1.01","-1.00"]},
+          {"mode":"HALF_EVEN","scale":0,"values":["2.5","3.5","-2.5","-3.5"],"outputs":["2","4","-2","-4"]},
+          {"mode":"HALF_UP","scale":4,"values":["1.23445","-1.23445"],"outputs":["1.2345","-1.2345"]}
+        ],
+        "typedWorkerEntries": [
+          {"valueType":"MONEY","value":"123.456789","currency":"USD","expectedType":"InputAmount"},
+          {"valueType":"RATE","value":"0.12345678","unit":"RATIO","expectedType":"RateDecimal"},
+          {"valueType":"HOURS","value":"8.500000","unit":"HOUR","expectedType":"QuantityDecimal"},
+          {"valueType":"NUMBER","value":"999.12345678","unit":"UNITLESS","expectedType":"CalculationDecimal"}
+        ],
+        "negativeZeroCases": ["-0", "-0.0", "-0.000000"],
+        "invalidWireValues": ["1e3", "-2E-2", "+1.00", "01.00", " 1.00"],
+        "invalidJsonNumbers": [1.25, -0.0],
+        "overflowCases": {
+          "InputAmount": "10000000000000.000000",
+          "RateDecimal": "100000000000.00000000",
+          "CalculationDecimal": "10000000000000000.00000000",
+          "PostedMoney": "1000000000000000.0000"
+        },
+        "mismatchCases": [
+          {"left":{"amount":"1.00","currency":"USD"},"right":{"amount":"1.00","currency":"KRW"},"expected":"CROSS_CURRENCY_FORBIDDEN"},
+          {"left":{"quantity":"1.000000","unit":"HOUR"},"right":{"quantity":"1.000000","unit":"DAY"},"expected":"UNIT_MISMATCH"},
+          {"unit":"AMOUNT","quantity":"10.000000","currency":null,"expected":"CURRENCY_REQUIRED"},
+          {"unit":"HOUR","quantity":"10.000000","currency":"USD","expected":"CURRENCY_FORBIDDEN"}
+        ],
+        "trace": [
+          {"stage":"SOURCE_NORMALIZE","before":"1.005000","after":"1.005","scale":6,"mode":"DOWN","policyDigest":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},
+          {"stage":"ELEMENT","before":"1.005","after":"1.01","scale":2,"mode":"HALF_UP","policyDigest":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+          {"stage":"WORKER_RESULT","before":"1.01","after":"1.0100","scale":4,"mode":"HALF_UP","policyDigest":"abababababababababababababababababababababababababababababababab"}
+        ]
+      },
+      "expected": {
+        "wireType": "STRING",
+        "roundingCasesAllMatch": true,
+        "floatingPointUsed": false,
+        "databaseRoundingUsed": false,
+        "traceHasBeforeAfterStageScaleModePolicyDigest": true,
+        "negativeZeroOutputs": ["0", "0", "0"],
+        "invalidWireOutcome": "SCHEMA_INVALID",
+        "invalidJsonNumberOutcome": "WIRE_TYPE_REQUIRED",
+        "overflowOutcome": "DECIMAL_OVERFLOW",
+        "sameInputPolicyDigestByteIdentical": true,
+        "mismatchOutcomes": ["CROSS_CURRENCY_FORBIDDEN", "UNIT_MISMATCH", "CURRENCY_REQUIRED", "CURRENCY_FORBIDDEN"]
+      }
+    },
+    {
+      "id": "PAY-GOLD-015",
+      "title": "command idempotency is caller-bound and the authorization seal is immutable",
+      "layer": "GLOBAL_CORE",
+      "input": {
+        "originatingAction": "PAY_RUN_FINALIZE",
+        "idempotencyKey": "synthetic-pay-finalize-015",
+        "firstSubject": "00000000-0000-0000-0000-000000000151",
+        "secondSubject": "00000000-0000-0000-0000-000000000152",
+        "firstRequestDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "changedRequestDigest": "2525252525252525252525252525252525252525252525252525252525252525",
+        "sealedFields": ["tenantId","commandType","originatingAction","subjectPrincipalPublicId","populationScopeDigest","fieldPolicyRevision","purposeCode","authorizationRevision","idempotencyKey","requestDigest","correlationId"]
+      },
+      "expected": {
+        "sameSubjectSameDigest": "ORIGINAL_RECEIPT",
+        "sameSubjectDifferentDigest": "409_IDEMPOTENCY_KEY_REUSED",
+        "differentSubjectSameKey": "INDEPENDENT_RECEIPT",
+        "sealedFieldUpdate": "REJECTED",
+        "receiptDelete": "REJECTED",
+        "logicalCommandCountForFirstSubject": 1
+      }
+    },
+    {
+      "id": "PAY-GOLD-016",
+      "title": "concurrent overlapping country-pack activation has one database winner",
+      "layer": "COUNTRY_PACK_HARNESS",
+      "input": {
+        "first": {"jurisdictionCode":"ZZ","packKey":"synthetic-statutory","effectiveFrom":"2030-01-01","effectiveTo":"2030-07-01"},
+        "second": {"jurisdictionCode":"ZZ","packKey":"synthetic-statutory","effectiveFrom":"2030-06-01","effectiveTo":null},
+        "transactions": 2,
+        "status": "ACTIVE"
+      },
+      "expected": {"committedCount":1,"rejectedCount":1,"sqlState":"23P01","httpStatus":409,"activePointerCount":1,"partialActivation":false,"statutoryAmountAsserted":false}
+    },
+    {
+      "id": "PAY-GOLD-017",
+      "title": "half-open country-pack successor begins at the prior upper boundary",
+      "layer": "COUNTRY_PACK_HARNESS",
+      "input": {
+        "first": {"jurisdictionCode":"ZZ","packKey":"synthetic-statutory","effectiveFrom":"2030-01-01","effectiveTo":"2030-07-01"},
+        "successor": {"jurisdictionCode":"ZZ","packKey":"synthetic-statutory","effectiveFrom":"2030-07-01","effectiveTo":null},
+        "status": "ACTIVE"
+      },
+      "expected": {"committedCount":2,"rejectedCount":0,"halfOpen":"[)","statutoryAmountAsserted":false}
+    }
+  ]
+}

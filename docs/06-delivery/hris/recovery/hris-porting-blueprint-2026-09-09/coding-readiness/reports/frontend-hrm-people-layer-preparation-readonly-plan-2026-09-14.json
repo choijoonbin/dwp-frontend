@@ -1,0 +1,372 @@
+{
+  "schemaVersion": 1,
+  "status": "READ_ONLY_PREPARATION_REVIEW_NOT_GATE_APPROVAL",
+  "scope": "HRM People360 existing seven flat frontend sources",
+  "authorIndependent": true,
+  "sourceWrites": 0,
+  "nativeCalls": 0,
+  "testExecution": false,
+  "declaredSourceCases": {
+    "model": 6,
+    "runtime": 6,
+    "total": 12,
+    "actualPassClaim": false
+  },
+  "capture": {
+    "captureStartUtc": "2026-09-14T11:17:51.259620+00:00",
+    "captureEndUtc": "2026-09-14T11:17:51.270414+00:00",
+    "sourcePre": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+        "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+        "mtimeNs": "1788935983012002560",
+        "bytes": 3535
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+        "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+        "mtimeNs": "1788935983069076131",
+        "bytes": 3311
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-data-source.ts",
+        "sha256": "25aa6b3621bfc6bc17e78b523f684ce808bd2f112918e42ced952a89b70efd0a",
+        "mtimeNs": "1788964244697295197",
+        "bytes": 276
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-detail.tsx",
+        "sha256": "526c760e7c653981e9f090f2e6613f5aa4afe8756fd5d38910110cbbe3dc2b0a",
+        "mtimeNs": "1788995949700774366",
+        "bytes": 9015
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-mobile-list.tsx",
+        "sha256": "1bd7ce17d957c4c139a0eda11ab18f1fe64aee7f2dbfbf2a4076d33530595b8f",
+        "mtimeNs": "1788966038043941536",
+        "bytes": 4698
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-model.test.ts",
+        "sha256": "0791df450cab8bef88ad243e4ed60095a03fbb5d877c2bd797d5e27969a4565f",
+        "mtimeNs": "1788964244698154340",
+        "bytes": 4058
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-model.ts",
+        "sha256": "26f84a70812be957412e7b3df2cf83fb426f92ed0b4304dfbec6ea6297cf5ae5",
+        "mtimeNs": "1788964244698525890",
+        "bytes": 4447
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-workspace.runtime.test.tsx",
+        "sha256": "9dea25a278932a5120ccd66776bdb25db820b98036593c2e5189c8ed1d3b4e99",
+        "mtimeNs": "1788996156193358689",
+        "bytes": 17348
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-workspace.tsx",
+        "sha256": "626e816930817514b571086c4815e58a3ba5f0db79e9007d7ba57bee3d3bc8a5",
+        "mtimeNs": "1788995201834869198",
+        "bytes": 19299
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+        "sha256": "35922a16f3a7e588610cc82ab4473ee7c00ac8f931fd3787b1ff36d93b93903e",
+        "mtimeNs": "1789005687514347442",
+        "bytes": 1594
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/pages/hcm.tsx",
+        "sha256": "38316821c18f50ff56a134f436f877182383abe14023c5e7332d53e36a2dd939",
+        "mtimeNs": "1789005698873414142",
+        "bytes": 6296
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+        "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+        "mtimeNs": "1788935983717918934",
+        "bytes": 39012
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+        "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+        "mtimeNs": "1788935983730374125",
+        "bytes": 19913
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/people-admin-api.ts",
+        "sha256": "6263590ce225937dc137e78c0788883f5226828919062f174852fbd9ecc072ef",
+        "mtimeNs": "1788935990328071205",
+        "bytes": 27981
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/auth/product-surface-context-provider.tsx",
+        "sha256": "2d51c2b14474f215e51b55157778f6b7d7d4be65e895313798abd8b92920f1ce",
+        "mtimeNs": "1788935990373289868",
+        "bytes": 28051
+      }
+    ],
+    "sourcePost": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+        "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+        "mtimeNs": "1788935983012002560",
+        "bytes": 3535
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+        "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+        "mtimeNs": "1788935983069076131",
+        "bytes": 3311
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-data-source.ts",
+        "sha256": "25aa6b3621bfc6bc17e78b523f684ce808bd2f112918e42ced952a89b70efd0a",
+        "mtimeNs": "1788964244697295197",
+        "bytes": 276
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-detail.tsx",
+        "sha256": "526c760e7c653981e9f090f2e6613f5aa4afe8756fd5d38910110cbbe3dc2b0a",
+        "mtimeNs": "1788995949700774366",
+        "bytes": 9015
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-mobile-list.tsx",
+        "sha256": "1bd7ce17d957c4c139a0eda11ab18f1fe64aee7f2dbfbf2a4076d33530595b8f",
+        "mtimeNs": "1788966038043941536",
+        "bytes": 4698
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-model.test.ts",
+        "sha256": "0791df450cab8bef88ad243e4ed60095a03fbb5d877c2bd797d5e27969a4565f",
+        "mtimeNs": "1788964244698154340",
+        "bytes": 4058
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-model.ts",
+        "sha256": "26f84a70812be957412e7b3df2cf83fb426f92ed0b4304dfbec6ea6297cf5ae5",
+        "mtimeNs": "1788964244698525890",
+        "bytes": 4447
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-workspace.runtime.test.tsx",
+        "sha256": "9dea25a278932a5120ccd66776bdb25db820b98036593c2e5189c8ed1d3b4e99",
+        "mtimeNs": "1788996156193358689",
+        "bytes": 17348
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/people/people-360-workspace.tsx",
+        "sha256": "626e816930817514b571086c4815e58a3ba5f0db79e9007d7ba57bee3d3bc8a5",
+        "mtimeNs": "1788995201834869198",
+        "bytes": 19299
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+        "sha256": "35922a16f3a7e588610cc82ab4473ee7c00ac8f931fd3787b1ff36d93b93903e",
+        "mtimeNs": "1789005687514347442",
+        "bytes": 1594
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/pages/hcm.tsx",
+        "sha256": "38316821c18f50ff56a134f436f877182383abe14023c5e7332d53e36a2dd939",
+        "mtimeNs": "1789005698873414142",
+        "bytes": 6296
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+        "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+        "mtimeNs": "1788935983717918934",
+        "bytes": 39012
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+        "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+        "mtimeNs": "1788935983730374125",
+        "bytes": 19913
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/people-admin-api.ts",
+        "sha256": "6263590ce225937dc137e78c0788883f5226828919062f174852fbd9ecc072ef",
+        "mtimeNs": "1788935990328071205",
+        "bytes": 27981
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/auth/product-surface-context-provider.tsx",
+        "sha256": "2d51c2b14474f215e51b55157778f6b7d7d4be65e895313798abd8b92920f1ce",
+        "mtimeNs": "1788935990373289868",
+        "bytes": 28051
+      }
+    ],
+    "captureStable": true,
+    "fullSevenUtf8": {
+      "encoding": "GZIP_BASE64",
+      "sha256": "430edc4c5067f6964a44a6fe39afd46cb7c714324af41bc3d6e4196b50768ba4",
+      "data": "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"
+    },
+    "nativeCalls": 0,
+    "testExecution": 0
+  },
+  "captureBoundary": "Immediate capture pre/post is stable. It does not retrospectively certify the entire earlier reading interval.",
+  "instructionsReadCompletely": [
+    "integration/frontend/AGENTS.md",
+    "docs/04-design-system/DWP Product Experience Rules.md",
+    "docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md"
+  ],
+  "findings": [
+    {
+      "id": "HRM-FE-001",
+      "severity": "P0_PRIVACY",
+      "kind": "DEFINITE_EXISTING_SOURCE_AND_FIXTURE_CONFLICT",
+      "file": "people-360-detail.tsx",
+      "selector": "workerNumber Fact",
+      "line": 107,
+      "description": "Detail renders raw person.workerNumber without honoring workerNumberMasked. Restricted runtime fixture sets masked=true while retaining SECRET-WORKER-92 and explicitly expects its visibility before 403.",
+      "fixtureFile": "people-360-workspace.runtime.test.tsx",
+      "fixtureSelector": "restrictedDetail and SECRET-WORKER-92 visibility expectation",
+      "fixtureLine": 466,
+      "closingCondition": "Preserve baseline as historical unsafe behavior; separate privacy strengthening expectation change and strict projection tests. Masked worker number must never exist in cached display VM."
+    },
+    {
+      "id": "HRM-FE-002",
+      "severity": "P1_PREPARATION",
+      "kind": "CONFIRMED_RAW_DTO_CACHE",
+      "files": [
+        "people-360-data-source.ts",
+        "people-360-workspace.tsx",
+        "people-360-detail.tsx"
+      ],
+      "description": "Shared API returns response.data.data without runtime decoding or projection; query data stores raw PersonSummary/PersonDetail including unused workers/relationship/employer/country/assignment fields. Selected JSX does not strip cache data.",
+      "closingCondition": "Both native and injected unknown callbacks must pass the same pure strict selected-field projection before React Query cache. Keep disclosure/masking, strip extra fields and unused workers."
+    },
+    {
+      "id": "HRM-FE-003",
+      "severity": "P1_PREPARATION",
+      "kind": "NO_WIRE_OR_TARGET_VALIDATION",
+      "description": "Scalar/boolean/list/classification shape is trusted. Detail response identity is not compared with requested personId; pagination/asOf/cursor invariants are not validated.",
+      "closingCondition": "Strict owned VM codec with requested target/asOf checks and fail-closed malformed responses; do not reinterpret existing opaque source IDs as fake UUIDs."
+    },
+    {
+      "id": "HRM-FE-004",
+      "severity": "P1_POLICY_OPEN",
+      "kind": "DATE_SOURCE_BOUNDARY",
+      "files": [
+        "people-360-model.ts",
+        "people-360-workspace.tsx"
+      ],
+      "description": "URL civil DATE uses real Temporal validation. Invalid zone catch ignores injected now and uses actual Temporal.Now; workspace literal Asia/Seoul fallback is not a published global business-asOf policy.",
+      "closingCondition": "Keep civil DATE distinct from Instant; define preference/system fallback explicitly and deterministic error policy. Owner effective-date policy remains separately unpublished."
+    },
+    {
+      "id": "HRM-FE-005",
+      "severity": "P1_ARCHITECTURE",
+      "kind": "LAYER_EDGES",
+      "description": "Page/detail own React Query and transport DTO rendering; model imports request-scope type from React hook module. No public feature index exists.",
+      "closingCondition": "Move queries to hook, raw boundary to API, pure VM/model owned types and rendering components; explicit public index, no filler folders."
+    }
+  ],
+  "preserve": [
+    "Read-only People360 layout, list/detail drill-in, mobile/detail drawer and DS components.",
+    "Query-owner asOf/query/status and partial loaded-page org/grade/location filters with explicit partial-results disclosure.",
+    "All six existing authority cache-key parts, access-sensitive metadata, abort signal, enabled=false request suppression.",
+    "Distinguish normal network retry with retained partial data from 403/context change immediate whole-view PII hiding.",
+    "No frontend role shadow, CRUD, export authority or native policy auto-allow."
+  ],
+  "authorityAssessment": {
+    "positiveSourceEvidence": "Feature keys include tenant/actor/accessMode/surface/contextScope/decisionRevision; scope signals/metadata forwarded. Shared authority provider cancels then removes sensitive scoped queries.",
+    "definiteGlobalStaleCacheLeak": false,
+    "unverified": [
+      "Native PEP/transport/field-policy freshness and revocation",
+      "Cross-tab full production cache lifecycle",
+      "Actual owner payload minimization"
+    ],
+    "doNotInheritNativeApproval": true
+  },
+  "exactMoves": [
+    {
+      "from": "people-360-data-source.ts",
+      "to": "api/people-360-api.ts",
+      "responsibility": "Raw facade only; callbacks preserve options/surface/scope/signal and return unknown to hook projection."
+    },
+    {
+      "from": "people-360-model.ts",
+      "to": "model/people-360-model.ts",
+      "responsibility": "Pure filters, DATE, cache key and disclosure using owned types."
+    },
+    {
+      "from": "people-360-mobile-list.tsx",
+      "to": "components/people-360-mobile-list.tsx",
+      "responsibility": "Owned display VM only."
+    },
+    {
+      "from": "people-360-detail.tsx",
+      "to": "components/people-360-detail.tsx",
+      "responsibility": "Rendering/view state/retry only; hook owns query."
+    },
+    {
+      "from": "people-360-workspace.tsx",
+      "to": "pages/people-360-workspace.tsx",
+      "responsibility": "URL/layout composition only."
+    },
+    {
+      "from": "people-360-model.test.ts",
+      "to": "testing/people-360-model.test.ts",
+      "responsibility": "Public import; existing expectations preserved except separately acknowledged privacy correction."
+    },
+    {
+      "from": "people-360-workspace.runtime.test.tsx",
+      "to": "testing/people-360-workspace.runtime.test.tsx",
+      "responsibility": "Public imports and injectable facade through common projection."
+    }
+  ],
+  "requiredRealAdditions": [
+    {
+      "path": "hooks/use-people-360.ts",
+      "responsibility": "List/detail query ownership, unknown response projection, request scope, cancellation, pagination and permission-vs-network view state."
+    },
+    {
+      "path": "model/people-360-view-model.ts",
+      "responsibility": "Owned selected readonly Person/Assignment/Detail/Page/Access VM plus strict pure codec; masked raw values and unused workers absent."
+    },
+    {
+      "path": "index.ts",
+      "responsibility": "Explicit workspace/runtime and required owned model/API injection contracts; no raw DTO wildcard/deep exports."
+    }
+  ],
+  "externalImports": [
+    {
+      "path": "apps/dwp/src/pages/hcm.tsx",
+      "line": 90,
+      "selector": "lazy import('../features/hris/people/people-360-workspace')",
+      "change": "Use explicit public ../features/hris/people barrel, named workspace export preserved."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/hris-home-mount-contract.test.ts",
+      "line": 30,
+      "selector": "old People360 deep import string",
+      "change": "Update route contract to public barrel with same HRM mount behavior."
+    }
+  ],
+  "searchBoundary": "rg apps/libs found no other external People360 imports. Internal seven imports require target-relative/public-test changes.",
+  "scopeOwnership": {
+    "implementationWriter": "Root",
+    "reviewer": "current_backend_readiness_recheck",
+    "reviewWrites": "Only these two new reports",
+    "baselineExecution": "Root to run original 12 source-declared cases; reviewer actual execution0"
+  },
+  "remainingG3": [
+    "Exact layering and codec tests/consumer compile",
+    "Published owner field policy/transport/PEP boundaries where required",
+    "Independent fresh review of implementation and actual runtime receipts"
+  ],
+  "notG3Prerequisites": [
+    "Full HRM domain CRUD implementation (G4)",
+    "Customer production identity adoption/authority and connector activation (G6)"
+  ],
+  "formatValidation": {
+    "jsonParsed": true,
+    "sourceCapturePrePostEqual": true,
+    "fullSourceArchiveSha256": "430edc4c5067f6964a44a6fe39afd46cb7c714324af41bc3d6e4196b50768ba4"
+  }
+}

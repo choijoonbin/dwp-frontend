@@ -1,0 +1,3067 @@
+{
+  "total": 106,
+  "sqlCheckAst": 88,
+  "ownerSemanticOpen": 18,
+  "dispositions": [
+    {
+      "table": "tme_work_rule_set_versions",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "version_no > 0",
+      "normalizedSql": "version_no > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "version_no",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_work_rule_set_versions",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "row_version >= 0",
+      "normalizedSql": "row_version >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_work_rule_set_versions",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "effective_to IS NULL OR effective_to > effective_from",
+      "normalizedSql": "effective_to IS NULL OR effective_to > effective_from",
+      "ast": {
+        "op": "OR",
+        "args": [
+          {
+            "op": "IS_NULL",
+            "arg": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            }
+          },
+          {
+            "op": "COMPARE",
+            "operator": ">",
+            "left": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            },
+            "right": {
+              "op": "COLUMN",
+              "name": "effective_from",
+              "sqlType": "DATE"
+            }
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_work_rule_set_versions",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "normalizedSql": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DRAFT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "VALIDATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SIMULATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUBMITTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "WITHDRAW_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PUBLISHED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RETIRED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_work_rule_set_versions",
+      "ordinal": 4,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "content_schema_id = 'TIM.TimeRuleContent.v1'; closed schema validated before bind",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_work_rule_set_versions",
+      "ordinal": 5,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "scope_kind='TENANT' iff scope_public_id IS NULL; other scope IDs resolved by exact owner/local tenant resolver",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_shift_template_versions",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "version_no > 0",
+      "normalizedSql": "version_no > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "version_no",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_shift_template_versions",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "row_version >= 0",
+      "normalizedSql": "row_version >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_shift_template_versions",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "effective_to IS NULL OR effective_to > effective_from",
+      "normalizedSql": "effective_to IS NULL OR effective_to > effective_from",
+      "ast": {
+        "op": "OR",
+        "args": [
+          {
+            "op": "IS_NULL",
+            "arg": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            }
+          },
+          {
+            "op": "COMPARE",
+            "operator": ">",
+            "left": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            },
+            "right": {
+              "op": "COLUMN",
+              "name": "effective_from",
+              "sqlType": "DATE"
+            }
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_shift_template_versions",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "normalizedSql": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DRAFT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "VALIDATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SIMULATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUBMITTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "WITHDRAW_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PUBLISHED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RETIRED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_shift_template_versions",
+      "ordinal": 4,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "content_schema_id = 'TIM.ShiftTemplateContent.v1'; closed schema validated before bind",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_shift_template_versions",
+      "ordinal": 5,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "scope_kind='TENANT' iff scope_public_id IS NULL; other scope IDs resolved by exact owner/local tenant resolver",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_schedule_patterns",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "version_no > 0",
+      "normalizedSql": "version_no > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "version_no",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_patterns",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "row_version >= 0",
+      "normalizedSql": "row_version >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_patterns",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "effective_to IS NULL OR effective_to > effective_from",
+      "normalizedSql": "effective_to IS NULL OR effective_to > effective_from",
+      "ast": {
+        "op": "OR",
+        "args": [
+          {
+            "op": "IS_NULL",
+            "arg": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            }
+          },
+          {
+            "op": "COMPARE",
+            "operator": ">",
+            "left": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            },
+            "right": {
+              "op": "COLUMN",
+              "name": "effective_from",
+              "sqlType": "DATE"
+            }
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_patterns",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "normalizedSql": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DRAFT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "VALIDATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SIMULATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUBMITTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "WITHDRAW_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PUBLISHED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RETIRED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_patterns",
+      "ordinal": 4,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "content_schema_id = 'TIM.SchedulePatternContent.v1'; closed schema validated before bind",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_schedule_patterns",
+      "ordinal": 5,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "scope_kind='TENANT' iff scope_public_id IS NULL; other scope IDs resolved by exact owner/local tenant resolver",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_leave_plan_versions",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "version_no > 0",
+      "normalizedSql": "version_no > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "version_no",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_plan_versions",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "row_version >= 0",
+      "normalizedSql": "row_version >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_plan_versions",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "effective_to IS NULL OR effective_to > effective_from",
+      "normalizedSql": "effective_to IS NULL OR effective_to > effective_from",
+      "ast": {
+        "op": "OR",
+        "args": [
+          {
+            "op": "IS_NULL",
+            "arg": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            }
+          },
+          {
+            "op": "COMPARE",
+            "operator": ">",
+            "left": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            },
+            "right": {
+              "op": "COLUMN",
+              "name": "effective_from",
+              "sqlType": "DATE"
+            }
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_plan_versions",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "normalizedSql": "status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DRAFT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "VALIDATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SIMULATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUBMITTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "WITHDRAW_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PUBLISHED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RETIRED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_plan_versions",
+      "ordinal": 4,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "content_schema_id = 'TIM.LeavePolicyContent.v1'; closed schema validated before bind",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_leave_plan_versions",
+      "ordinal": 5,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "scope_kind='TENANT' iff scope_public_id IS NULL; other scope IDs resolved by exact owner/local tenant resolver",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_artifact_revision_counters",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "last_version > 0",
+      "normalizedSql": "last_version > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "last_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_time_group_memberships",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "effective_to IS NULL OR effective_to > effective_from",
+      "normalizedSql": "effective_to IS NULL OR effective_to > effective_from",
+      "ast": {
+        "op": "OR",
+        "args": [
+          {
+            "op": "IS_NULL",
+            "arg": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            }
+          },
+          {
+            "op": "COMPARE",
+            "operator": ">",
+            "left": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            },
+            "right": {
+              "op": "COLUMN",
+              "name": "effective_from",
+              "sqlType": "DATE"
+            }
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_owner_artifact_snapshots",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "snapshot_revision > 0",
+      "normalizedSql": "snapshot_revision > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "snapshot_revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_owner_artifact_snapshots",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "valid_until > as_of",
+      "normalizedSql": "valid_until > as_of",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "valid_until",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "as_of",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_owner_artifact_snapshots",
+      "ordinal": 2,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "content_schema_id resolves exact owner operation response schema, not generic JSON",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_schedule_periods",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "ends_at > starts_at",
+      "normalizedSql": "ends_at > starts_at",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ends_at",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "starts_at",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_periods",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "period_revision > 0",
+      "normalizedSql": "period_revision > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "period_revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_periods",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DRAFT','ASSIGNED','VALIDATED','VALIDATION_FAILED','SUBMITTED','APPROVED','PUBLISHED','REJECTED','CANCEL_PENDING','CANCELLED','WITHDRAW_PENDING')",
+      "normalizedSql": "status IN ('DRAFT','ASSIGNED','VALIDATED','VALIDATION_FAILED','SUBMITTED','APPROVED','PUBLISHED','REJECTED','CANCEL_PENDING','CANCELLED','WITHDRAW_PENDING')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(30)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DRAFT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ASSIGNED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "VALIDATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "VALIDATION_FAILED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUBMITTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PUBLISHED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "WITHDRAW_PENDING"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_periods",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "change_kind IN ('CREATE','AMEND','CANCEL_PUBLISHED')",
+      "normalizedSql": "change_kind IN ('CREATE','AMEND','CANCEL_PUBLISHED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "change_kind",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "CREATE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "AMEND"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PUBLISHED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_period_revision_counters",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "last_revision > 0",
+      "normalizedSql": "last_revision > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "last_revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_worker_schedule_assignments",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "ends_at > starts_at",
+      "normalizedSql": "ends_at > starts_at",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ends_at",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "starts_at",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_scheduled_segments",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "ends_at > starts_at",
+      "normalizedSql": "ends_at > starts_at",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ends_at",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "starts_at",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_scheduled_segments",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "start_utc_offset_seconds BETWEEN -50400 AND50400",
+      "normalizedSql": "start_utc_offset_seconds BETWEEN -50400 AND 50400",
+      "ast": {
+        "op": "BETWEEN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "start_utc_offset_seconds",
+          "sqlType": "INTEGER"
+        },
+        "lower": {
+          "op": "LITERAL",
+          "value": -50400
+        },
+        "upper": {
+          "op": "LITERAL",
+          "value": 50400
+        }
+      },
+      "spacingRepair": true
+    },
+    {
+      "table": "tme_scheduled_segments",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "end_utc_offset_seconds BETWEEN -50400 AND50400",
+      "normalizedSql": "end_utc_offset_seconds BETWEEN -50400 AND 50400",
+      "ast": {
+        "op": "BETWEEN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "end_utc_offset_seconds",
+          "sqlType": "INTEGER"
+        },
+        "lower": {
+          "op": "LITERAL",
+          "value": -50400
+        },
+        "upper": {
+          "op": "LITERAL",
+          "value": 50400
+        }
+      },
+      "spacingRepair": true
+    },
+    {
+      "table": "tme_scheduled_segments",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "segment_type IN ('WORK','BREAK','ON_CALL','TRAINING','ABSENCE')",
+      "normalizedSql": "segment_type IN ('WORK','BREAK','ON_CALL','TRAINING','ABSENCE')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "segment_type",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "WORK"
+          },
+          {
+            "op": "LITERAL",
+            "value": "BREAK"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ON_CALL"
+          },
+          {
+            "op": "LITERAL",
+            "value": "TRAINING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ABSENCE"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_evaluations",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "validation_status IN ('VALID','INVALID')",
+      "normalizedSql": "validation_status IN ('VALID','INVALID')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "validation_status",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "VALID"
+          },
+          {
+            "op": "LITERAL",
+            "value": "INVALID"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_evaluations",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "blocking_count >= 0",
+      "normalizedSql": "blocking_count >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "blocking_count",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_violation_lines",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "severity IN ('BLOCK','WARNING')",
+      "normalizedSql": "severity IN ('BLOCK','WARNING')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "severity",
+          "sqlType": "VARCHAR(10)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "BLOCK"
+          },
+          {
+            "op": "LITERAL",
+            "value": "WARNING"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_approval_bindings",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "normalizedSql": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DELIVERY_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_publication_receipts",
+      "ordinal": 0,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "source_kind='MANUAL' iff native_command_receipt_public_id IS NOT NULL and wfm_candidate_id IS NULL; source_kind='WFM' iff wfm_candidate_id IS NOT NULL and native_command_receipt_public_id IS NULL",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_schedule_assignment_events",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "ends_at > starts_at",
+      "normalizedSql": "ends_at > starts_at",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ends_at",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "starts_at",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_assignment_events",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "event_type IN ('PUBLISH','SUPERSEDE','CANCEL')",
+      "normalizedSql": "event_type IN ('PUBLISH','SUPERSEDE','CANCEL')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "event_type",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "PUBLISH"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUPERSEDE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_schedule_active_intervals",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "ends_at > starts_at",
+      "normalizedSql": "ends_at > starts_at",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ends_at",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "starts_at",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_availability_snapshots",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "snapshot_kind IN ('CANONICAL_SCHEDULE','ABSENCE_AVAILABILITY','COMPOSED_AVAILABILITY')",
+      "normalizedSql": "snapshot_kind IN ('CANONICAL_SCHEDULE','ABSENCE_AVAILABILITY','COMPOSED_AVAILABILITY')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "snapshot_kind",
+          "sqlType": "VARCHAR(30)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "CANONICAL_SCHEDULE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ABSENCE_AVAILABILITY"
+          },
+          {
+            "op": "LITERAL",
+            "value": "COMPOSED_AVAILABILITY"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_availability_snapshots",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "ends_at > starts_at",
+      "normalizedSql": "ends_at > starts_at",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ends_at",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "starts_at",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_availability_snapshots",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "valid_until > as_of",
+      "normalizedSql": "valid_until > as_of",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "valid_until",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "as_of",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_worker_plan_enrollments",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "effective_to IS NULL OR effective_to > effective_from",
+      "normalizedSql": "effective_to IS NULL OR effective_to > effective_from",
+      "ast": {
+        "op": "OR",
+        "args": [
+          {
+            "op": "IS_NULL",
+            "arg": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            }
+          },
+          {
+            "op": "COMPARE",
+            "operator": ">",
+            "left": {
+              "op": "COLUMN",
+              "name": "effective_to",
+              "sqlType": "DATE"
+            },
+            "right": {
+              "op": "COLUMN",
+              "name": "effective_from",
+              "sqlType": "DATE"
+            }
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_worker_plan_enrollments",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('ACTIVE','ENDED','CANCELLED')",
+      "normalizedSql": "status IN ('ACTIVE','ENDED','CANCELLED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "ACTIVE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ENDED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_enrollment_decisions",
+      "ordinal": 0,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "worker+assignment+policy+effective range must match referenced enrollment; decision row independent immutable identity, no parent-cycle placeholder",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_leave_requests",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "requested_quantity > 0",
+      "normalizedSql": "requested_quantity > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "requested_quantity",
+          "sqlType": "NUMERIC(19,6)"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_requests",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "unit IN ('MINUTE','HOUR','DAY')",
+      "normalizedSql": "unit IN ('MINUTE','HOUR','DAY')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "unit",
+          "sqlType": "VARCHAR(12)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "MINUTE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "HOUR"
+          },
+          {
+            "op": "LITERAL",
+            "value": "DAY"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_requests",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DRAFT','SUBMITTED','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','WITHDRAW_PENDING','CORRECTION_REQUIRED')",
+      "normalizedSql": "status IN ('DRAFT','SUBMITTED','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','WITHDRAW_PENDING','CORRECTION_REQUIRED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(30)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DRAFT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUBMITTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "WITHDRAW_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CORRECTION_REQUIRED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_request_segments",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "quantity > 0",
+      "normalizedSql": "quantity > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "quantity",
+          "sqlType": "NUMERIC(19,6)"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_request_segments",
+      "ordinal": 1,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "starts_at IS NULL iff ends_at IS NULL; ends_at > starts_at when interval exists",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_leave_approval_bindings",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "normalizedSql": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DELIVERY_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_reservations",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "quantity > 0",
+      "normalizedSql": "quantity > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "quantity",
+          "sqlType": "NUMERIC(19,6)"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_reservations",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('RESERVED','CONSUMED','RELEASED')",
+      "normalizedSql": "status IN ('RESERVED','CONSUMED','RELEASED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(12)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "RESERVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CONSUMED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RELEASED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_runs",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "period_end > period_start",
+      "normalizedSql": "period_end > period_start",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "period_end",
+          "sqlType": "DATE"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "period_start",
+          "sqlType": "DATE"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_runs",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "run_mode IN ('DRY_RUN','POST')",
+      "normalizedSql": "run_mode IN ('DRY_RUN','POST')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "run_mode",
+          "sqlType": "VARCHAR(10)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DRY_RUN"
+          },
+          {
+            "op": "LITERAL",
+            "value": "POST"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_runs",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('QUEUED','RUNNING','SUCCEEDED','PARTIAL','FAILED','RESULT_UNKNOWN','CANCEL_PENDING','CANCELLED','CANCELLED_PARTIAL')",
+      "normalizedSql": "status IN ('QUEUED','RUNNING','SUCCEEDED','PARTIAL','FAILED','RESULT_UNKNOWN','CANCEL_PENDING','CANCELLED','CANCELLED_PARTIAL')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "QUEUED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RUNNING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUCCEEDED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PARTIAL"
+          },
+          {
+            "op": "LITERAL",
+            "value": "FAILED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED_PARTIAL"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_runs",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "selected_count>0",
+      "normalizedSql": "selected_count>0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "selected_count",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_run_items",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('CALCULATED','POSTED','BLOCKED','FAILED','CANCELLED')",
+      "normalizedSql": "status IN ('CALCULATED','POSTED','BLOCKED','FAILED','CANCELLED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(16)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "CALCULATED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "POSTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "BLOCKED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "FAILED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_run_items",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "((status IN ('CALCULATED','POSTED') AND numerator IS NOT NULL AND denominator>0 AND quantity IS NOT NULL AND suppressed_quantity IS NOT NULL AND rounding_trace IS NOT NULL AND error_code IS NULL AND cancel_fence IS NULL) OR (status IN ('BLOCKED','FAILED') AND numerator IS NULL AND denominator IS NULL AND quantity IS NULL AND suppressed_quantity IS NULL AND rounding_trace IS NULL AND error_code IS NOT NULL AND cancel_fence IS NULL) OR (status='CANCELLED' AND numerator IS NULL AND denominator IS NULL AND quantity IS NULL AND suppressed_quantity IS NULL AND rounding_trace IS NULL AND error_code IS NULL AND cancel_fence IS NOT NULL))",
+      "normalizedSql": "((status IN ('CALCULATED','POSTED') AND numerator IS NOT NULL AND denominator>0 AND quantity IS NOT NULL AND suppressed_quantity IS NOT NULL AND rounding_trace IS NOT NULL AND error_code IS NULL AND cancel_fence IS NULL) OR (status IN ('BLOCKED','FAILED') AND numerator IS NULL AND denominator IS NULL AND quantity IS NULL AND suppressed_quantity IS NULL AND rounding_trace IS NULL AND error_code IS NOT NULL AND cancel_fence IS NULL) OR (status='CANCELLED' AND numerator IS NULL AND denominator IS NULL AND quantity IS NULL AND suppressed_quantity IS NULL AND rounding_trace IS NULL AND error_code IS NULL AND cancel_fence IS NOT NULL))",
+      "ast": {
+        "op": "OR",
+        "args": [
+          {
+            "op": "AND",
+            "args": [
+              {
+                "op": "IN",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "status",
+                  "sqlType": "VARCHAR(16)"
+                },
+                "values": [
+                  {
+                    "op": "LITERAL",
+                    "value": "CALCULATED"
+                  },
+                  {
+                    "op": "LITERAL",
+                    "value": "POSTED"
+                  }
+                ]
+              },
+              {
+                "op": "IS_NOT_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "numerator",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "COMPARE",
+                "operator": ">",
+                "left": {
+                  "op": "COLUMN",
+                  "name": "denominator",
+                  "sqlType": "NUMERIC(19,6)"
+                },
+                "right": {
+                  "op": "LITERAL",
+                  "value": 0
+                }
+              },
+              {
+                "op": "IS_NOT_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "quantity",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NOT_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "suppressed_quantity",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NOT_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "rounding_trace",
+                  "sqlType": "JSONB"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "error_code",
+                  "sqlType": "VARCHAR(80)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "cancel_fence",
+                  "sqlType": "BIGINT"
+                }
+              }
+            ]
+          },
+          {
+            "op": "AND",
+            "args": [
+              {
+                "op": "IN",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "status",
+                  "sqlType": "VARCHAR(16)"
+                },
+                "values": [
+                  {
+                    "op": "LITERAL",
+                    "value": "BLOCKED"
+                  },
+                  {
+                    "op": "LITERAL",
+                    "value": "FAILED"
+                  }
+                ]
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "numerator",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "denominator",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "quantity",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "suppressed_quantity",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "rounding_trace",
+                  "sqlType": "JSONB"
+                }
+              },
+              {
+                "op": "IS_NOT_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "error_code",
+                  "sqlType": "VARCHAR(80)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "cancel_fence",
+                  "sqlType": "BIGINT"
+                }
+              }
+            ]
+          },
+          {
+            "op": "AND",
+            "args": [
+              {
+                "op": "COMPARE",
+                "operator": "=",
+                "left": {
+                  "op": "COLUMN",
+                  "name": "status",
+                  "sqlType": "VARCHAR(16)"
+                },
+                "right": {
+                  "op": "LITERAL",
+                  "value": "CANCELLED"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "numerator",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "denominator",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "quantity",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "suppressed_quantity",
+                  "sqlType": "NUMERIC(19,6)"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "rounding_trace",
+                  "sqlType": "JSONB"
+                }
+              },
+              {
+                "op": "IS_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "error_code",
+                  "sqlType": "VARCHAR(80)"
+                }
+              },
+              {
+                "op": "IS_NOT_NULL",
+                "arg": {
+                  "op": "COLUMN",
+                  "name": "cancel_fence",
+                  "sqlType": "BIGINT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_ledger_entries",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "entry_type IN ('GRANT','USE','RELEASE','EXPIRE','CARRYOVER','REVERSE','ADJUST')",
+      "normalizedSql": "entry_type IN ('GRANT','USE','RELEASE','EXPIRE','CARRYOVER','REVERSE','ADJUST')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "entry_type",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "GRANT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "USE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RELEASE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "EXPIRE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CARRYOVER"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REVERSE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ADJUST"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_ledger_entries",
+      "ordinal": 1,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "entry_type='REVERSE' iff reverses_entry_id IS NOT NULL",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_entitlement_ledger_entries",
+      "ordinal": 2,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "exactly1 source runItem/leaveRequest/lotEvent/reversal; entry_type-specific source+sign invariants",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_entitlement_ledger_entries",
+      "ordinal": 3,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "quantity nonzero; MINUTE/HOUR/DAY unit matches enrollment policy",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_entitlement_ledger_entries",
+      "ordinal": 4,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "RELEASE requires linked_entry_id points exact same enrollment/unit original USE with quantity = -original.quantity; at most1 release from source_request unique",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_leave_grant_lots",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "quantity > 0",
+      "normalizedSql": "quantity > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "quantity",
+          "sqlType": "NUMERIC(19,6)"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_leave_lot_events",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "event_type IN ('ALLOCATE_USE','RELEASE_USE','EXPIRE','CARRYOVER_OUT','CARRYOVER_IN','REVERSE')",
+      "normalizedSql": "event_type IN ('ALLOCATE_USE','RELEASE_USE','EXPIRE','CARRYOVER_OUT','CARRYOVER_IN','REVERSE')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "event_type",
+          "sqlType": "VARCHAR(16)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "ALLOCATE_USE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RELEASE_USE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "EXPIRE"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CARRYOVER_OUT"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CARRYOVER_IN"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REVERSE"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_time_cards",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "period_end > period_start",
+      "normalizedSql": "period_end > period_start",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "period_end",
+          "sqlType": "DATE"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "period_start",
+          "sqlType": "DATE"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_time_cards",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('OPEN','SUBMITTED','APPROVED','REJECTED','LOCKED','CORRECTION_REQUIRED')",
+      "normalizedSql": "status IN ('OPEN','SUBMITTED','APPROVED','REJECTED','LOCKED','CORRECTION_REQUIRED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "OPEN"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUBMITTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "LOCKED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CORRECTION_REQUIRED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_policy_evaluation_reports",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "report_kind IN ('VALIDATION','SIMULATION')",
+      "normalizedSql": "report_kind IN ('VALIDATION','SIMULATION')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "report_kind",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "VALIDATION"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SIMULATION"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_policy_evaluation_reports",
+      "ordinal": 1,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "artifact_kind fixes exact domain table identity, no arbitrarysubjectalias",
+      "requiredOwner": "TIME",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "tme_policy_governance_bindings",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "num_nonnulls(rule_version_id,shift_version_id,pattern_version_id) = 1",
+      "normalizedSql": "num_nonnulls(rule_version_id,shift_version_id,pattern_version_id) = 1",
+      "ast": {
+        "op": "COMPARE",
+        "operator": "=",
+        "left": {
+          "op": "NUM_NONNULLS",
+          "args": [
+            {
+              "op": "COLUMN",
+              "name": "rule_version_id",
+              "sqlType": "BIGINT"
+            },
+            {
+              "op": "COLUMN",
+              "name": "shift_version_id",
+              "sqlType": "BIGINT"
+            },
+            {
+              "op": "COLUMN",
+              "name": "pattern_version_id",
+              "sqlType": "BIGINT"
+            }
+          ]
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 1
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_policy_governance_bindings",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "subject_row_version >= 0",
+      "normalizedSql": "subject_row_version >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "subject_row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_policy_governance_bindings",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "normalizedSql": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DELIVERY_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_timecard_approval_bindings",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','RESULT_UNKNOWN')",
+      "normalizedSql": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','RESULT_UNKNOWN')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DELIVERY_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "tme_time_ledger_revision_counters",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "last_revision >= 0",
+      "normalizedSql": "last_revision >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "last_revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_input_versions",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "revision=1",
+      "normalizedSql": "revision=1",
+      "ast": {
+        "op": "COMPARE",
+        "operator": "=",
+        "left": {
+          "op": "COLUMN",
+          "name": "revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 1
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_input_versions",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "selected_count>0",
+      "normalizedSql": "selected_count>0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "selected_count",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_selected_items",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "ordinal>0",
+      "normalizedSql": "ordinal>0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ordinal",
+          "sqlType": "INTEGER"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_entitlement_selected_items",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "enrollment_revision>=0",
+      "normalizedSql": "enrollment_revision>=0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "enrollment_revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_enrollment_termination_workflows",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('STOPPED','CORRECTION_QUEUED','SETTLEMENT_PENDING','RESULT_UNKNOWN','COMPLETED','REJECTED')",
+      "normalizedSql": "status IN ('STOPPED','CORRECTION_QUEUED','SETTLEMENT_PENDING','RESULT_UNKNOWN','COMPLETED','REJECTED')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(32)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "STOPPED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CORRECTION_QUEUED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SETTLEMENT_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          },
+          {
+            "op": "LITERAL",
+            "value": "COMPLETED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_enrollment_termination_workflows",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "row_version>=0",
+      "normalizedSql": "row_version>=0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_termination_settlement_intents",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "revision=1",
+      "normalizedSql": "revision=1",
+      "ast": {
+        "op": "COMPARE",
+        "operator": "=",
+        "left": {
+          "op": "COLUMN",
+          "name": "revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 1
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_termination_settlement_intents",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DELIVERY_PENDING','ACCEPTED','RUNNING','SUCCEEDED','REJECTED','FAILED','RESULT_UNKNOWN')",
+      "normalizedSql": "status IN ('DELIVERY_PENDING','ACCEPTED','RUNNING','SUCCEEDED','REJECTED','FAILED','RESULT_UNKNOWN')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DELIVERY_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ACCEPTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RUNNING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SUCCEEDED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "FAILED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_termination_settlement_intents",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "row_version>=0",
+      "normalizedSql": "row_version>=0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_owner_artifact_snapshots",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "snapshot_revision > 0",
+      "normalizedSql": "snapshot_revision > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "snapshot_revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_owner_artifact_snapshots",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "valid_until > as_of",
+      "normalizedSql": "valid_until > as_of",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "valid_until",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "as_of",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_owner_artifact_snapshots",
+      "ordinal": 2,
+      "kind": "OWNER_SEMANTIC_REQUIRED_OPEN",
+      "source": "content_schema_id resolves exact owner operation response schema, not generic JSON",
+      "requiredOwner": "ABS",
+      "failClosed": true,
+      "approval": "NOT_IMPLEMENTED_OR_PROVED"
+    },
+    {
+      "table": "abs_policy_evaluation_reports",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "artifact_kind = 'LeavePolicy'",
+      "normalizedSql": "artifact_kind = 'LeavePolicy'",
+      "ast": {
+        "op": "COMPARE",
+        "operator": "=",
+        "left": {
+          "op": "COLUMN",
+          "name": "artifact_kind",
+          "sqlType": "VARCHAR(30)"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": "LeavePolicy"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_policy_evaluation_reports",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "report_kind IN ('VALIDATION','SIMULATION')",
+      "normalizedSql": "report_kind IN ('VALIDATION','SIMULATION')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "report_kind",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "VALIDATION"
+          },
+          {
+            "op": "LITERAL",
+            "value": "SIMULATION"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_policy_governance_bindings",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "leave_policy_version_id IS NOT NULL",
+      "normalizedSql": "leave_policy_version_id IS NOT NULL",
+      "ast": {
+        "op": "IS_NOT_NULL",
+        "arg": {
+          "op": "COLUMN",
+          "name": "leave_policy_version_id",
+          "sqlType": "BIGINT"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_policy_governance_bindings",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "subject_row_version >= 0",
+      "normalizedSql": "subject_row_version >= 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">=",
+        "left": {
+          "op": "COLUMN",
+          "name": "subject_row_version",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_policy_governance_bindings",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "normalizedSql": "status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "status",
+          "sqlType": "VARCHAR(24)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "DELIVERY_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "APPROVED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "REJECTED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCEL_PENDING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "CANCELLED"
+          },
+          {
+            "op": "LITERAL",
+            "value": "RESULT_UNKNOWN"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_time_schedule_segment_snapshots",
+      "ordinal": 0,
+      "kind": "SQL_CHECK_AST",
+      "source": "ends_at > starts_at",
+      "normalizedSql": "ends_at > starts_at",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "ends_at",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "starts_at",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_time_schedule_segment_snapshots",
+      "ordinal": 1,
+      "kind": "SQL_CHECK_AST",
+      "source": "start_utc_offset_seconds BETWEEN -50400 AND50400",
+      "normalizedSql": "start_utc_offset_seconds BETWEEN -50400 AND 50400",
+      "ast": {
+        "op": "BETWEEN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "start_utc_offset_seconds",
+          "sqlType": "INTEGER"
+        },
+        "lower": {
+          "op": "LITERAL",
+          "value": -50400
+        },
+        "upper": {
+          "op": "LITERAL",
+          "value": 50400
+        }
+      },
+      "spacingRepair": true
+    },
+    {
+      "table": "abs_time_schedule_segment_snapshots",
+      "ordinal": 2,
+      "kind": "SQL_CHECK_AST",
+      "source": "end_utc_offset_seconds BETWEEN -50400 AND50400",
+      "normalizedSql": "end_utc_offset_seconds BETWEEN -50400 AND 50400",
+      "ast": {
+        "op": "BETWEEN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "end_utc_offset_seconds",
+          "sqlType": "INTEGER"
+        },
+        "lower": {
+          "op": "LITERAL",
+          "value": -50400
+        },
+        "upper": {
+          "op": "LITERAL",
+          "value": 50400
+        }
+      },
+      "spacingRepair": true
+    },
+    {
+      "table": "abs_time_schedule_segment_snapshots",
+      "ordinal": 3,
+      "kind": "SQL_CHECK_AST",
+      "source": "segment_type IN ('WORK','BREAK','ON_CALL','TRAINING','ABSENCE')",
+      "normalizedSql": "segment_type IN ('WORK','BREAK','ON_CALL','TRAINING','ABSENCE')",
+      "ast": {
+        "op": "IN",
+        "arg": {
+          "op": "COLUMN",
+          "name": "segment_type",
+          "sqlType": "VARCHAR(20)"
+        },
+        "values": [
+          {
+            "op": "LITERAL",
+            "value": "WORK"
+          },
+          {
+            "op": "LITERAL",
+            "value": "BREAK"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ON_CALL"
+          },
+          {
+            "op": "LITERAL",
+            "value": "TRAINING"
+          },
+          {
+            "op": "LITERAL",
+            "value": "ABSENCE"
+          }
+        ]
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_time_schedule_segment_snapshots",
+      "ordinal": 4,
+      "kind": "SQL_CHECK_AST",
+      "source": "source_revision > 0",
+      "normalizedSql": "source_revision > 0",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "source_revision",
+          "sqlType": "BIGINT"
+        },
+        "right": {
+          "op": "LITERAL",
+          "value": 0
+        }
+      },
+      "spacingRepair": false
+    },
+    {
+      "table": "abs_time_schedule_segment_snapshots",
+      "ordinal": 5,
+      "kind": "SQL_CHECK_AST",
+      "source": "valid_until > source_as_of",
+      "normalizedSql": "valid_until > source_as_of",
+      "ast": {
+        "op": "COMPARE",
+        "operator": ">",
+        "left": {
+          "op": "COLUMN",
+          "name": "valid_until",
+          "sqlType": "TIMESTAMPTZ"
+        },
+        "right": {
+          "op": "COLUMN",
+          "name": "source_as_of",
+          "sqlType": "TIMESTAMPTZ"
+        }
+      },
+      "spacingRepair": false
+    }
+  ],
+  "plannedSqlMaterials": [
+    "ALTER TABLE public.tme_work_rule_set_versions ADD CONSTRAINT tme_work_rule_set_versions_v4_c0 CHECK (version_no > 0);",
+    "ALTER TABLE public.tme_work_rule_set_versions ADD CONSTRAINT tme_work_rule_set_versions_v4_c1 CHECK (row_version >= 0);",
+    "ALTER TABLE public.tme_work_rule_set_versions ADD CONSTRAINT tme_work_rule_set_versions_v4_c2 CHECK (effective_to IS NULL OR effective_to > effective_from);",
+    "ALTER TABLE public.tme_work_rule_set_versions ADD CONSTRAINT tme_work_rule_set_versions_v4_c3 CHECK (status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED'));",
+    "ALTER TABLE public.tme_shift_template_versions ADD CONSTRAINT tme_shift_template_versions_v4_c0 CHECK (version_no > 0);",
+    "ALTER TABLE public.tme_shift_template_versions ADD CONSTRAINT tme_shift_template_versions_v4_c1 CHECK (row_version >= 0);",
+    "ALTER TABLE public.tme_shift_template_versions ADD CONSTRAINT tme_shift_template_versions_v4_c2 CHECK (effective_to IS NULL OR effective_to > effective_from);",
+    "ALTER TABLE public.tme_shift_template_versions ADD CONSTRAINT tme_shift_template_versions_v4_c3 CHECK (status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED'));",
+    "ALTER TABLE public.tme_schedule_patterns ADD CONSTRAINT tme_schedule_patterns_v4_c0 CHECK (version_no > 0);",
+    "ALTER TABLE public.tme_schedule_patterns ADD CONSTRAINT tme_schedule_patterns_v4_c1 CHECK (row_version >= 0);",
+    "ALTER TABLE public.tme_schedule_patterns ADD CONSTRAINT tme_schedule_patterns_v4_c2 CHECK (effective_to IS NULL OR effective_to > effective_from);",
+    "ALTER TABLE public.tme_schedule_patterns ADD CONSTRAINT tme_schedule_patterns_v4_c3 CHECK (status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED'));",
+    "ALTER TABLE public.abs_leave_plan_versions ADD CONSTRAINT abs_leave_plan_versions_v4_c0 CHECK (version_no > 0);",
+    "ALTER TABLE public.abs_leave_plan_versions ADD CONSTRAINT abs_leave_plan_versions_v4_c1 CHECK (row_version >= 0);",
+    "ALTER TABLE public.abs_leave_plan_versions ADD CONSTRAINT abs_leave_plan_versions_v4_c2 CHECK (effective_to IS NULL OR effective_to > effective_from);",
+    "ALTER TABLE public.abs_leave_plan_versions ADD CONSTRAINT abs_leave_plan_versions_v4_c3 CHECK (status IN ('DRAFT','VALIDATED','SIMULATED','SUBMITTED','WITHDRAW_PENDING','APPROVED','PUBLISHED','REJECTED','CANCELLED','RETIRED'));",
+    "ALTER TABLE public.tme_artifact_revision_counters ADD CONSTRAINT tme_artifact_revision_counters_v4_c0 CHECK (last_version > 0);",
+    "ALTER TABLE public.tme_time_group_memberships ADD CONSTRAINT tme_time_group_memberships_v4_c0 CHECK (effective_to IS NULL OR effective_to > effective_from);",
+    "ALTER TABLE public.tme_owner_artifact_snapshots ADD CONSTRAINT tme_owner_artifact_snapshots_v4_c0 CHECK (snapshot_revision > 0);",
+    "ALTER TABLE public.tme_owner_artifact_snapshots ADD CONSTRAINT tme_owner_artifact_snapshots_v4_c1 CHECK (valid_until > as_of);",
+    "ALTER TABLE public.tme_schedule_periods ADD CONSTRAINT tme_schedule_periods_v4_c0 CHECK (ends_at > starts_at);",
+    "ALTER TABLE public.tme_schedule_periods ADD CONSTRAINT tme_schedule_periods_v4_c1 CHECK (period_revision > 0);",
+    "ALTER TABLE public.tme_schedule_periods ADD CONSTRAINT tme_schedule_periods_v4_c2 CHECK (status IN ('DRAFT','ASSIGNED','VALIDATED','VALIDATION_FAILED','SUBMITTED','APPROVED','PUBLISHED','REJECTED','CANCEL_PENDING','CANCELLED','WITHDRAW_PENDING'));",
+    "ALTER TABLE public.tme_schedule_periods ADD CONSTRAINT tme_schedule_periods_v4_c3 CHECK (change_kind IN ('CREATE','AMEND','CANCEL_PUBLISHED'));",
+    "ALTER TABLE public.tme_schedule_period_revision_counters ADD CONSTRAINT tme_schedule_period_revision_counters_v4_c0 CHECK (last_revision > 0);",
+    "ALTER TABLE public.tme_worker_schedule_assignments ADD CONSTRAINT tme_worker_schedule_assignments_v4_c0 CHECK (ends_at > starts_at);",
+    "ALTER TABLE public.tme_scheduled_segments ADD CONSTRAINT tme_scheduled_segments_v4_c0 CHECK (ends_at > starts_at);",
+    "ALTER TABLE public.tme_scheduled_segments ADD CONSTRAINT tme_scheduled_segments_v4_c1 CHECK (start_utc_offset_seconds BETWEEN -50400 AND 50400);",
+    "ALTER TABLE public.tme_scheduled_segments ADD CONSTRAINT tme_scheduled_segments_v4_c2 CHECK (end_utc_offset_seconds BETWEEN -50400 AND 50400);",
+    "ALTER TABLE public.tme_scheduled_segments ADD CONSTRAINT tme_scheduled_segments_v4_c3 CHECK (segment_type IN ('WORK','BREAK','ON_CALL','TRAINING','ABSENCE'));",
+    "ALTER TABLE public.tme_schedule_evaluations ADD CONSTRAINT tme_schedule_evaluations_v4_c0 CHECK (validation_status IN ('VALID','INVALID'));",
+    "ALTER TABLE public.tme_schedule_evaluations ADD CONSTRAINT tme_schedule_evaluations_v4_c1 CHECK (blocking_count >= 0);",
+    "ALTER TABLE public.tme_schedule_violation_lines ADD CONSTRAINT tme_schedule_violation_lines_v4_c0 CHECK (severity IN ('BLOCK','WARNING'));",
+    "ALTER TABLE public.tme_schedule_approval_bindings ADD CONSTRAINT tme_schedule_approval_bindings_v4_c0 CHECK (status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN'));",
+    "ALTER TABLE public.tme_schedule_assignment_events ADD CONSTRAINT tme_schedule_assignment_events_v4_c0 CHECK (ends_at > starts_at);",
+    "ALTER TABLE public.tme_schedule_assignment_events ADD CONSTRAINT tme_schedule_assignment_events_v4_c1 CHECK (event_type IN ('PUBLISH','SUPERSEDE','CANCEL'));",
+    "ALTER TABLE public.tme_schedule_active_intervals ADD CONSTRAINT tme_schedule_active_intervals_v4_c0 CHECK (ends_at > starts_at);",
+    "ALTER TABLE public.tme_availability_snapshots ADD CONSTRAINT tme_availability_snapshots_v4_c0 CHECK (snapshot_kind IN ('CANONICAL_SCHEDULE','ABSENCE_AVAILABILITY','COMPOSED_AVAILABILITY'));",
+    "ALTER TABLE public.tme_availability_snapshots ADD CONSTRAINT tme_availability_snapshots_v4_c1 CHECK (ends_at > starts_at);",
+    "ALTER TABLE public.tme_availability_snapshots ADD CONSTRAINT tme_availability_snapshots_v4_c2 CHECK (valid_until > as_of);",
+    "ALTER TABLE public.abs_worker_plan_enrollments ADD CONSTRAINT abs_worker_plan_enrollments_v4_c0 CHECK (effective_to IS NULL OR effective_to > effective_from);",
+    "ALTER TABLE public.abs_worker_plan_enrollments ADD CONSTRAINT abs_worker_plan_enrollments_v4_c1 CHECK (status IN ('ACTIVE','ENDED','CANCELLED'));",
+    "ALTER TABLE public.abs_leave_requests ADD CONSTRAINT abs_leave_requests_v4_c0 CHECK (requested_quantity > 0);",
+    "ALTER TABLE public.abs_leave_requests ADD CONSTRAINT abs_leave_requests_v4_c1 CHECK (unit IN ('MINUTE','HOUR','DAY'));",
+    "ALTER TABLE public.abs_leave_requests ADD CONSTRAINT abs_leave_requests_v4_c2 CHECK (status IN ('DRAFT','SUBMITTED','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','WITHDRAW_PENDING','CORRECTION_REQUIRED'));",
+    "ALTER TABLE public.abs_leave_request_segments ADD CONSTRAINT abs_leave_request_segments_v4_c0 CHECK (quantity > 0);",
+    "ALTER TABLE public.abs_leave_approval_bindings ADD CONSTRAINT abs_leave_approval_bindings_v4_c0 CHECK (status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN'));",
+    "ALTER TABLE public.abs_leave_reservations ADD CONSTRAINT abs_leave_reservations_v4_c0 CHECK (quantity > 0);",
+    "ALTER TABLE public.abs_leave_reservations ADD CONSTRAINT abs_leave_reservations_v4_c1 CHECK (status IN ('RESERVED','CONSUMED','RELEASED'));",
+    "ALTER TABLE public.abs_entitlement_runs ADD CONSTRAINT abs_entitlement_runs_v4_c0 CHECK (period_end > period_start);",
+    "ALTER TABLE public.abs_entitlement_runs ADD CONSTRAINT abs_entitlement_runs_v4_c1 CHECK (run_mode IN ('DRY_RUN','POST'));",
+    "ALTER TABLE public.abs_entitlement_runs ADD CONSTRAINT abs_entitlement_runs_v4_c2 CHECK (status IN ('QUEUED','RUNNING','SUCCEEDED','PARTIAL','FAILED','RESULT_UNKNOWN','CANCEL_PENDING','CANCELLED','CANCELLED_PARTIAL'));",
+    "ALTER TABLE public.abs_entitlement_runs ADD CONSTRAINT abs_entitlement_runs_v4_c3 CHECK (selected_count>0);",
+    "ALTER TABLE public.abs_entitlement_run_items ADD CONSTRAINT abs_entitlement_run_items_v4_c0 CHECK (status IN ('CALCULATED','POSTED','BLOCKED','FAILED','CANCELLED'));",
+    "ALTER TABLE public.abs_entitlement_run_items ADD CONSTRAINT abs_entitlement_run_items_v4_c1 CHECK (((status IN ('CALCULATED','POSTED') AND numerator IS NOT NULL AND denominator>0 AND quantity IS NOT NULL AND suppressed_quantity IS NOT NULL AND rounding_trace IS NOT NULL AND error_code IS NULL AND cancel_fence IS NULL) OR (status IN ('BLOCKED','FAILED') AND numerator IS NULL AND denominator IS NULL AND quantity IS NULL AND suppressed_quantity IS NULL AND rounding_trace IS NULL AND error_code IS NOT NULL AND cancel_fence IS NULL) OR (status='CANCELLED' AND numerator IS NULL AND denominator IS NULL AND quantity IS NULL AND suppressed_quantity IS NULL AND rounding_trace IS NULL AND error_code IS NULL AND cancel_fence IS NOT NULL)));",
+    "ALTER TABLE public.abs_entitlement_ledger_entries ADD CONSTRAINT abs_entitlement_ledger_entries_v4_c0 CHECK (entry_type IN ('GRANT','USE','RELEASE','EXPIRE','CARRYOVER','REVERSE','ADJUST'));",
+    "ALTER TABLE public.abs_leave_grant_lots ADD CONSTRAINT abs_leave_grant_lots_v4_c0 CHECK (quantity > 0);",
+    "ALTER TABLE public.abs_leave_lot_events ADD CONSTRAINT abs_leave_lot_events_v4_c0 CHECK (event_type IN ('ALLOCATE_USE','RELEASE_USE','EXPIRE','CARRYOVER_OUT','CARRYOVER_IN','REVERSE'));",
+    "ALTER TABLE public.tme_time_cards ADD CONSTRAINT tme_time_cards_v4_c0 CHECK (period_end > period_start);",
+    "ALTER TABLE public.tme_time_cards ADD CONSTRAINT tme_time_cards_v4_c1 CHECK (status IN ('OPEN','SUBMITTED','APPROVED','REJECTED','LOCKED','CORRECTION_REQUIRED'));",
+    "ALTER TABLE public.tme_policy_evaluation_reports ADD CONSTRAINT tme_policy_evaluation_reports_v4_c0 CHECK (report_kind IN ('VALIDATION','SIMULATION'));",
+    "ALTER TABLE public.tme_policy_governance_bindings ADD CONSTRAINT tme_policy_governance_bindings_v4_c0 CHECK (num_nonnulls(rule_version_id,shift_version_id,pattern_version_id) = 1);",
+    "ALTER TABLE public.tme_policy_governance_bindings ADD CONSTRAINT tme_policy_governance_bindings_v4_c1 CHECK (subject_row_version >= 0);",
+    "ALTER TABLE public.tme_policy_governance_bindings ADD CONSTRAINT tme_policy_governance_bindings_v4_c2 CHECK (status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN'));",
+    "ALTER TABLE public.tme_timecard_approval_bindings ADD CONSTRAINT tme_timecard_approval_bindings_v4_c0 CHECK (status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','RESULT_UNKNOWN'));",
+    "ALTER TABLE public.tme_time_ledger_revision_counters ADD CONSTRAINT tme_time_ledger_revision_counters_v4_c0 CHECK (last_revision >= 0);",
+    "ALTER TABLE public.abs_entitlement_input_versions ADD CONSTRAINT abs_entitlement_input_versions_v4_c0 CHECK (revision=1);",
+    "ALTER TABLE public.abs_entitlement_input_versions ADD CONSTRAINT abs_entitlement_input_versions_v4_c1 CHECK (selected_count>0);",
+    "ALTER TABLE public.abs_entitlement_selected_items ADD CONSTRAINT abs_entitlement_selected_items_v4_c0 CHECK (ordinal>0);",
+    "ALTER TABLE public.abs_entitlement_selected_items ADD CONSTRAINT abs_entitlement_selected_items_v4_c1 CHECK (enrollment_revision>=0);",
+    "ALTER TABLE public.abs_enrollment_termination_workflows ADD CONSTRAINT abs_enrollment_termination_workflows_v4_c0 CHECK (status IN ('STOPPED','CORRECTION_QUEUED','SETTLEMENT_PENDING','RESULT_UNKNOWN','COMPLETED','REJECTED'));",
+    "ALTER TABLE public.abs_enrollment_termination_workflows ADD CONSTRAINT abs_enrollment_termination_workflows_v4_c1 CHECK (row_version>=0);",
+    "ALTER TABLE public.abs_termination_settlement_intents ADD CONSTRAINT abs_termination_settlement_intents_v4_c0 CHECK (revision=1);",
+    "ALTER TABLE public.abs_termination_settlement_intents ADD CONSTRAINT abs_termination_settlement_intents_v4_c1 CHECK (status IN ('DELIVERY_PENDING','ACCEPTED','RUNNING','SUCCEEDED','REJECTED','FAILED','RESULT_UNKNOWN'));",
+    "ALTER TABLE public.abs_termination_settlement_intents ADD CONSTRAINT abs_termination_settlement_intents_v4_c2 CHECK (row_version>=0);",
+    "ALTER TABLE public.abs_owner_artifact_snapshots ADD CONSTRAINT abs_owner_artifact_snapshots_v4_c0 CHECK (snapshot_revision > 0);",
+    "ALTER TABLE public.abs_owner_artifact_snapshots ADD CONSTRAINT abs_owner_artifact_snapshots_v4_c1 CHECK (valid_until > as_of);",
+    "ALTER TABLE public.abs_policy_evaluation_reports ADD CONSTRAINT abs_policy_evaluation_reports_v4_c0 CHECK (artifact_kind = 'LeavePolicy');",
+    "ALTER TABLE public.abs_policy_evaluation_reports ADD CONSTRAINT abs_policy_evaluation_reports_v4_c1 CHECK (report_kind IN ('VALIDATION','SIMULATION'));",
+    "ALTER TABLE public.abs_policy_governance_bindings ADD CONSTRAINT abs_policy_governance_bindings_v4_c0 CHECK (leave_policy_version_id IS NOT NULL);",
+    "ALTER TABLE public.abs_policy_governance_bindings ADD CONSTRAINT abs_policy_governance_bindings_v4_c1 CHECK (subject_row_version >= 0);",
+    "ALTER TABLE public.abs_policy_governance_bindings ADD CONSTRAINT abs_policy_governance_bindings_v4_c2 CHECK (status IN ('DELIVERY_PENDING','PENDING','APPROVED','REJECTED','CANCEL_PENDING','CANCELLED','RESULT_UNKNOWN'));",
+    "ALTER TABLE public.abs_time_schedule_segment_snapshots ADD CONSTRAINT abs_time_schedule_segment_snapshots_v4_c0 CHECK (ends_at > starts_at);",
+    "ALTER TABLE public.abs_time_schedule_segment_snapshots ADD CONSTRAINT abs_time_schedule_segment_snapshots_v4_c1 CHECK (start_utc_offset_seconds BETWEEN -50400 AND 50400);",
+    "ALTER TABLE public.abs_time_schedule_segment_snapshots ADD CONSTRAINT abs_time_schedule_segment_snapshots_v4_c2 CHECK (end_utc_offset_seconds BETWEEN -50400 AND 50400);",
+    "ALTER TABLE public.abs_time_schedule_segment_snapshots ADD CONSTRAINT abs_time_schedule_segment_snapshots_v4_c3 CHECK (segment_type IN ('WORK','BREAK','ON_CALL','TRAINING','ABSENCE'));",
+    "ALTER TABLE public.abs_time_schedule_segment_snapshots ADD CONSTRAINT abs_time_schedule_segment_snapshots_v4_c4 CHECK (source_revision > 0);",
+    "ALTER TABLE public.abs_time_schedule_segment_snapshots ADD CONSTRAINT abs_time_schedule_segment_snapshots_v4_c5 CHECK (valid_until > source_as_of);"
+  ],
+  "nativeExecuted": false
+}

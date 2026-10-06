@@ -1,0 +1,245 @@
+{
+  "authority": {
+    "moduleCodeAuthority": "NONE_START_TOKEN_WITHHELD",
+    "officialGateAuthority": "NONE",
+    "productionAuthority": "NOT_AUTHORIZED_G6",
+    "readinessAuthority": "CONTROL_PREPARATION_ONLY"
+  },
+  "contractBindings": [
+    {
+      "byteLength": 876,
+      "path": "output/hris-porting-blueprint-2026-09-09/g0/current-g3-gate-decision.json",
+      "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e"
+    },
+    {
+      "byteLength": 35262,
+      "path": "output/hris-porting-blueprint-2026-09-09/g0/g3-verification-command-catalog.v1.json",
+      "sha256": "820749c845788dbc02ed14045af67206092fc0573331736ba81e01601756f3f8"
+    },
+    {
+      "byteLength": 8951,
+      "path": "output/hris-porting-blueprint-2026-09-09/g0/migration-allocation-register.csv",
+      "sha256": "264386a3ba37e012f9d7bf13479b76413eabd553e79c9d0144cda17b4bcd7431"
+    },
+    {
+      "byteLength": 305301,
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+    },
+    {
+      "byteLength": 28987,
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/g3-file-allocation-register.csv",
+      "sha256": "a9deb03deff95bc7fc8c3126666d71a552eb9503c82508f2483d8bf4e1561219"
+    },
+    {
+      "byteLength": 28104,
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/module-exact-business-fixtures.v1.json",
+      "sha256": "7fec66f3f49f96d09a7fafb8cfdcc56b49ffe67c6aa528a6367fd56e7b272345"
+    },
+    {
+      "byteLength": 29031,
+      "path": "output/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-canonical-schemas.v1.json",
+      "sha256": "f6fb63f52e2b6043b62f8afdd87b7acdbd89fe9db3330d8a2818be9e5c8326c4"
+    },
+    {
+      "byteLength": 35196,
+      "path": "output/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+      "sha256": "5390eac887c06d33e744252ddf013183f2f1e55198f8a28d341197b6a6336e65"
+    },
+    {
+      "byteLength": 51577,
+      "path": "output/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql",
+      "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969"
+    },
+    {
+      "byteLength": 10444,
+      "path": "output/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/authorization-field-policy.csv",
+      "sha256": "be822a9c07eedc49f880448f56594640828a65171f379f2d217f5227b30e4149"
+    }
+  ],
+  "expiry": "UNTIL_REVOKED_OR_INVALIDATED_BY_DRIFT",
+  "firstSlice": {
+    "codeGoTokenAuthority": "REFERENCE_ONLY_NOT_ACTIVATED",
+    "codeGoTokenReference": "G3-CODE-GO-BASE-TFR-HRM-004",
+    "fileAllocationIds": [
+      "G3-HRM-BE-MIGRATION",
+      "G3-HRM-BE-SOURCE",
+      "G3-HRM-BE-TEST",
+      "G3-HRM-FE-SOURCE"
+    ],
+    "nextSlicesHeld": [
+      "BASE-TFR-HRM-010",
+      "BASE-TFR-HRM-008"
+    ],
+    "sliceId": "BASE-TFR-HRM-004",
+    "sliceRowSha256": "ff54531bbe7ab3781b87e19708a2fda7c9e6891f05d5cde93f2938bb46494331",
+    "summary": "People 360 read, as-of lifecycle, population scope, and VIEW/MASK/OMIT field policy"
+  },
+  "fixturePolicy": {
+    "freeFormJson": "FORBIDDEN",
+    "liveCrossModuleCalls": "FORBIDDEN",
+    "liveEventPublication": "FORBIDDEN",
+    "mode": "SYNTHETIC_PERSON_WORKER_AS_OF_MASKING_ONLY"
+  },
+  "generation": 1,
+  "holdPolicy": {
+    "designAi": "WITHHELD_UNTIL_G4",
+    "developmentStarted": false,
+    "holds": [
+      "HRM_CHANGE_REQUEST_AND_APPROVAL_LIVE_WIRING",
+      "EMPLOYMENT_ASSIGNMENT_ORGANIZATION_MUTATIONS",
+      "CROSS_MODULE_EVENT_PUBLICATION",
+      "INTEGRATION_MERGE_AND_EVIDENCE_PROMOTION"
+    ],
+    "integrationMerge": "WITHHELD",
+    "liveWiring": "WITHHELD",
+    "officialEvidencePromotion": "WITHHELD",
+    "requiredFutureCommand": "START_SCOPED_AUTHORING",
+    "startCommandIssued": false,
+    "startToken": "WITHHELD"
+  },
+  "invalidationConditions": [
+    "PACKET_BYTE_OR_CANONICAL_BINDING_DIGEST_DRIFT",
+    "WORKTREE_HEAD_TREE_BRANCH_OR_CLEAN_STATE_DRIFT",
+    "FIRST_SLICE_OR_ALLOCATION_DRIFT",
+    "MIGRATION_RESERVATION_COLLISION",
+    "START_COMMAND_OR_CODE_CHANGE_OBSERVED_BEFORE_USER_INSTRUCTION"
+  ],
+  "issuedAt": "2026-09-16T18:06:44+09:00",
+  "issuerRole": "ROLE.INTEGRATION_CONTROL",
+  "lifecycleState": "PACKET_ISSUED_HOLD",
+  "migrationPolicy": {
+    "allocationId": "MIG-HRM-PEOPLE-51-73",
+    "createOnly": "YES",
+    "existingEditAllowed": "NO",
+    "migrationCreated": false,
+    "migrationExecuted": false,
+    "migrationPromoted": false,
+    "plannedFile": "dwp-people-server/src/main/resources/db/migration/V51__hrm_base_tfr_hrm_004.sql",
+    "rangeFromCanonicalRegister": "51-73",
+    "state": "RESERVED_START_TOKEN_WITHHELD_CREATE_ONLY_IF_SCHEMA_TOUCH"
+  },
+  "mode": "PREPARE_ONLY_NO_CODE",
+  "officialGateSnapshot": {
+    "currentState": "VALIDATOR_CONTROLLED_BLOCKED",
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "path": "output/hris-porting-blueprint-2026-09-09/g0/current-g3-gate-decision.json",
+    "registerOpenTokensMeaning": "DESIGN_TARGET_OR_HISTORICAL_ENTRY_SEAL_NOT_CURRENT_EFFECTIVE_GATE",
+    "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e"
+  },
+  "packetId": "SCOPED-G3-AUTHORING-HRM-V1",
+  "pathPolicy": {
+    "allowedBackendGlobs": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/people/**"
+    ],
+    "allowedFrontendGlobs": [
+      "apps/dwp/src/features/hris/people/**"
+    ],
+    "centralSingleWriterGlobs": [
+      "contracts/**",
+      "dwp-gateway/**",
+      "architecture/**",
+      "libs/api-contracts/**",
+      "apps/dwp/src/routes/**",
+      "apps/dwp/src/features/hris/hris-navigation*.ts*",
+      "apps/dwp/src/features/hris/hris-product-manifest*.ts*",
+      "output/hris-porting-blueprint-2026-09-09/**"
+    ],
+    "forbiddenGlobs": [
+      "**/package.json",
+      ".yarn/**",
+      "apps/dwp/src/components/desktop-navigation-header*.ts*",
+      "apps/dwp/src/components/product-manifest*.ts*",
+      "apps/dwp/src/features/auth/**",
+      "apps/dwp/src/features/hris/employee-services/**",
+      "apps/dwp/src/features/hris/hris-navigation*.ts*",
+      "apps/dwp/src/features/hris/hris-product-manifest*.ts*",
+      "apps/dwp/src/features/hris/organization/**",
+      "apps/dwp/src/features/shell/**",
+      "apps/dwp/src/layouts/**",
+      "apps/dwp/src/pages/auth/**",
+      "apps/dwp/src/routes/**",
+      "architecture/**",
+      "build.gradle",
+      "contracts/**",
+      "dwp-gateway/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/**",
+      "gradle.properties",
+      "libs/api-contracts/**",
+      "libs/shared-i18n/**",
+      "libs/shared-utils/src/auth/**",
+      "nx.json",
+      "package.json",
+      "settings.gradle",
+      "yarn.lock"
+    ],
+    "touchManifestState": "NOT_ISSUED_UNTIL_START_COMMAND"
+  },
+  "schema": "dwp.hris.scoped-g3-authoring-packet.v1",
+  "sealedPayloadSha256": "c34f405ce884bb5ee75415e02d02b367d6fde9826530405d8d8e9eab3b7841ca",
+  "sessionId": "HRIS-HRM",
+  "verificationBindings": {
+    "backendProfileId": "G3CMD-HRM-BE",
+    "commandCatalogPath": "output/hris-porting-blueprint-2026-09-09/g0/g3-verification-command-catalog.v1.json",
+    "commandCatalogSha256": "820749c845788dbc02ed14045af67206092fc0573331736ba81e01601756f3f8",
+    "frontendProfileId": "G3CMD-HRM-FE",
+    "frontendTestPath": "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-004.slice.test.tsx",
+    "postStartRequirement": "RUN_BOUNDED_SLICE_TESTS_AT_FIRST_CHECKPOINT",
+    "preflightExecution": "BINDINGS_ONLY_TESTS_NOT_RUN_EXPECTED_NOT_IMPLEMENTED"
+  },
+  "worktrees": {
+    "backend": {
+      "authoringBaseHeadSha": "299336eacb52de29a85366318a08151ea691eb5e",
+      "authoringBaseTreeSha": "d5277fabaa2315ddc28a4220fa8075875be28920",
+      "branch": "codex/hris-hrm-scoped-g3-v1-backend-20260916",
+      "branchRefSha": "299336eacb52de29a85366318a08151ea691eb5e",
+      "capturedAt": "2026-09-16T18:06:44+09:00",
+      "clean": true,
+      "developmentStarted": false,
+      "dirtyCount": 0,
+      "mainCheckoutUsed": false,
+      "observedHeadSha": "299336eacb52de29a85366318a08151ea691eb5e",
+      "observedTreeSha": "d5277fabaa2315ddc28a4220fa8075875be28920",
+      "officialRegisterModified": false,
+      "recordId": "SCOPE-WT-HRM-BACKEND-V1",
+      "relationToSealedEntry": "DIRECT_ONE_COMMIT_DESCENDANT",
+      "repository": "DWP_BACKEND",
+      "repositoryRoot": "/Users/a10697/Work/DWP/dwp-backend",
+      "sealedEntryHeadSha": "787f25753a72dc5f0fbbb06783205c0bff6635a5",
+      "sessionId": "HRIS-HRM",
+      "sourceIntegrationWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+      "state": "PREPARED_READY_TO_START_HOLD",
+      "statusPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktreePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/hrm/backend",
+      "worktreeRealPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/hrm/backend"
+    },
+    "frontend": {
+      "authoringBaseHeadSha": "cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca",
+      "authoringBaseTreeSha": "29a8ed87a323bfc318043b2171d39fb73129fe28",
+      "branch": "codex/hris-hrm-scoped-g3-v1-frontend-20260916",
+      "branchRefSha": "cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca",
+      "capturedAt": "2026-09-16T18:06:44+09:00",
+      "clean": true,
+      "developmentStarted": false,
+      "dirtyCount": 0,
+      "mainCheckoutUsed": false,
+      "observedHeadSha": "cd0dcf875c92fa8c9bd18dec208f8f8a3750d5ca",
+      "observedTreeSha": "29a8ed87a323bfc318043b2171d39fb73129fe28",
+      "officialRegisterModified": false,
+      "recordId": "SCOPE-WT-HRM-FRONTEND-V1",
+      "relationToSealedEntry": "DIRECT_ONE_COMMIT_DESCENDANT",
+      "repository": "DWP_FRONTEND",
+      "repositoryRoot": "/Users/a10697/Work/DWP/dwp-frontend",
+      "sealedEntryHeadSha": "c658679ef377f43ec4f9fec7e7433eb98f46970e",
+      "sessionId": "HRIS-HRM",
+      "sourceIntegrationWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+      "state": "PREPARED_READY_TO_START_HOLD",
+      "statusPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktreePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/hrm/frontend",
+      "worktreeRealPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/hrm/frontend"
+    }
+  }
+}

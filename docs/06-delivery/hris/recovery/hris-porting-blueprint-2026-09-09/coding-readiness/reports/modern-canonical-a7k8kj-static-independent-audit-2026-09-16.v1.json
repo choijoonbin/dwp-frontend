@@ -1,0 +1,450 @@
+{
+  "reportId": "dwp.hris.modern-canonical-a7k8kj.static-independent-audit.v1",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-16T03:48:43Z",
+  "reviewerBoundary": "INDEPENDENT_READ_ONLY_CANONICAL_STATIC_QUALIFICATION_ONLY",
+  "candidate": {
+    "directory": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-canonical-candidate.A7K8Kj",
+    "role": "IMMUTABLE_UNPROMOTED_CANONICAL_CANDIDATE",
+    "fileCount": 8,
+    "profile": "SUCCESSOR_V5_131"
+  },
+  "writeBoundary": {
+    "candidate": "READ_ONLY_NO_WRITE_NO_REPLACE_NO_CHMOD",
+    "liveCanonical": "READ_ONLY_NO_PROMOTION",
+    "gate": "READ_ONLY_NO_TRANSITION",
+    "policies": "READ_ONLY_NO_RESEAL",
+    "workspaceReportWrites": [
+      "coding-readiness/reports/modern-canonical-a7k8kj-static-independent-audit-2026-09-16.v1.json"
+    ],
+    "temporaryOutputs": "ONLY_UNDER_/tmp_AND_NOT_EVIDENCE_AUTHORITY"
+  },
+  "decision": {
+    "status": "PASS_STATIC_CANDIDATE_QUALIFICATION",
+    "eligibleNextStep": "INDEPENDENT_PHYSICAL_CANDIDATE_REVIEW_AND_CONTROLLED_PROMOTION_CONSIDERATION",
+    "notAuthorized": [
+      "CANONICAL_OR_PHYSICAL_LIVE_PROMOTION",
+      "G3_GATE_OPEN",
+      "OPEN_G3_CODE",
+      "MODULE_SESSION_START",
+      "PRODUCTION_ACTIVATION_G6"
+    ],
+    "downstreamClosure": "NOT_EVALUATED_NOT_CLEARED_BY_THIS_REPORT"
+  },
+  "gateObservation": {
+    "path": "g0/current-g3-gate-decision.json",
+    "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "currentState": "VALIDATOR_CONTROLLED_BLOCKED",
+    "productionActivation": "NOT_AUTHORIZED_G6",
+    "mutated": false
+  },
+  "policyChain": [
+    {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+      "sha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+      "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+      "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+      "sha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+      "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+      "sha256": "64bc16def08c4a87750a656a039588db67bba5ec5fad6fac0dbd1bed638e6444",
+      "sealedPayloadSha256": "36229b77ea56f94d61e9beee431b74d0413263853bb7e3b82951ae68534bfe86"
+    }
+  ],
+  "sourceTools": [
+    {
+      "path": "coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py",
+      "sha256": "f4080d54aba62ec1b2a7d9c0838a4f5510edf8187efe09c102c9c636fb787611"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_global_hcm_v5_validator_hostile.py",
+      "sha256": "a41b6134833d5e453366d1eecbbad8d9f38248f797d3095ffc5a359584f45532"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py",
+      "sha256": "77c14ed3a4b6feb495e3238b3ab66c64be907987db1d1fd63e35e4ce19dbbdcb"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256": "30982425e0cc769acfad4c1a64d6e3c91a72e993fb4cd68fd14d267e2724d09b"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py",
+      "sha256": "21d1e68138a3c961780d540e5fbb2c7b2bd1b2a86d872d43b934fb40eaa946ea"
+    },
+    {
+      "path": "coding-readiness/generate_modern_exact_event_successor.py",
+      "sha256": "60be42956716c7b60b067c74c6358764cf81c1d6b4c84bef4607a4a93316fbd1"
+    },
+    {
+      "path": "coding-readiness/generate_modern_semantic_field_lineage.py",
+      "sha256": "7145e882e5a450c1d058672f90d4ca2fc65e2cc3452c56c3ef0f496b7d2f306a"
+    },
+    {
+      "path": "coding-readiness/generate_modern_causal_module_successor.py",
+      "sha256": "1e947bf2ba1f5ec6a2055093b49c82d7146e9459613db630dff38ba64f105d45"
+    },
+    {
+      "path": "coding-readiness/test_modern_candidate_validator_coherence.py",
+      "sha256": "8c87804d9eb0fe2ac31f95d5560023d617915136d45ec0e1ee1a676d2e539ceb"
+    },
+    {
+      "path": "coding-readiness/physical-owner-prefix-register.csv",
+      "sha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49"
+    }
+  ],
+  "candidateMetadataSnapshots": {
+    "exactFileSet": [
+      "modern-capability-causal-state-contracts.v2.json",
+      "modern-capability-closed-set-manifest.v3.json",
+      "modern-capability-event-payload-contracts.v1.json",
+      "modern-capability-exact-schema-contracts.v1.json",
+      "modern-capability-operation-causal-contract-ssot.v2.json",
+      "modern-capability-public-identity-registry.v1.json",
+      "modern-capability-semantic-bindings.v1.json",
+      "sys-listening-stream-authority-successor.v2.json"
+    ],
+    "before": {
+      "modern-capability-causal-state-contracts.v2.json": {
+        "dev": 16777234,
+        "inode": 47635963,
+        "mode": "0o600",
+        "size": 4790036,
+        "mtimeNs": 1789529754770713989,
+        "ctimeNs": 1789529754771598118,
+        "sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe"
+      },
+      "modern-capability-closed-set-manifest.v3.json": {
+        "dev": 16777234,
+        "inode": 47631719,
+        "mode": "0o600",
+        "size": 294333,
+        "mtimeNs": 1789529741603144818,
+        "ctimeNs": 1789529741613400356,
+        "sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612"
+      },
+      "modern-capability-event-payload-contracts.v1.json": {
+        "dev": 16777234,
+        "inode": 47635697,
+        "mode": "0o644",
+        "size": 1687439,
+        "mtimeNs": 1789529753300605189,
+        "ctimeNs": 1789529753312166242,
+        "sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4"
+      },
+      "modern-capability-exact-schema-contracts.v1.json": {
+        "dev": 16777234,
+        "inode": 47635696,
+        "mode": "0o644",
+        "size": 7912823,
+        "mtimeNs": 1789529753291935712,
+        "ctimeNs": 1789529753311934197,
+        "sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02"
+      },
+      "modern-capability-operation-causal-contract-ssot.v2.json": {
+        "dev": 16777234,
+        "inode": 47635693,
+        "mode": "0o644",
+        "size": 5279746,
+        "mtimeNs": 1789529753285236174,
+        "ctimeNs": 1789529753311676152,
+        "sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227"
+      },
+      "modern-capability-public-identity-registry.v1.json": {
+        "dev": 16777234,
+        "inode": 47635700,
+        "mode": "0o644",
+        "size": 759646,
+        "mtimeNs": 1789529753310138009,
+        "ctimeNs": 1789529753312616372,
+        "sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e"
+      },
+      "modern-capability-semantic-bindings.v1.json": {
+        "dev": 16777234,
+        "inode": 47635698,
+        "mode": "0o644",
+        "size": 5400337,
+        "mtimeNs": 1789529753303798726,
+        "ctimeNs": 1789529753312414328,
+        "sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598"
+      },
+      "sys-listening-stream-authority-successor.v2.json": {
+        "dev": 16777234,
+        "inode": 47631865,
+        "mode": "0o644",
+        "size": 298993,
+        "mtimeNs": 1789529742246644107,
+        "ctimeNs": 1789529742247008694,
+        "sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+      }
+    },
+    "after": {
+      "modern-capability-causal-state-contracts.v2.json": {
+        "dev": 16777234,
+        "inode": 47635963,
+        "mode": "0o600",
+        "size": 4790036,
+        "mtimeNs": 1789529754770713989,
+        "ctimeNs": 1789529754771598118,
+        "sha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe"
+      },
+      "modern-capability-closed-set-manifest.v3.json": {
+        "dev": 16777234,
+        "inode": 47631719,
+        "mode": "0o600",
+        "size": 294333,
+        "mtimeNs": 1789529741603144818,
+        "ctimeNs": 1789529741613400356,
+        "sha256": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612"
+      },
+      "modern-capability-event-payload-contracts.v1.json": {
+        "dev": 16777234,
+        "inode": 47635697,
+        "mode": "0o644",
+        "size": 1687439,
+        "mtimeNs": 1789529753300605189,
+        "ctimeNs": 1789529753312166242,
+        "sha256": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4"
+      },
+      "modern-capability-exact-schema-contracts.v1.json": {
+        "dev": 16777234,
+        "inode": 47635696,
+        "mode": "0o644",
+        "size": 7912823,
+        "mtimeNs": 1789529753291935712,
+        "ctimeNs": 1789529753311934197,
+        "sha256": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02"
+      },
+      "modern-capability-operation-causal-contract-ssot.v2.json": {
+        "dev": 16777234,
+        "inode": 47635693,
+        "mode": "0o644",
+        "size": 5279746,
+        "mtimeNs": 1789529753285236174,
+        "ctimeNs": 1789529753311676152,
+        "sha256": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227"
+      },
+      "modern-capability-public-identity-registry.v1.json": {
+        "dev": 16777234,
+        "inode": 47635700,
+        "mode": "0o644",
+        "size": 759646,
+        "mtimeNs": 1789529753310138009,
+        "ctimeNs": 1789529753312616372,
+        "sha256": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e"
+      },
+      "modern-capability-semantic-bindings.v1.json": {
+        "dev": 16777234,
+        "inode": 47635698,
+        "mode": "0o644",
+        "size": 5400337,
+        "mtimeNs": 1789529753303798726,
+        "ctimeNs": 1789529753312414328,
+        "sha256": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598"
+      },
+      "sys-listening-stream-authority-successor.v2.json": {
+        "dev": 16777234,
+        "inode": 47631865,
+        "mode": "0o644",
+        "size": 298993,
+        "mtimeNs": 1789529742246644107,
+        "ctimeNs": 1789529742247008694,
+        "sha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+      }
+    },
+    "exactMatch": true,
+    "mutationDetected": false
+  },
+  "candidateSeals": {
+    "modern-capability-causal-state-contracts.v2.json": "7d460ba031a94fa82d870f434da5e811b466da008ae970b8e079d752a01797c0",
+    "modern-capability-closed-set-manifest.v3.json": "d0bf2a0492b3fcd0acf0b201846f4d48aeabd5f3676b0346ec10ab743d49ba1a",
+    "modern-capability-public-identity-registry.v1.json": "a731c63d60ee4a90be5c3e89a1f8119114f9cabfb15d393ab17a9870272d6e53",
+    "modern-capability-semantic-bindings.v1.json": "2d02f71cfdecb51e72ca4164fc2614d4c0f16c41400fa534dcb59087a923eed7",
+    "sys-listening-stream-authority-successor.v2.json": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4"
+  },
+  "qualifyingChecks": [
+    {
+      "checkId": "GLOBAL_V5_ACCEPTANCE",
+      "command": "python3 coding-readiness/modern-independent-successor/validate_global_hcm_live_acceptance.py --candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj --check",
+      "exitCode": 0,
+      "status": "PASS_GLOBAL_HCM_LIVE_ACCEPTANCE",
+      "findings": 0,
+      "P0": 0,
+      "P1": 0,
+      "failedRequirements": 0,
+      "selfTests": "35/35",
+      "counts": {
+        "capabilities": 16,
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "events": 157,
+        "tables": 131
+      },
+      "stdoutSha256": "6ba87ea6318ba85e737f1d86e5d7c2a9a0f1a870097f41263a0d28ac542e86a8"
+    },
+    {
+      "checkId": "GLOBAL_V5_HOSTILE_VALIDATOR",
+      "command": "python3 coding-readiness/modern-independent-successor/audit_global_hcm_v5_validator_hostile.py --candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj --check",
+      "exitCode": 0,
+      "status": "PASS_HOSTILE_VALIDATOR_AUDIT",
+      "positiveControlFindingCount": 0,
+      "tests": "50/50",
+      "candidateBytesUnchanged": true,
+      "temporaryReportSha256": "55032e6c4e4606b501d37bc0496884457e07c83c16a1c72406caf930f52f900c",
+      "temporaryReportSeal": "875619163ce4066be7e818deecbb62517316a52e9046fd24c9b25250af4df453"
+    },
+    {
+      "checkId": "OWNER_STREAM_BOUNDARIES_V5",
+      "command": "python3 coding-readiness/modern-independent-successor/audit_modern_132_owner_stream_boundaries.py coding-readiness/modern-canonical-candidate.A7K8Kj --authority coding-readiness/modern-canonical-candidate.A7K8Kj/sys-listening-stream-authority-successor.v2.json --self-test",
+      "exitCode": 0,
+      "status": "PASS",
+      "decision": "ELIGIBLE_FOR_NEXT_REVIEW",
+      "auditMode": "SUCCESSOR_V5_131",
+      "findings": 0,
+      "selfTests": "20/20",
+      "inputStability": "UNCHANGED_DURING_FULL_AUDIT",
+      "temporaryReportSha256": "6c5939e8cf604dc9c21871fe443a2e5fa488b3dcda4d4417ccacb47103ed044a",
+      "temporaryReportSeal": "436a4f21755226217efdf2ddb68ecafed025fed976f6cce5e9df2df9e63848fe"
+    },
+    {
+      "checkId": "OPERATION_SEMANTICS",
+      "command": "python3 coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py --ssot coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-operation-causal-contract-ssot.v2.json --exact coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-exact-schema-contracts.v1.json --report /tmp/a7-operation.json --selftest --selftest-report /tmp/a7-operation-selftest.json",
+      "exitCode": 0,
+      "status": "PASS",
+      "findingCount": 0,
+      "affectedOperationCount": 0,
+      "selfTests": "24/24",
+      "temporaryReportSha256": "2c4155b3863dfb83cc327e619e5f7fd8edd29c7c40c6d27941cf38fa3b3dda9d",
+      "temporarySelfTestReportSha256": "0748e752a32a44e2cb0562f690ce910a4f6a2954482893d5c4834d2c434f1f51"
+    },
+    {
+      "checkId": "ROUTE_TAXONOMY",
+      "command": "python3 coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py --ssot coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-operation-causal-contract-ssot.v2.json --report /tmp/a7-route.json",
+      "exitCode": 0,
+      "status": "PASS",
+      "operations": 199,
+      "findingCount": 0,
+      "normalizationRequired": 0,
+      "outOfAuthoritativeFamily": 0,
+      "proposedRouteCollisions": 0,
+      "temporaryReportSha256": "233e11164de9340796db41aa6c04d8c9ecd0c796097c119788e436c1194a1d44"
+    },
+    {
+      "checkId": "EXACT_EVENT_PREDECESSOR_REPROJECTION",
+      "command": "python3 coding-readiness/generate_modern_exact_event_successor.py --check --candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj",
+      "exitCode": 0,
+      "status": "PASS",
+      "operations": 199,
+      "tables": 131,
+      "events": 157,
+      "stdoutSha256": "21007b61ce221cc5b673b74782ac18e1a7e702400957de1c96ac8d1c3b2a1405"
+    },
+    {
+      "checkId": "EXACT_EVENT_FIXED_POINT",
+      "command": "python3 coding-readiness/generate_modern_exact_event_successor.py --check --candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj --source-exact coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-exact-schema-contracts.v1.json --source-events coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-event-payload-contracts.v1.json",
+      "exitCode": 0,
+      "status": "PASS",
+      "operations": 199,
+      "tables": 131,
+      "events": 157,
+      "stdoutSha256": "21007b61ce221cc5b673b74782ac18e1a7e702400957de1c96ac8d1c3b2a1405"
+    },
+    {
+      "checkId": "SEMANTIC_LINEAGE_PREDECESSOR_REPROJECTION",
+      "command": "python3 coding-readiness/generate_modern_semantic_field_lineage.py --check --candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj",
+      "exitCode": 0,
+      "status": "PASS",
+      "unregisteredRequestFallbacks": 0,
+      "genericEventFallbacks": 0,
+      "explicitBindings": 13297,
+      "operations": 199,
+      "events": 157,
+      "tables": 131,
+      "stdoutSha256": "4e04395cab136759d57a5ec10095bb59e4f53433f3cf9e38a7d436520d8855f9"
+    },
+    {
+      "checkId": "SEMANTIC_LINEAGE_FIXED_POINT",
+      "command": "python3 coding-readiness/generate_modern_semantic_field_lineage.py --check --candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj --source-exact coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-exact-schema-contracts.v1.json --source-events coding-readiness/modern-canonical-candidate.A7K8Kj/modern-capability-event-payload-contracts.v1.json",
+      "exitCode": 0,
+      "status": "PASS",
+      "unregisteredRequestFallbacks": 0,
+      "genericEventFallbacks": 0,
+      "explicitBindings": 13297,
+      "operations": 199,
+      "events": 157,
+      "tables": 131,
+      "stdoutSha256": "4e04395cab136759d57a5ec10095bb59e4f53433f3cf9e38a7d436520d8855f9"
+    },
+    {
+      "checkId": "CAUSAL_READ_ONLY_CANDIDATE",
+      "command": "python3 coding-readiness/generate_modern_causal_module_successor.py --check-candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj",
+      "exitCode": 0,
+      "status": "PASS",
+      "exactFiles": 8,
+      "metadata": "UNCHANGED",
+      "candidateMutation": "NONE",
+      "stdoutSha256": "e9523b3d02990663bc72bd6a8e7327ee5f3e1e5c683dbe15366a96a78a061868"
+    },
+    {
+      "checkId": "CAUSAL_GENERATOR_AND_READ_ONLY_HOSTILE_SELFTEST",
+      "command": "python3 coding-readiness/generate_modern_causal_module_successor.py --self-test-candidate-dir coding-readiness/modern-canonical-candidate.A7K8Kj",
+      "exitCode": 0,
+      "status": "PASS",
+      "legacyCases": "22/22",
+      "readOnlyCases": "8/8",
+      "stdoutSha256": "b5bc7d7b9c1faa0ee90516d37e42b98ab0c8c0c27fc04b188af7166de7149817"
+    },
+    {
+      "checkId": "CANDIDATE_VALIDATOR_COHERENCE",
+      "command": "python3 coding-readiness/test_modern_candidate_validator_coherence.py",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": "5/5",
+      "stderrSha256": "c8647a4f918bc5f0fb62b39b63ffae03cf6a1e569fd66512b53f2190891ba353"
+    }
+  ],
+  "nonQualifyingDiagnostic": {
+    "checkId": "LEGACY_SEMANTIC_UNIT_SUITE_STALE_CONSUMER",
+    "command": "python3 coding-readiness/test_modern_semantic_field_lineage.py",
+    "exitCode": 1,
+    "observed": "75 tests executed; one CanonicalSealedRegistryMutationTests class setup error before its cases due to a legacy live capability-oracle assumption that constraint-list members are hashable strings while successor data contains structured objects",
+    "stderrSha256": "6d93a34b1c71e7b91a7372dee169dbd3479218b4e76618dc26a4f3d39067fbd7",
+    "classification": "KNOWN_DOWNSTREAM_STALE_CONSUMER_NOT_A_V5_CANDIDATE_QUALIFIER",
+    "sealedPlan": {
+      "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-2026-09-16.v1.json",
+      "sha256": "5b213caa17c1bdb09d33778c19d4478955c9309f67b34b768fe3dd08f1229887",
+      "sealedPayloadSha256": "6496c84bd1a4d08a4b255fa9e980cc9b4080af9790a3666bfecd320489431ec3",
+      "inventoryDisposition": "UPDATE_TO_199_OPERATION_SUCCESSOR_SEMANTICS"
+    },
+    "effect": "DOES_NOT_INVALIDATE_THIS_STATIC_CANDIDATE_ONLY_DECISION; REMAINS_REQUIRED_BEFORE_DOWNSTREAM_CLOSURE_AND_G3_OPEN"
+  },
+  "summary": {
+    "status": "PASS_STATIC_CANDIDATE_QUALIFICATION",
+    "qualifyingChecksPassed": 12,
+    "qualifyingChecksFailed": 0,
+    "globalFindings": 0,
+    "ownerFindings": 0,
+    "operationFindings": 0,
+    "routeFindings": 0,
+    "candidateExactEightUnchanged": true,
+    "candidateBytesAndMetadataUnchanged": true,
+    "promotionPerformed": false,
+    "gateChanged": false,
+    "gateRemainsClosed": true,
+    "downstreamStaleConsumersRemain": true,
+    "notGateAuthority": true
+  },
+  "sealedPayloadSha256": "1b2cbb0c4fcdc5c59da46ae1829638a62fbfd899d61f5a8e09b1c6854aa28e35"
+}

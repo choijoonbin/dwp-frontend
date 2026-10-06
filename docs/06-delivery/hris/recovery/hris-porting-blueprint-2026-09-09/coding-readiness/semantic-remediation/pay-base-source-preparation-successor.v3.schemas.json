@@ -1,0 +1,3467 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "status": "STANDALONE_DRAFT07_AUTHOR_CANDIDATE_NOT_CANONICAL",
+  "$defs": {
+    "PAYV3.GovernanceQuery.ENTITY": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "ENTITY"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.ENTITY": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "ENTITY"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceQuery.PAYGROUP": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "PAYGROUP"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.PAYGROUP": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "PAYGROUP"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceQuery.CALENDAR": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "CALENDAR"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.CALENDAR": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "CALENDAR"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceQuery.ROUNDING": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "ROUNDING"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.ROUNDING": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "ROUNDING"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceQuery.ELIGIBILITY": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "ELIGIBILITY"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.ELIGIBILITY": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "ELIGIBILITY"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceQuery.ELEMENT": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "ELEMENT"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.ELEMENT": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "ELEMENT"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceQuery.FORMULA": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "FORMULA"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.FORMULA": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "FORMULA"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceQuery.GL_MAPPING": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "const": "GL_MAPPING"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedPayloadDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedPayloadDigest",
+        "expectedOwnerRevision"
+      ]
+    },
+    "PAYV3.GovernanceSnapshot.GL_MAPPING": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "artifactKind": {
+          "const": "GL_MAPPING"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "policyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operatorRegistryVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "currencyRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeZoneRegistry": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "approvalPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "retentionPolicyId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "allowedArtifactKinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ENTITY",
+              "PAYGROUP",
+              "CALENDAR",
+              "ROUNDING",
+              "ELIGIBILITY",
+              "ELEMENT",
+              "FORMULA",
+              "GL_MAPPING"
+            ]
+          }
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "snapshotId",
+        "schemaVersion",
+        "artifactKind",
+        "scope",
+        "policyRevision",
+        "ownerRevision",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expiresAt",
+        "operatorRegistryVersion",
+        "currencyRegistry",
+        "timeZoneRegistry",
+        "approvalPolicyId",
+        "retentionPolicyId",
+        "allowedArtifactKinds",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.GovernanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactKind": {
+          "enum": [
+            "ENTITY",
+            "PAYGROUP",
+            "CALENDAR",
+            "ROUNDING",
+            "ELIGIBILITY",
+            "ELEMENT",
+            "FORMULA",
+            "GL_MAPPING"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/PAYV2.ConfigurationScope"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedSchemaVersion": {
+          "const": "PAYROLL_CONFIG_GOVERNANCE_V3"
+        },
+        "expectedPolicyRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expectedOwnerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expectedPayloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "artifactKind",
+        "scope",
+        "asOf",
+        "validFrom",
+        "validTo",
+        "expectedSchemaVersion",
+        "expectedPolicyRevision",
+        "expectedOwnerRevision",
+        "expectedPayloadDigest"
+      ]
+    },
+    "PAYV3.EntityCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entityKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "jurisdictionCode": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}(?:-[A-Z0-9]{1,8})?$"
+        },
+        "baseCurrency": {
+          "$ref": "#/$defs/PAY.Currency"
+        },
+        "timeZone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ENTITY"
+                }
+              }
+            }
+          ]
+        },
+        "legalEmployerRef": {
+          "$ref": "#/$defs/PAYV2.NativeLegalEmployerRef"
+        }
+      },
+      "required": [
+        "entityKey",
+        "jurisdictionCode",
+        "baseCurrency",
+        "timeZone",
+        "validFrom",
+        "validTo",
+        "governance",
+        "legalEmployerRef"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.ENTITY": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "ENTITY"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.EntityCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.ENTITY"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.PayGroupCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "groupKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "legalPayrollEntityId": {
+          "$ref": "#/$defs/PAY.Uuid",
+          "referenceContract": {
+            "entityType": "PAY.LegalPayrollEntity",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "HOURLY",
+            "DAILY",
+            "WEEKLY",
+            "BIWEEKLY",
+            "SEMIMONTHLY",
+            "MONTHLY",
+            "ANNUAL",
+            "CUSTOM"
+          ]
+        },
+        "currency": {
+          "$ref": "#/$defs/PAY.Currency"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": [
+            "MANUAL_RECORDED",
+            "BANK_CONNECTOR"
+          ]
+        },
+        "eligibilityArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "calendarArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "PAYGROUP"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "groupKey",
+        "legalPayrollEntityId",
+        "frequency",
+        "currency",
+        "paymentMethod",
+        "eligibilityArtifact",
+        "calendarArtifact",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.PAYGROUP": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "PAYGROUP"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.PayGroupCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.PAYGROUP"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.CalendarCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "calendarKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAY.ConfigScope"
+        },
+        "periods": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 366,
+          "items": {
+            "$ref": "#/$defs/PAY.CalendarPeriod"
+          }
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "CALENDAR"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "calendarKey",
+        "scope",
+        "periods",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.CALENDAR": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "CALENDAR"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.CalendarCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.CALENDAR"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.RoundingCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policyKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/PAY.RoundingRule"
+          }
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ROUNDING"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "policyKey",
+        "rules",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.ROUNDING": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "ROUNDING"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.RoundingCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.ROUNDING"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.EligibilityCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policyKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/PAY.InputDeclaration"
+          }
+        },
+        "expression": {
+          "$ref": "#/$defs/PAY.AstNode"
+        },
+        "outputType": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "valueType": {
+              "const": "BOOLEAN"
+            },
+            "unit": {
+              "const": "BOOLEAN"
+            },
+            "currency": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "valueType",
+            "unit",
+            "currency"
+          ]
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ELIGIBILITY"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "policyKey",
+        "inputs",
+        "expression",
+        "outputType",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.ELIGIBILITY": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "ELIGIBILITY"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.EligibilityCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.ELIGIBILITY"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.ElementCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "elementKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "nameKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "elementType": {
+          "type": "string",
+          "enum": [
+            "EARNING",
+            "DEDUCTION",
+            "EMPLOYER_COST",
+            "INFORMATION",
+            "BALANCE"
+          ]
+        },
+        "valueType": {
+          "$ref": "#/$defs/PAY.TypeDescriptor"
+        },
+        "processingPriority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "eligibilityArtifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.LocalArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "formulaArtifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.LocalArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "roundingArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "sourceInput": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.InputDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "classification": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "taxCode": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.Code"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "insuranceCode": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.Code"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "accountingCode": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.Code"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "countryPackRef": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PAY.OwnerSelector"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "taxCode",
+            "insuranceCode",
+            "accountingCode",
+            "countryPackRef"
+          ]
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "ELEMENT"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "elementKey",
+        "nameKey",
+        "elementType",
+        "valueType",
+        "processingPriority",
+        "eligibilityArtifact",
+        "formulaArtifact",
+        "roundingArtifact",
+        "sourceInput",
+        "classification",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.ELEMENT": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "ELEMENT"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.ElementCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.ELEMENT"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.FormulaCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "formulaKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "languageVersion": {
+          "const": "PAY_RULE_AST_V1"
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/PAY.InputDeclaration"
+          }
+        },
+        "outputType": {
+          "$ref": "#/$defs/PAY.TypeDescriptor"
+        },
+        "expression": {
+          "$ref": "#/$defs/PAY.AstNode"
+        },
+        "decisionTables": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/PAY.DecisionTable"
+          }
+        },
+        "dependencyArtifacts": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/PAY.LocalArtifactRef"
+          }
+        },
+        "roundingArtifact": {
+          "$ref": "#/$defs/PAY.LocalArtifactRef"
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "maxNodes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            },
+            "maxDepth": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "maxCollectionItems": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000
+            },
+            "timeoutMillis": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            },
+            "memoryBytes": {
+              "type": "integer",
+              "minimum": 4096,
+              "maximum": 16777216
+            }
+          },
+          "required": [
+            "maxNodes",
+            "maxDepth",
+            "maxCollectionItems",
+            "timeoutMillis",
+            "memoryBytes"
+          ]
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "FORMULA"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "formulaKey",
+        "languageVersion",
+        "inputs",
+        "outputType",
+        "expression",
+        "decisionTables",
+        "dependencyArtifacts",
+        "roundingArtifact",
+        "limits",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.FORMULA": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "FORMULA"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.FormulaCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.FORMULA"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.GlMappingCreate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mappingKey": {
+          "$ref": "#/$defs/PAY.Code"
+        },
+        "scope": {
+          "$ref": "#/$defs/PAY.ConfigScope"
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10000,
+          "items": {
+            "$ref": "#/$defs/PAY.GlMappingLine"
+          }
+        },
+        "accountRegistrySnapshot": {
+          "$ref": "#/$defs/PAY.OwnerSelector"
+        },
+        "validFrom": {
+          "$ref": "#/$defs/PAY.Date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAY.Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/PAYV3.GovernanceRef"
+            },
+            {
+              "properties": {
+                "artifactKind": {
+                  "const": "GL_MAPPING"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "mappingKey",
+        "scope",
+        "lines",
+        "accountRegistrySnapshot",
+        "validFrom",
+        "validTo",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryResult.GL_MAPPING": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "const": "GL_MAPPING"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payload": {
+          "$ref": "#/$defs/PAYV3.GlMappingCreate"
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "VALIDATED",
+            "VALIDATION_FAILED",
+            "APPROVAL_PENDING",
+            "APPROVED",
+            "PUBLISHED",
+            "RETIRED",
+            "CANCELLED"
+          ]
+        },
+        "rowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "governance": {
+          "$ref": "#/$defs/PAYV3.GovernanceSnapshot.GL_MAPPING"
+        }
+      },
+      "required": [
+        "artifactId",
+        "kind",
+        "key",
+        "versionNo",
+        "payloadId",
+        "payload",
+        "payloadDigest",
+        "validFrom",
+        "validTo",
+        "status",
+        "rowVersion",
+        "governance"
+      ]
+    },
+    "PAYV3.ArtifactQueryParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "limit",
+        "cursor"
+      ]
+    },
+    "PAYV3.OwnerSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contractRef": {
+          "type": "string",
+          "enum": [
+            "XCON_001",
+            "XCON_002",
+            "XCON_008",
+            "XCON_017",
+            "XCON_018",
+            "XCON_019",
+            "XCON_020",
+            "HRM.PayrollWorkforceManifest.proposal.v1",
+            "HRM.VerifiedSelfScopeSnapshot.proposal.v1",
+            "HRM.RetirementServiceBasisSnapshot.proposal.v1",
+            "SYS.EffectivePayrollConfigurationSnapshot.proposal.v1",
+            "Approval.PayrollDecisionSnapshot.proposal.v1",
+            "Integration.ConnectorActivationSnapshot.proposal.v1",
+            "Integration.PayrollSettlementReceipt.proposal.v1",
+            "Document.PayrollEvidenceSnapshot.proposal.v1",
+            "HRM.LegalEntitySnapshot.proposal.v1",
+            "HRM.PayrollCompensationManifest.proposal.v1",
+            "HRM.PayrollTaxFactManifest.proposal.v1",
+            "HRM.PayrollBankTokenManifest.proposal.v1",
+            "HRM.PayrollDependentManifest.proposal.v1",
+            "SYS.PayrollTemplateSnapshot.proposal.v1",
+            "Finance.AccountRegistrySnapshot.proposal.v1",
+            "Integration.PayrollFormatArtifactSnapshot.proposal.v1",
+            "Country.PayrollPackArtifactSnapshot.proposal.v1",
+            "Country.PayrollCaseResultSnapshot.proposal.v1",
+            "Integration.YearEndProviderActivationSnapshot.proposal.v1",
+            "Integration.YearEndProviderResultSnapshot.proposal.v1",
+            "Approval.PayrollCancellationSnapshot.proposal.v1",
+            "PAY.CaseOutput.v1",
+            "SYS.PayrollPolicyContextSnapshot.proposal.v1",
+            "HRM.PayrollSourceChangeSnapshot.proposal.v1",
+            "TIM.ClosedTimeRevisionStateSnapshot.proposal.v1",
+            "PER.ApprovedPlanStateSnapshot.proposal.v1",
+            "Auth.PrincipalPersonBindingReceipt.proposal.v1",
+            "TIM.ClosedTimeManifest.proposal.v3"
+          ]
+        },
+        "ownerObjectId": {
+          "$ref": "#/$defs/PAY.Uuid"
+        },
+        "ownerRevision": {
+          "$ref": "#/$defs/PAY.Version"
+        },
+        "asOf": {
+          "$ref": "#/$defs/PAY.Instant"
+        },
+        "payloadDigest": {
+          "$ref": "#/$defs/PAY.Digest"
+        }
+      },
+      "required": [
+        "contractRef",
+        "ownerObjectId",
+        "ownerRevision",
+        "asOf",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.InputIngest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runId": {
+          "$ref": "#/$defs/PAY.Uuid",
+          "referenceContract": {
+            "entityType": "PAY.PayrollRun",
+            "idSpace": "PUBLIC_UUID"
+          }
+        },
+        "sourceSelector": {
+          "$ref": "#/$defs/PAYV3.OwnerSelector"
+        },
+        "sourceKind": {
+          "type": "string",
+          "enum": [
+            "HRM_WORKFORCE",
+            "HRM_COMPENSATION",
+            "TIM_CLOSED_TIME",
+            "PER_APPROVED_PLAN",
+            "HRM_TAX_IDENTITY",
+            "HRM_DEPENDENT",
+            "HRM_BANK_TOKEN",
+            "COUNTRY_PACK",
+            "SYS_CONFIGURATION",
+            "LOCAL_ELEMENT",
+            "LOCAL_FORMULA",
+            "LOCAL_ROUNDING",
+            "LOCAL_ENTRY",
+            "LOCAL_BALANCE",
+            "PRIOR_FINAL_RESULT"
+          ]
+        },
+        "requestedFieldSetVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "runId",
+        "sourceSelector",
+        "sourceKind",
+        "requestedFieldSetVersion"
+      ]
+    },
+    "PAYV3.Actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "principalPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "authRowVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authAccessRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "tenantId",
+        "principalPublicId",
+        "authRowVersion",
+        "authAccessRevision"
+      ]
+    },
+    "PAYV3.Authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "purpose": {
+          "enum": [
+            "PAY_CONFIG_MANAGE",
+            "PAY_INPUT_SOURCE_INGEST"
+          ]
+        },
+        "originatingAction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "permissionRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "populationRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fieldPolicyRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "populationDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "appEntitled": {
+          "type": "boolean"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "purpose",
+        "originatingAction",
+        "permissionRevision",
+        "populationRevision",
+        "fieldPolicyRevision",
+        "populationDigest",
+        "appEntitled",
+        "expiresAt"
+      ]
+    },
+    "PAYV3.LocalArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "publicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payloadId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "internalId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "kind": {
+          "enum": [
+            "ENTITY",
+            "PAYGROUP",
+            "CALENDAR",
+            "ROUNDING",
+            "ELIGIBILITY",
+            "ELEMENT",
+            "FORMULA",
+            "GL_MAPPING"
+          ]
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionNo": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PAYV3.EntityCreate"
+            },
+            {
+              "$ref": "#/$defs/PAYV3.PayGroupCreate"
+            },
+            {
+              "$ref": "#/$defs/PAYV3.CalendarCreate"
+            },
+            {
+              "$ref": "#/$defs/PAYV3.RoundingCreate"
+            },
+            {
+              "$ref": "#/$defs/PAYV3.EligibilityCreate"
+            },
+            {
+              "$ref": "#/$defs/PAYV3.ElementCreate"
+            },
+            {
+              "$ref": "#/$defs/PAYV3.FormulaCreate"
+            },
+            {
+              "$ref": "#/$defs/PAYV3.GlMappingCreate"
+            }
+          ]
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "PUBLISHED",
+            "RETIRED"
+          ]
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date"
+        },
+        "validTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "tenantId",
+        "publicId",
+        "payloadId",
+        "internalId",
+        "kind",
+        "key",
+        "versionNo",
+        "schemaVersion",
+        "payload",
+        "payloadDigest",
+        "status",
+        "validFrom",
+        "validTo"
+      ]
+    },
+    "PAYV3.SourcePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ownerObjectId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "ownerRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "schemaVersion": {
+          "const": "PAYV3_TEST_SOURCE_V1"
+        },
+        "contractRef": {
+          "const": "TIM.ClosedTimeManifest.proposal.v3"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "enum": [
+            "CLOSED",
+            "REOPENED"
+          ]
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "lineNo": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "workerPublicId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "assignmentPublicId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "unit": {
+                "enum": [
+                  "HOUR",
+                  "DAY"
+                ]
+              },
+              "quantity": {
+                "type": "string",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]{1,6})?$"
+              },
+              "sourceEntryDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "lineNo",
+              "workerPublicId",
+              "assignmentPublicId",
+              "unit",
+              "quantity",
+              "sourceEntryDigest"
+            ]
+          }
+        },
+        "declaredLineCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payloadDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "tenantId",
+        "ownerObjectId",
+        "ownerRevision",
+        "schemaVersion",
+        "contractRef",
+        "asOf",
+        "status",
+        "lines",
+        "declaredLineCount",
+        "payloadDigest"
+      ]
+    },
+    "PAYV3.InputQueryResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "FROZEN",
+            "STALE"
+          ]
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "inputDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceVectorDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workerCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "sourceKind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contractRef": {
+                "type": "string",
+                "minLength": 1
+              },
+              "ownerObjectId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "ownerRevision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "schemaVersion": {
+                "type": "string",
+                "minLength": 1
+              },
+              "asOf": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "payloadDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "payloadRef": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "sourceKind",
+              "contractRef",
+              "ownerObjectId",
+              "ownerRevision",
+              "schemaVersion",
+              "asOf",
+              "payloadDigest",
+              "payloadRef"
+            ]
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "personPublicId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "workerPublicId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "relationshipPublicId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "assignmentPublicId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "legalEmployerPublicId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "personVersion": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "workerVersion": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "relationshipVersion": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "assignmentVersion": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "inputDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "personPublicId",
+              "workerPublicId",
+              "relationshipPublicId",
+              "assignmentPublicId",
+              "legalEmployerPublicId",
+              "personVersion",
+              "workerVersion",
+              "relationshipVersion",
+              "assignmentVersion",
+              "inputDigest"
+            ]
+          }
+        }
+      },
+      "required": [
+        "snapshotId",
+        "revision",
+        "status",
+        "asOf",
+        "inputDigest",
+        "sourceVectorDigest",
+        "workerCount",
+        "sources",
+        "targets"
+      ]
+    }
+  }
+}

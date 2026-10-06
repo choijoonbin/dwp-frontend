@@ -1,0 +1,406 @@
+{
+  "schema": "dwp.hris.modern-physical-v4-preflight-findings-independent-triage/v1",
+  "status": "FAIL_REPAIR_REQUIRED_2_P0_3_P1",
+  "recordedAtUtc": "2026-09-16T02:05:11Z",
+  "authority": "INDEPENDENT_READ_ONLY_TRIAGE_NOT_G3_NOT_G6",
+  "scope": {
+    "objective": "Classify the 23 v4 physical preflight findings, review narrowly-scoped SQL grammar safety, verify every affected expansion reader, and decide the eight-file canonical input contract.",
+    "sourceCandidateLiveGateMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "allowedWrite": "THIS_DISTINCT_SELF_SEALED_REPORT_ONLY",
+    "postgresExecution": "NOT_AUTHORIZED_UNTIL_STATIC_ZERO",
+    "productionState": "NOT_AUTHORIZED_G6"
+  },
+  "inputPins": {
+    "preflightReport": {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/physical-preflight-clean-source.json",
+      "sha256": "92dfc0f843c1d7639df19e3460683b3768b782ee59ab299edbdab3f1a0a9216b",
+      "sealedPayloadSha256": "4472c2e32422c0240b57a2a9d1e937c2c644dad6f23fa09654fb7324a8b4030b",
+      "selfSealValid": true,
+      "status": "FAIL_BLOCKED_SOURCE",
+      "findingCount": 23
+    },
+    "capturedCanonicalFiles": {
+      "directory": "/private/tmp/dwp-hris-v4-preflight.oOxBMl",
+      "exactCanonicalSubsetOnly": true,
+      "files": {
+        "modern-capability-causal-state-contracts.v2.json": "07ff767f6c87a5b5b69aa387ae2691f679b7ad3b81a55259f68271d654af6090",
+        "modern-capability-closed-set-manifest.v3.json": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3",
+        "modern-capability-event-payload-contracts.v1.json": "3e9e4c1ca92c823853fdbf0afe8b03bd66b3074b2691b0aa35acd883d90e851c",
+        "modern-capability-exact-schema-contracts.v1.json": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88",
+        "modern-capability-operation-causal-contract-ssot.v2.json": "ff951d124c04f233c8bf2f7515012ad9a421b7162cc998ddb52c1dc4b4e56290",
+        "modern-capability-public-identity-registry.v1.json": "383e3ff40e655b0ef47177cc517ab122ead637a97e2c0f58de61e4c34c5df720",
+        "modern-capability-semantic-bindings.v1.json": "246b96c0a2dcf9945fc631f573210d82ac0a3400850a0e2617028e5663f40c34",
+        "sys-listening-stream-authority-successor.v2.json": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00"
+      }
+    },
+    "sevenFileProjection": {
+      "directory": "/private/tmp/dwp-hris-v4-physical-source.3L5vKc",
+      "excludedCanonicalFile": "modern-capability-causal-state-contracts.v2.json",
+      "projectionManifestPresent": false,
+      "disposition": "UNSEALED_AD_HOC_PROJECTION_NOT_ACCEPTABLE_AS_CANONICAL_INPUT_AUTHORITY"
+    },
+    "tableExpansionPolicy": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+      "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+      "selfSealValid": true
+    },
+    "reviewedToolPins": {
+      "generate_modern_physical_candidate.py": "0700d9f1b7f539c01b8f3aa9b6b9e34cdecfc7b79fff7aaffd7c1ccc38c96b0b",
+      "validate_modern_physical_candidate.py": "fc7ed38c22f859b9e983747f30d7b6318db95f0e668d8651842676a672bace0b",
+      "README.md": "1100d75ae2df5065bf34608c10cc7a6137fe210faad7b064e11a00197213a8bf"
+    }
+  },
+  "findingClassificationSummary": {
+    "inputFindings": 23,
+    "validatorGrammarFalsePositives": 22,
+    "sourceContractTruePositives": 1,
+    "byCode": {
+      "UNSAFE_CHECK_EXPRESSION": {
+        "input": 3,
+        "falsePositive": 3,
+        "truePositive": 0
+      },
+      "UNSUPPORTED_SQL_TYPE": {
+        "input": 7,
+        "falsePositive": 7,
+        "truePositive": 0,
+        "separateSecurityHardeningFinding": "SIGNATURE_LENGTH_AND_ENCODING_NOT_EXACTLY_BOUNDED"
+      },
+      "EXPANSION_READER_DIRECT_LINEAGE_INCOMPLETE": {
+        "input": 13,
+        "falsePositive": 12,
+        "truePositive": 1
+      }
+    }
+  },
+  "checkExpressionTriage": {
+    "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE",
+    "severity": "P1_TOOL_BLOCKER",
+    "subjects": [
+      "sys_hris_listening_cohort_packages.ck_sys_hris_listening_cohort_packages_adequacy_v4",
+      "sys_hris_listening_cohort_projections.ck_sys_hris_listening_cohort_projections_adequacy_v4",
+      "sys_hris_listening_lineage_receipts.ck_sys_hris_listening_lineage_receipts_adequacy_v4"
+    ],
+    "commonRejectedToken": "'[]'::jsonb",
+    "securityAssessment": {
+      "sqlInjectionRiskOfExactToken": "NONE_WHEN_THE_LITERAL_AND_TYPE_CAST_ARE_ACCEPTED_AS_ONE_EXACT_STATIC_TOKEN_AND_ALL_OTHER_CASTS_REMAIN_REJECTED",
+      "privacySemantics": "The checks preserve suppressed-measure closure: the protected package may retain the small-cell count, while insights projection and lineage rows require subject_count NULL and measure_values NULL or the empty JSONB array when suppressed.",
+      "broadCastGrammar": "FORBIDDEN",
+      "functionsSubqueriesCommentsStatementSeparators": "REMAIN_FORBIDDEN"
+    },
+    "exactCorrection": [
+      "In both physical generator and validator, recognize exactly the byte token '[]'::jsonb before the existing closed scalar grammar is evaluated.",
+      "Replace that exact token with a safe literal sentinel for grammar inspection, then reject any remaining double-colon token.",
+      "Do not allow arbitrary quoted JSON, arbitrary cast targets, identifiers followed by casts, case variants, functions, comments, semicolons, dots, or SQL keywords.",
+      "Add positive tests for all three canonical expressions and hostile negative tests for {}, [1], ::text, payload::jsonb, comments, statement separators, pg_read_file and UNION SELECT."
+    ]
+  },
+  "signatureTextTriage": {
+    "classification": "VALIDATOR_TYPE_ALLOWLIST_GAP_FALSE_POSITIVE_WITH_SEPARATE_SOURCE_HARDENING_GAP",
+    "findingSeverity": "P1_TOOL_BLOCKER",
+    "hardeningSeverity": "P1_SOURCE_SECURITY_BLOCKER",
+    "subjects": [
+      "sys_hris_listening_domain_outbox.owner_signature",
+      "sys_hris_listening_insights_inbox.owner_signature",
+      "sys_hris_listening_insights_outbox.owner_signature",
+      "sys_hris_listening_operation_receipts.owner_signature",
+      "sys_hris_listening_protected_outbox.owner_signature",
+      "sys_hris_listening_protected_receipts.owner_signature",
+      "sys_hris_listening_token_issuances.credential_signature"
+    ],
+    "securityAssessment": {
+      "sqlInjectionRiskOfExactUppercaseTextType": "NONE_FROM_THE_TYPE_TOKEN_WHEN_SQL_TYPE_RE_ACCEPTS_ONLY_THE_COMPLETE_LITERAL_TEXT_TOKEN",
+      "unsafeBroadening": "Accepting arbitrary suffixes, arrays, collations, constraints, lower-case aliases or compound type expressions is forbidden.",
+      "residualRisk": "The canonical request/message fields declare STRING or EXACT_TYPED_VALUE but no maximum encoded byte length or canonical encoding. PostgreSQL TEXT therefore permits avoidable storage and memory amplification at an authenticated ingress boundary.",
+      "existingEnvelopeChecks": "Owner message rows already require complete envelopes and restrict owner signature algorithms to ED25519 or ECDSA_P256_SHA256; the token issuance row has an algorithm column but no physical closed-set algorithm check in the reviewed table specification."
+    },
+    "exactCorrection": [
+      "Tool grammar may safely add only the complete uppercase TEXT alternative; retain fullmatch semantics and all existing identifier/default/check guards.",
+      "Before G3 Gate open, make signature serialization exact: declare canonical encoding, algorithm-specific validation, and a maximum encoded byte length in owner-port/request schemas.",
+      "Prefer mapping that exact bound to VARCHAR(N), with N derived from the frozen supported algorithm and serialization profile. If TEXT is retained for algorithm agility, enforce the same bound before persistence and in a narrowly validated database constraint.",
+      "Add a closed-set algorithm constraint to sys_hris_listening_token_issuances.algorithm or pin an equivalent owner-local invariant that the physical validator proves."
+    ]
+  },
+  "expansionReaderTriage": {
+    "commonAssertions": {
+      "policyReaderDeclared": true,
+      "operationAndBindingExist": true,
+      "bindingReadsTable": true,
+      "operationReadPlanIncludesTable": true,
+      "responseProjectionPhysicalSourcesIncludesTable": true,
+      "fieldPolicyPresent": true,
+      "pepDenyOnUnavailable": true,
+      "countingRule": "Count distinct target plus existing physical column bindings whose sourceKind is PHYSICAL_POST_STATE and whose complete sourcePath matches bare table.column, LOCKED_PRE:table.column, STATE_WINNER:table.column or CONTENT_WINNER:table.column. Derived paths do not satisfy the minimum."
+    },
+    "rows": [
+      {
+        "table": "ppl_rec_requisition_versions",
+        "reader": "modern.recruiting.requisition.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 21,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "ppl_rec_requisition_versions",
+        "reader": "modern.recruiting.requisitions.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 21,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "ppl_jny_template_task_definitions",
+        "reader": "modern.onboarding.self.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 0,
+        "classification": "SOURCE_CONTRACT_GAP_TRUE_POSITIVE"
+      },
+      {
+        "table": "ppl_cwk_engagement_versions",
+        "reader": "modern.contingent.engagement.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 19,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "ppl_cwk_engagement_versions",
+        "reader": "modern.contingent.engagements.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 19,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_lrn_offering_versions",
+        "reader": "modern.learning.offering.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 18,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_lrn_offering_versions",
+        "reader": "modern.learning.catalog.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 17,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_mkt_opportunity_versions",
+        "reader": "modern.opportunity.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 18,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_mkt_opportunity_versions",
+        "reader": "modern.opportunity.catalog.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 15,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_mkt_opportunity_versions",
+        "reader": "modern.opportunity.application.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 4,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_mkt_opportunity_versions",
+        "reader": "modern.opportunity.applications.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 4,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_suc_plan_versions",
+        "reader": "modern.succession.plan.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 17,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      },
+      {
+        "table": "prf_suc_plan_versions",
+        "reader": "modern.succession.plans.query",
+        "reportedDirect": 0,
+        "strictQualifiedDirect": 17,
+        "classification": "VALIDATOR_GRAMMAR_GAP_FALSE_POSITIVE"
+      }
+    ],
+    "columnExistenceAndSourceKind": "PASS_FOR_ALL_190_STRICT_QUALIFIED_BINDINGS_ACROSS_THE_12_FALSE_POSITIVES",
+    "onboardingSelfGap": {
+      "severity": "P0_SOURCE_CONTRACT_BLOCKER",
+      "evidence": [
+        "The v4 expansion policy declares modern.onboarding.self.query as a readConsumer of ppl_jny_template_task_definitions.",
+        "The operation readPlan, exact binding readsTables and responseProjection.physicalSources all repeat that table.",
+        "The response lineage contains only an EXACT_TYPED_PROJECTION aggregate marker for that table and zero durable table-column response bindings.",
+        "The current self entity returns task instance IDs and evidence IDs but no task-definition field, while administrator assignment queries already bind task_key and required_flag from this table."
+      ],
+      "requiredDecision": "Do not add invented lineage rows merely to satisfy the counter. Preferred product correction is to enrich the self task response with a typed task model backed by the assigned definition revision, including at minimum task key and title plus the required/completion/evidence contract needed by the employee journey. The smaller alternative is to remove this table from the self query readPlan, binding physicalSources and policy readConsumers if the product deliberately returns IDs only.",
+      "recommendedOutcome": "ENRICH_SELF_TASK_RESPONSE_AND_KEEP_DECLARED_READER"
+    },
+    "validatorCorrection": [
+      "Parse the complete sourcePath with an anchored closed grammar, not substring or startswith rules.",
+      "Permit only bare, LOCKED_PRE, STATE_WINNER and CONTENT_WINNER direct physical selectors for this minimum; do not count DERIVED, EXACT_TYPED_PROJECTION, arbitrary prefixes, or selection-mode prose.",
+      "Require PHYSICAL_POST_STATE, exact table identity, an existing physical column, and distinct target plus column bindings.",
+      "Retain the minimum of two; after this correction exactly one of the thirteen findings must remain until the onboarding source contract is regenerated."
+    ]
+  },
+  "canonicalInputContractTriage": {
+    "severity": "P0_PROVENANCE_BLOCKER",
+    "observedBehavior": {
+      "fullEightFileCandidate": "REJECTED_WITH_SOURCE_LOAD_FAILURE_BECAUSE_THE_PROFILE_EXPECTS_SEVEN_FILES",
+      "sevenFileProjection": "ACCEPTED_FOR_SEMANTIC_PREFLIGHT_LOADING_AND_THEN_REPORTED_THE_23_FINDINGS",
+      "risk": "A caller is encouraged to copy a subset into an unsealed temporary directory. The physical report then cannot prove that the omitted causal-state artifact belonged to the same canonical publication, and byte substitution or omission is outside the recorded input authority."
+    },
+    "decision": "ACCEPT_FULL_EXACT_EIGHT_FILE_CANONICAL_CANDIDATE",
+    "requiredExactAllowlist": [
+      "modern-capability-closed-set-manifest.v3.json",
+      "modern-capability-operation-causal-contract-ssot.v2.json",
+      "modern-capability-causal-state-contracts.v2.json",
+      "modern-capability-exact-schema-contracts.v1.json",
+      "modern-capability-event-payload-contracts.v1.json",
+      "modern-capability-public-identity-registry.v1.json",
+      "modern-capability-semantic-bindings.v1.json",
+      "sys-listening-stream-authority-successor.v2.json"
+    ],
+    "requiredValidation": [
+      "Reject missing or extra basenames, non-regular files, symlinks and directory rebinding exactly as the hardened loader already does.",
+      "Validate the causal-state document self-seal.",
+      "Require causal-state closedSetManifest.manifestId and sealedPayloadSha256 to equal the loaded manifest.",
+      "Require canonicalSourcePins to contain exactly operation, exact schema, event payload, public identity and semantic bindings, and require every pinned SHA-256 to equal the loaded bytes.",
+      "Continue validating the Listening authority self-seal and semantic equality against the canonical composition. Do not require a reverse hash pin that its own canonicalPrecedence explicitly forbids.",
+      "Record all eight source file hashes in both generation and validation reports even if physical DDL synthesis reads only a subset."
+    ],
+    "capturedEightFileClosure": {
+      "causalSelfSealValid": true,
+      "causalManifestSealMatches": true,
+      "causalCanonicalSourcePinSetExact": true,
+      "causalCanonicalSourceHashesAllMatch": true
+    },
+    "sealedProjectionManifestAlternative": {
+      "disposition": "NOT_RECOMMENDED",
+      "reason": "It introduces a ninth trust artifact and another publication step without reducing the cost of loading the causal file. If retained, it must self-seal, pin the parent eight-file set and every hash, declare the selected seven files and exclusion rationale, and the tool must still read and validate the parent causal artifact."
+    }
+  },
+  "hostileTests": {
+    "status": "PASS",
+    "suites": [
+      {
+        "suiteId": "EXACT_EMPTY_JSONB_CAST_CLOSED_GRAMMAR",
+        "passed": 12,
+        "total": 12,
+        "accepted": [
+          "measure_values='[]'::jsonb",
+          "subject_count>=0 AND (measure_values IS NULL OR measure_values='[]'::jsonb)"
+        ],
+        "rejectedClasses": [
+          "different JSON literal",
+          "different cast type",
+          "identifier cast",
+          "semicolon and second statement",
+          "function call",
+          "line comment",
+          "block comment",
+          "UNION SELECT",
+          "case variant outside exact canonical token"
+        ]
+      },
+      {
+        "suiteId": "EXACT_SQL_TYPE_TOKEN",
+        "passed": 10,
+        "total": 10,
+        "accepted": [
+          "TEXT",
+          "VARCHAR(512)",
+          "JSONB"
+        ],
+        "rejected": [
+          "text",
+          "TEXT[]",
+          "TEXT;DROP TABLE x",
+          "TEXT COLLATE x",
+          "TEXT NOT NULL",
+          "VARCHAR(0)",
+          "VARCHAR(1);SELECT"
+        ]
+      },
+      {
+        "suiteId": "TEMPORAL_DIRECT_LINEAGE_CLOSED_GRAMMAR",
+        "passed": 10,
+        "total": 10,
+        "acceptedClasses": [
+          "table.column",
+          "LOCKED_PRE:table.column",
+          "STATE_WINNER:table.column",
+          "CONTENT_WINNER:table.column"
+        ],
+        "rejectedClasses": [
+          "arbitrary prefix",
+          "derived path",
+          "statement suffix",
+          "missing column",
+          "extra path segment",
+          "uppercase identifier"
+        ]
+      },
+      {
+        "suiteId": "FULL_EIGHT_FILE_CAUSAL_PIN_CLOSURE",
+        "passed": 6,
+        "total": 6,
+        "cases": [
+          "full exact eight accepted",
+          "missing causal rejected",
+          "extra file rejected",
+          "causal self-seal mutation rejected",
+          "resealed causal with wrong source pin rejected",
+          "manifest seal-link drift rejected"
+        ]
+      }
+    ],
+    "aggregate": {
+      "passed": 38,
+      "total": 38
+    }
+  },
+  "blockers": {
+    "P0": [
+      {
+        "id": "P0-PHYS-V4-ONBOARDING-SELF-DIRECT-LINEAGE",
+        "owner": "CANONICAL_SOURCE_AUTHOR",
+        "closure": "Regenerate a coherent typed self-task response and direct durable lineage, or consistently remove the reader from policy/readPlan/binding/projection."
+      },
+      {
+        "id": "P0-PHYS-V4-EIGHT-FILE-PROVENANCE",
+        "owner": "PHYSICAL_TOOL_AUTHOR",
+        "closure": "Consume the exact eight-file candidate and validate causal self-seal, manifest link and exact five source pins; eliminate the unsealed seven-file projection workflow."
+      }
+    ],
+    "P1": [
+      {
+        "id": "P1-PHYS-V4-CLOSED-SQL-GRAMMAR",
+        "owner": "PHYSICAL_TOOL_AUTHOR",
+        "closure": "Narrowly support only the exact empty-array JSONB cast and exact static SQL type tokens in both tools with hostile tests."
+      },
+      {
+        "id": "P1-PHYS-V4-TEMPORAL-LINEAGE-GRAMMAR",
+        "owner": "PHYSICAL_TOOL_AUTHOR",
+        "closure": "Use the anchored direct-selector parser with sourceKind, table, column and distinctness checks in both tools."
+      },
+      {
+        "id": "P1-PHYS-V4-SIGNATURE-BOUND",
+        "owner": "CANONICAL_SOURCE_AUTHOR_AND_SECURITY_REVIEWER",
+        "closure": "Freeze signature serialization, maximum length and token-issuance algorithm closure, then regenerate and re-review."
+      }
+    ]
+  },
+  "requiredRegression": [
+    "Generate a new distinct eight-file canonical candidate; do not mutate or reuse the captured candidate or seven-file projection.",
+    "Run the physical preflight directly on that eight-file directory and require zero findings after the single real source gap and tool grammar gaps are corrected.",
+    "Run generator and validator hostile self-tests including all 38 cases above plus prior v3 q0 exact-38 reproduction.",
+    "Require physical output generation to remain blocked on any missing/extra canonical file, causal seal drift, pin drift, arbitrary cast/type, arbitrary lineage prefix or nonexistent column.",
+    "Only after static zero may PostgreSQL 16 and 18 disposable execution begin."
+  ],
+  "conclusion": "THE_CAPTURED_23 FINDINGS ARE NOT 23 SOURCE DEFECTS: 22 ARE CLOSED-GRAMMAR FALSE POSITIVES AND ONE IS A REAL ONBOARDING SELF-QUERY RESPONSE-LINEAGE GAP. HOWEVER, THE CURRENT SEVEN-FILE PHYSICAL INPUT CONTRACT LOSES THE CAUSAL PUBLICATION PROOF AND IS A SEPARATE P0. THE G3 CODE GATE MUST REMAIN CLOSED UNTIL A NEW EIGHT-FILE CANDIDATE CLOSES BOTH P0 ITEMS, THE THREE P1 ITEMS, AND A RE-RUN REACHES ZERO STATIC FINDINGS.",
+  "productionState": "NOT_AUTHORIZED_G6",
+  "sealedPayloadSha256": "a136a171bdb285a6edac688dd4de69aacc5548724419207fa8dc568fd7824481"
+}

@@ -1,0 +1,1152 @@
+openapi: 3.1.0
+info:
+  title: DWP HRIS Performance API
+  version: 1.0.0-draft
+  description: >-
+    G2 contract proposal owned by dwp-people-server/hris/performance. Tenant and actor
+    are derived from trusted authentication context; clients cannot select another tenant.
+servers:
+  - url: /api/people/v1/hris/performance
+x-dwp-routing:
+  gatewayBasePath: /api/people/v1/hris/performance
+  controllerBasePath: /v1/hris/performance
+  internalBasePath: /internal/hris-performance/v1
+  gatewayRule: service-key route /api/people/** with StripPrefix=2; internal paths are never gateway exposed
+security:
+  - dwpSession: []
+tags:
+  - name: Home
+  - name: Cycles
+  - name: Population
+  - name: Goals
+  - name: Reviews
+  - name: Feedback
+  - name: Checkins
+  - name: Calibration
+  - name: Results
+  - name: Appeals
+  - name: DataExchange
+
+paths:
+  /dashboard:
+    get:
+      tags: [Home]
+      operationId: getPerformanceDashboard
+      x-dwp-capabilities: [hcm.operations.performance.update, hcm.personal.performance.view, hcm.team.performance.review]
+      parameters:
+        - $ref: '#/components/parameters/AsOf'
+      responses:
+        '200':
+          description: Permission-trimmed widget projection; never a menu catalog.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PerformanceDashboard'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /cycles:
+    get:
+      tags: [Cycles]
+      operationId: listCycles
+      x-dwp-capability: per.cycle.view
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Cursor page
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CyclePage'}
+    post:
+      tags: [Cycles]
+      operationId: createCycle
+      x-dwp-capability: per.cycle.manage
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateCycleCommand'}
+      responses:
+        '201':
+          description: Cycle created
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Cycle'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/RuleViolation'}
+
+  /cycles/{cycleId}:
+    get:
+      tags: [Cycles]
+      operationId: getCycle
+      x-dwp-capability: per.cycle.view
+      parameters:
+        - $ref: '#/components/parameters/CycleId'
+      responses:
+        '200':
+          description: Cycle resource
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Cycle'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    patch:
+      tags: [Cycles]
+      operationId: updateCycleDraft
+      x-dwp-capability: per.cycle.manage
+      parameters:
+        - $ref: '#/components/parameters/CycleId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: {$ref: '#/components/schemas/UpdateCycleDraftCommand'}
+      responses:
+        '200':
+          description: Updated draft
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Cycle'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/RuleViolation'}
+
+  /cycles/{cycleId}/validate:
+    post:
+      tags: [Cycles]
+      operationId: validateCycle
+      x-dwp-capability: per.cycle.manage
+      parameters:
+        - $ref: '#/components/parameters/CycleId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Deterministic validation report
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ValidationReport'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /cycles/{cycleId}/publish:
+    post:
+      tags: [Cycles]
+      operationId: publishCycle
+      x-dwp-capability: per.cycle.publish
+      parameters:
+        - $ref: '#/components/parameters/CycleId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PublishCommand'}
+      responses:
+        '202':
+          description: Publish accepted after approval reference and step-up checks
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CommandReceipt'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /cycles/{cycleId}/population-previews:
+    post:
+      tags: [Population]
+      operationId: previewPopulation
+      x-dwp-capability: per.population.preview
+      parameters:
+        - $ref: '#/components/parameters/CycleId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PopulationPreviewCommand'}
+      responses:
+        '202':
+          description: Preview job accepted
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CommandReceipt'}
+        '422': {$ref: '#/components/responses/RuleViolation'}
+
+  /cycles/{cycleId}/population-freezes:
+    post:
+      tags: [Population]
+      operationId: freezePopulation
+      x-dwp-capability: per.population.freeze
+      parameters:
+        - $ref: '#/components/parameters/CycleId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FreezePopulationCommand'}
+      responses:
+        '202':
+          description: Freeze accepted
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CommandReceipt'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /goals:
+    post:
+      tags: [Goals]
+      operationId: createGoal
+      x-dwp-capabilities: [per.goal.self.write, per.goal.team.approve]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateGoalCommand'}
+      responses:
+        '201':
+          description: Goal created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Goal'}
+        '422': {$ref: '#/components/responses/RuleViolation'}
+
+  /goals/{goalId}/submit:
+    post:
+      tags: [Goals]
+      operationId: submitGoal
+      x-dwp-capabilities: [per.goal.self.write, per.goal.team.approve]
+      parameters:
+        - $ref: '#/components/parameters/GoalId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Submitted goal revision
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Goal'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /reviews/{reviewId}:
+    get:
+      tags: [Reviews]
+      operationId: getAssignedReview
+      x-dwp-capabilities: [hcm.team.performance.review, per.review.self.submit]
+      parameters:
+        - $ref: '#/components/parameters/ReviewId'
+      responses:
+        '200':
+          description: Field-policy-trimmed assigned review
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Review'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    patch:
+      tags: [Reviews]
+      operationId: saveReviewDraft
+      x-dwp-capabilities: [hcm.team.performance.review, per.review.self.submit]
+      parameters:
+        - $ref: '#/components/parameters/ReviewId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: {$ref: '#/components/schemas/ReviewDraftCommand'}
+      responses:
+        '200':
+          description: Draft saved
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Review'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /reviews/{reviewId}/submit:
+    post:
+      tags: [Reviews]
+      operationId: submitReview
+      x-dwp-capabilities: [hcm.team.performance.review, per.review.self.submit]
+      parameters:
+        - $ref: '#/components/parameters/ReviewId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SubmitReviewCommand'}
+      responses:
+        '200':
+          description: Immutable submission created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReviewSubmission'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/RuleViolation'}
+
+  /feedback-requests:
+    post:
+      tags: [Feedback]
+      operationId: createFeedbackRequest
+      x-dwp-capability: per.feedback.request.create
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateFeedbackRequestCommand'}
+      responses:
+        '201':
+          description: Feedback request created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FeedbackRequest'}
+        '422': {$ref: '#/components/responses/RuleViolation'}
+
+  /check-ins:
+    post:
+      tags: [Checkins]
+      operationId: createCheckin
+      x-dwp-capability: per.checkin.manage
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateCheckinCommand'}
+      responses:
+        '201':
+          description: Check-in created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Checkin'}
+
+  /calibration-sessions/{sessionId}/adjustments:
+    post:
+      tags: [Calibration]
+      operationId: appendCalibrationAdjustment
+      x-dwp-capability: hcm.operations.performance.calibrate
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CalibrationAdjustmentCommand'}
+      responses:
+        '201':
+          description: Append-only adjustment
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CalibrationAdjustment'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /result-sets/{resultSetId}/publish:
+    post:
+      tags: [Results]
+      operationId: publishResults
+      x-dwp-capability: hcm.operations.performance.publish
+      parameters:
+        - $ref: '#/components/parameters/ResultSetId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PublishCommand'}
+      responses:
+        '202':
+          description: Step-up and independent approval verified; publish accepted
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CommandReceipt'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /results/{resultId}/appeals:
+    post:
+      tags: [Appeals]
+      operationId: openAppeal
+      x-dwp-capability: per.appeal.self.open
+      parameters:
+        - $ref: '#/components/parameters/ResultId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/OpenAppealCommand'}
+      responses:
+        '201':
+          description: Appeal opened
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Appeal'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /imports:
+    post:
+      tags: [DataExchange]
+      operationId: requestImport
+      x-dwp-capability: per.data-exchange.execute
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ImportCommand'}
+      responses:
+        '202':
+          description: Import accepted; poll the receipt instead of retrying blindly.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CommandReceipt'}
+        '422': {$ref: '#/components/responses/RuleViolation'}
+
+  /command-receipts/{receiptId}:
+    get:
+      tags: [DataExchange]
+      operationId: getCommandReceipt
+      x-dwp-capability: per.command-receipt.view
+      x-dwp-authorization-context: SEALED_ORIGINATING_COMMAND_CONTEXT
+      x-dwp-authorization-rule: MORE_RESTRICTIVE_OF_CURRENT_AND_ORIGINATING
+      x-dwp-opaque-not-found-on-context-mismatch: true
+      parameters:
+        - $ref: '#/components/parameters/ReceiptId'
+      responses:
+        '200':
+          description: Current receipt status
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CommandReceipt'}
+        '404': {$ref: '#/components/responses/NotFound'}
+
+  # Service-only routes are declared in the same OpenAPI so extraction, auth
+  # binding and contract tests cannot drift. Gateway exposure is forbidden by
+  # x-dwp-routing and the workload/tenant controls below.
+  /internal/hris-performance/v1/approved-compensation-plan-snapshots/{snapshotId}:
+    servers:
+      - url: /
+    get:
+      tags: [DataExchange]
+      operationId: getApprovedCompensationPlanSnapshot
+      x-dwp-capability: approved PAY service contract
+      security:
+        - dwpWorkloadMtls: []
+          dwpWorkloadJwt: [hris.internal]
+      x-dwp-workload-auth:
+        caller: dwp-payroll-server
+        audience: dwp-people-server
+        signedTenantClaim: required
+        purposeCode: HRIS_APPROVED_COMPENSATION_PLAN_SNAPSHOT_REFETCH
+      responses:
+        '200':
+          description: Immutable approved compensation-plan snapshot for the authenticated Payroll workload.
+          x-dwp-canonical-schema: coding-readiness/cross-module-canonical-schemas.v1.json#/$defs/XCON_020
+          x-dwp-projection-cardinality: one header and 1..100000 ordered contiguous lines; lineCount equals lines length
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /internal/hris-performance/v1/home-contributions/{payloadRef}:
+    servers:
+      - url: /
+    get:
+      tags: [Home]
+      operationId: materializePerformanceHomeContribution
+      x-dwp-capability: approved SYS home projection contract
+      security:
+        - dwpWorkloadMtls: []
+          dwpWorkloadJwt: [hris.internal]
+      x-dwp-workload-auth:
+        caller: dwp-platform-server
+        audience: dwp-people-server
+        signedTenantClaim: required
+        purposeCode: HRIS_HOME_CONTRIBUTION_MATERIALIZE
+      responses:
+        '200':
+          description: Subject-delegated and permission-trimmed performance home contribution.
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+components:
+  securitySchemes:
+    dwpSession:
+      type: openIdConnect
+      openIdConnectUrl: /.well-known/openid-configuration
+    dwpWorkloadMtls:
+      type: mutualTLS
+      description: SPIFFE workload identity pinned to the registered caller and owner service.
+    dwpWorkloadJwt:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes:
+            hris.internal: Invoke an allowlisted HRIS service-only contract.
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string, minLength: 16, maxLength: 200}
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema: {type: string, pattern: '^"[0-9]+"$'}
+    AsOf:
+      name: asOf
+      in: query
+      schema: {type: string, format: date-time}
+    Cursor:
+      name: cursor
+      in: query
+      schema: {type: string, maxLength: 500}
+    PageSize:
+      name: size
+      in: query
+      schema: {type: integer, minimum: 1, maximum: 100, default: 25}
+    CycleId:
+      name: cycleId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    GoalId:
+      name: goalId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    ReviewId:
+      name: reviewId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    ResultSetId:
+      name: resultSetId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    ResultId:
+      name: resultId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    ReceiptId:
+      name: receiptId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+  headers:
+    ETag:
+      schema: {type: string, pattern: '^"[0-9]+"$'}
+  responses:
+    Forbidden:
+      description: App entitlement, capability, population, field, purpose, step-up or SoD denied.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    NotFound:
+      description: Tenant-safe absence; response does not reveal cross-tenant existence.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    Conflict:
+      description: Stale expected version, illegal state transition or idempotency-key payload mismatch.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    RuleViolation:
+      description: Domain validation failed with stable issue codes.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+  schemas:
+    CanonicalDecimal6:
+      type: string
+      pattern: '^-?(?:0|[1-9][0-9]{0,12})(?:\.[0-9]{1,6})?$'
+      x-valueType: CalculationDecimal
+      x-rounding: HALF_UP_BEFORE_PERSISTENCE
+      x-exponentNotation: FORBIDDEN
+    UnitRatioDecimal:
+      type: string
+      pattern: '^(?:0(?:\.[0-9]{1,6})?|1(?:\.0{1,6})?)$'
+      x-valueType: CalculationDecimal
+      x-rounding: HALF_UP_BEFORE_PERSISTENCE
+      x-exponentNotation: FORBIDDEN
+    DashboardGoalSummary:
+      type: object
+      additionalProperties: false
+      required: [totalCount, activeCount, overdueCount]
+      properties:
+        totalCount: {type: integer, minimum: 0}
+        activeCount: {type: integer, minimum: 0}
+        overdueCount: {type: integer, minimum: 0}
+    DashboardReviewSummary:
+      type: object
+      additionalProperties: false
+      required: [totalCount, awaitingSelfCount, awaitingManagerCount, overdueCount]
+      properties:
+        totalCount: {type: integer, minimum: 0}
+        awaitingSelfCount: {type: integer, minimum: 0}
+        awaitingManagerCount: {type: integer, minimum: 0}
+        overdueCount: {type: integer, minimum: 0}
+    DashboardResultSummary:
+      type: object
+      additionalProperties: false
+      required: [publishedCount, pendingPublicationCount, openAppealCount]
+      properties:
+        publishedCount: {type: integer, minimum: 0}
+        pendingPublicationCount: {type: integer, minimum: 0}
+        openAppealCount: {type: integer, minimum: 0}
+    PerformanceDashboard:
+      type: object
+      additionalProperties: false
+      required: [asOf, tasks, goalSummary, reviewSummary, resultSummary, partialFailures]
+      properties:
+        asOf: {type: string, format: date-time}
+        tasks: {type: array, items: {$ref: '#/components/schemas/TaskSummary'}}
+        goalSummary: {$ref: '#/components/schemas/DashboardGoalSummary'}
+        reviewSummary: {$ref: '#/components/schemas/DashboardReviewSummary'}
+        resultSummary: {$ref: '#/components/schemas/DashboardResultSummary'}
+        partialFailures: {type: array, items: {$ref: '#/components/schemas/PartialFailure'}}
+    TaskSummary:
+      type: object
+      additionalProperties: false
+      required: [taskId, taskType, dueAt, deepLink]
+      properties:
+        taskId: {type: string, format: uuid}
+        taskType: {type: string, enum: [GOAL_DUE, REVIEW_DUE, FEEDBACK_DUE, CHECKIN_DUE, RESULT_ACKNOWLEDGEMENT, APPEAL_ACTION]}
+        dueAt: {type: string, format: date-time}
+        deepLink: {type: string, pattern: '^/hr/(?:my|team|performance)/[a-z0-9/_-]+$'}
+    PartialFailure:
+      type: object
+      additionalProperties: false
+      required: [widgetKey, issueCode, retryable]
+      properties:
+        widgetKey: {type: string}
+        issueCode: {type: string}
+        retryable: {type: boolean}
+    CyclePage:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/Cycle'}}
+        nextCursor: {type: [string, 'null']}
+    Cycle:
+      type: object
+      additionalProperties: false
+      required: [cycleId, cycleKey, displayName, lifecycleState, aggregateVersion]
+      properties:
+        cycleId: {type: string, format: uuid}
+        cycleKey: {type: string}
+        displayName: {type: string}
+        lifecycleState: {type: string, enum: [DRAFT, VALIDATED, PUBLISHED, ACTIVE, CLOSED, RETIRED]}
+        activeVersionNo: {type: [integer, 'null']}
+        aggregateVersion: {type: integer, minimum: 0}
+        stages: {type: array, items: {$ref: '#/components/schemas/CycleStage'}}
+    CycleStage:
+      type: object
+      additionalProperties: false
+      required: [stageKey, stageType, sequenceNo, opensAt, closesAt]
+      properties:
+        stageKey: {type: string}
+        stageType: {type: string}
+        sequenceNo: {type: integer, minimum: 1}
+        opensAt: {type: string, format: date-time}
+        closesAt: {type: string, format: date-time}
+    CreateCycleCommand:
+      type: object
+      additionalProperties: false
+      required: [cycleKey, displayName, timezoneId, retentionPolicyId]
+      properties:
+        cycleKey: {type: string, minLength: 1, maxLength: 100}
+        displayName: {type: string, minLength: 1, maxLength: 240}
+        timezoneId: {type: string, minLength: 1, maxLength: 80}
+        retentionPolicyId: {type: string, format: uuid}
+    UpdateCycleDraftCommand:
+      type: object
+      additionalProperties: false
+      properties:
+        displayName: {type: string, minLength: 1, maxLength: 240}
+        stages: {type: array, minItems: 1, items: {$ref: '#/components/schemas/CycleStage'}}
+        policyVersionId: {type: string, format: uuid}
+    PublishCommand:
+      type: object
+      additionalProperties: false
+      required: [approvalRef, stepUpEvidenceRef]
+      properties:
+        approvalRef: {type: string, format: uuid}
+        stepUpEvidenceRef: {type: string, format: uuid}
+    PopulationPreviewCommand:
+      type: object
+      additionalProperties: false
+      required: [populationRuleId, workforceSnapshotId, workforceSnapshotRevision]
+      properties:
+        populationRuleId: {type: string, format: uuid}
+        workforceSnapshotId: {type: string, format: uuid}
+        workforceSnapshotRevision: {type: integer, minimum: 0}
+    FreezePopulationCommand:
+      allOf:
+        - $ref: '#/components/schemas/PopulationPreviewCommand'
+        - type: object
+          additionalProperties: false
+          required: [previewContentHash]
+          properties:
+            previewContentHash: {type: string, pattern: '^[0-9a-f]{64}$'}
+    CreateGoalCommand:
+      type: object
+      additionalProperties: false
+      required: [cycleVersionId, ownerType, ownerPublicId, title, measurement, weight, periodStart, periodEnd]
+      properties:
+        cycleVersionId: {type: string, format: uuid}
+        ownerType: {type: string, enum: [WORKER, ORGANIZATION, TEAM]}
+        ownerPublicId: {type: string, format: uuid}
+        title: {type: string, minLength: 1, maxLength: 500}
+        measurement: {$ref: '#/components/schemas/GoalMeasurement'}
+        weight: {$ref: '#/components/schemas/UnitRatioDecimal'}
+        periodStart: {type: string, format: date}
+        periodEnd: {type: string, format: date}
+    GoalMeasurement:
+      oneOf:
+        - $ref: '#/components/schemas/QuantitativeGoalMeasurement'
+        - $ref: '#/components/schemas/MilestoneGoalMeasurement'
+        - $ref: '#/components/schemas/BooleanGoalMeasurement'
+      discriminator:
+        propertyName: kind
+        mapping:
+          QUANTITATIVE: '#/components/schemas/QuantitativeGoalMeasurement'
+          MILESTONE: '#/components/schemas/MilestoneGoalMeasurement'
+          BOOLEAN: '#/components/schemas/BooleanGoalMeasurement'
+    QuantitativeGoalMeasurement:
+      type: object
+      additionalProperties: false
+      required: [kind, unitCode, targetValue]
+      properties:
+        kind: {type: string, const: QUANTITATIVE}
+        unitCode: {type: string, minLength: 1, maxLength: 40}
+        targetValue: {$ref: '#/components/schemas/CanonicalDecimal6'}
+    MilestoneGoalMeasurement:
+      type: object
+      additionalProperties: false
+      required: [kind, targetDate]
+      properties:
+        kind: {type: string, const: MILESTONE}
+        targetDate: {type: string, format: date}
+    BooleanGoalMeasurement:
+      type: object
+      additionalProperties: false
+      required: [kind, targetValue]
+      properties:
+        kind: {type: string, const: BOOLEAN}
+        targetValue: {type: boolean}
+    Goal:
+      type: object
+      additionalProperties: false
+      required: [goalId, goalState, revisionNo, aggregateVersion]
+      properties:
+        goalId: {type: string, format: uuid}
+        goalState: {type: string, enum: [DRAFT, SUBMITTED, APPROVED, ACTIVE, COMPLETED, CANCELLED]}
+        revisionNo: {type: integer, minimum: 1}
+        aggregateVersion: {type: integer, minimum: 0}
+    ReviewDraftCommand:
+      type: object
+      additionalProperties: false
+      required: [answers]
+      properties:
+        answers: {type: array, minItems: 1, maxItems: 500, items: {$ref: '#/components/schemas/ReviewAnswer'}}
+    ReviewAnswer:
+      oneOf:
+        - $ref: '#/components/schemas/TextReviewAnswer'
+        - $ref: '#/components/schemas/DecimalReviewAnswer'
+        - $ref: '#/components/schemas/RatingReviewAnswer'
+        - $ref: '#/components/schemas/ChoiceReviewAnswer'
+      discriminator:
+        propertyName: kind
+        mapping:
+          TEXT: '#/components/schemas/TextReviewAnswer'
+          DECIMAL: '#/components/schemas/DecimalReviewAnswer'
+          RATING: '#/components/schemas/RatingReviewAnswer'
+          CHOICE: '#/components/schemas/ChoiceReviewAnswer'
+    TextReviewAnswer:
+      type: object
+      additionalProperties: false
+      required: [itemKey, kind, textValue]
+      properties:
+        itemKey: {type: string, minLength: 1, maxLength: 120}
+        kind: {type: string, const: TEXT}
+        textValue: {type: string, maxLength: 10000}
+    DecimalReviewAnswer:
+      type: object
+      additionalProperties: false
+      required: [itemKey, kind, decimalValue]
+      properties:
+        itemKey: {type: string, minLength: 1, maxLength: 120}
+        kind: {type: string, const: DECIMAL}
+        decimalValue: {$ref: '#/components/schemas/CanonicalDecimal6'}
+    RatingReviewAnswer:
+      type: object
+      additionalProperties: false
+      required: [itemKey, kind, ratingValue]
+      properties:
+        itemKey: {type: string, minLength: 1, maxLength: 120}
+        kind: {type: string, const: RATING}
+        ratingValue: {$ref: '#/components/schemas/CanonicalDecimal6'}
+    ChoiceReviewAnswer:
+      type: object
+      additionalProperties: false
+      required: [itemKey, kind, optionKey]
+      properties:
+        itemKey: {type: string, minLength: 1, maxLength: 120}
+        kind: {type: string, const: CHOICE}
+        optionKey: {type: string, minLength: 1, maxLength: 120}
+    SubmitReviewCommand:
+      type: object
+      additionalProperties: false
+      required: [draftContentHash]
+      properties:
+        draftContentHash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        acknowledgement: {type: boolean, const: true}
+    Review:
+      type: object
+      additionalProperties: false
+      required: [reviewId, state, templateVersionId, aggregateVersion, writable]
+      properties:
+        reviewId: {type: string, format: uuid}
+        state: {type: string, enum: [NOT_STARTED, IN_PROGRESS, SUBMITTED, RETURNED, COMPLETED, CANCELLED]}
+        templateVersionId: {type: string, format: uuid}
+        aggregateVersion: {type: integer, minimum: 0}
+        writable: {type: boolean}
+        answers: {type: array, maxItems: 500, items: {$ref: '#/components/schemas/ReviewAnswer'}}
+    ReviewSubmission:
+      type: object
+      additionalProperties: false
+      required: [submissionId, submissionNo, state, contentHash, submittedAt]
+      properties:
+        submissionId: {type: string, format: uuid}
+        submissionNo: {type: integer, minimum: 1}
+        state: {type: string, enum: [SUBMITTED]}
+        contentHash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        submittedAt: {type: string, format: date-time}
+    CreateFeedbackRequestCommand:
+      type: object
+      additionalProperties: false
+      required: [cycleVersionId, subjectWorkerPublicId, templateVersionId, anonymityMode, minimumReleaseCount, opensAt, closesAt]
+      properties:
+        cycleVersionId: {type: string, format: uuid}
+        subjectWorkerPublicId: {type: string, format: uuid}
+        templateVersionId: {type: string, format: uuid}
+        anonymityMode: {type: string, enum: [IDENTIFIED, MASKED, ANONYMOUS_AGGREGATE]}
+        minimumReleaseCount: {type: integer, minimum: 1}
+        opensAt: {type: string, format: date-time}
+        closesAt: {type: string, format: date-time}
+    FeedbackRequest:
+      type: object
+      additionalProperties: false
+      required: [feedbackRequestId, state, anonymityMode, minimumReleaseCount]
+      properties:
+        feedbackRequestId: {type: string, format: uuid}
+        state: {type: string, enum: [DRAFT, OPEN, CLOSED, RELEASED, CANCELLED]}
+        anonymityMode: {type: string, enum: [IDENTIFIED, MASKED, ANONYMOUS_AGGREGATE]}
+        minimumReleaseCount: {type: integer, minimum: 1}
+    CreateCheckinCommand:
+      type: object
+      additionalProperties: false
+      required: [subjectWorkerPublicId, managerWorkerPublicId]
+      properties:
+        subjectWorkerPublicId: {type: string, format: uuid}
+        managerWorkerPublicId: {type: string, format: uuid}
+        scheduledAt: {type: [string, 'null'], format: date-time}
+        agenda: {$ref: '#/components/schemas/CheckinAgenda'}
+    CheckinAgenda:
+      type: object
+      additionalProperties: false
+      required: [topics]
+      properties:
+        topics: {type: array, minItems: 1, maxItems: 20, items: {type: string, minLength: 1, maxLength: 500}}
+        privateNoteObjectRef: {type: [string, 'null'], pattern: '^obj_[A-Za-z0-9_-]{16,128}$'}
+    Checkin:
+      type: object
+      additionalProperties: false
+      required: [checkinId, state, aggregateVersion]
+      properties:
+        checkinId: {type: string, format: uuid}
+        state: {type: string, enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]}
+        aggregateVersion: {type: integer, minimum: 0}
+    CalibrationAdjustmentCommand:
+      type: object
+      additionalProperties: false
+      required: [participantId, previousValue, adjustedValue, reasonCode, reasonText, distributionImpact, stepUpEvidenceRef]
+      properties:
+        participantId: {type: string, format: uuid}
+        previousValue: {$ref: '#/components/schemas/CanonicalDecimal6'}
+        adjustedValue: {$ref: '#/components/schemas/CanonicalDecimal6'}
+        previousGrade: {type: [string, 'null']}
+        adjustedGrade: {type: [string, 'null']}
+        reasonCode: {type: string}
+        reasonText: {type: string, minLength: 1, maxLength: 1000}
+        distributionImpact: {$ref: '#/components/schemas/DistributionImpact'}
+        stepUpEvidenceRef: {type: string, format: uuid}
+    DistributionImpact:
+      type: object
+      additionalProperties: false
+      required: [affectedParticipantCount, priorCohortMean, projectedCohortMean, policyDigest]
+      properties:
+        affectedParticipantCount: {type: integer, minimum: 0}
+        priorCohortMean: {$ref: '#/components/schemas/CanonicalDecimal6'}
+        projectedCohortMean: {$ref: '#/components/schemas/CanonicalDecimal6'}
+        policyDigest: {type: string, pattern: '^[0-9a-f]{64}$'}
+    CalibrationAdjustment:
+      type: object
+      additionalProperties: false
+      required: [adjustmentId, sequenceNo, createdAt]
+      properties:
+        adjustmentId: {type: string, format: uuid}
+        sequenceNo: {type: integer, minimum: 1}
+        createdAt: {type: string, format: date-time}
+    OpenAppealCommand:
+      type: object
+      additionalProperties: false
+      required: [categoryCode, statement]
+      properties:
+        categoryCode: {type: string, maxLength: 80}
+        statement: {type: string, minLength: 1, maxLength: 10000}
+        evidenceObjectIds: {type: array, maxItems: 10, items: {type: string, format: uuid}}
+    Appeal:
+      type: object
+      additionalProperties: false
+      required: [appealId, state, openedAt, aggregateVersion]
+      properties:
+        appealId: {type: string, format: uuid}
+        state: {type: string, enum: [OPEN, UNDER_REVIEW, UPHELD, REJECTED, CLOSED, WITHDRAWN]}
+        openedAt: {type: string, format: date-time}
+        aggregateVersion: {type: integer}
+    ImportCommand:
+      type: object
+      additionalProperties: false
+      required: [importType, schemaVersion, sourceObjectId, sourceContentHash]
+      properties:
+        importType: {type: string, enum: [GOALS, POPULATION_EXCEPTIONS, REVIEW_ASSIGNMENTS, RESULT_REFERENCE]}
+        schemaVersion: {type: string}
+        sourceObjectId: {type: string, format: uuid}
+        sourceContentHash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        mappingVersion: {type: [string, 'null']}
+    ValidationReport:
+      type: object
+      additionalProperties: false
+      required: [valid, issues, contentHash]
+      properties:
+        valid: {type: boolean}
+        issues: {type: array, items: {$ref: '#/components/schemas/ValidationIssue'}}
+        contentHash: {type: string, pattern: '^[0-9a-f]{64}$'}
+    ValidationIssue:
+      type: object
+      additionalProperties: false
+      required: [code, severity, path]
+      properties:
+        code: {type: string}
+        severity: {type: string, enum: [INFO, WARNING, ERROR, FATAL]}
+        path: {type: string}
+    CommandReceipt:
+      type: object
+      additionalProperties: false
+      required: [receiptId, commandType, state, acceptedAt, originatingAction, subjectPrincipalPublicId, populationScopeDigest, fieldPolicyRevision, purposeCode, authorizationRevision]
+      properties:
+        receiptId: {type: string, format: uuid}
+        commandType: {type: string}
+        state: {type: string, enum: [ACCEPTED, RUNNING, SUCCEEDED, FAILED, RESULT_UNKNOWN, QUARANTINED]}
+        acceptedAt: {type: string, format: date-time}
+        completedAt: {type: [string, 'null'], format: date-time}
+        resultRef: {type: [string, 'null'], format: uuid}
+        errorCode: {type: [string, 'null']}
+        originatingAction: {type: string, minLength: 1, maxLength: 160}
+        subjectPrincipalPublicId: {type: string, format: uuid}
+        populationScopeDigest: {type: string, pattern: '^[0-9a-f]{64}$'}
+        fieldPolicyRevision: {type: integer, minimum: 1}
+        purposeCode: {type: string, minLength: 3, maxLength: 80}
+        authorizationRevision: {type: integer, minimum: 1}
+    Problem:
+      type: object
+      additionalProperties: false
+      required: [type, title, status, code, correlationId]
+      properties:
+        type: {type: string, format: uri}
+        title: {type: string}
+        status: {type: integer}
+        code: {type: string}
+        correlationId: {type: string, format: uuid}
+        retryable: {type: boolean, default: false}
+
+x-dwp-event-envelope:
+  schemaRef: contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope
+  required: [specVersion, id, source, type, schemaVersion, time, tenantId, aggregateType, aggregateId, aggregateSequence, correlationId, data]
+  fields:
+    specVersion: const 1.0
+    id: uuid
+    source: bounded service URI
+    type: canonical event type
+    schemaVersion: positive integer
+    time: RFC3339 timestamp
+    tenantId: int64
+    aggregateType: string
+    aggregateId: uuid
+    aggregateSequence: positive int64
+    correlationId: uuid
+    causationId: nullable uuid
+    data: event-specific object
+
+x-dwp-domain-events:
+  - name: PerformanceCyclePublished.v1
+    aggregate: Cycle
+    payload: [cycleId, cycleVersionId, effectiveFrom, effectiveTo, stageKeys, contentHash]
+  - name: PerformancePopulationFrozen.v1
+    aggregate: PopulationFreeze
+    payload: [cycleVersionId, populationFreezeId, workforceSnapshotId, workforceSnapshotRevision, participantCount, reviewerAssignmentCount, contentHash]
+  - name: PerformanceGoalCommitted.v1
+    aggregate: Goal
+    payload: [goalId, ownerType, ownerPublicId, revisionNo, state]
+  - name: PerformanceReviewSubmitted.v1
+    aggregate: Review
+    payload: [reviewId, participantId, reviewerAssignmentId, submissionId, templateVersionId, contentHash]
+  - name: PerformanceFeedbackSubmitted.v1
+    aggregate: FeedbackRequest
+    payload: [feedbackRequestId, feedbackAssignmentId, submittedAt]
+  - name: PerformanceCalibrationApproved.v1
+    aggregate: CalibrationSession
+    payload: [calibrationSessionId, cycleVersionId, adjustmentCount, baselineHash, approvedAt]
+  - name: PerformanceResultsPublished.v1
+    aggregate: ResultSet
+    payload: [resultSetId, cycleVersionId, resultVersionNo, populationHash, publishedAt]
+  - name: PerformanceAppealResolved.v1
+    aggregate: Appeal
+    payload: [appealId, resultId, resolutionCode, correctionResultId, resolvedAt]
+  - name: PerformanceImportCompleted.v1
+    aggregate: ImportRun
+    payload: [importRunId, importType, schemaVersion, totalCount, acceptedCount, rejectedCount, appliedCount, reconciliationHash]
+  - name: HrisHomeContributionChanged.v1
+    aggregate: PerformanceHomeProjection
+    payload: [module, widgetKey, ownerPopulationScope, scopeRevision, state, generatedAt, freshUntil, staleAfter, payloadRef, payloadDigest]
+  - name: CompensationPlanApproved.v1
+    aggregate: CompensationPlan
+    payload: [planId, cycleId, approvalRevision, effectiveDate, snapshotId, payloadDigest]
+
+x-dwp-provided-snapshots:
+  - name: ApprovedCompensationPlanSnapshot.v1
+    version: 1
+    operationId: getApprovedCompensationPlanSnapshot
+    requiredFields: [snapshotId, snapshotRevision, planId, cycleId, effectiveFrom, effectiveTo, approvalReceiptId, sourceVersion, lineCount, lines, payloadDigest]
+    lineRequiredFields: [lineId, lineSequence, workerId, assignmentId, componentCode, currency, approvedAmount, effectiveFrom, effectiveTo, lineDigest]
+    streamingTransport:
+      wireVersion: V1_JSON_ARRAY
+      gatewayBuffering: FORBIDDEN_STREAM_THROUGH
+      backpressure: END_TO_END_REACTIVE_PULL_WITH_BOUNDED_QUEUES
+      lineCeiling: 100000
+      maxHeaderBytes: 65536
+      maxLineBytes: 4096
+      maxPayloadBytes: 536870912
+      maxCompressedPayloadBytes: 134217728
+      maxUncompressedPayloadBytes: 536870912
+      maxCompressionRatio: 100
+      byteAccounting: COUNT_COMPRESSED_AND_STREAMING_DECOMPRESSED_BYTES_BEFORE_ALLOCATION
+      sequenceValidation: LINE_SEQUENCE_EQUALS_ARRAY_INDEX_PLUS_1_CONTIGUOUS_NO_GAP_OR_DUPLICATE
+      digest: INCREMENTAL_CANONICAL_HEADER_THEN_ORDERED_LINES
+      consumerIngest: STAGED_TEMPORARY_ROWS
+      finalize: ATOMIC_AFTER_COUNT_SEQUENCE_AND_DIGEST_VALIDATION
+      failure: ROLLBACK_STAGED_ROWS_AND_QUARANTINE_RECEIPT
+
+x-dwp-internal-operations:
+  - operationId: getApprovedCompensationPlanSnapshot
+    method: GET
+    path: /internal/hris-performance/v1/approved-compensation-plan-snapshots/{snapshotId}
+    callerWorkload: dwp-payroll-server
+    purposeCode: HRIS_APPROVED_COMPENSATION_PLAN_SNAPSHOT_REFETCH
+    response: ApprovedCompensationPlanSnapshot.v1
+    responseRequired: [snapshotId, snapshotRevision, planId, cycleId, effectiveFrom, effectiveTo, approvalReceiptId, sourceVersion, lineCount, lines, payloadDigest]
+    responseLineRequired: [lineId, lineSequence, workerId, assignmentId, componentCode, currency, approvedAmount, effectiveFrom, effectiveTo, lineDigest]
+    rules:
+      - mTLS workload identity, signed tenant claim and owner tenant grant are mandatory.
+      - The snapshot must be APPROVED, immutable and digest-verifiable; stale or superseded references fail closed.
+      - Return 1..100000 lines ordered by contiguous lineSequence from 1; lineCount must equal lines length and lineId/lineSequence are unique.
+      - Stream through every proxy with bounded reactive backpressure; count compressed and uncompressed bytes independently before allocation and reject a payload over either byte limit, the compression-ratio limit, the per-line limit or the line ceiling.
+      - approvedAmount is a canonical non-exponent decimal string matching PostedMoney NUMERIC(19,4); binary float, negative zero, cross-currency arithmetic and implicit database rounding are forbidden.
+      - payloadDigest covers the canonical header plus ordered canonical line values including decimal strings; Payroll materializes exactly N input rows from N lines atomically.
+      - A sequence gap/duplicate, digest/count mismatch, decompression failure, cancellation or storage failure rolls back every staged row and seals a quarantined receipt; no partial snapshot becomes queryable.
+      - Browser routing, caller-selected tenant and fields outside the payroll projection are forbidden.
+  - operationId: materializePerformanceHomeContribution
+    method: GET
+    path: /internal/hris-performance/v1/home-contributions/{payloadRef}
+    callerWorkload: dwp-platform-server
+    purposeCode: HRIS_HOME_CONTRIBUTION_MATERIALIZE
+    response: PerformanceHomeContribution.v1
+    requestContextRequired: [subjectPrincipalPublicId, effectivePermissionRevision, populationScopeDigest, fieldPolicyRevision, widgetKey, browserAudience, ownerPopulationScope, scopeRevision, correlationId]
+    responseRequired: [module, widgetKey, widgetType, browserAudience, ownerPopulationScope, scopeRevision, populationScopeDigest, fieldPolicyRevision, purposeCode, state, generatedAt, freshUntil, staleAfter, deepLink, sourceVersion, payloadRef, payloadDigest, asOf, data, fieldDecisions, partialFailures]
+    typedDataProfile: PerformanceHomeData
+    browserProjection: dwp.hris.system.transport.v1#/$defs/HomeWidget
+    rules:
+      - mTLS workload identity, signed tenant claim and owner tenant grant are mandatory.
+      - Signed on-behalf-of subject context is mandatory and cannot be overridden by request body.
+      - Widget capability, effective permission revision, population scope, purpose and field projection are re-evaluated.
+      - payloadRef is opaque, tenant-bound and payloadDigest is verified before materialization.
+      - Browser routing and caller-selected tenant are forbidden.
+      - data is the closed PerformanceHomeData profile; arbitrary JSON, scores, comments, feedback text and browser payloadRef are forbidden.
+      - SYS removes payloadRef and revalidates the widget discriminant, audience, scope revision, field-policy revision, freshness and deep link before browser serialization.
+
+x-dwp-consumed-snapshots:
+  - name: WorkerAssignmentSnapshot.v1
+    owner: dwp-people-server/hris/core
+    required: [snapshotVersion, asOf, personPublicId, workerPublicId, workerStatus, relationships, assignments]
+    behavior: Freeze the exact owner revision for a published performance population; drafts may refresh explicitly.
+
+x-dwp-consumed-events:
+  - name: WorkerChanged.v1
+    owner: dwp-people-server/hris/core
+    payload: [workerPublicId, changeType, effectiveDate, newAggregateVersion]
+    behavior: Invalidate non-frozen participant previews and refetch the canonical snapshot.
+  - name: EmploymentChanged.v1
+    owner: dwp-people-server/hris/core
+    payload: [relationshipPublicId, changeType, effectiveDate, newAggregateVersion]
+    behavior: Re-evaluate draft eligibility by effective instant; retain frozen population lineage.
+  - name: AssignmentChanged.v1
+    owner: dwp-people-server/hris/core
+    payload: [assignmentPublicId, eventPublicId, eventType, effectiveDate, changedReferences, newAggregateVersion]
+    behavior: Invalidate only non-frozen previews; never mutate an existing population freeze.
+  - name: OrganizationChanged.v1
+    owner: dwp-people-server/hris/core
+    payload: [revisionPublicId, effectiveDate, changedOrganizationPublicIds, snapshotDigest]
+    behavior: Recompute draft previews by effective instant; retain frozen revision lineage.
+  - name: ApprovalDecisionRecorded.v1
+    owner: dwp-approval-server
+    behavior: Consume the DWP Approval relay adapter decision idempotently and unlock only the exact command, aggregate revision and scope carried by the approval reference.
+  - name: AccessPackageAssignmentRevoked.v1
+    owner: dwp-auth-server
+    behavior: Re-evaluate pending tasks and deny subsequent reads/writes immediately.

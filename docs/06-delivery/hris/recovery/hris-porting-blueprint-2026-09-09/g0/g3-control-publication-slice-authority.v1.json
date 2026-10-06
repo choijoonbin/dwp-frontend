@@ -1,0 +1,103 @@
+{
+  "crossRepositoryArtifactFamilies": [
+    {
+      "consumerAllocationId": "G3-CTL-FE-CONTRACTS",
+      "consumerCheckpointKind": "CENTRAL_MATERIALIZATION",
+      "consumerRepository": "DWP_FRONTEND",
+      "exactProducerTouchClosure": true,
+      "familyId": "BROWSER_API_EVENT_AUTHORIZATION_CONTRACT_SET",
+      "producerAllocationId": "G3-CTL-BE-CONTRACTS",
+      "producerCheckpointKind": "CENTRAL_MATERIALIZATION",
+      "producerPathPrefixes": [
+        "contracts/asyncapi/",
+        "contracts/openapi/",
+        "contracts/product-authorization/"
+      ],
+      "producerRepository": "DWP_BACKEND",
+      "requiredOwnerAndSliceEquality": true
+    }
+  ],
+  "moduleSliceIsolation": {
+    "consumerSliceAuthority": "ACTIVE_OPEN_G3_OWNER_SLICE_ID_EXACT",
+    "controlAllocationInModuleSlice": "FORBIDDEN",
+    "moduleAllocationInControlCatalog": "FORBIDDEN"
+  },
+  "operations": {
+    "CENTRAL_MATERIALIZATION": {
+      "allowedAllocationIds": [
+        "G3-CTL-BE-CONTRACT-VERIFIER",
+        "G3-CTL-BE-CONTRACTS",
+        "G3-CTL-BE-GATEWAY",
+        "G3-CTL-BE-GENERATED-HRIS-CONTRACTS",
+        "G3-CTL-BE-ROOT-BUILD",
+        "G3-CTL-BE-RUNTIME",
+        "G3-CTL-BE-SHARED-WORKFORCE-ABI",
+        "G3-CTL-FE-CONTRACTS",
+        "G3-CTL-FE-HRIS-API-TRANSITION",
+        "G3-CTL-FE-HRIS-SHARED",
+        "G3-CTL-FE-MANIFEST",
+        "G3-CTL-FE-ROUTES",
+        "G3-CTL-FE-RUNTIME",
+        "G3-CTL-PAY-SCAFFOLD",
+        "G3-CTL-PER-MIGRATION-STREAM",
+        "G3-CTL-SYS-LISTEN-CONFIGURATION-STREAM",
+        "G3-CTL-SYS-LISTEN-INSIGHTS-STREAM",
+        "G3-CTL-SYS-LISTEN-ISSUER-STREAM",
+        "G3-CTL-SYS-LISTEN-PROTECTED-STREAM",
+        "G3-CTL-TIM-SCAFFOLD"
+      ],
+      "artifactFamilyAuthority": "FILE_ALLOCATION_ARTIFACT_CLASS_AND_PATH_GLOBS_EXACT",
+      "consumerReferenceFields": [
+        "ownerSessionId",
+        "proposalRef",
+        "proposalSha256",
+        "selectedOperationRefs",
+        "sliceId"
+      ],
+      "sourceCheckpointPolicy": "FORBIDDEN",
+      "worktreeSessionRule": "CONTROL",
+      "writerSessionId": "CONTROL"
+    },
+    "CONTROL_BASELINE_SYNC": {
+      "artifactFamilyAuthority": "PRIOR_CENTRAL_MATERIALIZATION_TOUCH_AND_DELIVERY_EXACT",
+      "consumerReferenceFields": [
+        "consumerReceiptId",
+        "ownerSessionId",
+        "releaseId",
+        "sliceId"
+      ],
+      "ownerAllocationIds": {
+        "HRIS-HRM": [
+          "G3-CTL-BE-CONTRACT-VERIFIER", "G3-CTL-BE-CONTRACTS", "G3-CTL-BE-GATEWAY", "G3-CTL-BE-GENERATED-HRIS-CONTRACTS", "G3-CTL-BE-ROOT-BUILD", "G3-CTL-BE-RUNTIME", "G3-CTL-BE-SHARED-WORKFORCE-ABI", "G3-CTL-FE-CONTRACTS", "G3-CTL-FE-HRIS-API-TRANSITION", "G3-CTL-FE-HRIS-SHARED", "G3-CTL-FE-MANIFEST", "G3-CTL-FE-ROUTES", "G3-CTL-FE-RUNTIME"
+        ],
+        "HRIS-PAY": [
+          "G3-CTL-BE-CONTRACT-VERIFIER", "G3-CTL-BE-CONTRACTS", "G3-CTL-BE-GATEWAY", "G3-CTL-BE-GENERATED-HRIS-CONTRACTS", "G3-CTL-BE-ROOT-BUILD", "G3-CTL-BE-RUNTIME", "G3-CTL-BE-SHARED-WORKFORCE-ABI", "G3-CTL-FE-CONTRACTS", "G3-CTL-FE-HRIS-API-TRANSITION", "G3-CTL-FE-HRIS-SHARED", "G3-CTL-FE-MANIFEST", "G3-CTL-FE-ROUTES", "G3-CTL-FE-RUNTIME", "G3-CTL-PAY-SCAFFOLD"
+        ],
+        "HRIS-PER": [
+          "G3-CTL-BE-CONTRACT-VERIFIER", "G3-CTL-BE-CONTRACTS", "G3-CTL-BE-GATEWAY", "G3-CTL-BE-GENERATED-HRIS-CONTRACTS", "G3-CTL-BE-ROOT-BUILD", "G3-CTL-BE-RUNTIME", "G3-CTL-BE-SHARED-WORKFORCE-ABI", "G3-CTL-FE-CONTRACTS", "G3-CTL-FE-HRIS-API-TRANSITION", "G3-CTL-FE-HRIS-SHARED", "G3-CTL-FE-MANIFEST", "G3-CTL-FE-ROUTES", "G3-CTL-FE-RUNTIME", "G3-CTL-PER-MIGRATION-STREAM"
+        ],
+        "HRIS-SYS": [
+          "G3-CTL-BE-CONTRACT-VERIFIER", "G3-CTL-BE-CONTRACTS", "G3-CTL-BE-GATEWAY", "G3-CTL-BE-GENERATED-HRIS-CONTRACTS", "G3-CTL-BE-ROOT-BUILD", "G3-CTL-BE-RUNTIME", "G3-CTL-FE-CONTRACTS", "G3-CTL-FE-HRIS-API-TRANSITION", "G3-CTL-FE-HRIS-SHARED", "G3-CTL-FE-MANIFEST", "G3-CTL-FE-ROUTES", "G3-CTL-FE-RUNTIME", "G3-CTL-SYS-LISTEN-CONFIGURATION-STREAM", "G3-CTL-SYS-LISTEN-INSIGHTS-STREAM", "G3-CTL-SYS-LISTEN-ISSUER-STREAM", "G3-CTL-SYS-LISTEN-PROTECTED-STREAM"
+        ],
+        "HRIS-TIM": [
+          "G3-CTL-BE-CONTRACT-VERIFIER", "G3-CTL-BE-CONTRACTS", "G3-CTL-BE-GATEWAY", "G3-CTL-BE-GENERATED-HRIS-CONTRACTS", "G3-CTL-BE-ROOT-BUILD", "G3-CTL-BE-RUNTIME", "G3-CTL-BE-SHARED-WORKFORCE-ABI", "G3-CTL-FE-CONTRACTS", "G3-CTL-FE-HRIS-API-TRANSITION", "G3-CTL-FE-HRIS-SHARED", "G3-CTL-FE-MANIFEST", "G3-CTL-FE-ROUTES", "G3-CTL-FE-RUNTIME", "G3-CTL-TIM-SCAFFOLD"
+        ]
+      },
+      "sourceCheckpointPolicy": "PRIOR_CENTRAL_MATERIALIZATION_AND_CONTROL_DELIVERY_EXACT",
+      "worktreeSessionRule": "OWNER_SESSION",
+      "writerSessionId": "CONTROL"
+    },
+    "INTEGRATION_MERGE": {
+      "allowedAllocationSelector": "SOURCE_MODULE_COMMIT_TOUCH_ALLOCATION_EXACT",
+      "artifactFamilyAuthority": "SOURCE_TOUCH_PATH_OPERATION_AND_BLOB_EXACT",
+      "consumerReferenceFields": [
+        "sourceAllocationId", "sourceBlobOid", "sourceCheckpointId", "sourceOperation", "sourcePath", "sourceTouchId", "targetAllocationId", "targetBlobOid", "targetOperation", "targetPath", "targetTouchId"
+      ],
+      "sourceCheckpointPolicy": "VERIFIED_SAME_OWNER_REPOSITORY_SLICE_MODULE_COMMIT",
+      "worktreeSessionRule": "CONTROL",
+      "writerSessionId": "CONTROL"
+    }
+  },
+  "schema": "dwp.hris.g3.control-publication-slice-authority.v1",
+  "state": "ACTIVE_FAIL_CLOSED"
+}

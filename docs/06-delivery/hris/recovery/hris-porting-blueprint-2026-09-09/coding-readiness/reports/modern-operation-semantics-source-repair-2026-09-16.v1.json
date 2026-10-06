@@ -1,0 +1,140 @@
+{
+  "reportId": "dwp.hris.modern-operation-semantics-source-repair.2026-09-16.v1",
+  "generatedAt": "2026-09-16T01:29:47Z",
+  "status": "PASS_SOURCE_ONLY_READY_FOR_DISTINCT_CANDIDATE_REGENERATION",
+  "scope": {
+    "candidateCreated": false,
+    "liveCanonicalModified": false,
+    "gateModified": false,
+    "policyModified": false,
+    "historicalEvidenceModified": false,
+    "temporaryProjectionOnly": "/tmp/hris-operation-source-v5.json"
+  },
+  "reviewDisposition": {
+    "truePositiveRepairs": [
+      {
+        "finding": "modern.learning.completion.verify used undeclared body.skillEvidenceIds",
+        "repair": "worker_skill_evidence_id now resolves from ownerProof.body.evidencePublicId.skillEvidenceIds[*] exactly like the typed child public identity projection"
+      },
+      {
+        "finding": "WorkforceScenarioSimulated.v2 named a simulation-request aggregate but pointed at the parent scenario detail query",
+        "repair": "success and failure events now forbid aggregate refetch and carry a closed payload-sufficient signed result tuple: receiptId+revision+schemaVersion+digest; latest fallback and aggregate lookup are forbidden"
+      }
+    ],
+    "falsePositiveCorrections": [
+      {
+        "findingClass": "Listening signed credential and route references lacked exact-source selectors",
+        "correction": "independent audit now recognizes only the complete typed composite proof: closed signed credential and non-revocation schemas, nested admission and protected-audience selectors, exact input effect, and route survey to signed claim to locked admission equality"
+      },
+      {
+        "findingClass": "Listening submit allegedly required participationEnvelope/formRevision and protected outbox",
+        "correction": "audit is aligned to the current authority: route surveyId plus signedParticipationCredential, responseToken and answers; exact seven-step owner-local private receipt transaction; broker/public outbox is forbidden and hostile-tested"
+      }
+    ],
+    "forbiddenRegressions": [
+      "separate client participationEnvelope",
+      "client formRevision duplicate of signed/locked form authority",
+      "submit public or broker outbox",
+      "fake nested simulation-request query on the scenario route",
+      "latest-version fallback for Workforce Planning terminal events"
+    ]
+  },
+  "modifiedSourceFiles": [
+    {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256": "e01f93f182dce49d4265be918d0c81761e71da3590e55995c5f6d7a9dbe8fb00",
+      "projectionVersion": "modern-operation-causal-source-v5-2026-09-16"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256": "612c2287f971711dfa9ad039f664d47aaa303ee3427bd92bb7367cbc4e7dd10f"
+    }
+  ],
+  "unchangedAuthoritySources": [
+    {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+    },
+    {
+      "path": "coding-readiness/modern_closed_set_design.py",
+      "sha256": "53282661fd973816e27c9e95ff74091d62da2982f24060d15a56fae9a16e43d6"
+    }
+  ],
+  "sourceProjectionVerification": {
+    "status": "PASS",
+    "sha256": "ff951d124c04f233c8bf2f7515012ad9a421b7162cc998ddb52c1dc4b4e56290",
+    "deterministicSecondPassSha256": "ff951d124c04f233c8bf2f7515012ad9a421b7162cc998ddb52c1dc4b4e56290",
+    "counts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 27,
+      "publicEvents": 157,
+      "tableSpecifications": 131
+    },
+    "authorValidation": "PASS",
+    "semanticExactIdentityCompositionValidation": "PASS",
+    "protectedSubmit": {
+      "requestSources": [
+        "pathParameters.surveyId",
+        "body.signedParticipationCredential",
+        "body.responseToken",
+        "body.answers"
+      ],
+      "orderedRoles": [
+        "PROTECTED_TOKEN_RECEIPT_CLAIM",
+        "LATEST_STABLE_ADMISSION_FENCE",
+        "ONE_TIME_TOKEN_CONSUMPTION",
+        "ANONYMOUS_RESPONSE_WITH_PER_RESPONSE_DEK",
+        "ENCRYPTED_TYPED_ANSWER_VALUES",
+        "TOKEN_CONSUMPTION_BIND_RESPONSE",
+        "PROTECTED_TOKEN_RECEIPT_CLOSE"
+      ],
+      "outboxStepCount": 0,
+      "privateDelivery": "OWNER_LOCAL_RESPONSE_ONLY_BROKER_AND_PUBLIC_OUTBOX_FORBIDDEN"
+    },
+    "workforcePlanningTerminalEventRefetchModes": {
+      "WorkforceScenarioSimulated.v2": "FORBIDDEN",
+      "WorkforceScenarioSimulationFailed.v2": "FORBIDDEN"
+    }
+  },
+  "independentVerification": {
+    "operationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "affectedOperationCount": 0,
+      "reportSha256": "69b6b2b9b9545b33518610c3ea08f1eac107f571103693c8467f738b5b9ee95b"
+    },
+    "mutationSelftests": {
+      "status": "PASS",
+      "testsRun": 18,
+      "testsPassed": 18,
+      "reportSha256": "fb2a1df242a8e7248413bdfc927699b4bd093981f2383dac1baf46cb8a4bb322",
+      "specificHostileCoverage": [
+        "nested admission selector removal and target drift",
+        "protected audience selector removal and target drift",
+        "route-to-claim equality target drift",
+        "credential form artifact claim removal",
+        "token-consumption write removal",
+        "private delivery fence removal",
+        "forbidden public/broker outbox addition",
+        "WFP forbidden-refetch endpoint hint addition",
+        "WFP signed result owner tuple member removal"
+      ]
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "findingCount": 0,
+      "reportSha256": "33c1b8bf86b1b04392782e73f914b0427856dbaf640ec42fd264bf9a12455bb7"
+    }
+  },
+  "immutabilityEvidence": {
+    "rejectedCandidateOperationSha256": "27cae6ed93c084bb5f489a3d3c0996a4eebf9b0e2faabd68839614c5343b7a2a",
+    "rejectedCandidateExactSha256": "248a40ab0fdc82b59681344f7d400a025f0d0171df43496e9011e0151893cb23",
+    "liveOperationSha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+    "g3GateDecisionSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "tablePolicyV4Sha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de"
+  },
+  "nextAuthorizedStep": "Generate a distinct canonical candidate from the unchanged live predecessor and v4 table policy lineage, then rerun all independent canonical, physical and PostgreSQL gates before any promotion.",
+  "sealedPayloadSha256": "6841d10578f6a56ec470d6c44060efa7cfb8a56e8542dc94f0e61b3be564245a"
+}

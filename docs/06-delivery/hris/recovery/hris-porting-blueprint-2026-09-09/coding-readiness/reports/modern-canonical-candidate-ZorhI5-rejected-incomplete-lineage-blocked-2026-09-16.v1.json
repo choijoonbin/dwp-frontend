@@ -1,0 +1,54 @@
+{
+  "reportId": "dwp.hris.modern-canonical-candidate.ZorhI5.rejected-incomplete-lineage-blocked.v1",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-16T00:13:45Z",
+  "status": "REJECTED_INCOMPLETE_LINEAGE_BLOCKED",
+  "candidateDirectory": "coding-readiness/modern-canonical-candidate.ZorhI5",
+  "disposition": {
+    "preserveHistoricalBytes": true,
+    "deletionForbidden": true,
+    "reuseForbidden": true,
+    "promotionForbidden": true,
+    "validationContinuationForbidden": true
+  },
+  "blockers": [
+    {
+      "code": "POLICY_V3_LINEAGE_IMMUTABILITY_VIOLATION",
+      "detail": "The already sealed 132-table policy v3 must remain at its historical bytes; the 131-table scope was incorrectly projected through the same v3 path and must instead become a distinct v4 successor policy."
+    },
+    {
+      "code": "CANONICAL_CAUSAL_STATE_ARTIFACT_MISSING",
+      "detail": "modern-capability-causal-state-contracts.v2.json was not emitted before the lineage block stopped candidate generation."
+    }
+  ],
+  "policyLineage": {
+    "historicalV3RequiredFileSha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+    "historicalV3RequiredSealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+    "incorrect131V3FileSha256": "0f18d15303807c3383c761cc25de84820abb9b756361c14f86319a081a36d186",
+    "incorrect131V3SealedPayloadSha256": "8f6e250defcf2a8a931e1cb6e583c832d6f4624377e0e66f7fd702de6beca5be",
+    "requiredSuccessorAction": "RESTORE_EXACT_V3_BYTES_AND_CREATE_DISTINCT_V4_FOR_131_SCOPE"
+  },
+  "candidateArtifacts": {
+    "modern-capability-closed-set-manifest.v3.json": "789f5ab0d56e2c69207c46662b8681e9c98bb136ecfcceee72edf6a7631139e7",
+    "modern-capability-operation-causal-contract-ssot.v2.json": "a6d6f72ff8f80eb444125687ba7d394b23fbb2745156e6a48ca4238c157b7258",
+    "modern-capability-exact-schema-contracts.v1.json": "da0cce4253768c84d45d7757fcba2d48b458d5dc2915ce7902e736788d141ba4",
+    "modern-capability-event-payload-contracts.v1.json": "df6e3303b5009f175b84a55eef96b52e35a7bc53e24b582cdf53dc16c8ba78de",
+    "modern-capability-semantic-bindings.v1.json": "a6d6cbf50ce63d6c0fcd8093f8e39b78f5933a7e1d44e3b0a5b3c7e35e811f80",
+    "modern-capability-public-identity-registry.v1.json": "29cf3963d8937844c6213214070e4e0dc92e47ba42bac2d035a4f37f904b2450",
+    "sys-listening-stream-authority-successor.v2.json": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00"
+  },
+  "missingArtifacts": [
+    "modern-capability-causal-state-contracts.v2.json"
+  ],
+  "liveCanonicalFileSha256": {
+    "modern-capability-closed-set-manifest.v3.json": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+    "modern-capability-operation-causal-contract-ssot.v2.json": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+    "modern-capability-causal-state-contracts.v2.json": "4f604faf4593e765e3a10671a8577cfa3e43a250fc3d7f34d89759518a4d0b08",
+    "modern-capability-exact-schema-contracts.v1.json": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730",
+    "modern-capability-event-payload-contracts.v1.json": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b",
+    "modern-capability-semantic-bindings.v1.json": "834cd00e20148cded2765f1f41790926a479515afd0f23f6d95a0cea4ba389dd",
+    "modern-capability-public-identity-registry.v1.json": "d3c09697221660a35b6fd405182433d1dbbe6b36c4198fa5b08db088f9d00a06"
+  },
+  "liveCanonicalMutation": "NONE",
+  "sealedPayloadSha256": "b89453b64d28f0324555cfebafb9257118f0dfe6f5a006bcab66a80828e426fb"
+}

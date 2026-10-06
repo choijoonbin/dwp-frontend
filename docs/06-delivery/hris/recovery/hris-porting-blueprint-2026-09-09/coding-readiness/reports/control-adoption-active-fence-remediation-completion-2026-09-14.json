@@ -1,0 +1,178 @@
+{
+  "schemaVersion": "2.0.0",
+  "contractId": "ControlAdoptionActiveFenceRemediationCompletion.v2",
+  "status": "BOUNDED_FROZEN_DB0_ATOMIC_REMEDIATION_VERIFIED_G3_CLOSED",
+  "readinessPass": false,
+  "g3Open": false,
+  "commitCreated": false,
+  "base": {
+    "verifiedCommit": "db0d2b5",
+    "newerDwpDevObserved": "315e1b2",
+    "newerDwpDevMergedOrCertifiedHere": false
+  },
+  "before": {
+    "summaryPath": "control-adoption-active-fence-reproduction-before-2026-09-14.json",
+    "losslessPath": "control-adoption-active-fence-reproduction-before-2026-09-14.json.gz.b64",
+    "counts": {"total": 4, "passed": 3, "failed": 1, "errors": 0, "skipped": 0},
+    "targetFailure": "actualPublicMainMustNotReopenFencedRuntimeToReverifyAlreadyVerifiedAdoptedPredecessor()",
+    "sqlState": "42501",
+    "stackBoundary": [
+      "MigrationControlMain.runAdoption",
+      "AdoptionSealer.legacyBoundary",
+      "MigrationAdoptionGuard.verifyControlPrincipal",
+      "ControlDataSource.getConnection"
+    ],
+    "archiveSha256": "506c45d6cae09d56da0df2ea54055c408ce4e47ae667c6c5d55598f1e5c2454a",
+    "receiptSha256": "ba95b36504b49515a4e68ad63247f6e0f9e6b20ac830934d56eb36bf01467458",
+    "ackChunks": 36,
+    "independentReadback": true
+  },
+  "productionDesign": {
+    "preparedProof": "Immutable PreparedLegacyBoundary stores only stream key, enum mode, integer boundary, Receipt or HistoryDigest; it stores no credential, DataSource, Connection or ControlEnvironment.",
+    "lifecycle": "The same held exclusive Control lock and bootstrap session performs qualification, BASELINE proof capture, ACTIVE activation, proof consume/revalidation and protected-object transfer.",
+    "atomicTransfer": "consumeAndTransferAdoption starts one transaction on the already-held fence connection. Prepared proof structure is checked, current ACTIVE ACL and zero foreign sessions are checked, predecessor evidence is write-locked, the proof is revalidated, and transferProtectedObjects performs its mutations before the same transaction commits.",
+    "existing": "BASELINE still performs direct migration/runtime verification. ACTIVE revalidates exact receipt, external reference, canonical history, inventory, PUBLIC ACL and named migration/runtime ACL through the controller connection without relogin.",
+    "initial": "Receipt absence and the exact canonical history digest are captured and revalidated. Positive count, exact maximum rank, lowercase SHA-256, all-successful history and legacy/current ownership provenance are constructor invariants.",
+    "locks": "Existing adoption takes ACCESS EXCLUSIVE on receipt, inventory and every planned Flyway history table; initial adoption takes ACCESS EXCLUSIVE on every planned Flyway history table. Locks are retained through transfer commit.",
+    "structuralFailClosed": "Mode, proof count, stream key/order, receipt/reference binding and single consumption fail before database transfer/Flyway; runAdoption independently checks exact boundary coverage.",
+    "connectPolicy": "Runtime CONNECT remains denied throughout ACTIVE. No bridge, relogin, credential retention or temporary runtime regrant exists.",
+    "preflightTwoPassRationale": "ControlPreflight remains the unchanged service qualification pass. AdoptionSealer immediately repeats the read-only predecessor verification only to materialize the typed proof under the same lock/session, keeping the established preflight contract and the approved three-production-file boundary."
+  },
+  "afterAtomicFocused": {
+    "engine": "postgres:16-alpine",
+    "testClass": "com.dwp.migration.control.MigrationControlAdoptionActiveFenceV1PostgresTest",
+    "targetedRaceRun": {
+      "counts": {"total": 2, "passed": 2, "failed": 0, "errors": 0, "skipped": 0},
+      "cases": [
+        "existingProofHistoryWriterCannotCrossAtomicTransferBoundary()",
+        "initialProofHistoryWriterCannotCrossAtomicTransferBoundary()"
+      ],
+      "xmlSha256": "a67bddf7efb7623f6d3fa02c775164f884658b1fb8a84e0f59a2d510467dcd23",
+      "fixturePostgres": "bac008c112d5c0b6a8ee3c1f7b3a4bbb0824940ca0514f80a38c24874cb9b832",
+      "observedRyuk": "a01d07de97050e89ea77ec981057a01b2f03c597945a89f8af9c579726c806f5",
+      "bothAbsentAfterRun": true,
+      "sourcePinsStable": true
+    },
+    "fullRuns": [
+      {
+        "counts": {"total": 21, "unique": 21, "passed": 21, "failed": 0, "errors": 0, "skipped": 0},
+        "testTimeSeconds": 114.624,
+        "xmlSha256": "6856a714f2acb0810b4bff6302c1024e752c7a56ffb065c0f538d356d4a4c4db",
+        "evidenceDisposition": "Native assertions accepted as an independent fresh-XML pass; the evidence-only runner raised NameError after native completion and before archive serialization, so no archive claim is made."
+      },
+      {
+        "counts": {"total": 21, "unique": 21, "passed": 21, "failed": 0, "errors": 0, "skipped": 0},
+        "testTimeSeconds": 94.485,
+        "xmlTimestampUtc": "2026-09-14T13:05:27Z",
+        "xmlSha256": "86dcb343b5687a7c21d6c6b3c181cb63484b5abe784cacb59654106d9c7c121c",
+        "exactFixturePostgres": "71c0076a9ee98b0c8de3d43f09484dcf7baaa406dc330b8366693c0cb254cacb",
+        "exactSessionId": "53131e6e-ac53-4283-88d7-954c09c34d1d",
+        "exactSessionRyuk": "2201632d9724b930163e43246c599647cf1c778530f593ba111acee17e329e98",
+        "postgresDestroyedAtUnixNs": "1789391222487861584",
+        "ryukDestroyedAtUnixNs": "1789391232685692506",
+        "exactOwnedAbsentBeforeRunnerRelease": true,
+        "sourcePinIntervalStable": true,
+        "evidenceDisposition": "Authoritative functional pass. The lossless ACK archive was not completed because the tool transport waited 30 seconds per interactive chunk; after the native child and exact containers had ended, only the owned evidence runner PID/PGID 52711 was terminated. No container was stopped or removed manually. The fresh XML identity, counts and SHA were captured before the later regression task reused the Gradle result directory."
+      }
+    ],
+    "publicMainTargetPassed": true,
+    "activeRuntimeRelogin42501InMainStack": false,
+    "taskTimeoutSeconds": 180,
+    "childTimeoutSeconds": 45,
+    "testOnlyObservation": "pg_stat_clear_snapshot() appears only in the race test polling loop so pg_stat_activity does not reuse a transaction-local statistics snapshot; production contains zero calls.",
+    "archiveLimitation": "There is deliberately no claimed lossless archive for the final 21-case runs. Two independently fresh XML namespaces recorded 21/21 PASS; the missing ACK archive is an evidence-transport limitation, not a test failure."
+  },
+  "negativeCoverage": [
+    "missing and wrong controller identity",
+    "receipt digest and external control-reference drift",
+    "canonical existing history drift",
+    "canonical initial history drift",
+    "live inventory drift",
+    "PUBLIC and runtime Control metadata ACL drift",
+    "unsuccessful existing and initial history",
+    "empty initial history",
+    "missing proof count and wrong stream key",
+    "swapped or duplicate proof order",
+    "initial/existing mode mix",
+    "single-consumption reuse",
+    "existing writer blocked through atomic transfer commit",
+    "initial writer blocked through atomic transfer commit",
+    "actual public Main does not reopen runtime under ACTIVE"
+  ],
+  "finalRegressions": {
+    "hostSemaphore": {
+      "name": "hris-verification",
+      "acquiredAt": "2026-09-14T13:13:35.734Z",
+      "releasedAt": "2026-09-14T13:14:15.701Z",
+      "waitMilliseconds": 0,
+      "status": "RELEASED"
+    },
+    "sourcePinsAndMtimeNsStable": true,
+    "manualContainerStops": 0,
+    "manualContainerRemovals": 0,
+    "suites": [
+      {
+        "suite": "com.dwp.migration.control.MigrationControlMainTest",
+        "counts": {"total": 9, "passed": 9, "failed": 0, "errors": 0, "skipped": 0},
+        "xmlSha256": "fe87ee7855980ca4f69e42f09b16e2d245b650c1de024904ee61ef5708254809",
+        "stdoutSha256": "173be6438aacd58cc7318c231cc5f600fe0b3dffcd15168390010a446009643f",
+        "stderrSha256": "caa02d83e4b8ab55fd283ef6af8044e4cb2118f921f578d81f46bca9009563cd",
+        "pidPgid": "57764/57764",
+        "processGroupAtEnd": []
+      },
+      {
+        "suite": "com.dwp.core.database.MigrationAdoptionGuardPostgresTest",
+        "engine": "postgres:16-alpine",
+        "counts": {"total": 6, "passed": 6, "failed": 0, "errors": 0, "skipped": 0},
+        "xmlSha256": "eb8671f6d2a72529d7a02fedf67a240cc29fc5bde621560251ef0d7ae75e556e",
+        "stdoutSha256": "d96ed6b3931ce41840b882e3099ec309b809a64c87681b516c290cc5c9b2dc14",
+        "stderrSha256": "71710a61dd8ab09aae48d4288f1e609c4ebd6b670e4548ca0980b9bbdd875cfa",
+        "pidPgid": "57928/57928",
+        "processGroupAtEnd": [],
+        "exactFixturePostgres": "e47b25a855b17f7ea3d31243ec34879527fbc3cb29ad23c362e5442d42c80989",
+        "exactSessionId": "f0b60869-40dd-43d5-9afc-ee4fa537eedc",
+        "exactSessionRyuk": "3e57e4e7b74aa041af9587b3c00c65e2d404beb8ab113a8e27ee5f4122c73469",
+        "exactOwnedAbsentBeforeRelease": true
+      }
+    ],
+    "foreignContainerSeparation": "Pre-existing approval Testcontainers and one new session carrying dwp.approval.owner=signature-provider-native-v35 were observed separately and never touched. Their presence does not change the exact Control ownership/cleanup result."
+  },
+  "sourcePins": {
+    "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java": "aa96d21033db7e003d2a87d30506dcaf8135fe4efd021b93427da0402ee270d8",
+    "dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java": "b4e69bb55768d8f1146b527d049afbf20c20885dbf681cc04522ea0c30791b41",
+    "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java": "dc3b2b375b59eaafc6c23bb3fc6909a7361d3cd44f1ed3953c81001d8046b5df",
+    "dwp-migration-control/src/test/java/com/dwp/migration/control/AdoptionActiveFenceFixtureV1.java": "4c3985d8a0f785bd695ec97222a3ef528ce80982d972413580e3b59efcc57e39",
+    "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlAdoptionActiveFenceV1PostgresTest.java": "3992203e2be54bf5ef92a543b4e069af670f6ae298fb6bc8dd50c11184d6c439"
+  },
+  "changedProductionFiles": [
+    "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java",
+    "dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java",
+    "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java"
+  ],
+  "changedFocusedTestFiles": [
+    "dwp-migration-control/src/test/java/com/dwp/migration/control/AdoptionActiveFenceFixtureV1.java",
+    "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlAdoptionActiveFenceV1PostgresTest.java"
+  ],
+  "evidenceNotes": {
+    "observerCalibrationRun": "The first 21-case atomic suite produced 19 PASS / 2 observation-only FAIL because pg_stat_activity reused a transaction snapshot. The archive was retained with status UNEXPECTED_RESULT (archive SHA-256 4516599864bda6ced5865f547cbda6ac32be02cf89de64f1736c192a809166f2). The production path did not fail; only the test polling observer was corrected.",
+    "noExpectationWeakening": "No production expectation, JUnit assertion, timeout, Main/core contract or migration count was weakened.",
+    "diffCheck": "git diff --check passed after final edits.",
+    "runnerOnlyChange": "The evidence runner now derives owned PostgreSQL from fresh XML/console ID, obtains its exact Testcontainers session label, and classifies only the matching session-name Ryuk as owned; all other post-snapshot containers are foreign/unattributed."
+  },
+  "toctouAssessment": {
+    "specificRaceClosed": true,
+    "proof": "With the current temporary migration credential, an adversarial migration session was actually opened after proof consume began. In both existing and initial paths its history UPDATE remained in PostgreSQL Lock wait, was still incomplete after transferProtectedObjects, and completed only after the shared fence transaction committed.",
+    "atomicBoundary": "There is no new bootstrap connection between proof consume and transfer. The held fence transaction acquires write-conflicting evidence locks, revalidates exact proof state and performs the first protected-object transfer mutation before commit.",
+    "credentialAndAclBoundary": "The old migration password is rotated/rejected, runtime CONNECT is never restored during ACTIVE, and the current temporary migration secret stays in Control custody. A malicious holder of the bootstrap-owner secret is a broader privileged-database compromise outside this application-session race; the offline-session checks and advisory lock remain defense in depth, not a claim against a hostile superuser/owner.",
+    "postCommit": "A holder of the current migration credential can proceed only after the atomic transfer boundary releases. That cannot retroactively change the proof used for transfer; subsequent Flyway/receipt checks remain fail closed under the existing credential-custody contract.",
+    "readyUse": false
+  },
+  "limitations": [
+    "This certifies only the frozen db0d2b5 Control scope, not newer dwp-dev 315e1b2.",
+    "The public Main fixture proves removal of the ACTIVE runtime-relogin counterexample and reaches the expected later migration boundary; it is not all Auth migrations or issuer acceptance.",
+    "Final 21-case lossless ACK transport did not complete; two fresh XML passes and exact Docker lifecycle events are reported without overstating archive availability.",
+    "Control metadata composition/bridge suites are separate gates and were not re-aggregated here.",
+    "The separate Auth 80-character historical-role MALFORMED_REQUEST issue was not modified.",
+    "No G3/READY promotion, production commit, producer publication or whole-backend certification is claimed."
+  ]
+}

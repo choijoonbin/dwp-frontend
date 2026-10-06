@@ -1,0 +1,3973 @@
+{
+  "contractId": "dwp.hris.hrm-per.base-preparation-successor.fixtures.v1",
+  "status": "AUTHOR_SYNTHETIC_ORACLES_NOT_NATIVE_RUNTIME_NOT_INDEPENDENT_PASS",
+  "identityPolicy": "UUID literals independently specified as synthetic constants; business keys are not converted into UUIDs",
+  "context": {
+    "tenantId": 101,
+    "otherTenantId": 202,
+    "principalPublicId": "00000000-0000-4000-8000-000000000051",
+    "approverPrincipalPublicId": "00000000-0000-4000-8000-000000000052",
+    "native": {
+      "personPublicId": "00000000-0000-4000-8000-000000000001",
+      "personVersion": 2,
+      "workerPublicId": "00000000-0000-4000-8000-000000000002",
+      "workerVersion": 4,
+      "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+      "relationshipVersion": 3,
+      "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+      "assignmentVersion": 8
+    },
+    "manager": {
+      "personPublicId": "00000000-0000-4000-8000-000000000011",
+      "personVersion": 2,
+      "workerPublicId": "00000000-0000-4000-8000-000000000012",
+      "workerVersion": 4,
+      "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+      "relationshipVersion": 3,
+      "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+      "assignmentVersion": 2
+    },
+    "assignmentFacts": {
+      "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+      "positionPublicId": "00000000-0000-4000-8000-000000000006",
+      "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+      "locationPublicId": "00000000-0000-4000-8000-000000000008",
+      "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+      "businessTitle": "Synthetic platform analyst",
+      "costCenterKey": "SYN-CENTER-ALPHA",
+      "workerHours": "40.000000",
+      "fullTimeEquivalent": "1.000000",
+      "primaryAssignment": true
+    },
+    "refs": {
+      "employmentPolicy": {
+        "artifactId": "00000000-0000-4000-8000-000000001001",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+        "ownerType": "SYS.EmploymentEventPolicy",
+        "schemaId": "SYS.EmploymentEventPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+      },
+      "employmentSnapshot": {
+        "artifactId": "00000000-0000-4000-8000-000000001002",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+        "ownerType": "HRM.EmploymentReferenceSnapshot",
+        "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+      },
+      "populationRule": {
+        "artifactId": "00000000-0000-4000-8000-000000001003",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002003",
+        "ownerType": "PER.PopulationRule",
+        "schemaId": "PER.PopulationRule.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "0226a4bf6b3356d7d846f17a63fe2b77a4f7aa17334268cf1d9e45867e4b0d35"
+      },
+      "workforce": {
+        "artifactId": "00000000-0000-4000-8000-000000001004",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002004",
+        "ownerType": "HRM.WorkforceSnapshot",
+        "schemaId": "HRM.WorkforcePopulationSnapshot.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 8,
+        "contentDigest": "29b20588a08be14cf8142e9c6645bff376c25744411fc37746f07faa7eaed81d"
+      },
+      "scoringA": {
+        "artifactId": "00000000-0000-4000-8000-000000001005",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002005",
+        "ownerType": "SYS.PerformanceScoringPolicy",
+        "schemaId": "SYS.PerformanceScoringPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "71729c6701e440e02793515878f73d261a56a08986f4b6db0a6e77487f905311"
+      },
+      "scoringB": {
+        "artifactId": "00000000-0000-4000-8000-000000001006",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002006",
+        "ownerType": "SYS.PerformanceScoringPolicy",
+        "schemaId": "SYS.PerformanceScoringPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "31653486d60d051eb0eccfd0895df941cb702bf67bbcba7119784b1b9beea9a1"
+      },
+      "template": {
+        "artifactId": "00000000-0000-4000-8000-000000001007",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+        "ownerType": "PER.TemplateVersion",
+        "schemaId": "PER.ReviewTemplateContent.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "consent": {
+        "artifactId": "00000000-0000-4000-8000-000000001008",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002008",
+        "ownerType": "HRM.CandidateConsent",
+        "schemaId": "HRM.CandidateConsent.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "offerTerms": {
+        "artifactId": "00000000-0000-4000-8000-000000001009",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002009",
+        "ownerType": "HRM.OfferTerms",
+        "schemaId": "HRM.OfferTerms.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "evidence": {
+        "artifactId": "00000000-0000-4000-8000-000000001010",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002010",
+        "ownerType": "SYS.Evidence",
+        "schemaId": "SYS.Evidence.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "preview": {
+        "artifactId": "00000000-0000-4000-8000-000000001011",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002011",
+        "ownerType": "PER.PopulationPreview",
+        "schemaId": "PER.PopulationPreviewRecord.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "e707ff2a1d23e1bbba21a47163337f85da8ba640ca739fd1161cd6571a3abf8e"
+      }
+    },
+    "asOf": "2026-09-15T09:00:00Z"
+  },
+  "ownerTables": {
+    "ppl_persons": [
+      {
+        "tenant_id": 101,
+        "person_id": 1,
+        "public_id": "00000000-0000-4000-8000-000000000001",
+        "version": 2,
+        "lifecycle_state": "ACTIVE"
+      }
+    ],
+    "ppl_workers": [
+      {
+        "tenant_id": 101,
+        "worker_id": 2,
+        "public_id": "00000000-0000-4000-8000-000000000002",
+        "person_id": 1,
+        "version": 4,
+        "worker_status": "ACTIVE",
+        "worker_type": "EMPLOYEE"
+      }
+    ],
+    "ppl_work_relationships": [
+      {
+        "tenant_id": 101,
+        "work_relationship_id": 3,
+        "public_id": "00000000-0000-4000-8000-000000000003",
+        "worker_id": 2,
+        "legal_employer_id": 10,
+        "version": 3,
+        "start_date": "2026-01-01",
+        "end_date": null
+      },
+      {
+        "tenant_id": 101,
+        "work_relationship_id": 23,
+        "public_id": "00000000-0000-4000-8000-000000000023",
+        "worker_id": 2,
+        "legal_employer_id": 10,
+        "version": 1,
+        "start_date": "2026-03-01",
+        "end_date": null
+      },
+      {
+        "tenant_id": 101,
+        "work_relationship_id": 31,
+        "public_id": "00000000-0000-4000-8000-000000000031",
+        "worker_id": 2,
+        "legal_employer_id": 10,
+        "version": 3,
+        "start_date": "2025-01-01",
+        "end_date": "2026-08-31"
+      }
+    ],
+    "ppl_assignments": [
+      {
+        "tenant_id": 101,
+        "assignment_id": 4,
+        "public_id": "00000000-0000-4000-8000-000000000004",
+        "work_relationship_id": 3,
+        "version": 8,
+        "assignment_key": "SYN-ASSIGN-CURRENT",
+        "effective_start_date": "2026-01-01",
+        "effective_end_date": null,
+        "effective_sequence": 1,
+        "assignment_status": "ACTIVE",
+        "organization_id": 5,
+        "position_id": 6,
+        "job_profile_id": 7,
+        "location_id": 8,
+        "manager_assignment_key": "SYN-MANAGER-ALPHA",
+        "business_title": "Synthetic platform analyst",
+        "cost_center_key": "SYN-CENTER-ALPHA",
+        "worker_hours": "40.000000",
+        "full_time_equivalent": "1.000000",
+        "primary_assignment": true
+      },
+      {
+        "tenant_id": 101,
+        "assignment_id": 24,
+        "public_id": "00000000-0000-4000-8000-000000000024",
+        "work_relationship_id": 23,
+        "version": 1,
+        "assignment_status": "ACTIVE"
+      }
+    ],
+    "ppl_organizations": [
+      {
+        "tenant_id": 101,
+        "organization_id": 5,
+        "public_id": "00000000-0000-4000-8000-000000000005",
+        "version": 2,
+        "lifecycle_state": "ACTIVE"
+      },
+      {
+        "tenant_id": 101,
+        "organization_id": 15,
+        "public_id": "00000000-0000-4000-8000-000000000015",
+        "version": 4,
+        "lifecycle_state": "ACTIVE"
+      }
+    ],
+    "ppl_positions": [
+      {
+        "tenant_id": 101,
+        "position_id": 6,
+        "public_id": "00000000-0000-4000-8000-000000000006",
+        "version": 2,
+        "organization_id": 5
+      },
+      {
+        "tenant_id": 101,
+        "position_id": 16,
+        "public_id": "00000000-0000-4000-8000-000000000016",
+        "version": 3,
+        "organization_id": 15
+      },
+      {
+        "tenant_id": 101,
+        "position_id": 26,
+        "public_id": "00000000-0000-4000-8000-000000000026",
+        "version": 1,
+        "organization_id": 5
+      }
+    ],
+    "ppl_job_profiles": [
+      {
+        "tenant_id": 101,
+        "job_profile_id": 7,
+        "public_id": "00000000-0000-4000-8000-000000000007",
+        "version": 1
+      },
+      {
+        "tenant_id": 101,
+        "job_profile_id": 17,
+        "public_id": "00000000-0000-4000-8000-000000000017",
+        "version": 3
+      },
+      {
+        "tenant_id": 101,
+        "job_profile_id": 27,
+        "public_id": "00000000-0000-4000-8000-000000000027",
+        "version": 1
+      }
+    ],
+    "ppl_locations": [
+      {
+        "tenant_id": 101,
+        "location_id": 8,
+        "public_id": "00000000-0000-4000-8000-000000000008",
+        "version": 1
+      },
+      {
+        "tenant_id": 101,
+        "location_id": 18,
+        "public_id": "00000000-0000-4000-8000-000000000018",
+        "version": 2
+      }
+    ],
+    "manager_assignments": [
+      {
+        "tenant_id": 101,
+        "assignment_id": 9,
+        "public_id": "00000000-0000-4000-8000-000000000009",
+        "version": 2,
+        "assignment_key": "SYN-MANAGER-ALPHA"
+      },
+      {
+        "tenant_id": 101,
+        "assignment_id": 19,
+        "public_id": "00000000-0000-4000-8000-000000000019",
+        "version": 5,
+        "assignment_key": "SYN-MANAGER-BETA"
+      }
+    ]
+  },
+  "ownerSourceStatus": "Fixture owner rows with job/location/LegalEmployer publicUUID are PROPOSED NEW COLUMN simulation, not evidence current V1..48 has them.",
+  "populationRule": {
+    "schemaVersion": 1,
+    "populationKey": "WORKER_ASSIGNMENT",
+    "multiEmploymentPolicy": "ALL_ELIGIBLE_ASSIGNMENTS",
+    "employmentTypes": [
+      "EMPLOYEE"
+    ],
+    "workerStatuses": [
+      "ACTIVE"
+    ],
+    "organizationPublicIds": [
+      "00000000-0000-4000-8000-000000000005"
+    ],
+    "assignmentSelection": "ALL_EFFECTIVE",
+    "reviewerTypes": [
+      "SELF",
+      "MANAGER"
+    ],
+    "missingManager": "BLOCK"
+  },
+  "workforce": {
+    "snapshotPublicId": "00000000-0000-4000-8000-000000002004",
+    "revision": 8,
+    "asOf": "2026-09-15T09:00:00Z",
+    "complete": true,
+    "rows": [
+      {
+        "native": {
+          "personPublicId": "00000000-0000-4000-8000-000000000001",
+          "personVersion": 2,
+          "workerPublicId": "00000000-0000-4000-8000-000000000002",
+          "workerVersion": 4,
+          "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+          "relationshipVersion": 3,
+          "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+          "assignmentVersion": 8
+        },
+        "relationshipType": "EMPLOYEE",
+        "workerStatus": "ACTIVE",
+        "assignmentStatus": "ACTIVE",
+        "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+        "managerNative": {
+          "personPublicId": "00000000-0000-4000-8000-000000000011",
+          "personVersion": 2,
+          "workerPublicId": "00000000-0000-4000-8000-000000000012",
+          "workerVersion": 4,
+          "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+          "relationshipVersion": 3,
+          "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+          "assignmentVersion": 2
+        },
+        "primaryAssignment": true,
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": null
+      },
+      {
+        "native": {
+          "personPublicId": "00000000-0000-4000-8000-000000000001",
+          "personVersion": 2,
+          "workerPublicId": "00000000-0000-4000-8000-000000000002",
+          "workerVersion": 4,
+          "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+          "relationshipVersion": 1,
+          "assignmentPublicId": "00000000-0000-4000-8000-000000000024",
+          "assignmentVersion": 1
+        },
+        "relationshipType": "EMPLOYEE",
+        "workerStatus": "ACTIVE",
+        "assignmentStatus": "ACTIVE",
+        "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+        "managerNative": {
+          "personPublicId": "00000000-0000-4000-8000-000000000011",
+          "personVersion": 2,
+          "workerPublicId": "00000000-0000-4000-8000-000000000012",
+          "workerVersion": 4,
+          "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+          "relationshipVersion": 3,
+          "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+          "assignmentVersion": 2
+        },
+        "primaryAssignment": true,
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": null
+      }
+    ]
+  },
+  "configurations": [
+    {
+      "configurationId": "A",
+      "scoringRef": {
+        "artifactId": "00000000-0000-4000-8000-000000001005",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002005",
+        "ownerType": "SYS.PerformanceScoringPolicy",
+        "schemaId": "SYS.PerformanceScoringPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "71729c6701e440e02793515878f73d261a56a08986f4b6db0a6e77487f905311"
+      },
+      "scoring": {
+        "schemaVersion": 1,
+        "unit": "SCORE_POINT",
+        "minimum": "0.000000",
+        "maximum": "5.000000",
+        "rounding": "HALF_EVEN",
+        "scale": 6,
+        "missingRequired": "BLOCK",
+        "notApplicable": "RENORMALIZE_EXPLICIT_WEIGHTS",
+        "withheld": "BLOCK",
+        "components": [
+          {
+            "componentKey": "SELF",
+            "stageKey": "self",
+            "weight": "0.250000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          },
+          {
+            "componentKey": "MANAGER",
+            "stageKey": "manager",
+            "weight": "0.750000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          }
+        ],
+        "gradeBands": [
+          {
+            "gradeKey": "LOW",
+            "minimumInclusive": "0.000000",
+            "maximumExclusive": "3.000000"
+          },
+          {
+            "gradeKey": "HIGH",
+            "minimumInclusive": "3.000000",
+            "maximumExclusive": "5.000001"
+          }
+        ],
+        "calibration": {
+          "maxAbsoluteAdjustment": "2.000000",
+          "cohortMeanMinimum": "0.000000",
+          "cohortMeanMaximum": "5.000000",
+          "minimumCohortSize": 2,
+          "cohortUnit": "SCORE_POINT"
+        }
+      },
+      "inputValues": [
+        "2.000000",
+        "4.000000"
+      ],
+      "baselineScores": [
+        "1.500000",
+        "3.500000"
+      ],
+      "adjustment": "2.500000",
+      "expected": {
+        "weightedScore": "3.500000",
+        "weightedGrade": "HIGH",
+        "priorMean": "2.500000",
+        "projectedMean": "3.000000",
+        "adjustedGrade": "LOW"
+      },
+      "participantReviewValues": [
+        [
+          "0.000000",
+          "2.000000"
+        ],
+        [
+          "2.000000",
+          "4.000000"
+        ]
+      ]
+    },
+    {
+      "configurationId": "B",
+      "scoringRef": {
+        "artifactId": "00000000-0000-4000-8000-000000001006",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002006",
+        "ownerType": "SYS.PerformanceScoringPolicy",
+        "schemaId": "SYS.PerformanceScoringPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "31653486d60d051eb0eccfd0895df941cb702bf67bbcba7119784b1b9beea9a1"
+      },
+      "scoring": {
+        "schemaVersion": 1,
+        "unit": "RATIO",
+        "minimum": "0.000000",
+        "maximum": "1.000000",
+        "rounding": "HALF_EVEN",
+        "scale": 6,
+        "missingRequired": "BLOCK",
+        "notApplicable": "RENORMALIZE_EXPLICIT_WEIGHTS",
+        "withheld": "BLOCK",
+        "components": [
+          {
+            "componentKey": "SELF",
+            "stageKey": "self",
+            "weight": "0.250000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          },
+          {
+            "componentKey": "MANAGER",
+            "stageKey": "manager",
+            "weight": "0.750000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          }
+        ],
+        "gradeBands": [
+          {
+            "gradeKey": "LOW",
+            "minimumInclusive": "0.000000",
+            "maximumExclusive": "0.500000"
+          },
+          {
+            "gradeKey": "HIGH",
+            "minimumInclusive": "0.500000",
+            "maximumExclusive": "1.000001"
+          }
+        ],
+        "calibration": {
+          "maxAbsoluteAdjustment": "0.300000",
+          "cohortMeanMinimum": "0.000000",
+          "cohortMeanMaximum": "1.000000",
+          "minimumCohortSize": 2,
+          "cohortUnit": "RATIO"
+        }
+      },
+      "inputValues": [
+        "0.400000",
+        "0.800000"
+      ],
+      "baselineScores": [
+        "0.400000",
+        "0.800000"
+      ],
+      "adjustment": "0.600000",
+      "expected": {
+        "weightedScore": "0.700000",
+        "weightedGrade": "HIGH",
+        "priorMean": "0.600000",
+        "projectedMean": "0.700000",
+        "adjustedGrade": "HIGH"
+      },
+      "participantReviewValues": [
+        [
+          "0.400000",
+          "0.400000"
+        ],
+        [
+          "0.800000",
+          "0.800000"
+        ]
+      ]
+    }
+  ],
+  "employmentCases": [
+    {
+      "caseId": "HRM-HIRE",
+      "input": {
+        "eventType": "HIRE",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001031",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002031",
+          "ownerType": "HRM.EmploymentAdmissionReferenceSnapshot",
+          "schemaId": "HRM.EmploymentAdmissionReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "331b3194d1f205d9b5819866fc73f3b7952b53f077b198438293b133a3a4e3a9"
+        },
+        "payload": {
+          "personPublicId": "00000000-0000-4000-8000-000000000001",
+          "personVersion": 2,
+          "legalEmployerPublicId": "00000000-0000-4000-8000-000000000010",
+          "workerType": "EMPLOYEE",
+          "workerNumber": "SYN-WORKER-NEW",
+          "relationshipKey": "SYN-REL-NEW",
+          "assignmentKey": "SYN-ASSIGN-NEW",
+          "assignment": {
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "positionPublicId": "00000000-0000-4000-8000-000000000006",
+            "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+            "locationPublicId": "00000000-0000-4000-8000-000000000008",
+            "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+            "businessTitle": "Synthetic platform analyst",
+            "costCenterKey": "SYN-CENTER-ALPHA",
+            "workerHours": "40.000000",
+            "fullTimeEquivalent": "1.000000",
+            "primaryAssignment": true
+          },
+          "hireHandoffRef": null,
+          "primaryRelationship": false
+        }
+      },
+      "expectedChangedColumns": [
+        "NEW_WORKER",
+        "NEW_RELATIONSHIP",
+        "NEW_ASSIGNMENT"
+      ]
+    },
+    {
+      "caseId": "HRM-REHIRE",
+      "input": {
+        "eventType": "REHIRE",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001032",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002032",
+          "ownerType": "HRM.EmploymentAdmissionReferenceSnapshot",
+          "schemaId": "HRM.EmploymentAdmissionReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "95342fc1999de35c47c6d9cfa0c81920c07aeaeca01921507a5d1013f96acfb5"
+        },
+        "payload": {
+          "personPublicId": "00000000-0000-4000-8000-000000000001",
+          "personVersion": 2,
+          "priorRelationshipPublicId": "00000000-0000-4000-8000-000000000031",
+          "priorRelationshipVersion": 3,
+          "legalEmployerPublicId": "00000000-0000-4000-8000-000000000010",
+          "workerPublicId": "00000000-0000-4000-8000-000000000002",
+          "workerVersion": 4,
+          "relationshipKey": "SYN-REHIRE-REL",
+          "assignmentKey": "SYN-REHIRE-ASSIGN",
+          "assignment": {
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "positionPublicId": "00000000-0000-4000-8000-000000000006",
+            "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+            "locationPublicId": "00000000-0000-4000-8000-000000000008",
+            "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+            "businessTitle": "Synthetic platform analyst",
+            "costCenterKey": "SYN-CENTER-ALPHA",
+            "workerHours": "40.000000",
+            "fullTimeEquivalent": "1.000000",
+            "primaryAssignment": true
+          },
+          "primaryRelationship": false
+        }
+      },
+      "expectedChangedColumns": [
+        "NEW_RELATIONSHIP",
+        "NEW_ASSIGNMENT"
+      ]
+    },
+    {
+      "caseId": "HRM-TRANSFER",
+      "input": {
+        "eventType": "TRANSFER",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "organizationPublicId": "00000000-0000-4000-8000-000000000015",
+          "positionPublicId": "00000000-0000-4000-8000-000000000016",
+          "jobProfilePublicId": "00000000-0000-4000-8000-000000000017",
+          "costCenterKey": "SYN-CENTER-BETA"
+        }
+      },
+      "expectedChangedColumns": [
+        "organization_id",
+        "position_id",
+        "job_profile_id",
+        "cost_center_key"
+      ]
+    },
+    {
+      "caseId": "HRM-PROMOTION",
+      "input": {
+        "eventType": "PROMOTION",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "positionPublicId": "00000000-0000-4000-8000-000000000016",
+          "jobProfilePublicId": "00000000-0000-4000-8000-000000000017",
+          "businessTitle": "Synthetic senior analyst",
+          "compensationBasisRef": {
+            "artifactId": "00000000-0000-4000-8000-000000001020",
+            "ownerPublicId": "00000000-0000-4000-8000-000000002020",
+            "ownerType": "HRM.CompensationBasis",
+            "schemaId": "HRM.CompensationBasis.v1",
+            "schemaVersion": 1,
+            "ownerRevision": 1,
+            "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expectedChangedColumns": [
+        "position_id",
+        "job_profile_id",
+        "business_title"
+      ]
+    },
+    {
+      "caseId": "HRM-DEMOTION",
+      "input": {
+        "eventType": "DEMOTION",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "positionPublicId": "00000000-0000-4000-8000-000000000026",
+          "jobProfilePublicId": "00000000-0000-4000-8000-000000000027",
+          "businessTitle": "Synthetic associate analyst",
+          "compensationBasisRef": {
+            "artifactId": "00000000-0000-4000-8000-000000001021",
+            "ownerPublicId": "00000000-0000-4000-8000-000000002021",
+            "ownerType": "HRM.CompensationBasis",
+            "schemaId": "HRM.CompensationBasis.v1",
+            "schemaVersion": 1,
+            "ownerRevision": 1,
+            "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expectedChangedColumns": [
+        "position_id",
+        "job_profile_id",
+        "business_title"
+      ]
+    },
+    {
+      "caseId": "HRM-CONCURRENT_ASSIGNMENT",
+      "input": {
+        "eventType": "CONCURRENT_ASSIGNMENT",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "assignmentKey": "SYN-CONCURRENT-ASSIGN",
+          "assignment": {
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "positionPublicId": "00000000-0000-4000-8000-000000000006",
+            "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+            "locationPublicId": "00000000-0000-4000-8000-000000000008",
+            "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+            "businessTitle": "Synthetic platform analyst",
+            "costCenterKey": "SYN-CENTER-ALPHA",
+            "workerHours": "40.000000",
+            "fullTimeEquivalent": "1.000000",
+            "primaryAssignment": false
+          },
+          "primaryChange": "KEEP_EXISTING_PRIMARY"
+        }
+      },
+      "expectedChangedColumns": [
+        "NEW_ASSIGNMENT_ONLY"
+      ]
+    },
+    {
+      "caseId": "HRM-CHANGE_MANAGER",
+      "input": {
+        "eventType": "CHANGE_MANAGER",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000019",
+          "managerAssignmentVersion": 5
+        }
+      },
+      "expectedChangedColumns": [
+        "manager_assignment_key"
+      ]
+    },
+    {
+      "caseId": "HRM-CHANGE_LOCATION",
+      "input": {
+        "eventType": "CHANGE_LOCATION",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "locationPublicId": "00000000-0000-4000-8000-000000000018",
+          "locationVersion": 2
+        }
+      },
+      "expectedChangedColumns": [
+        "location_id"
+      ]
+    },
+    {
+      "caseId": "HRM-LEAVE",
+      "input": {
+        "eventType": "LEAVE",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "absenceCaseRef": {
+            "artifactId": "00000000-0000-4000-8000-000000001022",
+            "ownerPublicId": "00000000-0000-4000-8000-000000002022",
+            "ownerType": "HRM.AbsenceCase",
+            "schemaId": "HRM.AbsenceCase.v1",
+            "schemaVersion": 1,
+            "ownerRevision": 1,
+            "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "plannedReturnDate": "2026-10-01",
+          "payClass": "UNPAID"
+        }
+      },
+      "expectedChangedColumns": [
+        "assignment_status"
+      ]
+    },
+    {
+      "caseId": "HRM-RETURN",
+      "input": {
+        "eventType": "RETURN",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 9
+          },
+          "leaveEventPublicId": "00000000-0000-4000-8000-000000000041",
+          "leaveEventVersion": 6,
+          "actualReturnDate": "2026-09-15"
+        }
+      },
+      "expectedChangedColumns": [
+        "assignment_status"
+      ]
+    },
+    {
+      "caseId": "HRM-TERMINATION",
+      "input": {
+        "eventType": "TERMINATION",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "separationCaseRef": {
+            "artifactId": "00000000-0000-4000-8000-000000001023",
+            "ownerPublicId": "00000000-0000-4000-8000-000000002023",
+            "ownerType": "HRM.SeparationCase",
+            "schemaId": "HRM.SeparationCase.v1",
+            "schemaVersion": 1,
+            "ownerRevision": 1,
+            "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "lastWorkingDate": "2026-09-14",
+          "separationType": "END_OF_CONTRACT"
+        }
+      },
+      "expectedChangedColumns": [
+        "RELATIONSHIP_END_ONLY",
+        "OTHER_RELATIONSHIP_REMAINS_ACTIVE"
+      ]
+    },
+    {
+      "caseId": "HRM-CORRECTION",
+      "input": {
+        "eventType": "CORRECTION",
+        "effectiveDate": "2026-09-15",
+        "reasonCode": "SYN-REASON",
+        "policyRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001001",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+          "ownerType": "SYS.EmploymentEventPolicy",
+          "schemaId": "SYS.EmploymentEventPolicy.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+        },
+        "referenceSnapshotRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001002",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+          "ownerType": "HRM.EmploymentReferenceSnapshot",
+          "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+        },
+        "payload": {
+          "target": {
+            "personPublicId": "00000000-0000-4000-8000-000000000001",
+            "personVersion": 2,
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "workerVersion": 4,
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "relationshipVersion": 3,
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+            "assignmentVersion": 8
+          },
+          "correctsEventPublicId": "00000000-0000-4000-8000-000000000042",
+          "correctsEventVersion": 4,
+          "replacement": {
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "positionPublicId": "00000000-0000-4000-8000-000000000006",
+            "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+            "locationPublicId": "00000000-0000-4000-8000-000000000008",
+            "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+            "businessTitle": "Synthetic platform analyst",
+            "costCenterKey": "SYN-CENTER-ALPHA",
+            "workerHours": "40.000000",
+            "fullTimeEquivalent": "1.000000"
+          },
+          "correctionReason": "Synthetic wrong-location evidence",
+          "downstreamReversalReceipts": []
+        }
+      },
+      "expectedChangedColumns": [
+        "organization_id",
+        "position_id",
+        "job_profile_id",
+        "location_id",
+        "manager_assignment_key",
+        "business_title",
+        "cost_center_key",
+        "worker_hours",
+        "full_time_equivalent"
+      ]
+    }
+  ],
+  "legacyFreezeWitness": {
+    "populationRuleId": "00000000-0000-4000-8000-000000002003",
+    "workforceSnapshotId": "00000000-0000-4000-8000-000000002004",
+    "workforceSnapshotRevision": 8,
+    "previewContentHash": "e707ff2a1d23e1bbba21a47163337f85da8ba640ca739fd1161cd6571a3abf8e"
+  },
+  "freezeRequest": {
+    "previewPublicId": "00000000-0000-4000-8000-000000002011",
+    "previewVersion": 1,
+    "populationRuleId": "00000000-0000-4000-8000-000000002003",
+    "workforceSnapshotId": "00000000-0000-4000-8000-000000002004",
+    "workforceSnapshotRevision": 8,
+    "asOf": "2026-09-15T09:00:00Z",
+    "previewContentHash": "e707ff2a1d23e1bbba21a47163337f85da8ba640ca739fd1161cd6571a3abf8e"
+  },
+  "candidateAdmission": {
+    "requisitionPublicId": "00000000-0000-4000-8000-000000000061",
+    "requisitionVersion": 1,
+    "personToken": "SYN-CANDIDATE-OPAQUE-A",
+    "source": {
+      "kind": "NATIVE_MANUAL",
+      "sourceKey": "SYN-NATIVE-INTAKE-A"
+    },
+    "consentArtifactRef": {
+      "artifactId": "00000000-0000-4000-8000-000000001008",
+      "ownerPublicId": "00000000-0000-4000-8000-000000002008",
+      "ownerType": "HRM.CandidateConsent",
+      "schemaId": "HRM.CandidateConsent.v1",
+      "schemaVersion": 1,
+      "ownerRevision": 1,
+      "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "onboardingTemplate": {
+    "templatePublicId": null,
+    "title": "Synthetic native onboarding",
+    "tasks": [
+      {
+        "taskKey": "ACCOUNT_CONTEXT",
+        "title": "Choose native employment context",
+        "required": true,
+        "assigneeKind": "SUBJECT",
+        "assigneeNative": null,
+        "dueOffsetDays": 0,
+        "requiredEvidenceSchemaId": null
+      },
+      {
+        "taskKey": "ORIENTATION",
+        "title": "Complete synthetic orientation",
+        "required": true,
+        "assigneeKind": "NAMED_NATIVE_WORKER",
+        "assigneeNative": {
+          "personPublicId": "00000000-0000-4000-8000-000000000011",
+          "personVersion": 2,
+          "workerPublicId": "00000000-0000-4000-8000-000000000012",
+          "workerVersion": 4,
+          "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+          "relationshipVersion": 3,
+          "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+          "assignmentVersion": 2
+        },
+        "dueOffsetDays": 2,
+        "requiredEvidenceSchemaId": "SYS.Evidence.v1"
+      },
+      {
+        "taskKey": "OPTIONAL_PROFILE",
+        "title": "Optional profile",
+        "required": false,
+        "assigneeKind": "SUBJECT",
+        "assigneeNative": null,
+        "dueOffsetDays": 5,
+        "requiredEvidenceSchemaId": null
+      }
+    ],
+    "effectiveFrom": "2026-09-01",
+    "effectiveTo": null
+  },
+  "negativeCases": [
+    {
+      "caseId": "NO_OWNER_ADAPTER",
+      "kind": "missingOwner",
+      "expectedCode": "MISSING_OWNER_ADAPTER"
+    },
+    {
+      "caseId": "TENANT_PROBE",
+      "kind": "tenant",
+      "expectedCode": "TENANT_NOT_FOUND"
+    },
+    {
+      "caseId": "STALE_NATIVE_VERSION",
+      "kind": "stale",
+      "expectedCode": "STALE_VERSION"
+    },
+    {
+      "caseId": "NATIVE_PARENT_MISMATCH",
+      "kind": "parent",
+      "expectedCode": "PARENT_MISMATCH"
+    },
+    {
+      "caseId": "OWNER_REVISION_MISMATCH",
+      "kind": "ownerRevision",
+      "expectedCode": "STALE_OWNER_SNAPSHOT"
+    },
+    {
+      "caseId": "MAKER_CHECKER",
+      "kind": "sod",
+      "expectedCode": "SOD_DENIED"
+    },
+    {
+      "caseId": "TERMINAL",
+      "kind": "terminal",
+      "expectedCode": "TERMINAL_STATE"
+    },
+    {
+      "caseId": "SAME_KEY_DIFFERENT_CONTENT",
+      "kind": "keyMismatch",
+      "expectedCode": "IDEMPOTENCY_KEY_REUSED"
+    },
+    {
+      "caseId": "CALIBRATION_CALLER_IMPACT",
+      "kind": "callerImpact",
+      "expectedCode": "UNKNOWN_FIELD"
+    },
+    {
+      "caseId": "REVIEW_MISSING_REQUIRED",
+      "kind": "requiredAnswer",
+      "expectedCode": "VALIDATION_FAILED"
+    },
+    {
+      "caseId": "CALIBRATION_UNIT_MISMATCH",
+      "kind": "unitMismatch",
+      "expectedCode": "VALIDATION_FAILED"
+    },
+    {
+      "caseId": "POPULATION_STALE_VECTOR",
+      "kind": "freezeStale",
+      "expectedCode": "IMMUTABLE_INPUT_MISMATCH"
+    },
+    {
+      "caseId": "NATIVE_SOURCE_ID_COPY",
+      "kind": "wrongReference",
+      "expectedCode": "PARENT_MISMATCH"
+    },
+    {
+      "caseId": "ONBOARDING_INCOMPLETE",
+      "kind": "onboardingRequired",
+      "expectedCode": "VALIDATION_FAILED"
+    },
+    {
+      "caseId": "CANDIDATE_WITHOUT_INTAKE",
+      "kind": "candidateNoIntake",
+      "expectedCode": "TENANT_NOT_FOUND"
+    }
+  ],
+  "checkerCaveat": "Schema-generated probes below/at runtime are mechanical and not source meaning approval. Business oracles above are explicit synthetic owner-model execution, not G4 DB/HTTP or production proof.",
+  "ownerArtifacts": [
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001001",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002001",
+        "ownerType": "SYS.EmploymentEventPolicy",
+        "schemaId": "SYS.EmploymentEventPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "b4dd9ff72faf61d298314d297c5e98e41179f1295777b1be3bd7f6f3719849a9"
+      },
+      "content": {
+        "schemaVersion": 1,
+        "effectiveRangeCodec": "DATE_INCLUSIVE_NATIVE_TO_HALF_OPEN_V1",
+        "allowedReasonCodes": [
+          "SYN-REASON"
+        ],
+        "requiredApproval": true,
+        "separationWorkerStatusPolicy": "ACTIVE_IF_ANY_ACTIVE_RELATIONSHIP_ELSE_LEAVE_IF_ANY_SUSPENDED_ELSE_TERMINATED",
+        "managerCyclePolicy": "REJECT_EFFECTIVE_PARENT_CYCLE",
+        "concurrentPrimaryPolicy": "ONE_PRIMARY_PER_RELATIONSHIP",
+        "leavePayClass": "TENANT_POLICY",
+        "returnAdjustmentDays": 0
+      },
+      "responseSchemaRef": "#/definitions/EmploymentEventPolicy",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001002",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002002",
+        "ownerType": "HRM.EmploymentReferenceSnapshot",
+        "schemaId": "HRM.EmploymentReferenceSnapshot.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "87032e29ba9aa42b400e58489c03e51e22c5eb8310b59a87c0cde3ed2d96ae77"
+      },
+      "content": {
+        "native": {
+          "personPublicId": "00000000-0000-4000-8000-000000000001",
+          "personVersion": 2,
+          "workerPublicId": "00000000-0000-4000-8000-000000000002",
+          "workerVersion": 4,
+          "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+          "relationshipVersion": 3,
+          "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+          "assignmentVersion": 8
+        },
+        "legalEmployerPublicId": "00000000-0000-4000-8000-000000000010",
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": null,
+        "assignmentStatus": "ACTIVE",
+        "assignment": {
+          "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+          "positionPublicId": "00000000-0000-4000-8000-000000000006",
+          "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+          "locationPublicId": "00000000-0000-4000-8000-000000000008",
+          "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+          "businessTitle": "Synthetic platform analyst",
+          "costCenterKey": "SYN-CENTER-ALPHA",
+          "workerHours": "40.000000",
+          "fullTimeEquivalent": "1.000000",
+          "primaryAssignment": true
+        },
+        "references": [
+          {
+            "entityType": "ORGANIZATION",
+            "publicId": "00000000-0000-4000-8000-000000000005",
+            "version": 2,
+            "validFrom": "2026-01-01",
+            "validTo": null,
+            "lifecycleState": "ACTIVE"
+          },
+          {
+            "entityType": "POSITION",
+            "publicId": "00000000-0000-4000-8000-000000000006",
+            "version": 2,
+            "validFrom": "2026-01-01",
+            "validTo": null,
+            "lifecycleState": "OPEN"
+          }
+        ],
+        "asOf": "2026-09-15T09:00:00Z"
+      },
+      "responseSchemaRef": "#/definitions/EmploymentReferenceSnapshot",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001003",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002003",
+        "ownerType": "PER.PopulationRule",
+        "schemaId": "PER.PopulationRule.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "0226a4bf6b3356d7d846f17a63fe2b77a4f7aa17334268cf1d9e45867e4b0d35"
+      },
+      "content": {
+        "schemaVersion": 1,
+        "populationKey": "WORKER_ASSIGNMENT",
+        "multiEmploymentPolicy": "ALL_ELIGIBLE_ASSIGNMENTS",
+        "employmentTypes": [
+          "EMPLOYEE"
+        ],
+        "workerStatuses": [
+          "ACTIVE"
+        ],
+        "organizationPublicIds": [
+          "00000000-0000-4000-8000-000000000005"
+        ],
+        "assignmentSelection": "ALL_EFFECTIVE",
+        "reviewerTypes": [
+          "SELF",
+          "MANAGER"
+        ],
+        "missingManager": "BLOCK"
+      },
+      "responseSchemaRef": "#/definitions/PopulationRule",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001004",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002004",
+        "ownerType": "HRM.WorkforceSnapshot",
+        "schemaId": "HRM.WorkforcePopulationSnapshot.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 8,
+        "contentDigest": "29b20588a08be14cf8142e9c6645bff376c25744411fc37746f07faa7eaed81d"
+      },
+      "content": {
+        "snapshotPublicId": "00000000-0000-4000-8000-000000002004",
+        "revision": 8,
+        "asOf": "2026-09-15T09:00:00Z",
+        "complete": true,
+        "rows": [
+          {
+            "native": {
+              "personPublicId": "00000000-0000-4000-8000-000000000001",
+              "personVersion": 2,
+              "workerPublicId": "00000000-0000-4000-8000-000000000002",
+              "workerVersion": 4,
+              "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+              "relationshipVersion": 3,
+              "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+              "assignmentVersion": 8
+            },
+            "relationshipType": "EMPLOYEE",
+            "workerStatus": "ACTIVE",
+            "assignmentStatus": "ACTIVE",
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "managerNative": {
+              "personPublicId": "00000000-0000-4000-8000-000000000011",
+              "personVersion": 2,
+              "workerPublicId": "00000000-0000-4000-8000-000000000012",
+              "workerVersion": 4,
+              "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+              "relationshipVersion": 3,
+              "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+              "assignmentVersion": 2
+            },
+            "primaryAssignment": true,
+            "effectiveFrom": "2026-01-01",
+            "effectiveTo": null
+          },
+          {
+            "native": {
+              "personPublicId": "00000000-0000-4000-8000-000000000001",
+              "personVersion": 2,
+              "workerPublicId": "00000000-0000-4000-8000-000000000002",
+              "workerVersion": 4,
+              "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+              "relationshipVersion": 1,
+              "assignmentPublicId": "00000000-0000-4000-8000-000000000024",
+              "assignmentVersion": 1
+            },
+            "relationshipType": "EMPLOYEE",
+            "workerStatus": "ACTIVE",
+            "assignmentStatus": "ACTIVE",
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "managerNative": {
+              "personPublicId": "00000000-0000-4000-8000-000000000011",
+              "personVersion": 2,
+              "workerPublicId": "00000000-0000-4000-8000-000000000012",
+              "workerVersion": 4,
+              "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+              "relationshipVersion": 3,
+              "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+              "assignmentVersion": 2
+            },
+            "primaryAssignment": true,
+            "effectiveFrom": "2026-01-01",
+            "effectiveTo": null
+          }
+        ]
+      },
+      "responseSchemaRef": "#/definitions/WorkforcePopulationSnapshot",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001005",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002005",
+        "ownerType": "SYS.PerformanceScoringPolicy",
+        "schemaId": "SYS.PerformanceScoringPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "71729c6701e440e02793515878f73d261a56a08986f4b6db0a6e77487f905311"
+      },
+      "content": {
+        "schemaVersion": 1,
+        "unit": "SCORE_POINT",
+        "minimum": "0.000000",
+        "maximum": "5.000000",
+        "rounding": "HALF_EVEN",
+        "scale": 6,
+        "missingRequired": "BLOCK",
+        "notApplicable": "RENORMALIZE_EXPLICIT_WEIGHTS",
+        "withheld": "BLOCK",
+        "components": [
+          {
+            "componentKey": "SELF",
+            "stageKey": "self",
+            "weight": "0.250000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          },
+          {
+            "componentKey": "MANAGER",
+            "stageKey": "manager",
+            "weight": "0.750000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          }
+        ],
+        "gradeBands": [
+          {
+            "gradeKey": "LOW",
+            "minimumInclusive": "0.000000",
+            "maximumExclusive": "3.000000"
+          },
+          {
+            "gradeKey": "HIGH",
+            "minimumInclusive": "3.000000",
+            "maximumExclusive": "5.000001"
+          }
+        ],
+        "calibration": {
+          "maxAbsoluteAdjustment": "2.000000",
+          "cohortMeanMinimum": "0.000000",
+          "cohortMeanMaximum": "5.000000",
+          "minimumCohortSize": 2,
+          "cohortUnit": "SCORE_POINT"
+        }
+      },
+      "responseSchemaRef": "#/definitions/ScoringPolicy",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001006",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002006",
+        "ownerType": "SYS.PerformanceScoringPolicy",
+        "schemaId": "SYS.PerformanceScoringPolicy.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "31653486d60d051eb0eccfd0895df941cb702bf67bbcba7119784b1b9beea9a1"
+      },
+      "content": {
+        "schemaVersion": 1,
+        "unit": "RATIO",
+        "minimum": "0.000000",
+        "maximum": "1.000000",
+        "rounding": "HALF_EVEN",
+        "scale": 6,
+        "missingRequired": "BLOCK",
+        "notApplicable": "RENORMALIZE_EXPLICIT_WEIGHTS",
+        "withheld": "BLOCK",
+        "components": [
+          {
+            "componentKey": "SELF",
+            "stageKey": "self",
+            "weight": "0.250000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          },
+          {
+            "componentKey": "MANAGER",
+            "stageKey": "manager",
+            "weight": "0.750000",
+            "aggregation": "WEIGHTED_MEAN",
+            "source": "IMMUTABLE_REVIEW_SUBMISSION"
+          }
+        ],
+        "gradeBands": [
+          {
+            "gradeKey": "LOW",
+            "minimumInclusive": "0.000000",
+            "maximumExclusive": "0.500000"
+          },
+          {
+            "gradeKey": "HIGH",
+            "minimumInclusive": "0.500000",
+            "maximumExclusive": "1.000001"
+          }
+        ],
+        "calibration": {
+          "maxAbsoluteAdjustment": "0.300000",
+          "cohortMeanMinimum": "0.000000",
+          "cohortMeanMaximum": "1.000000",
+          "minimumCohortSize": 2,
+          "cohortUnit": "RATIO"
+        }
+      },
+      "responseSchemaRef": "#/definitions/ScoringPolicy",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001011",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002011",
+        "ownerType": "PER.PopulationPreview",
+        "schemaId": "PER.PopulationPreviewRecord.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "e707ff2a1d23e1bbba21a47163337f85da8ba640ca739fd1161cd6571a3abf8e"
+      },
+      "content": {
+        "previewPublicId": "00000000-0000-4000-8000-000000002011",
+        "previewVersion": 1,
+        "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+        "asOf": "2026-09-15T09:00:00Z",
+        "ruleRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001003",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002003",
+          "ownerType": "PER.PopulationRule",
+          "schemaId": "PER.PopulationRule.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 1,
+          "contentDigest": "0226a4bf6b3356d7d846f17a63fe2b77a4f7aa17334268cf1d9e45867e4b0d35"
+        },
+        "workforceRef": {
+          "artifactId": "00000000-0000-4000-8000-000000001004",
+          "ownerPublicId": "00000000-0000-4000-8000-000000002004",
+          "ownerType": "HRM.WorkforceSnapshot",
+          "schemaId": "HRM.WorkforcePopulationSnapshot.v1",
+          "schemaVersion": 1,
+          "ownerRevision": 8,
+          "contentDigest": "29b20588a08be14cf8142e9c6645bff376c25744411fc37746f07faa7eaed81d"
+        },
+        "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "members": [
+          {
+            "participantPublicId": "00000000-0000-4000-8000-000000000071",
+            "native": {
+              "personPublicId": "00000000-0000-4000-8000-000000000001",
+              "personVersion": 2,
+              "workerPublicId": "00000000-0000-4000-8000-000000000002",
+              "workerVersion": 4,
+              "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+              "relationshipVersion": 3,
+              "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+              "assignmentVersion": 8
+            },
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "reviewers": [
+              {
+                "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000171",
+                "reviewerNative": {
+                  "personPublicId": "00000000-0000-4000-8000-000000000001",
+                  "personVersion": 2,
+                  "workerPublicId": "00000000-0000-4000-8000-000000000002",
+                  "workerVersion": 4,
+                  "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+                  "relationshipVersion": 3,
+                  "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+                  "assignmentVersion": 8
+                },
+                "reviewerType": "SELF",
+                "stageKey": "self"
+              },
+              {
+                "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000271",
+                "reviewerNative": {
+                  "personPublicId": "00000000-0000-4000-8000-000000000011",
+                  "personVersion": 2,
+                  "workerPublicId": "00000000-0000-4000-8000-000000000012",
+                  "workerVersion": 4,
+                  "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+                  "relationshipVersion": 3,
+                  "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+                  "assignmentVersion": 2
+                },
+                "reviewerType": "MANAGER",
+                "stageKey": "manager"
+              }
+            ]
+          },
+          {
+            "participantPublicId": "00000000-0000-4000-8000-000000000072",
+            "native": {
+              "personPublicId": "00000000-0000-4000-8000-000000000001",
+              "personVersion": 2,
+              "workerPublicId": "00000000-0000-4000-8000-000000000002",
+              "workerVersion": 4,
+              "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+              "relationshipVersion": 1,
+              "assignmentPublicId": "00000000-0000-4000-8000-000000000024",
+              "assignmentVersion": 1
+            },
+            "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+            "reviewers": [
+              {
+                "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000172",
+                "reviewerNative": {
+                  "personPublicId": "00000000-0000-4000-8000-000000000001",
+                  "personVersion": 2,
+                  "workerPublicId": "00000000-0000-4000-8000-000000000002",
+                  "workerVersion": 4,
+                  "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+                  "relationshipVersion": 1,
+                  "assignmentPublicId": "00000000-0000-4000-8000-000000000024",
+                  "assignmentVersion": 1
+                },
+                "reviewerType": "SELF",
+                "stageKey": "self"
+              },
+              {
+                "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000272",
+                "reviewerNative": {
+                  "personPublicId": "00000000-0000-4000-8000-000000000011",
+                  "personVersion": 2,
+                  "workerPublicId": "00000000-0000-4000-8000-000000000012",
+                  "workerVersion": 4,
+                  "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+                  "relationshipVersion": 3,
+                  "assignmentPublicId": "00000000-0000-4000-8000-000000000009",
+                  "assignmentVersion": 2
+                },
+                "reviewerType": "MANAGER",
+                "stageKey": "manager"
+              }
+            ]
+          }
+        ],
+        "exceptions": []
+      },
+      "responseSchemaRef": "#/definitions/PopulationPreviewRecord",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001031",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002031",
+        "ownerType": "HRM.EmploymentAdmissionReferenceSnapshot",
+        "schemaId": "HRM.EmploymentAdmissionReferenceSnapshot.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "331b3194d1f205d9b5819866fc73f3b7952b53f077b198438293b133a3a4e3a9"
+      },
+      "content": {
+        "personPublicId": "00000000-0000-4000-8000-000000000001",
+        "personVersion": 2,
+        "existingWorker": null,
+        "priorRelationship": null,
+        "legalEmployerPublicId": "00000000-0000-4000-8000-000000000010",
+        "legalEmployerVersion": 1,
+        "assignmentReferences": {
+          "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+          "positionPublicId": "00000000-0000-4000-8000-000000000006",
+          "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+          "locationPublicId": "00000000-0000-4000-8000-000000000008",
+          "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+          "businessTitle": "Synthetic platform analyst",
+          "costCenterKey": "SYN-CENTER-ALPHA",
+          "workerHours": "40.000000",
+          "fullTimeEquivalent": "1.000000",
+          "primaryAssignment": true
+        },
+        "masterReferences": [
+          {
+            "entityType": "ORGANIZATION",
+            "publicId": "00000000-0000-4000-8000-000000000005",
+            "version": 2,
+            "validFrom": "2026-01-01",
+            "validTo": null,
+            "lifecycleState": "ACTIVE"
+          },
+          {
+            "entityType": "POSITION",
+            "publicId": "00000000-0000-4000-8000-000000000006",
+            "version": 2,
+            "validFrom": "2026-01-01",
+            "validTo": null,
+            "lifecycleState": "OPEN"
+          }
+        ],
+        "asOf": "2026-09-15T09:00:00Z"
+      },
+      "responseSchemaRef": "#/definitions/EmploymentAdmissionReferenceSnapshot",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    },
+    {
+      "ref": {
+        "artifactId": "00000000-0000-4000-8000-000000001032",
+        "ownerPublicId": "00000000-0000-4000-8000-000000002032",
+        "ownerType": "HRM.EmploymentAdmissionReferenceSnapshot",
+        "schemaId": "HRM.EmploymentAdmissionReferenceSnapshot.v1",
+        "schemaVersion": 1,
+        "ownerRevision": 1,
+        "contentDigest": "95342fc1999de35c47c6d9cfa0c81920c07aeaeca01921507a5d1013f96acfb5"
+      },
+      "content": {
+        "personPublicId": "00000000-0000-4000-8000-000000000001",
+        "personVersion": 2,
+        "existingWorker": {
+          "workerPublicId": "00000000-0000-4000-8000-000000000002",
+          "workerVersion": 4,
+          "personPublicId": "00000000-0000-4000-8000-000000000001"
+        },
+        "priorRelationship": {
+          "relationshipPublicId": "00000000-0000-4000-8000-000000000031",
+          "relationshipVersion": 3,
+          "workerPublicId": "00000000-0000-4000-8000-000000000002",
+          "endDate": "2026-08-31"
+        },
+        "legalEmployerPublicId": "00000000-0000-4000-8000-000000000010",
+        "legalEmployerVersion": 1,
+        "assignmentReferences": {
+          "organizationPublicId": "00000000-0000-4000-8000-000000000005",
+          "positionPublicId": "00000000-0000-4000-8000-000000000006",
+          "jobProfilePublicId": "00000000-0000-4000-8000-000000000007",
+          "locationPublicId": "00000000-0000-4000-8000-000000000008",
+          "managerAssignmentPublicId": "00000000-0000-4000-8000-000000000009",
+          "businessTitle": "Synthetic platform analyst",
+          "costCenterKey": "SYN-CENTER-ALPHA",
+          "workerHours": "40.000000",
+          "fullTimeEquivalent": "1.000000",
+          "primaryAssignment": true
+        },
+        "masterReferences": [
+          {
+            "entityType": "ORGANIZATION",
+            "publicId": "00000000-0000-4000-8000-000000000005",
+            "version": 2,
+            "validFrom": "2026-01-01",
+            "validTo": null,
+            "lifecycleState": "ACTIVE"
+          },
+          {
+            "entityType": "POSITION",
+            "publicId": "00000000-0000-4000-8000-000000000006",
+            "version": 2,
+            "validFrom": "2026-01-01",
+            "validTo": null,
+            "lifecycleState": "OPEN"
+          }
+        ],
+        "asOf": "2026-09-15T09:00:00Z"
+      },
+      "responseSchemaRef": "#/definitions/EmploymentAdmissionReferenceSnapshot",
+      "authority": "SYNTHETIC_OWNER_MODEL_UNSIGNED_NOT_PUBLISHED"
+    }
+  ],
+  "schemaDigestCaveat": "Fixture digest is canonical content-only author model for reproducibility; production codec also frames tenant/schema/owner/native/artifact revisions. Fixture authority unsigned; no production approval/issuer proof.",
+  "performanceJourneys": [
+    {
+      "caseId": "PER-BASE-FULL-A",
+      "configurationId": "A",
+      "steps": [
+        {
+          "operationId": "createCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": null,
+          "body": {
+            "cycleKey": "SYN-CYCLE-A",
+            "displayName": "Synthetic A performance",
+            "timezoneId": "UTC",
+            "retentionPolicyRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003203",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004203",
+              "ownerType": "SYS.RetentionPolicy",
+              "schemaId": "SYS.RetentionPolicy.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "effectiveFrom": "2026-09-15T09:00:00Z",
+            "effectiveTo": "2026-10-01T00:00:00Z",
+            "stages": [
+              {
+                "stageKey": "self",
+                "stageType": "SELF_REVIEW",
+                "sequence": 1,
+                "opensAt": "2026-09-15T09:00:00Z",
+                "closesAt": "2026-09-16T09:00:00Z",
+                "required": true,
+                "templateVersionRef": {
+                  "artifactId": "00000000-0000-4000-8000-000000001007",
+                  "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+                  "ownerType": "PER.TemplateVersion",
+                  "schemaId": "PER.ReviewTemplateContent.v1",
+                  "schemaVersion": 1,
+                  "ownerRevision": 1,
+                  "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              },
+              {
+                "stageKey": "manager",
+                "stageType": "MANAGER_REVIEW",
+                "sequence": 2,
+                "opensAt": "2026-09-16T09:00:00Z",
+                "closesAt": "2026-09-17T09:00:00Z",
+                "required": true,
+                "templateVersionRef": {
+                  "artifactId": "00000000-0000-4000-8000-000000001007",
+                  "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+                  "ownerType": "PER.TemplateVersion",
+                  "schemaId": "PER.ReviewTemplateContent.v1",
+                  "schemaVersion": 1,
+                  "ownerRevision": 1,
+                  "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              }
+            ],
+            "scoringPolicyRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001005",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002005",
+              "ownerType": "SYS.PerformanceScoringPolicy",
+              "schemaId": "SYS.PerformanceScoringPolicy.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "71729c6701e440e02793515878f73d261a56a08986f4b6db0a6e77487f905311"
+            },
+            "populationRuleRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001003",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002003",
+              "ownerType": "PER.PopulationRule",
+              "schemaId": "PER.PopulationRule.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "0226a4bf6b3356d7d846f17a63fe2b77a4f7aa17334268cf1d9e45867e4b0d35"
+            }
+          },
+          "expectedFrom": null,
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "validateCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "VALIDATED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "publishCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 1,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "VALIDATED",
+          "expectedTo": "PUBLISHED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "previewPopulationExact",
+          "machine": "PopulationFreeze",
+          "aggregateId": "00000000-0000-4000-8000-000000000082",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "populationRuleRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001003",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002003",
+              "ownerType": "PER.PopulationRule",
+              "schemaId": "PER.PopulationRule.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "0226a4bf6b3356d7d846f17a63fe2b77a4f7aa17334268cf1d9e45867e4b0d35"
+            },
+            "workforceSnapshotRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001004",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002004",
+              "ownerType": "HRM.WorkforceSnapshot",
+              "schemaId": "HRM.WorkforcePopulationSnapshot.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 8,
+              "contentDigest": "29b20588a08be14cf8142e9c6645bff376c25744411fc37746f07faa7eaed81d"
+            },
+            "asOf": "2026-09-15T09:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "PREVIEWED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "freezePopulationExact",
+          "machine": "PopulationFreeze",
+          "aggregateId": "00000000-0000-4000-8000-000000000082",
+          "expectedVersion": 0,
+          "body": {
+            "previewPublicId": "00000000-0000-4000-8000-000000002011",
+            "previewVersion": 1,
+            "populationRuleId": "00000000-0000-4000-8000-000000002003",
+            "workforceSnapshotId": "00000000-0000-4000-8000-000000002004",
+            "workforceSnapshotRevision": 8,
+            "asOf": "2026-09-15T09:00:00Z",
+            "previewContentHash": "e707ff2a1d23e1bbba21a47163337f85da8ba640ca739fd1161cd6571a3abf8e"
+          },
+          "expectedFrom": "PREVIEWED",
+          "expectedTo": "FROZEN",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "activateCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "PUBLISHED",
+          "expectedTo": "ACTIVE",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "createGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "owner": {
+              "ownerType": "WORKER",
+              "native": {
+                "personPublicId": "00000000-0000-4000-8000-000000000001",
+                "personVersion": 2,
+                "workerPublicId": "00000000-0000-4000-8000-000000000002",
+                "workerVersion": 4,
+                "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+                "relationshipVersion": 3,
+                "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+                "assignmentVersion": 8
+              }
+            },
+            "title": "Complete ten synthetic work items",
+            "measurement": {
+              "kind": "QUANTITATIVE",
+              "unit": "COUNT",
+              "target": "10.000000",
+              "direction": "HIGHER_IS_BETTER"
+            },
+            "weight": "1.000000",
+            "periodStart": "2026-09-15",
+            "periodEnd": "2026-09-30"
+          },
+          "expectedFrom": null,
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "submitGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "returnGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 1,
+          "body": {
+            "reasonCode": "SYN-RETURN",
+            "reasonText": "Synthetic reviewed content refinement"
+          },
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "submitGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "approveGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 3,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "APPROVED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "activateGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 4,
+          "body": {},
+          "expectedFrom": "APPROVED",
+          "expectedTo": "ACTIVE",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "recordGoalProgressExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 5,
+          "body": {
+            "measurement": {
+              "kind": "QUANTITATIVE",
+              "unit": "COUNT",
+              "actual": "5.000000"
+            },
+            "evidenceRefs": [],
+            "observedAt": "2026-09-15T09:00:00Z"
+          },
+          "expectedFrom": "ACTIVE",
+          "expectedTo": "ACTIVE",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "completeGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 6,
+          "body": {
+            "measurement": {
+              "kind": "QUANTITATIVE",
+              "unit": "COUNT",
+              "actual": "10.000000"
+            },
+            "evidenceRefs": [
+              {
+                "artifactId": "00000000-0000-4000-8000-000000001010",
+                "ownerPublicId": "00000000-0000-4000-8000-000000002010",
+                "ownerType": "SYS.Evidence",
+                "schemaId": "SYS.Evidence.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "observedAt": "2026-09-15T09:00:00Z"
+          },
+          "expectedFrom": "ACTIVE",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000071",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000171",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-16T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "0.000000",
+                "unit": "SCORE_POINT"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000190",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003300",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000190",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000071",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000271",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-17T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "2.000000",
+                "unit": "SCORE_POINT"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000191",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003301",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000191",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000072",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000172",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-16T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "2.000000",
+                "unit": "SCORE_POINT"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000192",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003302",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000192",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000072",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000272",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-17T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "4.000000",
+                "unit": "SCORE_POINT"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000193",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003303",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000193",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "createCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "freezePublicId": "00000000-0000-4000-8000-000000000082",
+            "baselineRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003401",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004401",
+              "ownerType": "PER.CalibrationBaseline",
+              "schemaId": "PER.CalibrationBaseline.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": null,
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "validateCalibrationBaselineExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "READY",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "startCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 1,
+          "body": {},
+          "expectedFrom": "READY",
+          "expectedTo": "IN_SESSION",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "appendCalibrationAdjustmentExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 2,
+          "body": {
+            "participantPublicId": "00000000-0000-4000-8000-000000000071",
+            "expectedParticipantVersion": 1,
+            "adjustedValue": "2.500000",
+            "unit": "SCORE_POINT",
+            "reasonCode": "SYN-CALIBRATION",
+            "reasonText": "Synthetic source-evidence adjustment",
+            "evidenceRefs": []
+          },
+          "expectedFrom": "IN_SESSION",
+          "expectedTo": "IN_SESSION",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "submitCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 3,
+          "body": {},
+          "expectedFrom": "IN_SESSION",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "approveCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 4,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "APPROVED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "lockCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 5,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "APPROVED",
+          "expectedTo": "LOCKED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "calculateResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "freezePublicId": "00000000-0000-4000-8000-000000000082",
+            "scoringPolicyRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001005",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002005",
+              "ownerType": "SYS.PerformanceScoringPolicy",
+              "schemaId": "SYS.PerformanceScoringPolicy.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "71729c6701e440e02793515878f73d261a56a08986f4b6db0a6e77487f905311"
+            },
+            "sourceSubmissionRefs": [
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003300",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004300",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003301",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004301",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003302",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004302",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003303",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004303",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              }
+            ],
+            "lockedCalibrationRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003501",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000084",
+              "ownerType": "PER.CalibrationSession",
+              "schemaId": "PER.CalibrationRecord.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 6,
+              "contentDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+            }
+          },
+          "expectedFrom": null,
+          "expectedTo": "COMPUTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "validateResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "COMPUTED",
+          "expectedTo": "VALIDATED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "approveResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": 1,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "VALIDATED",
+          "expectedTo": "APPROVED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "publishResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": 2,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "APPROVED",
+          "expectedTo": "PUBLISHED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000054"
+        },
+        {
+          "operationId": "closeCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 3,
+          "body": {
+            "reasonCode": "SYN-COMPLETE",
+            "reasonText": "All required frozen reviews completed and results published"
+          },
+          "expectedFrom": "ACTIVE",
+          "expectedTo": "CLOSED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        }
+      ],
+      "expectedFinalStates": {
+        "Cycle": "CLOSED",
+        "PopulationFreeze": "FROZEN",
+        "Goal": "COMPLETED",
+        "Calibration": "LOCKED",
+        "ResultSet": "PUBLISHED"
+      },
+      "expectedFrozenMemberCount": 2,
+      "expectedRequiredReviewCount": 4,
+      "scope": "Actual closed-schema requests and author state/decimal/owner-tuple model; no signed owner producer/native domain execution.",
+      "expectedScores": [
+        "2.500000",
+        "3.500000"
+      ],
+      "expectedGrades": [
+        "LOW",
+        "HIGH"
+      ],
+      "expectedCohortMean": "3.000000",
+      "sourceConsistency": "Review values by participant + frozen stage slots actually compute exact baselineScores. Adjustment changes first participant only; result uses immutable LOCKED calibration ref and leaves second participant score unchanged. No aggregate average masquerading as individual result."
+    },
+    {
+      "caseId": "PER-BASE-FULL-B",
+      "configurationId": "B",
+      "steps": [
+        {
+          "operationId": "createCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": null,
+          "body": {
+            "cycleKey": "SYN-CYCLE-B",
+            "displayName": "Synthetic B performance",
+            "timezoneId": "UTC",
+            "retentionPolicyRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003203",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004203",
+              "ownerType": "SYS.RetentionPolicy",
+              "schemaId": "SYS.RetentionPolicy.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "effectiveFrom": "2026-09-15T09:00:00Z",
+            "effectiveTo": "2026-10-01T00:00:00Z",
+            "stages": [
+              {
+                "stageKey": "self",
+                "stageType": "SELF_REVIEW",
+                "sequence": 1,
+                "opensAt": "2026-09-15T09:00:00Z",
+                "closesAt": "2026-09-16T09:00:00Z",
+                "required": true,
+                "templateVersionRef": {
+                  "artifactId": "00000000-0000-4000-8000-000000001007",
+                  "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+                  "ownerType": "PER.TemplateVersion",
+                  "schemaId": "PER.ReviewTemplateContent.v1",
+                  "schemaVersion": 1,
+                  "ownerRevision": 1,
+                  "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              },
+              {
+                "stageKey": "manager",
+                "stageType": "MANAGER_REVIEW",
+                "sequence": 2,
+                "opensAt": "2026-09-16T09:00:00Z",
+                "closesAt": "2026-09-17T09:00:00Z",
+                "required": true,
+                "templateVersionRef": {
+                  "artifactId": "00000000-0000-4000-8000-000000001007",
+                  "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+                  "ownerType": "PER.TemplateVersion",
+                  "schemaId": "PER.ReviewTemplateContent.v1",
+                  "schemaVersion": 1,
+                  "ownerRevision": 1,
+                  "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              }
+            ],
+            "scoringPolicyRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001006",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002006",
+              "ownerType": "SYS.PerformanceScoringPolicy",
+              "schemaId": "SYS.PerformanceScoringPolicy.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "31653486d60d051eb0eccfd0895df941cb702bf67bbcba7119784b1b9beea9a1"
+            },
+            "populationRuleRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001003",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002003",
+              "ownerType": "PER.PopulationRule",
+              "schemaId": "PER.PopulationRule.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "0226a4bf6b3356d7d846f17a63fe2b77a4f7aa17334268cf1d9e45867e4b0d35"
+            }
+          },
+          "expectedFrom": null,
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "validateCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "VALIDATED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "publishCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 1,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "VALIDATED",
+          "expectedTo": "PUBLISHED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "previewPopulationExact",
+          "machine": "PopulationFreeze",
+          "aggregateId": "00000000-0000-4000-8000-000000000082",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "populationRuleRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001003",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002003",
+              "ownerType": "PER.PopulationRule",
+              "schemaId": "PER.PopulationRule.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "0226a4bf6b3356d7d846f17a63fe2b77a4f7aa17334268cf1d9e45867e4b0d35"
+            },
+            "workforceSnapshotRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001004",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002004",
+              "ownerType": "HRM.WorkforceSnapshot",
+              "schemaId": "HRM.WorkforcePopulationSnapshot.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 8,
+              "contentDigest": "29b20588a08be14cf8142e9c6645bff376c25744411fc37746f07faa7eaed81d"
+            },
+            "asOf": "2026-09-15T09:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "PREVIEWED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "freezePopulationExact",
+          "machine": "PopulationFreeze",
+          "aggregateId": "00000000-0000-4000-8000-000000000082",
+          "expectedVersion": 0,
+          "body": {
+            "previewPublicId": "00000000-0000-4000-8000-000000002011",
+            "previewVersion": 1,
+            "populationRuleId": "00000000-0000-4000-8000-000000002003",
+            "workforceSnapshotId": "00000000-0000-4000-8000-000000002004",
+            "workforceSnapshotRevision": 8,
+            "asOf": "2026-09-15T09:00:00Z",
+            "previewContentHash": "e707ff2a1d23e1bbba21a47163337f85da8ba640ca739fd1161cd6571a3abf8e"
+          },
+          "expectedFrom": "PREVIEWED",
+          "expectedTo": "FROZEN",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "activateCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "PUBLISHED",
+          "expectedTo": "ACTIVE",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "createGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "owner": {
+              "ownerType": "WORKER",
+              "native": {
+                "personPublicId": "00000000-0000-4000-8000-000000000001",
+                "personVersion": 2,
+                "workerPublicId": "00000000-0000-4000-8000-000000000002",
+                "workerVersion": 4,
+                "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+                "relationshipVersion": 3,
+                "assignmentPublicId": "00000000-0000-4000-8000-000000000004",
+                "assignmentVersion": 8
+              }
+            },
+            "title": "Complete ten synthetic work items",
+            "measurement": {
+              "kind": "QUANTITATIVE",
+              "unit": "COUNT",
+              "target": "10.000000",
+              "direction": "HIGHER_IS_BETTER"
+            },
+            "weight": "1.000000",
+            "periodStart": "2026-09-15",
+            "periodEnd": "2026-09-30"
+          },
+          "expectedFrom": null,
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "submitGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "returnGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 1,
+          "body": {
+            "reasonCode": "SYN-RETURN",
+            "reasonText": "Synthetic reviewed content refinement"
+          },
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "submitGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "approveGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 3,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "APPROVED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "activateGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 4,
+          "body": {},
+          "expectedFrom": "APPROVED",
+          "expectedTo": "ACTIVE",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "recordGoalProgressExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 5,
+          "body": {
+            "measurement": {
+              "kind": "QUANTITATIVE",
+              "unit": "COUNT",
+              "actual": "5.000000"
+            },
+            "evidenceRefs": [],
+            "observedAt": "2026-09-15T09:00:00Z"
+          },
+          "expectedFrom": "ACTIVE",
+          "expectedTo": "ACTIVE",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "completeGoalExact",
+          "machine": "Goal",
+          "aggregateId": "00000000-0000-4000-8000-000000000083",
+          "expectedVersion": 6,
+          "body": {
+            "measurement": {
+              "kind": "QUANTITATIVE",
+              "unit": "COUNT",
+              "actual": "10.000000"
+            },
+            "evidenceRefs": [
+              {
+                "artifactId": "00000000-0000-4000-8000-000000001010",
+                "ownerPublicId": "00000000-0000-4000-8000-000000002010",
+                "ownerType": "SYS.Evidence",
+                "schemaId": "SYS.Evidence.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "observedAt": "2026-09-15T09:00:00Z"
+          },
+          "expectedFrom": "ACTIVE",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000071",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000171",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-16T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "0.400000",
+                "unit": "RATIO"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000190",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003300",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000190",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000090",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000003",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000071",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000271",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-17T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "0.400000",
+                "unit": "RATIO"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000191",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003301",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000191",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000091",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000072",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000172",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-16T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "0.800000",
+                "unit": "RATIO"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000192",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003302",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000192",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000092",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000002",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000023",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000024"
+          }
+        },
+        {
+          "operationId": "createAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "participantPublicId": "00000000-0000-4000-8000-000000000072",
+            "reviewerAssignmentPublicId": "00000000-0000-4000-8000-000000000272",
+            "templateVersionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001007",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002007",
+              "ownerType": "PER.TemplateVersion",
+              "schemaId": "PER.ReviewTemplateContent.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "dueAt": "2026-09-17T08:00:00Z"
+          },
+          "expectedFrom": null,
+          "expectedTo": "NOT_STARTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "saveAssignedEvaluationDraftExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": 0,
+          "body": {
+            "answers": [
+              {
+                "itemKey": "SYN_VALUE",
+                "valueType": "DECIMAL",
+                "value": "0.800000",
+                "unit": "RATIO"
+              }
+            ],
+            "evidenceRefs": []
+          },
+          "expectedFrom": "NOT_STARTED",
+          "expectedTo": "IN_PROGRESS",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "submitAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": 1,
+          "body": {
+            "draftSubmissionPublicId": "00000000-0000-4000-8000-000000000193",
+            "draftSubmissionVersion": 1,
+            "draftArtifactRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003303",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000193",
+              "ownerType": "PER.ReviewSubmission",
+              "schemaId": "PER.SaveEvaluation.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "IN_PROGRESS",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "completeAssignedEvaluationExact",
+          "machine": "Evaluation",
+          "aggregateId": "00000000-0000-4000-8000-000000000093",
+          "expectedVersion": 2,
+          "body": {},
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "COMPLETED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000053",
+          "contextSelector": {
+            "workerPublicId": "00000000-0000-4000-8000-000000000012",
+            "relationshipPublicId": "00000000-0000-4000-8000-000000000013",
+            "assignmentPublicId": "00000000-0000-4000-8000-000000000009"
+          }
+        },
+        {
+          "operationId": "createCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "freezePublicId": "00000000-0000-4000-8000-000000000082",
+            "baselineRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003401",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004401",
+              "ownerType": "PER.CalibrationBaseline",
+              "schemaId": "PER.CalibrationBaseline.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": null,
+          "expectedTo": "DRAFT",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "validateCalibrationBaselineExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "DRAFT",
+          "expectedTo": "READY",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "startCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 1,
+          "body": {},
+          "expectedFrom": "READY",
+          "expectedTo": "IN_SESSION",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "appendCalibrationAdjustmentExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 2,
+          "body": {
+            "participantPublicId": "00000000-0000-4000-8000-000000000071",
+            "expectedParticipantVersion": 1,
+            "adjustedValue": "0.600000",
+            "unit": "RATIO",
+            "reasonCode": "SYN-CALIBRATION",
+            "reasonText": "Synthetic source-evidence adjustment",
+            "evidenceRefs": []
+          },
+          "expectedFrom": "IN_SESSION",
+          "expectedTo": "IN_SESSION",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "submitCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 3,
+          "body": {},
+          "expectedFrom": "IN_SESSION",
+          "expectedTo": "SUBMITTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "approveCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 4,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "SUBMITTED",
+          "expectedTo": "APPROVED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "lockCalibrationExact",
+          "machine": "Calibration",
+          "aggregateId": "00000000-0000-4000-8000-000000000084",
+          "expectedVersion": 5,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "APPROVED",
+          "expectedTo": "LOCKED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "calculateResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": null,
+          "body": {
+            "cycleVersionPublicId": "00000000-0000-4000-8000-000000000081",
+            "freezePublicId": "00000000-0000-4000-8000-000000000082",
+            "scoringPolicyRef": {
+              "artifactId": "00000000-0000-4000-8000-000000001006",
+              "ownerPublicId": "00000000-0000-4000-8000-000000002006",
+              "ownerType": "SYS.PerformanceScoringPolicy",
+              "schemaId": "SYS.PerformanceScoringPolicy.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "31653486d60d051eb0eccfd0895df941cb702bf67bbcba7119784b1b9beea9a1"
+            },
+            "sourceSubmissionRefs": [
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003300",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004300",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003301",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004301",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003302",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004302",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              {
+                "artifactId": "00000000-0000-4000-8000-000000003303",
+                "ownerPublicId": "00000000-0000-4000-8000-000000004303",
+                "ownerType": "PER.ReviewSubmission",
+                "schemaId": "PER.SaveEvaluation.v1",
+                "schemaVersion": 1,
+                "ownerRevision": 1,
+                "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              }
+            ],
+            "lockedCalibrationRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003502",
+              "ownerPublicId": "00000000-0000-4000-8000-000000000084",
+              "ownerType": "PER.CalibrationSession",
+              "schemaId": "PER.CalibrationRecord.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 6,
+              "contentDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+            }
+          },
+          "expectedFrom": null,
+          "expectedTo": "COMPUTED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "validateResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": 0,
+          "body": {},
+          "expectedFrom": "COMPUTED",
+          "expectedTo": "VALIDATED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        },
+        {
+          "operationId": "approveResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": 1,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "VALIDATED",
+          "expectedTo": "APPROVED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000052"
+        },
+        {
+          "operationId": "publishResultsExact",
+          "machine": "ResultSet",
+          "aggregateId": "00000000-0000-4000-8000-000000000085",
+          "expectedVersion": 2,
+          "body": {
+            "approvalDecisionRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003201",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004201",
+              "ownerType": "Approval.Decision",
+              "schemaId": "Approval.TargetBoundDecision.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "stepUpEvidenceRef": {
+              "artifactId": "00000000-0000-4000-8000-000000003202",
+              "ownerPublicId": "00000000-0000-4000-8000-000000004202",
+              "ownerType": "Auth.StepUpProof",
+              "schemaId": "Auth.StepUpProof.v1",
+              "schemaVersion": 1,
+              "ownerRevision": 1,
+              "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          },
+          "expectedFrom": "APPROVED",
+          "expectedTo": "PUBLISHED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000054"
+        },
+        {
+          "operationId": "closeCycleExact",
+          "machine": "Cycle",
+          "aggregateId": "00000000-0000-4000-8000-000000000080",
+          "expectedVersion": 3,
+          "body": {
+            "reasonCode": "SYN-COMPLETE",
+            "reasonText": "All required frozen reviews completed and results published"
+          },
+          "expectedFrom": "ACTIVE",
+          "expectedTo": "CLOSED",
+          "actorPrincipalPublicId": "00000000-0000-4000-8000-000000000051"
+        }
+      ],
+      "expectedFinalStates": {
+        "Cycle": "CLOSED",
+        "PopulationFreeze": "FROZEN",
+        "Goal": "COMPLETED",
+        "Calibration": "LOCKED",
+        "ResultSet": "PUBLISHED"
+      },
+      "expectedFrozenMemberCount": 2,
+      "expectedRequiredReviewCount": 4,
+      "scope": "Actual closed-schema requests and author state/decimal/owner-tuple model; no signed owner producer/native domain execution.",
+      "expectedScores": [
+        "0.600000",
+        "0.800000"
+      ],
+      "expectedGrades": [
+        "HIGH",
+        "HIGH"
+      ],
+      "expectedCohortMean": "0.700000",
+      "sourceConsistency": "Review values by participant + frozen stage slots actually compute exact baselineScores. Adjustment changes first participant only; result uses immutable LOCKED calibration ref and leaves second participant score unchanged. No aggregate average masquerading as individual result."
+    }
+  ],
+  "authPersonBindings": [
+    {
+      "tenantId": 101,
+      "principalPublicId": "00000000-0000-4000-8000-000000000051",
+      "personPublicId": "00000000-0000-4000-8000-000000000001",
+      "userId": 51,
+      "accessRevision": 2
+    },
+    {
+      "tenantId": 101,
+      "principalPublicId": "00000000-0000-4000-8000-000000000053",
+      "personPublicId": "00000000-0000-4000-8000-000000000011",
+      "userId": 53,
+      "accessRevision": 3
+    }
+  ]
+}

@@ -1,0 +1,369 @@
+{
+  "reportId": "DWP-HRIS-MODERN-CLOSED-SET-LISTENING-PRE-EMIT-INDEPENDENT-DESIGN-REVIEW-2026-09-16-V3",
+  "schemaVersion": 3,
+  "status": "FINAL_SELF_SEALED_READ_ONLY_SOURCE_REAUDIT_FAIL",
+  "verdict": "ARCH_FAIL",
+  "reviewedAt": "2026-09-16T10:48:05+09:00",
+  "reviewer": {
+    "reviewerId": "/root/post_repair_architecture_reaudit",
+    "reviewerRole": "INDEPENDENT_POST_REPAIR_SOURCE_ONLY_ARCHITECTURE_REAUDIT_AGENT",
+    "independence": "SOURCE_AUTHOR_AND_REVIEWER_TASKS_WERE_DISTINCT",
+    "externalIdentityAttestation": "EXTERNAL_IDENTITY_ATTESTATION_NOT_CLAIMED"
+  },
+  "scope": {
+    "reviewMode": "SOURCE_ONLY_TWO_TEMPORARY_COMPOSITIONS_NO_WORKSPACE_CANDIDATE",
+    "temporaryCompositionRuns": 2,
+    "candidateOrLiveArtifactsEmitted": false,
+    "candidateOrLiveArtifactsModified": false,
+    "gateModified": false,
+    "policiesModified": false,
+    "historicalArtifactsModified": false,
+    "onlyWorkspaceWrite": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v3.json",
+    "reviewedDomains": [
+      "A_SEVEN_DUAL_CHAIN_TEMPORAL_VERSION_FAMILIES",
+      "B_LISTENING_FOUR_STREAM_PRIVACY_AND_OWNER_BOUNDARY",
+      "CANONICAL_FIVE_AND_CAUSAL_TEMPORARY_REPROJECTION",
+      "OPERATION_SEMANTICS_AND_ROUTE_TAXONOMY",
+      "V4_TO_V3_TO_V2_TABLE_SCOPE_POLICY_LINEAGE",
+      "REMOVED_TABLE_ACTIVE_REFERENCE_CLOSURE",
+      "CANDIDATE_VALIDATOR_API_COHERENCE"
+    ],
+    "excludedClaims": [
+      "G3_OR_G4_USER_JOURNEY_IMPLEMENTATION_COMPLETE",
+      "G6_PRODUCTION_ACTIVATION",
+      "PHYSICAL_POSTGRESQL_16_OR_18_EXECUTION",
+      "LIVE_PROMOTION_AUTHORIZED",
+      "REAL_IDENTITY_OR_PROCESS_ISOLATION_PROVEN"
+    ]
+  },
+  "priorReportDisposition": {
+    "path": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v2.json",
+    "fileSha256": "3c6aef861603588d558c3836ed517bfffd3a5284539bb85eb43212d5833a8cb8",
+    "sealedPayloadSha256": "9e57dabbd19ea1e0aa7a649b996e76db00dbdb1c9f6c5bc78df1a03cb142c6c8",
+    "classification": "HISTORICAL_SUPERSEDED_BY_POST_REPAIR_SOURCE_HASHES",
+    "activeSourceAuthorityClaim": "FORBIDDEN_V2_IS_NOT_CURRENT_SOURCE_AUTHORITY",
+    "materialSourceDrift": {
+      "coding-readiness/generate_modern_operation_ssot_successor.py": {
+        "v2PinnedSha256": "32d049194e262fab8ec99bef64ad25738ceae4757df7dc2bf286fce15a01d6e9",
+        "currentSha256": "e01f93f182dce49d4265be918d0c81761e71da3590e55995c5f6d7a9dbe8fb00"
+      }
+    }
+  },
+  "sourcePins": [
+    {
+      "path": "coding-readiness/modern_closed_set_design.py",
+      "sha256": "53282661fd973816e27c9e95ff74091d62da2982f24060d15a56fae9a16e43d6"
+    },
+    {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+    },
+    {
+      "path": "coding-readiness/generate_sys_listening_stream_authority_successor.py",
+      "sha256": "fc4d9e69c8ad5bc2b359b8b1e8e01cd9b123523b0ced675cba80142e29c2c3c8"
+    },
+    {
+      "path": "coding-readiness/generate_modern_closed_set_manifest.py",
+      "sha256": "0e98c782cbecb04204f8d97359d3adda5e57b20bf0f778be78205bc8bb07dec8"
+    },
+    {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256": "e01f93f182dce49d4265be918d0c81761e71da3590e55995c5f6d7a9dbe8fb00"
+    },
+    {
+      "path": "coding-readiness/generate_modern_exact_event_successor.py",
+      "sha256": "046baafd255b9eafc4459c23a1e627c3dbe7dc61493b43e3629d762cbf98683c"
+    },
+    {
+      "path": "coding-readiness/generate_modern_semantic_identity_successor.py",
+      "sha256": "b1ebf5b285b6bf2c3ccbe07eda6f6ee58c1a9647e34813b04822443e7d95e058"
+    },
+    {
+      "path": "coding-readiness/generate_modern_canonical_five_successor.py",
+      "sha256": "5f14b5239ec659951011fdb33f8ff784e2e3137aff36503eff5c563836d441d3"
+    },
+    {
+      "path": "coding-readiness/generate_modern_causal_module_successor.py",
+      "sha256": "41e4f560ed35da08b7c9428ab80c35709768ce9da82e2db075e48332f9b6370b"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256": "612c2287f971711dfa9ad039f664d47aaa303ee3427bd92bb7367cbc4e7dd10f"
+    },
+    {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py",
+      "sha256": "21d1e68138a3c961780d540e5fbb2c7b2bd1b2a86d872d43b934fb40eaa946ea"
+    }
+  ],
+  "policyLineage": {
+    "verdict": "PASS",
+    "canonicalization": "UTF8_JSON_SORT_KEYS_TRUE_SEPARATORS_COMMA_COLON_ENSURE_ASCII_FALSE_EXCLUDING_TOP_LEVEL_sealedPayloadSha256",
+    "v2": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+      "fileSha256": "64bc16def08c4a87750a656a039588db67bba5ec5fad6fac0dbd1bed638e6444",
+      "sealedPayloadSha256": "36229b77ea56f94d61e9beee431b74d0413263853bb7e3b82951ae68534bfe86",
+      "payloadSealRecomputed": true
+    },
+    "v3": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json",
+      "fileSha256": "02fe8f0e5aebf06bc2c8b3cbe09f0947138310f6c921056c8be2f43d222cbd57",
+      "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a",
+      "payloadSealRecomputed": true,
+      "predecessorV2FilePinExact": true,
+      "predecessorV2SealPinExact": true
+    },
+    "v4": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v4.json",
+      "fileSha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+      "sealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+      "payloadSealRecomputed": true,
+      "predecessorV3FilePinExact": true,
+      "predecessorV3SealPinExact": true,
+      "successorTableCount": 131,
+      "netDelta": 16,
+      "removedTableIds": [
+        "sys_hris_listening_export_receipts"
+      ]
+    }
+  },
+  "temporaryComposition": {
+    "verdict": "PASS",
+    "runs": 2,
+    "workflow": [
+      "SOURCE_DERIVED_MANIFEST",
+      "SOURCE_DERIVED_LISTENING_AUTHORITY_V2",
+      "CANONICAL_FIVE",
+      "CAUSAL_AND_MODULE_PROJECTION"
+    ],
+    "byteEquivalentArtifacts": 8,
+    "allEightArtifactsByteEquivalentAcrossRuns": true,
+    "derivedPins": {
+      "modern-capability-closed-set-manifest.v3.json": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3",
+      "sys-listening-stream-authority-successor.v2.json": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "ff951d124c04f233c8bf2f7515012ad9a421b7162cc998ddb52c1dc4b4e56290",
+      "modern-capability-exact-schema-contracts.v1.json": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88",
+      "modern-capability-event-payload-contracts.v1.json": "3e9e4c1ca92c823853fdbf0afe8b03bd66b3074b2691b0aa35acd883d90e851c",
+      "modern-capability-semantic-bindings.v1.json": "246b96c0a2dcf9945fc631f573210d82ac0a3400850a0e2617028e5663f40c34",
+      "modern-capability-public-identity-registry.v1.json": "383e3ff40e655b0ef47177cc517ab122ead637a97e2c0f58de61e4c34c5df720",
+      "modern-capability-causal-state-contracts.v2.json": "07ff767f6c87a5b5b69aa387ae2691f679b7ad3b81a55259f68271d654af6090"
+    },
+    "manifestSealedPayloadSha256": "65994ba2adf9c5ada6490562d28ff4ece2d7818df6e0819dd0a9f6413585181d",
+    "listeningAuthoritySealedPayloadSha256": "950217094f49e8761245e56c171948b074846beff8eb00602838d82e6138e66c"
+  },
+  "compositionInventory": {
+    "operations": 199,
+    "commands": 133,
+    "queries": 66,
+    "systemHandlers": 27,
+    "publicEvents": 157,
+    "tableSpecifications": 131,
+    "ownerPortOperationContracts": 18,
+    "ownerDependencyContracts": 1,
+    "physicalClosureMismatches": 0,
+    "physicalClosureCoverage": {
+      "aggregateRootsChecked": 154,
+      "commandsChecked": 133,
+      "dmlAssignmentsChecked": 5902,
+      "eventSourcesChecked": 1740,
+      "generatedResponseSourcesChecked": 3128,
+      "handlersChecked": 27,
+      "ownerPortResponseSourcesChecked": 81,
+      "ownerPortsChecked": 18,
+      "querySourcesChecked": 233,
+      "selectorsChecked": 142,
+      "stateSinksChecked": 133
+    }
+  },
+  "temporalReview": {
+    "verdict": "PASS",
+    "versionTableCount": 7,
+    "publicWriterClosedSet": {
+      "creates": 7,
+      "revises": 7,
+      "lifecycleMutations": 24,
+      "total": 38
+    },
+    "contingentSystemHandlerMutations": 3,
+    "queryClosedSet": {
+      "stableParentDetailQueries": 7,
+      "collectionQueries": 10,
+      "detailModes": [
+        "UNQUALIFIED",
+        "STATE_HISTORY",
+        "CONTENT_HISTORY"
+      ]
+    },
+    "validatedInvariants": [
+      "ROOT_INSERT_OR_CAS_AND_EXACTLY_ONE_VERSION_APPEND_SHARE_ONE_TRANSACTION",
+      "GLOBAL_ROOT_VERSION_AND_EFFECTIVE_SEGMENT_REVISION_CHAINS_ARE_DISTINCT",
+      "CORRECTION_REUSES_EXACT_SEGMENT_TIP_AND_SUPERSEDE_CREATES_SEGMENT_REVISION_ONE",
+      "LIFECYCLE_COPIES_CONTENT_POINTER_FROM_LOCKED_SEGMENT_TIP",
+      "PERSISTED_EFFECTIVE_TO_IS_NULL_ONLY_AND_DERIVED_FROM_NEXT_VISIBLE_BASE",
+      "DETAIL_HISTORY_REQUIRES_SYSTEM_AS_OF_AND_EXACT_STATE_OR_CONTENT_IDENTITY",
+      "COLLECTIONS_FORBID_PARENTLESS_EXACT_REVISION_SELECTORS",
+      "EVENTS_CARRY_STABLE_ROOT_PLUS_EXACT_STATE_AND_CONTENT_REVISION_IDENTITIES",
+      "THREE_CONTINGENT_ASYNC_HANDLERS_ATOMICALLY_CAS_ENGAGEMENT_AND_APPEND_VERSION"
+    ]
+  },
+  "listeningReview": {
+    "verdict": "PASS",
+    "exactCounts": {
+      "streams": 4,
+      "ownerServices": 2,
+      "runtimePurposes": 5,
+      "publicOperations": 10,
+      "ownerPortOperations": 18,
+      "ownerDependencyContracts": 1,
+      "ownerLocalHandlers": 9,
+      "plannedTables": 23,
+      "canonicalPublicEvents": 7,
+      "internalPortMessages": 6,
+      "privateReceiptTypes": 5,
+      "migrationReservations": 4,
+      "streamFileAllocationTriples": 4,
+      "verificationProfiles": 5,
+      "localForeignKeys": 14
+    },
+    "privateSubmission": {
+      "requestSources": [
+        "pathParameters.surveyId",
+        "body.signedParticipationCredential",
+        "body.responseToken",
+        "body.answers"
+      ],
+      "orderedRoles": [
+        "PROTECTED_TOKEN_RECEIPT_CLAIM",
+        "LATEST_STABLE_ADMISSION_FENCE",
+        "ONE_TIME_TOKEN_CONSUMPTION",
+        "ANONYMOUS_RESPONSE_WITH_PER_RESPONSE_DEK",
+        "ENCRYPTED_TYPED_ANSWER_VALUES",
+        "TOKEN_CONSUMPTION_BIND_RESPONSE",
+        "PROTECTED_TOKEN_RECEIPT_CLOSE"
+      ],
+      "privateDelivery": "OWNER_LOCAL_RESPONSE_ONLY_BROKER_AND_PUBLIC_OUTBOX_FORBIDDEN",
+      "participationEnvelopePresent": false,
+      "formRevisionPresent": false,
+      "publicEventPresent": false,
+      "outboxPresent": false
+    },
+    "workforcePlanningTerminalRefetch": {
+      "events": [
+        "WorkforceScenarioSimulated.v2",
+        "WorkforceScenarioSimulationFailed.v2"
+      ],
+      "mode": "FORBIDDEN",
+      "aggregateLookup": "FORBIDDEN",
+      "latestFallback": "FORBIDDEN",
+      "requiredResultOwnerFields": [
+        "resultReceiptId",
+        "resultReceiptRevision",
+        "resultSchemaVersion",
+        "resultDigest"
+      ]
+    },
+    "learningCompletionSkillEvidence": {
+      "source": "ownerProof.body.evidencePublicId.skillEvidenceIds[*]",
+      "bodySkillEvidenceIdsPresent": false,
+      "verdict": "PASS"
+    },
+    "validatedInvariants": [
+      "FOUR_STREAMS_HAVE_DISTINCT_SCHEMA_MIGRATION_OWNER_AND_RUNTIME_PRINCIPALS",
+      "CROSS_STREAM_AND_CROSS_SCHEMA_FOREIGN_KEYS_ARE_FORBIDDEN",
+      "EIGHTEEN_OWNER_PORTS_HAVE_CLOSED_TYPED_EXECUTION_CONTRACTS",
+      "SIX_SIGNED_INTERNAL_MESSAGES_HAVE_ONE_PRODUCER_AND_OWNER_LOCAL_INBOX_OUTBOX",
+      "ANONYMOUS_ACTIVE_AND_SUBMIT_ROUTES_HAVE_NO_PRINCIPAL_OR_CORRELATION_ID",
+      "COHORT_SUPPRESSION_FORBIDS_EXACT_SUBTHRESHOLD_SUBJECT_COUNT_AND_MEASURES",
+      "RAW_RESPONSE_EVENT_IS_FORBIDDEN",
+      "CANONICAL_FIVE_LISTENING_MARKERS_AND_NO_REVERSE_AUTHORITY_REFERENCE_PASS"
+    ]
+  },
+  "orphanRemovalReview": {
+    "verdict": "PASS",
+    "removedTableId": "sys_hris_listening_export_receipts",
+    "activeAtomCounts": {
+      "staticDesign": 0,
+      "operationProjection": 0,
+      "exactProjection": 0
+    },
+    "activeForeignKeyReferences": 0,
+    "replacementOwnerTable": "sys_hris_analytics_export_receipts",
+    "replacementPublicWriters": [
+      "modern.analytics.export.cancel",
+      "modern.analytics.export.create"
+    ],
+    "replacementOwnerHandlerWriters": [
+      "internal.analytics.export.expire",
+      "internal.analytics.export.result.consume"
+    ],
+    "replacementPublicReaders": [
+      "modern.analytics.export.query",
+      "modern.analytics.exports.query"
+    ]
+  },
+  "independentAudits": {
+    "operationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "operationsAudited": 199,
+      "hostileTestsRun": 18,
+      "hostileTestsPassed": 18,
+      "auditReportSha256": "c3a2c5445fd26e1bc0f7f5ec2900307f966930b69940d9a860474b981348cb14",
+      "selftestReportSha256": "b189502787eb1d9a723117d865cbea590de3939b8d505131fd75b672dd18ed83"
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "operationsAudited": 199,
+      "findingCount": 0,
+      "reportSha256": "751919602c7ac2b35c4d26a1af01ecfde5bcca2651d1feed09c5373a35136e8f"
+    },
+    "causalProjection": {
+      "status": "PASS",
+      "hostileAndLosslessnessTestsRun": 14,
+      "hostileAndLosslessnessTestsPassed": 14,
+      "recompositionByteEquivalent": true
+    },
+    "authorSourceSemanticMutationClosure": {
+      "status": "PASS",
+      "embeddedMutationsRun": 6,
+      "embeddedMutationsRejected": 6
+    }
+  },
+  "findings": {
+    "p0": [],
+    "p1": [
+      {
+        "findingId": "P1-EXACT-CANDIDATE-VALIDATOR-GLOBAL-SOURCE-COHERENCE",
+        "title": "Exact/event validator accepts candidate arguments but deterministically re-reads live global sources",
+        "path": "coding-readiness/generate_modern_exact_event_successor.py",
+        "lines": "5160-5168,5180-5199",
+        "evidence": {
+          "reproduction": "Call validate(candidateExact,candidateEvents,candidateManifest) over the temporary canonical-five output while live SSOT/EXACT remain the predecessor",
+          "observedError": "ValueError: exact/event contracts differ from deterministic source reprojection",
+          "candidateExactSha256": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88",
+          "candidateEventSha256": "3e9e4c1ca92c823853fdbf0afe8b03bd66b3074b2691b0aa35acd883d90e851c",
+          "cause": "validate() ignores the provenance of its exact/events arguments for its final oracle and reads module-global SSOT and EXACT paths; reciprocal semantic/identity registry enrichment in the candidate therefore compares against a live-predecessor-derived expected document",
+          "fullReadinessDirectInvocationFound": false,
+          "cliCandidateDirectorySupport": false,
+          "liveGlobalMonkeyPatchReproduction": "PASS_ONLY_WHEN_SSOT_EXACT_EVENTS_AND_MANIFEST_GLOBALS_ARE_REDIRECTED_TO_THE_SAME_TEMPORARY_CANDIDATE"
+        },
+        "risk": "A pre-promotion candidate cannot be validated through the validator's public argument surface without hidden global rebinding; candidate and live provenance can be mixed accidentally, so validator/API coherence is fail-open at the pre-emit boundary.",
+        "requiredCorrection": "Add an explicit candidate-dir or inject all source documents into validate(); perform deterministic comparison against one provenance-closed candidate set after reciprocal registry enrichment, then add a mutation proving mixed live/candidate inputs are rejected with a provenance-specific error.",
+        "disposition": "BLOCKS_ARCH_PASS_AND_CANDIDATE_EMIT_AUTHORIZATION"
+      }
+    ]
+  },
+  "severityTotals": {
+    "p0": 0,
+    "p1": 1
+  },
+  "closureDecision": {
+    "sourceDesignReadyForCandidateEmit": false,
+    "candidateEmitAuthorizedByThisReport": false,
+    "livePromotionAuthorizedByThisReport": false,
+    "gateOpenAuthorizedByThisReport": false,
+    "reason": "DOMAIN_ARCHITECTURE_COUNTS_TEMPORAL_LISTENING_OPERATION_ROUTE_CAUSAL_POLICY_LINEAGE_AND_REMOVAL_CHECKS_PASS_BUT_ONE_P1_CANDIDATE_VALIDATOR_PROVENANCE_COHERENCE_DEFECT_REMAINS",
+    "requiredNextBoundary": "REPAIR_EXACT_EVENT_CANDIDATE_VALIDATOR_PROVENANCE_COHERENCE_THEN_RUN_A_NEW_DISTINCT_SOURCE_ONLY_REAUDIT_AND_REQUIRE_P0_0_P1_0"
+  },
+  "sealCanonicalization": "UTF8_JSON_SORT_KEYS_TRUE_SEPARATORS_COMMA_COLON_ENSURE_ASCII_FALSE_EXCLUDING_TOP_LEVEL_sealedPayloadSha256",
+  "sealedPayloadSha256": "f3f46fc72d56ae2e1159b30639859e77874ee41246435986383d21ba178d9ecb"
+}

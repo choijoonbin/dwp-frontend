@@ -1,0 +1,435 @@
+{
+  "reportId": "dwp.hris.modern.causal-design.hostile-audit.2026-09-15",
+  "auditMode": "CANDIDATE_INDEPENDENT_READ_ONLY_REVIEW",
+  "auditedAt": "2026-09-15T04:15:17+09:00",
+  "status": "FAIL_CURRENT_CANDIDATE_SEALED",
+  "overallSeverity": "P0",
+  "gateDecision": "DO_NOT_OPEN_MODERN_G3_OR_MODULE_CODE_GATES",
+  "scope": {
+    "operations": 100,
+    "commands": 81,
+    "queries": 19,
+    "materializedEvents": 81,
+    "materializedSelectors": 91,
+    "requiredInsertAppendFixtureEdges": 58,
+    "requiredFixtureTransactions": 45
+  },
+  "candidateSnapshot": {
+    "note": "The Python source was being edited concurrently. This decision is bound to the hashes below; the materialized JSON remained older than the source and the generator could not reconcile them.",
+    "sha256": {
+      "modern_causal_successor.py": "225994adb09e2f4378bb468edc07f03cd4365e9c3d68d71d10efa8ffda98a9c6",
+      "generate_modern_causal_successor.py": "bfac835c1967a98fec68f94f36980e890f6a678e50d4c788e1c01d499637b5ca",
+      "validate_modern_causal_state_contracts.py": "3662b4a4cc079572dc2de1665ee8c90ff9b62b4c794d57bd94d90c63f3b4d54a",
+      "modern-capability-exact-schema-contracts.v1.json": "b28407b0b92cc4a1e13c7caf157cb37b542f0737f820ea1f4402c62ac720036a",
+      "modern-capability-event-payload-contracts.v1.json": "e6d8b354b1f008e1648fd311249bbbbbc11bbba43e5b3b643da6a35227749de4",
+      "modern-capability-semantic-bindings.v1.json": "c7a5a83f7161dc5a75ee947120f051c33d925a747ec478b6723a93bcfb09b8b4",
+      "modern-capability-public-identity-registry.v1.json": "bd88fb69d9b0a365d44531e60b481ea76071540ba2a0dd3a33346a6",
+      "modern-capability-causal-state-contracts.v2.json": "e2c8b31b6a0b14f31d7d4c883985ec5c3f25add4c3dfbf514e51b198c81c09de"
+    },
+    "reproduction": {
+      "generatorCheck": "CRASH: KeyError GovernedAiAssistanceProduced.v2",
+      "validator": "FAIL: 12 errors",
+      "validatorErrorClasses": [
+        "TRANSITION_STATE_CHECK_MISMATCH",
+        "TRANSITION_AGGREGATE_MISMATCH",
+        "INSERT_FROM_NONEXISTENT_PRESTATE",
+        "GENERATED_API_SURFACE_DRIFT",
+        "QUERY_MUTATION"
+      ]
+    }
+  },
+  "blockers": [
+    {
+      "id": "P0-SELECTOR-001",
+      "severity": "P0",
+      "title": "Every materialized selector is structurally under-specified",
+      "counts": {
+        "selectorOccurrences": 91,
+        "missingTargetTable": 91,
+        "missingTargetColumn": 91,
+        "missingSelectorType": 91,
+        "missingCardinality": 91,
+        "commandPathSelectors": 69,
+        "generatedRootSelectors": 22
+      },
+      "affectedSpecialSelectors": {
+        "relatedParent": [
+          "modern.recruiting.offer.issue:pathParameters.candidateCaseId->ppl_rec_candidate_cases.public_id",
+          "modern.opportunity.apply:pathParameters.opportunityId->prf_mkt_opportunities.public_id",
+          "modern.opportunity.shortlist:pathParameters.opportunityId->prf_mkt_opportunities.public_id",
+          "modern.opportunity.selection.record:pathParameters.opportunityId->prf_mkt_opportunities.public_id",
+          "modern.compplan.proposal.submit:pathParameters.proposalId->prf_cmp_proposals.public_id",
+          "modern.compplan.snapshot.publish:pathParameters.cycleId->prf_cmp_cycles.public_id",
+          "modern.wfm.schedule.optimize:pathParameters.forecastId->tme_wfm_demand_forecasts.public_id",
+          "modern.listening.response.submit:pathParameters.surveyId->sys_hris_listening_surveys.public_id",
+          "modern.listening.action.create:pathParameters.surveyId->sys_hris_listening_surveys.public_id"
+        ],
+        "version": [
+          "modern.onboarding.template.publish:pathParameters.version",
+          "modern.benefits.plan.publish:pathParameters.version",
+          "modern.skills.taxonomy.validate:pathParameters.version",
+          "modern.skills.taxonomy.publish:pathParameters.version",
+          "modern.analytics.metric.validate:pathParameters.version",
+          "modern.analytics.metric.publish:pathParameters.version"
+        ],
+        "externalOwner": [
+          "modern.onboarding.task.complete:pathParameters.taskId->HRM.OnboardingTask"
+        ],
+        "naturalKey": [
+          "modern.ai.kill.switch:pathParameters.useCaseKey->sys_hris_ai_use_policies.use_case_key"
+        ]
+      },
+      "finding": "The materialized contract reduces public IDs, related parents, versions, external-owner references and a natural key to the same tenant_public_id_lookup pattern. Type, id-space, exact physical column, cardinality, version/as-of and causal join are not executable.",
+      "acceptance": "Every selector occurrence must declare ROOT_TARGET, RELATED_PARENT, VERSION, NATURAL_KEY, OWNER_PORT or GENERATED_ROOT; source type/id-space; exact target table/column/type; tenant/purpose/as-of/version filters; cardinality and an executable causal join. No implicit first row is permitted."
+    },
+    {
+      "id": "P0-QUERY-001",
+      "severity": "P0",
+      "title": "All 19 queries are modeled with command/write effects",
+      "counts": {
+        "affectedQueries": 19,
+        "invalidRequiredInputUses": 22,
+        "correlationToOutbox": 19,
+        "genericPathLookup": 3
+      },
+      "pathFields": [
+        "modern.hrservice.case.query:pathParameters.caseId",
+        "modern.skills.worker.query:pathParameters.workerId",
+        "modern.listening.cohorts.query:pathParameters.surveyId"
+      ],
+      "affectedOperations": [
+        "modern.recruiting.requisitions.query",
+        "modern.onboarding.self.query",
+        "modern.workforceplan.scenarios.query",
+        "modern.benefits.self.plans.query",
+        "modern.hrservice.case.query",
+        "modern.contingent.engagements.query",
+        "modern.skills.taxonomies.query",
+        "modern.skills.worker.query",
+        "modern.growth.self.query",
+        "modern.learning.catalog.query",
+        "modern.opportunity.catalog.query",
+        "modern.succession.plans.query",
+        "modern.compplan.cycles.query",
+        "modern.wfm.forecasts.query",
+        "modern.listening.active.query",
+        "modern.listening.cohorts.query",
+        "modern.analytics.metrics.query",
+        "modern.analytics.cohorts.query",
+        "modern.ai.policies.query"
+      ],
+      "acceptance": "Queries have an exact read plan and filters only; correlation is observability context. They create no command receipt, outbox row or mutation, including under error and pagination paths."
+    },
+    {
+      "id": "P0-INPUT-EFFECT-001",
+      "severity": "P0",
+      "title": "Required inputs are renamed guards rather than causal effects",
+      "counts": {
+        "materializedDecisionInputUses": 356,
+        "affectedCommands": 81,
+        "requiredCommandBodyFields": 356,
+        "guardOnlyInExactLineage": 200,
+        "commandsWithGuardOnlyBodyFields": 81
+      },
+      "criticalAffectedFields": [
+        "modern.recruiting.requisition.create:body.title,body.employmentType,body.decisionReceiptId",
+        "modern.recruiting.offer.issue:body.currency,body.amount,body.decisionReceiptId",
+        "modern.recruiting.hire.record:body.decision,body.reasonCode,body.humanDecisionReceiptId,body.effectiveDate,body.offerId",
+        "modern.onboarding.template.publish:body.approvalReceiptId,body.contentDigest,body.templateVersionId",
+        "modern.onboarding.task.complete:body.completionCode",
+        "modern.benefits.enrollment.submit:body.coverageOptionCode,body.submissionDigest",
+        "modern.hrservice.case.respond:body.responseDigest,body.visibility",
+        "modern.skills.evidence.verify:body.evidencePublicId,body.skillId,body.skillPublicId",
+        "modern.learning.completion.verify:body.evidencePublicId,body.sourceRevision",
+        "modern.opportunity.shortlist:body.decision,body.explanationId,body.humanDecisionReceiptId",
+        "modern.compplan.snapshot.publish:body.contentDigest,body.approvalReceiptId,body.lineCount,body.workerPublicId,body.assignmentPublicId,body.componentCode,body.currencyCode,body.approvedAmount",
+        "modern.wfm.schedule.optimize:body.inputSnapshotId,body.ruleVersion,body.deterministicSeed,body.fairnessEvaluationId,body.blockingViolationCount,body.fairnessMetricCount,body.approvalReceiptId,body.schedulePeriodPublicId",
+        "modern.wfm.schedule.validate:body.validationSuiteVersion,body.inputDigest,body.inputSnapshotId,body.fairnessEvaluationId,body.blockingViolationCount,body.fairnessMetricCount",
+        "modern.wfm.schedule.submit:body.submissionDigest,body.inputSnapshotId,body.fairnessEvaluationId,body.blockingViolationCount,body.fairnessMetricCount,body.policyVersionId",
+        "modern.wfm.schedule.publish:body.approvalReceiptId,body.schedulePeriodPublicId,body.contentDigest",
+        "modern.analytics.metric.create:body.cohortDefinitionId,body.anonymityThreshold,body.asOf,body.calculatedAt,body.subjectCount",
+        "modern.ai.assist.create:body.sourceReferenceIds,body.instructionDigest,body.humanConfirmation,body.sourceRefs"
+      ],
+      "finding": "decision_input.*, TRANSITION_GUARD and request-digest membership do not demonstrate that changing a required business input changes a persisted fact, exact owner validation, deterministic derivation, response or reviewed event. The validator checks labels, not observable dataflow.",
+      "acceptance": "Every required and optional field is enumerated in the independent oracle. Each accepted field has at least one concrete effect with an exact physical sink, typed owner-refetch receipt, deterministic derived sink, query filter, CAS selector or conditional output assertion. Renamed guards and digest-only membership cannot be the sole semantic effect."
+    },
+    {
+      "id": "P0-ROOT-DML-001",
+      "severity": "P0",
+      "title": "First-write aggregate selection and unordered mutation unions lose multi-row lifecycle causality",
+      "counts": {
+        "commands": 81,
+        "knownWrongOrIncompleteAggregateOperations": 8,
+        "secondaryRowsMisclassifiedAsUpdate": 6,
+        "requiredInsertAppendEdgesNotExercisedByPgProbe": 58,
+        "requiredTransactionsNotExercised": 45
+      },
+      "wrongOrIncompleteAggregateOperations": [
+        "modern.recruiting.offer.issue:existing candidate is CAS parent; offer is inserted and candidate must become OFFERED atomically",
+        "modern.recruiting.hire.record:hire is pending until HRM owner confirms handoff; candidate must not be marked HIRED from caller decision",
+        "modern.onboarding.template.publish:path version must select an immutable template version aggregate",
+        "modern.onboarding.task.complete:task completion evidence, task state and assignment reduction are distinct ordered effects",
+        "modern.benefits.plan.publish:path version must select an immutable benefit-plan version",
+        "modern.compplan.snapshot.publish:existing cycle APPROVED->PUBLISHED is CAS root; snapshot header and 1..N lines are immutable children",
+        "modern.wfm.schedule.publish:validated candidate, approval receipt and canonical schedule publication must be resolved before ledger append",
+        "modern.ai.kill.switch:useCaseKey is a natural-key selector, not a UUID public-id aggregate selector"
+      ],
+      "secondaryInsertMisclassifiedAsUpdate": [
+        "modern.workforceplan.scenario.create->ppl_wfp_scenario_revisions",
+        "modern.hrservice.case.create->ppl_hrs_case_actions",
+        "modern.skills.taxonomy.create->prf_skl_taxonomy_versions",
+        "modern.growth.profile.create->prf_grw_aspirations",
+        "modern.analytics.metric.create->sys_hris_metric_versions",
+        "modern.ai.policy.create->sys_hris_ai_policy_versions"
+      ],
+      "acceptance": "Each command declares an ordered DML plan. Every step has disposition, exact selector, assignment source per mutable column, expected row count and failure behavior; immutable columns are not updated; CAS increments exactly once. The transaction includes the real receipt and outbox and is proven atomically."
+    },
+    {
+      "id": "P0-EVENT-001",
+      "severity": "P0",
+      "title": "All materialized events discard domain payload and source causality",
+      "counts": {
+        "genericSixFieldEvents": 81,
+        "events": 81,
+        "registeredStableV1EventsMissing": 32,
+        "registeredStableV1Events": 32,
+        "eventsWithBlankForeignBusinessReferences": 81
+      },
+      "registeredEventsMissing": [
+        "AiAssistanceProduced.v1",
+        "AiPolicyChanged.v1",
+        "BenefitAdministrationChanged.v1",
+        "BenefitEnrollmentChanged.v1",
+        "CandidateHired.v1",
+        "CandidateStageChanged.v1",
+        "CompensationPlanApproved.v1",
+        "CompensationPlanChanged.v1",
+        "ContingentAccessExpired.v1",
+        "ContingentEngagementChanged.v1",
+        "GrowthEvidenceLinked.v1",
+        "GrowthProfileChanged.v1",
+        "HrCaseChanged.v1",
+        "HrCaseResolved.v1",
+        "LearningAssignmentChanged.v1",
+        "LearningCompletionVerified.v1",
+        "ListeningProgramChanged.v1",
+        "ListeningSurveyPublished.v1",
+        "MetricDefinitionPublished.v1",
+        "MetricProjectionChanged.v1",
+        "OnboardingJourneyChanged.v1",
+        "OnboardingJourneyCompleted.v1",
+        "OpportunityApplicationChanged.v1",
+        "OpportunitySelectionRecorded.v1",
+        "SkillsTaxonomyPublished.v1",
+        "SuccessionPlanChanged.v1",
+        "SuccessionPlanPublished.v1",
+        "WorkerSkillEvidenceVerified.v1",
+        "WorkforcePlanPublished.v1",
+        "WorkforceScenarioChanged.v1",
+        "WorkforceScheduleCandidateGenerated.v1",
+        "WorkforceSchedulePublished.v1"
+      ],
+      "finding": "The materialized event contract has only aggregateId/fromState/toState/aggregateVersion/occurredAt/correlationId for every command. The source draft attempts to repair this by copying every path/body field into events; that would merely expose caller assertions, including sensitive fields, and still would not prove committed facts.",
+      "criticalPayloadAcceptance": {
+        "CandidateHired.v1": [
+          "candidateCaseId",
+          "workerPublicId",
+          "effectiveDate",
+          "hireHandoffReceiptId",
+          "aggregateVersion"
+        ],
+        "OnboardingJourneyCompleted.v1": [
+          "assignmentId",
+          "workerPublicId",
+          "templateVersionId",
+          "completedAt",
+          "completionRevision",
+          "aggregateVersion"
+        ],
+        "BenefitEnrollmentChanged.v1": [
+          "enrollmentId",
+          "workerPublicId",
+          "planVersionId",
+          "coverageOptionCode",
+          "fromState",
+          "toState",
+          "aggregateVersion"
+        ],
+        "CompensationPlanApproved.v1": [
+          "planId",
+          "cycleId",
+          "approvalRevision",
+          "effectiveDate",
+          "snapshotId",
+          "payloadDigest"
+        ],
+        "WorkforceSchedulePublished.v1": [
+          "publicationPublicId",
+          "candidatePublicId",
+          "candidateRevision",
+          "canonicalSchedulePeriodPublicId",
+          "approvalReceiptPublicId",
+          "candidateDigest"
+        ]
+      },
+      "acceptance": "Preserve each stable registered event or perform an explicit version migration that atomically updates ownership, trace, AsyncAPI and every consumer. Every field is sourced from same-transaction post-state or a typed tenant/purpose/version/as-of owner refetch. Sensitivity and audience are explicit; raw request mirroring is forbidden. Outbox insert is in the business transaction and publish is after commit."
+    },
+    {
+      "id": "P0-TIME-001",
+      "severity": "P0",
+      "title": "Event occurrence time is aggregate creation or unrelated business time",
+      "counts": {
+        "nonTransactionClockOperations": 58,
+        "updateTransitionsUsingCreatedAtOrCompletedAt": 53,
+        "createTransitionsUsingUnrelatedCompletedAt": 5
+      },
+      "unrelatedFamilies": [
+        "modern.learning.* uses prf_lrn_completion_evidence.completed_at, including offering creation/publish and enrollment/start",
+        "modern.listening.* uses sys_hris_listening_actions.completed_at, including response and survey creation/publish/close"
+      ],
+      "acceptance": "occurredAt is the owner transaction clock captured for the causal transition; createdAt and domain completion timestamps remain separate payload facts."
+    },
+    {
+      "id": "P0-OPTIONALITY-001",
+      "severity": "P0",
+      "title": "Optional-field semantics are absent and optional-to-required edges remain unsafe",
+      "counts": {
+        "optionalFieldsAbsentFromCausalContract": 86,
+        "affectedOperations": 48,
+        "optionalCommandFields": 29,
+        "affectedCommands": 29,
+        "knownOptionalToRequiredEdges": 6
+      },
+      "knownEdges": [
+        "modern.contingent.engagement.create:body.effectiveTo->ppl_cwk_engagements.effective_to",
+        "modern.contingent.engagement.submit:body.effectiveDate->ppl_cwk_engagements.effective_from",
+        "modern.compplan.cycle.create:body.effectiveTo->prf_cmp_cycles.effective_to",
+        "modern.compplan.proposal.submit:body.effectiveDate->prf_cmp_proposals.effective_date",
+        "modern.compplan.proposal.submit:body.effectiveDate->prf_cmp_cycles.effective_from",
+        "modern.recruiting.candidate.stage:body.decisionReceiptId->CandidateStageChanged.v1.decisionReceiptId"
+      ],
+      "acceptance": "All optional inputs have ABSENT and PRESENT cases. An optional value may feed a required column/event only under an explicit total deterministic default or a conditional payload/schema branch."
+    },
+    {
+      "id": "P0-IDENTITY-001",
+      "severity": "P0",
+      "title": "Public identity equality and distinctness are not enforced",
+      "counts": {
+        "pathBodyEqualityGaps": 3,
+        "compensationDistinctIdentityFields": 3
+      },
+      "pathBodyEqualityGaps": [
+        "modern.skills.evidence.verify:path.evidenceId == body.evidencePublicId",
+        "modern.opportunity.apply:path.opportunityId == body.opportunityId",
+        "modern.compplan.snapshot.publish:path.cycleId == body.cyclePublicId"
+      ],
+      "compensationDistinctSources": [
+        "snapshotId->prf_cmp_approved_snapshots.public_id",
+        "planId->prf_cmp_approved_snapshots.plan_public_id",
+        "cycleId->prf_cmp_approved_snapshots.cycle_public_id"
+      ],
+      "acceptance": "Explicit equality constraints reject disagreement, while snapshot/plan/cycle IDs are asserted pairwise distinct and mapped to distinct typed physical or owner sources."
+    },
+    {
+      "id": "P0-COMP-SNAPSHOT-001",
+      "severity": "P0",
+      "title": "Compensation snapshot cannot represent or prove the canonical 1..N approved plan",
+      "operation": "modern.compplan.snapshot.publish",
+      "affectedFields": [
+        "path.cycleId",
+        "body.cyclePublicId",
+        "body.planPublicId",
+        "body.approvalReceiptId",
+        "body.contentDigest",
+        "body.lineCount",
+        "body.workerPublicId",
+        "body.assignmentPublicId",
+        "body.componentCode",
+        "body.currencyCode",
+        "body.approvedAmount"
+      ],
+      "finding": "The request supplies lineCount but only one scalar line. The response permits 1..100000 lines. A caller can claim N while one line is appended; approval and content digest are not authoritative owner-refetched facts, and cycle CAS is not the selected lifecycle root.",
+      "acceptance": "APPROVED cycle CAS, authoritative approval refetch, immutable header plus exactly N typed lines, recomputed canonical digest/count/total, distinct IDs and CompensationPlanApproved.v1 post-state payload are all in one transaction."
+    },
+    {
+      "id": "P0-WFM-001",
+      "severity": "P0",
+      "title": "WFM accepts engine and approval outcomes from the caller",
+      "operations": [
+        "modern.wfm.forecast.create",
+        "modern.wfm.schedule.optimize",
+        "modern.wfm.schedule.validate",
+        "modern.wfm.schedule.submit",
+        "modern.wfm.schedule.publish"
+      ],
+      "affectedFields": [
+        "inputSnapshotId",
+        "fairnessEvaluationId",
+        "blockingViolationCount",
+        "fairnessMetricCount",
+        "approvalReceiptId",
+        "schedulePeriodPublicId",
+        "policyVersionId"
+      ],
+      "acceptance": "Optimization consumes typed demand/constraint inputs; engine produces immutable evaluation lines/receipt; submission creates a real approval request/outbox; publication refetches an approved receipt and invokes the canonical schedule owner port. Counts, fairness result and schedule period are computed/refetched, never trusted caller outcomes."
+    },
+    {
+      "id": "P1-ORACLE-001",
+      "severity": "P1",
+      "blocking": true,
+      "title": "Validator imports candidate state/write choices and therefore self-certifies",
+      "evidence": [
+        "validate_modern_causal_state_contracts.py imports COMMAND_WRITES, STATE and state_column_for from modern_causal_successor.py",
+        "validator also imports build_postgres_feasibility_ddl from the candidate-family validator",
+        "post-state closure only re-observes a declared mutation source, not executed DML",
+        "foreignBusinessReferences=[] and one-event-per-command are enforced as shape rather than independently reviewed semantics",
+        "self-tests mutate the same candidate representation and expected labels"
+      ],
+      "acceptance": "Validation is driven by a separately sealed, reviewer-owned oracle. Candidate code is never imported. The validator compares candidate outputs to explicit operation/field/DML/event expectations and contains negative tests proving each blocker class is detected."
+    },
+    {
+      "id": "P1-PG-PROBE-001",
+      "severity": "P1",
+      "blocking": true,
+      "title": "PostgreSQL probe does not exercise operation transactions",
+      "counts": {
+        "tablesSeededArbitrarily": 56,
+        "broadRootUpdates": 81,
+        "fakeTempEvents": 81,
+        "actualOperationTransactions": 0,
+        "actualInsertAppendEdges": 0,
+        "realReceiptOutboxAssertions": 0,
+        "replayConflictAssertions": 0,
+        "stepRollbackAssertions": 0,
+        "postgresMajors": 1
+      },
+      "acceptance": "Run isolated real operation transactions on PostgreSQL 16 and 18 for all 45 operations and 58 fixed INSERT/APPEND edges. Assert exact seed/select/CAS/DML/receipt/outbox/replay/digest conflict/stale/tenant/purpose behavior and inject failure after every ordered step to prove rollback."
+    }
+  ],
+  "independentOracleRequirement": {
+    "path": "../modern-causal-independent-oracle.v1.json",
+    "candidateMayGenerateOrRewrite": false,
+    "mustCover": [
+      "100 operation modes and exact query read plans",
+      "all required and optional request fields with concrete effects",
+      "typed ROOT_TARGET/RELATED_PARENT/VERSION/NATURAL_KEY/OWNER_PORT selectors",
+      "ordered per-table DML with assignments, selectors, row counts, CAS and rollback points",
+      "physical transition sink and CHECK-compatible post-state",
+      "stable event type and every payload source/audience/sensitivity",
+      "receipt and outbox same-transaction write plus after-commit publication",
+      "public identity equality and distinctness constraints"
+    ],
+    "fixturePath": "../modern-causal-independent-pg-fixtures.v1.json",
+    "validatorPath": "../validate_modern_causal_independent_oracle.py"
+  },
+  "releaseAcceptance": [
+    "Current candidate remains sealed FAIL; changing source without materializing all pinned artifacts does not change the decision.",
+    "Independent oracle validator reports zero structural and semantic errors without importing candidate modules.",
+    "All 81 commands and 19 queries have explicit operation-level acceptance records.",
+    "Every request field, including 86 optional fields, has an independently reviewed effect/absence contract.",
+    "All 91 current selector occurrences are replaced by executable typed selectors; no generic lookup remains.",
+    "Stable event payload and consumer compatibility are preserved or explicitly migrated.",
+    "PostgreSQL 16 and 18 fixtures execute all 45 operation transactions and 58 INSERT/APPEND edges with real receipts/outbox, replay/conflict/stale/tenant/purpose and step rollback evidence.",
+    "A second independent reviewer signs the oracle hash and execution evidence before any modern module code gate opens."
+  ]
+}

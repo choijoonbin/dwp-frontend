@@ -1,0 +1,323 @@
+{
+  "reportId": "dwp.hris.modern-independent-successor.initial-findings.v1",
+  "status": "FAIL",
+  "reviewBoundary": "CANDIDATES_ONLY_NO_AUTHOR_FILE_MUTATION",
+  "capturedOn": "2026-09-15",
+  "expectedClosedSet": {
+    "operations": 199,
+    "commands": 133,
+    "queries": 66,
+    "handlers": 25,
+    "publicEvents": 155,
+    "tables": 106
+  },
+  "findings": [
+    {
+      "code": "C-MANIFEST-OPERATION-EVENT-CLOSURE",
+      "severity": "P0",
+      "artifact": "../modern-capability-closed-set-manifest.v3.json",
+      "detail": "Eight operation eventIds still name removed predecessor events although publicEventIds contains the successor set.",
+      "counterexamples": [
+        ["modern.contingent.engagement.activate", "ContingentEngagementActivated.v2", "ContingentAccessGrantRequested.v2"],
+        ["modern.listening.action.complete", "EmployeeListeningActionCompleted.v2", "EmployeeListeningActionCompleted.v3"],
+        ["modern.listening.action.create", "EmployeeListeningActionCreated.v2", "EmployeeListeningActionCreated.v3"],
+        ["modern.listening.response.submit", "EmployeeListeningResponseSubmitted.v2", null],
+        ["modern.listening.survey.close", "EmployeeListeningSurveyClosed.v2", "EmployeeListeningSurveyClosed.v3"],
+        ["modern.listening.survey.create", "EmployeeListeningSurveyCreated.v2", "EmployeeListeningSurveyCreated.v3"],
+        ["modern.listening.survey.publish", "EmployeeListeningSurveyPublished.v2", "EmployeeListeningSurveyPublished.v3"],
+        ["modern.ai.assist.create", "GovernedAiAssistanceProduced.v2", "GovernedAiAssistanceRequested.v2"]
+      ]
+    },
+    {
+      "code": "C-QUERY-EXACT-TUPLE-MISSING",
+      "severity": "P0",
+      "artifact": "../modern-capability-operation-causal-contract-ssot.v2.json",
+      "requiredMembers": [
+        "projectionTuple.responseSchema",
+        "projectionTuple.entity",
+        "projectionTuple.physicalSources",
+        "tenantPep",
+        "purpose",
+        "population",
+        "asOf",
+        "freshness",
+        "pagination"
+      ],
+      "operationIds": [
+        "modern.ai.policies.query",
+        "modern.analytics.metrics.query",
+        "modern.benefits.self.plans.query",
+        "modern.compplan.cycles.query",
+        "modern.contingent.engagements.query",
+        "modern.growth.self.query",
+        "modern.hrservice.case.query",
+        "modern.learning.catalog.query",
+        "modern.listening.active.query",
+        "modern.listening.cohorts.query",
+        "modern.onboarding.self.query",
+        "modern.opportunity.catalog.query",
+        "modern.recruiting.requisitions.query",
+        "modern.skills.taxonomies.query",
+        "modern.skills.worker.query",
+        "modern.succession.plans.query",
+        "modern.wfm.forecasts.query",
+        "modern.workforceplan.scenarios.query"
+      ]
+    },
+    {
+      "code": "C-BUSINESS-PROVENANCE-COMMAND-RECEIPT-ABUSE",
+      "severity": "P0",
+      "artifact": "../modern-capability-operation-causal-contract-ssot.v2.json",
+      "requiredTerminalCount": 0,
+      "currentCount": 13,
+      "counterexamples": [
+        {
+          "operationId": "modern.benefits.enrollment.decide",
+          "path": "/inputEffects/4/effects/0",
+          "currentSource": "ppl_command_receipts authorization/field-policy revisions",
+          "requiredSource": "typed Approval decision proof plus immutable benefit enrollment decision fact",
+          "physicalLedger": "ppl_bnf_enrollment_decisions"
+        },
+        {
+          "operationId": "modern.benefits.enrollment.submit",
+          "path": "/inputEffects/2/effects/0",
+          "currentSource": "ppl_command_receipts authorization/field-policy revisions",
+          "requiredSource": "persisted coverage_level, submission_digest and submitted lifecycle fact",
+          "physicalLedger": "ppl_bnf_enrollments"
+        },
+        {
+          "operationId": "modern.compplan.budget.allocate",
+          "path": "/inputEffects/7/effects/0",
+          "currentSource": "prf_command_receipts authorization/field-policy revisions",
+          "requiredSource": "entry kind, amount, currency, organization and sequence in append-only budget facts",
+          "physicalLedger": "prf_cmp_budget_ledger"
+        },
+        {
+          "operationId": "modern.compplan.plan.approve",
+          "path": "/inputEffects/4/effects/0",
+          "currentSource": "prf_command_receipts authorization/field-policy revisions",
+          "requiredSource": "exact target-bound Approval receipt id, decision version, outcome and input digest",
+          "physicalLedger": "prf_cmp_plans or a dedicated immutable compensation approval-proof ledger"
+        },
+        {
+          "operationId": "modern.growth.profile.archive",
+          "path": "/inputEffects/5/effects/0",
+          "currentSource": "prf_command_receipts plus body.portabilityExportRequested boolean",
+          "requiredSource": "remove the boolean/effect; invoke modern.growth.export.request as a separate async intent",
+          "physicalLedger": "prf_grw_portability_export_receipts"
+        },
+        {
+          "operationId": "modern.onboarding.task.complete",
+          "path": "/inputEffects/5/effects/0",
+          "currentSource": "ppl_command_receipts authorization/field-policy revisions",
+          "requiredSource": "task completion code, owner-clock time, task revision and immutable evidence",
+          "physicalLedger": "ppl_jny_task_evidence plus task/assignment revision facts"
+        },
+        {
+          "operationId": "modern.opportunity.selection.record",
+          "path": "/inputEffects/5/effects/0",
+          "currentSource": "prf_command_receipts authorization/field-policy revisions",
+          "requiredSource": "exact target-bound human Approval proof and selection decision fact",
+          "physicalLedger": "prf_mkt_application_decisions"
+        },
+        {
+          "operationId": "modern.opportunity.shortlist",
+          "path": "/inputEffects/5/effects/0",
+          "currentSource": "prf_command_receipts authorization/field-policy revisions",
+          "requiredSource": "exact target-bound human Approval proof, match provenance and shortlist decision fact",
+          "physicalLedger": "prf_mkt_application_decisions and prf_mkt_match_explanations"
+        },
+        {
+          "operationId": "modern.recruiting.candidate.stage",
+          "path": "/inputEffects/4/effects/0",
+          "currentSource": "ppl_command_receipts authorization/field-policy revisions",
+          "requiredSource": "from/to stage, reason, transition ordinal and owner-clock time",
+          "physicalLedger": "ppl_rec_candidate_stage_history"
+        },
+        {
+          "operationId": "modern.recruiting.hire.record",
+          "path": "/inputEffects/4/effects/0",
+          "currentSource": "ppl_command_receipts authorization/field-policy revisions",
+          "requiredSource": "accepted-offer lock plus exact target-bound human decision proof",
+          "physicalLedger": "ppl_rec_hire_requests and an immutable approval-proof fact"
+        },
+        {
+          "operationId": "modern.skills.evidence.verify",
+          "path": "/inputEffects/6/effects/2",
+          "currentSource": "prf_command_receipts authorization/field-policy revisions",
+          "requiredSource": "exact evidence-owner verification receipt id/version/outcome/input digest",
+          "physicalLedger": "prf_skl_worker_evidence or a dedicated immutable verification-proof ledger"
+        },
+        {
+          "operationId": "modern.succession.plan.approve",
+          "path": "/inputEffects/4/effects/0",
+          "currentSource": "prf_command_receipts authorization/field-policy revisions",
+          "requiredSource": "exact target-bound Approval receipt id/version/outcome/input digest",
+          "physicalLedger": "dedicated immutable succession approval-proof ledger or write-once plan-version fields"
+        },
+        {
+          "operationId": "modern.workforceplan.scenario.approve",
+          "path": "/inputEffects/4/effects/0",
+          "currentSource": "ppl_command_receipts authorization/field-policy revisions",
+          "requiredSource": "exact target-bound Approval receipt id/version/outcome/input digest",
+          "physicalLedger": "dedicated immutable workforce-plan approval-proof ledger"
+        }
+      ],
+      "asyncIntentProofBoundaries": [
+        {
+          "operationId": "modern.growth.export.request",
+          "requestFact": "append replay-stable REQUESTED export intent",
+          "completionHandler": "internal.growth.portability-export.result.consume",
+          "requiredProof": "immutable result object id/version/digest/expiry; restart and replay reconstruct from durable rows"
+        },
+        {
+          "operationId": "modern.ai.assist.create",
+          "requestFact": "insert replay-stable governed assistance request",
+          "completionHandler": "internal.ai.assistance-result.consume",
+          "requiredProof": "append sys_hris_ai_provenance_receipts with exact governed input/output and human-oversight proof"
+        }
+      ]
+    },
+    {
+      "code": "C-PRODUCER-CLOSURE",
+      "severity": "P0",
+      "unresolvedWriterZero": [
+        {
+          "table": "ppl_bnf_provider_receipts",
+          "producer": "internal.benefits.provider-result.consume",
+          "currentWrites": ["ppl_bnf_enrollments"],
+          "requiredWrites": ["ppl_bnf_provider_receipts", "ppl_bnf_provider_requests", "ppl_bnf_enrollments"]
+        },
+        {
+          "table": "ppl_hrs_sla_receipts",
+          "producer": "internal.hrservice.sla-milestone.consume",
+          "currentWrites": ["ppl_hrs_cases"],
+          "requiredWrites": ["ppl_hrs_sla_receipts", "ppl_hrs_cases"]
+        },
+        {
+          "table": "ppl_cwk_sponsor_assignments",
+          "producer": "modern.contingent.engagement.create",
+          "currentWrites": ["ppl_cwk_engagements"],
+          "requiredWrites": ["ppl_cwk_engagements", "ppl_cwk_sponsor_assignments"]
+        }
+      ],
+      "unresolvedUpdateOnly": [
+        {
+          "table": "prf_cmp_proposals",
+          "producer": "modern.compplan.proposal.upsert",
+          "preStates": ["NONE", "DRAFT"],
+          "currentActions": ["UPDATE_CAS"],
+          "requiredActions": ["INSERT_WHEN_NONE", "UPDATE_CAS_WHEN_DRAFT"]
+        }
+      ]
+    },
+    {
+      "code": "C-REENTRY-PROJECTION-NO-QUERY",
+      "severity": "P0",
+      "artifact": "../modern-physical-successor/modern-query-projection-physical-contracts.v3.json",
+      "projectionIds": [
+        "hrm.recruiting.hire.handoff.reentry.v3",
+        "hrm.contingent.engagement.reentry.v3",
+        "hrm.contingent.sponsor.reentry.v3",
+        "per.succession.plan.reentry.v3",
+        "per.compensation.cycle.reentry.v3",
+        "per.compensation.plan.reentry.v3",
+        "tim.wfm.validation.reentry.v3",
+        "sys.listening.cohort-insight.reentry.v3"
+      ],
+      "detail": "Every public authorized re-entry projection must name at least one parent/detail public query or an exact authorized internal query."
+    },
+    {
+      "code": "C-CANONICAL-PHYSICAL-SCHEMA-DIVERGENCE",
+      "severity": "P0",
+      "canonical": "../modern-capability-exact-schema-contracts.v1.json",
+      "physical": "../modern-physical-successor/modern-query-projection-physical-contracts.v3.json",
+      "tableIdClosure": 106,
+      "tablesWithColumnSetMismatch": 106,
+      "canonicalColumnsMissingFromPhysical": 1360,
+      "physicalColumnsAbsentFromCanonical": 909,
+      "example": {
+        "table": "ppl_rec_candidate_cases",
+        "canonicalOnly": ["stage", "status", "aggregate_version", "requisition_id", "source_candidate_key"],
+        "physicalOnly": ["current_stage", "lifecycle_state", "version", "requisition_public_id", "stage_revision"]
+      },
+      "requiredDisposition": "Choose one reviewed schema model, regenerate the canonical five and physical artifacts from independently authored authorities, then require exact column/type/nullability/default/key/check agreement."
+    },
+    {
+      "code": "C-LIFECYCLE-AND-TEMPORAL-CLOSURE",
+      "severity": "P0",
+      "duplicateLifecycleColumns": {
+        "ppl_rec_candidate_cases": ["stage", "status"],
+        "sys_hris_listening_actions": ["state", "status"],
+        "sys_hris_listening_responses": ["state", "status"],
+        "sys_hris_listening_surveys": ["state", "status"]
+      },
+      "missingIntervalPairChecks": [
+        ["ppl_bnf_plan_versions", "effective_from", "effective_to"],
+        ["ppl_bnf_plan_versions", "valid_from", "valid_to"],
+        ["ppl_jny_template_versions", "effective_from", "effective_to"],
+        ["prf_grw_profiles", "valid_from", "valid_to"],
+        ["prf_skl_taxonomy_versions", "effective_from", "effective_to"],
+        ["sys_hris_ai_policy_versions", "effective_from", "effective_to"],
+        ["sys_hris_ai_use_policies", "valid_from", "valid_to"],
+        ["sys_hris_metric_versions", "effective_from", "effective_to"],
+        ["tme_wfm_schedule_candidates", "period_start", "period_end"]
+      ]
+    },
+    {
+      "code": "C-PUBLICATION-PROOF-NOT-DURABLE",
+      "severity": "P0",
+      "publishOperationCount": 13,
+      "missingOrUnsafe": [
+        "modern.recruiting.requisition.publish",
+        "modern.onboarding.template.publish",
+        "modern.benefits.plan.publish",
+        "modern.skills.taxonomy.publish",
+        "modern.learning.offering.publish",
+        "modern.opportunity.publish",
+        "modern.listening.survey.publish",
+        "modern.succession.plan.publish",
+        "modern.workforceplan.scenario.publish",
+        "modern.ai.policy.publish"
+      ],
+      "detail": "The operation must persist exact receipt subject/version/action/input digest/purpose/tenant in the immutable version or proof ledger; a caller field or transient refetch is insufficient."
+    },
+    {
+      "code": "C-TYPED-COLLECTION-AND-RECURRENCE-NORMALIZATION",
+      "severity": "P0",
+      "uuidArrayColumnsRequiringTypedOrdinalChildren": [
+        "prf_grw_coaching_notes.evidence_refs",
+        "prf_grw_profile_revisions.evidence_refs",
+        "prf_lrn_completion_evidence.skill_evidence_ids",
+        "sys_hris_analytics_export_receipts.metric_projection_ids",
+        "tme_wfm_schedule_candidates.time_group_ids"
+      ],
+      "unsafeRecurrenceUniqueness": [
+        "ppl_cwk_engagements(tenant_id,worker_public_id,effective_from)",
+        "ppl_cwk_sponsor_assignments(tenant_id,contingent_engagement_id,valid_from)"
+      ],
+      "wfmDuplicateModelColumns": [
+        "tme_wfm_forecast_revision_counters.current_revision+last_revision",
+        "tme_wfm_fairness_measure_values.metric_code/measured_value/threshold_value/outcome + measure_key/measure_value/accepted_bound/result"
+      ]
+    },
+    {
+      "code": "C-PHYSICAL-SECURITY-CANDIDATE-NOT-FINAL",
+      "severity": "P0",
+      "artifact": "../modern-physical-successor/sys-modern-forward-ddl.v3.sql",
+      "counterexamples": [
+        "blanket GRANT ... ON ALL TABLES",
+        "runtime and projection roles receive DELETE",
+        "ALTER DEFAULT PRIVILEGES grants future table privileges",
+        "raw protected/insights/issuer readers receive table SELECT"
+      ],
+      "required": "strict collision; exact schema/table/function ownership via NOINHERIT migrator SET ROLE; no blanket/default/DELETE grants; no direct raw reader access; trigger-function PUBLIC/runtime/handler EXECUTE count zero"
+    }
+  ],
+  "passForbiddenUntil": [
+    "all findings are remediated in author-owned sources",
+    "frozen successor oracle validates exact candidate bytes",
+    "normal and hostile mutation suites pass",
+    "PostgreSQL 16 and 18 reports are both PASS and semantically identical"
+  ]
+}

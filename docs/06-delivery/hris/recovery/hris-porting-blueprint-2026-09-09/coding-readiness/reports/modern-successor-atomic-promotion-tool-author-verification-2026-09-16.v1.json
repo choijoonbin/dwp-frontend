@@ -1,0 +1,151 @@
+{
+  "schema": "dwp.hris.modern-successor-atomic-promotion-tool-author-verification.v1",
+  "reportId": "modern-successor-atomic-promotion-tool-author-verification-2026-09-16.v1",
+  "recordedAt": "2026-09-16T03:53:30Z",
+  "status": "PASS_SOURCE_ONLY_PROMOTION_NOT_EXECUTED",
+  "authority": "AUTHOR_VERIFICATION_ONLY_INDEPENDENT_AUDIT_AND_QUALIFIED_BUNDLE_EVIDENCE_REQUIRED",
+  "scope": {
+    "root": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "allowedWrites": [
+      "coding-readiness/promote_modern_successor_bundle.py",
+      "g0/central_transaction_fence.py",
+      "coding-readiness/reports/modern-successor-atomic-promotion-tool-author-verification-2026-09-16.v1.json"
+    ],
+    "forbiddenAndUnchanged": [
+      "live canonical artifacts",
+      "all canonical candidate directories",
+      "all physical candidate directories",
+      "modern physical successor artifacts",
+      "g0/current-g3-gate-decision.json",
+      "g0/g3-gate-transition-register.csv",
+      "module and integration worktrees"
+    ],
+    "promotionExecuted": false,
+    "productionActivation": "NOT_AUTHORIZED_G6"
+  },
+  "inputs": {
+    "downstreamTransitionPlan": {
+      "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-2026-09-16.v1.json",
+      "fileSha256": "5b213caa17c1bdb09d33778c19d4478955c9309f67b34b768fe3dd08f1229887"
+    },
+    "hostSemaphore": {
+      "name": "hris-verification",
+      "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock"
+    },
+    "gateBeforeAndAfter": {
+      "path": "g0/current-g3-gate-decision.json",
+      "fileSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+      "effectiveGate": "CLOSED_FAIL_SAFE",
+      "currentState": "VALIDATOR_CONTROLLED_BLOCKED",
+      "productionActivation": "NOT_AUTHORIZED_G6"
+    }
+  },
+  "implementation": {
+    "promotionTool": {
+      "path": "coding-readiness/promote_modern_successor_bundle.py",
+      "fileSha256": "85492db76784aeb0f7f54829bcf6e4d6ceb715af17b7c402a6485d2d1aa28020",
+      "lineCount": 1830,
+      "commands": [
+        "--prepare-spec",
+        "--preflight or --dry-run",
+        "--promote",
+        "--recover",
+        "--self-test"
+      ],
+      "bundleInvariant": {
+        "canonicalFiles": 8,
+        "physicalFiles": 8,
+        "totalDestinations": 16,
+        "physicalExplanation": "five owner DDL units plus two physical contracts plus the self-sealed generation report"
+      }
+    },
+    "centralFence": {
+      "path": "g0/central_transaction_fence.py",
+      "fileSha256": "943c2c467142ed3e505ce7f3e33f99f88b9a6555dc917d2879ed2331945b59ac",
+      "lineCount": 514,
+      "optionalJournalPath": "g0/modern-successor-promotion-transaction-state.json",
+      "absentMeaning": "NO_PROMOTION_STARTED",
+      "nonTerminalMeaning": "ALL_CENTRAL_CONSUMERS_FAIL_CLOSED",
+      "terminalPhases": [
+        "COMMITTED",
+        "ROLLED_BACK"
+      ]
+    },
+    "controls": [
+      "exact eight-file canonical and exact eight-file physical directory boundaries reject missing, extra, symlink and non-regular entries",
+      "candidate files are opened with O_NOFOLLOW and stable path/descriptor device, inode, mode, size, mtime_ns, ctime_ns and SHA-256 identity checks",
+      "the immutable self-sealed promotion spec contains the exact ordered source/destination manifest, every candidate identity and every destination compare-and-swap precondition",
+      "a strict self-sealed independent acceptance report must bind both exact candidate hash maps and PASS canonical static, hostile, physical, PostgreSQL 16, PostgreSQL 18, normalized equality, source stability, reader-fence coverage and journal recovery checks",
+      "the physical generation report must self-seal, bind the canonical directory and all eight canonical hashes, and bind all seven generated physical payload hashes",
+      "all candidate sources, destinations, transaction staging, backups, journal and immutable receipt are required on one filesystem",
+      "staged and backup bytes are fsynced before PREPARED; journal and renamed destination parents are fsynced; the immutable receipt uses create-new hard-link publication",
+      "the common hris-verification semaphore and same-thread opaque capability are mandatory for production promotion and recovery",
+      "PREPARED, COMMITTING and FINALIZING journal phases block central consumers; only exact terminal journals permit them",
+      "destination identity is checked immediately before each atomic rename and the complete successor generation is checked again before receipt publication",
+      "candidate identity is rechecked after staging and again after all destination renames",
+      "recovery first classifies every destination as predecessor, accepted successor or foreign; any foreign generation refuses destructive rollback",
+      "an interrupted partial transaction restores predecessor bytes and modes, while a crash after exact immutable receipt publication finalizes only when all sixteen destinations are the accepted successor",
+      "Gate must remain exact CLOSED_FAIL_SAFE and every receipt preserves NOT_AUTHORIZED_G6",
+      "specs, preflight reports and promotion receipts are create-new and cannot overwrite historical evidence"
+    ]
+  },
+  "verification": {
+    "pythonCompile": "PASS",
+    "astParse": "PASS",
+    "promotionSelfTest": {
+      "command": "python3 coding-readiness/promote_modern_successor_bundle.py --self-test --compact",
+      "status": "PASS",
+      "caseCount": 13,
+      "passedCount": 13,
+      "outputSha256": "f51d511037604231e4e55607ce0c94fb11f4bcaba318bd2fb9c4c1c3856c97f7",
+      "coveredHostileCases": [
+        "same-byte source inode/ctime rebinding",
+        "destination CAS drift before journal",
+        "candidate extra file",
+        "candidate symlink",
+        "acceptance evidence tamper",
+        "immutable receipt collision",
+        "crash after first destination install with exact rollback",
+        "crash after receipt publication with exact commit finalization",
+        "successful exact sixteen-file commit in an isolated fixture"
+      ]
+    },
+    "centralFenceSelfTest": {
+      "command": "python3 g0/central_transaction_fence.py --self-test --compact",
+      "status": "PASS",
+      "caseCount": 20,
+      "passedCount": 20,
+      "outputSha256": "ec3257ae147714b99420f2f926c3ba68952babaf7bafeb023d61eb31c51acb6d"
+    },
+    "currentCentralFence": {
+      "command": "python3 g0/central_transaction_fence.py --compact",
+      "status": "PASS",
+      "errors": []
+    },
+    "sourceOnlyMutationProof": {
+      "status": "PASS",
+      "method": "SHA-256 snapshot before and after compile plus both self-tests",
+      "protectedFileCount": 94,
+      "protectedSets": [
+        "all modern canonical candidates",
+        "all modern physical candidates",
+        "current modern physical successor",
+        "current Gate decision",
+        "selected live canonical authority files"
+      ],
+      "beforeAfterEqual": true,
+      "livePromotionJournalCreated": false
+    }
+  },
+  "limitationsAndRequiredNextGate": [
+    "This author report is not independent acceptance and cannot authorize promotion.",
+    "No production candidate spec was prepared and no live promotion, rollback or recovery was executed.",
+    "POSIX provides no single rename for sixteen independent pathnames; no-mixed-generation safety therefore requires the common semaphore plus the fail-closed journal fence for every supported reader. Independent review must prove reader-fence coverage before issuing the required acceptance evidence.",
+    "The transition plan text that says six physical artifacts is stale relative to the current v4 physical generator. Promotion is deliberately blocked unless the exact eight-file physical candidate, including split SYS auth/platform DDL and the generation report, is accepted.",
+    "The eventual qualified bundle requires an independently self-sealed acceptance report with all nine exact PASS checks before --prepare-spec can succeed.",
+    "The production promotion must be separately audited and invoked only after the fresh canonical and physical candidates are independently accepted; Gate opening remains a later, separate transaction."
+  ],
+  "conclusion": "SOURCE_TOOLING_READY_FOR_INDEPENDENT_AUDIT_PROMOTION_REMAINS_BLOCKED",
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "52ca26a3d05ac732fdc38bede72bfbdb80d819f88d5fc336e56b33d9a3f8b30f"
+}

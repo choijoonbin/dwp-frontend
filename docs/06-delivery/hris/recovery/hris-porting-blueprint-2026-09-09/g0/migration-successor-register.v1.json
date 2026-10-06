@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "contractId": "HRIS_MIGRATION_SUCCESSOR_C1_V1",
+  "status": "CANONICAL_START_BOUNDARY_SEALED",
+  "effectiveGate": "CLOSED_FAIL_SAFE",
+  "moduleStartAuthorization": "NONE",
+  "source": {
+    "repository": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "commit": "787f25753a72dc5f0fbbb06783205c0bff6635a5",
+    "tree": "00cf32bf78a46ad17f9482414806b8ffddf4e1d2",
+    "predecessorCommit": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "migrationSqlCount": 444,
+    "migrationManifestSha256": "accbd9bf1306e3cb67fbb62922747b423587c2daff201fcc79a741b79164403b",
+    "migrationSubtreeOids": {
+      "dwp-people-server/src/main/resources/db/migration": "ff52f232e127fe3efd2dbe230519453a506868cc",
+      "dwp-people-server/src/main/resources/db/performance-migration": "1ac14953b1d0b707628e029d46ad0837b23a9dc2",
+      "dwp-payroll-server/src/main/resources/db/migration": "3b050e0f0f3558836c5652323dd0abb58a4d5f4f",
+      "dwp-time-server/src/main/resources/db/migration": "18f551c22076544bb1449f61cb5b73d47f2aac47",
+      "dwp-auth-server/src/main/resources/db/migration": "07ffefdd34ec250cdd8d1f2e8a8e3dabf4b67ecd",
+      "dwp-platform-server/src/main/resources/db/migration": "f064bd4bbfc399e136bf28ced7a7f97066cd307f",
+      "dwp-approval-server/src/main/resources/db/migration": "2063d822fb0a5da80778b9cbe43bd83fad663d7f",
+      "dwp-notification-server/src/main/resources/db/migration": "fe03230779dc5626c3351a1a37b65227a868504c"
+    },
+    "requiredWorktreeState": "CLEAN"
+  },
+  "rules": {
+    "versionedFilePattern": "^V([0-9]+(?:[._][0-9]+)*)__.+\\.sql$",
+    "createOnly": true,
+    "existingEditAllowed": false,
+    "outOfOrderAllowed": false,
+    "crossStreamForeignKeyAllowed": false,
+    "privateStreamsPublishPublicVersions": false,
+    "historicalG2ArtifactsMutable": false,
+    "lineageEquality": "GIT_BLOB_OID_AND_SHA256_AND_BYTE_LENGTH"
+  },
+  "allocations": [
+    {
+      "allocationId": "MIG-HRM-PEOPLE-51-73",
+      "sessionId": "HRIS-HRM",
+      "service": "dwp-people-server",
+      "migrationDir": "dwp-people-server/src/main/resources/db/migration",
+      "schema": "public",
+      "historyTable": "flyway_schema_history",
+      "baselineHighWater": 50,
+      "start": 51,
+      "end": 73
+    },
+    {
+      "allocationId": "MIG-PER-PERFORMANCE-1-63",
+      "sessionId": "HRIS-PER",
+      "service": "dwp-people-server",
+      "migrationDir": "dwp-people-server/src/main/resources/db/performance-migration",
+      "schema": "hris_performance",
+      "historyTable": "flyway_performance_schema_history",
+      "baselineHighWater": 0,
+      "start": 1,
+      "end": 63
+    },
+    {
+      "allocationId": "MIG-PAY-PAYROLL-1-49",
+      "sessionId": "HRIS-PAY",
+      "service": "dwp-payroll-server",
+      "migrationDir": "dwp-payroll-server/src/main/resources/db/migration",
+      "schema": "public",
+      "historyTable": "flyway_schema_history",
+      "baselineHighWater": 0,
+      "start": 1,
+      "end": 49
+    },
+    {
+      "allocationId": "MIG-TIM-TIME-1-39",
+      "sessionId": "HRIS-TIM",
+      "service": "dwp-time-server",
+      "migrationDir": "dwp-time-server/src/main/resources/db/migration",
+      "schema": "public",
+      "historyTable": "flyway_schema_history",
+      "baselineHighWater": 0,
+      "start": 1,
+      "end": 39
+    },
+    {
+      "allocationId": "MIG-SYS-AUTH-217-245",
+      "sessionId": "HRIS-SYS",
+      "service": "dwp-auth-server",
+      "migrationDir": "dwp-auth-server/src/main/resources/db/migration",
+      "schema": "public",
+      "historyTable": "flyway_schema_history",
+      "baselineHighWater": 216,
+      "start": 217,
+      "end": 245
+    },
+    {
+      "allocationId": "MIG-SYS-PLATFORM-261-289",
+      "sessionId": "HRIS-SYS",
+      "service": "dwp-platform-server",
+      "migrationDir": "dwp-platform-server/src/main/resources/db/migration",
+      "schema": "public",
+      "historyTable": "flyway_schema_history",
+      "baselineHighWater": 260,
+      "start": 261,
+      "end": 289
+    }
+  ],
+  "baselineStreams": [
+    {
+      "streamKey": "people-main",
+      "service": "dwp-people-server",
+      "migrationDir": "dwp-people-server/src/main/resources/db/migration",
+      "highWater": 50,
+      "boundary": "COMMON_FOUNDATION_THEN_HRM"
+    },
+    {
+      "streamKey": "performance-private",
+      "service": "dwp-people-server",
+      "migrationDir": "dwp-people-server/src/main/resources/db/performance-migration",
+      "highWater": 0,
+      "boundary": "PRIVATE_STREAM"
+    },
+    {
+      "streamKey": "payroll-main",
+      "service": "dwp-payroll-server",
+      "migrationDir": "dwp-payroll-server/src/main/resources/db/migration",
+      "highWater": 0,
+      "boundary": "NEW_SERVICE_STREAM"
+    },
+    {
+      "streamKey": "time-main",
+      "service": "dwp-time-server",
+      "migrationDir": "dwp-time-server/src/main/resources/db/migration",
+      "highWater": 0,
+      "boundary": "NEW_SERVICE_STREAM"
+    },
+    {
+      "streamKey": "auth-main",
+      "service": "dwp-auth-server",
+      "migrationDir": "dwp-auth-server/src/main/resources/db/migration",
+      "highWater": 216,
+      "boundary": "COMMON_FOUNDATION_THEN_SYS"
+    },
+    {
+      "streamKey": "platform-main",
+      "service": "dwp-platform-server",
+      "migrationDir": "dwp-platform-server/src/main/resources/db/migration",
+      "highWater": 260,
+      "boundary": "COMMON_FOUNDATION_THEN_SYS"
+    },
+    {
+      "streamKey": "approval-main",
+      "service": "dwp-approval-server",
+      "migrationDir": "dwp-approval-server/src/main/resources/db/migration",
+      "highWater": 35,
+      "boundary": "CONTROLLED_SHARED_ON_DEMAND"
+    },
+    {
+      "streamKey": "notification-main",
+      "service": "dwp-notification-server",
+      "migrationDir": "dwp-notification-server/src/main/resources/db/migration",
+      "highWater": 30,
+      "boundary": "PROTECTED_EXTERNAL_BASELINE"
+    }
+  ],
+  "peopleCommonFoundation": [
+    {
+      "version": 47,
+      "path": "dwp-people-server/src/main/resources/db/migration/V47__enforce_append_only_people_audit_evidence.sql",
+      "blobOid": "9ba4abb575b3b6932ff495a580af99416dd396d6",
+      "sha256": "828e7dfadf6d69791d5350bde8541b2ebe7ab0225630f50bdcb30a729a9c6e9e",
+      "byteLength": 2026
+    },
+    {
+      "version": 48,
+      "path": "dwp-people-server/src/main/resources/db/migration/V48__bind_uuid_defaults_to_pg_catalog.sql",
+      "blobOid": "5081696b8e830ddf1d19242f983ee5080527f3b1",
+      "sha256": "1b101a46df4e26fbf43d008c57d4c81a9d79693d81baf37ca5fdd97d9d56b9d2",
+      "byteLength": 4457
+    },
+    {
+      "version": 49,
+      "path": "dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+      "blobOid": "b0f3c912a0e0901a69223c2542768e6d846db828",
+      "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+      "byteLength": 918
+    },
+    {
+      "version": 50,
+      "path": "dwp-people-server/src/main/resources/db/migration/V50__align_workforce_policy_role_code_compatibility.sql",
+      "blobOid": "aa8292494ecfce3f6638e640e45145e4c862e119",
+      "sha256": "6ac12cc8dc366c022e29f57d940923dda11da4909338b6afc200e093f9e00e89",
+      "byteLength": 1004
+    }
+  ],
+  "exactRenameLineage": [
+    {
+      "stream": "AUTH",
+      "predecessorPath": "dwp-auth-server/src/main/resources/db/migration/V211__harden_auth_trigger_execution_boundary.sql",
+      "successorPath": "dwp-auth-server/src/main/resources/db/migration/V215__harden_auth_trigger_execution_boundary.sql",
+      "blobOid": "12b92335e7a158f7682edc00542c244e6b289737",
+      "sha256": "22e0f38ab7f15efed15808df97da0582774634c58e6ddb8c50d52149e526e77d",
+      "byteLength": 4681
+    },
+    {
+      "stream": "AUTH",
+      "predecessorPath": "dwp-auth-server/src/main/resources/db/migration/V212__bind_uuid_defaults_to_pg_catalog.sql",
+      "successorPath": "dwp-auth-server/src/main/resources/db/migration/V216__bind_uuid_defaults_to_pg_catalog.sql",
+      "blobOid": "5081696b8e830ddf1d19242f983ee5080527f3b1",
+      "sha256": "1b101a46df4e26fbf43d008c57d4c81a9d79693d81baf37ca5fdd97d9d56b9d2",
+      "byteLength": 4457
+    },
+    {
+      "stream": "PLATFORM",
+      "predecessorPath": "dwp-platform-server/src/main/resources/db/migration/V231__harden_partition_maintenance_authority.sql",
+      "successorPath": "dwp-platform-server/src/main/resources/db/migration/V254__harden_partition_maintenance_authority.sql",
+      "blobOid": "8fddc87d1a9557020c7970305e4172efff77ee69",
+      "sha256": "b3b4e87d8d4cd5b61214d15446dcc06a2b293849f178057be6dfd756b2037ff2",
+      "byteLength": 6360
+    },
+    {
+      "stream": "PLATFORM",
+      "predecessorPath": "dwp-platform-server/src/main/resources/db/migration/V232__harden_platform_trigger_execution_boundary.sql",
+      "successorPath": "dwp-platform-server/src/main/resources/db/migration/V255__harden_platform_trigger_execution_boundary.sql",
+      "blobOid": "c5343ff3b1ea3c57c4fc9c1ef5afd05858c4ced9",
+      "sha256": "183f48e714b932ad50339d8d9c16070c6cc299237eebaa490d076d99e3c68bc4",
+      "byteLength": 4068
+    },
+    {
+      "stream": "PLATFORM",
+      "predecessorPath": "dwp-platform-server/src/main/resources/db/migration/V233__govern_audit_retention_execution.sql",
+      "successorPath": "dwp-platform-server/src/main/resources/db/migration/V256__govern_audit_retention_execution.sql",
+      "blobOid": "f228b8b44a57bdc5f67ff36412f4f582064bb69c",
+      "sha256": "bdbb4f8b10ef3d732c539f955dbf8a4778c85fb003ae606cea4290b5a4f0732d",
+      "byteLength": 8007
+    },
+    {
+      "stream": "PLATFORM",
+      "predecessorPath": "dwp-platform-server/src/main/resources/db/migration/V234__add_api_history_default_partition.sql",
+      "successorPath": "dwp-platform-server/src/main/resources/db/migration/V257__add_api_history_default_partition.sql",
+      "blobOid": "0d9084b236572b4c50beca75243bb7fcab008a84",
+      "sha256": "254066e1b99f1fbcdd3f26df798ac288a5a418025caec8eaf17401e726b2fdd7",
+      "byteLength": 1061
+    },
+    {
+      "stream": "PLATFORM",
+      "predecessorPath": "dwp-platform-server/src/main/resources/db/migration/V235__enforce_append_only_api_history.sql",
+      "successorPath": "dwp-platform-server/src/main/resources/db/migration/V258__enforce_append_only_api_history.sql",
+      "blobOid": "ae5e4fa12c28abbd1edb1c8af6060db60527d6b8",
+      "sha256": "11bfb8c6fc89022bf4ce617d2a3b5eb7eb057008a64564aaec755194db7135e6",
+      "byteLength": 850
+    },
+    {
+      "stream": "PLATFORM",
+      "predecessorPath": "dwp-platform-server/src/main/resources/db/migration/V236__enforce_append_only_platform_audit_evidence.sql",
+      "successorPath": "dwp-platform-server/src/main/resources/db/migration/V259__enforce_append_only_platform_audit_evidence.sql",
+      "blobOid": "82aaf71e679b8088c0be4e48e8e49aba12891d48",
+      "sha256": "4036b0449ad73138ef1895afb6e6324991d4656fcb5c8fb8d377c7ef039bb6e3",
+      "byteLength": 1339
+    },
+    {
+      "stream": "PLATFORM",
+      "predecessorPath": "dwp-platform-server/src/main/resources/db/migration/V237__bind_uuid_defaults_to_pg_catalog.sql",
+      "successorPath": "dwp-platform-server/src/main/resources/db/migration/V260__bind_uuid_defaults_to_pg_catalog.sql",
+      "blobOid": "5081696b8e830ddf1d19242f983ee5080527f3b1",
+      "sha256": "1b101a46df4e26fbf43d008c57d4c81a9d79693d81baf37ca5fdd97d9d56b9d2",
+      "byteLength": 4457
+    },
+    {
+      "stream": "APPROVAL",
+      "predecessorPath": "dwp-approval-server/src/main/resources/db/migration/V15__harden_approval_trigger_execution_boundary.sql",
+      "successorPath": "dwp-approval-server/src/main/resources/db/migration/V34__harden_approval_trigger_execution_boundary.sql",
+      "blobOid": "003ae341c98d06307c975aaf1458f81d49c59401",
+      "sha256": "2dcb6710a1d89c09824336bcaf5716f4f4a980b9670d252bd73be426cc4e1490",
+      "byteLength": 1670
+    },
+    {
+      "stream": "APPROVAL",
+      "predecessorPath": "dwp-approval-server/src/main/resources/db/migration/V16__protect_step_up_replay_and_idempotency_evidence.sql",
+      "successorPath": "dwp-approval-server/src/main/resources/db/migration/V35__protect_step_up_replay_and_idempotency_evidence.sql",
+      "blobOid": "eb7a41e44ac22c84b82b0f0f7116a63a7ccee195",
+      "sha256": "195c02bf0636a4041667f2905c8545b0fde96c4f9bd13654290816752b0750e5",
+      "byteLength": 6208
+    }
+  ],
+  "historicalArtifacts": {
+    "immutablePredecessorProposal": "coding-readiness/semantic-remediation/common-migration-baseline.proposal.v1.json",
+    "immutableAllocationProposal": "coding-readiness/semantic-remediation/common-allocation-successor.v1.json",
+    "successorizedCheckpointSummary": "g0/checkpoint-register.csv",
+    "successorPolicy": "REFER_AS_HISTORY_ONLY_NEVER_AUTHORIZE_FROM_PREDECESSOR_IDS"
+  }
+}

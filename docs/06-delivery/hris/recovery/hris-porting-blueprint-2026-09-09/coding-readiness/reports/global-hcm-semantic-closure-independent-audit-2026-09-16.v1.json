@@ -1,0 +1,3207 @@
+{
+  "auditId": "dwp.hris.global-hcm-semantic-closure-independent-audit.2026-09-16.v1",
+  "schemaVersion": 1,
+  "status": "P0_BLOCKED_CANONICAL_CANDIDATE_WITHDRAWN",
+  "auditedAt": "2026-09-16T00:15:00+09:00",
+  "authorityBoundary": "READ_ONLY_INDEPENDENT_PRODUCT_AND_DOMAIN_AUDIT; NOT_GATE_AUTHORITY; NO_CANONICAL_EDIT",
+  "verdict": {
+    "g3CodeGate": "MUST_REMAIN_CLOSED",
+    "reason": "Each of the 16 modern capabilities has at least one finite P0 semantic closure defect. This is not a request for customer production data or G6 activation."
+  },
+  "sourceSnapshot": {
+    "root": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "artifacts": [
+      {
+        "path": "coding-readiness/modern-capability-operation-causal-contract-ssot.v2.json",
+        "sha256": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0"
+      },
+      {
+        "path": "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+        "sha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730"
+      },
+      {
+        "path": "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+        "sha256": "a9e85dbc2e35a7e586e4d87072f8b8311b90d9f42864d48ac146957eb161715b"
+      },
+      {
+        "path": "coding-readiness/modern-capability-semantic-bindings.v1.json",
+        "sha256": "834cd00e20148cded2765f1f41790926a479515afd0f23f6d95a0cea4ba389dd"
+      },
+      {
+        "path": "coding-readiness/modern-capability-causal-state-contracts.v2.json",
+        "sha256": "4f604faf4593e765e3a10671a8577cfa3e43a250fc3d7f34d89759518a4d0b08"
+      },
+      {
+        "path": "coding-readiness/modern-capability-closed-set-manifest.v3.json",
+        "sha256": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4"
+      },
+      {
+        "path": "coding-readiness/reports/global-product-semantic-audit-2026-09-14.md",
+        "sha256": "ad4dc24364ec5ed156f70fb37df8444c07bfcaead0510bbf0e6c77113f87eb04"
+      }
+    ],
+    "derivedCounts": {
+      "capabilities": 16,
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "systemHandlers": 25,
+      "publicEvents": 155,
+      "tableSpecifications": 115
+    }
+  },
+  "method": [
+    "Read all 199 operation rows, 115 table specifications, 155 event schemas and 25 handler rows from the exact source snapshot.",
+    "Compared the candidate against the 16-capability minimum redesign matrix in the 2026-09-14 global product semantic audit.",
+    "Separated envelope/type existence from reproducible business meaning, subject authority, effective-time, privacy, decision and immutable result provenance.",
+    "Did not modify the canonical five, physical successor or gate state."
+  ],
+  "capabilityP0Matrix": {
+    "HRIS.MODERN.RECRUITING_ATS": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-HANDLER-002",
+      "P0-CROSS-EVENT-003",
+      "P0-REC-001"
+    ],
+    "HRIS.MODERN.ONBOARDING": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-SELF-004",
+      "P0-ONB-001"
+    ],
+    "HRIS.MODERN.WORKFORCE_PLANNING": [
+      "P0-CROSS-QUERY-001",
+      "P0-WFP-001"
+    ],
+    "HRIS.MODERN.BENEFITS_ADMIN": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-HANDLER-002",
+      "P0-CROSS-EVENT-003",
+      "P0-CROSS-SELF-004",
+      "P0-BNF-001"
+    ],
+    "HRIS.MODERN.HR_SERVICE_DELIVERY": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-HANDLER-002",
+      "P0-CROSS-SELF-004",
+      "P0-HRS-001"
+    ],
+    "HRIS.MODERN.CONTINGENT_WORKFORCE": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-HANDLER-002",
+      "P0-CROSS-EVENT-003",
+      "P0-CWK-001"
+    ],
+    "HRIS.MODERN.SKILLS_ONTOLOGY": [
+      "P0-CROSS-QUERY-001",
+      "P0-SKL-001"
+    ],
+    "HRIS.MODERN.GROWTH_PROFILE": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-HANDLER-002",
+      "P0-CROSS-SELF-004",
+      "P0-GRW-001"
+    ],
+    "HRIS.MODERN.LEARNING": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-SELF-004",
+      "P0-LRN-001"
+    ],
+    "HRIS.MODERN.INTERNAL_MARKETPLACE": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-SELF-004",
+      "P0-MKT-001"
+    ],
+    "HRIS.MODERN.SUCCESSION": [
+      "P0-CROSS-QUERY-001",
+      "P0-SUC-001"
+    ],
+    "HRIS.MODERN.COMPENSATION_PLANNING": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-EVENT-003",
+      "P0-CMP-001"
+    ],
+    "HRIS.MODERN.ADVANCED_WFM": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-HANDLER-002",
+      "P0-WFM-001"
+    ],
+    "HRIS.MODERN.EMPLOYEE_LISTENING": [
+      "P0-CROSS-QUERY-001",
+      "P0-LIS-001"
+    ],
+    "HRIS.MODERN.PEOPLE_ANALYTICS": [
+      "P0-CROSS-QUERY-001",
+      "P0-CROSS-HANDLER-002",
+      "P0-CROSS-EVENT-003",
+      "P0-ANL-001"
+    ],
+    "HRIS.MODERN.GOVERNED_AI": [
+      "P0-CROSS-HANDLER-002",
+      "P0-CROSS-EVENT-003",
+      "P0-CROSS-SELF-004",
+      "P0-AI-001"
+    ]
+  },
+  "findings": [
+    {
+      "id": "P0-CROSS-QUERY-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.ADVANCED_WFM",
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.COMPENSATION_PLANNING",
+        "HRIS.MODERN.CONTINGENT_WORKFORCE",
+        "HRIS.MODERN.EMPLOYEE_LISTENING",
+        "HRIS.MODERN.GROWTH_PROFILE",
+        "HRIS.MODERN.HR_SERVICE_DELIVERY",
+        "HRIS.MODERN.INTERNAL_MARKETPLACE",
+        "HRIS.MODERN.LEARNING",
+        "HRIS.MODERN.ONBOARDING",
+        "HRIS.MODERN.PEOPLE_ANALYTICS",
+        "HRIS.MODERN.RECRUITING_ATS",
+        "HRIS.MODERN.SKILLS_ONTOLOGY",
+        "HRIS.MODERN.SUCCESSION",
+        "HRIS.MODERN.WORKFORCE_PLANNING"
+      ],
+      "title": "60 of 66 query entity schemas expose only a five-field envelope",
+      "affectedOperations": [
+        "modern.wfm.candidate.query",
+        "modern.wfm.candidates.query",
+        "modern.wfm.forecast.query",
+        "modern.wfm.forecasts.query",
+        "modern.wfm.optimization.query",
+        "modern.benefits.enrollment.query",
+        "modern.benefits.enrollments.query",
+        "modern.benefits.lifeevent.query",
+        "modern.benefits.lifeevents.query",
+        "modern.benefits.plan.query",
+        "modern.benefits.plans.query",
+        "modern.benefits.self.plans.query",
+        "modern.compplan.cycle.query",
+        "modern.compplan.cycles.query",
+        "modern.compplan.proposal.query",
+        "modern.compplan.proposals.query",
+        "modern.contingent.engagement.query",
+        "modern.contingent.engagements.query",
+        "modern.listening.active.query",
+        "modern.listening.cohorts.query",
+        "modern.listening.surveys.query",
+        "modern.growth.export.query",
+        "modern.growth.exports.query",
+        "modern.growth.profile.query",
+        "modern.growth.profiles.query",
+        "modern.growth.self.query",
+        "modern.hrservice.case.query",
+        "modern.hrservice.cases.query",
+        "modern.opportunity.application.query",
+        "modern.opportunity.applications.query",
+        "modern.opportunity.catalog.query",
+        "modern.opportunity.query",
+        "modern.learning.assignment.query",
+        "modern.learning.assignments.query",
+        "modern.learning.catalog.query",
+        "modern.learning.offering.query",
+        "modern.onboarding.assignment.query",
+        "modern.onboarding.assignments.query",
+        "modern.onboarding.self.query",
+        "modern.onboarding.template.query",
+        "modern.onboarding.templates.query",
+        "modern.analytics.export.query",
+        "modern.analytics.exports.query",
+        "modern.analytics.metric.query",
+        "modern.analytics.metrics.query",
+        "modern.analytics.projection.query",
+        "modern.analytics.projections.query",
+        "modern.recruiting.candidate.query",
+        "modern.recruiting.candidates.query",
+        "modern.recruiting.requisition.query",
+        "modern.recruiting.requisitions.query",
+        "modern.skills.evidence.query",
+        "modern.skills.evidences.query",
+        "modern.skills.taxonomies.query",
+        "modern.skills.taxonomy.query",
+        "modern.skills.worker.query",
+        "modern.succession.plan.query",
+        "modern.succession.plans.query",
+        "modern.workforceplan.scenario.query",
+        "modern.workforceplan.scenarios.query"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "recordSchemas",
+            "key": "schemaId",
+            "value": "modern.recruiting.candidate.query.Entity.v3"
+          }
+        },
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "recordSchemas",
+            "key": "schemaId",
+            "value": "modern.wfm.candidate.query.Entity.v3"
+          }
+        }
+      ],
+      "evidenceRef": "enumerations.genericQueryEntities",
+      "whyBlocking": "additionalProperties=false prevents implementation from returning any actual HR business field; field-policy prose cannot enlarge a closed schema.",
+      "falsePositiveAnalysis": "The five envelope fields are valid common metadata; the defect is their use as the complete entity contract.",
+      "minimumCanonicalContract": {
+        "request": "retain filters and exact subject/as-of inputs",
+        "response": "define typed business record per aggregate; use minimumBusinessProjectionByCapability and field-policy masks",
+        "dml": "read named physical columns/immutable artifacts only",
+        "event": "events not required for pure query",
+        "handler": "no query handler",
+        "schema": "closed additionalProperties=false entity schemas with exact field lineage"
+      }
+    },
+    {
+      "id": "P0-CROSS-HANDLER-002",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.GOVERNED_AI",
+        "HRIS.MODERN.PEOPLE_ANALYTICS",
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.CONTINGENT_WORKFORCE",
+        "HRIS.MODERN.GROWTH_PROFILE",
+        "HRIS.MODERN.HR_SERVICE_DELIVERY",
+        "HRIS.MODERN.RECRUITING_ATS",
+        "HRIS.MODERN.ADVANCED_WFM"
+      ],
+      "title": "16 async handlers use generic lifecycle states incompatible with their aggregate enums",
+      "affectedHandlers": [
+        "internal.ai.assistance-result.consume",
+        "internal.ai.policy-evaluation-result.consume",
+        "internal.analytics.export.expire",
+        "internal.analytics.export.result.consume",
+        "internal.benefits.life-event.expire",
+        "internal.benefits.provider-result.consume",
+        "internal.contingent.access-expiry.initiate",
+        "internal.contingent.access-grant-result.consume",
+        "internal.contingent.access-revoke-result.consume",
+        "internal.growth.portability-export.expire",
+        "internal.growth.portability-export.result.consume",
+        "internal.hrservice.sla-milestone.consume",
+        "internal.recruiting.hire-handoff.result.consume",
+        "internal.recruiting.offer.expire",
+        "internal.wfm.approval-result.consume",
+        "internal.wfm.schedule-optimization.result.consume"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.recruiting.hire-handoff.result.consume"
+          }
+        },
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "tableSpecifications",
+            "key": "tableName",
+            "value": "ppl_rec_candidate_cases"
+          }
+        }
+      ],
+      "evidenceRef": "enumerations.handlerLifecycleMismatches",
+      "whyBlocking": "several handlers cannot select a pre-state or persist a post-state accepted by DDL; even schema-compatible rows such as expire use the wrong business outcome.",
+      "falsePositiveAnalysis": "REQUESTED/RUNNING->COMPLETED/FAILED is legitimate only for true async request aggregates, not for candidate, engagement, enrollment, case, offer, schedule or expiry semantics.",
+      "minimumCanonicalContract": {
+        "request": "signed owner result includes exact request/aggregate id, expected revision, outcome and payload digest",
+        "response": "return/refetch typed domain outcome and immutable proof",
+        "dml": "claim inbox; lock actual request/root; append typed result proof; update exact domain state; close inbox; append outbox",
+        "event": "condition on actual domain outcome, not event name",
+        "handler": "per-handler pre/post map and compensation/retry behavior",
+        "schema": "DDL checks exactly contain every handler state; separate async request state from business aggregate state"
+      }
+    },
+    {
+      "id": "P0-CROSS-EVENT-003",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.GOVERNED_AI",
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.COMPENSATION_PLANNING",
+        "HRIS.MODERN.CONTINGENT_WORKFORCE",
+        "HRIS.MODERN.RECRUITING_ATS",
+        "HRIS.MODERN.PEOPLE_ANALYTICS",
+        "HRIS.MODERN.GROWTH_PROFILE",
+        "HRIS.MODERN.HR_SERVICE_DELIVERY",
+        "HRIS.MODERN.ADVANCED_WFM"
+      ],
+      "title": "10 command events and 17 handler events compare to event names rather than reachable states",
+      "affectedOperations": [
+        "modern.ai.assist.review",
+        "modern.benefits.lifeevent.decide",
+        "modern.compplan.cycle.revise",
+        "modern.contingent.sponsor.reassign",
+        "modern.recruiting.offer.respond",
+        "modern.recruiting.requisition.lifecycle.change"
+      ],
+      "affectedHandlers": [
+        "internal.ai.assistance-result.consume",
+        "internal.ai.policy-evaluation-result.consume",
+        "internal.analytics.export.expire",
+        "internal.analytics.export.result.consume",
+        "internal.analytics.metric-projection.result.consume",
+        "internal.benefits.life-event.expire",
+        "internal.benefits.provider-result.consume",
+        "internal.contingent.access-expiry.initiate",
+        "internal.contingent.access-grant-result.consume",
+        "internal.contingent.access-revoke-result.consume",
+        "internal.growth.portability-export.expire",
+        "internal.growth.portability-export.result.consume",
+        "internal.hrservice.sla-milestone.consume",
+        "internal.recruiting.hire-handoff.result.consume",
+        "internal.recruiting.offer.expire",
+        "internal.wfm.approval-result.consume",
+        "internal.wfm.schedule-optimization.result.consume"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.recruiting.offer.respond"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.wfm.schedule-optimization.result.consume"
+          }
+        }
+      ],
+      "evidenceRef": "enumerations.unreachableEventConditions",
+      "whyBlocking": "the outbox condition is never true, so declared public facts have no producer even when state mutation commits.",
+      "falsePositiveAnalysis": "An event type may resemble a transition name, but the contract explicitly evaluates `toState`; no alias registry maps these event-name literals.",
+      "minimumCanonicalContract": {
+        "request": "decision inputs resolve to exact post-state",
+        "response": "receipt returns committed state/event facts",
+        "dml": "outbox after closed receipt only",
+        "event": "use `toState=CONFIRMED`, `toState=ACCEPTED`, etc., or ALWAYS for a single committed fact",
+        "handler": "handler event condition uses actual ownerResult/domain state",
+        "schema": "state enum and event condition validator must prove reachability"
+      }
+    },
+    {
+      "id": "P0-CROSS-SELF-004",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.GOVERNED_AI",
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.GROWTH_PROFILE",
+        "HRIS.MODERN.HR_SERVICE_DELIVERY",
+        "HRIS.MODERN.LEARNING",
+        "HRIS.MODERN.ONBOARDING",
+        "HRIS.MODERN.INTERNAL_MARKETPLACE"
+      ],
+      "title": "18 self-service mutations lack an exact caller-to-subject/ownership predicate",
+      "affectedOperations": [
+        "modern.ai.assist.cancel",
+        "modern.ai.assist.review",
+        "modern.ai.assist.revoke",
+        "modern.benefits.enrollment.submit",
+        "modern.benefits.lifeevent.submit",
+        "modern.growth.profile.create",
+        "modern.growth.profile.update",
+        "modern.growth.profile.archive",
+        "modern.growth.evidence.link",
+        "modern.growth.evidence.unlink",
+        "modern.growth.export.request",
+        "modern.hrservice.case.create",
+        "modern.learning.assignment.start",
+        "modern.learning.assignment.cancel",
+        "modern.learning.self.enroll",
+        "modern.onboarding.task.complete",
+        "modern.onboarding.task.waive",
+        "modern.opportunity.apply"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.benefits.enrollment.submit"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.learning.assignment.start"
+          }
+        }
+      ],
+      "evidenceRef": "enumerations.selfSubjectBindingsMissing",
+      "whyBlocking": "tenant membership and a self capability do not prove that a caller-supplied worker UUID or selected aggregate belongs to the caller.",
+      "falsePositiveAnalysis": "A validated HRM.Worker owner ref proves existence and tenant, not self identity. A manager/operations proxy remains valid only through a distinct duty and recorded delegation.",
+      "minimumCanonicalContract": {
+        "request": "self routes derive worker from authenticated principal or require equality; proxy routes use distinct capability plus delegation reason",
+        "response": "self query/mutation never reveals another subject; proxy response records acting-on-behalf-of",
+        "dml": "persist derived subject and delegation receipt, never arbitrary self-route worker input",
+        "event": "include actor/subject/delegation revision where consumers need the decision",
+        "handler": "PEP asserts tenant+purpose+population+subject before DML",
+        "schema": "unique/index/RLS predicates support worker ownership and delegated scopes"
+      }
+    },
+    {
+      "id": "P0-REC-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.RECRUITING_ATS"
+      ],
+      "title": "Candidate intake and hire handoff do not create reproducible candidate/hire facts",
+      "affectedOperations": [
+        "modern.recruiting.candidate.admit",
+        "modern.recruiting.offer.respond",
+        "modern.recruiting.requisition.revise"
+      ],
+      "affectedHandlers": [
+        "internal.recruiting.hire-handoff.result.consume",
+        "internal.recruiting.offer.expire"
+      ],
+      "affectedTables": [
+        "ppl_rec_candidate_cases",
+        "ppl_rec_candidate_stage_history",
+        "ppl_rec_hire_handoff_receipts",
+        "ppl_rec_offers"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.recruiting.candidate.admit"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.recruiting.hire-handoff.result.consume"
+          }
+        }
+      ],
+      "whyBlocking": "candidate.admit has no candidate/source/consent input and does not populate requisition_id; the hire handler updates candidate stage with generic states and never appends the declared handoff receipt; offer response has no candidate/proxy decision provenance.",
+      "falsePositiveAnalysis": "Offer amount/currency and compensation-policy version are a real improvement and are not reported as missing; a full vendor ATS or resume blob is not required.",
+      "minimumCanonicalContract": {
+        "request": "candidate person token, source system/key, consent receipt+expiry, requisition selector; offer response actor/proxy receipt",
+        "response": "candidate detail returns stage history, offers and hire handoff; redact candidate identity by field policy",
+        "dml": "insert candidate and initial history atomically; append immutable hire handoff receipt before HIRED",
+        "event": "emit APPLIED and exact ACCEPTED/DECLINED/HIRED or handoff-failed facts from real states",
+        "handler": "handoff handler locks hire request+candidate HIRE_PENDING, verifies owner ack, writes worker/employment/assignment refs",
+        "schema": "typed consent/source columns and immutable offer terms artifact or closed minimum terms schema"
+      }
+    },
+    {
+      "id": "P0-ONB-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.ONBOARDING"
+      ],
+      "title": "Template tasks cannot express actor, due anchor, condition or evidence policy; waiver is empty",
+      "affectedOperations": [
+        "modern.onboarding.template.create",
+        "modern.onboarding.template.revise",
+        "modern.onboarding.journey.assign",
+        "modern.onboarding.task.complete",
+        "modern.onboarding.task.waive"
+      ],
+      "affectedTables": [
+        "ppl_jny_template_versions",
+        "ppl_jny_assignment_tasks",
+        "ppl_jny_task_evidence",
+        "ppl_jny_assignment_revisions",
+        "ppl_jny_assignment_task_revisions"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "valueObjects",
+            "key": "name",
+            "value": "OnboardingTemplateTask.v1"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.onboarding.task.waive"
+          }
+        }
+      ],
+      "whyBlocking": "a task title/type plus dueOffset cannot determine who acts, what starts the offset, whether the task applies, or what evidence completes/waives it; assignment DML also omits instance due_at.",
+      "falsePositiveAnalysis": "The existing typed task array is useful and need not become one table per vendor screen; it is simply not a closed executable task graph yet.",
+      "minimumCanonicalContract": {
+        "request": "task actorRule, dueAnchor+offset, applicability condition version, completion/evidence schema ref; waiver reason+human authorization receipt",
+        "response": "template and journey queries return typed definitions/instances/evidence",
+        "dml": "append immutable template version; materialize N tasks with actor/due/condition snapshot; append complete/waive revision and evidence",
+        "event": "task completed/waived and journey completed only when required task predicate holds",
+        "handler": "optional owner-port checks for documents/workflow plus exact actor PEP",
+        "schema": "versioned task definition children or immutable typed artifact with exact refetch; producer for assignment/task revision tables"
+      }
+    },
+    {
+      "id": "P0-WFP-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.WORKFORCE_PLANNING"
+      ],
+      "title": "Scenario revisions persist digests but no typed assumptions or results",
+      "affectedOperations": [
+        "modern.workforceplan.scenario.create",
+        "modern.workforceplan.scenario.revise",
+        "modern.workforceplan.scenario.simulate",
+        "modern.workforceplan.scenario.submit",
+        "modern.workforceplan.scenario.approve",
+        "modern.workforceplan.scenario.publish"
+      ],
+      "affectedTables": [
+        "ppl_wfp_scenarios",
+        "ppl_wfp_scenario_revisions"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.workforceplan.scenario.create"
+          }
+        },
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "tableSpecifications",
+            "key": "tableName",
+            "value": "ppl_wfp_scenario_revisions"
+          }
+        }
+      ],
+      "whyBlocking": "organization/config/snapshot IDs and result digests cannot reconstruct headcount, skills, cost, currency, time horizon or scenario deltas; revise is bodyless.",
+      "falsePositiveAnalysis": "Pinned population/organization snapshots and deterministic seed are valid inputs. The defect is absence of the typed assumption/result artifact behind those pins.",
+      "minimumCanonicalContract": {
+        "request": "as-of population snapshot plus typed assumption artifact/version, unit/currency and horizon; revise supplies a replacement revision",
+        "response": "scenario query returns immutable assumptions and result lines/refetch handle",
+        "dml": "append scenario revision with exact artifact IDs/revisions and simulation result receipt; never overwrite prior revision",
+        "event": "emit revised/simulated/approved/published with revision/result refs",
+        "handler": "simulation result handler verifies request digest and appends immutable typed result",
+        "schema": "typed assumption/result line children or content artifact with schema version, digest, owner and exact historical refetch"
+      }
+    },
+    {
+      "id": "P0-BNF-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.BENEFITS_ADMIN"
+      ],
+      "title": "Enrollment eligibility/dependent snapshot and provider request lifecycle are not reproducible",
+      "affectedOperations": [
+        "modern.benefits.plan.revise",
+        "modern.benefits.enrollment.submit",
+        "modern.benefits.lifeevent.submit",
+        "modern.benefits.lifeevent.decide"
+      ],
+      "affectedHandlers": [
+        "internal.benefits.provider-result.consume",
+        "internal.benefits.life-event.expire"
+      ],
+      "affectedTables": [
+        "ppl_bnf_enrollments",
+        "ppl_bnf_provider_requests",
+        "ppl_bnf_provider_receipts"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.benefits.enrollment.submit"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.benefits.provider-result.consume"
+          }
+        }
+      ],
+      "whyBlocking": "the election stores caller-supplied dependent tokens without an eligibility/relationship snapshot or eligibility decision receipt; no producer creates provider_requests, while its handler requires one; life-event expiry targets enrollment with impossible states.",
+      "falsePositiveAnalysis": "Coverage options already carry contribution money/currency/component and eligibility/window config refs; generic benefits is not excluded BENSK/ADDSK.",
+      "minimumCanonicalContract": {
+        "request": "self-derived worker, exact plan version, selected option, dependent relationship tokens, eligibility snapshot+decision receipt, life-event link",
+        "response": "eligible plan/election query returns effective option price/frequency, coverage and provider status without exposing dependent identity",
+        "dml": "insert election+eligibility proof; on approval append provider request; handler appends result receipt and maps provider outcome to enrollment domain state",
+        "event": "submitted/decided/provider-result/cancelled events reference exact plan/election revision",
+        "handler": "provider handler locks provider request and enrollment; life-event expiry locks life event, not an unrelated generic state",
+        "schema": "versioned option/dependent-election children or immutable typed election artifact; provider request/result producer and refetch"
+      }
+    },
+    {
+      "id": "P0-HRS-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.HR_SERVICE_DELIVERY"
+      ],
+      "title": "Case request/response content has only a digest and SLA handler corrupts case lifecycle",
+      "affectedOperations": [
+        "modern.hrservice.case.create",
+        "modern.hrservice.case.respond",
+        "modern.hrservice.case.resolve",
+        "modern.hrservice.case.assign",
+        "modern.hrservice.case.triage"
+      ],
+      "affectedHandlers": [
+        "internal.hrservice.sla-milestone.consume"
+      ],
+      "affectedTables": [
+        "ppl_hrs_cases",
+        "ppl_hrs_case_actions",
+        "ppl_hrs_sla_receipts"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.hrservice.case.create"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.hrservice.sla-milestone.consume"
+          }
+        }
+      ],
+      "whyBlocking": "case create contains no request content/artifact; responses persist only a digest with no immutable object reference; assignment has no assignee/queue decision; the SLA handler uses REQUESTED/RUNNING and COMPLETED/FAILED against OPEN/TRIAGED/IN_PROGRESS/WAITING/RESOLVED/CANCELLED.",
+      "falsePositiveAnalysis": "Sensitive case text need not be stored in the case table; an encrypted immutable content owner is preferred. Digest-only is insufficient without exact owner/refetch.",
+      "minimumCanonicalContract": {
+        "request": "encrypted request/response artifact id+revision, attachments refs, visibility, requester derived from self or proxy, assignee/queue decision",
+        "response": "case query returns permitted content refs, action history and SLA clock",
+        "dml": "append action with artifact refs; update case state separately; append SLA milestone without replacing case status",
+        "event": "case action/SLA events expose no raw content and use exact case revision",
+        "handler": "SLA handler appends measurement and optionally raises breach action; it never maps milestone outcome to generic case state",
+        "schema": "action artifact/ref columns, SLA pause/resume intervals and tenant-configured case/queue/policy versions"
+      }
+    },
+    {
+      "id": "P0-CWK-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.CONTINGENT_WORKFORCE"
+      ],
+      "title": "Classification and access control are declared but have no producer or independent state",
+      "affectedOperations": [
+        "modern.contingent.engagement.create",
+        "modern.contingent.engagement.revise",
+        "modern.contingent.engagement.activate",
+        "modern.contingent.sponsor.reassign"
+      ],
+      "affectedHandlers": [
+        "internal.contingent.access-grant-result.consume",
+        "internal.contingent.access-revoke-result.consume",
+        "internal.contingent.access-expiry.initiate"
+      ],
+      "affectedTables": [
+        "ppl_cwk_classification_receipts",
+        "ppl_cwk_access_requests",
+        "ppl_cwk_access_expiry_receipts",
+        "ppl_cwk_engagements",
+        "ppl_cwk_sponsor_assignments"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.contingent.engagement.create"
+          }
+        },
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "tableSpecifications",
+            "key": "tableName",
+            "value": "ppl_cwk_classification_receipts"
+          }
+        }
+      ],
+      "whyBlocking": "create does not accept/persist classification despite a non-null column; activate creates no access request; three access handlers write only generic engagement status and no access/classification/expiry proof; sponsor reassignment has no new sponsor input.",
+      "falsePositiveAnalysis": "Vendor, worker, sponsor and effective interval refs are useful. This does not require a shared vendor database—typed owner ports are sufficient.",
+      "minimumCanonicalContract": {
+        "request": "classification intent+policy/decision receipt, access package/scope/expiry, sponsor replacement+effective interval",
+        "response": "engagement query returns classification and access grant/revoke/expiry receipts under restricted policy",
+        "dml": "append classification receipt; append access request; handle grant/revoke in separate access state; close sponsor interval then append new assignment",
+        "event": "engagement activated only after approved classification and access grant; access events do not masquerade as engagement states",
+        "handler": "handlers lock access request and append immutable result/expiry receipts; engagement becomes ACTIVE/ENDED only under explicit transition",
+        "schema": "closed classification vocabulary/version, access request/result schema, non-overlapping sponsor intervals"
+      }
+    },
+    {
+      "id": "P0-SKL-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.SKILLS_ONTOLOGY"
+      ],
+      "title": "Taxonomy node/edge/band tables contain only generic fact-envelope fields and evidence admission is empty",
+      "affectedOperations": [
+        "modern.skills.taxonomy.create",
+        "modern.skills.taxonomy.revise",
+        "modern.skills.evidence.record"
+      ],
+      "affectedTables": [
+        "prf_skl_skill_nodes",
+        "prf_skl_skill_edges",
+        "prf_skl_proficiency_levels",
+        "prf_skl_worker_evidence"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "tableSpecifications",
+            "key": "tableName",
+            "value": "prf_skl_skill_nodes"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.skills.evidence.record"
+          }
+        }
+      ],
+      "whyBlocking": "there is nowhere to store a skill code/label, edge endpoints/relation, proficiency code/order or taxonomy version linkage; evidence.record has no worker/skill/proficiency/provenance/consent input.",
+      "falsePositiveAnalysis": "Content digests are valid integrity checks after typed graph materialization; they are not the graph.",
+      "minimumCanonicalContract": {
+        "request": "taxonomy revision carries nodes(code,label,locale), edges(source,target,type), ordered proficiency bands; evidence carries worker, skill+taxonomy version, band, source, observedAt, consent/provenance",
+        "response": "taxonomy/evidence queries return exact versioned graph and verified evidence",
+        "dml": "append a new immutable taxonomy version and children; append evidence PENDING; verification only matches exact source receipt",
+        "event": "published taxonomy and evidence recorded/verified/revoked events carry exact revision refs",
+        "handler": "optional external evidence verifier returns signed receipt; no automated proficiency decision without configured rule/human boundary",
+        "schema": "typed node/edge/band columns/FKs/uniques; evidence consent receipt and taxonomy-version FK"
+      }
+    },
+    {
+      "id": "P0-GRW-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.GROWTH_PROFILE"
+      ],
+      "title": "Immutable content references and evidence consent are persisted without validating exact owner revisions",
+      "affectedOperations": [
+        "modern.growth.profile.create",
+        "modern.growth.profile.update",
+        "modern.growth.coaching.record",
+        "modern.growth.evidence.link"
+      ],
+      "affectedTables": [
+        "prf_grw_profiles",
+        "prf_grw_profile_revisions",
+        "prf_grw_coaching_notes",
+        "prf_grw_evidence_links"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.growth.profile.update"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.growth.coaching.record"
+          }
+        }
+      ],
+      "whyBlocking": "profilePatch/coaching contain artifact IDs/revisions and coach principal but selectors do not refetch either artifact or principal; evidence.link derives a consent revision that is absent from the request and has no consent receipt; self ownership is not enforced.",
+      "falsePositiveAnalysis": "External immutable encrypted artifacts are an acceptable alternative to storing confidential text locally, and the new typed evidence-ref child tables are useful.",
+      "minimumCanonicalContract": {
+        "request": "artifact id+revision+schema/digest, evidence refs with consent receipt/version/expiry; coach is caller or exact delegated principal",
+        "response": "profile query returns exact historical artifact/evidence/coaching refs by permitted visibility",
+        "dml": "owner-refetch every artifact/principal/evidence revision before append; persist consent receipt not an invented revision",
+        "event": "revision/coaching/evidence-linked events use immutable revision refs and no confidential text",
+        "handler": "content/evidence owner port denies stale, cross-tenant, withdrawn-consent and unauthorized visibility",
+        "schema": "artifact schema/version/digest columns or typed owner-proof receipt; consent expiry/revocation linkage"
+      }
+    },
+    {
+      "id": "P0-LRN-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.LEARNING"
+      ],
+      "title": "Offerings have no executable content/capacity/skill version and administrative assignment creation is empty",
+      "affectedOperations": [
+        "modern.learning.offering.create",
+        "modern.learning.offering.revise",
+        "modern.learning.assignment.create",
+        "modern.learning.self.enroll"
+      ],
+      "affectedTables": [
+        "prf_lrn_offerings",
+        "prf_lrn_assignments"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.learning.assignment.create"
+          }
+        },
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "tableSpecifications",
+            "key": "tableName",
+            "value": "prf_lrn_offerings"
+          }
+        }
+      ],
+      "whyBlocking": "offering stores provider and digest but no content artifact/version, capacity, eligibility or skills; assignment.create has no worker/offering/due/source input, so mandatory learning cannot be assigned.",
+      "falsePositiveAnalysis": "Self enrollment already carries offering, worker, effective date and consent revision; completion verification has a meaningful evidence owner-refetch path.",
+      "minimumCanonicalContract": {
+        "request": "offering content artifact+revision, delivery/session/capacity/eligibility/skill mappings; assignment worker/offering exact revision/due/assignment source; self worker derived",
+        "response": "catalog returns usable offering facts; assignment returns due/progress/completion evidence",
+        "dml": "append offering version and mappings; reserve capacity/waitlist atomically; create assignment with exact source policy",
+        "event": "offering/assignment/enrollment/completion events distinguish self vs required assignment",
+        "handler": "provider/completion owner receipts verify content/completion; capacity retry is idempotent",
+        "schema": "versioned offering child/artifact schema, capacity ledger, skill taxonomy version refs, assignment source and consent receipt"
+      }
+    },
+    {
+      "id": "P0-MKT-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.INTERNAL_MARKETPLACE"
+      ],
+      "title": "Opportunity criteria/capacity and explanation provenance are absent",
+      "affectedOperations": [
+        "modern.opportunity.create",
+        "modern.opportunity.revise",
+        "modern.opportunity.apply",
+        "modern.opportunity.shortlist",
+        "modern.opportunity.selection.record"
+      ],
+      "affectedTables": [
+        "prf_mkt_opportunities",
+        "prf_mkt_applications",
+        "prf_mkt_match_explanations",
+        "prf_mkt_application_decisions"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.opportunity.create"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.opportunity.shortlist"
+          }
+        }
+      ],
+      "whyBlocking": "an opportunity has only name/org/dates; no type, capacity, eligibility, skill criteria or assignment terms. Application statement and explanation are digests without immutable artifact/refetch; shortlist receives explanationId but does not persist it.",
+      "falsePositiveAnalysis": "Human decision and prohibited-attribute count concepts are present and should be retained; they do not prove the explanation or decision input.",
+      "minimumCanonicalContract": {
+        "request": "typed opportunity artifact+version/capacity/criteria; self-derived applicant and consent receipt; shortlist explanation artifact+policy/input revision; selection human receipt",
+        "response": "catalog/application query returns criteria, status, typed explanation factors and decision receipt subject to field policy",
+        "dml": "append immutable opportunity revision; append application; append explanation linked by ID; update only from exact human decision",
+        "event": "published/applied/shortlisted/selected/rejected events reference exact revisions, never ranking raw features",
+        "handler": "any model match is advisory through governed-AI owner and requires human selection; non-AI rule path remains available",
+        "schema": "opportunity version/criteria/skill mappings, statement artifact ref, explanation id/factors, decision receipt"
+      }
+    },
+    {
+      "id": "P0-SUC-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.SUCCESSION"
+      ],
+      "title": "Restricted succession evidence and consent/audience versions are not anchored",
+      "affectedOperations": [
+        "modern.succession.plan.create",
+        "modern.succession.plan.revise",
+        "modern.succession.nomination.add",
+        "modern.succession.readiness.record"
+      ],
+      "affectedTables": [
+        "prf_suc_plans",
+        "prf_suc_nominations",
+        "prf_suc_readiness_evidence"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.succession.nomination.add"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.succession.readiness.record"
+          }
+        }
+      ],
+      "whyBlocking": "plan stores an audience policy ID but not the exact revision supplied/selected; nomination stores a raw consent revision and evidence digest without consent/evidence refetch; readiness.record has no nomination/evidence input.",
+      "falsePositiveAnalysis": "Key-position and worker owner refs are valid. A plan does not need to expose succession data to employees merely because the worker exists.",
+      "minimumCanonicalContract": {
+        "request": "audience policy id+revision, key position, nomination worker, consent receipt+expiry, readiness vocabulary version, evidence id+revision/digest/review due",
+        "response": "query enforces restricted audience and returns nomination/readiness history only under exact policy revision",
+        "dml": "append nominations and readiness evidence linked to nomination; never overwrite evidence; publish pins audience approval",
+        "event": "nomination/readiness/approval/publish events carry no sensitive assessment, only exact restricted refs",
+        "handler": "evidence/consent/audience owner refetch fails closed and reauthorizes every call",
+        "schema": "audience revision column/check, readiness vocabulary/config version, consent receipt, typed evidence reference and expiry"
+      }
+    },
+    {
+      "id": "P0-CMP-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.COMPENSATION_PLANNING"
+      ],
+      "title": "Proposal admission is empty and approved snapshot accepts untrusted replacement lines",
+      "affectedOperations": [
+        "modern.compplan.cycle.create",
+        "modern.compplan.cycle.revise",
+        "modern.compplan.budget.allocate",
+        "modern.compplan.proposal.upsert",
+        "modern.compplan.proposal.submit",
+        "modern.compplan.plan.approve",
+        "modern.compplan.snapshot.publish"
+      ],
+      "affectedTables": [
+        "prf_cmp_cycles",
+        "prf_cmp_budget_ledger",
+        "prf_cmp_proposals",
+        "prf_cmp_plans",
+        "prf_cmp_approved_snapshots",
+        "prf_cmp_approved_snapshot_lines"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.compplan.proposal.upsert"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.compplan.snapshot.publish"
+          }
+        }
+      ],
+      "whyBlocking": "proposal.upsert has no worker/component/money/effective input; cycle create omits required budget money; snapshot.publish lets the caller provide arbitrary lines and does not bind each line to approved proposal versions or budget balance.",
+      "falsePositiveAnalysis": "Money is correctly modeled as decimal string plus currency in budget/snapshot value objects; the defect is provenance, cross-currency policy and absent proposal creation.",
+      "minimumCanonicalContract": {
+        "request": "cycle budget Money and FX policy snapshot; proposal worker+assignment+component catalog revision+Money+effective date+reason; snapshot request only approved plan/revision",
+        "response": "queries expose budget balance, proposal version/history and immutable approved lines under compensation field policy",
+        "dml": "append budget ledger; insert/update proposal with CAS; approval freezes proposal IDs+versions; server derives snapshot lines from approved plan",
+        "event": "proposal/plan/snapshot events identify exact revision and money currency, never mutable request-only lines",
+        "handler": "optional approval handler validates decision receipt and budget; no automatic pay update—handoff to PAY owner is explicit",
+        "schema": "money checks, component catalog/country-pack version, FX snapshot where needed, proposal version history and snapshot FK to source proposal revisions"
+      }
+    },
+    {
+      "id": "P0-WFM-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.ADVANCED_WFM"
+      ],
+      "title": "Optimization result has no candidate/shift-line producer and hard-couples every run to AI fairness",
+      "affectedOperations": [
+        "modern.wfm.forecast.create",
+        "modern.wfm.schedule.optimize",
+        "modern.wfm.schedule.validate",
+        "modern.wfm.schedule.submit",
+        "modern.wfm.schedule.publish"
+      ],
+      "affectedHandlers": [
+        "internal.wfm.schedule-optimization.result.consume",
+        "internal.wfm.approval-result.consume"
+      ],
+      "affectedTables": [
+        "tme_wfm_optimization_requests",
+        "tme_wfm_schedule_candidates",
+        "tme_wfm_schedule_candidate_versions",
+        "tme_wfm_candidate_shift_lines",
+        "tme_wfm_schedule_candidate_time_group_refs"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.wfm.schedule.optimize"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.wfm.schedule-optimization.result.consume"
+          }
+        }
+      ],
+      "whyBlocking": "schedule.optimize creates only an optimization request; result handler tries to UPDATE a schedule candidate that no operation creates and writes no candidate version/shift lines. A mandatory SYS.AIFairnessEvaluation also prevents a deterministic rule optimizer from being a generic core path.",
+      "falsePositiveAnalysis": "Forecast demand lines are now typed and schedule time-group refs are normalized; those improvements remain valid. Fairness constraints remain required, but AI-governance proof is conditional on algorithm mode.",
+      "minimumCanonicalContract": {
+        "request": "optimization mode discriminator; exact forecast/input/availability/rule snapshots; governed-AI proof only for AI mode",
+        "response": "candidate query returns candidate version and full typed shift/constraint/fairness/approval/publish facts",
+        "dml": "result handler locks optimization request, appends candidate+version+shift lines+time groups, closes request; validation appends receipts; publish calls TIM owner once",
+        "event": "generated/failed/validated/submitted/approved/rejected/published conditions use real states",
+        "handler": "optimizer result schema includes candidate digest, shifts, skills with taxonomy version/band, time zone/tzdb, coverage and proof; approval handler maps to APPROVED/REJECTED design state",
+        "schema": "candidate creator and immutable versions, typed skill refs, unique shift line keys, interval/time-zone checks and publish ledger"
+      }
+    },
+    {
+      "id": "P0-LIS-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.EMPLOYEE_LISTENING"
+      ],
+      "title": "Anonymous response path is linked to authenticated receipts and persists no answers",
+      "affectedOperations": [
+        "modern.listening.survey.create",
+        "modern.listening.survey.revise",
+        "modern.listening.response.submit",
+        "modern.listening.cohorts.query"
+      ],
+      "affectedHandlers": [
+        "internal.listening.protected.admission-install.consume",
+        "internal.listening.insights.cohort-package.consume",
+        "internal.listening.protected.erasure.request",
+        "internal.listening.protected.erasure.process"
+      ],
+      "affectedTables": [
+        "sys_hris_listening_survey_versions",
+        "sys_hris_listening_responses",
+        "sys_hris_listening_answer_values",
+        "sys_hris_listening_token_consumptions",
+        "sys_hris_listening_cohort_projections"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.listening.response.submit"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.listening.protected.erasure.request"
+          }
+        }
+      ],
+      "whyBlocking": "response.submit uses authenticatedPrincipal, a general command receipt and correlation ID, accepts no token or typed answers, lets the respondent choose eraseAfter, and does not bind admission_version; 15 listening support tables have no exact DML producer in the canonical five.",
+      "falsePositiveAnalysis": "The separate configuration/protected/insights/issuer static architecture is directionally correct and raw response events are absent as required; static owner names are not an exact transactional field contract.",
+      "minimumCanonicalContract": {
+        "request": "one-time anonymous participation envelope/token plus survey admission version and typed answer values; erase date server-derived from retention policy",
+        "response": "active survey returns question schema; cohort query returns threshold-safe bucket values/count policy and lineage only",
+        "dml": "token-scoped protected receipt claims first; atomically consume token, append response+answers, close anonymous receipt; erasure owner destroys content/key and retains non-linkable tombstone",
+        "event": "no raw response event or cross-stream correlation; only minimized cohort package/projection receipts",
+        "handler": "fully specify all eight listening owner handlers with input, writes, idempotency, ack and rollback; no authenticated principal on anonymous submit",
+        "schema": "versioned question/answer schemas, protected answer encryption, token consumption uniqueness, admission FK, cohort privacy budget and erasure tables"
+      }
+    },
+    {
+      "id": "P0-ANL-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.PEOPLE_ANALYTICS"
+      ],
+      "title": "Metric definition incorrectly accepts projection outputs while projection/export results are never stored",
+      "affectedOperations": [
+        "modern.analytics.metric.create",
+        "modern.analytics.metric.revise",
+        "modern.analytics.projection.request",
+        "modern.analytics.export.create"
+      ],
+      "affectedHandlers": [
+        "internal.analytics.metric-projection.result.consume",
+        "internal.analytics.export.result.consume",
+        "internal.analytics.export.expire"
+      ],
+      "affectedTables": [
+        "sys_hris_metric_versions",
+        "sys_hris_metric_projection_requests",
+        "sys_hris_metric_projections",
+        "sys_hris_analytics_export_receipts"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.analytics.metric.create"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.analytics.metric-projection.result.consume"
+          }
+        }
+      ],
+      "whyBlocking": "metric.create accepts cohortDefinitionId/anonymityThreshold/asOf/calculatedAt/subjectCount—projection inputs/outputs—but persists none and has no typed metric expression. projection.request has no as-of/cohort/population input and its result handler appends no projection row. Export result writes no object reference/digest/row count.",
+      "falsePositiveAnalysis": "The new typed child table for export projection IDs is correct. Digest-only lineage can remain as an integrity field after named sources/expressions and immutable projection values exist.",
+      "minimumCanonicalContract": {
+        "request": "metric definition: typed expression/aggregation/unit/dimensions/source contracts; projection request: exact metric version/as-of/cohort/population snapshot/purpose; export: exact projection revisions and bounded retention",
+        "response": "metric/projection/export query returns typed definition/value/lineage/object receipt under privacy policy",
+        "dml": "append metric version; create projection request; handler appends immutable projection values/lineage then closes request; export handler stores object ref/digest/count and expiry",
+        "event": "validated/published/projected/exported/expired events use actual state and privacy-safe refs",
+        "handler": "projection/export handlers verify signed owner result, purpose/population and threshold; expiry only sets EXPIRED and revokes object",
+        "schema": "metric-expression AST/schema, dimension/unit registry versions, typed projection values, export object reference and retention fence"
+      }
+    },
+    {
+      "id": "P0-AI-001",
+      "severity": "P0",
+      "capabilityIds": [
+        "HRIS.MODERN.GOVERNED_AI"
+      ],
+      "title": "AI assistance/evaluation queries reuse a policy record and evaluation results have no receipt producer",
+      "affectedOperations": [
+        "modern.ai.assistance.query",
+        "modern.ai.assistances.query",
+        "modern.ai.evaluation.query",
+        "modern.ai.evaluations.query",
+        "modern.ai.policy.query",
+        "modern.ai.policies.query",
+        "modern.ai.assist.review"
+      ],
+      "affectedHandlers": [
+        "internal.ai.assistance-result.consume",
+        "internal.ai.policy-evaluation-result.consume"
+      ],
+      "affectedTables": [
+        "sys_hris_ai_assistance_requests",
+        "sys_hris_ai_provenance_receipts",
+        "sys_hris_ai_evaluation_requests",
+        "sys_hris_ai_evaluation_receipts"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "recordSchemas",
+            "key": "schemaId",
+            "value": "modern.ai.evaluation.query.Entity.v3"
+          }
+        },
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "operationFieldLineage",
+            "key": "operationId",
+            "value": "modern.ai.policy.query"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "systemHandlers",
+            "key": "handlerId",
+            "value": "internal.ai.policy-evaluation-result.consume"
+          }
+        }
+      ],
+      "whyBlocking": "all six AI query schemas expose the same policy proof fields. Evaluation queries omit outcome/suite/blocking failures/result digest; assistance queries omit instruction/source projection/result details; policy queries incorrectly source per-assistance disclosure evidence from a table outside their read plan. Evaluation handler never appends sys_hris_ai_evaluation_receipts, and assistance handler declares invalid COMPLETED.",
+      "falsePositiveAnalysis": "The central AI governance proof set, kill switch, monitoring expiry, `autonomous_employment_decision_allowed=false`, raw-prompt prohibition and human-confirmation concept are strong and should be preserved.",
+      "minimumCanonicalContract": {
+        "request": "assistance/evaluation/policy have distinct closed request schemas and exact subject ownership; review includes human actor/reason/decision receipt",
+        "response": "distinct entity records: policy proof; assistance instruction/source/result/human confirmation; evaluation suite/outcome/failures/result receipt",
+        "dml": "assistance result appends provenance and sets PRODUCED/FAILED; evaluation result appends evaluation receipt and sets COMPLETED/FAILED",
+        "event": "events use PRODUCED/FAILED/CONFIRMED/REJECTED etc. and immutable result receipt refs",
+        "handler": "central governance revalidated on every call; human confirmation cannot apply another user's assistance; evaluation handler writes signed immutable receipt",
+        "schema": "separate query schemas/lineage per aggregate; evaluation receipt producer; requester/subject ownership and exact historical result refetch"
+      }
+    },
+    {
+      "id": "P1-CFG-001",
+      "severity": "P1",
+      "capabilityIds": [
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.HR_SERVICE_DELIVERY",
+        "HRIS.MODERN.RECRUITING_ATS",
+        "HRIS.MODERN.SUCCESSION",
+        "HRIS.MODERN.COMPENSATION_PLANNING",
+        "HRIS.MODERN.ADVANCED_WFM"
+      ],
+      "title": "Tenant/country configurable codes are stored without an exact vocabulary or country-pack version",
+      "affectedFields": [
+        "ppl_bnf_plan_versions.payroll_treatment_code",
+        "ppl_hrs_cases.case_type",
+        "ppl_hrs_cases.queue_key",
+        "ppl_rec_requisitions.employment_type",
+        "prf_suc_nominations.readiness_code",
+        "prf_cmp_proposals.component_code",
+        "prf_cmp_approved_snapshot_lines.component_code",
+        "tme_wfm_demand_lines.demand_unit_code"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "tableSpecifications",
+            "key": "tableName",
+            "value": "ppl_hrs_cases"
+          }
+        },
+        {
+          "artifact": "modern-capability-exact-schema-contracts.v1.json",
+          "selector": {
+            "collection": "tableSpecifications",
+            "key": "tableName",
+            "value": "prf_suc_nominations"
+          }
+        }
+      ],
+      "whyBlocking": "not a universal G3 stop if exact config validation exists elsewhere, but the current exact contracts contain no vocabulary revision/refetch for these codes.",
+      "falsePositiveAnalysis": "The code strings need not be hardcoded enums or actual customer golden data at G3; they should be validated against versioned tenant config/country pack.",
+      "minimumCanonicalContract": {
+        "request": "code plus vocabulary/config version",
+        "response": "return code and resolved localized label/version",
+        "dml": "persist exact version with code",
+        "event": "event exposes code only when audience permits and pins version",
+        "handler": "SYS config owner validates active/effective version",
+        "schema": "composite code+version reference or immutable config receipt"
+      }
+    },
+    {
+      "id": "P1-MONEY-002",
+      "severity": "P1",
+      "capabilityIds": [
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.RECRUITING_ATS",
+        "HRIS.MODERN.COMPENSATION_PLANNING",
+        "HRIS.MODERN.WORKFORCE_PLANNING"
+      ],
+      "title": "Money fields lack frequency/FX/basis boundaries needed for multinational use",
+      "affectedFields": [
+        "BenefitCoverageOption.v1.employeeContribution",
+        "BenefitCoverageOption.v1.employerContribution",
+        "ppl_rec_offers.amount",
+        "prf_cmp_budget_ledger.amount",
+        "prf_cmp_proposals.amount",
+        "ApprovedCompensationSnapshotLine.v1.approvedAmount"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "valueObjects",
+            "key": "name",
+            "value": "BenefitCoverageOption.v1"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "valueObjects",
+            "key": "name",
+            "value": "ApprovedCompensationSnapshotLine.v1"
+          }
+        }
+      ],
+      "whyBlocking": "decimal+currency is correct but cannot compare annual/monthly/per-pay-period amounts or balance cross-currency budgets without frequency/basis and an exact FX policy snapshot.",
+      "falsePositiveAnalysis": "No binary-float or integer-minor-unit defect was found; current DECIMAL(19,4) string wire values are acceptable.",
+      "minimumCanonicalContract": {
+        "request": "Money plus frequency/basis; FX snapshot only when currencies differ",
+        "response": "display original and reporting money without lossy conversion",
+        "dml": "persist original currency/value and pinned FX conversion proof",
+        "event": "events preserve original money and conversion revision",
+        "handler": "country pack owns tax/pay frequency; finance/FX owner supplies immutable rate snapshot",
+        "schema": "currency checks, scale, frequency code and optional FX receipt"
+      }
+    },
+    {
+      "id": "P1-DECISION-003",
+      "severity": "P1",
+      "capabilityIds": [
+        "HRIS.MODERN.RECRUITING_ATS",
+        "HRIS.MODERN.INTERNAL_MARKETPLACE",
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.SUCCESSION"
+      ],
+      "title": "Several consequential decisions do not distinguish subject action from administrator proxy recording",
+      "affectedOperations": [
+        "modern.recruiting.offer.respond",
+        "modern.opportunity.application.withdraw",
+        "modern.benefits.lifeevent.decide",
+        "modern.succession.nomination.withdraw"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.recruiting.offer.respond"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.opportunity.application.withdraw"
+          }
+        }
+      ],
+      "whyBlocking": "actor provenance affects consent, appeal and audit. Current operations can change the state but do not say whether the affected person acted or an operator recorded an external decision.",
+      "falsePositiveAnalysis": "Not every cancellation requires common approval. A self action can use authenticated subject evidence; a proxy needs a distinct duty/reason/source receipt.",
+      "minimumCanonicalContract": {
+        "request": "actorMode SELF|AUTHORIZED_PROXY with exact subject/delegation/source receipt and reason when proxy",
+        "response": "return actor mode and audit-safe receipt ref",
+        "dml": "append immutable decision fact before state update",
+        "event": "event includes decision source class, not sensitive content",
+        "handler": "DWP PEP enforces distinct self/proxy duties",
+        "schema": "decision ledger fields for actor/source/delegation revision"
+      }
+    },
+    {
+      "id": "P1-EFFECTIVE-004",
+      "severity": "P1",
+      "capabilityIds": [
+        "HRIS.MODERN.RECRUITING_ATS",
+        "HRIS.MODERN.ONBOARDING",
+        "HRIS.MODERN.BENEFITS_ADMIN",
+        "HRIS.MODERN.CONTINGENT_WORKFORCE",
+        "HRIS.MODERN.LEARNING",
+        "HRIS.MODERN.SUCCESSION"
+      ],
+      "title": "Revision operations do not define correction versus future-effective supersession semantics",
+      "affectedOperations": [
+        "modern.recruiting.requisition.revise",
+        "modern.onboarding.template.revise",
+        "modern.benefits.plan.revise",
+        "modern.contingent.engagement.revise",
+        "modern.learning.offering.revise",
+        "modern.succession.plan.revise"
+      ],
+      "sourceAnchors": [
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.benefits.plan.revise"
+          }
+        },
+        {
+          "artifact": "modern-capability-operation-causal-contract-ssot.v2.json",
+          "selector": {
+            "collection": "operations",
+            "key": "operationId",
+            "value": "modern.succession.plan.revise"
+          }
+        }
+      ],
+      "whyBlocking": "the product needs audit-safe corrections and future changes without rewriting history; current revise commands are bodyless and state-only.",
+      "falsePositiveAnalysis": "Open-ended effective_to is explicitly modeled and is not itself a defect.",
+      "minimumCanonicalContract": {
+        "request": "revision mode CORRECTION|SUPERSEDE, effectiveFrom/To, changed fields/artifact and reason",
+        "response": "as-of query returns the exact revision and correction lineage",
+        "dml": "append new revision; correction never mutates published historical facts except controlled reversal/supersession",
+        "event": "event states revision mode/effective time and predecessor",
+        "handler": "no asynchronous handler required unless external owner proof is involved",
+        "schema": "non-overlap/exclusion constraints, predecessor revision and correction reason"
+      }
+    }
+  ],
+  "enumerations": {
+    "genericQueryEntities": {
+      "count": 60,
+      "totalQueries": 66,
+      "closedEntityFieldSet": [
+        "publicId",
+        "aggregateVersion",
+        "state",
+        "referenceEffectiveAt",
+        "fieldPolicyRevision"
+      ],
+      "operationsByCapability": {
+        "HRIS.MODERN.ADVANCED_WFM": [
+          "modern.wfm.candidate.query",
+          "modern.wfm.candidates.query",
+          "modern.wfm.forecast.query",
+          "modern.wfm.forecasts.query",
+          "modern.wfm.optimization.query"
+        ],
+        "HRIS.MODERN.BENEFITS_ADMIN": [
+          "modern.benefits.enrollment.query",
+          "modern.benefits.enrollments.query",
+          "modern.benefits.lifeevent.query",
+          "modern.benefits.lifeevents.query",
+          "modern.benefits.plan.query",
+          "modern.benefits.plans.query",
+          "modern.benefits.self.plans.query"
+        ],
+        "HRIS.MODERN.COMPENSATION_PLANNING": [
+          "modern.compplan.cycle.query",
+          "modern.compplan.cycles.query",
+          "modern.compplan.proposal.query",
+          "modern.compplan.proposals.query"
+        ],
+        "HRIS.MODERN.CONTINGENT_WORKFORCE": [
+          "modern.contingent.engagement.query",
+          "modern.contingent.engagements.query"
+        ],
+        "HRIS.MODERN.EMPLOYEE_LISTENING": [
+          "modern.listening.active.query",
+          "modern.listening.cohorts.query",
+          "modern.listening.surveys.query"
+        ],
+        "HRIS.MODERN.GROWTH_PROFILE": [
+          "modern.growth.export.query",
+          "modern.growth.exports.query",
+          "modern.growth.profile.query",
+          "modern.growth.profiles.query",
+          "modern.growth.self.query"
+        ],
+        "HRIS.MODERN.HR_SERVICE_DELIVERY": [
+          "modern.hrservice.case.query",
+          "modern.hrservice.cases.query"
+        ],
+        "HRIS.MODERN.INTERNAL_MARKETPLACE": [
+          "modern.opportunity.application.query",
+          "modern.opportunity.applications.query",
+          "modern.opportunity.catalog.query",
+          "modern.opportunity.query"
+        ],
+        "HRIS.MODERN.LEARNING": [
+          "modern.learning.assignment.query",
+          "modern.learning.assignments.query",
+          "modern.learning.catalog.query",
+          "modern.learning.offering.query"
+        ],
+        "HRIS.MODERN.ONBOARDING": [
+          "modern.onboarding.assignment.query",
+          "modern.onboarding.assignments.query",
+          "modern.onboarding.self.query",
+          "modern.onboarding.template.query",
+          "modern.onboarding.templates.query"
+        ],
+        "HRIS.MODERN.PEOPLE_ANALYTICS": [
+          "modern.analytics.export.query",
+          "modern.analytics.exports.query",
+          "modern.analytics.metric.query",
+          "modern.analytics.metrics.query",
+          "modern.analytics.projection.query",
+          "modern.analytics.projections.query"
+        ],
+        "HRIS.MODERN.RECRUITING_ATS": [
+          "modern.recruiting.candidate.query",
+          "modern.recruiting.candidates.query",
+          "modern.recruiting.requisition.query",
+          "modern.recruiting.requisitions.query"
+        ],
+        "HRIS.MODERN.SKILLS_ONTOLOGY": [
+          "modern.skills.evidence.query",
+          "modern.skills.evidences.query",
+          "modern.skills.taxonomies.query",
+          "modern.skills.taxonomy.query",
+          "modern.skills.worker.query"
+        ],
+        "HRIS.MODERN.SUCCESSION": [
+          "modern.succession.plan.query",
+          "modern.succession.plans.query"
+        ],
+        "HRIS.MODERN.WORKFORCE_PLANNING": [
+          "modern.workforceplan.scenario.query",
+          "modern.workforceplan.scenarios.query"
+        ]
+      },
+      "minimumBusinessProjectionByCapability": {
+        "HRIS.MODERN.RECRUITING_ATS": [
+          "requisition code/title/organization/position/employment type/effective interval/status",
+          "candidate source key/system, person token, consent expiry, requisition, stage/history",
+          "offer version, money, terms artifact, expiry/status",
+          "hire request and immutable handoff receipt"
+        ],
+        "HRIS.MODERN.ONBOARDING": [
+          "template/version/config scope/effective interval",
+          "typed task definition: key,title,type,actor rule,due anchor,completion/evidence schema,condition",
+          "assignment worker/template version/due/status",
+          "task instance actor/due/status/evidence"
+        ],
+        "HRIS.MODERN.WORKFORCE_PLANNING": [
+          "scenario/config/org and population snapshot/as-of/effective interval/status",
+          "immutable typed assumptions with unit/currency",
+          "simulation revision/input snapshot/rule/seed",
+          "typed result lines and approval/publish receipts"
+        ],
+        "HRIS.MODERN.BENEFITS_ADMIN": [
+          "plan/version/effective interval/options/eligibility/window/provider/payroll treatment",
+          "eligible option price/currency/frequency and coverage constraints",
+          "enrollment worker/plan version/option/dependents/life event/effective interval/status",
+          "provider request/result receipt"
+        ],
+        "HRIS.MODERN.HR_SERVICE_DELIVERY": [
+          "case number/type/requester/queue/sensitivity/status",
+          "SLA policy version/due/paused intervals/milestones",
+          "typed encrypted request/response/attachment artifact refs",
+          "actions with actor, visibility, time and resolution"
+        ],
+        "HRIS.MODERN.CONTINGENT_WORKFORCE": [
+          "engagement/vendor/worker/sponsor/effective interval/classification/status",
+          "classification receipt",
+          "access request/grant/revoke/expiry receipts",
+          "sponsor assignment history"
+        ],
+        "HRIS.MODERN.SKILLS_ONTOLOGY": [
+          "taxonomy/version/effective interval/status",
+          "skill node code/label/version",
+          "typed edge relation/source/target",
+          "proficiency band code/order/locale",
+          "worker evidence subject/skill/taxonomy version/proficiency/provenance/consent/verification"
+        ],
+        "HRIS.MODERN.GROWTH_PROFILE": [
+          "profile worker/effective interval/revision/visibility/status",
+          "aspiration typed content and target",
+          "immutable profile artifact id/revision",
+          "coaching artifact, author/actor, visibility",
+          "consent-bound evidence refs"
+        ],
+        "HRIS.MODERN.LEARNING": [
+          "offering/version/provider/content artifact/capacity/eligibility/skill mappings/effective interval",
+          "assignment worker/offering revision/source/due/status",
+          "completion evidence/provenance and skill evidence refs"
+        ],
+        "HRIS.MODERN.INTERNAL_MARKETPLACE": [
+          "opportunity type/capacity/owner/effective interval/criteria artifact/status",
+          "application worker/statement artifact/consent/status",
+          "match explanation typed factors/prohibited-attribute proof",
+          "human selection decision receipt"
+        ],
+        "HRIS.MODERN.SUCCESSION": [
+          "plan/key position/audience policy id+revision/effective interval/status",
+          "nomination worker/consent receipt/readiness vocabulary version/review due",
+          "typed readiness evidence and expiry",
+          "approval/publish receipt"
+        ],
+        "HRIS.MODERN.COMPENSATION_PLANNING": [
+          "cycle/guideline/population/effective interval/budget money/status",
+          "proposal worker/assignment/component catalog version/money/effective date/status/version",
+          "balanced budget ledger",
+          "approved plan and server-derived immutable snapshot lines"
+        ],
+        "HRIS.MODERN.ADVANCED_WFM": [
+          "forecast/worksite/source/timezone/period/revision/status and typed demand lines",
+          "optimization request snapshots/rule/algorithm governance/period/status",
+          "candidate/version/digest/coverage/status",
+          "typed shift lines with worker/assignment/time-zone offsets/skills/time groups",
+          "constraint/fairness/approval/publish receipts"
+        ],
+        "HRIS.MODERN.EMPLOYEE_LISTENING": [
+          "survey/version/question schema/audience/consent/anonymity/open-close/status",
+          "anonymous admission/token state",
+          "protected typed answers and erasure status",
+          "cohort projection values/threshold/count/budget/lineage",
+          "non-retaliation action"
+        ],
+        "HRIS.MODERN.PEOPLE_ANALYTICS": [
+          "metric/version/expression/unit/aggregation/dimensions/source lineage/effective interval/status",
+          "projection request metric version/as-of/cohort/population snapshot/purpose",
+          "projection result typed values/count/privacy/lineage",
+          "export object ref/digest/count/expiry"
+        ]
+      }
+    },
+    "aiQuerySchemaCopy": {
+      "count": 6,
+      "operations": [
+        "modern.ai.assistance.query",
+        "modern.ai.assistances.query",
+        "modern.ai.evaluation.query",
+        "modern.ai.evaluations.query",
+        "modern.ai.policy.query",
+        "modern.ai.policies.query"
+      ],
+      "copiedFields": [
+        "useCase",
+        "riskClassification",
+        "useCaseRegistrationVersionId",
+        "riskClassificationVersionId",
+        "modelVersionId",
+        "promptTemplateVersionId",
+        "datasetManifestVersionId",
+        "evaluationProtocolVersionId",
+        "purposePolicyVersionId",
+        "populationPolicyVersionId",
+        "humanOversightAssignmentVersionId",
+        "affectedPersonDisclosurePlanVersionId",
+        "impactAssessmentVersionId",
+        "conformityAssessmentVersionId",
+        "incidentResponsePlanVersionId",
+        "rollbackPlanVersionId",
+        "monitoringPolicyVersionId",
+        "killSwitchControlVersionId",
+        "governanceActivationReceiptId",
+        "governanceActivationReceiptRevision",
+        "affectedPersonDisclosureEvidenceId",
+        "monitoringExpiresAt",
+        "killSwitchEnabled",
+        "governanceGateStatus"
+      ],
+      "impossibleOrWrongLineage": [
+        {
+          "operationId": "modern.ai.policy.query",
+          "field": "affectedPersonDisclosureEvidenceId",
+          "source": "sys_hris_ai_assistance_requests.affected_person_disclosure_evidence_id",
+          "readPlan": [
+            "sys_hris_ai_use_policies",
+            "sys_hris_ai_policy_versions"
+          ]
+        },
+        {
+          "operationId": "modern.ai.evaluation.query",
+          "field": "affectedPersonDisclosureEvidenceId",
+          "source": "sys_hris_ai_assistance_requests.affected_person_disclosure_evidence_id",
+          "readPlan": [
+            "sys_hris_ai_evaluation_requests",
+            "sys_hris_ai_evaluation_receipts",
+            "sys_hris_ai_policy_versions",
+            "sys_hris_ai_use_policies"
+          ]
+        }
+      ]
+    },
+    "genericAsyncHandlers": {
+      "count": 17,
+      "selectionRule": "aggregateRoot.preStates=['REQUESTED','RUNNING'] and postStates=['COMPLETED','FAILED']",
+      "rows": [
+        {
+          "handlerId": "internal.ai.assistance-result.consume",
+          "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+          "aggregateTable": "sys_hris_ai_assistance_requests",
+          "stateColumn": "state",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "CONFIRMED",
+            "FAILED",
+            "PRODUCED",
+            "REJECTED",
+            "REQUESTED",
+            "REVOKED",
+            "RUNNING"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "GovernedAiAssistanceResultRecorded.v2",
+          "eventCondition": "toState=GOVERNEDAIASSISTANCERESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.ai.policy-evaluation-result.consume",
+          "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+          "aggregateTable": "sys_hris_ai_evaluation_requests",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "COMPLETED",
+            "FAILED",
+            "REQUESTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "GovernedAiPolicyEvaluationResultRecorded.v2",
+          "eventCondition": "toState=GOVERNEDAIPOLICYEVALUATIONRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.analytics.export.expire",
+          "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+          "aggregateTable": "sys_hris_analytics_export_receipts",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "PeopleAnalyticsExportExpired.v2",
+          "eventCondition": "toState=PEOPLEANALYTICSEXPORTEXPIRED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.analytics.export.result.consume",
+          "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+          "aggregateTable": "sys_hris_analytics_export_receipts",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "PeopleAnalyticsExportResultRecorded.v2",
+          "eventCondition": "toState=PEOPLEANALYTICSEXPORTRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.analytics.metric-projection.result.consume",
+          "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+          "aggregateTable": "sys_hris_metric_projection_requests",
+          "stateColumn": "state",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "ddlLifecycleCompatible": true,
+          "eventName": "PeopleMetricProjectionResultRecorded.v2",
+          "eventCondition": "toState=PEOPLEMETRICPROJECTIONRESULTRECORDED",
+          "semanticDisposition": "P0_PROJECTION_NOT_CREATED_OR_WRITTEN_AND_EVENT_UNREACHABLE"
+        },
+        {
+          "handlerId": "internal.benefits.life-event.expire",
+          "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+          "aggregateTable": "ppl_bnf_enrollments",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "ACTIVE",
+            "CANCELLED",
+            "REJECTED",
+            "SUBMITTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "BenefitLifeEventExpired.v2",
+          "eventCondition": "toState=BENEFITLIFEEVENTEXPIRED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.benefits.provider-result.consume",
+          "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+          "aggregateTable": "ppl_bnf_enrollments",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "ACTIVE",
+            "CANCELLED",
+            "REJECTED",
+            "SUBMITTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "BenefitProviderResultRecorded.v2",
+          "eventCondition": "toState=BENEFITPROVIDERRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.contingent.access-expiry.initiate",
+          "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+          "aggregateTable": "ppl_cwk_engagements",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "ACTIVE",
+            "DRAFT",
+            "ENDED",
+            "OFFBOARDING",
+            "PENDING_APPROVAL",
+            "REJECTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "ContingentAccessExpiryInitiated.v2",
+          "eventCondition": "toState=CONTINGENTACCESSEXPIRYINITIATED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.contingent.access-grant-result.consume",
+          "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+          "aggregateTable": "ppl_cwk_engagements",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "ACTIVE",
+            "DRAFT",
+            "ENDED",
+            "OFFBOARDING",
+            "PENDING_APPROVAL",
+            "REJECTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "ContingentAccessGrantResultRecorded.v2",
+          "eventCondition": "toState=CONTINGENTACCESSGRANTRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.contingent.access-revoke-result.consume",
+          "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+          "aggregateTable": "ppl_cwk_engagements",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "ACTIVE",
+            "DRAFT",
+            "ENDED",
+            "OFFBOARDING",
+            "PENDING_APPROVAL",
+            "REJECTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "ContingentAccessRevokeResultRecorded.v2",
+          "eventCondition": "toState=CONTINGENTACCESSREVOKERESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.growth.portability-export.expire",
+          "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+          "aggregateTable": "prf_grw_portability_export_receipts",
+          "stateColumn": "state",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "GrowthPortabilityExportExpired.v2",
+          "eventCondition": "toState=GROWTHPORTABILITYEXPORTEXPIRED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.growth.portability-export.result.consume",
+          "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+          "aggregateTable": "prf_grw_portability_export_receipts",
+          "stateColumn": "state",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "GrowthPortabilityExportResultRecorded.v2",
+          "eventCondition": "toState=GROWTHPORTABILITYEXPORTRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.hrservice.sla-milestone.consume",
+          "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+          "aggregateTable": "ppl_hrs_cases",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "IN_PROGRESS",
+            "OPEN",
+            "RESOLVED",
+            "TRIAGED",
+            "WAITING"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "HrServiceSlaMilestoneRecorded.v2",
+          "eventCondition": "toState=HRSERVICESLAMILESTONERECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.recruiting.hire-handoff.result.consume",
+          "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+          "aggregateTable": "ppl_rec_candidate_cases",
+          "stateColumn": "stage",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "APPLIED",
+            "CLOSED",
+            "HIRED",
+            "HIRE_PENDING",
+            "INTERVIEW",
+            "OFFERED",
+            "REJECTED",
+            "SCREENING"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "CandidateHireHandoffResultRecorded.v2",
+          "eventCondition": "toState=CANDIDATEHIREHANDOFFRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.recruiting.offer.expire",
+          "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+          "aggregateTable": "ppl_rec_candidate_cases",
+          "stateColumn": "stage",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "APPLIED",
+            "CLOSED",
+            "HIRED",
+            "HIRE_PENDING",
+            "INTERVIEW",
+            "OFFERED",
+            "REJECTED",
+            "SCREENING"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "CandidateOfferExpired.v2",
+          "eventCondition": "toState=CANDIDATEOFFEREXPIRED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.wfm.approval-result.consume",
+          "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+          "aggregateTable": "tme_wfm_schedule_candidates",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "GENERATED",
+            "PUBLISHED",
+            "REJECTED",
+            "SUBMITTED",
+            "VALIDATED",
+            "VALIDATION_FAILED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "WorkforceScheduleApprovalResultRecorded.v2",
+          "eventCondition": "toState=WORKFORCESCHEDULEAPPROVALRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        },
+        {
+          "handlerId": "internal.wfm.schedule-optimization.result.consume",
+          "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+          "aggregateTable": "tme_wfm_schedule_candidates",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "ddlAllowedStates": [
+            "CANCELLED",
+            "GENERATED",
+            "PUBLISHED",
+            "REJECTED",
+            "SUBMITTED",
+            "VALIDATED",
+            "VALIDATION_FAILED"
+          ],
+          "ddlLifecycleCompatible": false,
+          "eventName": "WorkforceScheduleOptimizationResultRecorded.v2",
+          "eventCondition": "toState=WORKFORCESCHEDULEOPTIMIZATIONRESULTRECORDED",
+          "semanticDisposition": "P0_STATE_AND_EVENT_CONTRACT"
+        }
+      ]
+    },
+    "handlerLifecycleMismatches": {
+      "count": 16,
+      "rows": [
+        {
+          "handlerId": "internal.ai.assistance-result.consume",
+          "table": "sys_hris_ai_assistance_requests",
+          "stateColumn": "state",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "CANCELLED",
+            "CONFIRMED",
+            "FAILED",
+            "PRODUCED",
+            "REJECTED",
+            "REQUESTED",
+            "REVOKED",
+            "RUNNING"
+          ],
+          "invalidPreStates": [],
+          "invalidPostStates": [
+            "COMPLETED"
+          ]
+        },
+        {
+          "handlerId": "internal.ai.policy-evaluation-result.consume",
+          "table": "sys_hris_ai_evaluation_requests",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "CANCELLED",
+            "COMPLETED",
+            "FAILED",
+            "REQUESTED"
+          ],
+          "invalidPreStates": [
+            "RUNNING"
+          ],
+          "invalidPostStates": []
+        },
+        {
+          "handlerId": "internal.analytics.export.expire",
+          "table": "sys_hris_analytics_export_receipts",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "invalidPreStates": [
+            "RUNNING"
+          ],
+          "invalidPostStates": []
+        },
+        {
+          "handlerId": "internal.analytics.export.result.consume",
+          "table": "sys_hris_analytics_export_receipts",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "invalidPreStates": [
+            "RUNNING"
+          ],
+          "invalidPostStates": []
+        },
+        {
+          "handlerId": "internal.benefits.life-event.expire",
+          "table": "ppl_bnf_enrollments",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "ACTIVE",
+            "CANCELLED",
+            "REJECTED",
+            "SUBMITTED"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.benefits.provider-result.consume",
+          "table": "ppl_bnf_enrollments",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "ACTIVE",
+            "CANCELLED",
+            "REJECTED",
+            "SUBMITTED"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.contingent.access-expiry.initiate",
+          "table": "ppl_cwk_engagements",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "ACTIVE",
+            "DRAFT",
+            "ENDED",
+            "OFFBOARDING",
+            "PENDING_APPROVAL",
+            "REJECTED"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.contingent.access-grant-result.consume",
+          "table": "ppl_cwk_engagements",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "ACTIVE",
+            "DRAFT",
+            "ENDED",
+            "OFFBOARDING",
+            "PENDING_APPROVAL",
+            "REJECTED"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.contingent.access-revoke-result.consume",
+          "table": "ppl_cwk_engagements",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "ACTIVE",
+            "DRAFT",
+            "ENDED",
+            "OFFBOARDING",
+            "PENDING_APPROVAL",
+            "REJECTED"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.growth.portability-export.expire",
+          "table": "prf_grw_portability_export_receipts",
+          "stateColumn": "state",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "CANCELLED",
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "invalidPreStates": [
+            "RUNNING"
+          ],
+          "invalidPostStates": []
+        },
+        {
+          "handlerId": "internal.growth.portability-export.result.consume",
+          "table": "prf_grw_portability_export_receipts",
+          "stateColumn": "state",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "CANCELLED",
+            "COMPLETED",
+            "EXPIRED",
+            "FAILED",
+            "GENERATING",
+            "REQUESTED"
+          ],
+          "invalidPreStates": [
+            "RUNNING"
+          ],
+          "invalidPostStates": []
+        },
+        {
+          "handlerId": "internal.hrservice.sla-milestone.consume",
+          "table": "ppl_hrs_cases",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "CANCELLED",
+            "IN_PROGRESS",
+            "OPEN",
+            "RESOLVED",
+            "TRIAGED",
+            "WAITING"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.recruiting.hire-handoff.result.consume",
+          "table": "ppl_rec_candidate_cases",
+          "stateColumn": "stage",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "APPLIED",
+            "CLOSED",
+            "HIRED",
+            "HIRE_PENDING",
+            "INTERVIEW",
+            "OFFERED",
+            "REJECTED",
+            "SCREENING"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.recruiting.offer.expire",
+          "table": "ppl_rec_candidate_cases",
+          "stateColumn": "stage",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "APPLIED",
+            "CLOSED",
+            "HIRED",
+            "HIRE_PENDING",
+            "INTERVIEW",
+            "OFFERED",
+            "REJECTED",
+            "SCREENING"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.wfm.approval-result.consume",
+          "table": "tme_wfm_schedule_candidates",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "CANCELLED",
+            "GENERATED",
+            "PUBLISHED",
+            "REJECTED",
+            "SUBMITTED",
+            "VALIDATED",
+            "VALIDATION_FAILED"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.wfm.schedule-optimization.result.consume",
+          "table": "tme_wfm_schedule_candidates",
+          "stateColumn": "status",
+          "declaredPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ],
+          "allowedStates": [
+            "CANCELLED",
+            "GENERATED",
+            "PUBLISHED",
+            "REJECTED",
+            "SUBMITTED",
+            "VALIDATED",
+            "VALIDATION_FAILED"
+          ],
+          "invalidPreStates": [
+            "REQUESTED",
+            "RUNNING"
+          ],
+          "invalidPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        }
+      ]
+    },
+    "unreachableEventConditions": {
+      "commandEventCount": 10,
+      "handlerEventCount": 17,
+      "commandEvents": [
+        {
+          "operationId": "modern.ai.assist.review",
+          "eventName": "GovernedAiAssistanceConfirmed.v2",
+          "condition": "toState=GOVERNEDAIASSISTANCECONFIRMED",
+          "allowedPostStates": [
+            "CONFIRMED",
+            "REJECTED"
+          ]
+        },
+        {
+          "operationId": "modern.ai.assist.review",
+          "eventName": "GovernedAiAssistanceRejected.v2",
+          "condition": "toState=GOVERNEDAIASSISTANCEREJECTED",
+          "allowedPostStates": [
+            "CONFIRMED",
+            "REJECTED"
+          ]
+        },
+        {
+          "operationId": "modern.benefits.lifeevent.decide",
+          "eventName": "BenefitLifeEventDecisionRecorded.v2",
+          "condition": "toState=BENEFITLIFEEVENTDECISIONRECORDED",
+          "allowedPostStates": [
+            "REJECTED",
+            "VERIFIED"
+          ]
+        },
+        {
+          "operationId": "modern.compplan.cycle.revise",
+          "eventName": "CompensationCycleRevised.v2",
+          "condition": "toState=COMPENSATIONCYCLEREVISED",
+          "allowedPostStates": [
+            "DRAFT",
+            "OPEN"
+          ]
+        },
+        {
+          "operationId": "modern.contingent.sponsor.reassign",
+          "eventName": "ContingentSponsorReassigned.v2",
+          "condition": "toState=CONTINGENTSPONSORREASSIGNED",
+          "allowedPostStates": [
+            "ACTIVE",
+            "DRAFT",
+            "PENDING_APPROVAL"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.offer.respond",
+          "eventName": "CandidateOfferAccepted.v2",
+          "condition": "toState=CANDIDATEOFFERACCEPTED",
+          "allowedPostStates": [
+            "ACCEPTED",
+            "DECLINED"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.offer.respond",
+          "eventName": "CandidateOfferDeclined.v2",
+          "condition": "toState=CANDIDATEOFFERDECLINED",
+          "allowedPostStates": [
+            "ACCEPTED",
+            "DECLINED"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.requisition.lifecycle.change",
+          "eventName": "RequisitionPaused.v2",
+          "condition": "toState=REQUISITIONPAUSED",
+          "allowedPostStates": [
+            "CLOSED",
+            "OPEN",
+            "PAUSED"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.requisition.lifecycle.change",
+          "eventName": "RequisitionResumed.v2",
+          "condition": "toState=REQUISITIONRESUMED",
+          "allowedPostStates": [
+            "CLOSED",
+            "OPEN",
+            "PAUSED"
+          ]
+        },
+        {
+          "operationId": "modern.recruiting.requisition.lifecycle.change",
+          "eventName": "RequisitionClosed.v2",
+          "condition": "toState=REQUISITIONCLOSED",
+          "allowedPostStates": [
+            "CLOSED",
+            "OPEN",
+            "PAUSED"
+          ]
+        }
+      ],
+      "handlerEvents": [
+        {
+          "handlerId": "internal.ai.assistance-result.consume",
+          "eventName": "GovernedAiAssistanceResultRecorded.v2",
+          "condition": "toState=GOVERNEDAIASSISTANCERESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.ai.policy-evaluation-result.consume",
+          "eventName": "GovernedAiPolicyEvaluationResultRecorded.v2",
+          "condition": "toState=GOVERNEDAIPOLICYEVALUATIONRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.analytics.export.expire",
+          "eventName": "PeopleAnalyticsExportExpired.v2",
+          "condition": "toState=PEOPLEANALYTICSEXPORTEXPIRED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.analytics.export.result.consume",
+          "eventName": "PeopleAnalyticsExportResultRecorded.v2",
+          "condition": "toState=PEOPLEANALYTICSEXPORTRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.analytics.metric-projection.result.consume",
+          "eventName": "PeopleMetricProjectionResultRecorded.v2",
+          "condition": "toState=PEOPLEMETRICPROJECTIONRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.benefits.life-event.expire",
+          "eventName": "BenefitLifeEventExpired.v2",
+          "condition": "toState=BENEFITLIFEEVENTEXPIRED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.benefits.provider-result.consume",
+          "eventName": "BenefitProviderResultRecorded.v2",
+          "condition": "toState=BENEFITPROVIDERRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.contingent.access-expiry.initiate",
+          "eventName": "ContingentAccessExpiryInitiated.v2",
+          "condition": "toState=CONTINGENTACCESSEXPIRYINITIATED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.contingent.access-grant-result.consume",
+          "eventName": "ContingentAccessGrantResultRecorded.v2",
+          "condition": "toState=CONTINGENTACCESSGRANTRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.contingent.access-revoke-result.consume",
+          "eventName": "ContingentAccessRevokeResultRecorded.v2",
+          "condition": "toState=CONTINGENTACCESSREVOKERESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.growth.portability-export.expire",
+          "eventName": "GrowthPortabilityExportExpired.v2",
+          "condition": "toState=GROWTHPORTABILITYEXPORTEXPIRED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.growth.portability-export.result.consume",
+          "eventName": "GrowthPortabilityExportResultRecorded.v2",
+          "condition": "toState=GROWTHPORTABILITYEXPORTRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.hrservice.sla-milestone.consume",
+          "eventName": "HrServiceSlaMilestoneRecorded.v2",
+          "condition": "toState=HRSERVICESLAMILESTONERECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.recruiting.hire-handoff.result.consume",
+          "eventName": "CandidateHireHandoffResultRecorded.v2",
+          "condition": "toState=CANDIDATEHIREHANDOFFRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.recruiting.offer.expire",
+          "eventName": "CandidateOfferExpired.v2",
+          "condition": "toState=CANDIDATEOFFEREXPIRED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.wfm.approval-result.consume",
+          "eventName": "WorkforceScheduleApprovalResultRecorded.v2",
+          "condition": "toState=WORKFORCESCHEDULEAPPROVALRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        {
+          "handlerId": "internal.wfm.schedule-optimization.result.consume",
+          "eventName": "WorkforceScheduleOptimizationResultRecorded.v2",
+          "condition": "toState=WORKFORCESCHEDULEOPTIMIZATIONRESULTRECORDED",
+          "declaredPostStates": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        }
+      ]
+    },
+    "producerlessExactTables": {
+      "count": 30,
+      "rows": [
+        {
+          "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+          "table": "ppl_cwk_access_expiry_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+          "table": "ppl_cwk_access_requests"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+          "table": "ppl_cwk_classification_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.ONBOARDING",
+          "table": "ppl_jny_assignment_revisions"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.ONBOARDING",
+          "table": "ppl_jny_assignment_task_revisions"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+          "table": "ppl_rec_hire_handoff_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+          "table": "sys_hris_ai_evaluation_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_admission_versions"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_answer_values"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_cohort_budgets"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_cohort_packages"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_cohort_projections"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_domain_outbox"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_eligibility_versions"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_erasure_tickets"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_export_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_insights_inbox"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_insights_outbox"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_issuer_outbox"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_issuer_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_lineage_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_operation_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_protected_outbox"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_protected_receipts"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_token_consumptions"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_token_issuances"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+          "table": "sys_hris_listening_token_revocations"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+          "table": "sys_hris_metric_projections"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+          "table": "tme_wfm_candidate_shift_lines"
+        },
+        {
+          "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+          "table": "tme_wfm_schedule_candidate_versions"
+        }
+      ]
+    },
+    "updateOnlyRoots": [
+      {
+        "table": "ppl_bnf_provider_requests",
+        "writers": [
+          {
+            "producer": "internal.benefits.provider-result.consume",
+            "action": "UPDATE_CAS"
+          }
+        ],
+        "missing": "request producer before provider result"
+      },
+      {
+        "table": "sys_hris_listening_survey_versions",
+        "writers": [
+          {
+            "producer": "modern.listening.survey.publish",
+            "action": "UPDATE_CAS"
+          },
+          {
+            "producer": "modern.listening.survey.revise",
+            "action": "UPDATE_CAS"
+          }
+        ],
+        "missing": "version INSERT on create/revise"
+      },
+      {
+        "table": "tme_wfm_schedule_candidates",
+        "writers": [
+          {
+            "producer": "modern.wfm.schedule.cancel",
+            "action": "UPDATE_CAS"
+          },
+          {
+            "producer": "modern.wfm.schedule.publish",
+            "action": "UPDATE_CAS"
+          },
+          {
+            "producer": "modern.wfm.schedule.submit",
+            "action": "UPDATE_CAS"
+          },
+          {
+            "producer": "modern.wfm.schedule.validate",
+            "action": "UPDATE_CAS"
+          },
+          {
+            "producer": "internal.wfm.approval-result.consume",
+            "action": "UPDATE_CAS"
+          },
+          {
+            "producer": "internal.wfm.schedule-optimization.result.consume",
+            "action": "UPDATE_CAS"
+          }
+        ],
+        "missing": "candidate INSERT from optimization result"
+      }
+    ],
+    "selfSubjectBindingsMissing": {
+      "count": 18,
+      "rows": [
+        {
+          "operationId": "modern.ai.assist.cancel",
+          "subjectSource": "pathParameters.assistanceId",
+          "requiredBinding": "sys_hris_ai_assistance_requests.created_by"
+        },
+        {
+          "operationId": "modern.ai.assist.review",
+          "subjectSource": "pathParameters.assistanceId",
+          "requiredBinding": "sys_hris_ai_assistance_requests.created_by"
+        },
+        {
+          "operationId": "modern.ai.assist.revoke",
+          "subjectSource": "pathParameters.assistanceId",
+          "requiredBinding": "sys_hris_ai_assistance_requests.created_by"
+        },
+        {
+          "operationId": "modern.benefits.enrollment.submit",
+          "subjectSource": "body.workerPublicId",
+          "requiredBinding": "authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.benefits.lifeevent.submit",
+          "subjectSource": "body.workerPublicId",
+          "requiredBinding": "authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.growth.profile.create",
+          "subjectSource": "body.workerPublicId",
+          "requiredBinding": "authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.growth.profile.update",
+          "subjectSource": "pathParameters.profileId",
+          "requiredBinding": "prf_grw_profiles.worker_public_id=authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.growth.profile.archive",
+          "subjectSource": "pathParameters.profileId",
+          "requiredBinding": "prf_grw_profiles.worker_public_id=authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.growth.evidence.link",
+          "subjectSource": "pathParameters.profileId",
+          "requiredBinding": "prf_grw_profiles.worker_public_id=authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.growth.evidence.unlink",
+          "subjectSource": "pathParameters.profileId",
+          "requiredBinding": "prf_grw_profiles.worker_public_id=authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.growth.export.request",
+          "subjectSource": "pathParameters.profileId",
+          "requiredBinding": "prf_grw_profiles.worker_public_id=authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.hrservice.case.create",
+          "subjectSource": "body.requesterWorkerPublicId",
+          "requiredBinding": "authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.learning.assignment.start",
+          "subjectSource": "pathParameters.assignmentId",
+          "requiredBinding": "prf_lrn_assignments.worker_public_id=authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.learning.assignment.cancel",
+          "subjectSource": "pathParameters.assignmentId",
+          "requiredBinding": "prf_lrn_assignments.worker_public_id=authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.learning.self.enroll",
+          "subjectSource": "body.workerPublicId",
+          "requiredBinding": "authenticatedPrincipal.workerPublicId"
+        },
+        {
+          "operationId": "modern.onboarding.task.complete",
+          "subjectSource": "pathParameters.taskId",
+          "requiredBinding": "task assignee/worker or delegated actor policy"
+        },
+        {
+          "operationId": "modern.onboarding.task.waive",
+          "subjectSource": "pathParameters.taskId",
+          "requiredBinding": "distinct waiver duty plus delegated actor policy"
+        },
+        {
+          "operationId": "modern.opportunity.apply",
+          "subjectSource": "body.workerPublicId",
+          "requiredBinding": "authenticatedPrincipal.workerPublicId"
+        }
+      ]
+    }
+  },
+  "falsePositives": [
+    {
+      "claim": "Every digest is invalid.",
+      "decision": "REJECTED",
+      "reason": "A digest is valid for integrity when paired with typed local rows or an immutable typed artifact/version and exact historical refetch. Forecast demand lines and growth artifact references illustrate the intended pattern."
+    },
+    {
+      "claim": "Every bodyless command is invalid.",
+      "decision": "REJECTED",
+      "reason": "Publish/start/cancel can be bodyless when locked state plus previously sealed approval/reason/effective-time facts fully determine the transition. Empty create/revise/evidence/reassign operations are the actual defect."
+    },
+    {
+      "claim": "Every UUID reference must become a local foreign key.",
+      "decision": "REJECTED",
+      "reason": "Cross-boundary public UUIDs are correct when entity-typed, tenant/purpose/version validated by the owner and retained with exact refetch. Cross-service local IDs remain forbidden."
+    },
+    {
+      "claim": "Actual customer country-pack values and golden data are required before G3.",
+      "decision": "REJECTED",
+      "reason": "G3 needs schemas, versioned configuration references, algorithms and synthetic fixtures. Actual legal/provider/customer activation remains G6."
+    },
+    {
+      "claim": "Generic benefits is excluded because BENSK/ADDSK are excluded.",
+      "decision": "REJECTED",
+      "reason": "The optional generic benefits capability is a product-core design and does not reuse excluded company-specific BENSK/ADDSK behavior."
+    },
+    {
+      "claim": "Governed AI should be removed.",
+      "decision": "REJECTED",
+      "reason": "The central proof set, kill switch, monitoring and autonomous-decision=false controls are sound. The exact aggregate/query/result lifecycle must be repaired."
+    },
+    {
+      "claim": "The Listening static design already proves exact runtime behavior.",
+      "decision": "REJECTED",
+      "reason": "It proves ownership direction and stream separation, but its handler rows carry domain table names rather than exact field-level DML, token/receipt schemas and atomic predicates."
+    },
+    {
+      "claim": "Field-policy prose can add omitted query fields at runtime.",
+      "decision": "REJECTED",
+      "reason": "All affected Entity schemas set additionalProperties=false, so undeclared business fields would violate the response schema."
+    }
+  ],
+  "remediationOrder": [
+    "Freeze this exact snapshot as failed evidence; do not mutate historical hashes.",
+    "Define capability-specific query records for all 66 queries and exact field lineage.",
+    "Replace generic handler lifecycle/event templates with object-specific request/result/proof machines.",
+    "Close the 16 capability-specific request/DML/schema/refetch gaps, preserving tenant-config/country-pack and DWP PEP boundaries.",
+    "Regenerate the canonical five and manifest from one source, then run an independent validator against the new hashes.",
+    "Only after author and independent zero-P0 results may physical successor generation and G3 gate transition resume."
+  ],
+  "validation": {
+    "script": "coding-readiness/reports/validate_global_hcm_semantic_closure_audit_2026_09_16.py",
+    "expectedResult": "PASS_AUDIT_SNAPSHOT_WITH_P0_FINDINGS",
+    "semantics": "A PASS means the report exactly reproduces defects in the pinned failed candidate; it is not a G3 readiness PASS."
+  }
+}

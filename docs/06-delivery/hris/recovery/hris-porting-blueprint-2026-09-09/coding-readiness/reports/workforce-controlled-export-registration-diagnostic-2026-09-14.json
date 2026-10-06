@@ -1,0 +1,2074 @@
+{
+  "schema": "dwp.hris.workforce-controlled-export-registration-diagnostic.v1",
+  "diagnosticDate": "2026-09-14",
+  "capturedAtUtc": "2026-09-14T03:49:42.661753+00:00",
+  "status": "READ_ONLY_SOURCE_REGISTRATION_GAP_DIAGNOSED_NOT_REMEDIATED",
+  "codingGate": "CLOSED_NOT_AUTHORIZED",
+  "productionExportActivation": "NOT_AUTHORIZED",
+  "summary": "The exact controlled-export descriptors are present from v3, but no checked-in Auth production catalog/template registration for ACTION.WORKFORCE_CONTROLLED_EXPORT was found in integration db0 or current main dirty bytes. Seed loading is intentionally DRAFT-only and does not materialize resources/grants. Missing default grants and disabled external artifact execution are intentional safety, not permissions to fix by autogrant. The absent resource publication is separate internal owner/source-readiness OPEN, not proven to be delegated by a named external setting. Current main v7/v8 is uncommitted and is not integration current authority.",
+  "scope": {
+    "readOnly": true,
+    "sourceNativeFreshQueryReproducedByReviewer": false,
+    "newDatabaseQueries": 0,
+    "newGradleOrHeavyTests": 0,
+    "newServerOrProcessChanges": 0,
+    "newSourceSqlGateMainEdits": 0,
+    "newCommits": 0,
+    "writesAllowedAndUsed": [
+      "coding-readiness/reports/workforce-controlled-export-registration-diagnostic-2026-09-14.json",
+      "coding-readiness/reports/workforce-controlled-export-registration-diagnostic-2026-09-14.md"
+    ],
+    "preservedPriorFinalAuditPins": {
+      "jsonSha256": "ccb68b6707dea519620b46f4ec1145cb63922399b7cfa5c125c0eb198ab57fe9",
+      "mdSha256": "84387eefb395b4b784586b053fd16fa6605f14e8cd13a26f9bad62d2f751a3fa"
+    },
+    "noSecretsOrEnvFileValuesRead": true,
+    "noPermissionAutogrants": true,
+    "noGuardWeakening": true,
+    "sourceThreadForRootReply": "019fda32-66e5-76f2-b70e-a100690eb2f0"
+  },
+  "method": "Read primary SeedLoader in full, contract import/store/activation paths, native template provisioning and permission guard resolution, selected exact source/capability/route metadata, existing People feature/export ADR/config/writer and main test fixture. Used rg/source JSON parsing, SHA/HEAD blob comparisons, actual filename inventory and read-only git metadata. No native DB reproduction or permission writes. Main is another task's actively changing working tree; use the captured SHA/selector and do not wait for immutable pre/post main test bytes.",
+  "receivedNativeObservation": {
+    "source": "Another electronic-approval integration task, relayed by root",
+    "reportedFreshAuthMigrationCount": 114,
+    "reportedSeedVersions": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "reportedExactResourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+    "reportedExactResourceRows": 0,
+    "reportedAppHcmPresent": true,
+    "independentReproduction": false,
+    "sourceShaAndSqlOrNativeReceiptNotProvidedToThisReviewer": true,
+    "scopeCaveat": "Do not combine this114/v1..8 native claim with our integration114/v1..6 or current main113/v1..8 static inventories as one source-equivalent run. Source receipt/query SHA must be supplied by the originating task for exact native closure. APP.HCM presence describes the reported HCM-related query subset, not the entire Auth resource database."
+  },
+  "repositorySnapshots": [
+    {
+      "repository": "integration",
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+      "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+      "tree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+      "statusPaths": 4,
+      "trackedChanges": 0,
+      "untrackedPaths": 4,
+      "statusRawSha256": "d412dad8cbf7df3ce8c6585090161f4ce7a6465915c611b81d369b080fa3c454"
+    },
+    {
+      "repository": "main",
+      "path": "/Users/a10697/Work/DWP/dwp-backend",
+      "head": "449b2db05bada8851c376e1841830f0b68f8a346",
+      "tree": "b30b3b92463d8f89beafb89bb0a86d11341dff32",
+      "statusPaths": 274,
+      "trackedChanges": 74,
+      "untrackedPaths": 200,
+      "statusRawSha256": "75850c54c58319d83655f6568d1107978d01d1c2ae2b3579721b3772dc059567"
+    }
+  ],
+  "bundleInventory": [
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v1.json",
+      "version": 1,
+      "bundleStatus": "DRAFT",
+      "checksum": "bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67",
+      "controlledExportDescriptorCount": 0,
+      "exportActionCount": 0,
+      "viewActionCount": 0,
+      "descriptorKeys": [],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v2.json",
+      "version": 2,
+      "bundleStatus": "DRAFT",
+      "checksum": "5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c",
+      "controlledExportDescriptorCount": 0,
+      "exportActionCount": 0,
+      "viewActionCount": 0,
+      "descriptorKeys": [],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+      "version": 3,
+      "bundleStatus": "DRAFT",
+      "checksum": "f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v4.json",
+      "version": 4,
+      "bundleStatus": "DRAFT",
+      "checksum": "a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v5.json",
+      "version": 5,
+      "bundleStatus": "DRAFT",
+      "checksum": "c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v6.json",
+      "version": 6,
+      "bundleStatus": "DRAFT",
+      "checksum": "7cf8602aa2da5f7a0464b23cfd84a8f381e2d3eb85333ed8a8e483865b2b0abe",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v1.json",
+      "version": 1,
+      "bundleStatus": "DRAFT",
+      "checksum": "bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67",
+      "controlledExportDescriptorCount": 0,
+      "exportActionCount": 0,
+      "viewActionCount": 0,
+      "descriptorKeys": [],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v2.json",
+      "version": 2,
+      "bundleStatus": "DRAFT",
+      "checksum": "5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c",
+      "controlledExportDescriptorCount": 0,
+      "exportActionCount": 0,
+      "viewActionCount": 0,
+      "descriptorKeys": [],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+      "version": 3,
+      "bundleStatus": "DRAFT",
+      "checksum": "f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v4.json",
+      "version": 4,
+      "bundleStatus": "DRAFT",
+      "checksum": "a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v5.json",
+      "version": 5,
+      "bundleStatus": "DRAFT",
+      "checksum": "c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v6.json",
+      "version": 6,
+      "bundleStatus": "DRAFT",
+      "checksum": "7cf8602aa2da5f7a0464b23cfd84a8f381e2d3eb85333ed8a8e483865b2b0abe",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v7.json",
+      "version": 7,
+      "bundleStatus": "DRAFT",
+      "checksum": "fe9721ef01164c64e03f8798f89765bdf35e55993cf98ad1f6f9c3611dd8d61a",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.bundle-v8.json",
+      "version": 8,
+      "bundleStatus": "DRAFT",
+      "checksum": "9449a516a2dbd96106e71963cbda764b80d83f0f61fa861d110d85517adac942",
+      "controlledExportDescriptorCount": 5,
+      "exportActionCount": 3,
+      "viewActionCount": 2,
+      "descriptorKeys": [
+        "hcm.controlled-export.cancel",
+        "hcm.controlled-export.create",
+        "hcm.controlled-export.preview",
+        "hcm.controlled-export.read",
+        "hcm.controlled-export.retry"
+      ],
+      "authSeedByteIdentical": true
+    }
+  ],
+  "seedIndices": [
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.index.json",
+      "latestVersion": 6,
+      "versions": [
+        {
+          "version": 1,
+          "checksum": "bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v1.generated.json"
+        },
+        {
+          "version": 2,
+          "checksum": "5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v2.generated.json"
+        },
+        {
+          "version": 3,
+          "checksum": "f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v3.generated.json"
+        },
+        {
+          "version": 4,
+          "checksum": "a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v4.generated.json"
+        },
+        {
+          "version": 5,
+          "checksum": "c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v5.generated.json"
+        },
+        {
+          "version": 6,
+          "checksum": "7cf8602aa2da5f7a0464b23cfd84a8f381e2d3eb85333ed8a8e483865b2b0abe",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v6.generated.json"
+        }
+      ]
+    },
+    {
+      "repository": "integration",
+      "file": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "latestVersion": 6,
+      "versions": [
+        {
+          "version": 1,
+          "checksum": "bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v1.generated.json"
+        },
+        {
+          "version": 2,
+          "checksum": "5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v2.generated.json"
+        },
+        {
+          "version": 3,
+          "checksum": "f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v3.generated.json"
+        },
+        {
+          "version": 4,
+          "checksum": "a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v4.generated.json"
+        },
+        {
+          "version": 5,
+          "checksum": "c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v5.generated.json"
+        },
+        {
+          "version": 6,
+          "checksum": "7cf8602aa2da5f7a0464b23cfd84a8f381e2d3eb85333ed8a8e483865b2b0abe",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v6.generated.json"
+        }
+      ]
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.index.json",
+      "latestVersion": 8,
+      "versions": [
+        {
+          "version": 1,
+          "checksum": "bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v1.generated.json"
+        },
+        {
+          "version": 2,
+          "checksum": "5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v2.generated.json"
+        },
+        {
+          "version": 3,
+          "checksum": "f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v3.generated.json"
+        },
+        {
+          "version": 4,
+          "checksum": "a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v4.generated.json"
+        },
+        {
+          "version": 5,
+          "checksum": "c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v5.generated.json"
+        },
+        {
+          "version": 6,
+          "checksum": "7cf8602aa2da5f7a0464b23cfd84a8f381e2d3eb85333ed8a8e483865b2b0abe",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v6.generated.json"
+        },
+        {
+          "version": 7,
+          "checksum": "fe9721ef01164c64e03f8798f89765bdf35e55993cf98ad1f6f9c3611dd8d61a",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v7.generated.json"
+        },
+        {
+          "version": 8,
+          "checksum": "9449a516a2dbd96106e71963cbda764b80d83f0f61fa861d110d85517adac942",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v8.generated.json"
+        }
+      ]
+    },
+    {
+      "repository": "main",
+      "file": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "latestVersion": 8,
+      "versions": [
+        {
+          "version": 1,
+          "checksum": "bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v1.generated.json"
+        },
+        {
+          "version": 2,
+          "checksum": "5b634a35472ef98ecdd5ca9efe7a716020d8f3ae0d8f5025d76bbf072692c12c",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v2.generated.json"
+        },
+        {
+          "version": 3,
+          "checksum": "f90c4e3a734204a4619ae77d3476ebc7cc802c43ed8574fcf4f3fc85def67a8e",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v3.generated.json"
+        },
+        {
+          "version": 4,
+          "checksum": "a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v4.generated.json"
+        },
+        {
+          "version": 5,
+          "checksum": "c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v5.generated.json"
+        },
+        {
+          "version": 6,
+          "checksum": "7cf8602aa2da5f7a0464b23cfd84a8f381e2d3eb85333ed8a8e483865b2b0abe",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v6.generated.json"
+        },
+        {
+          "version": 7,
+          "checksum": "fe9721ef01164c64e03f8798f89765bdf35e55993cf98ad1f6f9c3611dd8d61a",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v7.generated.json"
+        },
+        {
+          "version": 8,
+          "checksum": "9449a516a2dbd96106e71963cbda764b80d83f0f61fa861d110d85517adac942",
+          "bundleStatus": "DRAFT",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v8.generated.json"
+        }
+      ]
+    }
+  ],
+  "canonicalSourceMatches": [
+    {
+      "repository": "integration",
+      "file": "contracts/product-authorization/product-surfaces-v1.yaml",
+      "matches": [
+        {
+          "line": 6041,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW\","
+        },
+        {
+          "line": 6045,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6062,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW\","
+        },
+        {
+          "line": 6066,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6083,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT\","
+        },
+        {
+          "line": 6087,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6104,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT\","
+        },
+        {
+          "line": 6108,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6125,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT\","
+        },
+        {
+          "line": 6129,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        }
+      ]
+    },
+    {
+      "repository": "main",
+      "file": "contracts/product-authorization/product-surfaces-v1.yaml",
+      "matches": [
+        {
+          "line": 6041,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW\","
+        },
+        {
+          "line": 6045,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6062,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW\","
+        },
+        {
+          "line": 6066,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6083,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT\","
+        },
+        {
+          "line": 6087,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6104,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT\","
+        },
+        {
+          "line": 6108,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        },
+        {
+          "line": 6125,
+          "text": "\"resolvedCapabilityCode\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT\","
+        },
+        {
+          "line": 6129,
+          "text": "\"resourceKey\": \"ACTION.WORKFORCE_CONTROLLED_EXPORT\","
+        }
+      ]
+    }
+  ],
+  "exactControlledExportDescriptors": [
+    {
+      "action": "EXPORT",
+      "activationPolicy": null,
+      "authorityMode": "PERMISSION",
+      "contractKey": "hcm.controlled-export.cancel",
+      "legacySource": null,
+      "lifecycleState": "ACTIVE",
+      "mappingVersion": 1,
+      "owner": "HCM + Security",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "requiresProductEntitlement": false,
+      "resolvedCapabilityCode": "ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT",
+      "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+      "responsibilityRequirement": "NOT_REQUIRED",
+      "riskTier": "LOW",
+      "routeContractKeys": [
+        "route.hcm.management.controlled-export-cancel.action"
+      ],
+      "scopeResolver": "APPROVED_EXPORT_POPULATION",
+      "sodPolicyId": null,
+      "sunsetAt": null,
+      "surfaceKey": "hcm.management"
+    },
+    {
+      "action": "EXPORT",
+      "activationPolicy": "STEPUP-MGMT-CRITICAL-V1",
+      "authorityMode": "PERMISSION",
+      "contractKey": "hcm.controlled-export.create",
+      "legacySource": null,
+      "lifecycleState": "ACTIVE",
+      "mappingVersion": 1,
+      "owner": "HCM + Security",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "requiresProductEntitlement": false,
+      "resolvedCapabilityCode": "ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT",
+      "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+      "responsibilityRequirement": "NOT_REQUIRED",
+      "riskTier": "CRITICAL",
+      "routeContractKeys": [
+        "route.hcm.management.controlled-export-create.action"
+      ],
+      "scopeResolver": "APPROVED_EXPORT_POPULATION",
+      "sodPolicyId": null,
+      "sunsetAt": null,
+      "surfaceKey": "hcm.management"
+    },
+    {
+      "action": "VIEW",
+      "activationPolicy": null,
+      "authorityMode": "PERMISSION",
+      "contractKey": "hcm.controlled-export.preview",
+      "legacySource": null,
+      "lifecycleState": "ACTIVE",
+      "mappingVersion": 1,
+      "owner": "HCM + Security",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "requiresProductEntitlement": false,
+      "resolvedCapabilityCode": "ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW",
+      "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+      "responsibilityRequirement": "NOT_REQUIRED",
+      "riskTier": "LOW",
+      "routeContractKeys": [
+        "route.hcm.management.controlled-export-preview.data"
+      ],
+      "scopeResolver": "APPROVED_EXPORT_POPULATION",
+      "sodPolicyId": null,
+      "sunsetAt": null,
+      "surfaceKey": "hcm.management"
+    },
+    {
+      "action": "VIEW",
+      "activationPolicy": null,
+      "authorityMode": "PERMISSION",
+      "contractKey": "hcm.controlled-export.read",
+      "legacySource": null,
+      "lifecycleState": "ACTIVE",
+      "mappingVersion": 1,
+      "owner": "HCM + Security",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "requiresProductEntitlement": false,
+      "resolvedCapabilityCode": "ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW",
+      "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+      "responsibilityRequirement": "NOT_REQUIRED",
+      "riskTier": "LOW",
+      "routeContractKeys": [
+        "route.hcm.management.controlled-export.page"
+      ],
+      "scopeResolver": "APPROVED_EXPORT_POPULATION",
+      "sodPolicyId": null,
+      "sunsetAt": null,
+      "surfaceKey": "hcm.management"
+    },
+    {
+      "action": "EXPORT",
+      "activationPolicy": "STEPUP-MGMT-CRITICAL-V1",
+      "authorityMode": "PERMISSION",
+      "contractKey": "hcm.controlled-export.retry",
+      "legacySource": null,
+      "lifecycleState": "ACTIVE",
+      "mappingVersion": 1,
+      "owner": "HCM + Security",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "requiresProductEntitlement": false,
+      "resolvedCapabilityCode": "ACTION.WORKFORCE_CONTROLLED_EXPORT:EXPORT",
+      "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+      "responsibilityRequirement": "NOT_REQUIRED",
+      "riskTier": "CRITICAL",
+      "routeContractKeys": [
+        "route.hcm.management.controlled-export-retry.action"
+      ],
+      "scopeResolver": "APPROVED_EXPORT_POPULATION",
+      "sodPolicyId": null,
+      "sunsetAt": null,
+      "surfaceKey": "hcm.management"
+    }
+  ],
+  "migrationInventories": [
+    {
+      "repository": "integration",
+      "files": 114,
+      "distinctNumericVersions": 111,
+      "maxNumericVersion": 212,
+      "exactKeyMatches": [],
+      "inventorySha256": "167a3c08539e346f3cd00231e12b359330222f23ea09950dc0cd5f9bb5b6a13d",
+      "distinctFlywayVersions": 114,
+      "duplicateFlywayVersions": {},
+      "numericPrefixGroups": {
+        "89": [
+          "dwp-auth-server/src/main/resources/db/migration/V89_2__require_closed_step_up_amr_allowlist.sql",
+          "dwp-auth-server/src/main/resources/db/migration/V89_3__persist_product_authority_endpoints.sql",
+          "dwp-auth-server/src/main/resources/db/migration/V89_1__preserve_session_assurance_and_step_up.sql",
+          "dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql"
+        ]
+      }
+    },
+    {
+      "repository": "main",
+      "files": 113,
+      "distinctNumericVersions": 110,
+      "maxNumericVersion": 211,
+      "exactKeyMatches": [],
+      "inventorySha256": "2d2fde81af5971c7d79a1e2e96e466ace85026d3bd3830cf88b966096e0c71a8",
+      "distinctFlywayVersions": 113,
+      "duplicateFlywayVersions": {},
+      "numericPrefixGroups": {
+        "89": [
+          "dwp-auth-server/src/main/resources/db/migration/V89_2__require_closed_step_up_amr_allowlist.sql",
+          "dwp-auth-server/src/main/resources/db/migration/V89_3__persist_product_authority_endpoints.sql",
+          "dwp-auth-server/src/main/resources/db/migration/V89_1__preserve_session_assurance_and_step_up.sql",
+          "dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql"
+        ]
+      }
+    }
+  ],
+  "migrationInventoryInterpretation": "All Flyway full versions are distinct: integration114 files/114versions, main113files/113versions at this capture. 89,89.1,89.2,89.3 share an integer prefix but are not duplicate Flyway versions. Main untracked approval V211 differs from integration common V211/V212 high-water; never choose a correction version from uncommitted main or reuse occupied211/212.",
+  "findings": [
+    {
+      "id": "WCE-001",
+      "classification": "SOURCE_CATALOG_PUBLICATION_GAP_OPEN",
+      "stage": "G3_INTERNAL_OWNER_PREPARATION",
+      "severity": "BLOCKER_FOR_ENFORCED_NATIVE_CONTROLLED_EXPORT_READY",
+      "observed": "Integration v1/v2 controlled-export descriptors0, v3..v6 each5 (EXPORT3/VIEW2); main dirty v3..v8 each5. All bundles DRAFT, descriptor lifecycleACTIVE is not active runtime or permission grant. Production Auth Java/SQL literal search found no ACTION.WORKFORCE_CONTROLLED_EXPORT registration. V26 registers WorkforceManagement/Data/Reference/DataOperations but not ControlledExport; V49 tenant templates also omit it; V54 creates only APP.HCM alias. Main new runtime test explicitly states no production Auth catalog/grants yet and inserts fixture resource/grant.",
+      "evidence": [
+        {
+          "repository": "integration",
+          "file": "contracts/product-authorization/product-surfaces-v1.yaml",
+          "line": 6040,
+          "selector": "controlled-export read/preview/create/cancel/retry definitions6040..6135",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.yaml",
+          "sha256": "0a2f11a1d894dc961676e15b50895165a8243444703e4817303e56df6dbd7b5c"
+        },
+        {
+          "repository": "integration",
+          "file": "contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+          "line": 1212,
+          "selector": "5 PERMISSION descriptors; create and retry CRITICAL activationPolicy",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+          "sha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/resources/db/migration/V26__add_workforce_application_authorization.sql",
+          "line": 22,
+          "selector": "resource registration22..34 omits controlled-export",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V26__add_workforce_application_authorization.sql",
+          "sha256": "e60b5715bf6fcfcabdcf1bd31821df96820337312c5c14a3bd9e717f42f401d2"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+          "line": 36,
+          "selector": "tenant resource template VALUES36..71 omits controlled-export",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+          "sha256": "6ac326bf0b59bb32ce2eb7f9e80f204bc7e986fa9f78c1d1e81939c1886a7f8c"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/resources/db/migration/V54__introduce_hcm_application_permission_alias.sql",
+          "line": 1,
+          "selector": "APP.HCM alias, not ACTION key",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V54__introduce_hcm_application_permission_alias.sql",
+          "sha256": "d862487c903c20b2161bd4c1c06be59dccef66ccb6296a33d133d5aa1274d9ad"
+        },
+        {
+          "repository": "main",
+          "file": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+          "line": 210,
+          "selector": "current dirty test212..216 fixture-only insertion/explicit grant",
+          "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+          "sha256": "770e64b238099ed2725dad5024ce7874d7b7d23c3859b64f4cb33323c0aa6518"
+        }
+      ],
+      "decision": "No checked-in explicit external-setting provenance found that publishes this exact action resource. Because bundle/runtime activation remains separate/default-off, diagnose an unpublished owner catalog mapping, not an established current production permission regression. Do not presume prior source omission intent from absence alone; publish either approved resource-only owner registration or explicit future/unavailable catalog mapping in canonical readiness."
+    },
+    {
+      "id": "WCE-002",
+      "classification": "INTENTIONAL_DRAFT_IMPORT_AND_LEAST_PRIVILEGE_NOT_DEFECT",
+      "stage": "REGISTRY_GOVERNANCE",
+      "observed": "SeedLoader is opt-in defaultfalse, resolves indexed immutable snapshots and only calls importDraft. It logs without activation. ContractService imports onlyDRAFT; Repository inserts auth_product_* descriptor tables rather than com_resources/grants. Approve/activate are separate governed/CAS actions. Missing blanket defaultEXPORT grants is intentional failclosed safety.",
+      "evidence": [
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+          "line": 32,
+          "selector": "enabledfalse/index default; run46..72 only importDraft64",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+          "sha256": "d065174040e4bd1777b61b332238291f563477f517af3a33f98edbefa968fa1b"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractService.java",
+          "line": 29,
+          "selector": "DRAFT-only import29..48; approval52 and activation223 separate",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractService.java",
+          "sha256": "c9b0188b0d4cf702ebb466860b36dcae21d02780cc8d70865a707591bf6be4b5"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/ProductAuthorizationContractRepository.java",
+          "line": 145,
+          "selector": "descriptor-only INSERT145..209; no resource/grant table",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/ProductAuthorizationContractRepository.java",
+          "sha256": "5cc8f175fdd5041d6127306cceb678c0c1bcdf88d02564fcedcca35b3a00e541"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+          "line": 76,
+          "selector": "6 imports and never approve/activate82..84",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+          "sha256": "dc80e2c696d12294db18538931051f023738544b0110c9bcc22fe7e3ba1b293b"
+        },
+        {
+          "repository": "main",
+          "file": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+          "line": 46,
+          "selector": "current dirty8 versions, still DRAFT-only and never approve/activate",
+          "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+          "sha256": "177aa69cee2fcd3d53733793188744d6c94efbe111deec411ac3be0f4c98301b"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql",
+          "line": 1,
+          "selector": "release manifest defaultoff and never descriptor/activation source",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql",
+          "sha256": "ed9ccdfb68b01b08ff03ccd591d7d7943c5bf5a99f40cf801e79220cb678ecdc"
+        }
+      ],
+      "decision": "Do not fix by seed.enabled=true, import-to-resource autoconversion, activation pointer mutation, privileged role/template grants or APP.HCM→EXPORT inference."
+    },
+    {
+      "id": "WCE-003",
+      "classification": "NATIVE_TEMPLATE_PROVISIONING_CANNOT_INVENT_ABSENT_KEY",
+      "stage": "G3_OWNER_REGISTRATION",
+      "observed": "AuthTenantProvisioningService reads ACTIVE sys_tenant_resource_templates and conditionally syncs tenant resources by approved entitlement keys. No controlled-export template means enabling an existing general seed/config cannot create that exact catalog row. Grant resolution uses enabled tenant-bound com_resources; ProductAuthorizationAuthorityAdapter requires exact resolvedCapabilityCode. Compatibility aliases only APP.HCM/APP.HRIS, not ACTION export. Existing syncResources ON CONFLICT explicitly sets enabledTRUE256; adding an ACTIVE template without enabled-state lifecycle review can silently reenable an admin-disabled row. Builtin role permission synchronization350..389 is a separate permission-template path, not descriptor-based autogrant.",
+      "evidence": [
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+          "line": 237,
+          "selector": "syncResources template query239..246 and entitlement conditional248..269",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+          "sha256": "072e82d5d0a5103dd731c540c719fc296ffc74392141badb7f267103d3dab65f"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/PrincipalResourceGrantRepository.java",
+          "line": 20,
+          "selector": "effective principal grantsJOINcom_resources tenant/enabled27..30",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/PrincipalResourceGrantRepository.java",
+          "sha256": "ba599c11f97244ec3ec40c80e9f656a2fe3467897a251422abc1b1ac3342b97d"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+          "line": 103,
+          "selector": "exact permission membership and onlyAPPcompatibility111..118",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+          "sha256": "7d83c62b6eab54ea7531561f4c94f35e23a1ee89c0143c86a3e362b0d3961197"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+          "line": 598,
+          "selector": "missing exact permission→SURFACE_CAPABILITY_REQUIRED",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+          "sha256": "4f3d2f108adc23f26637c1719acc49ad601eff8aec7fdc10fd90b71fd7bb1a24"
+        }
+      ],
+      "decision": "Resource presence and user privilege are separate contracts. APP.HCM:VIEW or general Workforce/DataOperations MANAGE must not satisfy controlled-exportEXPORT."
+    },
+    {
+      "id": "WCE-004",
+      "classification": "EXTERNAL_ARTIFACT_ACTIVATION_IS_EXPLICIT_INTENTIONAL_G6_BOUNDARY",
+      "stage": "G6_CUSTOMER_SECURITY_ARTIFACT_ACTIVATION",
+      "observed": "Existing People workforce/export controller/service and native ledger objects are actual source. ADR accepted executiondisabled until externalD09/D12; current configuration execution-enabledfalse/blockersD09,D12. Policy rejects enabled execution with blockers; DisabledWorkforceExportArtifactWriter throws instead of fabricating KMS storage/artifacts. This is a real named external boundary, not a documented delegation to register Auth resources.",
+      "evidence": [
+        {
+          "repository": "integration",
+          "file": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportController.java",
+          "line": 18,
+          "selector": "actual preview/list/create/cancel/retry endpoints",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportController.java",
+          "sha256": "107be45a4bacbc467c4e7082b958edb236b8796f83bd6dee82d028ab0fa5290a"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java",
+          "line": 156,
+          "selector": "EXPORT policy+population+dataset+highRisk binding before request snapshot",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java",
+          "sha256": "5975a019f2f713eecd5111891f65100bc5b985af855aed4fca7d1f2fd1618231"
+        },
+        {
+          "repository": "integration",
+          "file": "docs/architecture/workforce-access-and-export-governance.md",
+          "line": 80,
+          "selector": "execution-enabledfalse andD09/D12; blocker removal alone invalid94",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/docs/architecture/workforce-access-and-export-governance.md",
+          "sha256": "7d521427c94135043673207fbc1e1e5ded3d439e4d75d674315fffbe00cb28d8"
+        },
+        {
+          "repository": "integration",
+          "file": "docs/delivery/customer-policy-and-release-gate-register.md",
+          "line": 58,
+          "selector": "D09 external roles/masking/watermark/expiry andD12 worker/KMS/retention gates",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/docs/delivery/customer-policy-and-release-gate-register.md",
+          "sha256": "d8b4cb7bed24b8d600b040024bd757aadf7db9a7376ca83568aa7efdf6828ea4"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportPolicy.java",
+          "line": 20,
+          "selector": "executionfalse default, blockers28, forbiddenenabled41..44",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportPolicy.java",
+          "sha256": "b36aaea9f79833dd29a9b5d28a4513e30f511b400c7bccffa6035cf42982d573"
+        },
+        {
+          "repository": "integration",
+          "file": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/DisabledWorkforceExportArtifactWriter.java",
+          "line": 6,
+          "selector": "disabled writer conditionalfalse; write throws14..16",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/DisabledWorkforceExportArtifactWriter.java",
+          "sha256": "f3fdf2fd1d8396f2ec9f46551d71653c65f630a597608b06798d07a7ea661692"
+        }
+      ],
+      "decision": "Preserve executiondisabled/blockers/writerfailure, validate generic sharedfailclosed coreG3 and customer KMS/DLP/release activationG6 separately. Catalog-only publication is not execution readiness or customer security approval."
+    },
+    {
+      "id": "WCE-005",
+      "classification": "PEOPLE_ELIGIBILITY_SIGNING_REMAINS_FAILCLOSED_EVEN_AFTER_FIXTURE_GRANTS",
+      "stage": "G3_SHARED_OWNER_AUTHORITY_OPEN",
+      "observed": "Current main untracked test inserts resourceEXPORT andAPP.HCMVIEW, then derives STEP_UP_REQUIRED critical policy but requiresProductEligibility=true. It asserts challenge failureAUTHORITY_RESOLUTION_UNAVAILABLE and no session calls. Challenge service explicitly rejects requiresProductEligibility. This source witness is not a test executed by this reviewer, and does not prove actual People producer integration.",
+      "evidence": [
+        {
+          "repository": "main",
+          "file": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+          "line": 212,
+          "selector": "fixture catalog/grants212..216; authority227 then unavailable234/calls0235",
+          "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+          "sha256": "770e64b238099ed2725dad5024ce7874d7b7d23c3859b64f4cb33323c0aa6518"
+        },
+        {
+          "repository": "main",
+          "file": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+          "line": 231,
+          "selector": "requiresProductEligibility234/244 rejects signing",
+          "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+          "sha256": "cc91e7a8e52d9dd153ab656e0b1ffe6ad5c12a81bd98f40e3b87ebc781e105bd"
+        }
+      ],
+      "decision": "Do not set eligibilityfalse or relax signing guard to pass. Exact People owner population/field/current version/eligibility publication and verified sharedproducerconsumer binding remains separate readiness OPEN."
+    },
+    {
+      "id": "WCE-006",
+      "classification": "VERSION_AND_NATIVE_EVIDENCE_SCOPE_MUST_BE_SEPARATE",
+      "stage": "G0_G3_CURRENT_BYTE_PROVENANCE",
+      "observed": "Integration db0 classpath indexlatest6; main current dirtyindexlatest8 has untrackedv7/v8 with equal Auth byte peers. Main HEAD449 canonicalsource itself remains samev6 source as integration; new source/index/test are working changes, not committed currentintegration authority. The transmitted fresh114/v1..8 observation cannot be sourcebound to either snapshot from count alone. Main runtime test line numbers moved after capture as its owner continues work; the SHA770e64... snapshot/semantic selector is the evidence, not a claim current main lines stay212..216. Integration production source absence remains stable and independent of this fixture.",
+      "evidence": [
+        {
+          "repository": "integration",
+          "file": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+          "line": 8,
+          "selector": "latest6",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+          "sha256": "e6a33c75f7363e8c28eae806cb578a1d7bd3d05f84e5c99f27e06a3cf5753303"
+        },
+        {
+          "repository": "main",
+          "file": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+          "line": 8,
+          "selector": "dirtylatest8; version7/8107/121",
+          "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+          "sha256": "aa5febbb326a8af2170be34b72f88c4c392d99fd276c1380b5ff466fa3ae12da"
+        },
+        {
+          "repository": "main",
+          "file": "contracts/product-authorization/product-surfaces-v1.yaml",
+          "line": 6082,
+          "selector": "controlled-export source remains present, workingSHA differs fromHEAD",
+          "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.yaml",
+          "sha256": "16fd773c695a6341fb39158c7ba8bede30d8a0cf1736bbab68eb328a0841609e"
+        }
+      ],
+      "decision": "Pin the originating native run's exact source/artifact hashes and fresh receipt rather than labelintegrationv8 or merge main dirty work. Keep old finalfiveaudit pins unchanged.",
+      "mainWorkingSnapshotApproval": "NOT_APPROVED_CAPTURE_ONLY_ACTIVE_OTHER_TASK"
+    }
+  ],
+  "externalSettingsProvenance": [
+    {
+      "setting": "DWP_PRODUCT_AUTHORIZATION_SEED_ENABLED",
+      "scope": "Auth registry DRAFT import",
+      "default": false,
+      "publishesResource": false,
+      "publishesGrant": false,
+      "source": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java:33 / application.yml:130"
+    },
+    {
+      "setting": "DWP_PRODUCT_AUTHORIZATION_SEED_INDEX_LOCATION",
+      "scope": "Artifact index selection",
+      "default": "classpath product-surfaces-v1.index.generated.json",
+      "publishesResource": false,
+      "publishesGrant": false,
+      "source": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java:34 / application.yml:131"
+    },
+    {
+      "setting": "DWP_PRODUCT_AUTHORIZATION_LOCAL_PILOT_ACTIVATION_ENABLED",
+      "scope": "opt-in local registry pilot; no production approval",
+      "default": false,
+      "publishesResource": "No evidence of exactcontrolled-export resource registration in source",
+      "publishesGrant": "No blanketgrants allowed",
+      "source": "dwp-auth-server/src/main/resources/application.yml:135..138"
+    },
+    {
+      "setting": "DWP_HCM_PRODUCT_AUTHORIZATION_V3_ENABLED",
+      "scope": "People owner PEP rollout",
+      "default": false,
+      "publishesResource": false,
+      "publishesGrant": false,
+      "source": "dwp-people-server/src/main/resources/application.yml:103"
+    },
+    {
+      "setting": "DWP_WORKFORCE_EXPORT_EXECUTION_ENABLED / DWP_WORKFORCE_EXPORT_BLOCKERS",
+      "scope": "People artifact execution",
+      "default": "false / D-09,D-12",
+      "publishesResource": false,
+      "publishesGrant": false,
+      "source": "dwp-people-server/src/main/resources/application.yml:141..142; ADR80..95"
+    }
+  ],
+  "narrowestSafeCorrection": {
+    "status": "PROPOSED_ONLY_NOT_IMPLEMENTED_NOT_AUTHORIZATION_TO_WRITE",
+    "beforeAnyChange": "Owner Security/Auth decides explicit catalog disposition for the controlled-export capability and approved entitlement/install/environment/tenant lifecycle. If publication is not in current approved scope, declare exact owner mappingUNPUBLISHED_REQUIRED / affectednativejourneydisabledG3OPEN instead of claim exactallsourceREADY. Do not mark descriptorACTIVE as resource permission authority. Existing ON CONFLICT forces enabledTRUE: source-owner enabled/admin-disabled/entitlement-disabled lifecycle and explicit reactivation must be defined first; resource registration must not silently reenable existing disabled resources.",
+    "changeIfApproved": [
+      "Add approved resource-only Auth catalog/template registration for exact ACTION.WORKFORCE_CONTROLLED_EXPORT and globalVIEW/EXPORT permission codes through new noncolliding owner CREATE-only forwardmigration/sourcepublication; existing EXPORT code is already defined, so do not add duplicate permission codes.",
+      "Use existing owner template/provisioning boundaries only with an approved conditional entitlement/install/tenant and enabled-state lifecycle. Existing sync currently forces enabledTRUE on conflict; a naive ACTIVE template/re-sync is unsafe for admin-disabled rows. Require explicit owner-reviewed preservation/CAS/reenable policy and new-vs-existing tenant regression. If those policies are unallocated, stage as UNPUBLISHED_REQUIRED/disabled and keep the native readiness OPEN, not force templateACTIVE or enable alltenants.",
+      "Do not add sys_tenant_role_permission_templates or com_role_permissions/com_principal_resource_grants for broad builtinroles/users. User rights require separate explicit makerchecker/governed subject/scope/field/currentversion/expiry/deny policy. Preserve zero implicit grant after catalog sync.",
+      "Do not touch historicalV26/V49/V54/V89 or use occupiedAuth211/212. Current high-water alone is not approved successorreservation; obtain Control owner allocation, then source-linked exactblob integration/fanout.",
+      "Keep DRAFT/approval/CAS activation, requiresProductEligibility signing guard, owner PEP and externalD09/D12execution/writerdisabled boundaries unchanged.",
+      "Define exact app-owner/catalog management visibility, resource-set or separate action-admin resolver, duty/package grant/revoke and scope/field boundary mapping before activating the capability. ACTION metadata alone does not prove app-group/package visibility; this is an unverified follow-up requirement, not an independently established new resolver defect. Do not clone blanket APP.HCM grants."
+    ],
+    "internalTechnicalApprovalOnly": true,
+    "newUserCustomerOrExternalDecisionRequiredForInternalDesign": false,
+    "approvalMeaning": "Security/Auth/Control review means internal expert/code-owner technical validation already within authorized common preparation, not a new user choice or customer/external person approval request. No operational source/permission writes were applied here."
+  },
+  "boundedVerificationPlan": {
+    "executedByReviewer": "Source-only descriptor/seed byte equality/version/count/HEADSHA/filenameinventory/rg noexactregistration; noNativefresh orGradletests.",
+    "possibleNowReadOnly": [
+      "Pin exactsource/schema/artifact/SeedLoader/index/nativeobservations from originatingtask; compare v1..6integration versusv1..8main explicitly.",
+      "Run reviewed generator --check on a stable approvedsource snapshot only after inspecting that checkmode is nonmutating; catalog/descriptor equality does not prove native grants.",
+      "Statically validate approved registrationplan maps exactkey/type/entitlement/install/tenant/new-vs-existing sync and writes no grant/activation/execution tables; no keys/companyIDs/defaultactor constants."
+    ],
+    "futureAfterApprovedCorrectionNotRunHere": [
+      "Small focused Auth tests: seeddisabled→importcalls0; enabled→DRAFTonly no resource/grant/approval/activation writes; registryresourcecatalog plan maps capability exactly.",
+      "Isolated owner test/nativepilot if separately authorized: clean/upgrade/replay idempotent resource-only registration; applicabletenant new/provision/update behaviors; nonapplicabletenant absent/disabled; existing grants count unchanged; zero autogrant. Verify administrator-disabled resource stays disabled across entitlement/provisioning replay; entitlement-disable versus admin-disable restoration must follow explicit owner policy, not unconditional enabledTRUE.",
+      "Exactpermission negative: APP.HCMVIEW alone deniedEXPORT; catalog-only resource still denied; VIEW cannotcreate/retry/cancel; crossTenant/revoked/expired/DENYwins; only explicit currentEXPORT receives route capability, not a manufactured challenge.",
+      "Ownereligibility negative: absent/stale/foreign population/field/version→unavailable/calls0, even with explicitEXPORT; no guard relaxation.",
+      "Execution boundary negative: enabledwithD09/D12blockers startupreject; noapprovedwriter noartifactsuccess; canonical registration doesnot removeBLOCKED_PENDING_APPROVAL or claim customerdownloadapproval."
+    ],
+    "noHeavyPgOrNewServersAuthorizedByThisReport": true
+  },
+  "evidenceManifest": [
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.yaml",
+      "bytes": 623592,
+      "sha256": "0a2f11a1d894dc961676e15b50895165a8243444703e4817303e56df6dbd7b5c",
+      "lines": 16678,
+      "headBlobPresent": true,
+      "headBlobSha256": "0a2f11a1d894dc961676e15b50895165a8243444703e4817303e56df6dbd7b5c",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.index.json",
+      "bytes": 3185,
+      "sha256": "e6a33c75f7363e8c28eae806cb578a1d7bd3d05f84e5c99f27e06a3cf5753303",
+      "lines": 96,
+      "headBlobPresent": true,
+      "headBlobSha256": "e6a33c75f7363e8c28eae806cb578a1d7bd3d05f84e5c99f27e06a3cf5753303",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.json",
+      "bytes": 663472,
+      "sha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "lines": 20660,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/README.md",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/README.md",
+      "bytes": 16200,
+      "sha256": "e9d7ef66cb02e16df9b305165af6c5b749d53d6a4a7d1dbfe7fc02df1dac5c73",
+      "lines": 293,
+      "headBlobPresent": true,
+      "headBlobSha256": "e9d7ef66cb02e16df9b305165af6c5b749d53d6a4a7d1dbfe7fc02df1dac5c73",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "bytes": 3185,
+      "sha256": "e6a33c75f7363e8c28eae806cb578a1d7bd3d05f84e5c99f27e06a3cf5753303",
+      "lines": 96,
+      "headBlobPresent": true,
+      "headBlobSha256": "e6a33c75f7363e8c28eae806cb578a1d7bd3d05f84e5c99f27e06a3cf5753303",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "bytes": 663472,
+      "sha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "lines": 20660,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+      "bytes": 5568,
+      "sha256": "d065174040e4bd1777b61b332238291f563477f517af3a33f98edbefa968fa1b",
+      "lines": 114,
+      "headBlobPresent": true,
+      "headBlobSha256": "d065174040e4bd1777b61b332238291f563477f517af3a33f98edbefa968fa1b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "bytes": 4414,
+      "sha256": "dc80e2c696d12294db18538931051f023738544b0110c9bcc22fe7e3ba1b293b",
+      "lines": 86,
+      "headBlobPresent": true,
+      "headBlobSha256": "dc80e2c696d12294db18538931051f023738544b0110c9bcc22fe7e3ba1b293b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractService.java",
+      "bytes": 22689,
+      "sha256": "c9b0188b0d4cf702ebb466860b36dcae21d02780cc8d70865a707591bf6be4b5",
+      "lines": 489,
+      "headBlobPresent": true,
+      "headBlobSha256": "c9b0188b0d4cf702ebb466860b36dcae21d02780cc8d70865a707591bf6be4b5",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/ProductAuthorizationContractRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/ProductAuthorizationContractRepository.java",
+      "bytes": 22036,
+      "sha256": "5cc8f175fdd5041d6127306cceb678c0c1bcdf88d02564fcedcca35b3a00e541",
+      "lines": 474,
+      "headBlobPresent": true,
+      "headBlobSha256": "5cc8f175fdd5041d6127306cceb678c0c1bcdf88d02564fcedcca35b3a00e541",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "bytes": 35761,
+      "sha256": "4f3d2f108adc23f26637c1719acc49ad601eff8aec7fdc10fd90b71fd7bb1a24",
+      "lines": 695,
+      "headBlobPresent": true,
+      "headBlobSha256": "4f3d2f108adc23f26637c1719acc49ad601eff8aec7fdc10fd90b71fd7bb1a24",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+      "bytes": 5512,
+      "sha256": "7d83c62b6eab54ea7531561f4c94f35e23a1ee89c0143c86a3e362b0d3961197",
+      "lines": 125,
+      "headBlobPresent": true,
+      "headBlobSha256": "7d83c62b6eab54ea7531561f4c94f35e23a1ee89c0143c86a3e362b0d3961197",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/PrincipalResourceGrantRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/PrincipalResourceGrantRepository.java",
+      "bytes": 11490,
+      "sha256": "ba599c11f97244ec3ec40c80e9f656a2fe3467897a251422abc1b1ac3342b97d",
+      "lines": 233,
+      "headBlobPresent": true,
+      "headBlobSha256": "ba599c11f97244ec3ec40c80e9f656a2fe3467897a251422abc1b1ac3342b97d",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+      "bytes": 30382,
+      "sha256": "7027aae4450079516a0a7abf1f5be14c12e033c99160f012d9abf7c06485dee3",
+      "lines": 641,
+      "headBlobPresent": true,
+      "headBlobSha256": "7027aae4450079516a0a7abf1f5be14c12e033c99160f012d9abf7c06485dee3",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+      "bytes": 35625,
+      "sha256": "072e82d5d0a5103dd731c540c719fc296ffc74392141badb7f267103d3dab65f",
+      "lines": 694,
+      "headBlobPresent": true,
+      "headBlobSha256": "072e82d5d0a5103dd731c540c719fc296ffc74392141badb7f267103d3dab65f",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/application.yml",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/application.yml",
+      "bytes": 7505,
+      "sha256": "c8aa4834f40aa9743aa5fc735e0663a78b1ffa83a5996e60b5df5f7c4b1644b2",
+      "lines": 200,
+      "headBlobPresent": true,
+      "headBlobSha256": "c8aa4834f40aa9743aa5fc735e0663a78b1ffa83a5996e60b5df5f7c4b1644b2",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V26__add_workforce_application_authorization.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V26__add_workforce_application_authorization.sql",
+      "bytes": 3101,
+      "sha256": "e60b5715bf6fcfcabdcf1bd31821df96820337312c5c14a3bd9e717f42f401d2",
+      "lines": 63,
+      "headBlobPresent": true,
+      "headBlobSha256": "e60b5715bf6fcfcabdcf1bd31821df96820337312c5c14a3bd9e717f42f401d2",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+      "bytes": 38156,
+      "sha256": "6ac326bf0b59bb32ce2eb7f9e80f204bc7e986fa9f78c1d1e81939c1886a7f8c",
+      "lines": 768,
+      "headBlobPresent": true,
+      "headBlobSha256": "6ac326bf0b59bb32ce2eb7f9e80f204bc7e986fa9f78c1d1e81939c1886a7f8c",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V54__introduce_hcm_application_permission_alias.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V54__introduce_hcm_application_permission_alias.sql",
+      "bytes": 2313,
+      "sha256": "d862487c903c20b2161bd4c1c06be59dccef66ccb6296a33d133d5aa1274d9ad",
+      "lines": 59,
+      "headBlobPresent": true,
+      "headBlobSha256": "d862487c903c20b2161bd4c1c06be59dccef66ccb6296a33d133d5aa1274d9ad",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V56__retire_unowned_authorization_placeholders.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V56__retire_unowned_authorization_placeholders.sql",
+      "bytes": 622,
+      "sha256": "eda8cb19b291e4cc8744ab566d7ac46631301b8ab6d1b115625da60494f02a16",
+      "lines": 15,
+      "headBlobPresent": true,
+      "headBlobSha256": "eda8cb19b291e4cc8744ab566d7ac46631301b8ab6d1b115625da60494f02a16",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql",
+      "bytes": 1788,
+      "sha256": "ed9ccdfb68b01b08ff03ccd591d7d7943c5bf5a99f40cf801e79220cb678ecdc",
+      "lines": 39,
+      "headBlobPresent": true,
+      "headBlobSha256": "ed9ccdfb68b01b08ff03ccd591d7d7943c5bf5a99f40cf801e79220cb678ecdc",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportController.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportController.java",
+      "bytes": 4440,
+      "sha256": "107be45a4bacbc467c4e7082b958edb236b8796f83bd6dee82d028ab0fa5290a",
+      "lines": 99,
+      "headBlobPresent": true,
+      "headBlobSha256": "107be45a4bacbc467c4e7082b958edb236b8796f83bd6dee82d028ab0fa5290a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java",
+      "bytes": 27630,
+      "sha256": "5975a019f2f713eecd5111891f65100bc5b985af855aed4fca7d1f2fd1618231",
+      "lines": 569,
+      "headBlobPresent": true,
+      "headBlobSha256": "5975a019f2f713eecd5111891f65100bc5b985af855aed4fca7d1f2fd1618231",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportPolicy.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportPolicy.java",
+      "bytes": 3444,
+      "sha256": "b36aaea9f79833dd29a9b5d28a4513e30f511b400c7bccffa6035cf42982d573",
+      "lines": 89,
+      "headBlobPresent": true,
+      "headBlobSha256": "b36aaea9f79833dd29a9b5d28a4513e30f511b400c7bccffa6035cf42982d573",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/DisabledWorkforceExportArtifactWriter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/DisabledWorkforceExportArtifactWriter.java",
+      "bytes": 911,
+      "sha256": "f3fdf2fd1d8396f2ec9f46551d71653c65f630a597608b06798d07a7ea661692",
+      "lines": 24,
+      "headBlobPresent": true,
+      "headBlobSha256": "f3fdf2fd1d8396f2ec9f46551d71653c65f630a597608b06798d07a7ea661692",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-people-server/src/main/resources/application.yml",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/application.yml",
+      "bytes": 7764,
+      "sha256": "17e0d5d1b4ab40bde6c80e5c2f146ccbc6ebdc38958a56e74e46af27a7042f56",
+      "lines": 199,
+      "headBlobPresent": true,
+      "headBlobSha256": "17e0d5d1b4ab40bde6c80e5c2f146ccbc6ebdc38958a56e74e46af27a7042f56",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "docs/architecture/workforce-access-and-export-governance.md",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/docs/architecture/workforce-access-and-export-governance.md",
+      "bytes": 5863,
+      "sha256": "7d521427c94135043673207fbc1e1e5ded3d439e4d75d674315fffbe00cb28d8",
+      "lines": 105,
+      "headBlobPresent": true,
+      "headBlobSha256": "7d521427c94135043673207fbc1e1e5ded3d439e4d75d674315fffbe00cb28d8",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "docs/delivery/customer-policy-and-release-gate-register.md",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/docs/delivery/customer-policy-and-release-gate-register.md",
+      "bytes": 18938,
+      "sha256": "d8b4cb7bed24b8d600b040024bd757aadf7db9a7376ca83568aa7efdf6828ea4",
+      "lines": 165,
+      "headBlobPresent": true,
+      "headBlobSha256": "d8b4cb7bed24b8d600b040024bd757aadf7db9a7376ca83568aa7efdf6828ea4",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+      "bytes": 21004,
+      "sha256": "cc91e7a8e52d9dd153ab656e0b1ffe6ad5c12a81bd98f40e3b87ebc781e105bd",
+      "lines": 433,
+      "headBlobPresent": true,
+      "headBlobSha256": "cc91e7a8e52d9dd153ab656e0b1ffe6ad5c12a81bd98f40e3b87ebc781e105bd",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v1.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.bundle-v1.json",
+      "bytes": 90332,
+      "sha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "lines": 2805,
+      "headBlobPresent": true,
+      "headBlobSha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v1.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v1.generated.json",
+      "bytes": 90332,
+      "sha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "lines": 2805,
+      "headBlobPresent": true,
+      "headBlobSha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v2.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.bundle-v2.json",
+      "bytes": 211357,
+      "sha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "lines": 6470,
+      "headBlobPresent": true,
+      "headBlobSha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v2.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v2.generated.json",
+      "bytes": 211357,
+      "sha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "lines": 6470,
+      "headBlobPresent": true,
+      "headBlobSha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+      "bytes": 381765,
+      "sha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "lines": 11732,
+      "headBlobPresent": true,
+      "headBlobSha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v3.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v3.generated.json",
+      "bytes": 381765,
+      "sha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "lines": 11732,
+      "headBlobPresent": true,
+      "headBlobSha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v4.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.bundle-v4.json",
+      "bytes": 449726,
+      "sha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "lines": 13951,
+      "headBlobPresent": true,
+      "headBlobSha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v4.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v4.generated.json",
+      "bytes": 449726,
+      "sha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "lines": 13951,
+      "headBlobPresent": true,
+      "headBlobSha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v5.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.bundle-v5.json",
+      "bytes": 460383,
+      "sha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "lines": 14289,
+      "headBlobPresent": true,
+      "headBlobSha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v5.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v5.generated.json",
+      "bytes": 460383,
+      "sha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "lines": 14289,
+      "headBlobPresent": true,
+      "headBlobSha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v6.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/contracts/product-authorization/product-surfaces-v1.bundle-v6.json",
+      "bytes": 663472,
+      "sha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "lines": 20660,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "integration",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v6.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v6.generated.json",
+      "bytes": 663472,
+      "sha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "lines": 20660,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.yaml",
+      "bytes": 685870,
+      "sha256": "16fd773c695a6341fb39158c7ba8bede30d8a0cf1736bbab68eb328a0841609e",
+      "lines": 18369,
+      "headBlobPresent": true,
+      "headBlobSha256": "0a2f11a1d894dc961676e15b50895165a8243444703e4817303e56df6dbd7b5c",
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.index.json",
+      "bytes": 4101,
+      "sha256": "aa5febbb326a8af2170be34b72f88c4c392d99fd276c1380b5ff466fa3ae12da",
+      "lines": 124,
+      "headBlobPresent": true,
+      "headBlobSha256": "e6a33c75f7363e8c28eae806cb578a1d7bd3d05f84e5c99f27e06a3cf5753303",
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.json",
+      "bytes": 722646,
+      "sha256": "fb90fe5179d2eff7328291813dd302d01d7c8b1623065a7fa3dc0db47081ad00",
+      "lines": 22444,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/README.md",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/README.md",
+      "bytes": 16200,
+      "sha256": "e9d7ef66cb02e16df9b305165af6c5b749d53d6a4a7d1dbfe7fc02df1dac5c73",
+      "lines": 293,
+      "headBlobPresent": true,
+      "headBlobSha256": "e9d7ef66cb02e16df9b305165af6c5b749d53d6a4a7d1dbfe7fc02df1dac5c73",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "bytes": 4101,
+      "sha256": "aa5febbb326a8af2170be34b72f88c4c392d99fd276c1380b5ff466fa3ae12da",
+      "lines": 124,
+      "headBlobPresent": true,
+      "headBlobSha256": "e6a33c75f7363e8c28eae806cb578a1d7bd3d05f84e5c99f27e06a3cf5753303",
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "bytes": 722646,
+      "sha256": "fb90fe5179d2eff7328291813dd302d01d7c8b1623065a7fa3dc0db47081ad00",
+      "lines": 22444,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+      "bytes": 5568,
+      "sha256": "d065174040e4bd1777b61b332238291f563477f517af3a33f98edbefa968fa1b",
+      "lines": 114,
+      "headBlobPresent": true,
+      "headBlobSha256": "d065174040e4bd1777b61b332238291f563477f517af3a33f98edbefa968fa1b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "bytes": 4430,
+      "sha256": "177aa69cee2fcd3d53733793188744d6c94efbe111deec411ac3be0f4c98301b",
+      "lines": 86,
+      "headBlobPresent": true,
+      "headBlobSha256": "3681fe1199ec0b80f25dde4142c7348d7fba1cb128c65b81ee63437b18b72e61",
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractService.java",
+      "bytes": 22689,
+      "sha256": "c9b0188b0d4cf702ebb466860b36dcae21d02780cc8d70865a707591bf6be4b5",
+      "lines": 489,
+      "headBlobPresent": true,
+      "headBlobSha256": "c9b0188b0d4cf702ebb466860b36dcae21d02780cc8d70865a707591bf6be4b5",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/ProductAuthorizationContractRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/ProductAuthorizationContractRepository.java",
+      "bytes": 22036,
+      "sha256": "5cc8f175fdd5041d6127306cceb678c0c1bcdf88d02564fcedcca35b3a00e541",
+      "lines": 474,
+      "headBlobPresent": true,
+      "headBlobSha256": "5cc8f175fdd5041d6127306cceb678c0c1bcdf88d02564fcedcca35b3a00e541",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "bytes": 36030,
+      "sha256": "0e5bac6a0eb11a7fd6cc02ce778d9b394c5f8fc71d1f7a3d13bf620e6bbeba04",
+      "lines": 699,
+      "headBlobPresent": true,
+      "headBlobSha256": "4f3d2f108adc23f26637c1719acc49ad601eff8aec7fdc10fd90b71fd7bb1a24",
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+      "bytes": 5512,
+      "sha256": "7d83c62b6eab54ea7531561f4c94f35e23a1ee89c0143c86a3e362b0d3961197",
+      "lines": 125,
+      "headBlobPresent": true,
+      "headBlobSha256": "7d83c62b6eab54ea7531561f4c94f35e23a1ee89c0143c86a3e362b0d3961197",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/PrincipalResourceGrantRepository.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/repository/PrincipalResourceGrantRepository.java",
+      "bytes": 11490,
+      "sha256": "ba599c11f97244ec3ec40c80e9f656a2fe3467897a251422abc1b1ac3342b97d",
+      "lines": 233,
+      "headBlobPresent": true,
+      "headBlobSha256": "ba599c11f97244ec3ec40c80e9f656a2fe3467897a251422abc1b1ac3342b97d",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthService.java",
+      "bytes": 30382,
+      "sha256": "7027aae4450079516a0a7abf1f5be14c12e033c99160f012d9abf7c06485dee3",
+      "lines": 641,
+      "headBlobPresent": true,
+      "headBlobSha256": "7027aae4450079516a0a7abf1f5be14c12e033c99160f012d9abf7c06485dee3",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+      "bytes": 35625,
+      "sha256": "072e82d5d0a5103dd731c540c719fc296ffc74392141badb7f267103d3dab65f",
+      "lines": 694,
+      "headBlobPresent": true,
+      "headBlobSha256": "072e82d5d0a5103dd731c540c719fc296ffc74392141badb7f267103d3dab65f",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/application.yml",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/application.yml",
+      "bytes": 5966,
+      "sha256": "6bcd4e6bc8961b624808eded5ad4d6841b35b55db720c40619016926f96fa9a7",
+      "lines": 165,
+      "headBlobPresent": true,
+      "headBlobSha256": "6bcd4e6bc8961b624808eded5ad4d6841b35b55db720c40619016926f96fa9a7",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V26__add_workforce_application_authorization.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/db/migration/V26__add_workforce_application_authorization.sql",
+      "bytes": 3101,
+      "sha256": "e60b5715bf6fcfcabdcf1bd31821df96820337312c5c14a3bd9e717f42f401d2",
+      "lines": 63,
+      "headBlobPresent": true,
+      "headBlobSha256": "e60b5715bf6fcfcabdcf1bd31821df96820337312c5c14a3bd9e717f42f401d2",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/db/migration/V49__harden_tenant_authorization_and_seed_skax_groups.sql",
+      "bytes": 38156,
+      "sha256": "6ac326bf0b59bb32ce2eb7f9e80f204bc7e986fa9f78c1d1e81939c1886a7f8c",
+      "lines": 768,
+      "headBlobPresent": true,
+      "headBlobSha256": "6ac326bf0b59bb32ce2eb7f9e80f204bc7e986fa9f78c1d1e81939c1886a7f8c",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V54__introduce_hcm_application_permission_alias.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/db/migration/V54__introduce_hcm_application_permission_alias.sql",
+      "bytes": 2313,
+      "sha256": "d862487c903c20b2161bd4c1c06be59dccef66ccb6296a33d133d5aa1274d9ad",
+      "lines": 59,
+      "headBlobPresent": true,
+      "headBlobSha256": "d862487c903c20b2161bd4c1c06be59dccef66ccb6296a33d133d5aa1274d9ad",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V56__retire_unowned_authorization_placeholders.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/db/migration/V56__retire_unowned_authorization_placeholders.sql",
+      "bytes": 622,
+      "sha256": "eda8cb19b291e4cc8744ab566d7ac46631301b8ab6d1b115625da60494f02a16",
+      "lines": 15,
+      "headBlobPresent": true,
+      "headBlobSha256": "eda8cb19b291e4cc8744ab566d7ac46631301b8ab6d1b115625da60494f02a16",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/db/migration/V89__seed_approval_product_management_capabilities.sql",
+      "bytes": 1788,
+      "sha256": "ed9ccdfb68b01b08ff03ccd591d7d7943c5bf5a99f40cf801e79220cb678ecdc",
+      "lines": 39,
+      "headBlobPresent": true,
+      "headBlobSha256": "ed9ccdfb68b01b08ff03ccd591d7d7943c5bf5a99f40cf801e79220cb678ecdc",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportController.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportController.java",
+      "bytes": 4440,
+      "sha256": "107be45a4bacbc467c4e7082b958edb236b8796f83bd6dee82d028ab0fa5290a",
+      "lines": 99,
+      "headBlobPresent": true,
+      "headBlobSha256": "107be45a4bacbc467c4e7082b958edb236b8796f83bd6dee82d028ab0fa5290a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportService.java",
+      "bytes": 27630,
+      "sha256": "5975a019f2f713eecd5111891f65100bc5b985af855aed4fca7d1f2fd1618231",
+      "lines": 569,
+      "headBlobPresent": true,
+      "headBlobSha256": "5975a019f2f713eecd5111891f65100bc5b985af855aed4fca7d1f2fd1618231",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportPolicy.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceExportPolicy.java",
+      "bytes": 3444,
+      "sha256": "b36aaea9f79833dd29a9b5d28a4513e30f511b400c7bccffa6035cf42982d573",
+      "lines": 89,
+      "headBlobPresent": true,
+      "headBlobSha256": "b36aaea9f79833dd29a9b5d28a4513e30f511b400c7bccffa6035cf42982d573",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/DisabledWorkforceExportArtifactWriter.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/workforce/DisabledWorkforceExportArtifactWriter.java",
+      "bytes": 911,
+      "sha256": "f3fdf2fd1d8396f2ec9f46551d71653c65f630a597608b06798d07a7ea661692",
+      "lines": 24,
+      "headBlobPresent": true,
+      "headBlobSha256": "f3fdf2fd1d8396f2ec9f46551d71653c65f630a597608b06798d07a7ea661692",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-people-server/src/main/resources/application.yml",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-people-server/src/main/resources/application.yml",
+      "bytes": 5660,
+      "sha256": "f5a119a5d09754e40b18ff9068332078b73345cbd1aae813268061980809512d",
+      "lines": 154,
+      "headBlobPresent": true,
+      "headBlobSha256": "f5a119a5d09754e40b18ff9068332078b73345cbd1aae813268061980809512d",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "docs/architecture/workforce-access-and-export-governance.md",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/docs/architecture/workforce-access-and-export-governance.md",
+      "bytes": 5863,
+      "sha256": "7d521427c94135043673207fbc1e1e5ded3d439e4d75d674315fffbe00cb28d8",
+      "lines": 105,
+      "headBlobPresent": true,
+      "headBlobSha256": "7d521427c94135043673207fbc1e1e5ded3d439e4d75d674315fffbe00cb28d8",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "docs/delivery/customer-policy-and-release-gate-register.md",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/docs/delivery/customer-policy-and-release-gate-register.md",
+      "bytes": 18938,
+      "sha256": "d8b4cb7bed24b8d600b040024bd757aadf7db9a7376ca83568aa7efdf6828ea4",
+      "lines": 165,
+      "headBlobPresent": true,
+      "headBlobSha256": "d8b4cb7bed24b8d600b040024bd757aadf7db9a7376ca83568aa7efdf6828ea4",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+      "bytes": 30986,
+      "sha256": "770e64b238099ed2725dad5024ce7874d7b7d23c3859b64f4cb33323c0aa6518",
+      "lines": 470,
+      "headBlobPresent": false,
+      "headBlobSha256": null,
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+      "bytes": 21004,
+      "sha256": "cc91e7a8e52d9dd153ab656e0b1ffe6ad5c12a81bd98f40e3b87ebc781e105bd",
+      "lines": 433,
+      "headBlobPresent": true,
+      "headBlobSha256": "cc91e7a8e52d9dd153ab656e0b1ffe6ad5c12a81bd98f40e3b87ebc781e105bd",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v1.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v1.json",
+      "bytes": 90332,
+      "sha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "lines": 2805,
+      "headBlobPresent": true,
+      "headBlobSha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v1.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v1.generated.json",
+      "bytes": 90332,
+      "sha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "lines": 2805,
+      "headBlobPresent": true,
+      "headBlobSha256": "5175c0e36587241ebab59124a02130605363b5497808fa1459913b1ef8885f24",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v2.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v2.json",
+      "bytes": 211357,
+      "sha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "lines": 6470,
+      "headBlobPresent": true,
+      "headBlobSha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v2.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v2.generated.json",
+      "bytes": 211357,
+      "sha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "lines": 6470,
+      "headBlobPresent": true,
+      "headBlobSha256": "470c8b5608ec53597cc161ae997dea24092218ce735def78bf432ade9268d16a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v3.json",
+      "bytes": 381765,
+      "sha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "lines": 11732,
+      "headBlobPresent": true,
+      "headBlobSha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v3.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v3.generated.json",
+      "bytes": 381765,
+      "sha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "lines": 11732,
+      "headBlobPresent": true,
+      "headBlobSha256": "a8014a6f8a7f179a1f39a6d77e374763733296257104f5546ea01f50de60f9f0",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v4.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v4.json",
+      "bytes": 449726,
+      "sha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "lines": 13951,
+      "headBlobPresent": true,
+      "headBlobSha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v4.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v4.generated.json",
+      "bytes": 449726,
+      "sha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "lines": 13951,
+      "headBlobPresent": true,
+      "headBlobSha256": "41ee22506d246ccef8b245acbff0072771eb1f6fdeec95e7e41615122862a123",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v5.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v5.json",
+      "bytes": 460383,
+      "sha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "lines": 14289,
+      "headBlobPresent": true,
+      "headBlobSha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v5.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v5.generated.json",
+      "bytes": 460383,
+      "sha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "lines": 14289,
+      "headBlobPresent": true,
+      "headBlobSha256": "9344fd1a835eb1f6d84089d0f8fd19e260e412e28e01b67e7a606420ead8a34a",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v6.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v6.json",
+      "bytes": 663472,
+      "sha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "lines": 20660,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v6.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v6.generated.json",
+      "bytes": 663472,
+      "sha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "lines": 20660,
+      "headBlobPresent": true,
+      "headBlobSha256": "08fd9f286ff5ed8d6ed960a07a784b28e4a508273d17c74be72505175a932d0b",
+      "worktreeEqualsHead": true
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v7.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v7.json",
+      "bytes": 681066,
+      "sha256": "31c7e0cb119ca89394ad587fb56da829e8d787116c655fff40e4d3e056fc8fb5",
+      "lines": 21191,
+      "headBlobPresent": false,
+      "headBlobSha256": null,
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v7.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v7.generated.json",
+      "bytes": 681066,
+      "sha256": "31c7e0cb119ca89394ad587fb56da829e8d787116c655fff40e4d3e056fc8fb5",
+      "lines": 21191,
+      "headBlobPresent": false,
+      "headBlobSha256": null,
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v8.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v8.json",
+      "bytes": 722646,
+      "sha256": "fb90fe5179d2eff7328291813dd302d01d7c8b1623065a7fa3dc0db47081ad00",
+      "lines": 22444,
+      "headBlobPresent": false,
+      "headBlobSha256": null,
+      "worktreeEqualsHead": false
+    },
+    {
+      "repository": "main",
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v8.generated.json",
+      "absolutePath": "/Users/a10697/Work/DWP/dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v8.generated.json",
+      "bytes": 722646,
+      "sha256": "fb90fe5179d2eff7328291813dd302d01d7c8b1623065a7fa3dc0db47081ad00",
+      "lines": 22444,
+      "headBlobPresent": false,
+      "headBlobSha256": null,
+      "worktreeEqualsHead": false
+    }
+  ],
+  "formatValidation": {
+    "executed": true,
+    "result": "PASS_TWO_REPORT_STRUCTURE_AND_PRESERVED_PRIOR_PINS_ONLY",
+    "checks": [
+      "JSON parsed and87evidence pin rows contain exactSHA/HEAD-vs-worktree metadata",
+      "6classified source findings with no remediation/permission/runtime/commit writes",
+      "Main worktree observations explicitly captured nonapproved WIP, not immutable native run",
+      "Prior five-module final JSON/MD SHA unchanged",
+      "Only two new diagnostic reports authored; stable two outputSHA computed after write"
+    ],
+    "meaning": "Reportformat/source snapshot provenance only; no freshAuth/native/runtime/test execution or GatePASS."
+  }
+}

@@ -1,0 +1,491 @@
+{
+  "schema": "dwp.hris.semantic-dialect-mode-followup.v1",
+  "status": "MODE_GAP_FIXED_CURRENT_CANONICAL_STILL_FAIL",
+  "capturedAtUtc": "2026-09-14T02:38:53.465009+00:00",
+  "gateAuthorization": "NONE_G3_CLOSED",
+  "implementationScope": [
+    "validate_modern_semantic_field_lineage.py",
+    "test_modern_semantic_field_lineage.py"
+  ],
+  "mutations": {
+    "backend": false,
+    "frontend": false,
+    "canonicalContracts": false,
+    "proposal": false,
+    "aggregateCaller": false,
+    "gateOrSeal": false,
+    "databaseOrUserServer": false,
+    "commitCreated": false
+  },
+  "operationModeContract": {
+    "allowedExactStrings": [
+      "COMMAND",
+      "QUERY"
+    ],
+    "normalizationOrCoercion": false,
+    "errorCode": "OPERATION_MODE_INVALID",
+    "rejectionBeforeFieldExecution": true,
+    "diagnosticModeCannotBypassInvalidCanonicalMode": true,
+    "normalQueryForcedWrite": false
+  },
+  "beforeFixReproduction": {
+    "baselineValidatorSha256": "eaaf05d092c71c21edf1968d9c6c22d193a2eef7b083b7be5f56e2b31cf086a7",
+    "actualObservations": [
+      {
+        "mode": "BOGUS",
+        "readinessPass": true,
+        "errors": 0,
+        "validatedOperations": 1,
+        "status": "PASS",
+        "externalExpectedIds": [
+          "case.create"
+        ],
+        "externalExpectedCount": 1
+      },
+      {
+        "mode": null,
+        "readinessPass": true,
+        "errors": 0,
+        "validatedOperations": 1,
+        "status": "PASS",
+        "externalExpectedIds": [
+          "case.create"
+        ],
+        "externalExpectedCount": 1
+      },
+      {
+        "mode": " COMMAND",
+        "readinessPass": true,
+        "errors": 0,
+        "validatedOperations": 1,
+        "status": "PASS",
+        "externalExpectedIds": [
+          "case.create"
+        ],
+        "externalExpectedCount": 1
+      }
+    ],
+    "meaning": "Actual pre-edit negative reproduction, not an accepted contract or new readiness claim."
+  },
+  "negativeModeWitnesses": [
+    {
+      "label": "BOGUS",
+      "mode": "BOGUS",
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "null",
+      "mode": null,
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "leading-space",
+      "mode": " COMMAND",
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "missing",
+      "mode": null,
+      "fieldMissing": true,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "object",
+      "mode": {},
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "boolean-true",
+      "mode": true,
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "boolean-false",
+      "mode": false,
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "trailing-space",
+      "mode": "COMMAND ",
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "lowercase",
+      "mode": "command",
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "list",
+      "mode": [],
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    },
+    {
+      "label": "integer",
+      "mode": 1,
+      "fieldMissing": false,
+      "expectedOperationIds": [
+        "case.create"
+      ],
+      "expectedOperationCount": 1,
+      "validationStatus": "FAIL",
+      "readinessPass": false,
+      "validatedOperations": 0,
+      "issueCodes": [
+        "OPERATION_MODE_INVALID"
+      ]
+    }
+  ],
+  "positiveModeWitnesses": [
+    {
+      "operationId": "workers.query",
+      "mode": "QUERY",
+      "writesTables": [],
+      "validationStatus": "PASS",
+      "readinessPass": true,
+      "counts": {
+        "field_sources": 7,
+        "typed_sources": 5,
+        "operations": 1
+      },
+      "errors": 0
+    },
+    {
+      "operationId": "case.create",
+      "mode": "COMMAND",
+      "writesTables": [
+        "ppl_cases"
+      ],
+      "validationStatus": "PASS",
+      "readinessPass": true,
+      "counts": {
+        "typed_sources": 1,
+        "field_sources": 7,
+        "operations": 1
+      },
+      "errors": 0
+    }
+  ],
+  "verification": {
+    "pythonVersion": "3.12.14",
+    "warningPolicy": "error::SyntaxWarning",
+    "unitTests": {
+      "cases": 63,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "durationSeconds": 0.04923,
+      "outputSha256": "4e37cc4c16036867e9afbcf2481a27a41e4054b0355d0d00e0be1231539ec177",
+      "caseIds": [
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_both_graph_ids_relabelled_with_same_count_are_caught",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_both_graphs_and_counts_shortened_are_caught_by_independent_scope",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_canonical_cli_uses_independent_registry_not_cloned_doc_ids",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_canonical_graphs_require_array_not_null_object_or_string",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_command_mode_requires_exact_string_even_with_independent_scope",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_declared_scope_must_be_object",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_diagnostic_cannot_accept_unsupported_or_missing_graph",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_diagnostic_still_validates_real_nonempty_sources",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_document_count_mismatch_and_noncanonical_numbers_are_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_duplicate_binding_cannot_be_dictionary_overwritten",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_duplicate_lineage_is_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_empty_canonical_scope_is_not_readiness",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_empty_lineage_cannot_cover_nonempty_operations",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_exact_command_and_query_modes_keep_existing_source_witnesses",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_explicit_empty_diagnostic_is_never_readiness_pass",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_independent_count_mismatch_cannot_be_supplied_by_document",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_independent_scope_requires_unique_exact_ids_not_filter",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_invalid_independent_count_boolean_zero_string_negative",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_invalid_query_mode_is_not_accepted_in_diagnostic_mode",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_legitimate_scope_counts_can_grow_without_hardcoded_total",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_minimum_real_query_witness_needs_no_write",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_missing_either_canonical_graph_is_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_nonobject_document_is_failclosed",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_operation_ids_require_exact_nonempty_string_and_object",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_proposal_jobs_cannot_hide_behind_appended_canonical_graph",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_unknown_lineage_and_missing_operation_lineage_are_rejected",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_unknown_validation_mode_is_not_diagnostic_fallback",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_unsupported_wfm_22_public_and_6_internal_is_not_zero_op_pass",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_aggregate_string_cannot_bypass_source_registration",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_business_source_requires_provenance",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_correlation_cannot_hide_inside_registered_derived_source",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_correlation_cannot_originate_worker_uuid",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_correlation_header_is_not_a_business_object",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_cross_owner_sql_reference_is_forbidden",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_cursor_requires_asof_binding",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_derived_string_requires_registered_definition",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_generated_id_must_be_persisted_for_replay",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_generated_id_must_match_persisted_entity",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_generic_derivation_slogan_is_not_executable_contract",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_healthy_request_principal_local_fk_query_receipt_generated_id",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_local_resolution_must_bind_real_internal_column",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_local_uuid_to_bigint_needs_exact_resolution",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_nested_record_projection_requires_all_fields",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_nonexistent_column_is_not_a_projection",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_owner_validation_cannot_be_false",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_policy_id_cannot_be_relabelled_as_principal",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_projection_must_use_declared_inputs",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_projection_string_cannot_bypass_source_registration",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_real_scalar_uuid_array_cannot_masquerade_as_record_page_items",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_receipt_cannot_use_unregistered_or_phantom_table",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_receipt_registration_needs_actual_columns",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_request_cannot_expose_internal_id_space",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_request_uuid_needs_independent_entity_declaration",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_response_cannot_expose_internal_bigint_as_uuid",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_schema_entity_cannot_disagree_with_independent_fk",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_source_table_must_be_in_exact_operation_access",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_sql_parser_handles_nested_comma_defaults_and_constraints",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_trace_cannot_populate_non_metadata_scalar",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_typed_definition_cannot_omit_dependencies",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_typed_definition_dependencies_must_be_real",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_typed_definitions_are_acyclic",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_unused_typed_definitions_are_still_checked",
+        "test_modern_semantic_field_lineage.SemanticLineageTests.test_wrong_request_sink_is_not_excused_by_correct_column_source"
+      ],
+      "originalFieldLineageCases": 35,
+      "dialectScopeCases": 28,
+      "addedModeCaseIds": [
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_command_mode_requires_exact_string_even_with_independent_scope",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_exact_command_and_query_modes_keep_existing_source_witnesses",
+        "test_modern_semantic_field_lineage.SemanticDialectScopeTests.test_invalid_query_mode_is_not_accepted_in_diagnostic_mode"
+      ]
+    },
+    "aggregateNegativeSelfTests": {
+      "cases": 16,
+      "failures": []
+    },
+    "commands": [
+      {
+        "arguments": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-W",
+          "error::SyntaxWarning",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/validate_modern_semantic_field_lineage.py",
+          "--self-test",
+          "--compact"
+        ],
+        "exitCode": 1,
+        "durationSeconds": 0.276604,
+        "stdoutSha256": "7f87e9f2d8b9674c51847617cb5a4e074d65dcbb46bb14b01487982ffa74f0f7",
+        "stderrSha256": "71c4ff13c25b7947a3c4fb065c4e9c092ef78846356751118fcfce801945d704",
+        "stdoutSummary": [
+          "MODERN_SEMANTIC_LINEAGE_SELF_TESTS=PASS",
+          "MODERN_SEMANTIC_FIELD_LINEAGE=FAIL errors=2007 operations=100 field_sources=2335 typed_sources=0",
+          "ISSUE_COUNTS={\"CORRELATION_AS_BUSINESS_ID\": 45, \"CORRELATION_OBJECT_REFERENCE\": 100, \"PROJECTION_SOURCE_SHAPE_MISMATCH\": 22, \"REQUEST_ENTITY_UNDECLARED\": 108, \"SEMANTIC_BINDING_MISSING\": 371, \"SOURCE_COLUMN_MISSING\": 413, \"SOURCE_TYPE_MISMATCH\": 82, \"SOURCE_UNRESOLVED\": 866}"
+        ],
+        "stderrSummary": [
+          "",
+          "----------------------------------------------------------------------",
+          "Ran 63 tests in 0.029s",
+          "",
+          "OK"
+        ]
+      },
+      {
+        "arguments": [
+          "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-W",
+          "error::SyntaxWarning",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/validate_modern_capability_contracts.py",
+          "--self-test",
+          "--compact"
+        ],
+        "exitCode": 1,
+        "durationSeconds": 0.371454,
+        "stdoutSha256": "aa462c88b649a2ea0042c7f00a17cf003cccbe8229d61be08765340b1424a3d8",
+        "stderrSha256": "68e699e18b8c1912153f8caf343d031bb1a84f340f362786b9d2d75191dca970",
+        "stdoutSummary": [
+          "MODERN_SEMANTIC_LINEAGE_SELF_TESTS=PASS cases=63",
+          "MODERN_CAPABILITY_CONTRACTS=FAIL errors=2007",
+          "- semantic lineage [CORRELATION_OBJECT_REFERENCE] modern.recruiting.requisitions.query.headers.X-Correlation-ID: correlation header is metadata, not an OPAQUE_PUBLIC_UUID business reference"
+        ],
+        "stderrSummary": [
+          "...............................................................",
+          "----------------------------------------------------------------------",
+          "Ran 63 tests in 0.029s",
+          "",
+          "OK"
+        ]
+      },
+      {
+        "arguments": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness",
+          "-p",
+          "test_modern_semantic_field_lineage.py",
+          "-v"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 0.249272,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "a489ed81e1d179bb15bd863acb9fff866d2b1ea72593c45ecfd30d9e4c8ee1dc",
+        "stdoutSummary": [],
+        "stderrSummary": [
+          "",
+          "----------------------------------------------------------------------",
+          "Ran 63 tests in 0.071s",
+          "",
+          "OK"
+        ]
+      }
+    ]
+  },
+  "canonicalActual": {
+    "independentOperationScopeCount": 100,
+    "registryErrors": 0,
+    "validationStatus": "FAIL",
+    "readinessPass": false,
+    "counts": {
+      "field_sources": 2335,
+      "operations": 100
+    },
+    "errors": 2007,
+    "issueCounts": {
+      "CORRELATION_AS_BUSINESS_ID": 45,
+      "CORRELATION_OBJECT_REFERENCE": 100,
+      "PROJECTION_SOURCE_SHAPE_MISMATCH": 22,
+      "REQUEST_ENTITY_UNDECLARED": 108,
+      "SEMANTIC_BINDING_MISSING": 371,
+      "SOURCE_COLUMN_MISSING": 413,
+      "SOURCE_TYPE_MISMATCH": 82,
+      "SOURCE_UNRESOLVED": 866
+    },
+    "issuesSha256": "bcff18a5bf25ad27f4d5e8152a4f8f95cd5e53584dc8b9c5e9bc8da6603e4e99",
+    "priorIssuesSha256": "bcff18a5bf25ad27f4d5e8152a4f8f95cd5e53584dc8b9c5e9bc8da6603e4e99",
+    "sameIssuesFingerprint": true,
+    "exactSchemaSha256": "32b3d6c4e98037c0a26df0b08e112ad9ab067f95d70f3dc3d5dedf4f53f291fb",
+    "eventPayloadSha256": "ae9619899fad6dcfe19ad270b38b62371fdeef51f9de4eb8dee425d4d878a12f",
+    "typedSources": 0
+  },
+  "fieldChecker": {
+    "currentSha256": "cd32a67174847ea3747d6ce1787314fafb1a02f9da8234a89f19dda8b44a0e07",
+    "historicalSha256": "cd32a67174847ea3747d6ce1787314fafb1a02f9da8234a89f19dda8b44a0e07",
+    "unchanged": true
+  },
+  "sourceHashesBeforeVerification": {
+    "validate_modern_semantic_field_lineage.py": "30e3fe74498ba265945970b4b68ab008bbce6108fc74169edd356e8d70f3bf81",
+    "test_modern_semantic_field_lineage.py": "3483f0f8c0d1cab62d015c26741a5df157fb7835e693c315397010bc82af61f1",
+    "validate_modern_capability_contracts.py": "43b9e7456dd4f6cf5fd9edfeae1f9c60c3c299d7ad6f51eeb6be392f16e33737"
+  },
+  "sourceHashesAfterVerification": {
+    "validate_modern_semantic_field_lineage.py": "30e3fe74498ba265945970b4b68ab008bbce6108fc74169edd356e8d70f3bf81",
+    "test_modern_semantic_field_lineage.py": "3483f0f8c0d1cab62d015c26741a5df157fb7835e693c315397010bc82af61f1",
+    "validate_modern_capability_contracts.py": "43b9e7456dd4f6cf5fd9edfeae1f9c60c3c299d7ad6f51eeb6be392f16e33737"
+  },
+  "sourceChangedDuringVerification": false,
+  "historicalReportsBefore": {
+    "semantic-dialect-failclosed-hardening-2026-09-14.json": "3c878b13d09e684ec6392e7be2573250d90ea4d9018f10239d679122a3cfdeda",
+    "semantic-dialect-failclosed-hardening-2026-09-14.md": "9ac685272b771d0736421b656e0eb69fb12a9e7a9ed565cf7d282aa04036af92"
+  },
+  "historicalReportsAfter": {
+    "semantic-dialect-failclosed-hardening-2026-09-14.json": "3c878b13d09e684ec6392e7be2573250d90ea4d9018f10239d679122a3cfdeda",
+    "semantic-dialect-failclosed-hardening-2026-09-14.md": "9ac685272b771d0736421b656e0eb69fb12a9e7a9ed565cf7d282aa04036af92"
+  },
+  "historicalReportsChanged": false,
+  "limitations": [
+    "Validator graph/mode/source verification only, not execution of HRIS business domain implementations.",
+    "Current canonical actual contracts intentionally remain FAIL; error/count observations are not hardcoded policy targets.",
+    "No module coding Gate, composite authority wiring or deployment approval is granted."
+  ]
+}

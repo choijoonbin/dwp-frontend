@@ -1,0 +1,268 @@
+{
+  "reportId": "dwp.hris.modern-operation-semantics-source-repair-independent-audit.2026-09-16.v2",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-16T02:18:00Z",
+  "status": "FAIL_VALIDATOR_NOT_FAIL_CLOSED_SUPPLEMENTAL_PREFIX_ESCAPE",
+  "decision": "BLOCK_DISTINCT_CANONICAL_CANDIDATE_AND_GATE_UNTIL_EXACT_PAYLOAD_SUFFICIENCY_REPAIR_AND_REAUDIT",
+  "scope": {
+    "sourceRepairUnderAudit": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v2.json",
+    "sourceOnly": true,
+    "temporaryProjectionOnly": "/private/tmp/hris-operation-independent-v2-tuu83cqm",
+    "workspaceCandidateCreated": false,
+    "liveCanonicalModifiedByReviewer": false,
+    "gateModifiedByReviewer": false,
+    "reviewedSourceModifiedByReviewer": false,
+    "onlyDurableArtifactWritten": "coding-readiness/reports/modern-operation-semantics-source-repair-independent-audit-2026-09-16.v2.json"
+  },
+  "independence": {
+    "reviewer": "operation_repair_independent_audit",
+    "projectionMethod": "The reviewed generator was imported only to compose an in-memory v6 projection from pinned predecessor and manifest bytes. Its validation result was not used as the hostile oracle.",
+    "hostileOracle": "The repaired operation auditor was exercised by an external 94-case mutation harness whose cases and expected codes were defined outside the auditor's 22 official selftests.",
+    "importSeparation": {
+      "generatorImportsOperationAuditor": false,
+      "operationAuditorImportsGenerator": false,
+      "operationAuditorImportsAuthorValidator": false
+    },
+    "authorSelftestsDisposition": "Official 22/22 is corroborating evidence only; it is not substituted for the external campaign.",
+    "conclusion": "The three v1 escapes are repaired and all prior 94 cases now reject. A supplemental authority mutation nevertheless exposes a prefix-based broad exemption, so the oracle is still not fail-closed."
+  },
+  "inputs": {
+    "operationGeneratorAuditedBytes": {
+      "path": "coding-readiness/generate_modern_operation_ssot_successor.py",
+      "sha256": "f9b3a32c7117c4bc308fc21018303e4b16c62d4c2a78ea9031b5a3371689cb0f"
+    },
+    "operationReviewerOracle": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256": "f372179772d103a819402ea66c231e96049bc84d804ed95f656dfe1e6782a487"
+    },
+    "routeReviewerOracle": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_route_taxonomy.py",
+      "sha256": "21d1e68138a3c961780d540e5fbb2c7b2bd1b2a86d872d43b934fb40eaa946ea"
+    },
+    "candidateManifest": {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-closed-set-manifest.v3.json",
+      "sha256": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3"
+    },
+    "candidateExactSchema": {
+      "path": "/private/tmp/dwp-hris-v4-preflight.oOxBMl/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "83f3d1b02fa95b6a49015dcd9f107eb991909828ea1f05a626149eb3b6901b88"
+    },
+    "listeningAuthoritySource": {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+    },
+    "authorRepairV2": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-2026-09-16.v2.json",
+      "sha256": "3a70afb71563c23aade15566a4d7421a9b511ab542300d517443adeb89b989d2",
+      "sealedPayloadSha256": "cb060c4d75bd5f05c6f4d312cbefd821273c9b4b7c28caaf8bc49657965daf7d",
+      "sealVerified": true
+    },
+    "failedIndependentAuditV1": {
+      "path": "coding-readiness/reports/modern-operation-semantics-source-repair-independent-audit-2026-09-16.v1.json",
+      "sha256": "6d13884552f59d02e30d2f3accdb06fa2f5b6a51cd354fe0d63cdce9bdd46e73",
+      "sealedPayloadSha256": "7ca70f841578ba4d5c4ed89ff1004d39ec6ae5ef9cefedfb9331c27f7108f81c"
+    }
+  },
+  "temporaryV6Projection": {
+    "status": "PASS_DETERMINISTIC_EXACT_BYTE_IDENTITY",
+    "sourceProjectionVersion": "modern-operation-causal-source-v6-2026-09-16",
+    "sha256": "2d048ddf51a7177dc76abefc6f613312cebdee0b619a7fd4f57ddbf48429e50b",
+    "equalsAuthorV6Bytes": true,
+    "counts": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "handlers": 27,
+      "publicEvents": 157,
+      "tableSpecifications": 131
+    }
+  },
+  "baselineReviewerResults": {
+    "operationSemantics": {
+      "status": "PASS",
+      "findingCount": 0,
+      "affectedOperationCount": 0,
+      "reportPath": "/private/tmp/hris-operation-independent-v2-tuu83cqm/operation-audit.json",
+      "reportSha256": "728cb4697930167c50b28a8b7e05c116f219292b918f794268ad3acc95bc41ab"
+    },
+    "officialMutationSelftests": {
+      "status": "PASS",
+      "testsRun": 22,
+      "testsPassed": 22,
+      "reportPath": "/private/tmp/hris-operation-independent-v2-tuu83cqm/operation-selftest.json",
+      "reportSha256": "a1b54798d0d6bbec5063851027791766cb9302a0ec35348370889e1e177011f5"
+    },
+    "routeTaxonomy": {
+      "status": "PASS",
+      "findingCount": 0,
+      "operations": 199,
+      "reportPath": "/private/tmp/hris-operation-independent-v2-tuu83cqm/route-audit.json",
+      "reportSha256": "9094aa98555e64ccc27544abf59ac77ef4f5b642b4a1bf4627abd0e0e3bbf663"
+    },
+    "disposition": "Baseline zero, official selftests and route zero all pass, but they do not override the supplemental hostile escape."
+  },
+  "prior94HostileCampaign": {
+    "status": "PASS",
+    "testsRun": 94,
+    "hostilesRejected": 94,
+    "hostilesEscaped": 0,
+    "expectedCodeMatches": 94,
+    "mutationChangedDocument": "94/94",
+    "familySummary": {
+      "listeningProtectedSubmit": {
+        "testsRun": 67,
+        "rejected": 67,
+        "expectedCodeMatched": 67
+      },
+      "learningOwnerProof": {
+        "testsRun": 3,
+        "rejected": 3,
+        "expectedCodeMatched": 3
+      },
+      "workforcePlanningTerminalProof": {
+        "testsRun": 24,
+        "rejected": 24,
+        "expectedCodeMatched": 24
+      }
+    },
+    "externalHarnessSha256AtExecution": "4d7572cf7fe2125eabf8498461598b4e786e3bb9c970ae27ccba459b170ea1cf",
+    "evidencePath": "/private/tmp/hris-operation-independent-v2-tuu83cqm/external-hostile-94-evidence.json",
+    "evidenceSha256": "37cbca355388229bd76f0f7b3401c0b8f2ee2f34056501a1efcb3adee3dd8f91"
+  },
+  "priorEscapeClosure": [
+    {
+      "v1Escape": "ESCAPE-LEARNING-OWNER-PROOF-MEMBER-DRIFT",
+      "mutationOrdinal": 69,
+      "mutation": "ownerProof.body.evidencePublicId.skillEvidenceIds[*] -> ownerProof.body.evidencePublicId.unreviewedSkillEvidenceIds[*] in both child assignments",
+      "actual": {
+        "status": "FAIL",
+        "findingCount": 1,
+        "findingCode": "LEARNING_OWNER_PROOF_DERIVATION_DRIFT"
+      },
+      "closed": true
+    },
+    {
+      "v1Escape": "ESCAPE-WFP-SUCCESS-OWNER-VALIDATION-DRIFT",
+      "mutationOrdinal": 79,
+      "mutation": "success resultOwnerContract.validation -> TRUST_UNVERIFIED_RESULT",
+      "actual": {
+        "status": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE"
+      },
+      "closed": true
+    },
+    {
+      "v1Escape": "ESCAPE-WFP-FAILURE-OWNER-VALIDATION-DRIFT",
+      "mutationOrdinal": 91,
+      "mutation": "failure resultOwnerContract.validation -> TRUST_UNVERIFIED_RESULT",
+      "actual": {
+        "status": "FAIL",
+        "findingCount": 1,
+        "findingCode": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE"
+      },
+      "closed": true
+    }
+  ],
+  "supplementalBroadExemptionCampaign": {
+    "status": "FAIL",
+    "testsRun": 4,
+    "rejected": 2,
+    "escaped": 2,
+    "controls": {
+      "learningExtraOwnerProofSibling": "REJECTED_WITH_LEARNING_OWNER_PROOF_DERIVATION_DRIFT",
+      "wfpExtraResultOwnerContractKey": "REJECTED_WITH_HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE"
+    },
+    "evidencePath": "/private/tmp/hris-operation-independent-v2-tuu83cqm/supplemental-broad-exemption-evidence.json",
+    "evidenceSha256": "03a6455c02bb448f763a3816b96edb0140b2dfb7453470d5852c40306b6c24f5",
+    "escapedMutations": [
+      {
+        "id": "ESCAPE-WFP-SUCCESS-PAYLOAD-SUFFICIENCY-PREFIX-BYPASS",
+        "subject": "internal.workforceplan.simulation-result.consume WorkforceScenarioSimulated.v2 refetchContract.payloadSufficiency",
+        "mutation": "CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF -> CLOSED_DURABLE_EVENT_ALLOWLIST_BUT_UNSIGNED_AND_LATEST_ALLOWED",
+        "expected": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE with PAYLOAD_SUFFICIENCY_NOT_CLOSED",
+        "actual": {
+          "status": "PASS",
+          "findingCount": 0,
+          "findingCodes": []
+        }
+      },
+      {
+        "id": "ESCAPE-WFP-FAILURE-PAYLOAD-SUFFICIENCY-PREFIX-BYPASS",
+        "subject": "internal.workforceplan.simulation-result.consume WorkforceScenarioSimulationFailed.v2 refetchContract.payloadSufficiency",
+        "mutation": "CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF -> CLOSED_DURABLE_EVENT_ALLOWLIST_BUT_UNSIGNED_AND_LATEST_ALLOWED",
+        "expected": "HANDLER_FORBIDDEN_REFETCH_PAYLOAD_CONTRACT_INCOMPLETE with PAYLOAD_SUFFICIENCY_NOT_CLOSED",
+        "actual": {
+          "status": "PASS",
+          "findingCount": 0,
+          "findingCodes": []
+        }
+      }
+    ],
+    "rootCause": {
+      "source": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "lines": "983-985 at audited SHA f372179772d103a819402ea66c231e96049bc84d804ed95f656dfe1e6782a487",
+      "defect": "payloadSufficiency is accepted by startswith('CLOSED_DURABLE_EVENT_ALLOWLIST') instead of exact equality to the reviewed closed-payload literal.",
+      "internalPolicyContradiction": "The same validator states 'No semantic equivalence by substring or prose marker.'"
+    }
+  },
+  "historicalTruePositiveRetention": {
+    "candidate": "coding-readiness/modern-canonical-candidate.uaHfXj",
+    "status": "FAIL_AS_EXPECTED",
+    "findingCount": 3,
+    "affectedOperationCount": 1,
+    "findings": [
+      {
+        "code": "UNDECLARED_BODY_SOURCE_USED",
+        "operationId": "modern.learning.completion.verify",
+        "field": "body.skillEvidenceIds"
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulated.v2",
+        "table": "ppl_wfp_simulation_requests"
+      },
+      {
+        "code": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+        "handlerId": "internal.workforceplan.simulation-result.consume",
+        "eventName": "WorkforceScenarioSimulationFailed.v2",
+        "table": "ppl_wfp_simulation_requests"
+      }
+    ],
+    "disposition": "All three historical true positives remain reproducible; the v2 repairs did not mask them."
+  },
+  "requiredRepair": [
+    "Define one exact reviewed WFP payload-sufficiency literal: CLOSED_DURABLE_EVENT_ALLOWLIST_INCLUDES_EXACT_SIMULATION_REQUEST_REVISION_AND_SIGNED_RESULT_OWNER_PROOF.",
+    "For both WorkforceScenarioSimulated.v2 and WorkforceScenarioSimulationFailed.v2 require exact equality, not startswith, substring, token-presence or prose-semantic equivalence.",
+    "Add success and failure suffix-bypass mutations to the official reviewer selftests and retain them in the external campaign.",
+    "Rerun baseline audit=0, official mutations with all tests passing, route=0, prior hostile 94/94, both new suffix mutations rejected, and uaHfXj=the same three true positives."
+  ],
+  "immutabilityEvidence": {
+    "auditWindow": {
+      "liveOperationSsotSha256BeforeAndAfter": "e5bface3c14e761899e7fa1b7af1adc3bd6b50902626a182ee38b560b38f44c0",
+      "liveManifestSha256BeforeAndAfter": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+      "g3GateDecisionSha256BeforeAndAfter": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+      "candidateTreeHashesBeforeAndAfter": {
+        "modern-canonical-candidate.2eZCXW": "eda199e366a750eda73a01090a359f921be252d4c4b6028d38ae266ecfe92e45",
+        "modern-canonical-candidate.Qs4ngh": "21774d838e69c3e91aab0d37f635730a3762468cafa13438a73a11ea79edaafc",
+        "modern-canonical-candidate.ZorhI5": "9df733e9186fb5a42a1c4bf1edbbf9734ff9faad97f4661072d8c80fc635e8ac",
+        "modern-canonical-candidate.q0mnJg": "c6f716618c0f17e2479efbe4ccff1357ec0b78ea550c78e2d0ed2f08c9642815",
+        "modern-canonical-candidate.uaHfXj": "24ba1a473c0d3caa398bd99864c0277dcfb54c9718b6a9007fc1cdd6db7545aa"
+      },
+      "identical": true
+    },
+    "gateDisposition": "UNCHANGED_CLOSED_FAIL_SAFE",
+    "postAuditConcurrencyNote": "After the sealed v2 evidence window, another workspace workstream changed the generator file. This report audits only the explicitly pinned f9b3... v2 bytes and makes no assertion about later generator bytes. The operation auditor under finding remained f372... through report sealing."
+  },
+  "finalAssertion": {
+    "prior94Passed": true,
+    "priorThreeEscapesClosed": true,
+    "baselineAndOfficialChecksPassed": true,
+    "newBroadExemptionEscapes": 2,
+    "reviewerOracleFailClosed": false,
+    "sourceRepairV2Cleared": false,
+    "candidateOrGateChangeAuthorized": false
+  },
+  "sealedPayloadSha256": "b24625e5d87e65041ff537bd8f026c45240752909548a3e132b4707b6992c24b"
+}

@@ -1,0 +1,234 @@
+{
+  "schema": "dwp.hris.module-exact-business-successor-final-independent-review.v1",
+  "generatedAt": "2026-09-14T23:00:00+09:00",
+  "status": "PASS_SCOPED_EXACT_BUSINESS_FINAL_REVIEW_AFTER_REMEDIATION",
+  "authority": "INDEPENDENT_ADVERSARIAL_REVIEW_NO_START_OR_PRODUCTION_AUTHORITY",
+  "scope": {
+    "included": [
+      "BASE-P0-004..011 exact-business request/record/source/refetch/write/state/authority/negative/fixture closure",
+      "30 aggregate state machines",
+      "34 closed schema definitions",
+      "74 fixtures",
+      "16 lineage bindings and their target/transport/API-SoR references",
+      "four historical proposal digests and non-promotion disposition",
+      "15-artifact atomic pin",
+      "Node primary validator and independent Python auditor",
+      "frontend API-SoR layer-path successor and current source bytes"
+    ],
+    "excluded": [
+      "frontend or backend implementation changes",
+      "module-session start authorization",
+      "production activation",
+      "global common controls outside BASE-P0-004..011"
+    ],
+    "frontendBackendSourceChanged": false
+  },
+  "failBefore": [
+    {
+      "id": "FBR-001",
+      "finding": "All 30 state machines lacked explicit terminal-state declarations and the validators proved only forward reachability.",
+      "impact": "A reachable non-terminal dead end could be accepted.",
+      "remediation": "Declared terminalStates, proved every state has a path to a terminal, and restricted terminal exits to named correction/reopen/reversal operations."
+    },
+    {
+      "id": "FBR-002",
+      "finding": "Lineage included semantically wrong but syntactically valid API-SoR references for HRM employment/separation, PER lifecycles and PAY run.",
+      "impact": "Module ownership alone did not prove that a reference represented the intended surface.",
+      "remediation": "Rebound HRM to API-SOR-READ-004, PER to READ-009/READ-014/MUT-009 and PAY to READ-008/READ-013; added PAY HRM/TIM/PER owner-refetch bindings and exact source-family union."
+    },
+    {
+      "id": "FBR-003",
+      "finding": "Both validators accepted seven in-memory adversarial mutations: reachable dead-end, schema-count drift, fixture-count drift, valid cross-module target/transport/API-SoR references, and source-family drift.",
+      "impact": "A co-edited pin could hide structural or lineage weakening.",
+      "remediation": "Added exact counts, reverse terminal reachability, recursive closed-object checks, module/status/consumer validation and exact target-source-family equality."
+    },
+    {
+      "id": "FBR-004",
+      "finding": "A second static adversarial pass found shared blind spots for duplicate/ambiguous state transitions, empty lineage sources/targets, cross-module or orphan fixtures and historical proposal promotion labels.",
+      "impact": "A package could retain counts while losing deterministic state or evidence allocation.",
+      "remediation": "Both implementations now reject all six classes and independently verify proposal non-promotion."
+    }
+  ],
+  "baseFindingClosure": [
+    {
+      "findingId": "BASE-P0-004",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "#/$defs/ScheduleCommand",
+        "sourceRefetchAuthority": "EBS-TIM-SCHEDULE -> TFR-TIM-016; PEP-TIM-002..006",
+        "writeState": "#/modules/HRIS-TIM/aggregates/Schedule",
+        "negativeFixture": "overlap, stale source, cross-tenant and DST-gap cases",
+        "fixtureAllocation": "TIM-P-SCHEDULE-DST|TIM-P-SCHEDULE-AMEND"
+      }
+    },
+    {
+      "findingId": "BASE-P0-005",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "#/$defs/TypedRuleAst|#/$defs/AccrualPolicy|AggregateTransitionCommand",
+        "sourceRefetchAuthority": "EBS-TIM-RULE-ACCRUAL and EBS-TIM-LEAVE-REQUEST; TFR-TIM-005/011/012/013/014",
+        "writeState": "RuleVersion, LeavePolicy, LeaveEnrollment, EntitlementRun and LeaveRequest state machines",
+        "negativeFixture": "unknown operator, arity, cycle, unit, expiry, negative cap and stale source",
+        "fixtureAllocation": "TIM-P-RULE|TIM-P-ACCRUAL|TIM-P-LEAVE-REQUEST"
+      }
+    },
+    {
+      "findingId": "BASE-P0-006",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "#/$defs/TimecardRecord",
+        "sourceRefetchAuthority": "EBS-TIM-TIMECARD -> TFR-TIM-007/017; PEP-TIM-011..014/022..026/028",
+        "writeState": "Timecard and TimePeriod literal, non-collapsed state machines",
+        "negativeFixture": "lock-collapse and illegal-transition cases",
+        "fixtureAllocation": "TIM-P-TIMECARD-CLOSE"
+      }
+    },
+    {
+      "findingId": "BASE-P0-007",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "#/$defs/EmploymentEventCommand|#/$defs/SelfContextSelection|AggregateTransitionCommand",
+        "sourceRefetchAuthority": "EBS-HRM-EMPLOYMENT/SEPARATION/MODERN; HRM target and PEP bindings; API-SOR-READ-004 where applicable",
+        "writeState": "EmploymentEvent, SeparationCase, Recruiting, Onboarding and BenefitsServiceContingent",
+        "negativeFixture": "generic patch, first UUID, overlap, stale owner, invalid date/FTE, incomplete separation/callback and automated-final-decision cases",
+        "fixtureAllocation": "all HRM fixtures allocated to HRM lineage"
+      }
+    },
+    {
+      "findingId": "BASE-P0-008",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "#/$defs/AggregateTransitionCommand",
+        "sourceRefetchAuthority": "EBS-PER-LIFECYCLES/TALENT; PER targets/PEPs; API-SOR-READ-009/014 and MUT-009",
+        "writeState": "10 PER aggregate state machines with terminal convergence",
+        "negativeFixture": "caller distribution, post-lock command, unreachable transition, stale baseline, optional skill, line cardinality and consent",
+        "fixtureAllocation": "PER cycle/calibration/appeal/compensation fixtures"
+      }
+    },
+    {
+      "findingId": "BASE-P0-009",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "single closed #/$defs/FreezePopulationCommand",
+        "sourceRefetchAuthority": "EBS-PER-FREEZE -> TFR-PER-006; PEP-PER-008/009",
+        "writeState": "PopulationFreeze with recompute/hash/stale-source guards",
+        "negativeFixture": "missing/unknown field, hash mismatch and stale workforce snapshot",
+        "fixtureAllocation": "PER-P-FREEZE"
+      }
+    },
+    {
+      "findingId": "BASE-P0-010",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "PayrollFoundationArtifact, PayFormulaAst, PayrollInputSourceVector, PayrollRunPrepareCommand, ProviderNeutralCase",
+        "sourceRefetchAuthority": "EBS-PAY-FOUNDATION/RUN/COUNTRY-CASE/PAYMENT/PAYSLIP; PAY targets/PEPs plus HRM/TIM/PER owner bindings; API-SOR-READ-008/013",
+        "writeState": "FoundationVersion, PayrollPeriod, PayrollRun, PaymentAccounting, Payslip and RetirementYearEndCase",
+        "negativeFixture": "digest-only, string/cyclic formula, currency, stale/partial input, closed period, rewrite, missing pack, hardcoded law and fallback",
+        "fixtureAllocation": "all PAY fixtures allocated to PAY lineage"
+      }
+    },
+    {
+      "findingId": "BASE-P0-011",
+      "decision": "PASS_EXACT_DESIGN",
+      "evidence": {
+        "requestRecord": "#/$defs/WfmPlanningInputSnapshot",
+        "sourceRefetchAuthority": "TIM orchestrator; TFR-TIM-016/019; PEP-TIM-002/003 and SVC-PEP-HRM-002/004",
+        "writeState": "Availability aggregate; optional PER NOT_INSTALLED is explicit",
+        "negativeFixture": "required HRM owner absent, empty interval intersection, stale source and forbidden optional PER call",
+        "fixtureAllocation": "TIM-P-WFM-NO-SKILL with perCalls=0"
+      }
+    }
+  ],
+  "integrity": {
+    "stateMachines": {
+      "aggregates": 30,
+      "states": 212,
+      "terminalDeclarations": 83,
+      "transitions": 213,
+      "allStatesReachable": true,
+      "everyStateCanReachDeclaredTerminal": true,
+      "duplicatesOrAmbiguousTransitions": 0
+    },
+    "schemas": {
+      "definitions": 34,
+      "dialect": "draft-07",
+      "recursiveOpenObjects": 0,
+      "forbiddenFreeExpressionConstructs": 0
+    },
+    "fixtures": {
+      "validSchema": 12,
+      "positiveJourney": 11,
+      "negative": 51,
+      "totalUnique": 74,
+      "allocatedByLineage": 74,
+      "crossModuleAllocations": 0
+    },
+    "lineage": {
+      "bindings": 16,
+      "allTargetRefsResolvedSameModule": true,
+      "declaredSourceFamiliesEqualTargetUnion": true,
+      "allLocalTransportRefsResolvedSameModule": true,
+      "allOwnerTransportRefsAllowConsumer": true,
+      "allApiSorRefsResolveToDeclaredOwner": true,
+      "allSchemaStateFixturePromptRefsResolve": true
+    },
+    "historicalProposals": {
+      "count": 4,
+      "allDigestsMatch": true,
+      "allDisposition": "SUPERSEDED_FOR_P0_BY_THIS_CONTRACT",
+      "promotedWholesale": false
+    },
+    "pin": {
+      "path": "coding-readiness/module-exact-business-start-pin.v1.json",
+      "artifacts": 15,
+      "sha256": "f17177d57cddc0e616d204d7c637b27f7cfc55960686986dbf5245194b640765",
+      "allArtifactDigestsMatch": true
+    }
+  },
+  "frontendApiSor": {
+    "successorReport": "coding-readiness/reports/frontend-api-sor-layer-path-successor-2026-09-14.json",
+    "status": "PASS",
+    "frontendHead": "4e1333c66dfd9563ecbf321cfcda3b3f6b7f9778",
+    "sourceRefs": [
+      {"module": "TIM", "path": "apps/dwp/src/features/hris/time/api/hris-time-api.ts", "symbol": "readHrisTimeWorkspace", "sha256": "64c00520bf7db7d2c143e5d5d0f2c633ed8c7a82389c112334206e46abefb284"},
+      {"module": "PAY", "path": "apps/dwp/src/features/hris/payroll/api/payroll-api.ts", "symbol": "getHrisPayrollWorkspace", "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09"},
+      {"module": "PER", "path": "apps/dwp/src/features/hris/performance/api/performance-talent-api.ts", "symbol": "getScopedPerformanceTalent", "sha256": "0296548ce6eecba11df106d110a5323bd9cf3c40740d043f07e8e4ec7d89fe05"}
+    ],
+    "transitionValidation": {"transitions": 23, "readVariants": 14, "mutations": 9, "selfTestsRejected": "18/18"},
+    "boundary": "Layer-path drift is closed; no cutover or execution authorization is inferred."
+  },
+  "validation": [
+    {"command": "node coding-readiness/validate_module_exact_business_start.cjs --self-test --compact", "status": "PASS", "mutationsRejected": "28/28"},
+    {"command": "python3 -B coding-readiness/audit_module_exact_business_start.py --self-test --compact", "status": "PASS", "mutationsRejected": "28/28", "independentImplementation": true},
+    {"command": "python3 -B coding-readiness/validate_hris_api_sor_transitions.py --compact", "status": "PASS", "transitions": 23},
+    {"command": "python3 -B coding-readiness/validate_hris_api_sor_transitions.py --self-test --compact", "status": "PASS", "mutationsRejected": "18/18"},
+    {"command": "python3 -B coding-readiness/validate_target_family_resolution.py --compact", "status": "PASS", "coverage": "86 families/2269 parents/10001 children"},
+    {"command": "python3 -B coding-readiness/validate_api_pep_bindings.py --compact", "status": "PASS", "coverage": "175 public/11 network-internal operations"},
+    {"command": "python3 -B coding-readiness/validate_transport_schema_resolution.py --self-test --compact", "status": "PASS", "mutationsRejected": "28/28"},
+    {"command": "python3 -B coding-readiness/validate_transport_schema_resolution.py --compact", "status": "FAIL_EXPECTED_OUTSIDE_SCOPED_PACKAGE", "errors": "current backend HEAD drift and unresolved historical baseline PEP-SYS-033/034 HomePreference references", "preservedFacts": "175-operation parity and 121 authorized-receipt convergences pass"}
+  ],
+  "modifiedBlueprintArtifacts": [
+    "coding-readiness/module-exact-business-start-canonical.v1.json",
+    "coding-readiness/module-exact-business-lineage-register.v1.csv",
+    "coding-readiness/validate_module_exact_business_start.cjs",
+    "coding-readiness/audit_module_exact_business_start.py",
+    "coding-readiness/module-exact-business-start-pin.v1.json"
+  ],
+  "remainingGlobalBlockers": [
+    "BASE-P0-001: current migration prefix and create-only allocation successor are not globally sealed",
+    "BASE-P0-002: current backend transport baseline still has HEAD drift and unresolved PEP-SYS-033/034 historical OpenAPI references",
+    "BASE-P0-003: authenticated-principal to People person/worker/relationship/assignment owner adapter is not implemented and verified",
+    "START-P0-001/002: current common source and transport publication/seal remains incomplete",
+    "START-P0-003/004: shared identity plus DTO/SPI/PEP/field-purpose-population and 13-stream authority integration remains incomplete",
+    "START-P0-005: current conflict-free migration allocation/seal remains incomplete",
+    "START-P0-006: current integrated evidence and two authoritative LIVE validations remain absent",
+    "START-P0-007: five independently operable session-environment receipts and approved capacity plan remain absent",
+    "START-P0-008: installed/uninstalled optional-dependency admission and zero-call evidence remains unimplemented"
+  ],
+  "finalDecision": {
+    "scopedExactBusinessPackage": "PASS_AFTER_REMEDIATION",
+    "baseP0004Through011": "CLOSED_AT_EXACT_DESIGN_EVIDENCE_LEVEL",
+    "moduleSessionStartAuthorization": "NONE_FROM_THIS_REVIEW",
+    "overall": "SCOPED_PASS_WITH_GLOBAL_BLOCKERS_REMAINING"
+  }
+}

@@ -1,0 +1,430 @@
+{
+  "schema": "dwp.hris.frontend-ia-current-source-successor.v1",
+  "evaluatedAt": "2026-09-14T14:02:54Z",
+  "status": "PASS_CURRENT_SOURCE_SUCCESSOR",
+  "scope": {
+    "findingClosed": "frontend-current-integration-final-readiness-2026-09-14:FE-BLK-005",
+    "claim": "The 76 BASE source digest pins now exactly bind the current committed, semantically lossless layered HRIS catalog.",
+    "notClaimed": [
+      "G3_OR_START_P0_OPEN",
+      "G4_OR_G6_APPROVAL",
+      "WHOLE_FRONTEND_INTEGRATION_READY",
+      "BACKEND_PROVENANCE_FINAL",
+      "APPROVAL_BASELINE_CLOSED"
+    ],
+    "gateAuthorization": "NONE_CLOSED"
+  },
+  "boundaries": {
+    "frontendSourceEdited": false,
+    "frontendCommitCreated": false,
+    "approvalFilesEdited": false,
+    "productionReachabilityAllowlistEdited": false,
+    "gateOrActivationArtifactsEdited": false,
+    "historicalBlueprintSnapshotManifestEdited": false,
+    "foreignProcessOrContainerAction": false
+  },
+  "frontendPin": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+    "branch": "codex/hris-integration-frontend-20260909",
+    "head": "4e1333c66dfd9563ecbf321cfcda3b3f6b7f9778",
+    "tree": "27390487173ba41640e01f69704740f38f0da8e0",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "headAndTreeStable": true,
+    "preLayerCatalog": {
+      "revision": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+      "path": "apps/dwp/src/features/hris/shell/hris-product-map-catalog.ts",
+      "gitBlob": "bc626072de7959fa98d40e1c314b908cf3db48ca"
+    }
+  },
+  "before": {
+    "registerSha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686",
+    "validatorCommand": "python3 coding-readiness/validate_information_architecture.py --compact",
+    "validatorExitCode": 1,
+    "status": "FAIL",
+    "blockerCount": 76,
+    "baseNodeDigestDrift": "76/76",
+    "modernNodeDigestDrift": "0/22",
+    "driftFields": {
+      "source_digest_sha256": 76
+    },
+    "otherDriftFields": 0,
+    "passingChecks": [
+      "nodeCoverageAndUniqueness",
+      "canonicalRouteAndWorkbenchClosure",
+      "fixedHomeSevenSidebarAndExplorerClosure",
+      "taskOrientedWorkbenchClosure",
+      "deepLinkClosure",
+      "benskCompatibilityIsolation",
+      "implementationAndActivationHonesty"
+    ],
+    "failingChecksCausedByDigestErrors": [
+      "exactSourceMaterialization",
+      "apiAndAuthorizationClosure"
+    ],
+    "downstreamSchemaCheckBefore": {
+      "command": "python3 coding-readiness/generate_ia_entry_query_projection_schemas.py --check",
+      "exitCode": 0,
+      "status": "PASS",
+      "projections": 66,
+      "apiContracts": 66,
+      "runtimeContracts": 66,
+      "actions": 202
+    }
+  },
+  "rootCause": {
+    "category": "LOSSLESS_LAYER_SPLIT_SOURCE_BYTE_PIN_DRIFT",
+    "description": "The IA register already pointed at the eight current layered catalog fragments, but its per-fragment SHA-256 values did not match the final committed fragment bytes. The generated IA meaning itself had not changed.",
+    "evidence": {
+      "currentRegisterRows": 98,
+      "generatedRows": 98,
+      "sameIaNodeOrder": true,
+      "changedRows": 76,
+      "unchangedRows": 22,
+      "changedBaseRows": 76,
+      "changedModernRows": 0,
+      "allChangedRowsHaveOnlySourceDigestField": true,
+      "semanticFieldsCompared": [
+        "ia_node_id",
+        "source_set",
+        "source_node_key",
+        "inventory_group",
+        "navigation_surface",
+        "owner_session",
+        "runtime_owner",
+        "personas",
+        "source_lifecycle",
+        "canonical_route",
+        "workbench_tab",
+        "source_family_refs",
+        "api_contract_refs",
+        "entry_query_refs",
+        "visibility_capability_refs",
+        "action_contract_refs",
+        "action_capability_refs",
+        "persona_access_profiles",
+        "entry_contract_state",
+        "authorization_refs",
+        "authorization_source_refs",
+        "deep_link_template",
+        "implementation_state",
+        "production_state",
+        "source_ref",
+        "compatibility_decision_ref"
+      ]
+    }
+  },
+  "semanticLosslessnessProof": {
+    "method": "The generator's existing AST-safe parser was used to compare the 76 node objects from the pre-layer single catalog at aaeba79 with the eight fragments at the current committed HEAD. Only the source container layout was excluded; every parsed node field and the global node order were compared.",
+    "previousNodeCount": 76,
+    "currentNodeCount": 76,
+    "sameOrder": true,
+    "semanticEqual": true,
+    "differentIndexes": [],
+    "parsedFields": [
+      "id",
+      "inventoryGroup",
+      "surface",
+      "module",
+      "personas",
+      "lifecycle",
+      "href"
+    ],
+    "fragments": [
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/my-hr.ts",
+        "nodes": 8,
+        "firstNode": "my-hr-home",
+        "lastNode": "my-hr-requests",
+        "oldRegisterDigest": "98eea284276ad67de46927917106bf17d692704d30a8ebcd0b23b28b25061bb5",
+        "currentSourceDigest": "b1c1758fbace7540e897e9bec16d32682a755abea06ce53ddacb5a46dc5326b6"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/team.ts",
+        "nodes": 7,
+        "firstNode": "team-home",
+        "lastNode": "team-delegation",
+        "oldRegisterDigest": "1972d2f0aa8ed66d7742ceaf6fd82bf7accecf83b6bb3fdf5253be39e1cabdd4",
+        "currentSourceDigest": "952b54bf133dd4dbef337ce6e7b500a49e71d03db4f094e4d7eb61308850342f"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/hr-operations.ts",
+        "nodes": 10,
+        "firstNode": "hr-operations-home",
+        "lastNode": "hr-data-quality",
+        "oldRegisterDigest": "299c5941015cdc45c9eedf3c2b353c115ef7603ebf1bf5a52eaff2f304cf70a4",
+        "currentSourceDigest": "ed615eb1580980b0cafe58d1b131177c50c8bfda00f9b3f37a0863075bd3d89d"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/time.ts",
+        "nodes": 10,
+        "firstNode": "time-command-center",
+        "lastNode": "time-reports",
+        "oldRegisterDigest": "859aad416dc0fe81feff9d68430e45ee621d1893f124e28b8dc7318672c058a1",
+        "currentSourceDigest": "432d9050e4255265cb16653b24404818de1de4adac6b7a15c26669af471a2354"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/payroll.ts",
+        "nodes": 14,
+        "firstNode": "pay-command-center",
+        "lastNode": "pay-reports",
+        "oldRegisterDigest": "952db3818418230f34f135aceee19d62445aeacd863e70a25f61e51c29b3b31e",
+        "currentSourceDigest": "2ba77fc6b5df96045753243d4fc089f83d90b9740253e15297e9322fe871492c"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/performance.ts",
+        "nodes": 8,
+        "firstNode": "performance-command-center",
+        "lastNode": "performance-results",
+        "oldRegisterDigest": "b129e923a8133dda19b3f0e940bd554afff9a4015fbcab25cbc02e6af74cfd6d",
+        "currentSourceDigest": "8a60d9e147a2254f0abe37fcdfb9f81450bf1a73aff5fd29597fb98d70dd3da9"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/settings.ts",
+        "nodes": 13,
+        "firstNode": "settings-enterprise",
+        "lastNode": "settings-operations",
+        "oldRegisterDigest": "dea5d172ee5d28cd0cd5b6c5e1fe71e777a166ae7c034008fa6807e42e3ee33e",
+        "currentSourceDigest": "7fc26238ff54047be74c700cb483c0685243a1c78f66564a7b8d74f05efdff76"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+        "nodes": 6,
+        "firstNode": "dwp-experience",
+        "lastNode": "dwp-extensibility",
+        "oldRegisterDigest": "8a4b8898a32d1967e39aa73cca12117261dadb3e0fdbaec054d39b5f6fd5853f",
+        "currentSourceDigest": "bf27bfdfe86a10f2c5899d5c750ffa7a7b7e364101e61590eae8dac69b509612"
+      }
+    ]
+  },
+  "generatorPins": {
+    "informationArchitectureGenerator": {
+      "path": "coding-readiness/generate_information_architecture_register.py",
+      "sha256": "6341e37bdf32b720e099d33a6da1aa82fae011401fe9e8eba7e66b1adecfad2f"
+    },
+    "entryProjectionGenerator": {
+      "path": "coding-readiness/generate_ia_entry_query_projection_schemas.py",
+      "sha256": "cd4b62a7d5b5ba66db7609ba7d2776dde0590fa4c9bc44012bb97e2cbfb051a8"
+    },
+    "iaValidatorSha256": "8377ec24ce47c380e16b8aee0589db3d1c1f78be547c6c94f5df0de57d411fa4",
+    "independentAccessValidatorSha256": "a6a5bf7f13aa78bf15ca6200c1c41048a839cb214e3485c94e349585557b0366",
+    "apiSorValidatorSha256": "805f3bdff429a79184b927d25a529e849489d9ae4b2aa3c268db59f93657e9f2"
+  },
+  "generation": {
+    "hostSemaphore": "hris-verification",
+    "lockReceipts": [
+      {
+        "purpose": "before-validation-and-schema-check",
+        "requestedAt": "2026-09-14T14:00:21.120Z",
+        "acquiredAt": "2026-09-14T14:00:21.120Z",
+        "waitMilliseconds": 0,
+        "released": true
+      },
+      {
+        "purpose": "canonical-generation",
+        "requestedAt": "2026-09-14T14:01:26.422Z",
+        "acquiredAt": "2026-09-14T14:01:26.422Z",
+        "waitMilliseconds": 0,
+        "released": true
+      },
+      {
+        "purpose": "determinism-and-validation-replay",
+        "requestedAt": "2026-09-14T14:01:59.895Z",
+        "acquiredAt": "2026-09-14T14:01:59.895Z",
+        "waitMilliseconds": 0,
+        "released": true
+      }
+    ],
+    "commands": [
+      {
+        "command": "python3 coding-readiness/generate_information_architecture_register.py",
+        "exitCode": 0,
+        "result": "rows=98 shellEntries=9 taskGroups=46"
+      },
+      {
+        "command": "python3 coding-readiness/generate_ia_entry_query_projection_schemas.py",
+        "exitCode": 0,
+        "result": "projections=66 api=66 runtime=66 actions=202"
+      },
+      {
+        "command": "python3 coding-readiness/generate_information_architecture_register.py",
+        "purpose": "second deterministic replay",
+        "exitCode": 0,
+        "allSevenArtifactHashesStable": true
+      },
+      {
+        "command": "python3 coding-readiness/generate_ia_entry_query_projection_schemas.py --check",
+        "exitCode": 0,
+        "result": "PASS projections=66 api=66 runtime=66 actions=202"
+      }
+    ],
+    "deterministicReplay": true
+  },
+  "artifacts": [
+    {
+      "path": "coding-readiness/hris-information-architecture-register.csv",
+      "rows": 98,
+      "bytesAfter": 103877,
+      "sha256Before": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686",
+      "sha256After": "518ca39ab3eb7b5e1d621ec5c67d2c0134eaba322ac74f8711d9e7fe010302dc",
+      "contentChanged": true,
+      "semanticFieldChanges": 0,
+      "sourceDigestFieldChanges": 76
+    },
+    {
+      "path": "coding-readiness/hris-shell-navigation-register.csv",
+      "rows": 9,
+      "bytesAfter": 3226,
+      "sha256Before": "f85ee40a66ce4100c5578fd3ca96bc89b652b0762e19d74cc7aeb76338009000",
+      "sha256After": "f85ee40a66ce4100c5578fd3ca96bc89b652b0762e19d74cc7aeb76338009000",
+      "contentChanged": false
+    },
+    {
+      "path": "coding-readiness/hris-workbench-task-group-register.csv",
+      "rows": 46,
+      "bytesAfter": 13920,
+      "sha256Before": "f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b",
+      "sha256After": "f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b",
+      "contentChanged": false
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "projections": 66,
+      "bytesAfter": 1523618,
+      "sha256Before": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "sha256After": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "contentChanged": false
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-api-contract-register.csv",
+      "rows": 66,
+      "bytesAfter": 99982,
+      "sha256Before": "cb8d5b5ff815ab5de960025c491d8ac0b565cfda644898dee019967a0fd85bbe",
+      "sha256After": "cb8d5b5ff815ab5de960025c491d8ac0b565cfda644898dee019967a0fd85bbe",
+      "contentChanged": false
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "rows": 66,
+      "bytesAfter": 51745,
+      "sha256Before": "3b9bd24be721fe1ea9ac11f011a840809dc154f459bd3e7d9288977a27586eda",
+      "sha256After": "3b9bd24be721fe1ea9ac11f011a840809dc154f459bd3e7d9288977a27586eda",
+      "contentChanged": false
+    },
+    {
+      "path": "coding-readiness/ia-entry-query-action-key-register.csv",
+      "rows": 202,
+      "bytesAfter": 78170,
+      "sha256Before": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+      "sha256After": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+      "contentChanged": false
+    }
+  ],
+  "validation": {
+    "informationArchitecture": {
+      "command": "python3 coding-readiness/validate_information_architecture.py --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "coverage": {
+        "nodes": 98,
+        "baseNodes": 76,
+        "modernNodes": 22,
+        "uniqueCanonicalPaths": 98,
+        "sourceFamilyReferences": 80,
+        "apiContractReferences": 372,
+        "authorizationCapabilities": 119,
+        "routeTransitions": 2,
+        "shellEntries": 9,
+        "fixedHome": 1,
+        "sidebarWorkbenches": 7,
+        "explorerUtilities": 1,
+        "taskGroups": 46,
+        "taskGroupedNodes": 97
+      },
+      "allNineChecks": true,
+      "blockers": []
+    },
+    "informationArchitectureMutations": {
+      "command": "python3 coding-readiness/validate_information_architecture.py --self-test --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "rejected": 30,
+      "total": 30,
+      "failures": []
+    },
+    "independentAccessAndSchema": {
+      "command": "python3 coding-readiness/validate_ia_node_access_contracts.py --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "counts": {
+        "iaNodes": 98,
+        "entryProjections": 66,
+        "entryQueryPublicOperations": 66,
+        "entryQueryRuntimeContracts": 66,
+        "typedFieldGroups": 138,
+        "publicActionKeys": 202,
+        "personaCategories": 5,
+        "accessPackages": 31,
+        "atomicDuties": 128
+      },
+      "errors": []
+    },
+    "independentAccessAndSchemaMutations": {
+      "command": "python3 coding-readiness/validate_ia_node_access_contracts.py --self-test --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "rejected": 54,
+      "total": 54,
+      "failures": []
+    },
+    "apiSorConsumer": {
+      "command": "python3 coding-readiness/validate_hris_api_sor_transitions.py --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "transitions": 23,
+      "readVariants": 14,
+      "mutations": 9,
+      "sourceOperations": 23,
+      "errors": []
+    },
+    "apiSorConsumerMutations": {
+      "command": "python3 coding-readiness/validate_hris_api_sor_transitions.py --self-test --compact",
+      "exitCode": 0,
+      "status": "PASS",
+      "passed": 18,
+      "total": 18
+    }
+  },
+  "changeSummary": {
+    "contentChangedCanonicalFiles": [
+      "coding-readiness/hris-information-architecture-register.csv"
+    ],
+    "deterministicallyRegeneratedButByteIdentical": [
+      "coding-readiness/hris-shell-navigation-register.csv",
+      "coding-readiness/hris-workbench-task-group-register.csv",
+      "coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "coding-readiness/ia-entry-query-api-contract-register.csv",
+      "coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "coding-readiness/ia-entry-query-action-key-register.csv"
+    ],
+    "evidenceFilesAdded": [
+      "coding-readiness/reports/frontend-ia-current-source-successor-2026-09-14.json",
+      "coding-readiness/reports/frontend-ia-current-source-successor-2026-09-14.md"
+    ]
+  },
+  "remainingBlockersOutsideThisSuccessor": [
+    "Committed Approval product-action disclosure contract mismatch",
+    "Committed Approval V2 golden fixture pin mismatch",
+    "Approval/shared HTTP typed cancellation compatibility assertion",
+    "Thirteen committed Approval production-unreachable modules",
+    "Backend final provenance remains pending"
+  ],
+  "finalDecision": {
+    "iaCurrentSourceBinding": "PASS",
+    "previousIaDigestBlocker": "RESOLVED_BY_THIS_SUCCESSOR",
+    "frontendSource": "UNCHANGED_CLEAN",
+    "wholeIntegration": "NOT_READY_OTHER_BLOCKERS_REMAIN",
+    "startP0": "CLOSED",
+    "gate": "CLOSED"
+  }
+}

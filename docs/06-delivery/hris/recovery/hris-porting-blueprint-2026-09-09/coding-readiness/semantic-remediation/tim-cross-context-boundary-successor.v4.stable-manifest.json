@@ -1,0 +1,168 @@
+{
+  "contractId": "TIM_V4_BOUNDED_AUTHOR_STABLE_MANIFEST",
+  "capturedAt": "2026-09-14T09:19:18.498948+00:00",
+  "status": "AUTHOR_MODEL_ONLY_G3_CLOSED_SOURCE_OPEN",
+  "selfExcluded": "Manifest intentionally excludes own self-hash/mtime; its final SHA is delivered separately.",
+  "mtimeNsEncoding": "EXACT_DECIMAL_STRING",
+  "ownedFileCountExcludingManifest": 12,
+  "ownedFiles": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v4.py",
+      "sha256": "582e99f8eaad7b8835992854c83e6e7c39c6323fccb6fca7bd0448d77e8c9328",
+      "mtimeNs": "1789377158420738317",
+      "bytes": 65384
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_cross_context_successor_v4.py",
+      "sha256": "0421fe522f308bb37e37095a1660807a6003bc01278d97f10a4b7063edef9f51",
+      "mtimeNs": "1789377126272313022",
+      "bytes": 26579
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.schema-engine.cjs",
+      "sha256": "8e100fd5ae4a43f45aa95f45ef792a69c5cd80262e7c50e1974b4c25c7b8fc1e",
+      "mtimeNs": "1789376172789792085",
+      "bytes": 2034
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.json",
+      "sha256": "133d6598d83d0efdc6f774c1170782fb1c483bb9577a4e7d2221034c1b896a6f",
+      "mtimeNs": "1789377346264588962",
+      "bytes": 12521
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.schemas.json",
+      "sha256": "9841d3d99bbc486e8d6ec41bb63d5b164aa23f2cba9d4c74d7e2a95ddbf8e14d",
+      "mtimeNs": "1789377350541084586",
+      "bytes": 140033
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.fixtures.json",
+      "sha256": "85757f558302d32b04f1b16c922f7a652c2e919d2fd377c98e149820bdce8225",
+      "mtimeNs": "1789377351977469584",
+      "bytes": 38777
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.source-graphs.json",
+      "sha256": "c54c3ed2bb6a9811dc46128e188fe8c57cf8c53a867f0a3316488b4001919247",
+      "mtimeNs": "1789377354133259834",
+      "bytes": 60611
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.table-dependencies.json",
+      "sha256": "4a96e09c7190b91bd8c4e46930ac6b0db54c4db5e8aea7c4d6b5b150a909e1c3",
+      "mtimeNs": "1789377354510146169",
+      "bytes": 9501
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.guards.json",
+      "sha256": "1cd3e1295f409c499c2f67efec28555325b8faed88682491fbc369ba1531ef79",
+      "mtimeNs": "1789377357375273647",
+      "bytes": 92785
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.record-outputs.json",
+      "sha256": "0f4c558dca26b5888da646b552359992b1a7e9a7366ac454caf1b962c1ca99a4",
+      "mtimeNs": "1789377359508098716",
+      "bytes": 67337
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.md",
+      "sha256": "e95d227d3ec009786d2bd75f6f16e0ee2736f6fdffcd2af01a6d993fe3a74224",
+      "mtimeNs": "1789377502924280830",
+      "bytes": 9032
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.evidence.json",
+      "sha256": "ea133c1a7f309aeb354152e152d0182c86ada05536703b75d4783f7e618d8f64",
+      "mtimeNs": "1789377558356877916",
+      "bytes": 70927
+    }
+  ],
+  "frozenDependencies": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "32b3d6c4e98037c0a26df0b08e112ad9ab067f95d70f3dc3d5dedf4f53f291fb",
+      "mtimeNs": "1789032069836686595",
+      "bytes": 1648904
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v3.md",
+      "sha256": "cc25cad8b769f30209859fe29a3de6b5819e17e785274b9052580e2460e51889",
+      "mtimeNs": "1789374445361825197",
+      "bytes": 5924
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/tim-cross-context-boundary-v3-author-candidate-2026-09-14.json",
+      "sha256": "827a7ea602ff80daa27446534f540b61a28f2cb2469be0d46856713e7d9bca91",
+      "mtimeNs": "1789374445361611696",
+      "bytes": 60880
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-physical-schema.sql",
+      "sha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80",
+      "mtimeNs": "1789048173239496293",
+      "bytes": 45482
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv",
+      "sha256": "7413f9d227b889f7b86949d8998f40823d953ab097047646a34a00cc023c9cba",
+      "mtimeNs": "1789054095274304138",
+      "bytes": 2015
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-review-remediation.proposal.v1.json",
+      "sha256": "04a4785e199b9babc92ae71c0a35df282194bb97adccc7eb31579a602d2cc448",
+      "mtimeNs": "1789356809098400292",
+      "bytes": 961484
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/validate_tim_base_review_remediation.py",
+      "sha256": "76d2c5b45098062def03ceaa3ad71dfa271a9160cdfc8deebc5d688f87dbc3e4",
+      "mtimeNs": "1789357012216608943",
+      "bytes": 34257
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-wfm-exact.proposal.v1.json",
+      "sha256": "d61723e26d9830ac634d2ae06ec44c758633519d80d95701d4cc30c901d52b11",
+      "mtimeNs": "1789353445007866272",
+      "bytes": 205514
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim_cross_context_successor_v3.py",
+      "sha256": "b524d4b51ed62c5630a01ebf72e4df18a387369ef0b9baca6cd6cc175128c88f",
+      "mtimeNs": "1789374268687511462",
+      "bytes": 23000
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/test_tim_cross_context_successor_v3.py",
+      "sha256": "8bcce6235f14a1cf030cc35375bebd4dc2bb5860c4d4808d0c686490c64edaf9",
+      "mtimeNs": "1789374320155499078",
+      "bytes": 6696
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/tim-base-exact.proposal.v1.json",
+      "sha256": "5fbb5b1ae3fd92795939e4ecea85877035fae85cf1c32189db22e91037cc3933",
+      "mtimeNs": "1789352926476163369",
+      "bytes": 10707168
+    }
+  ],
+  "actualValidation": {
+    "rawArchiveChecks": [
+      "same37AfterFix:raw-archive-pin-exit-stable",
+      "expanded40:raw-archive-pin-exit-stable",
+      "frozenFinal44:raw-archive-pin-exit-stable",
+      "savedPackage:raw-archive-pin-exit-stable"
+    ],
+    "initial37FailPreserved": true,
+    "final44Unique": true,
+    "currentFinal21PinsMatch": true,
+    "saved16Roots14CasesVerified": true,
+    "savedOwnedJsonParse": true,
+    "catalog116Remaining112Boundary15": true,
+    "guard106Dispositions88SQL18OwnerOpen": true,
+    "SOURCE_CLOSED": false,
+    "nativeExecution": false,
+    "DML": false
+  }
+}

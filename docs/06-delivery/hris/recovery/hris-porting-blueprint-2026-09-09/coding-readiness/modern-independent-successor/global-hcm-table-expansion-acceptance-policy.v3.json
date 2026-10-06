@@ -1,0 +1,61 @@
+{
+  "policyId": "DWP-HRIS-GLOBAL-HCM-NONREPLACEABLE-TABLE-EXPANSION-V3",
+  "schemaVersion": 3,
+  "status": "INDEPENDENT_REVIEW_REMEDIATION_ACCEPTANCE_REQUIREMENT",
+  "authorityBoundary": "DERIVED_FROM_FROZEN_GLOBAL_HCM_AUDIT_AND_INDEPENDENT_132_TABLE_REVIEW;NOT_G3_AUTHORITY",
+  "predecessorPolicy": {
+    "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v2.json",
+    "sha256": "64bc16def08c4a87750a656a039588db67bba5ec5fad6fac0dbd1bed638e6444",
+    "sealedPayloadSha256": "36229b77ea56f94d61e9beee431b74d0413263853bb7e3b82951ae68534bfe86",
+    "disposition": "IMMUTABLE_FAILED_REVIEW_INPUT_SUPERSEDED_NOT_REWRITTEN"
+  },
+  "independentReview": {
+    "path": "coding-readiness/modern-independent-successor/reports/table-scope-expansion-132-independent-review.v1.json",
+    "sha256": "da7b9a3b5adfe0246f9d53e4dd42d4275135b303033782a7c84450f822198075",
+    "requiredFindingIds": ["P0-TS132-PRODUCER-001", "P0-TS132-PRODUCER-002", "P0-TS132-CONSUMER-003"]
+  },
+  "requirementSource": {
+    "path": "coding-readiness/reports/global-hcm-semantic-closure-independent-audit-2026-09-16.v1.json",
+    "sha256": "af0ad56a400abd361fc8f14164f417b28d66a7daa1dd475a9f2926856ab51ba6",
+    "findingIds": ["P0-REC-001", "P0-ONB-001", "P0-WFP-001", "P0-BNF-001", "P0-CWK-001", "P0-LRN-001", "P0-MKT-001", "P0-CMP-001", "P0-WFM-001", "P1-DECISION-003", "P1-EFFECTIVE-004"]
+  },
+  "frozenBaseline": {
+    "tableCount": 115,
+    "tableSetSha256": "7a8805795efade4334baa3a6f91d6180b1a0bb4ecec118688e25e86cebd2f2cd",
+    "sourceManifestFileSha256": "693b273830df3957e9f77d6892aa9e4e290c9c8381efe13e632a9f0a0c7165a4",
+    "sourceExactSchemaFileSha256": "7ad31205819832a3100730364d7b79e4c7c8b1c4244fc36aa0c6946252071730"
+  },
+  "successorScope": {
+    "tableCount": 132,
+    "deltaCount": 17,
+    "removedTableIds": [],
+    "addedRows": [
+      {"tableId":"ppl_rec_offer_decisions","ownerSession":"HRIS-HRM","producers":["modern.recruiting.offer.respond"],"requirementIds":["P0-REC-001","P1-DECISION-003"],"readConsumers":["modern.recruiting.candidate.query"],"nonReplaceability":"Offer acceptance or rejection actor mode, subject, delegation/source receipt and reason are immutable decision facts; mutating ppl_rec_offers status cannot preserve decision history."},
+      {"tableId":"ppl_rec_requisition_versions","ownerSession":"HRIS-HRM","producers":["modern.recruiting.requisition.create","modern.recruiting.requisition.revise"],"requirementIds":["P0-REC-001","P1-EFFECTIVE-004"],"readConsumers":["modern.recruiting.requisition.query"],"nonReplaceability":"Correction versus future supersession, effective interval, predecessor and reason require append-only requisition versions rather than rewriting the mutable requisition root."},
+      {"tableId":"ppl_jny_template_task_definitions","ownerSession":"HRIS-HRM","producers":["modern.onboarding.template.create","modern.onboarding.template.revise"],"requirementIds":["P0-ONB-001"],"readConsumers":["modern.onboarding.template.query","modern.onboarding.assignment.query"],"nonReplaceability":"Ordered task identity, actor rule, due anchor, applicability condition and completion/evidence schema need relational keys and exact historical query lineage that a digest or untyped JSON blob cannot enforce."},
+      {"tableId":"ppl_wfp_simulation_requests","ownerSession":"HRIS-HRM","producers":["internal.workforceplan.simulation-result.consume","modern.workforceplan.scenario.cancel","modern.workforceplan.scenario.simulate"],"requirementIds":["P0-WFP-001"],"readConsumers":["modern.workforceplan.scenario.query","modern.workforceplan.scenarios.query"],"nonReplaceability":"Simulation request identity, pinned input/assumption revision and immutable result receipt lifecycle are distinct from the scenario revision and must be independently replayable."},
+      {"tableId":"ppl_bnf_enrollment_eligibility_receipts","ownerSession":"HRIS-HRM","producers":["modern.benefits.enrollment.submit"],"requirementIds":["P0-BNF-001"],"readConsumers":["modern.benefits.enrollment.query","modern.benefits.enrollments.query"],"nonReplaceability":"Eligibility policy/snapshot/decision proof must remain immutable and auditable independently of a mutable enrollment status."},
+      {"tableId":"ppl_bnf_dependent_elections","ownerSession":"HRIS-HRM","producers":["modern.benefits.enrollment.submit"],"requirementIds":["P0-BNF-001"],"readConsumers":["modern.benefits.enrollment.query","modern.benefits.enrollments.query"],"nonReplaceability":"A bounded ordered set of tokenized dependent relationship elections requires per-row uniqueness, option/version linkage and field-policy-safe query lineage; a digest cannot reproduce it."},
+      {"tableId":"ppl_bnf_life_event_decisions","ownerSession":"HRIS-HRM","producers":["modern.benefits.lifeevent.decide"],"requirementIds":["P0-BNF-001","P1-DECISION-003"],"readConsumers":["modern.benefits.lifeevent.query"],"nonReplaceability":"Life-event decision actor/source/delegation and outcome are immutable facts and cannot be reconstructed from the current life-event or enrollment state."},
+      {"tableId":"ppl_cwk_access_receipts","ownerSession":"HRIS-HRM","producers":["internal.contingent.access-grant-result.consume","internal.contingent.access-revoke-result.consume"],"requirementIds":["P0-CWK-001"],"readConsumers":["modern.contingent.engagement.query"],"nonReplaceability":"Signed access grant/revoke outcomes are immutable owner receipts on a separate access lifecycle; engagement state cannot serve as their proof."},
+      {"tableId":"ppl_cwk_engagement_versions","ownerSession":"HRIS-HRM","producers":["modern.contingent.engagement.create","modern.contingent.engagement.revise"],"requirementIds":["P0-CWK-001","P1-EFFECTIVE-004"],"readConsumers":["modern.contingent.engagement.query","modern.contingent.engagements.query"],"nonReplaceability":"A stable engagement identity cannot also be overwritten to represent correction and future supersession; effective interval, predecessor, revision mode, classification/access intent and reason require append-only versions with non-overlap."},
+      {"tableId":"prf_lrn_offering_versions","ownerSession":"HRIS-PER","producers":["modern.learning.offering.create","modern.learning.offering.revise"],"requirementIds":["P0-LRN-001","P1-EFFECTIVE-004"],"readConsumers":["modern.learning.offering.query","modern.learning.catalog.query"],"nonReplaceability":"Executable content, delivery/session, capacity, eligibility and skill-map revisions must be addressable as-of without rewriting the offering root."},
+      {"tableId":"prf_lrn_capacity_ledger","ownerSession":"HRIS-PER","producers":["modern.learning.assignment.cancel","modern.learning.assignment.create","modern.learning.self.enroll"],"requirementIds":["P0-LRN-001"],"readConsumers":["modern.learning.assignment.query","modern.learning.assignments.query"],"nonReplaceability":"Atomic reserve, release and waitlist ordering are ledger facts needed for concurrency-safe capacity replay and cannot be reduced to an offering counter."},
+      {"tableId":"prf_mkt_opportunity_versions","ownerSession":"HRIS-PER","producers":["modern.opportunity.create","modern.opportunity.revise"],"requirementIds":["P0-MKT-001"],"readConsumers":["modern.opportunity.query","modern.opportunity.catalog.query"],"nonReplaceability":"Criteria, capacity and skill requirements must be pinned to the opportunity revision seen by applicants and explanations; mutable root columns cannot preserve that historical input."},
+      {"tableId":"prf_suc_plan_versions","ownerSession":"HRIS-PER","producers":["modern.succession.plan.create","modern.succession.plan.revise"],"requirementIds":["P0-SUC-001","P1-EFFECTIVE-004"],"readConsumers":["modern.succession.plan.query","modern.succession.plans.query"],"nonReplaceability":"Stable succession-plan identity must be separated from restricted audience, key-position, content and effective-time revisions; a publication receipt cannot reproduce historical plan content or authorization policy."},
+      {"tableId":"prf_cmp_proposal_versions","ownerSession":"HRIS-PER","producers":["modern.compplan.proposal.upsert"],"requirementIds":["P0-CMP-001"],"readConsumers":["modern.compplan.proposal.query","modern.compplan.proposals.query"],"nonReplaceability":"Every compensation amount/component/reason/effective-date CAS revision must remain frozen for approval and snapshot derivation rather than being overwritten in the proposal root."},
+      {"tableId":"prf_cmp_plan_proposal_refs","ownerSession":"HRIS-PER","producers":["modern.compplan.plan.approve"],"requirementIds":["P0-CMP-001"],"readConsumers":["modern.compplan.cycle.query","modern.compplan.proposal.query"],"nonReplaceability":"Plan approval freezes an exact ordered proposal-ID/version set; a plan digest cannot prove membership or support server-derived approved snapshot lines."},
+      {"tableId":"tme_wfm_approval_receipts","ownerSession":"HRIS-TIM","producers":["internal.wfm.approval-result.consume"],"requirementIds":["P0-WFM-001"],"readConsumers":["modern.wfm.candidate.query","modern.wfm.candidates.query"],"nonReplaceability":"Approval outcome, decision receipt and candidate version are immutable facts separate from candidate status and are required for publish admission and historical refetch."},
+      {"tableId":"sys_hris_ai_assistance_reviews","ownerSession":"HRIS-SYS","producers":["modern.ai.assist.review","modern.ai.assist.revoke"],"requirementIds":["P0-AI-001"],"readConsumers":["modern.ai.assistance.query","modern.ai.assistances.query"],"nonReplaceability":"Human actor, assistance/subject identity, confirm-or-reject decision, reason and decision/delegation receipt have a distinct audience and retention lifecycle from model-output provenance and must remain immutable."}
+    ]
+  },
+  "acceptanceRules": [
+    "The live manifest tableScopeChange must pin the frozen 115-table set hash and declare exactly these 17 additions, zero removals and activeTableSpecifications=132.",
+    "Every added row must reproduce the exact ownerSession, complete producer set, exact declared readConsumers and non-empty nonReplaceability reason.",
+    "Every added table must have an exact table specification, producer DML and same-owner keys/constraints appropriate to the stated immutable fact.",
+    "Every declared detail/list reader for all 17 additions must include the table in readPlan.tables and projectionTuple.physicalSources, expose at least two exact durable table.column per-field response lineage bindings, enforce field-policy classification/redaction and preserve exact historical refetch where an event names the fact.",
+    "ppl_wfp_simulation_requests alone permits exact monotonic REQUESTED to COMPLETED, FAILED or CANCELLED UPDATE_CAS while all immutable input pins remain unchanged; all other added decision/version/ledger rows remain append-only.",
+    "Every added table must preserve FORCE RLS, named retention policy and field-policy-safe query projection; AI review, contingent engagement version and succession plan version require their specialized immutable controls."
+  ],
+  "sealedPayloadSha256": "8041c142ac96be31a4e4bd67a088bda1075147ec8111b388d572d3f35259d78a"
+}

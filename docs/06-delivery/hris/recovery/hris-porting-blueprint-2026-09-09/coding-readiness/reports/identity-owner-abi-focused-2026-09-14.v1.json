@@ -1,0 +1,1775 @@
+{
+  "schemaVersion": "dwp-identity-owner-abi-focused-evidence.v1",
+  "status": "AUTHOR_SCAFFOLD_VERIFIED_NOT_NATIVE_INTEGRATION_G3_CLOSED_COMMON_P0_OPEN",
+  "scope": "Owner-neutral Java ABI.v1 and unregistered guarded port. Existing Auth/People authority reused; production adapters, HTTP codecs/proof and wiring unimplemented.",
+  "baseline": {
+    "backendHead": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+    "backendTree": "20f345a640b1d8238b9a2e709a060cc51df9b729",
+    "frontendHead": "aaeba79eefae7cc2d1ba6151f47fa9e891a75bfd",
+    "frontendTree": "9e15dc43185be0df80c50504739ef4f47bd7f788",
+    "integrationPreChangeClean": true
+  },
+  "verification": {
+    "argv": [
+      "./gradlew",
+      ":dwp-platform-contracts:test",
+      "--rerun",
+      ":dwp-people-server:test",
+      "--tests",
+      "com.dwp.services.people.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+      "--rerun",
+      ":dwp-payroll-server:test",
+      "--tests",
+      "com.dwp.services.payroll.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+      "--rerun",
+      "--no-daemon",
+      "--max-workers=1"
+    ],
+    "startUtc": "2026-09-14T03:19:31.798771+00:00",
+    "endUtc": "2026-09-14T03:19:49.699015+00:00",
+    "seconds": 17.9,
+    "exit": 0,
+    "gradle": "BUILD SUCCESSFUL",
+    "executedTasks": 7,
+    "upToDateTasks": 16,
+    "semaphore": {
+      "name": "hris-verification",
+      "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+      "waitBoundSeconds": 30,
+      "waitSeconds": 0,
+      "releasedNormally": true
+    },
+    "processTimeoutSeconds": 600,
+    "processGroupOwnedOnly": true,
+    "noDaemon": true,
+    "maxWorkers": 1,
+    "noPostgresOrExternalEndpoints": true,
+    "totals": {
+      "tests": 85,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "identityCases": {
+      "typedRejections": 42,
+      "nativeUuidConsistencyRejections": 6,
+      "issuanceTimeRejections": 3,
+      "positiveAndConstructionBoundaries": 8,
+      "total": 59
+    },
+    "existingNeutralRegressionCases": 22,
+    "consumerProjectionAndMissingAdapterCases": 4,
+    "staticChecks": [
+      {
+        "command": "python3 scripts/check-service-boundaries.py",
+        "exit": 0,
+        "status": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-source-size.py",
+        "exit": 0,
+        "status": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-test-source-size.py",
+        "exit": 0,
+        "status": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-java-dependency-cycles.py",
+        "exit": 0,
+        "status": "PASS"
+      },
+      {
+        "command": "python3 scripts/check-unused-private-methods.py",
+        "exit": 0,
+        "status": "PASS"
+      }
+    ],
+    "whitespaceCheck": {
+      "allFourteenNewJavaAndTwoAbiFiles": true,
+      "violations": []
+    },
+    "note": "All three test tasks explicitly --rerun. Compilation freshness is separate: neutral compileJava/compileTestJava executed in this final run; consumer compileTestJava executed in the immediately preceding source-equivalent 83-case run and is up-to-date here. No skipped or cached tests are counted as fresh."
+  },
+  "sourceIntegrity": {
+    "preCaptureUtc": "2026-09-14T03:19:31.126143+00:00",
+    "postCaptureUtc": "2026-09-14T03:20:32.185757+00:00",
+    "prePostManifestExactlyEqual": true,
+    "prePostHeadTreeEqual": true,
+    "sourceFiles": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+        "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+        "lines": 13,
+        "mtimeNs": 1789354991077291000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java",
+        "sha256": "5eadeadb40991dacda7a84313f0e50ba8614aa9669938db1a5d3824d0154f20b",
+        "lines": 223,
+        "mtimeNs": 1789355923111205400
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+        "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+        "lines": 35,
+        "mtimeNs": 1789354991078381000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextAuthorityV1.java",
+        "sha256": "df1db8b5740aee6381c46bc692d9a01dbe91a43e28d422b373237b52cdbce827",
+        "lines": 24,
+        "mtimeNs": 1789355199306843400
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextContractExceptionV1.java",
+        "sha256": "c1e376e7332e950d1f0b37ada3d4f106b27bcc213cc713e89982bc8080d83f47",
+        "lines": 24,
+        "mtimeNs": 1789355488820323000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextOwnerPortsV1.java",
+        "sha256": "ccb3c2ace5e192c01cb620c8a658df8b69599e945f07181c1ced62384e0f46c4",
+        "lines": 67,
+        "mtimeNs": 1789355058604417300
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPortV1.java",
+        "sha256": "556dacec7f3d49a2a2568d023d94db7d6ada0cbabfdd279dfab33902331725ff",
+        "lines": 7,
+        "mtimeNs": 1789354991079850500
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+        "sha256": "7e3ea5978a47dbb09d752757a05806404453d0cf5f8ce7227d1e9b911acef2bd",
+        "lines": 20,
+        "mtimeNs": 1789354991075458600
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextQueryV1.java",
+        "sha256": "8e17e7f5f5baaed2bb8479136cc2b9860232c868879978807f0d1995e35152a2",
+        "lines": 8,
+        "mtimeNs": 1789354991076747800
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextResolutionV1.java",
+        "sha256": "61e7f0762065ba2997d387ceddd18af3399972c0c1922369ad764aba166a18e5",
+        "lines": 58,
+        "mtimeNs": 1789354991081170000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextSelectorV1.java",
+        "sha256": "258846f1a4a037aae51da484fe8df1e9c06a30c64cf03caa36e2a89749e6af50",
+        "lines": 8,
+        "mtimeNs": 1789354991076040400
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/IdentitySelfContextContractTest.java",
+        "sha256": "efcd32161d270c7785c6bc5620a3ca2d4c3bc6c46589f5e3be2a1fafac64d089",
+        "lines": 348,
+        "mtimeNs": 1789355945268336400
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+        "sha256": "cd537b51a8a85b36e7c1965c64778cbbcb3391513352f09e09adfb43ffb18cee",
+        "lines": 80,
+        "mtimeNs": 1789355780488533200
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+        "sha256": "8ac4766eafebc3ed5c8af67c5d97971897f055913c6a9f9e2ed8185873dc689b",
+        "lines": 80,
+        "mtimeNs": 1789355780489432300
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/identity-owner-abi.proposal.v1.json",
+        "sha256": "cb05e3f1a00e90574c97118a7508fc6e325b50f3bfd89809c2ac45a621b2d9d6",
+        "lines": 41,
+        "mtimeNs": 1789355945268932400
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/identity-owner-abi.proposal.v1.md",
+        "sha256": "fcad99bea801b660312561ef76a2cfc73170aa7e1f782921aa97d5368b4c1478",
+        "lines": 19,
+        "mtimeNs": 1789355838464857300
+      }
+    ],
+    "productionJavaFiles": 11,
+    "testJavaFiles": 3,
+    "allSourceMtimesPredateRunStart": true,
+    "backendPostStatus": [
+      "?? dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/",
+      "?? dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/",
+      "?? dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/",
+      "?? dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/"
+    ],
+    "trackedDiffNames": [],
+    "frontendPostStatus": [],
+    "noCommitOrPropagation": true,
+    "note": "Backend intentionally has only new scoped untracked paths. It is not reported clean after implementation. HEAD/tree unchanged; no tracked production/SQL/Gate/registry changes; frontend unchanged/clean."
+  },
+  "suites": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build/test-results/test/TEST-com.dwp.platform.contract.GeneratedHrisContractTest.xml",
+      "sha256": "6e98cec676adef02145bc75883d1eb1c52072f601195c0047bbbb358604f01fb",
+      "class": "com.dwp.platform.contract.GeneratedHrisContractTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T03:19:46",
+      "durationSeconds": 0.34,
+      "cases": [
+        {
+          "name": "enforcesClosedTimeHeaderLineCount()",
+          "durationSeconds": 0.054,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "packagesCanonicalSchemasAndRuntimePolicyClassifications()",
+          "durationSeconds": 0.005,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "notificationReceiptStateMatrixIsClosedAndExact()",
+          "durationSeconds": 0.006,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "enforcesConfigurationScopeEffectiveRangeAndPublishedApproval()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "rejectsNonCanonicalDecimalWireTokensAndCanonicalizesSignedZero()",
+          "durationSeconds": 0.162,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "enforcesConnectorFourEyesActiveEvidenceAndEffectiveRange()",
+          "durationSeconds": 0.004,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "notificationAndAuditContractsRemainStrictAndPrivacyMinimizedOnWire()",
+          "durationSeconds": 0.032,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "rejectsCanonicalInvalidArrayItems()",
+          "durationSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "rejectsMissingNullCoercedDuplicateAdditionalAndInvalidNestedWireValues()",
+          "durationSeconds": 0.02,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "enforcesCompensationPlanLineCountSequenceAndIdentity()",
+          "durationSeconds": 0.005,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "snapshotsMutableCollectionsAtTheGeneratedBoundary()",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "serializesRequiredNullTemporalAndUuidFieldsCanonicallyWithHostileMapperSettings()",
+          "durationSeconds": 0.012,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "serializesCanonicalDecimalStringsAndRoundTripsAllGeneratedValueTypes()",
+          "durationSeconds": 0.011,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "rejectsMissingRequiredValuesAndInvalidCanonicalConstraints()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "enforcesReconciliationCountBalanceAndPartialErrorReference()",
+          "durationSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "mapsCanonicalFormatsAndNumericWidthsToStableJavaTypes()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "enforcesClosedTimeUnitCurrencyBinding()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "enforcesNotificationRecipientStateRetryAndAuditFailureInvariants()",
+          "durationSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build/test-results/test/TEST-com.dwp.platform.contract.PlatformContractTest.xml",
+      "sha256": "8ea030890aa2f786960ac594a79b21d3e3c7ad99bbb71034dc13454223c659d3",
+      "class": "com.dwp.platform.contract.PlatformContractTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T03:19:46",
+      "durationSeconds": 0.014,
+      "cases": [
+        {
+          "name": "rejectsUnboundedConnectorAndSearchReads()",
+          "durationSeconds": 0.004,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "requiresApprovalForElevatedPlansAndNeverMutatesDuringPreview()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "mailConnectorAcceptsOnlyOpaqueSecretReferencesAndBoundedSynchronization()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "snapshotsMutableCollectionsAtTheBoundary()",
+          "durationSeconds": 0.003,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build/test-results/test/TEST-com.dwp.platform.contracts.hris.identity.v1.IdentitySelfContextContractTest.xml",
+      "sha256": "9c0173af3e0d7f32a14e3a7779538a480111dc8a0b6e2bc9eb6cd9a5fb6d98da",
+      "class": "com.dwp.platform.contracts.hris.identity.v1.IdentitySelfContextContractTest",
+      "tests": 59,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T03:19:46",
+      "durationSeconds": 0.134,
+      "cases": [
+        {
+          "name": "optionalNativeLeaveStatusIsPurposePolicyNotGlobalAuthSuspensionMapping()",
+          "durationSeconds": 0.012,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "expiry during owner calls: IssuanceFailure[finalNow=2026-09-14T00:00:10Z, shortAuthLease=false, code=AUTHORITY_INVALID]",
+          "durationSeconds": 0.005,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "expiry during owner calls: IssuanceFailure[finalNow=2026-09-14T00:00:02Z, shortAuthLease=true, code=AUTH_BINDING_STALE]",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "expiry during owner calls: IssuanceFailure[finalNow=2026-09-13T23:59:59Z, shortAuthLease=false, code=AUTHORITY_INVALID]",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "queryClockCapturedOnceAndIssuanceClockRecheckedWithValidatedBinding()",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "multipleContextsRequireExplicitNativeTupleAndNeverMintImplicitFirst()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "issuanceTimeIsCurrentButHistoricalAsOfRemainsOwnerBound()",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "existingVersionAndAccessRevisionMayAdvanceTogetherWhenCurrentExpectedOwnerStampsMatch()",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "zero native contexts",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "foreign selected native tuple",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "foreign native tenant",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "foreign native person",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "revoked Auth status",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "inactive Auth status",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "expired authority",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "future authority",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "oversized authority lease",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "expired Auth",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "changed user rowVersion conservatively invalidates person stamp",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "changed accessRevision independently invalidates access",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "principal UUID relabel to user numeric UUID is not identity",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "Auth person mismatch",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "Auth tenant mismatch",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "Auth actor mismatch",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "missing verifier",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "missing Auth adapter",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "missing People adapter",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "current APP entitlement missing",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "SoD denied",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "configured purpose audience mismatch",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "native incomplete cannot pretend singleton",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "duplicate native tuple",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "stale native asOf",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "future requested asOf",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "asOf outside Java civil date range",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "native zone civil date overflow is typed owner rejection",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "null query",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "nil selector UUID",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "UUID equality cannot substitute native relationship parent",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "wrong assignment parent",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "negative worker version",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "assignment no longer effective",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "owner verifier unavailable no fallback",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "owner returns null Auth no fallback",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "owner returns null native no fallback",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "foreign worker person despite outer person match",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "inactive native person not allowed by current policy",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "platform principal cannot acquire tenant self context",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "negative person version",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "inverted relationship date interval",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "formerPersonHistoricalPayrollPolicyIsExplicitAndNotGlobalActiveOnly()",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "ownerCanBuildRawCarrierAndGuardMintsOneSelectedNativeContext()",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-00000000012f, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000068, workerPublicId=10000000-0000-4000-8000-00000000012f, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000130, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000069, workRelationshipPublicId=10000000-0000-4000-8…",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=4, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000130, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=LEAVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000130, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-80…",
+          "durationSeconds": 0,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000068, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=5, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000068, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2021-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "durationSeconds": 0.001,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "rawCarriersDefensivelyCopyAndOnlyGuardCanConstructLookupOrVerifiedSelection()",
+          "durationSeconds": 0.002,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.identity.v1.IdentitySelfContextConsumerCompileTest.xml",
+      "sha256": "1827aa04e47ee82f7c12b158f963e6a02fa56d3f9723a238f8035064c457e1a4",
+      "class": "com.dwp.services.people.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T03:19:48",
+      "durationSeconds": 0.069,
+      "cases": [
+        {
+          "name": "peopleConsumerReceivesTypedMissingAdapterDenialBeforeAnyProviderCall()",
+          "durationSeconds": 0.056,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "peopleConsumerProjectsGuardMintedNativeIdsVersionsAndPurpose()",
+          "durationSeconds": 0.011,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/build/test-results/test/TEST-com.dwp.services.payroll.hris.identity.v1.IdentitySelfContextConsumerCompileTest.xml",
+      "sha256": "10a03be488c5ad271e32c200ccc094ca61d85a474840c60d033b08d173333d7e",
+      "class": "com.dwp.services.payroll.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-09-14T03:19:49",
+      "durationSeconds": 0.071,
+      "cases": [
+        {
+          "name": "payrollConsumerReceivesTypedMissingAdapterDenialBeforeAnyProviderCall()",
+          "durationSeconds": 0.056,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        },
+        {
+          "name": "payrollConsumerProjectsGuardMintedNativeIdsVersionsAndPayPurpose()",
+          "durationSeconds": 0.014,
+          "failed": false,
+          "error": false,
+          "skipped": false
+        }
+      ]
+    }
+  ],
+  "typedFixtureBase": {
+    "type": "Actual Java immutable DTO objects in executed tests; JSON below documents them, not an alternative executable oracle",
+    "clock": "Clock.fixed(2026-09-14T00:00:00Z,UTC), plus two-read advancing Clock",
+    "tenantId": {
+      "type": "long",
+      "value": 1
+    },
+    "userId": {
+      "type": "long",
+      "value": 3
+    },
+    "principalPublicId": {
+      "type": "UUID",
+      "value": "10000000-0000-4000-8000-000000000065"
+    },
+    "personPublicId": {
+      "type": "UUID",
+      "value": "10000000-0000-4000-8000-000000000066"
+    },
+    "workerPublicId": {
+      "type": "UUID",
+      "value": "10000000-0000-4000-8000-000000000067"
+    },
+    "workRelationshipPublicId": {
+      "type": "UUID",
+      "value": "10000000-0000-4000-8000-000000000068"
+    },
+    "assignmentPublicId": {
+      "type": "UUID",
+      "value": "10000000-0000-4000-8000-000000000069"
+    },
+    "auth": {
+      "userRowVersion": 7,
+      "accessRevision": 11,
+      "status": "ACTIVE",
+      "identityPlane": "TENANT",
+      "leaseSeconds": 10
+    },
+    "currentScope": {
+      "purpose": "SELF_PROFILE_READ",
+      "audience": "HRIS_HRM",
+      "appEntitled": true,
+      "separationOfDutiesAllowed": true,
+      "permissionDecisionRevision": 9,
+      "effectivePolicy": {
+        "reference": "tenant/self-profile-policy",
+        "version": 1,
+        "allowedPersonStates": [
+          "ACTIVE"
+        ],
+        "allowedWorkerStatuses": [
+          "ACTIVE"
+        ],
+        "allowedAssignmentStatuses": [
+          "ACTIVE"
+        ]
+      }
+    },
+    "native": {
+      "personVersion": 2,
+      "workerVersion": 3,
+      "relationshipVersion": 4,
+      "assignmentVersion": 5,
+      "effectiveStart": "2020-01-01",
+      "end": null,
+      "zone": "Asia/Seoul",
+      "complete": true
+    },
+    "expectedDefaultCalls": {
+      "verifier": 1,
+      "auth": 1,
+      "people": 1
+    },
+    "minimumRequiredCasesExecuted": true
+  },
+  "typedRejectFixtures": [
+    {
+      "name": "zero native contexts",
+      "expectedCode": "SELF_SCOPE_UNRESOLVED",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "foreign selected native tuple",
+      "expectedCode": "SELF_CONTEXT_FORBIDDEN",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "foreign native tenant",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "foreign native person",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "revoked Auth status",
+      "expectedCode": "AUTH_BINDING_REVOKED",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "inactive Auth status",
+      "expectedCode": "AUTH_BINDING_REVOKED",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "expired authority",
+      "expectedCode": "AUTHORITY_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "future authority",
+      "expectedCode": "AUTHORITY_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "oversized authority lease",
+      "expectedCode": "AUTHORITY_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "expired Auth",
+      "expectedCode": "AUTH_BINDING_STALE",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "changed user rowVersion conservatively invalidates person stamp",
+      "expectedCode": "AUTH_BINDING_STALE",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "changed accessRevision independently invalidates access",
+      "expectedCode": "AUTH_BINDING_STALE",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "principal UUID relabel to user numeric UUID is not identity",
+      "expectedCode": "AUTH_BINDING_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "Auth person mismatch",
+      "expectedCode": "AUTH_BINDING_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "Auth tenant mismatch",
+      "expectedCode": "AUTH_BINDING_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "Auth actor mismatch",
+      "expectedCode": "AUTH_BINDING_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "missing verifier",
+      "expectedCode": "ADAPTER_UNAVAILABLE",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "missing Auth adapter",
+      "expectedCode": "ADAPTER_UNAVAILABLE",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "missing People adapter",
+      "expectedCode": "ADAPTER_UNAVAILABLE",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "current APP entitlement missing",
+      "expectedCode": "APP_ENTITLEMENT_REQUIRED",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "SoD denied",
+      "expectedCode": "SEPARATION_OF_DUTIES_DENIED",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "configured purpose audience mismatch",
+      "expectedCode": "QUERY_INVALID",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "native incomplete cannot pretend singleton",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "duplicate native tuple",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "stale native asOf",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "future requested asOf",
+      "expectedCode": "QUERY_INVALID",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "asOf outside Java civil date range",
+      "expectedCode": "QUERY_INVALID",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "native zone civil date overflow is typed owner rejection",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "null query",
+      "expectedCode": "QUERY_INVALID",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "nil selector UUID",
+      "expectedCode": "QUERY_INVALID",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "UUID equality cannot substitute native relationship parent",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "wrong assignment parent",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "negative worker version",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "assignment no longer effective",
+      "expectedCode": "SELF_SCOPE_UNRESOLVED",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "owner verifier unavailable no fallback",
+      "expectedCode": "OWNER_UNAVAILABLE",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "name": "owner returns null Auth no fallback",
+      "expectedCode": "AUTH_BINDING_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "owner returns null native no fallback",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "foreign worker person despite outer person match",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "inactive native person not allowed by current policy",
+      "expectedCode": "SELF_SCOPE_UNRESOLVED",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "platform principal cannot acquire tenant self context",
+      "expectedCode": "AUTH_BINDING_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 0
+      }
+    },
+    {
+      "name": "negative person version",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "name": "inverted relationship date interval",
+      "expectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    }
+  ],
+  "additionalRejectFamilies": [
+    {
+      "family": "native UUID record consistency",
+      "cases": 6,
+      "typedExpectedCode": "OWNER_RESPONSE_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      },
+      "actualValues": "Full immutable Worker/WorkRelationship/Assignment records retained in six XML case IDs; same entity UUID with different parent/version/status/date rejected"
+    },
+    {
+      "family": "authority expires during provider calls",
+      "finalNow": "2026-09-14T00:00:10Z",
+      "expectedCode": "AUTHORITY_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "family": "Auth lease expires during provider calls",
+      "finalNow": "2026-09-14T00:00:02Z",
+      "authLeaseSeconds": 1,
+      "expectedCode": "AUTH_BINDING_STALE",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "family": "clock moves backward",
+      "finalNow": "2026-09-13T23:59:59Z",
+      "expectedCode": "AUTHORITY_INVALID",
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    },
+    {
+      "family": "People and Payroll missing adapter",
+      "cases": 2,
+      "expectedCode": "ADAPTER_UNAVAILABLE",
+      "expectedCalls": {
+        "verifier": 0,
+        "auth": 0,
+        "people": 0
+      }
+    },
+    {
+      "family": "People PROFILE and Payroll PAY consumer projections",
+      "cases": 2,
+      "actualFields": [
+        "personPublicId",
+        "workerPublicId",
+        "workRelationshipPublicId",
+        "assignmentPublicId",
+        "personVersion",
+        "workerVersion",
+        "relationshipVersion",
+        "assignmentVersion",
+        "userRowVersion",
+        "accessRevision",
+        "purpose"
+      ],
+      "expectedCalls": {
+        "verifier": 1,
+        "auth": 1,
+        "people": 1
+      }
+    }
+  ],
+  "ownerReuseEvidence": {
+    "sources": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+        "sha256": "b7be334f2a5da5e270da9cd687928cd3009297c669424534c7735dff4b3bbc13"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+        "sha256": "94f8eac76715389781e600b0460cf16f4481fa8824de8ecc22546fc21f2ceae4"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+        "sha256": "072e82d5d0a5103dd731c540c719fc296ffc74392141badb7f267103d3dab65f"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AccessReviewService.java",
+        "sha256": "9f593bf7e3c44b190fad719ef6b4b5e2da75247a6e107447774f2ad824103be8"
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/AppGovernanceAssignmentStore.java",
+        "sha256": "2a1117a508906142cd1e052b512e8f948904d1c888b7170aab4f47523448f6fe"
+      }
+    ],
+    "personBindingStamp": {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/entity/User.java",
+      "lines": [
+        51,
+        52,
+        75,
+        76,
+        77,
+        82,
+        83,
+        84
+      ],
+      "policy": "Use existing native rowVersion conservatively for JPA person linkage. No new table, DDL or binding counter. accessRevision separate. PublicUUID identity not BIGINT equality."
+    },
+    "personSetter": {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+      "line": 85,
+      "soleMainJavaCall": true
+    },
+    "nativeSqlVersionCaveat": {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/provisioning/AuthTenantProvisioningService.java",
+      "lines": [
+        200,
+        201,
+        202
+      ],
+      "status": "OPEN",
+      "finding": "Account activation changes status to ACTIVE without version/access_revision increment. RowVersion is NOT a complete lifecycle revision; require independent current status and eventual signed freshness/native producer consistency."
+    },
+    "explicitSqlInvalidationExamples": [
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AccessReviewService.java",
+        "lines": [
+          578,
+          579,
+          580,
+          581,
+          582
+        ]
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AppGovernanceAssignmentStore.java",
+        "lines": [
+          419,
+          420,
+          421,
+          422,
+          423,
+          426,
+          427,
+          428,
+          429
+        ]
+      }
+    ],
+    "ownershipAudit": "reports/dwp-identity-reuse-independent-audit-2026-09-14.json",
+    "correction": "Existing identity chain exists. No independent principal-worker ledger or shadow DWP RBAC is introduced."
+  },
+  "prior81CaseRun": {
+    "status": "HISTORICAL_SUPERSEDED_SHALLOW_CONSUMER_COMPILE_WITNESS_NOT_FINAL_PROOF",
+    "execution": {
+      "argv": [
+        "./gradlew",
+        ":dwp-platform-contracts:test",
+        "--rerun",
+        ":dwp-people-server:test",
+        "--tests",
+        "com.dwp.services.people.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+        "--rerun",
+        ":dwp-payroll-server:test",
+        "--tests",
+        "com.dwp.services.payroll.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+        "--rerun",
+        "--no-daemon",
+        "--max-workers=1"
+      ],
+      "startUtc": "2026-09-14T03:14:07.387804+00:00",
+      "endUtc": "2026-09-14T03:14:30.298450+00:00",
+      "seconds": 22.911,
+      "exit": 0,
+      "tests": 81,
+      "executedTasks": 4,
+      "upToDateTasks": 19
+    },
+    "sourceManifest": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/AuthPersonBindingV1.java",
+        "sha256": "a2da1604b6026ffdb70be1a290c20162e0e41e8f7f7d259e14f75036899f80ec",
+        "lines": 13,
+        "mtimeNs": 1789354991077291000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java",
+        "sha256": "40e9d3da5492270468a0a596ca9ac9b37017ce76c994d27120bed5986e525462",
+        "lines": 206,
+        "mtimeNs": 1789355199308770300
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+        "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+        "lines": 35,
+        "mtimeNs": 1789354991078381000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextAuthorityV1.java",
+        "sha256": "df1db8b5740aee6381c46bc692d9a01dbe91a43e28d422b373237b52cdbce827",
+        "lines": 24,
+        "mtimeNs": 1789355199306843400
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextContractExceptionV1.java",
+        "sha256": "c1e376e7332e950d1f0b37ada3d4f106b27bcc213cc713e89982bc8080d83f47",
+        "lines": 24,
+        "mtimeNs": 1789355488820323000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextOwnerPortsV1.java",
+        "sha256": "ccb3c2ace5e192c01cb620c8a658df8b69599e945f07181c1ced62384e0f46c4",
+        "lines": 67,
+        "mtimeNs": 1789355058604417300
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPortV1.java",
+        "sha256": "556dacec7f3d49a2a2568d023d94db7d6ada0cbabfdd279dfab33902331725ff",
+        "lines": 7,
+        "mtimeNs": 1789354991079850500
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextPurposeV1.java",
+        "sha256": "7e3ea5978a47dbb09d752757a05806404453d0cf5f8ce7227d1e9b911acef2bd",
+        "lines": 20,
+        "mtimeNs": 1789354991075458600
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextQueryV1.java",
+        "sha256": "8e17e7f5f5baaed2bb8479136cc2b9860232c868879978807f0d1995e35152a2",
+        "lines": 8,
+        "mtimeNs": 1789354991076747800
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextResolutionV1.java",
+        "sha256": "61e7f0762065ba2997d387ceddd18af3399972c0c1922369ad764aba166a18e5",
+        "lines": 58,
+        "mtimeNs": 1789354991081170000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextSelectorV1.java",
+        "sha256": "258846f1a4a037aae51da484fe8df1e9c06a30c64cf03caa36e2a89749e6af50",
+        "lines": 8,
+        "mtimeNs": 1789354991076040400
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/identity/v1/IdentitySelfContextContractTest.java",
+        "sha256": "c17ea0488fbb81f26899e607d1ce7bb9eda0a78e1da97c5abf6370b3d19501a1",
+        "lines": 341,
+        "mtimeNs": 1789355488820761300
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/test/java/com/dwp/services/people/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+        "sha256": "676b59e736926fd36b2f82c67368ed6bf0bf8e742a19d524eab92fc460318248",
+        "lines": 27,
+        "mtimeNs": 1789355167394786000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/identity/v1/IdentitySelfContextConsumerCompileTest.java",
+        "sha256": "c8ff47ab57441a998af600988691f7fb4599ed948b8d3309d76be021fe886282",
+        "lines": 27,
+        "mtimeNs": 1789355167396423000
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/identity-owner-abi.proposal.v1.json",
+        "sha256": "17b25c6599f6cfa1a0e827afb151862cadd3ec2b24be91c83569ae81f75c148f",
+        "lines": 41,
+        "mtimeNs": 1789355373513787600
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/identity-owner-abi.proposal.v1.md",
+        "sha256": "fb8486b6f4ec068f7b1f58dc7409ee9b79db3a26f127f4dc389dda78c229fdce",
+        "lines": 17,
+        "mtimeNs": 1789355373517626400
+      }
+    ],
+    "suites": [
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build/test-results/test/TEST-com.dwp.platform.contract.GeneratedHrisContractTest.xml",
+        "sha256": "9369f2a3701f73c3be360f9074e5dad78c043a83eca092d1da7489fc42d783d6",
+        "class": "com.dwp.platform.contract.GeneratedHrisContractTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T03:14:25",
+        "cases": [
+          "enforcesClosedTimeHeaderLineCount()",
+          "packagesCanonicalSchemasAndRuntimePolicyClassifications()",
+          "notificationReceiptStateMatrixIsClosedAndExact()",
+          "enforcesConfigurationScopeEffectiveRangeAndPublishedApproval()",
+          "rejectsNonCanonicalDecimalWireTokensAndCanonicalizesSignedZero()",
+          "enforcesConnectorFourEyesActiveEvidenceAndEffectiveRange()",
+          "notificationAndAuditContractsRemainStrictAndPrivacyMinimizedOnWire()",
+          "rejectsCanonicalInvalidArrayItems()",
+          "rejectsMissingNullCoercedDuplicateAdditionalAndInvalidNestedWireValues()",
+          "enforcesCompensationPlanLineCountSequenceAndIdentity()",
+          "snapshotsMutableCollectionsAtTheGeneratedBoundary()",
+          "serializesRequiredNullTemporalAndUuidFieldsCanonicallyWithHostileMapperSettings()",
+          "serializesCanonicalDecimalStringsAndRoundTripsAllGeneratedValueTypes()",
+          "rejectsMissingRequiredValuesAndInvalidCanonicalConstraints()",
+          "enforcesReconciliationCountBalanceAndPartialErrorReference()",
+          "mapsCanonicalFormatsAndNumericWidthsToStableJavaTypes()",
+          "enforcesClosedTimeUnitCurrencyBinding()",
+          "enforcesNotificationRecipientStateRetryAndAuditFailureInvariants()"
+        ]
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build/test-results/test/TEST-com.dwp.platform.contract.PlatformContractTest.xml",
+        "sha256": "cffecfe69987ab71127edfa66ce145cc7c8831c942e029b3715a043b121ecd38",
+        "class": "com.dwp.platform.contract.PlatformContractTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T03:14:26",
+        "cases": [
+          "rejectsUnboundedConnectorAndSearchReads()",
+          "requiresApprovalForElevatedPlansAndNeverMutatesDuringPreview()",
+          "mailConnectorAcceptsOnlyOpaqueSecretReferencesAndBoundedSynchronization()",
+          "snapshotsMutableCollectionsAtTheBoundary()"
+        ]
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/build/test-results/test/TEST-com.dwp.platform.contracts.hris.identity.v1.IdentitySelfContextContractTest.xml",
+        "sha256": "3fec4ec327fbef1727d406f865cc3da1c16e9731d5099f6854dc6fce566d4f1e",
+        "class": "com.dwp.platform.contracts.hris.identity.v1.IdentitySelfContextContractTest",
+        "tests": 57,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T03:14:26",
+        "cases": [
+          "optionalNativeLeaveStatusIsPurposePolicyNotGlobalAuthSuspensionMapping()",
+          "expiry during owner calls: IssuanceFailure[finalNow=2026-09-14T00:00:10Z, shortAuthLease=false, code=AUTHORITY_INVALID]",
+          "expiry during owner calls: IssuanceFailure[finalNow=2026-09-14T00:00:02Z, shortAuthLease=true, code=AUTH_BINDING_STALE]",
+          "expiry during owner calls: IssuanceFailure[finalNow=2026-09-13T23:59:59Z, shortAuthLease=false, code=AUTHORITY_INVALID]",
+          "queryClockCapturedOnceAndIssuanceClockRecheckedWithValidatedBinding()",
+          "multipleContextsRequireExplicitNativeTupleAndNeverMintImplicitFirst()",
+          "issuanceTimeIsCurrentButHistoricalAsOfRemainsOwnerBound()",
+          "existingVersionAndAccessRevisionMayAdvanceTogetherWhenCurrentExpectedOwnerStampsMatch()",
+          "zero native contexts",
+          "foreign selected native tuple",
+          "foreign native tenant",
+          "foreign native person",
+          "revoked Auth status",
+          "inactive Auth status",
+          "expired authority",
+          "future authority",
+          "oversized authority lease",
+          "expired Auth",
+          "changed user rowVersion conservatively invalidates person stamp",
+          "changed accessRevision independently invalidates access",
+          "principal UUID relabel to user numeric UUID is not identity",
+          "Auth person mismatch",
+          "Auth tenant mismatch",
+          "Auth actor mismatch",
+          "missing verifier",
+          "missing Auth adapter",
+          "missing People adapter",
+          "current APP entitlement missing",
+          "SoD denied",
+          "configured purpose audience mismatch",
+          "native incomplete cannot pretend singleton",
+          "duplicate native tuple",
+          "stale native asOf",
+          "future requested asOf",
+          "null query",
+          "nil selector UUID",
+          "UUID equality cannot substitute native relationship parent",
+          "wrong assignment parent",
+          "negative worker version",
+          "assignment no longer effective",
+          "owner verifier unavailable no fallback",
+          "owner returns null Auth no fallback",
+          "owner returns null native no fallback",
+          "foreign worker person despite outer person match",
+          "inactive native person not allowed by current policy",
+          "platform principal cannot acquire tenant self context",
+          "negative person version",
+          "inverted relationship date interval",
+          "formerPersonHistoricalPayrollPolicyIsExplicitAndNotGlobalActiveOnly()",
+          "ownerCanBuildRawCarrierAndGuardMintsOneSelectedNativeContext()",
+          "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-00000000012f, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000068, workerPublicId=10000000-0000-4000-8000-00000000012f, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000130, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000069, workRelationshipPublicId=10000000-0000-4000-8…",
+          "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=4, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000130, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=LEAVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000130, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-80…",
+          "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000068, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=5, startDate=2020-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "UUID record consistency: EmploymentContext[worker=Worker[publicId=10000000-0000-4000-8000-000000000067, personPublicId=10000000-0000-4000-8000-000000000066, version=3, status=ACTIVE], relationship=WorkRelationship[publicId=10000000-0000-4000-8000-000000000068, workerPublicId=10000000-0000-4000-8000-000000000067, legalEmployerPublicId=10000000-0000-4000-8000-00000000006a, version=4, startDate=2021-01-01, endDate=null], assignment=Assignment[publicId=10000000-0000-4000-8000-000000000131, workRelationshipPublicId=10000000-0000-4000-8…",
+          "rawCarriersDefensivelyCopyAndOnlyGuardCanConstructLookupOrVerifiedSelection()"
+        ]
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.identity.v1.IdentitySelfContextConsumerCompileTest.xml",
+        "sha256": "eb79c915154d86dc367e40f1e542949e1e26b4b6d6edf423d8cbbd677da28970",
+        "class": "com.dwp.services.people.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T03:14:29",
+        "cases": [
+          "peopleConsumerCompilesAgainstNeutralPortWithoutAuthServiceImplementationImports()"
+        ]
+      },
+      {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-payroll-server/build/test-results/test/TEST-com.dwp.services.payroll.hris.identity.v1.IdentitySelfContextConsumerCompileTest.xml",
+        "sha256": "dc3eddefbe015b203edddcab7259c5e19da077f126322cb5a55cb55f1f4042c8",
+        "class": "com.dwp.services.payroll.hris.identity.v1.IdentitySelfContextConsumerCompileTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "timestamp": "2026-09-14T03:14:30",
+        "cases": [
+          "payrollConsumerCompilesAgainstPurposeBoundNeutralPort()"
+        ]
+      }
+    ],
+    "reason": "Two consumer fixtures then returned null and proved only port invocation/type availability. Root independent review required actual verified-field projection and missing-adapter rejection; final four consumer cases replace them. Old count/hash evidence is preserved without claiming final approval."
+  },
+  "remainingCommonP0": [
+    "Actual Auth current principal/person binding endpoint and conservative stamp publication",
+    "Signed exact wire codec/owner proof, freshness/revoke/lease/deployment fence; existing versions are not cryptographic proof",
+    "Actual complete multi-employment native People producer, effective purpose policy and current owner versions",
+    "Existing primary LIMIT1 adapters replaced by explicit native selection where new HRIS uses this ABI",
+    "Current route APP/menu/action/resource scope PEP and owner-only factory registration; no arbitrary consumer composition",
+    "Lifecycle ordering/relink maker-checker/replay digest/outbox common producer and native SQL lifecycle consistency",
+    "Actual native Auth/Gateway/People HTTP/Postgres integration and security negative journeys",
+    "Full current backend/root readiness checks after source commit; this focused scaffold proof does not open a module Gate"
+  ],
+  "excludedMutations": [
+    "Auth build/dependency/endpoint",
+    "newDDL/linkledger",
+    "existing HTTP.v1/generated/G2/canonical",
+    "production guards/SQL/Control",
+    "Spring autowiring/new resources",
+    "main checkouts/SKKF/user DB/servers",
+    "Gates/seals/registries",
+    "commit/propagation before root approval"
+  ]
+}

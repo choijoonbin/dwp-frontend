@@ -1,0 +1,2453 @@
+{
+  "contractId": "dwp.hris.modern.event-payloads.v1",
+  "schemaVersion": 1,
+  "status": "G3_EVENT_SCHEMA_CONTRACT_READY_NOT_IMPLEMENTED",
+  "scope": {
+    "capabilities": 16,
+    "events": 32,
+    "implementationState": "NOT_STARTED_G3",
+    "productionState": "NOT_AUTHORIZED_G6"
+  },
+  "eventEnvelopeRef": "DWP_HRIS_DOMAIN_EVENT_ENVELOPE_V1",
+  "eventEnvelope": {
+    "additionalProperties": false,
+    "requiredFields": [
+      "specVersion",
+      "id",
+      "source",
+      "type",
+      "schemaVersion",
+      "time",
+      "tenantId",
+      "aggregateType",
+      "aggregateId",
+      "aggregateSequence",
+      "correlationId",
+      "data"
+    ],
+    "tenantId": {
+      "type": "BIGINT",
+      "source": "AUTHENTICATED_TENANT_CONTEXT",
+      "required": true
+    },
+    "aggregateId": {
+      "type": "UUID",
+      "exposure": "OPAQUE_PUBLIC_ID",
+      "required": true
+    },
+    "aggregateSequence": {
+      "type": "BIGINT",
+      "validation": "> 0",
+      "required": true
+    },
+    "data": {
+      "type": "OBJECT",
+      "additionalProperties": false,
+      "schemaRef": "EVENT_SPECIFIC"
+    }
+  },
+  "eventPayloadSchemas": [
+    {
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "session": "HRIS-HRM",
+      "eventName": "CandidateStageChanged.v1",
+      "eventType": "CandidateStageChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.recruiting.candidate-stage.changed.v1",
+      "payloadSchemaId": "CandidateStageChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "candidateCaseId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "requisitionId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromStage",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toStage",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "decisionReceiptId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-RECRUIT-TR-001",
+        "MOD-HRM-RECRUIT-TR-002",
+        "MOD-HRM-RECRUIT-TR-003",
+        "MOD-HRM-RECRUIT-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.recruiting.candidate.stage",
+        "modern.recruiting.offer.issue",
+        "modern.recruiting.requisition.create",
+        "modern.recruiting.requisition.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "session": "HRIS-HRM",
+      "eventName": "CandidateHired.v1",
+      "eventType": "CandidateHired",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.recruiting.candidate-hired.v1",
+      "payloadSchemaId": "CandidateHired.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "candidateCaseId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "requisitionId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "offerId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "hireHandoffId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "effectiveDate",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "payloadDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-RECRUIT-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.recruiting.hire.record"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "session": "HRIS-HRM",
+      "eventName": "OnboardingJourneyChanged.v1",
+      "eventType": "OnboardingJourneyChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.onboarding.journey.changed.v1",
+      "payloadSchemaId": "OnboardingJourneyChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "journeyAssignmentId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "templateVersionId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "dueAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-ONBOARD-TR-001",
+        "MOD-HRM-ONBOARD-TR-002",
+        "MOD-HRM-ONBOARD-TR-003",
+        "MOD-HRM-ONBOARD-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.onboarding.journey.assign",
+        "modern.onboarding.journey.cancel",
+        "modern.onboarding.template.create",
+        "modern.onboarding.template.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "session": "HRIS-HRM",
+      "eventName": "OnboardingJourneyCompleted.v1",
+      "eventType": "OnboardingJourneyCompleted",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.onboarding.journey.completed.v1",
+      "payloadSchemaId": "OnboardingJourneyCompleted.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "journeyAssignmentId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "completedTaskCount",
+          "type": "INTEGER",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "evidenceDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "completedAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-ONBOARD-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.onboarding.task.complete"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "session": "HRIS-HRM",
+      "eventName": "WorkforceScenarioChanged.v1",
+      "eventType": "WorkforceScenarioChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.workforce-planning.scenario.changed.v1",
+      "payloadSchemaId": "WorkforceScenarioChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "scenarioId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "inputSnapshotId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "ruleVersionId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "resultDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-WFP-TR-001",
+        "MOD-HRM-WFP-TR-002",
+        "MOD-HRM-WFP-TR-003",
+        "MOD-HRM-WFP-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.workforceplan.scenario.approve",
+        "modern.workforceplan.scenario.create",
+        "modern.workforceplan.scenario.simulate",
+        "modern.workforceplan.scenario.submit"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "session": "HRIS-HRM",
+      "eventName": "WorkforcePlanPublished.v1",
+      "eventType": "WorkforcePlanPublished",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.workforce-planning.plan.published.v1",
+      "payloadSchemaId": "WorkforcePlanPublished.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "scenarioId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "publishReceiptId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "approvedRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "effectiveDate",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "impactDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-WFP-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.workforceplan.scenario.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "session": "HRIS-HRM",
+      "eventName": "BenefitAdministrationChanged.v1",
+      "eventType": "BenefitAdministrationChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.benefits.administration.changed.v1",
+      "payloadSchemaId": "BenefitAdministrationChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "caseId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "planId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "effectiveDate",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-BENEFITS-TR-001",
+        "MOD-HRM-BENEFITS-TR-002",
+        "MOD-HRM-BENEFITS-TR-003",
+        "MOD-HRM-BENEFITS-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.benefits.enrollment.submit",
+        "modern.benefits.lifeevent.submit",
+        "modern.benefits.plan.create",
+        "modern.benefits.plan.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "session": "HRIS-HRM",
+      "eventName": "BenefitEnrollmentChanged.v1",
+      "eventType": "BenefitEnrollmentChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.benefits.enrollment.changed.v1",
+      "payloadSchemaId": "BenefitEnrollmentChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "enrollmentId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "planId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "coverageLevel",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "effectiveFrom",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "decisionReceiptId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-BENEFITS-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.benefits.enrollment.decide"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "session": "HRIS-HRM",
+      "eventName": "HrCaseChanged.v1",
+      "eventType": "HrCaseChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.hr-service.case.changed.v1",
+      "payloadSchemaId": "HrCaseChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "caseId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "caseType",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "queueKey",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "slaDueAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-HRSD-TR-001",
+        "MOD-HRM-HRSD-TR-002",
+        "MOD-HRM-HRSD-TR-003",
+        "MOD-HRM-HRSD-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.hrservice.case.assign",
+        "modern.hrservice.case.create",
+        "modern.hrservice.case.respond",
+        "modern.hrservice.case.triage"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "session": "HRIS-HRM",
+      "eventName": "HrCaseResolved.v1",
+      "eventType": "HrCaseResolved",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.hr-service.case.resolved.v1",
+      "payloadSchemaId": "HrCaseResolved.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "caseId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "resolutionCode",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "resolvedAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "slaOutcome",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "responseDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-HRSD-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.hrservice.case.resolve"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "session": "HRIS-HRM",
+      "eventName": "ContingentEngagementChanged.v1",
+      "eventType": "ContingentEngagementChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.contingent.engagement.changed.v1",
+      "payloadSchemaId": "ContingentEngagementChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "engagementId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "classificationCode",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "sponsorWorkerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "accessExpiresAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-CONTINGENT-TR-001",
+        "MOD-HRM-CONTINGENT-TR-002",
+        "MOD-HRM-CONTINGENT-TR-003",
+        "MOD-HRM-CONTINGENT-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.contingent.engagement.activate",
+        "modern.contingent.engagement.create",
+        "modern.contingent.engagement.offboard",
+        "modern.contingent.engagement.submit"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "session": "HRIS-HRM",
+      "eventName": "ContingentAccessExpired.v1",
+      "eventType": "ContingentAccessExpired",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.contingent.access.expired.v1",
+      "payloadSchemaId": "ContingentAccessExpired.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "engagementId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "endedAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "revokedGrantCount",
+          "type": "INTEGER",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "unreconciledGrantCount",
+          "type": "INTEGER",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "receiptDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-HRM-CONTINGENT-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.contingent.engagement.close"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "session": "HRIS-PER",
+      "eventName": "SkillsTaxonomyPublished.v1",
+      "eventType": "SkillsTaxonomyPublished",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.skills.taxonomy.published.v1",
+      "payloadSchemaId": "SkillsTaxonomyPublished.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "taxonomyId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "taxonomyVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "effectiveFrom",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "skillCount",
+          "type": "INTEGER",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "mappingDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-SKILLS-TR-001",
+        "MOD-PER-SKILLS-TR-002",
+        "MOD-PER-SKILLS-TR-003"
+      ],
+      "emittedByOperationIds": [
+        "modern.skills.taxonomy.create",
+        "modern.skills.taxonomy.publish",
+        "modern.skills.taxonomy.validate"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "session": "HRIS-PER",
+      "eventName": "WorkerSkillEvidenceVerified.v1",
+      "eventType": "WorkerSkillEvidenceVerified",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.skills.worker-evidence.verified.v1",
+      "payloadSchemaId": "WorkerSkillEvidenceVerified.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "evidenceId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "skillId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "proficiencyLevel",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "provenanceType",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "verifiedAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-SKILLS-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.skills.evidence.verify"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "session": "HRIS-PER",
+      "eventName": "GrowthProfileChanged.v1",
+      "eventType": "GrowthProfileChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.growth.profile.changed.v1",
+      "payloadSchemaId": "GrowthProfileChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "profileId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aspirationRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-GROWTH-TR-001",
+        "MOD-PER-GROWTH-TR-002",
+        "MOD-PER-GROWTH-TR-004",
+        "MOD-PER-GROWTH-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.growth.coaching.record",
+        "modern.growth.profile.archive",
+        "modern.growth.profile.create",
+        "modern.growth.profile.update"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "session": "HRIS-PER",
+      "eventName": "GrowthEvidenceLinked.v1",
+      "eventType": "GrowthEvidenceLinked",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.growth.evidence.linked.v1",
+      "payloadSchemaId": "GrowthEvidenceLinked.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "profileId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "evidenceId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "evidenceType",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "sourceRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "consentRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-GROWTH-TR-003"
+      ],
+      "emittedByOperationIds": [
+        "modern.growth.evidence.link"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "session": "HRIS-PER",
+      "eventName": "LearningAssignmentChanged.v1",
+      "eventType": "LearningAssignmentChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.learning.assignment.changed.v1",
+      "payloadSchemaId": "LearningAssignmentChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "assignmentId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "offeringId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-LEARNING-TR-001",
+        "MOD-PER-LEARNING-TR-002",
+        "MOD-PER-LEARNING-TR-003",
+        "MOD-PER-LEARNING-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.learning.assignment.start",
+        "modern.learning.offering.create",
+        "modern.learning.offering.publish",
+        "modern.learning.self.enroll"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "session": "HRIS-PER",
+      "eventName": "LearningCompletionVerified.v1",
+      "eventType": "LearningCompletionVerified",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.learning.completion.verified.v1",
+      "payloadSchemaId": "LearningCompletionVerified.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "completionId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "assignmentId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "completedAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "evidenceDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "skillEvidenceIds",
+          "type": "ARRAY<UUID>",
+          "required": true,
+          "validation": "0..10000 canonical UUIDs; duplicates rejected",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-LEARNING-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.learning.completion.verify"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "session": "HRIS-PER",
+      "eventName": "OpportunityApplicationChanged.v1",
+      "eventType": "OpportunityApplicationChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.opportunity.application.changed.v1",
+      "payloadSchemaId": "OpportunityApplicationChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "opportunityId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "applicationId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "workerPublicId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "explanationId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-MARKET-TR-001",
+        "MOD-PER-MARKET-TR-002",
+        "MOD-PER-MARKET-TR-003",
+        "MOD-PER-MARKET-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.opportunity.apply",
+        "modern.opportunity.create",
+        "modern.opportunity.publish",
+        "modern.opportunity.shortlist"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "session": "HRIS-PER",
+      "eventName": "OpportunitySelectionRecorded.v1",
+      "eventType": "OpportunitySelectionRecorded",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.opportunity.selection.recorded.v1",
+      "payloadSchemaId": "OpportunitySelectionRecorded.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "opportunityId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "applicationId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "decision",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "humanDecisionReceiptId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "reasonCode",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-MARKET-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.opportunity.selection.record"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "session": "HRIS-PER",
+      "eventName": "SuccessionPlanChanged.v1",
+      "eventType": "SuccessionPlanChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.succession.plan.changed.v1",
+      "payloadSchemaId": "SuccessionPlanChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "planId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "keyPositionId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "nominationCount",
+          "type": "INTEGER",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-SUCCESSION-TR-001",
+        "MOD-PER-SUCCESSION-TR-002",
+        "MOD-PER-SUCCESSION-TR-003",
+        "MOD-PER-SUCCESSION-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.succession.nomination.add",
+        "modern.succession.plan.approve",
+        "modern.succession.plan.create",
+        "modern.succession.plan.submit"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "session": "HRIS-PER",
+      "eventName": "SuccessionPlanPublished.v1",
+      "eventType": "SuccessionPlanPublished",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.succession.plan.published.v1",
+      "payloadSchemaId": "SuccessionPlanPublished.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "planId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "planVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "approvalReceiptId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "publishedAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "audiencePolicyRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "payloadDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-SUCCESSION-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.succession.plan.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "session": "HRIS-PER",
+      "eventName": "CompensationPlanChanged.v1",
+      "eventType": "CompensationPlanChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.compensation-plan.changed.v1",
+      "payloadSchemaId": "CompensationPlanChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "cycleId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "planId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "budgetCurrency",
+          "type": "CHAR(3)",
+          "required": true,
+          "validation": "ISO-4217 uppercase currency code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "budgetTotal",
+          "type": "NUMERIC(19,4)",
+          "required": true,
+          "validation": "finite decimal; scale <= 4; currency precision policy",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "allocatedTotal",
+          "type": "NUMERIC(19,4)",
+          "required": true,
+          "validation": "finite decimal; scale <= 4; currency precision policy",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-COMPPLAN-TR-001",
+        "MOD-PER-COMPPLAN-TR-002",
+        "MOD-PER-COMPPLAN-TR-003"
+      ],
+      "emittedByOperationIds": [
+        "modern.compplan.budget.allocate",
+        "modern.compplan.cycle.create",
+        "modern.compplan.proposal.submit"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "session": "HRIS-PER",
+      "eventName": "CompensationPlanApproved.v1",
+      "eventType": "CompensationPlanApproved",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.compensation-plan.approved.v1",
+      "payloadSchemaId": "CompensationPlanApproved.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "planId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "cycleId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "approvalRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "effectiveDate",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "snapshotId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "payloadDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-PER-COMPPLAN-TR-004",
+        "MOD-PER-COMPPLAN-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.compplan.plan.approve",
+        "modern.compplan.snapshot.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "session": "HRIS-SYS",
+      "eventName": "ListeningProgramChanged.v1",
+      "eventType": "ListeningProgramChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.listening.program.changed.v1",
+      "payloadSchemaId": "ListeningProgramChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "surveyId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "audienceSnapshotId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "anonymityThreshold",
+          "type": "INTEGER",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-SYS-LISTEN-TR-001",
+        "MOD-SYS-LISTEN-TR-003",
+        "MOD-SYS-LISTEN-TR-004",
+        "MOD-SYS-LISTEN-TR-005",
+        "MOD-SYS-LISTEN-TR-006"
+      ],
+      "emittedByOperationIds": [
+        "modern.listening.action.complete",
+        "modern.listening.action.create",
+        "modern.listening.response.submit",
+        "modern.listening.survey.close",
+        "modern.listening.survey.create"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "session": "HRIS-SYS",
+      "eventName": "ListeningSurveyPublished.v1",
+      "eventType": "ListeningSurveyPublished",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.listening.survey.published.v1",
+      "payloadSchemaId": "ListeningSurveyPublished.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "surveyId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "surveyVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "opensAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "closesAt",
+          "type": "TIMESTAMPTZ",
+          "required": true,
+          "validation": "RFC3339 UTC instant",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "audienceDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "consentPolicyVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-SYS-LISTEN-TR-002"
+      ],
+      "emittedByOperationIds": [
+        "modern.listening.survey.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "session": "HRIS-SYS",
+      "eventName": "MetricProjectionChanged.v1",
+      "eventType": "MetricProjectionChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.analytics.metric-projection.changed.v1",
+      "payloadSchemaId": "MetricProjectionChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "metricId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "metricVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "projectionRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "asOf",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "cohortCount",
+          "type": "INTEGER",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "lineageDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-SYS-ANALYTICS-TR-001",
+        "MOD-SYS-ANALYTICS-TR-002",
+        "MOD-SYS-ANALYTICS-TR-004",
+        "MOD-SYS-ANALYTICS-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.analytics.export.create",
+        "modern.analytics.metric.create",
+        "modern.analytics.metric.retire",
+        "modern.analytics.metric.validate"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "session": "HRIS-SYS",
+      "eventName": "MetricDefinitionPublished.v1",
+      "eventType": "MetricDefinitionPublished",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.analytics.metric-definition.published.v1",
+      "payloadSchemaId": "MetricDefinitionPublished.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "metricId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "metricKey",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "metricVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "effectiveFrom",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "definitionDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "lineageDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-SYS-ANALYTICS-TR-003"
+      ],
+      "emittedByOperationIds": [
+        "modern.analytics.metric.publish"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "session": "HRIS-SYS",
+      "eventName": "AiPolicyChanged.v1",
+      "eventType": "AiPolicyChanged",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.ai.policy.changed.v1",
+      "payloadSchemaId": "AiPolicyChanged.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "policyId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "useCaseKey",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "fromState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "toState",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "evaluationRevision",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "policyDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-SYS-AI-TR-001",
+        "MOD-SYS-AI-TR-002",
+        "MOD-SYS-AI-TR-003",
+        "MOD-SYS-AI-TR-005",
+        "MOD-SYS-AI-TR-006"
+      ],
+      "emittedByOperationIds": [
+        "modern.ai.kill.switch",
+        "modern.ai.policy.create",
+        "modern.ai.policy.evaluate",
+        "modern.ai.policy.publish",
+        "modern.ai.policy.retire"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "session": "HRIS-SYS",
+      "eventName": "AiAssistanceProduced.v1",
+      "eventType": "AiAssistanceProduced",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.ai.assistance.produced.v1",
+      "payloadSchemaId": "AiAssistanceProduced.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "assistanceReceiptId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "useCaseKey",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "policyVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "modelRouteKey",
+          "type": "STRING",
+          "required": true,
+          "validation": "1..256 UTF-8 characters or published enum/code",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "inputDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "outputDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "humanConfirmationRequired",
+          "type": "BOOLEAN",
+          "required": true,
+          "validation": "true or false",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-SYS-AI-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.ai.assist.create"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "session": "HRIS-TIM",
+      "eventName": "WorkforceScheduleCandidateGenerated.v1",
+      "eventType": "WorkforceScheduleCandidateGenerated",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.wfm.schedule-candidate.generated.v1",
+      "payloadSchemaId": "WorkforceScheduleCandidateGenerated.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "forecastId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "candidateId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "inputSnapshotId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "constraintPolicyVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "coverageScore",
+          "type": "NUMERIC(9,6)",
+          "required": true,
+          "validation": "0..1 inclusive; scale <= 6",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "fairnessEvaluationId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "candidateDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-TIM-WFM-TR-001",
+        "MOD-TIM-WFM-TR-002",
+        "MOD-TIM-WFM-TR-003",
+        "MOD-TIM-WFM-TR-004"
+      ],
+      "emittedByOperationIds": [
+        "modern.wfm.forecast.create",
+        "modern.wfm.schedule.optimize",
+        "modern.wfm.schedule.submit",
+        "modern.wfm.schedule.validate"
+      ]
+    },
+    {
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "session": "HRIS-TIM",
+      "eventName": "WorkforceSchedulePublished.v1",
+      "eventType": "WorkforceSchedulePublished",
+      "schemaVersion": 1,
+      "topic": "dwp.hris.wfm.schedule.published.v1",
+      "payloadSchemaId": "WorkforceSchedulePublished.v1.Payload.v1",
+      "additionalProperties": false,
+      "fields": [
+        {
+          "name": "candidateId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "publishLedgerId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "schedulePeriodStart",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "schedulePeriodEnd",
+          "type": "DATE",
+          "required": true,
+          "validation": "ISO-8601 calendar date",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        },
+        {
+          "name": "timeGroupIds",
+          "type": "ARRAY<UUID>",
+          "required": true,
+          "validation": "0..10000 canonical UUIDs; duplicates rejected",
+          "sensitivity": "INTERNAL",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "approvalReceiptId",
+          "type": "UUID",
+          "required": true,
+          "validation": "canonical UUID; tenant-authorized opaque reference",
+          "sensitivity": "RESTRICTED",
+          "tokenization": "OPAQUE_PUBLIC_ID"
+        },
+        {
+          "name": "payloadDigest",
+          "type": "SHA256",
+          "required": true,
+          "validation": "64 lowercase hexadecimal characters",
+          "sensitivity": "INTERNAL",
+          "tokenization": "HASH_ONLY"
+        },
+        {
+          "name": "aggregateVersion",
+          "type": "BIGINT",
+          "required": true,
+          "validation": ">= 0",
+          "sensitivity": "INTERNAL",
+          "tokenization": "NONE"
+        }
+      ],
+      "emittedOnTransitionIds": [
+        "MOD-TIM-WFM-TR-005"
+      ],
+      "emittedByOperationIds": [
+        "modern.wfm.schedule.publish"
+      ]
+    }
+  ]
+}

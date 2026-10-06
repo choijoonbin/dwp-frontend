@@ -1,0 +1,55 @@
+{
+  "schema": "dwp.hris.g3.control-sync-command-catalog.v1",
+  "commands": [
+    {
+      "sessionId": "HRIS-HRM",
+      "repository": "DWP_BACKEND",
+      "argv": ["./gradlew", ":dwp-people-server:compileJava", ":dwp-people-server:compileTestJava", "--no-daemon"]
+    },
+    {
+      "sessionId": "HRIS-HRM",
+      "repository": "DWP_FRONTEND",
+      "argv": ["yarn", "nx", "typecheck", "dwp"]
+    },
+    {
+      "sessionId": "HRIS-PER",
+      "repository": "DWP_BACKEND",
+      "argv": ["./gradlew", ":dwp-people-server:compileJava", ":dwp-people-server:compileTestJava", "--no-daemon"]
+    },
+    {
+      "sessionId": "HRIS-PER",
+      "repository": "DWP_FRONTEND",
+      "argv": ["yarn", "nx", "typecheck", "dwp"]
+    },
+    {
+      "sessionId": "HRIS-PAY",
+      "repository": "DWP_BACKEND",
+      "argv": ["./gradlew", ":dwp-payroll-server:compileJava", ":dwp-payroll-server:compileTestJava", "--no-daemon"]
+    },
+    {
+      "sessionId": "HRIS-PAY",
+      "repository": "DWP_FRONTEND",
+      "argv": ["yarn", "nx", "typecheck", "dwp"]
+    },
+    {
+      "sessionId": "HRIS-TIM",
+      "repository": "DWP_BACKEND",
+      "argv": ["./gradlew", ":dwp-time-server:compileJava", ":dwp-time-server:compileTestJava", "--no-daemon"]
+    },
+    {
+      "sessionId": "HRIS-TIM",
+      "repository": "DWP_FRONTEND",
+      "argv": ["yarn", "nx", "typecheck", "dwp"]
+    },
+    {
+      "sessionId": "HRIS-SYS",
+      "repository": "DWP_BACKEND",
+      "argv": ["./gradlew", ":dwp-platform-server:compileJava", ":dwp-platform-server:compileTestJava", ":dwp-auth-server:compileJava", ":dwp-auth-server:compileTestJava", "--no-daemon"]
+    },
+    {
+      "sessionId": "HRIS-SYS",
+      "repository": "DWP_FRONTEND",
+      "argv": ["yarn", "nx", "typecheck", "dwp"]
+    }
+  ]
+}

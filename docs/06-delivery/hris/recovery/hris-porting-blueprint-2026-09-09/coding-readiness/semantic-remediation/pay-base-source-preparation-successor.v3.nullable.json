@@ -1,0 +1,2255 @@
+{
+  "status": "EXACT_PHYSICAL_NULLABILITY_SIDECAR_BUSINESS_SEMANTICS_OPEN",
+  "declarations": [
+    {
+      "table": "public.pay_worker_projections",
+      "column": "projection_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "projection_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "worker_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "worker_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "assignment_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "assignment_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "legal_entity_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "legal_entity_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "compensation_basis_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "compensation_basis_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "bank_token_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "bank_token_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "bank_token_version",
+      "sqlType": "BIGINT",
+      "nullable": true,
+      "savedDdlLine": "bank_token_version BIGINT,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "bank_verification_status",
+      "sqlType": "VARCHAR(20)",
+      "nullable": true,
+      "savedDdlLine": "bank_verification_status VARCHAR(20),",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "effective_from",
+      "sqlType": "DATE",
+      "nullable": false,
+      "savedDdlLine": "effective_from DATE NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "effective_to",
+      "sqlType": "DATE",
+      "nullable": true,
+      "savedDdlLine": "effective_to DATE,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "source_revision",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "source_revision BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "field_set_version",
+      "sqlType": "VARCHAR(30)",
+      "nullable": false,
+      "savedDdlLine": "field_set_version VARCHAR(30) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "payload_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "payload_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "received_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "received_at TIMESTAMPTZ NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_projections",
+      "column": "version",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "version BIGINT NOT NULL DEFAULT 0,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "time_handoff_snapshot_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "time_handoff_snapshot_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "public_id UUID NOT NULL DEFAULT gen_random_uuid(),",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "handoff_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "handoff_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "closed_time_result_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "closed_time_result_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "close_period_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "close_period_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "close_revision",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "close_revision BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "payroll_entity_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "payroll_entity_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "pay_period_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "pay_period_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "schema_version",
+      "sqlType": "VARCHAR(30)",
+      "nullable": false,
+      "savedDdlLine": "schema_version VARCHAR(30) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "ledger_revision_from",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "ledger_revision_from BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "ledger_revision_to",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "ledger_revision_to BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "source_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "source_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "rule_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "rule_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "payload_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "payload_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "worker_count",
+      "sqlType": "INTEGER",
+      "nullable": false,
+      "savedDdlLine": "worker_count INTEGER NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "line_count",
+      "sqlType": "INTEGER",
+      "nullable": false,
+      "savedDdlLine": "line_count INTEGER NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "supersedes_snapshot_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "supersedes_snapshot_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_snapshots",
+      "column": "received_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "received_at TIMESTAMPTZ NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "time_handoff_line_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "time_handoff_line_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "public_id UUID NOT NULL DEFAULT gen_random_uuid(),",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "time_handoff_snapshot_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "time_handoff_snapshot_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "line_no",
+      "sqlType": "INTEGER",
+      "nullable": false,
+      "savedDdlLine": "line_no INTEGER NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "worker_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "worker_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "assignment_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "assignment_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "pay_code",
+      "sqlType": "VARCHAR(80)",
+      "nullable": false,
+      "savedDdlLine": "pay_code VARCHAR(80) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "unit",
+      "sqlType": "VARCHAR(12)",
+      "nullable": false,
+      "savedDdlLine": "unit VARCHAR(12) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "quantity",
+      "sqlType": "NUMERIC(19,6)",
+      "nullable": false,
+      "savedDdlLine": "quantity NUMERIC(19,6) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "currency_code",
+      "sqlType": "CHAR(3)",
+      "nullable": false,
+      "savedDdlLine": "currency_code CHAR(3) NOT NULL DEFAULT 'XXX',",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "source_entry_count",
+      "sqlType": "INTEGER",
+      "nullable": false,
+      "savedDdlLine": "source_entry_count INTEGER NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_lines",
+      "column": "source_entry_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "source_entry_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "time_handoff_ingest_receipt_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "time_handoff_ingest_receipt_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "public_id UUID NOT NULL DEFAULT gen_random_uuid(),",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "time_handoff_snapshot_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "time_handoff_snapshot_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "source_event_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "source_event_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "idempotency_key",
+      "sqlType": "VARCHAR(160)",
+      "nullable": false,
+      "savedDdlLine": "idempotency_key VARCHAR(160) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "request_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "request_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "response_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": true,
+      "savedDdlLine": "response_digest CHAR(64),",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "status",
+      "sqlType": "VARCHAR(20)",
+      "nullable": false,
+      "savedDdlLine": "status VARCHAR(20) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "reason_code",
+      "sqlType": "VARCHAR(80)",
+      "nullable": true,
+      "savedDdlLine": "reason_code VARCHAR(80),",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "row_version",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "row_version BIGINT NOT NULL DEFAULT 0,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "received_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "received_at TIMESTAMPTZ NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_time_handoff_ingest_receipts",
+      "column": "completed_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": true,
+      "savedDdlLine": "completed_at TIMESTAMPTZ,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "worker_tax_profile_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "worker_tax_profile_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "public_id UUID NOT NULL DEFAULT gen_random_uuid(),",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "worker_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "worker_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "jurisdiction_code",
+      "sqlType": "VARCHAR(20)",
+      "nullable": false,
+      "savedDdlLine": "jurisdiction_code VARCHAR(20) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "country_pack_version_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "country_pack_version_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "encrypted_profile_ref",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "encrypted_profile_ref UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "profile_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "profile_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "valid_from",
+      "sqlType": "DATE",
+      "nullable": false,
+      "savedDdlLine": "valid_from DATE NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "valid_to",
+      "sqlType": "DATE",
+      "nullable": true,
+      "savedDdlLine": "valid_to DATE,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "status",
+      "sqlType": "VARCHAR(20)",
+      "nullable": false,
+      "savedDdlLine": "status VARCHAR(20) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "row_version",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "row_version BIGINT NOT NULL DEFAULT 0,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "created_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_worker_tax_profiles",
+      "column": "created_by",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "created_by UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "payment_file_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "payment_file_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "public_id UUID NOT NULL DEFAULT gen_random_uuid(),",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "payment_batch_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "payment_batch_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "object_ref",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "object_ref UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "object_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "object_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "format_key",
+      "sqlType": "VARCHAR(100)",
+      "nullable": false,
+      "savedDdlLine": "format_key VARCHAR(100) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "format_version",
+      "sqlType": "VARCHAR(30)",
+      "nullable": false,
+      "savedDdlLine": "format_version VARCHAR(30) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "classification",
+      "sqlType": "VARCHAR(30)",
+      "nullable": false,
+      "savedDdlLine": "classification VARCHAR(30) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "created_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "created_by",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "created_by UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_payment_files",
+      "column": "revoked_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": true,
+      "savedDdlLine": "revoked_at TIMESTAMPTZ,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "statutory_case_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "statutory_case_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "public_id UUID NOT NULL DEFAULT gen_random_uuid(),",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "worker_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "worker_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "legal_payroll_entity_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "legal_payroll_entity_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "pay_period_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "pay_period_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "case_type",
+      "sqlType": "VARCHAR(40)",
+      "nullable": false,
+      "savedDdlLine": "case_type VARCHAR(40) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "jurisdiction_code",
+      "sqlType": "VARCHAR(20)",
+      "nullable": false,
+      "savedDdlLine": "jurisdiction_code VARCHAR(20) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "country_pack_version_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "country_pack_version_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "status",
+      "sqlType": "VARCHAR(24)",
+      "nullable": false,
+      "savedDdlLine": "status VARCHAR(24) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "input_snapshot_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "input_snapshot_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "result_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": true,
+      "savedDdlLine": "result_digest CHAR(64),",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "filing_receipt_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "filing_receipt_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "row_version",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "row_version BIGINT NOT NULL DEFAULT 0,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "created_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_statutory_cases",
+      "column": "created_by",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "created_by UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "command_receipt_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "command_receipt_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "public_id UUID NOT NULL DEFAULT gen_random_uuid(),",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "command_type",
+      "sqlType": "VARCHAR(100)",
+      "nullable": false,
+      "savedDdlLine": "command_type VARCHAR(100) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "originating_action",
+      "sqlType": "VARCHAR(120)",
+      "nullable": false,
+      "savedDdlLine": "originating_action VARCHAR(120) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "subject_principal_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "subject_principal_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "population_scope_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "population_scope_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "field_policy_revision",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "field_policy_revision BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "purpose_code",
+      "sqlType": "VARCHAR(120)",
+      "nullable": false,
+      "savedDdlLine": "purpose_code VARCHAR(120) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "authorization_revision",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "authorization_revision BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "idempotency_key",
+      "sqlType": "VARCHAR(160)",
+      "nullable": false,
+      "savedDdlLine": "idempotency_key VARCHAR(160) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "request_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "request_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "aggregate_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "aggregate_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "aggregate_revision",
+      "sqlType": "BIGINT",
+      "nullable": true,
+      "savedDdlLine": "aggregate_revision BIGINT,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "status",
+      "sqlType": "VARCHAR(24)",
+      "nullable": false,
+      "savedDdlLine": "status VARCHAR(24) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "result_ref",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "result_ref UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "error_code",
+      "sqlType": "VARCHAR(80)",
+      "nullable": true,
+      "savedDdlLine": "error_code VARCHAR(80),",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "correlation_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "correlation_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "created_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_command_receipts",
+      "column": "completed_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": true,
+      "savedDdlLine": "completed_at TIMESTAMPTZ,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "inbox_receipt_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "inbox_receipt_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "event_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "event_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "schema_name",
+      "sqlType": "VARCHAR(120)",
+      "nullable": false,
+      "savedDdlLine": "schema_name VARCHAR(120) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "schema_version",
+      "sqlType": "INTEGER",
+      "nullable": false,
+      "savedDdlLine": "schema_version INTEGER NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "subject_public_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "subject_public_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "subject_revision",
+      "sqlType": "BIGINT",
+      "nullable": true,
+      "savedDdlLine": "subject_revision BIGINT,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "payload_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "payload_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "status",
+      "sqlType": "VARCHAR(20)",
+      "nullable": false,
+      "savedDdlLine": "status VARCHAR(20) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "received_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "received_at TIMESTAMPTZ NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "processed_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": true,
+      "savedDdlLine": "processed_at TIMESTAMPTZ,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_inbox_receipts",
+      "column": "error_code",
+      "sqlType": "VARCHAR(80)",
+      "nullable": true,
+      "savedDdlLine": "error_code VARCHAR(80),",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "outbox_event_id",
+      "sqlType": "BIGSERIAL",
+      "nullable": false,
+      "savedDdlLine": "outbox_event_id BIGSERIAL PRIMARY KEY,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "tenant_id",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "tenant_id BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "event_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "event_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "aggregate_type",
+      "sqlType": "VARCHAR(80)",
+      "nullable": false,
+      "savedDdlLine": "aggregate_type VARCHAR(80) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "aggregate_public_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "aggregate_public_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "aggregate_revision",
+      "sqlType": "BIGINT",
+      "nullable": false,
+      "savedDdlLine": "aggregate_revision BIGINT NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "schema_name",
+      "sqlType": "VARCHAR(120)",
+      "nullable": false,
+      "savedDdlLine": "schema_name VARCHAR(120) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "schema_version",
+      "sqlType": "INTEGER",
+      "nullable": false,
+      "savedDdlLine": "schema_version INTEGER NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "payload",
+      "sqlType": "JSONB",
+      "nullable": false,
+      "savedDdlLine": "payload JSONB NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "payload_digest",
+      "sqlType": "CHAR(64)",
+      "nullable": false,
+      "savedDdlLine": "payload_digest CHAR(64) NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "correlation_id",
+      "sqlType": "UUID",
+      "nullable": false,
+      "savedDdlLine": "correlation_id UUID NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "causation_id",
+      "sqlType": "UUID",
+      "nullable": true,
+      "savedDdlLine": "causation_id UUID,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "occurred_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": false,
+      "savedDdlLine": "occurred_at TIMESTAMPTZ NOT NULL,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "published_at",
+      "sqlType": "TIMESTAMPTZ",
+      "nullable": true,
+      "savedDdlLine": "published_at TIMESTAMPTZ,",
+      "nativeNotNull": false,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    },
+    {
+      "table": "public.pay_outbox_events",
+      "column": "publish_attempts",
+      "sqlType": "INTEGER",
+      "nullable": false,
+      "savedDdlLine": "publish_attempts INTEGER NOT NULL DEFAULT 0,",
+      "nativeNotNull": true,
+      "provenance": {
+        "savedDdlSha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+        "nativeReportSha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+        "nativeReproducedByThisAuthor": false
+      },
+      "semanticMeaningApproved": false,
+      "use": "exact physical nullability declaration only; nullable business semantics/effectivity separately audited; no historical metadata rewrite"
+    }
+  ]
+}

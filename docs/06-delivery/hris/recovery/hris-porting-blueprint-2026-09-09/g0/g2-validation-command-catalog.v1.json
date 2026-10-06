@@ -1,0 +1,147 @@
+{
+  "schema": "dwp.hris.g2.validation-command-catalog.v1",
+  "repository": "BLUEPRINT",
+  "workingDirectory": ".",
+  "receiptContract": {
+    "schema": "dwp.hris.g2.validation-command-receipt.v1",
+    "requiredFields": [
+      "schema",
+      "profileId",
+      "ownerSessionId",
+      "repository",
+      "workingDirectory",
+      "catalogSha256",
+      "commands",
+      "overallStatus"
+    ],
+    "commandRequiredFields": [
+      "commandKey",
+      "argvSha256",
+      "exitCode",
+      "outputSha256",
+      "expectedPassMarker",
+      "markerMatched",
+      "status"
+    ],
+    "passStatus": "PASS"
+  },
+  "profiles": [
+    {
+      "profileId": "G2-HRM-BASE",
+      "ownerSessionId": "HRIS-HRM",
+      "sourceKind": "BASE_TARGET_FAMILY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "hrm-readiness", "argv": ["python3", "session-evidence/hrm/g2-readiness/validate_hrm_readiness.py"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "HRM_READINESS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-PER-BASE",
+      "ownerSessionId": "HRIS-PER",
+      "sourceKind": "BASE_TARGET_FAMILY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "per-readiness", "argv": ["python3", "session-evidence/per/g2-readiness/validate_per_readiness.py"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "PER_READINESS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-PAY-BASE",
+      "ownerSessionId": "HRIS-PAY",
+      "sourceKind": "BASE_TARGET_FAMILY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "pay-readiness", "argv": ["python3", "session-evidence/pay/validate_readiness.py"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "HRIS-PAY_READINESS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-TIM-BASE",
+      "ownerSessionId": "HRIS-TIM",
+      "sourceKind": "BASE_TARGET_FAMILY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "tim-readiness", "argv": ["python3", "session-evidence/tim/validate_readiness.py"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "HRIS-TIM_READINESS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-SYS-BASE",
+      "ownerSessionId": "HRIS-SYS",
+      "sourceKind": "BASE_TARGET_FAMILY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "sys-exact-readiness", "argv": ["python3", "session-evidence/sys/validate_sys_readiness.v2.py"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "\"status\": \"PASS\""}},
+        {"commandKey": "sys-service-local-migrations", "argv": ["python3", "session-evidence/sys/validate_sys_service_local_migrations.py", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "\"status\":\"PASS\""}}
+      ]
+    },
+    {
+      "profileId": "G2-HRM-MODERN",
+      "ownerSessionId": "HRIS-HRM",
+      "sourceKind": "MODERN_CAPABILITY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "modern-static-normal", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_CAPABILITY_CONTRACTS=PASS"}},
+        {"commandKey": "modern-static-self-test", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--self-test", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_SCHEMA_NEGATIVE_SELF_TESTS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-PER-MODERN",
+      "ownerSessionId": "HRIS-PER",
+      "sourceKind": "MODERN_CAPABILITY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "modern-static-normal", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_CAPABILITY_CONTRACTS=PASS"}},
+        {"commandKey": "modern-static-self-test", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--self-test", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_SCHEMA_NEGATIVE_SELF_TESTS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-PAY-MODERN",
+      "ownerSessionId": "HRIS-PAY",
+      "sourceKind": "MODERN_CAPABILITY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "modern-static-normal", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_CAPABILITY_CONTRACTS=PASS"}},
+        {"commandKey": "modern-static-self-test", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--self-test", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_SCHEMA_NEGATIVE_SELF_TESTS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-TIM-MODERN",
+      "ownerSessionId": "HRIS-TIM",
+      "sourceKind": "MODERN_CAPABILITY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "modern-static-normal", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_CAPABILITY_CONTRACTS=PASS"}},
+        {"commandKey": "modern-static-self-test", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--self-test", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_SCHEMA_NEGATIVE_SELF_TESTS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-SYS-MODERN",
+      "ownerSessionId": "HRIS-SYS",
+      "sourceKind": "MODERN_CAPABILITY",
+      "executor": "MODULE",
+      "semaphorePolicy": "NONE_STATIC_BLUEPRINT_ONLY",
+      "commands": [
+        {"commandKey": "modern-static-normal", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_CAPABILITY_CONTRACTS=PASS"}},
+        {"commandKey": "modern-static-self-test", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--self-test", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_SCHEMA_NEGATIVE_SELF_TESTS=PASS"}}
+      ]
+    },
+    {
+      "profileId": "G2-CONTROL-MODERN-PG16-18",
+      "ownerSessionId": "CONTROL",
+      "sourceKind": "MODERN_CAPABILITY_CONTROL_FEASIBILITY",
+      "executor": "INTEGRATION_CONTROL",
+      "semaphorePolicy": "REQUIRED_EXCLUSIVE_HRIS_VERIFICATION",
+      "commands": [
+        {"commandKey": "modern-schema-postgres-16", "argv": ["python3", "coding-readiness/validate_modern_capability_contracts.py", "--postgres-feasibility", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_POSTGRES_FEASIBILITY=PASS"}},
+        {"commandKey": "modern-causal-postgres-16-18", "argv": ["python3", "coding-readiness/validate_modern_causal_state_contracts.py", "--postgres-feasibility", "--compact"], "expectedReceipt": {"schema": "dwp.hris.g2.validation-command-receipt.v1", "status": "PASS", "passMarker": "MODERN_CAUSAL_POSTGRES_DML=PASS postgres=16,18"}}
+      ]
+    }
+  ]
+}

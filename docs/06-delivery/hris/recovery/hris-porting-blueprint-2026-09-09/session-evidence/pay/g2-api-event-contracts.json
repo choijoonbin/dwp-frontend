@@ -1,0 +1,150 @@
+{
+  "contractId": "dwp.hris.payroll.v1",
+  "status": "CODE_READY_PROPOSAL",
+  "owner": "dwp-payroll-server",
+  "routing": {"gatewayBasePath":"/api/payroll/v1","controllerBasePath":"/v1","internalBasePath":"/internal/hris-payroll/v1","gatewayRule":"service-key route /api/payroll/** with StripPrefix=2; internal paths are never gateway exposed"},
+  "baseline": {
+    "backend": "5670877de7a39e94e75021c7e23cbbb553296c90",
+    "frontend": "7635ce4223000ed83cb4965f8374d8a8433f1a62"
+  },
+  "principles": {
+    "tenantSource": "trusted-auth-context-only",
+    "externalIdentifiers": "uuid-public-id",
+    "crossContextDatabaseAccess": false,
+    "commandsRequireIdempotencyKey": true,
+    "aggregateMutationRequiresExpectedVersion": true,
+    "finalMonetaryFactsAreAppendOnly": true,
+    "formulaExecution": "typed-bounded-dsl-only",
+    "decimalContractRef": "coding-readiness/decimal-value-types.v1.json",
+    "decimalPersistence": "application validates precision/scale and rounds explicitly before SQL bind; binary floating point, exponent notation and database implicit rounding are forbidden",
+    "errors": ["400", "401", "403", "404_OPAQUE", "409_STALE_OR_STATE", "422_DOMAIN_RULE", "429", "503_RESULT_UNKNOWN"]
+  },
+  "commandHeaders": {
+    "required": ["Authorization", "Idempotency-Key", "X-Correlation-Id", "X-Purpose-Code"],
+    "conditional": ["If-Match", "X-Step-Up-Session"],
+    "forbidden": ["X-Tenant-Override", "X-Actor-Override", "X-Formula-Class", "X-Job-Method"]
+  },
+  "receipt": {
+    "schema": "PayrollCommandReceipt.v1",
+    "required": ["receiptId", "commandType", "originatingAction", "subjectPrincipalPublicId", "populationScopeDigest", "fieldPolicyRevision", "purposeCode", "authorizationRevision", "status", "correlationId", "requestDigest", "createdAt"],
+    "statuses": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"],
+    "lookup": "GET /v1/command-receipts/{receiptId}",
+    "authorization": "The receipt seals the originating command action, subject, population scope digest, field policy revision, purpose and authorization revision. Lookup re-evaluates current entitlement against that exact sealed context; the more restrictive of current and originating policy wins and lookup can never broaden access.",
+    "idempotencyScope": ["trustedTenantContext", "subjectPrincipalPublicId", "originatingAction", "Idempotency-Key"],
+    "idempotencyRule": "same scope and canonical requestDigest returns the original receipt; a different digest returns 409; another subject is an independent scope",
+    "sealedFieldsImmutable": true,
+    "opaqueNotFoundOnRevocationOrContextMismatch": true
+  },
+  "operations": [
+    {"id":"payroll.widget.summary","method":"GET","path":"/v1/widgets/summary","action":"PAY_WIDGET_VIEW","scope":"SELF|PAY_GROUP|LEGAL_PAYROLL_ENTITY","mode":"query","fieldPolicy":"PAY_WIDGET","response":"PayrollWidgetSummary.v1","notes":"freshness and partialFailures required"},
+    {"id":"command.receipt.query","method":"GET","path":"/v1/command-receipts/{receiptId}","action":"PAY_COMMAND_RECEIPT_READ","scope":"SEALED_ORIGINATING_COMMAND_CONTEXT","mode":"query","fieldPolicy":"SEALED_ORIGINATING_FIELD_POLICY","response":"PayrollCommandReceipt.v1","notes":"tenant is trusted-context only; receipt lookup re-evaluates current app entitlement, originating action, subject, population scope, field policy and purpose; the more restrictive decision wins; opaque 404 on cross-tenant or out-of-scope receipt"},
+    {"id":"foundation.query","method":"GET","path":"/v1/foundation","action":"PAY_CONFIG_VIEW","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP","mode":"query","response":"PayrollFoundation.v1"},
+    {"id":"foundation.version.create","method":"POST","path":"/v1/foundation/versions","action":"PAY_CONFIGURE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP","mode":"command","idempotent":true,"response":"PayrollCommandReceipt.v1","initialState":"DRAFT"},
+    {"id":"element.version.create","method":"POST","path":"/v1/elements/versions","action":"PAY_ELEMENT_CONFIGURE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP","mode":"command","idempotent":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"formula.version.create","method":"POST","path":"/v1/formulas/versions","action":"PAY_FORMULA_CONFIGURE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP","mode":"command","idempotent":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"formula.validate","method":"POST","path":"/v1/formulas/{formulaId}/validations","action":"PAY_FORMULA_VALIDATE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"formula.simulate","method":"POST","path":"/v1/formulas/{formulaId}/simulations","action":"PAY_FORMULA_SIMULATE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"formula.publish","method":"POST","path":"/v1/formulas/{formulaId}/publish","action":"PAY_FORMULA_PUBLISH","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP","mode":"command","idempotent":true,"expectedVersion":true,"sod":"FORMULA_AUTHOR_NE_PUBLISH_APPROVER","response":"PayrollCommandReceipt.v1","transition":"APPROVED->PUBLISHED"},
+    {"id":"worker.entry.create","method":"POST","path":"/v1/worker-entries","action":"PAY_INPUT_WRITE","scope":"PAY_GROUP|NAMED_POPULATION","mode":"command","idempotent":true,"fieldPolicy":"PAY_INPUT","response":"PayrollCommandReceipt.v1"},
+    {"id":"worker.entry.correct","method":"POST","path":"/v1/worker-entries/{entryId}/corrections","action":"PAY_INPUT_CORRECT","scope":"PAY_GROUP|NAMED_POPULATION","mode":"command","idempotent":true,"expectedVersion":true,"fieldPolicy":"PAY_INPUT","response":"PayrollCommandReceipt.v1"},
+    {"id":"run.prepare","method":"POST","path":"/v1/runs","action":"PAY_RUN_PREPARE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"response":"PayrollCommandReceipt.v1","transition":"NONE->PREPARING->READY"},
+    {"id":"run.calculate","method":"POST","path":"/v1/runs/{runId}/attempts","action":"PAY_RUN_CALCULATE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"response":"PayrollCommandReceipt.v1","transition":"READY->CALCULATING->VALIDATED|FAILED|RESULT_UNKNOWN"},
+    {"id":"run.query","method":"GET","path":"/v1/runs/{runId}","action":"PAY_RUN_VIEW","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"query","fieldPolicy":"PAY_RUN_SUMMARY","response":"PayrollRun.v1"},
+    {"id":"run.results","method":"GET","path":"/v1/runs/{runId}/results","action":"PAY_RESULT_VIEW","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD|NAMED_POPULATION","mode":"query","fieldPolicy":"PAY_RESULT","response":"PayrollResultPage.v1"},
+    {"id":"run.worker.trace","method":"GET","path":"/v1/runs/{runId}/workers/{workerId}/trace","action":"PAY_TRACE_VIEW","scope":"PAY_GROUP|PAY_PERIOD|NAMED_POPULATION","mode":"query","fieldPolicy":"PAY_CALCULATION_TRACE","stepUp":"conditional","response":"PayrollCalculationTrace.v1"},
+    {"id":"run.validate","method":"POST","path":"/v1/runs/{runId}/validations","action":"PAY_RUN_VALIDATE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"run.approve","method":"POST","path":"/v1/runs/{runId}/approvals","action":"PAY_RUN_APPROVE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"sod":"RUN_MAKER_NE_APPROVER","stepUp":"required","response":"PayrollCommandReceipt.v1","transition":"VALIDATED->APPROVED"},
+    {"id":"run.finalize","method":"POST","path":"/v1/runs/{runId}/finalize","action":"PAY_RUN_FINALIZE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"sod":"RUN_MAKER_NE_FINALIZER","stepUp":"required","response":"PayrollCommandReceipt.v1","transition":"APPROVED->FINALIZED"},
+    {"id":"retro.create","method":"POST","path":"/v1/retro-events","action":"PAY_RETRO_ASSESS","scope":"PAY_GROUP|PAY_PERIOD|NAMED_POPULATION","mode":"command","idempotent":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"correction.create","method":"POST","path":"/v1/runs/{runId}/corrections","action":"PAY_CORRECTION_POST","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"sod":"CORRECTION_MAKER_NE_APPROVER","response":"PayrollCommandReceipt.v1","transition":"FINALIZED->CORRECTION_RUN_WITH_REVERSAL"},
+    {"id":"payment.create","method":"POST","path":"/v1/runs/{runId}/payment-batches","action":"PAY_PAYMENT_PREPARE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"payment.release","method":"POST","path":"/v1/payment-batches/{batchId}/release","action":"PAY_PAYMENT_RELEASE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"sod":"BANK_ACCOUNT_CHANGER_NE_PAYMENT_RELEASER","stepUp":"required","response":"PayrollCommandReceipt.v1","transition":"APPROVED->RELEASED->ACKNOWLEDGED|REJECTED|RESULT_UNKNOWN"},
+    {"id":"payment.file.download","method":"POST","path":"/v1/payment-files/{fileId}/download-grants","action":"PAY_BANK_FILE_DOWNLOAD","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"stepUp":"required","fieldPolicy":"BANK_FILE","response":"PayrollCommandReceipt.v1"},
+    {"id":"gl.create","method":"POST","path":"/v1/runs/{runId}/gl-batches","action":"PAY_GL_PREPARE","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"response":"PayrollCommandReceipt.v1"},
+    {"id":"gl.post","method":"POST","path":"/v1/gl-batches/{batchId}/post","action":"PAY_GL_POST","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"expectedVersion":true,"sod":"RUN_MAKER_NE_GL_POSTER","stepUp":"required","response":"PayrollCommandReceipt.v1","transition":"APPROVED->SENT->POSTED|REJECTED|RESULT_UNKNOWN"},
+    {"id":"payslip.query","method":"GET","path":"/v1/payslips/{payslipId}","action":"PAYSLIP_VIEW","scope":"SELF|NAMED_POPULATION","mode":"query","fieldPolicy":"PAYSLIP","stepUp":"conditional","response":"PayslipMetadata.v1"},
+    {"id":"payslip.download","method":"POST","path":"/v1/payslips/{payslipId}/download-grants","action":"PAYSLIP_DOWNLOAD","scope":"SELF|NAMED_POPULATION","mode":"command","idempotent":true,"fieldPolicy":"PAYSLIP","stepUp":"required-for-operator","response":"PayrollCommandReceipt.v1"},
+    {"id":"country.pack.activate","method":"POST","path":"/v1/country-packs/{packId}/activate","action":"PAY_COUNTRY_PACK_ACTIVATE","scope":"TENANT|LEGAL_PAYROLL_ENTITY","mode":"command","idempotent":true,"expectedVersion":true,"sod":"PACK_INSTALLER_NE_STATUTORY_APPROVER","stepUp":"required","response":"PayrollCommandReceipt.v1","activationEvidence":["officialReferenceSet","effectiveDate","goldenPack","statutoryApproval"]},
+    {"id":"yearend.case.create","method":"POST","path":"/v1/year-end-cases","action":"YEA_CASE_CREATE","scope":"SELF|PAY_GROUP|NAMED_POPULATION","mode":"command","idempotent":true,"fieldPolicy":"YEA_CASE","response":"PayrollCommandReceipt.v1"},
+    {"id":"yearend.evidence.add","method":"POST","path":"/v1/year-end-cases/{caseId}/evidence","action":"YEA_EVIDENCE_WRITE","scope":"SELF|NAMED_POPULATION","mode":"command","idempotent":true,"expectedVersion":true,"fieldPolicy":"YEA_EVIDENCE","response":"PayrollCommandReceipt.v1"},
+    {"id":"yearend.provider.submit","method":"POST","path":"/v1/year-end-cases/{caseId}/provider-submissions","action":"YEA_PROVIDER_SUBMIT","scope":"PAY_GROUP|NAMED_POPULATION","mode":"command","idempotent":true,"expectedVersion":true,"sod":"YEA_COLLECTOR_NE_SUBMITTER","stepUp":"required","response":"PayrollCommandReceipt.v1","transition":"READY->SUBMITTED_TO_PROVIDER->CALCULATED|CORRECTION_REQUIRED|RESULT_UNKNOWN"},
+    {"id":"insight.export","method":"POST","path":"/v1/insights/exports","action":"PAY_EXPORT","scope":"LEGAL_PAYROLL_ENTITY|PAY_GROUP|PAY_PERIOD","mode":"command","idempotent":true,"fieldPolicy":"PAY_EXPORT","stepUp":"required","response":"PayrollCommandReceipt.v1"}
+  ],
+  "internalOperations": [
+    {
+      "id": "home-contribution.internal.query",
+      "method": "GET",
+      "path": "/internal/hris-payroll/v1/home-contributions/{payloadRef}",
+      "action": "approved SYS home projection contract",
+      "callerWorkload": "dwp-platform-server",
+      "purposeCode": "HRIS_HOME_MATERIALIZATION",
+      "response": "PayrollHomeContribution.v1",
+      "requestContextRequired": ["subjectPrincipalPublicId","effectivePermissionRevision","populationScopeDigest","fieldPolicyRevision","widgetKey","browserAudience","ownerPopulationScope","scopeRevision","correlationId"],
+      "responseRequired": ["module","widgetKey","widgetType","browserAudience","ownerPopulationScope","scopeRevision","populationScopeDigest","fieldPolicyRevision","purposeCode","state","generatedAt","freshUntil","staleAfter","deepLink","sourceVersion","payloadRef","payloadDigest","asOf","data","fieldDecisions","partialFailures"],
+      "typedDataProfile": "PayrollHomeData",
+      "browserProjection": "dwp.hris.system.transport.v1#/$defs/HomeWidget",
+      "rules": ["mTLS workload identity, signed tenant claim and owner tenant grant are mandatory","signed on-behalf-of subject context is mandatory and cannot be overridden by request body","widget capability, effective permission revision, population scope, purpose and field projection are re-evaluated","payloadRef is opaque and tenant-bound and payloadDigest is verified","data is the closed PayrollHomeData profile and protected money uses VIEW amount+currency, MASK fixed sentinel or OMIT with no value","SYS removes payloadRef and revalidates the widget discriminant, audience, scope revision, field-policy revision, freshness and deep link before browser serialization","browser routing and caller-selected tenant are forbidden","worker payroll lines and bank or tax secrets are never returned"]
+    }
+  ],
+  "eventEnvelope": {
+    "schemaRef": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+    "required": ["specVersion", "id", "source", "type", "schemaVersion", "time", "tenantId", "aggregateType", "aggregateId", "aggregateSequence", "correlationId", "data"],
+    "partitionKey": "tenantId:aggregateId",
+    "piiPolicy": "public IDs, totals and operational status only; no bank plaintext, identifier, tax document, formula expression or worker result lines"
+  },
+  "consumedSnapshots": [
+    {"name":"WorkerAssignmentSnapshot.v1","owner":"dwp-people-server","required":["snapshotVersion","asOf","personPublicId","workerPublicId","workerStatus","relationships","assignments"],"stalePolicy":"block-run-and-refetch"},
+    {"name":"CompensationBasisSnapshot.v1","owner":"dwp-people-server","required":["snapshotVersion","asOf","compensationBasisPublicId","workerPublicId","assignmentPublicId","legalEntityPublicId","payGroupPublicId","basisType","amount","currency","frequency","validFrom","validTo","sourceRevision","payloadDigest"],"stalePolicy":"block-run-and-refetch"},
+    {"name":"WorkerDependentEligibilitySnapshot.v1","owner":"dwp-people-server","required":["snapshotId","snapshotRevision","workerId","dependentPublicId","relationshipType","eligibilityFacts","effectiveFrom","effectiveTo","sourceVersion","payloadDigest"],"stalePolicy":"block-run-and-refetch"},
+    {"name":"WorkerTaxIdentitySnapshot.v1","owner":"dwp-people-server","required":["snapshotId","snapshotRevision","workerId","taxJurisdictionCode","taxIdentifierToken","residencyStatus","workerClassification","effectiveFrom","effectiveTo","sourceVersion","payloadDigest"],"stalePolicy":"block-run-and-refetch"},
+    {"name":"WorkerBankAccountTokenSnapshot.v1","owner":"dwp-people-server","required":["snapshotId","snapshotRevision","workerId","bankAccountToken","maskedAccountDisplay","currency","paymentPriority","effectiveFrom","effectiveTo","sourceVersion","payloadDigest"],"stalePolicy":"block-run-and-refetch"},
+    {"name":"ClosedTimeResult.v1","owner":"dwp-time-server","required":["closedTimeResultId","closePeriodId","closeRevision","payrollEntityId","payPeriodId","ledgerRevisionFrom","ledgerRevisionTo","workerCount","lineCount","sourceDigest","ruleDigest","payloadDigest","supersedesResultId","lines"],"lineRequired":["workerId","assignmentId","payCode","unit","quantity","currency","sourceEntryCount","sourceEntryDigest"],"lineValuePolicy":"unit MINUTE|HOUR|DAY|COUNT uses QuantityDecimal and currency=null; unit AMOUNT uses InputAmount and requires currency; exponent/JSON-number/implicit rounding forbidden","streamingTransport":{"wireVersion":"V1_JSON_ARRAY","gatewayBuffering":"FORBIDDEN_STREAM_THROUGH","backpressure":"END_TO_END_REACTIVE_PULL_WITH_BOUNDED_QUEUES","lineCeiling":1000000,"maxHeaderBytes":65536,"maxLineBytes":4096,"maxPayloadBytes":5368709120,"maxCompressedPayloadBytes":1073741824,"maxUncompressedPayloadBytes":5368709120,"maxCompressionRatio":100,"byteAccounting":"COUNT_COMPRESSED_AND_STREAMING_DECOMPRESSED_BYTES_BEFORE_ALLOCATION","sequenceValidation":"ARRAY_INDEX_CONTIGUOUS_FROM_0_AND_COUNT_EQUALS_LINE_COUNT","digest":"INCREMENTAL_CANONICAL_HEADER_THEN_ORDERED_LINES","consumerIngest":"STAGED_TEMPORARY_ROWS","finalize":"ATOMIC_AFTER_COUNT_SEQUENCE_AND_DIGEST_VALIDATION","failure":"ROLLBACK_STAGED_ROWS_AND_QUARANTINE_RECEIPT"},"stalePolicy":"reject-open-superseded-or-digest-mismatched-result"},
+    {"name":"ApprovedCompensationPlanSnapshot.v1","owner":"dwp-people-server/hris/performance","required":["snapshotId","snapshotRevision","planId","cycleId","effectiveFrom","effectiveTo","approvalReceiptId","sourceVersion","lineCount","lines","payloadDigest"],"lineRequired":["lineId","lineSequence","workerId","assignmentId","componentCode","currency","approvedAmount","effectiveFrom","effectiveTo","lineDigest"],"cardinality":"1..100000; lineCount=lines.length; lineSequence contiguous from 1; unique lineId and lineSequence; PAY materializes N lines to N input rows atomically","decimalPolicy":"approvedAmount is canonical PostedMoney decimal string NUMERIC(19,4); exponent, binary float, negative zero, cross-currency arithmetic and implicit database rounding forbidden","digestPolicy":"payloadDigest covers canonical header plus ordered canonical lines","streamingTransport":{"wireVersion":"V1_JSON_ARRAY","gatewayBuffering":"FORBIDDEN_STREAM_THROUGH","backpressure":"END_TO_END_REACTIVE_PULL_WITH_BOUNDED_QUEUES","lineCeiling":100000,"maxHeaderBytes":65536,"maxLineBytes":4096,"maxPayloadBytes":536870912,"maxCompressedPayloadBytes":134217728,"maxUncompressedPayloadBytes":536870912,"maxCompressionRatio":100,"byteAccounting":"COUNT_COMPRESSED_AND_STREAMING_DECOMPRESSED_BYTES_BEFORE_ALLOCATION","sequenceValidation":"LINE_SEQUENCE_EQUALS_ARRAY_INDEX_PLUS_1_CONTIGUOUS_NO_GAP_OR_DUPLICATE","digest":"INCREMENTAL_CANONICAL_HEADER_THEN_ORDERED_LINES","consumerIngest":"STAGED_TEMPORARY_ROWS","finalize":"ATOMIC_AFTER_COUNT_SEQUENCE_AND_DIGEST_VALIDATION","failure":"ROLLBACK_STAGED_ROWS_AND_QUARANTINE_RECEIPT"},"stalePolicy":"block-run-and-refetch"}
+  ],
+  "consumedEvents": [
+    {"name":"WorkerChanged.v1","type":"WorkerChanged","version":1,"owner":"dwp-people-server","payloadRequired":["workerPublicId","changeType","effectiveDate","newAggregateVersion"],"ordering":"worker revision","gapPolicy":"quarantine-and-replay"},
+    {"name":"EmploymentChanged.v1","type":"EmploymentChanged","version":1,"owner":"dwp-people-server","payloadRequired":["relationshipPublicId","changeType","effectiveDate","newAggregateVersion"],"ordering":"relationship revision","gapPolicy":"quarantine-and-replay"},
+    {"name":"AssignmentChanged.v1","type":"AssignmentChanged","version":1,"owner":"dwp-people-server","payloadRequired":["assignmentPublicId","eventPublicId","eventType","effectiveDate","changedReferences","newAggregateVersion"],"ordering":"assignment revision","gapPolicy":"quarantine-and-replay"},
+    {"name":"OrganizationChanged.v1","type":"OrganizationChanged","version":1,"owner":"dwp-people-server","payloadRequired":["revisionPublicId","effectiveDate","changedOrganizationPublicIds","snapshotDigest"],"ordering":"organization revision","gapPolicy":"quarantine-and-replay"},
+    {"name":"CompensationBasisChanged.v1","type":"CompensationBasisChanged","version":1,"owner":"dwp-people-server","payloadRequired":["compensationBasisPublicId","assignmentPublicId","basisType","validFrom","validTo","newAggregateVersion"],"ordering":"compensation basis revision","gapPolicy":"block-run-and-refetch"},
+    {"type":"WorkerDependentEligibilityChanged","version":1,"owner":"dwp-people-server","ordering":"worker fact revision","gapPolicy":"block-run-and-refetch"},
+    {"type":"WorkerTaxIdentityChanged","version":1,"owner":"dwp-people-server","ordering":"worker fact revision","gapPolicy":"block-run-and-refetch"},
+    {"type":"WorkerBankAccountTokenChanged","version":1,"owner":"dwp-people-server","ordering":"payment destination revision","gapPolicy":"block-run-and-refetch"},
+    {"name":"TimePeriodClosed.v1","type":"TimePeriodClosed","version":1,"owner":"dwp-time-server","payloadRequired":["closePeriodId","closeRevision","periodStart","periodEnd","scopeId","ledgerRevision","sourceDigest","ruleDigest"],"ordering":"close revision","gapPolicy":"reject-and-request-replay"},
+    {"name":"TimePeriodReopened.v1","type":"TimePeriodReopened","version":1,"owner":"dwp-time-server","payloadRequired":["closePeriodId","priorCloseRevision","newRevision","reasonCode"],"ordering":"close revision","gapPolicy":"invalidate-unfrozen-or-create-retro"},
+    {"name":"PayrollTimeHandoffReady.v1","type":"PayrollTimeHandoffReady","version":1,"owner":"dwp-time-server","payloadRequired":["handoffId","closedTimeResultId","closePeriodId","closeRevision","payrollEntityId","payPeriodId","workerCount","lineCount","sourceDigest","ruleDigest","payloadDigest"],"ordering":"close revision","gapPolicy":"fetch-closed-result-and-verify-digest"},
+    {"name":"CompensationPlanApproved.v1","type":"CompensationPlanApproved","version":1,"owner":"dwp-people-server/hris/performance","payloadRequired":["planId","cycleId","approvalRevision","effectiveDate","snapshotId","payloadDigest"],"ordering":"plan approval revision","gapPolicy":"block-run-and-refetch"},
+    {"type":"PolicyPublished","version":1,"owner":"dwp-platform-server","ordering":"policy revision","gapPolicy":"fail-closed"},
+    {"type":"ApprovalDecisionRecorded","version":1,"owner":"dwp-approval-server","ordering":"case revision","gapPolicy":"reject-stale-decision"}
+  ],
+  "providedEvents": [
+    {"type":"PayrollConfigurationPublished","version":1,"aggregate":"PayrollConfiguration","payloadRequired":["configurationId","version","effectiveFrom","validationDigest"]},
+    {"type":"PayrollRunPrepared","version":1,"aggregate":"PayrollRun","payloadRequired":["runId","runType","payPeriodId","inputSnapshotId","targetWorkerCount","inputDigest","ruleDigest"]},
+    {"type":"PayrollCalculated","version":1,"aggregate":"PayrollRun","payloadRequired":["runId","attemptNo","workerCount","resultDigest","controlTotals"]},
+    {"type":"PayrollValidated","version":1,"aggregate":"PayrollRun","payloadRequired":["runId","attemptNo","blockingIssueCount","resultDigest"]},
+    {"type":"PayrollRunApproved","version":1,"aggregate":"PayrollRun","payloadRequired":["runId","runRevision","approvalCaseId","decisionDigest"]},
+    {"type":"PayrollFinalized","version":1,"aggregate":"PayrollRun","payloadRequired":["runId","runRevision","resultDigest","auditBundleDigest"]},
+    {"type":"PayrollCorrectionPosted","version":1,"aggregate":"PayrollRun","payloadRequired":["runId","supersededRunId","correctionReason","resultDigest","balanceLedgerRevision"]},
+    {"type":"PayslipPublished","version":1,"aggregate":"Payslip","payloadRequired":["payslipId","workerId","payPeriodId","documentVersion","objectDigest"]},
+    {"type":"PaymentInstructionReleased","version":1,"aggregate":"PaymentBatch","payloadRequired":["paymentBatchId","instructionCount","currency","totalAmount","payloadDigest"]},
+    {"type":"PayrollPosted","version":1,"aggregate":"GlBatch","payloadRequired":["glBatchId","lineCount","currency","debitTotal","creditTotal","payloadDigest"]},
+    {"type":"YearEndCaseChanged","version":1,"aggregate":"YearEndCase","payloadRequired":["caseId","taxYear","status","providerMode","caseRevision"]},
+    {"name":"HrisHomeContributionChanged.v1","type":"HrisHomeContributionChanged","version":1,"aggregate":"PayrollHomeProjection","payloadRequired":["module","widgetKey","ownerPopulationScope","scopeRevision","state","generatedAt","freshUntil","staleAfter","payloadRef","payloadDigest"]}
+  ],
+  "yearEndProvider": {
+    "contract": "YearEndProvider.v1",
+    "modes": ["EXTERNAL_PROVIDER", "NATIVE_COUNTRY_PACK", "HYBRID"],
+    "operations": ["validate", "calculate", "file", "correct", "status"],
+    "requiredSemantics": ["idempotency", "requestDigest", "providerReference", "responseDigest", "resultUnknown", "correctionLineage", "receiptReconciliation"],
+    "coreOwnership": ["case", "evidence references", "purpose/consent", "status", "provider invocation", "reconciliation"],
+    "providerOwnership": ["optional calculation", "optional filing", "provider-specific payload and receipt"]
+  },
+  "activationGates": {
+    "core": ["contract-tests", "tenant-negative", "formula-state-ledger-golden", "recovery-tests"],
+    "countryPack": ["official-reference", "effective-date", "rounding", "approved-golden", "filing-format", "statutory-owner"],
+    "bankConnector": ["bank-schema", "sandbox-or-conformance-fixture", "keys-secret-ref", "SLA-and-operator", "reconciliation-runbook"],
+    "erpConnector": ["journal-mapping", "ERP-schema", "sandbox-or-conformance-fixture", "SLA-and-operator", "reversal-runbook"],
+    "yearEndProvider": ["provider-contract", "sandbox-or-conformance-fixture", "privacy/DPA", "correction-and-result-unknown", "operator"],
+    "production": ["volume-partition-test", "retention-legal-hold", "DR-restore", "parallel-pay-reconciliation", "observability-alert-runbook"]
+  }
+}

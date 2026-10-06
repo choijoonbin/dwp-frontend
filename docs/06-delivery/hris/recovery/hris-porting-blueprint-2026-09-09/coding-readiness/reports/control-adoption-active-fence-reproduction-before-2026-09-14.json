@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "ControlAdoptionActiveFenceBeforeEvidenceSummary.v1",
+  "status": "EXPECTED_COUNTEREXAMPLE_OBSERVED",
+  "readinessPass": false,
+  "g3Open": false,
+  "recordedAtUtc": "2026-09-14T12:00:05.158695+00:00",
+  "scope": {
+    "engine": "postgres:16-alpine",
+    "testClass": "com.dwp.migration.control.MigrationControlAdoptionActiveFenceV1PostgresTest",
+    "actualPublicMain": true,
+    "fullAuthMigrationSet": false,
+    "wholeBackend": false
+  },
+  "execution": {
+    "argv": [
+      "./gradlew",
+      ":dwp-migration-control:test",
+      "--tests",
+      "com.dwp.migration.control.MigrationControlAdoptionActiveFenceV1PostgresTest",
+      "--rerun-tasks",
+      "--no-daemon",
+      "--max-workers=1"
+    ],
+    "startedAtUtc": "2026-09-14T11:59:25.342324+00:00",
+    "finishedAtUtc": "2026-09-14T12:00:05.158695+00:00",
+    "nativeElapsedSeconds": 29.57957275000001,
+    "exitCode": 1,
+    "timedOut": false,
+    "taskTimeoutSeconds": 180,
+    "childTimeoutSeconds": 45,
+    "counts": {
+      "total": 4,
+      "unique": 4,
+      "passed": 3,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failedCase": "actualPublicMainMustNotReopenFencedRuntimeToReverifyAlreadyVerifiedAdoptedPredecessor()",
+    "freshXml": true,
+    "xmlSha256": "a86185e96bdebede7089e56a9d99ae1123767c7f6d9ee4a7074a829bbf41f051",
+    "stdoutSha256": "4e4df5c8f0d84009197635301fe9d13a6dd5c18f32e0fd75b7ddce97043528b3",
+    "stderrSha256": "f7d7509e2164f3bae56911175f0efcf404b777982ab91b09bc176298ecf0e13b"
+  },
+  "observedBoundary": {
+    "baselinePredecessorVerification": "PASS",
+    "activeExistingReceiptBootstrapRead": "PASS",
+    "activeRuntimeConnect": "DENIED_SQLSTATE_42501",
+    "publicMainOutcome": "FAIL_CLOSED_BEFORE_MIGRATION",
+    "targetStackContains": [
+      "MigrationControlMain.runAdoption",
+      "AdoptionSealer.legacyBoundary",
+      "MigrationAdoptionGuard.verifyControlPrincipal",
+      "ControlDataSource.getConnection"
+    ],
+    "historyAndReceiptSnapshotUnchanged": true
+  },
+  "sourceEvidence": {
+    "sourceCount": 486,
+    "shaAndMtimeNsStable": true,
+    "productionWrites": 0,
+    "testWritesDuringRun": 0,
+    "criticalPins": [
+      {
+        "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+        "sha256": "a1cb0f34a0ae0d968c8acc28953430615b228569cc9693c86fcd32d9c7291587",
+        "mtimeNs": "1789127185080799413"
+      },
+      {
+        "path": "dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java",
+        "sha256": "980836e73bbe5862f6aabd88e53f58db4e926a6cdad6c4020cd7233bf8ab5de3",
+        "mtimeNs": "1789109754020755214"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/database/MigrationAdoptionGuard.java",
+        "sha256": "cc211e7c3e58373a6fd8882c5923b840949d1e1894648ec88d106dc4ab3b7951",
+        "mtimeNs": "1789108995292713746"
+      },
+      {
+        "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/AdoptionActiveFenceFixtureV1.java",
+        "sha256": "d3d40ac7c8a001cd24f451eb1968425ee81ee6d2521df167c7a996f972e50ccd",
+        "mtimeNs": "1789385753342687840"
+      },
+      {
+        "path": "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlAdoptionActiveFenceV1PostgresTest.java",
+        "sha256": "9419bfaa308e9d96d29d5d60108c57181519dc37f2f913675cea78ccd367085a",
+        "mtimeNs": "1789385721151168016"
+      }
+    ]
+  },
+  "isolationAndCleanup": {
+    "hostSemaphore": {
+      "name": "hris-verification",
+      "requestedAt": "2026-09-14T11:59:25.101Z",
+      "acquiredAt": "2026-09-14T11:59:25.102Z",
+      "releasedAt": "2026-09-14T12:00:05.158Z",
+      "waitMilliseconds": 0,
+      "status": "RELEASED"
+    },
+    "outerPidAndPgid": 9304,
+    "outerProcessGroupAtEnd": [],
+    "ownedContainerIds": [
+      "9cf3aa7f33e10eae101b42d79ba628542c7e689450eb760cbec381200435897e",
+      "cfec9c4e4e1eb919ee70b4f19de8bac0f1ef1efe9808cd64334cfc5c93e1226d"
+    ],
+    "ownedContainersAbsentBeforeHostRelease": true,
+    "monitorErrors": [],
+    "manualStops": 0,
+    "manualRemovals": 0
+  },
+  "losslessArchive": {
+    "path": "control-adoption-active-fence-reproduction-before-2026-09-14.json.gz.b64",
+    "base64Chars": 140452,
+    "archiveBytes": 105339,
+    "archiveSha256": "506c45d6cae09d56da0df2ea54055c408ce4e47ae667c6c5d55598f1e5c2454a",
+    "receiptBytes": 362952,
+    "receiptSha256": "ba95b36504b49515a4e68ad63247f6e0f9e6b20ac830934d56eb36bf01467458",
+    "base64FileSha256": "83cebc21620c8c7a7817e42ff590ee403e64a7241c539ad28d2538d2ad8ff80f",
+    "ackChunks": 36,
+    "archiveComplete": true,
+    "independentReadback": "PASS"
+  },
+  "requiredNext": {
+    "productionChangeApproved": false,
+    "minimumBoundary": "BASELINE에서 sealed predecessor를 typed proof로 검증하고 ACTIVE 전환 뒤 bootstrap/controller 관찰로 같은 receipt/history/inventory/role ACL을 재검증한 후 소비한다. ACTIVE에서는 runtime principal로 재접속하지 않는다.",
+    "mustPreserve": [
+      "initial adoption legacy-boundary behavior",
+      "BASELINE runtime metadata privilege verification",
+      "ACTIVE CONNECT denial",
+      "exact previous receipt and control-reference binding",
+      "all existing Main, AdoptionGuard, Control, and build expectations"
+    ]
+  },
+  "limitations": {
+    "beforeFailureOnly": true,
+    "nativeIssuer": false,
+    "all114AuthMigrations": false,
+    "producerPublication": false,
+    "g3Open": false
+  }
+}

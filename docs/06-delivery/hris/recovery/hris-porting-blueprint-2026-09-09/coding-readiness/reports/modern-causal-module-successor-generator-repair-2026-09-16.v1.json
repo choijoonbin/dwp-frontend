@@ -1,0 +1,111 @@
+{
+  "reportId": "dwp.hris.modern-causal-module-successor-generator-repair.2026-09-16.v1",
+  "generatedAt": "2026-09-16T01:02:37Z",
+  "status": "PASS_CANDIDATE_ONLY_LIVE_NOT_WRITTEN",
+  "candidateDirectory": "coding-readiness/modern-canonical-candidate.uaHfXj",
+  "rootCause": {
+    "failingLocationBeforeRepair": "generate_modern_causal_module_successor.py:project_modules handler aggregateRoot preStates access",
+    "invalidAssumption": "every handler with an aggregateRoot is a single closed preStates-to-postStates transition",
+    "observedVariants": {
+      "publicOperations": {
+        "COMMAND": 133,
+        "QUERY": 66,
+        "branchCommands": 1
+      },
+      "internalHandlers": {
+        "total": 27,
+        "explicitRootStateTransition": 17,
+        "appendOnlyObservation": 1,
+        "rootedWithoutSingleClosedEdge": 3,
+        "rootlessExactSagaOrMessageHandler": 6
+      }
+    },
+    "failure": "the first rooted Listening append/multi-phase handler has no preStates key, causing KeyError before candidate causal emission"
+  },
+  "repair": {
+    "generator": {
+      "path": "coding-readiness/generate_modern_causal_module_successor.py",
+      "beforeSha256": "bf33001969635e045fb6df01638fcd2bd242d7e32f0d1638c4c1311f4f2f46ef",
+      "afterSha256": "41e4f560ed35da08b7c9428ab80c35709768ce9da82e2db075e48332f9b6370b"
+    },
+    "projectionRules": {
+      "path": "coding-readiness/modern-causal-module-successor-projection-rules.md",
+      "sha256": "7514dba4d550f7c9a0a4a5701b6161466103b4caf745449a510b40ac50124cbc"
+    },
+    "rules": [
+      "validate complete source closure before staging output",
+      "preserve branch command branches and derive only their exact state union",
+      "reject any query transition or event binding",
+      "project a handler state edge only when both non-empty state sets are explicit",
+      "preserve every rootless, append-only, and multi-phase handler contract without DML inference",
+      "preserve emittedByOperationIds and emittedByInternalHandlerIds, including additionalEvents",
+      "require exact manifest, SSOT, exact-binding, event-schema, handler, and table closure"
+    ]
+  },
+  "candidateInputs": {
+    "unchangedAcrossRepairAndEmission": true,
+    "files": {
+      "modern-capability-closed-set-manifest.v3.json": "8f1298569b9a73bb143b98a8cec026b4c892f9e171411547da24eb6c68fc6bd3d0",
+      "modern-capability-operation-causal-contract-ssot.v2.json": "27cae6ed93c084bb5f489a3d3c0996a4eebf9b0e2faabd68839614c5343b7a2a",
+      "modern-capability-exact-schema-contracts.v1.json": "248a40ab0fdc82b59681344f7d400a025f0d0171df43496e9011e0151893cb23",
+      "modern-capability-event-payload-contracts.v1.json": "6b3b3352d20a6573695df9ed9377faef6b01e9e94dbdf22d3adb3c5dc697b3d0",
+      "modern-capability-semantic-bindings.v1.json": "330366ba898c52c08f85d3d30480419b7e46e77ac29d63b0c406bdd065038de7",
+      "modern-capability-public-identity-registry.v1.json": "a95518840d4f7d62eda95607554f0923d6e828b6cb81884b267fafa63b7afab7",
+      "sys-listening-stream-authority-successor.v2.json": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00"
+    }
+  },
+  "candidateOutput": {
+    "path": "coding-readiness/modern-canonical-candidate.uaHfXj/modern-capability-causal-state-contracts.v2.json",
+    "fileSha256": "7344a37bc5b06d58c384987c091a8ec3404e076199d2d9d609d7cf320e71dd47",
+    "sealedPayloadSha256": "151eb2fb65855d2bfde99502f59e758f52e2aecb4fd06f7f82dfe429ba6d487f",
+    "scope": {
+      "operations": 199,
+      "commands": 133,
+      "queries": 66,
+      "publicEvents": 157,
+      "internalConsumerHandlers": 27,
+      "tables": 131
+    },
+    "idempotentSecondEmissionSameFileSha256": true,
+    "payloadSealRecomputed": "PASS"
+  },
+  "verification": {
+    "pythonCompile": "PASS",
+    "positiveCases": [
+      "baseline-closed-set",
+      "rootless-handler-no-invention",
+      "additional-handler-event",
+      "branch-command-lossless"
+    ],
+    "hostileCasesRejected": [
+      "duplicate-operation",
+      "invalid-mode",
+      "query-transition",
+      "command-transition-missing",
+      "branch-state-missing",
+      "handler-half-state",
+      "handler-root-type",
+      "exact-operation-removed",
+      "event-producer-drift",
+      "manifest-mode-drift"
+    ],
+    "selfTestResult": "PASS_14_OF_14",
+    "historicalCandidateReadOnlyPipeline": {
+      "modern-canonical-candidate.q0mnJg": "PASS_199_133_66_25_155_132",
+      "modern-canonical-candidate.Qs4ngh": "PASS_199_133_66_25_155_132",
+      "modern-canonical-candidate.2eZCXW": "PASS_199_133_66_25_155_132"
+    }
+  },
+  "safetyBoundary": {
+    "liveCanonicalWritten": false,
+    "livePhysicalWritten": false,
+    "historicalArtifactsWritten": false,
+    "policyArtifactsWritten": false,
+    "gateWritten": false,
+    "gateDecisionSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+    "gateCurrentState": "VALIDATOR_CONTROLLED_BLOCKED",
+    "gateEffectiveGate": "CLOSED_FAIL_SAFE",
+    "productionActivation": "NOT_AUTHORIZED_G6"
+  },
+  "sealedPayloadSha256": "75f23859df6853a8b7036354cd445c52338c840246b06d8d44d6ac63b4abf21c"
+}

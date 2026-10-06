@@ -1,0 +1,889 @@
+{
+  "status": "AUTHOR_SELECTED_SOURCE_STRUCTURE_AND_CONCRETE_FIXTURE_VERIFIED_G3_CLOSED",
+  "startedAt": "2026-09-14T08:28:19.850Z",
+  "finishedAt": "2026-09-14T08:28:22.146Z",
+  "actualArgv": [
+    "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.check.cjs",
+    ".codex-worktrees/hris/integration/frontend"
+  ],
+  "node": "v24.19.0",
+  "ajv": "6.12.6",
+  "schemaEngine": "installed Ajv full Draft07, no coerce/default/removeAdditional, all recursive refs/leaf values",
+  "assertions": 32286,
+  "compiledDefinitions": 703,
+  "recursiveSchemaNodes": 10112,
+  "normalizedBodyLeaves": 500,
+  "physicalSourceColumns": 328,
+  "actualMaterializedPrimitiveValues": 272,
+  "nativeSourceColumns": 10,
+  "plannedSourceAndTestFiles": 33,
+  "actualLocalArtifactSchemas": 128,
+  "ownerRequestResponseCases": 32,
+  "foundationPositive": 16,
+  "inputPositive": 2,
+  "concreteNegatives": 15,
+  "former39Concrete": [
+    "PAY_NEG_001_CROSS_TENANT_ENTITY",
+    "PAY_NEG_008_LOCAL_REF_WRONG_ENTITY",
+    "PAY_NEG_010_SOURCE_DIGEST_MISMATCH",
+    "PAY_NEG_011_SOURCE_AS_OF_STALE",
+    "PAY_NEG_012_TIME_RESULT_REOPENED",
+    "PAY_NEG_013_TIME_LINES_DUPLICATE_GAP_COUNT"
+  ],
+  "remainingFormer39": [
+    "PAY_NEG_003_PRINCIPAL_EQUALS_WORKER_UUID",
+    "PAY_NEG_004_SELF_AUTH_PERSON_UNLINKED",
+    "PAY_NEG_005_MULTI_EMPLOYMENT_AMBIGUOUS",
+    "PAY_NEG_006_SELF_CONTEXT_STALE_REVOKED",
+    "PAY_NEG_014_PER_PLAN_UNAPPROVED_OR_SUPERSEDED",
+    "PAY_NEG_016_FORMULA_CYCLE",
+    "PAY_NEG_018_MONEY_PLUS_HOURS",
+    "PAY_NEG_019_HOURLY_PRICE_TIMES_DAY",
+    "PAY_NEG_024_SOD_RUN_MAKER_APPROVES_OR_FINALIZES",
+    "PAY_NEG_025_CAS_STALE",
+    "PAY_NEG_026_EXPIRED_FENCE_LATE_COMMIT",
+    "PAY_NEG_027_COMMIT_HTTP_LOST",
+    "PAY_NEG_030_FINALIZED_TIME_REOPEN",
+    "PAY_NEG_031_UNFINALIZED_SOURCE_INVALIDATE_APPROVAL_PENDING",
+    "PAY_NEG_033_FINALIZED_AMEND_DESTRUCTIVE",
+    "PAY_NEG_034_DOUBLE_RETRO_AND_FULL_REVERSAL",
+    "PAY_NEG_035_BANK_TOKEN_REVOKED_OR_UNVERIFIED",
+    "PAY_NEG_036_BANK_SOURCE_CHANGER_RELEASES",
+    "PAY_NEG_037_PAYMENT_TIMEOUT_UNKNOWN",
+    "PAY_NEG_038_PAYMENT_PARTIAL_ACK",
+    "PAY_NEG_039_MANUAL_PROOF_AS_BANK_ACK",
+    "PAY_NEG_040_CANCEL_UNKNOWN_SEND",
+    "PAY_NEG_041_APPROVAL_CANCEL_ALREADY_APPROVED",
+    "PAY_NEG_042_APPROVAL_CANCEL_UNKNOWN_NOT_FOUND",
+    "PAY_NEG_043_GL_UNBALANCED_OR_MAPPING_STALE",
+    "PAY_NEG_044_NATIVE_JOURNAL_AS_ERP_POSTED",
+    "PAY_NEG_045_PAYSPLIP_REVOKED_OR_PURPOSE_STEPUP_MISSING",
+    "PAY_NEG_046_RECEIPT_ENTITLEMENT_REVOKED",
+    "PAY_NEG_047_DISABLED_COUNTRY_YEA",
+    "PAY_NEG_048_RETIREMENT_CREDITED_SERVICE_MISSING",
+    "PAY_NEG_049_YEAR_END_ANNUAL_SOURCE_RESTORATION_UNVERIFIED",
+    "PAY_NEG_050_DST_PERIOD_CIVIL_END",
+    "PAY_NEG_051_COUNTRY_EFFECTIVE_OVERLAP"
+  ],
+  "originalOpen856Unmodified": true,
+  "nullableDeclarations": 150,
+  "strictIndependentReplay": {
+    "units": {
+      "argv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.test.cjs"
+      ],
+      "startedAt": "2026-09-14T08:28:19.859Z",
+      "finishedAt": "2026-09-14T08:28:20.266Z",
+      "exitCode": 0,
+      "stdoutSha256": "7eeb68c0ee52632edcb599284d5cf9d9ce99613817eae0eb925751be9cfb1e24",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cli": {
+      "argv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.cjs",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend"
+      ],
+      "startedAt": "2026-09-14T08:28:20.266Z",
+      "finishedAt": "2026-09-14T08:28:21.565Z",
+      "exitCode": 0,
+      "stdoutSha256": "6c1b817f05668dfed731a4e9ad615335831e0c482ded27bd94f920d995f7bb30",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "strictResult": {
+      "schemaVersion": "dwp.hris.pay-v2-independent-strict-check.v1",
+      "status": "BOUNDED_STRUCTURE_PASS_SOURCE_PREPARATION_STILL_OPEN",
+      "startedAt": "2026-09-14T08:28:20.406Z",
+      "finishedAt": "2026-09-14T08:28:21.560Z",
+      "actualArgv": [
+        "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.cjs",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend"
+      ],
+      "before": [
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.build.cjs",
+          "sha256": "7aa0db607d866fcd89f7d7948c350fc2d241b89b356191de20ffe528db30f8b6",
+          "bytes": "35465",
+          "mtimeNs": "1789365765297063552"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.cancel-fixtures.json",
+          "sha256": "429cc5ba3a85276886b8e77062406b41acc532fa2ad97fdaeb03027caeb9d9f5",
+          "bytes": "63199",
+          "mtimeNs": "1789365320010347975"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+          "sha256": "0854a18e38ae9fa6dccc2961e77bd78785442a734eddc6fa198bd81441db9836",
+          "bytes": "24234",
+          "mtimeNs": "1789365804537835270"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.evidence.json",
+          "sha256": "6d310878f7918e6f4241e3d079b599ccb80e40a89ea13b8f5c50a5e2428bdbc0",
+          "bytes": "43043",
+          "mtimeNs": "1789365807554352582"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.fixtures.json",
+          "sha256": "52daaaade54c467965d972fc8437c7f893c795d0f3147e4d9af550fd1f57313c",
+          "bytes": "362357",
+          "mtimeNs": "1789364371401849304"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation-fixtures.json",
+          "sha256": "76dd5c9ecc869feb9892081f02a22a6734a98a122d619debb25384c29ca311f4",
+          "bytes": "61230",
+          "mtimeNs": "1789365523479217091"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation.schemas.json",
+          "sha256": "ff1103f7d31bb7d6f727811904eabd3d105d733a644e42ef34036cb085c83c5c",
+          "bytes": "17419",
+          "mtimeNs": "1789365459772171684"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.cjs",
+          "sha256": "3a4bc19e57f7249a0864754c7c59ba6816964438c7f512839aba3308456094a2",
+          "bytes": "10887",
+          "mtimeNs": "1789365239473461170"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.json",
+          "sha256": "ea8c5822fb655f448b94ac1a121d9dbf17bc21eca6eb093ded554712378bfc5c",
+          "bytes": "69312",
+          "mtimeNs": "1789365239473914659"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.json",
+          "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90",
+          "bytes": "1606606",
+          "mtimeNs": "1789365765874398592"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.md",
+          "sha256": "52e68a0197636ecdbf5d7e2111d80cb0e9261c98caf61aee9e219a7136bc1ee3",
+          "bytes": "13027",
+          "mtimeNs": "1789365765947115891"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.native-columns.json",
+          "sha256": "043e28263a9121cab7cc5505c8c825a971dbd8541bbf83bf42136c662ab0057a",
+          "bytes": "10293",
+          "mtimeNs": "1789365049693145979"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.owner-fixtures.json",
+          "sha256": "5c9f98a70150dc28e6655cfc0ac1e902bce0611b3832a480a34bc08a5f01b418",
+          "bytes": "38569",
+          "mtimeNs": "1789365150302527233"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.planned.sql",
+          "sha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+          "bytes": "111536",
+          "mtimeNs": "1789365101397570906"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.schemas.json",
+          "sha256": "07c8e2c60087e8910432afabbb08d7426aba9e5275648dfe2795b60a87e4f4e0",
+          "bytes": "26745",
+          "mtimeNs": "1789364709488676709"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.source-file-allocation.json",
+          "sha256": "02d3aa98cd1db1784c649955ee4a8996125f22974d06addd389f68c23d69e4ac",
+          "bytes": "5211",
+          "mtimeNs": "1789365687273456994"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.sql-plan.cjs",
+          "sha256": "e19379a270f0de4923f1c5377c3defd2728230332889176a5f02c430bcdd402a",
+          "bytes": "4037",
+          "mtimeNs": "1789364765336406904"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.cjs",
+          "sha256": "7b19b36d4e19ab20aa1271345fae8546ae60269a29abf5d14cb260b7dd4635fc",
+          "bytes": "6475",
+          "mtimeNs": "1789372151793571988"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.test.cjs",
+          "sha256": "94fe94b5ab77cdb74de40c4a46eaa5a6410066d41a796e51b5f1ff7f28a1b3c5",
+          "bytes": "3506",
+          "mtimeNs": "1789372151793928785"
+        }
+      ],
+      "after": [
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.build.cjs",
+          "sha256": "7aa0db607d866fcd89f7d7948c350fc2d241b89b356191de20ffe528db30f8b6",
+          "bytes": "35465",
+          "mtimeNs": "1789365765297063552"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.cancel-fixtures.json",
+          "sha256": "429cc5ba3a85276886b8e77062406b41acc532fa2ad97fdaeb03027caeb9d9f5",
+          "bytes": "63199",
+          "mtimeNs": "1789365320010347975"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+          "sha256": "0854a18e38ae9fa6dccc2961e77bd78785442a734eddc6fa198bd81441db9836",
+          "bytes": "24234",
+          "mtimeNs": "1789365804537835270"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.evidence.json",
+          "sha256": "6d310878f7918e6f4241e3d079b599ccb80e40a89ea13b8f5c50a5e2428bdbc0",
+          "bytes": "43043",
+          "mtimeNs": "1789365807554352582"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.fixtures.json",
+          "sha256": "52daaaade54c467965d972fc8437c7f893c795d0f3147e4d9af550fd1f57313c",
+          "bytes": "362357",
+          "mtimeNs": "1789364371401849304"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation-fixtures.json",
+          "sha256": "76dd5c9ecc869feb9892081f02a22a6734a98a122d619debb25384c29ca311f4",
+          "bytes": "61230",
+          "mtimeNs": "1789365523479217091"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation.schemas.json",
+          "sha256": "ff1103f7d31bb7d6f727811904eabd3d105d733a644e42ef34036cb085c83c5c",
+          "bytes": "17419",
+          "mtimeNs": "1789365459772171684"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.cjs",
+          "sha256": "3a4bc19e57f7249a0864754c7c59ba6816964438c7f512839aba3308456094a2",
+          "bytes": "10887",
+          "mtimeNs": "1789365239473461170"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.json",
+          "sha256": "ea8c5822fb655f448b94ac1a121d9dbf17bc21eca6eb093ded554712378bfc5c",
+          "bytes": "69312",
+          "mtimeNs": "1789365239473914659"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.json",
+          "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90",
+          "bytes": "1606606",
+          "mtimeNs": "1789365765874398592"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.md",
+          "sha256": "52e68a0197636ecdbf5d7e2111d80cb0e9261c98caf61aee9e219a7136bc1ee3",
+          "bytes": "13027",
+          "mtimeNs": "1789365765947115891"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.native-columns.json",
+          "sha256": "043e28263a9121cab7cc5505c8c825a971dbd8541bbf83bf42136c662ab0057a",
+          "bytes": "10293",
+          "mtimeNs": "1789365049693145979"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.owner-fixtures.json",
+          "sha256": "5c9f98a70150dc28e6655cfc0ac1e902bce0611b3832a480a34bc08a5f01b418",
+          "bytes": "38569",
+          "mtimeNs": "1789365150302527233"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.planned.sql",
+          "sha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+          "bytes": "111536",
+          "mtimeNs": "1789365101397570906"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.schemas.json",
+          "sha256": "07c8e2c60087e8910432afabbb08d7426aba9e5275648dfe2795b60a87e4f4e0",
+          "bytes": "26745",
+          "mtimeNs": "1789364709488676709"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.source-file-allocation.json",
+          "sha256": "02d3aa98cd1db1784c649955ee4a8996125f22974d06addd389f68c23d69e4ac",
+          "bytes": "5211",
+          "mtimeNs": "1789365687273456994"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.sql-plan.cjs",
+          "sha256": "e19379a270f0de4923f1c5377c3defd2728230332889176a5f02c430bcdd402a",
+          "bytes": "4037",
+          "mtimeNs": "1789364765336406904"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.cjs",
+          "sha256": "7b19b36d4e19ab20aa1271345fae8546ae60269a29abf5d14cb260b7dd4635fc",
+          "bytes": "6475",
+          "mtimeNs": "1789372151793571988"
+        },
+        {
+          "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.test.cjs",
+          "sha256": "94fe94b5ab77cdb74de40c4a46eaa5a6410066d41a796e51b5f1ff7f28a1b3c5",
+          "bytes": "3506",
+          "mtimeNs": "1789372151793928785"
+        }
+      ],
+      "sourceStable": true,
+      "physical": {
+        "tables": 88,
+        "columns": 1303,
+        "foreignKeyColumns": 146
+      },
+      "childExitCode": 0,
+      "childOutputSha256": "c352e4af79ef8be24f3dfd495760cb40b2b92be3a49df84b5344dbeba9f8f6c2",
+      "childAssertions": 41534,
+      "childCompiledSchemas": 662,
+      "sourceIssues": [],
+      "openInitialSources": 856,
+      "unmatchedFullAPINegativePayloads": [
+        "PAY_NEG_001_CROSS_TENANT_ENTITY",
+        "PAY_NEG_003_PRINCIPAL_EQUALS_WORKER_UUID",
+        "PAY_NEG_004_SELF_AUTH_PERSON_UNLINKED",
+        "PAY_NEG_005_MULTI_EMPLOYMENT_AMBIGUOUS",
+        "PAY_NEG_006_SELF_CONTEXT_STALE_REVOKED",
+        "PAY_NEG_008_LOCAL_REF_WRONG_ENTITY",
+        "PAY_NEG_010_SOURCE_DIGEST_MISMATCH",
+        "PAY_NEG_011_SOURCE_AS_OF_STALE",
+        "PAY_NEG_012_TIME_RESULT_REOPENED",
+        "PAY_NEG_013_TIME_LINES_DUPLICATE_GAP_COUNT",
+        "PAY_NEG_014_PER_PLAN_UNAPPROVED_OR_SUPERSEDED",
+        "PAY_NEG_016_FORMULA_CYCLE",
+        "PAY_NEG_018_MONEY_PLUS_HOURS",
+        "PAY_NEG_019_HOURLY_PRICE_TIMES_DAY",
+        "PAY_NEG_024_SOD_RUN_MAKER_APPROVES_OR_FINALIZES",
+        "PAY_NEG_025_CAS_STALE",
+        "PAY_NEG_026_EXPIRED_FENCE_LATE_COMMIT",
+        "PAY_NEG_027_COMMIT_HTTP_LOST",
+        "PAY_NEG_030_FINALIZED_TIME_REOPEN",
+        "PAY_NEG_031_UNFINALIZED_SOURCE_INVALIDATE_APPROVAL_PENDING",
+        "PAY_NEG_033_FINALIZED_AMEND_DESTRUCTIVE",
+        "PAY_NEG_034_DOUBLE_RETRO_AND_FULL_REVERSAL",
+        "PAY_NEG_035_BANK_TOKEN_REVOKED_OR_UNVERIFIED",
+        "PAY_NEG_036_BANK_SOURCE_CHANGER_RELEASES",
+        "PAY_NEG_037_PAYMENT_TIMEOUT_UNKNOWN",
+        "PAY_NEG_038_PAYMENT_PARTIAL_ACK",
+        "PAY_NEG_039_MANUAL_PROOF_AS_BANK_ACK",
+        "PAY_NEG_040_CANCEL_UNKNOWN_SEND",
+        "PAY_NEG_041_APPROVAL_CANCEL_ALREADY_APPROVED",
+        "PAY_NEG_042_APPROVAL_CANCEL_UNKNOWN_NOT_FOUND",
+        "PAY_NEG_043_GL_UNBALANCED_OR_MAPPING_STALE",
+        "PAY_NEG_044_NATIVE_JOURNAL_AS_ERP_POSTED",
+        "PAY_NEG_045_PAYSPLIP_REVOKED_OR_PURPOSE_STEPUP_MISSING",
+        "PAY_NEG_046_RECEIPT_ENTITLEMENT_REVOKED",
+        "PAY_NEG_047_DISABLED_COUNTRY_YEA",
+        "PAY_NEG_048_RETIREMENT_CREDITED_SERVICE_MISSING",
+        "PAY_NEG_049_YEAR_END_ANNUAL_SOURCE_RESTORATION_UNVERIFIED",
+        "PAY_NEG_050_DST_PERIOD_CIVIL_END",
+        "PAY_NEG_051_COUNTRY_EFFECTIVE_OVERLAP"
+      ],
+      "nativeSQLExecution": 0,
+      "nativeProviderRegistration": 0,
+      "G3Approval": false,
+      "sourceFamilyMeaningIndependentlyApproved": false
+    }
+  },
+  "mutations": [
+    "joint FK SQL type + sourceBinding + DDL mutation fatal",
+    "nonempty sourceIssues actual fatal",
+    "missing sourceIssues mandatory fatal",
+    "UUID as numeric rejected",
+    "numeric native token rejected",
+    "extra arbitrary payload field rejected",
+    "UUID value as localBIGINT rejected",
+    "Instant value as DATE rejected"
+  ],
+  "actualOutputArtifact": {
+    "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.record-outputs.json",
+    "sha256": "efa51dab5c1d3c9111d2cdbdb154a724719caa5a636dcb8b004360bd03d4f4ef",
+    "bytes": "264707",
+    "mtimeNs": "1789374499605571530",
+    "outputDigest": "6c827cf89f79785af5dfbf2165fd4c083522d160b4a03921699f4ea29d31573f",
+    "syntheticOnly": true,
+    "actualOutputCount": 18
+  },
+  "outputDigest": "6c827cf89f79785af5dfbf2165fd4c083522d160b4a03921699f4ea29d31573f",
+  "sourcePinsBefore": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.cjs",
+      "sha256": "7b19b36d4e19ab20aa1271345fae8546ae60269a29abf5d14cb260b7dd4635fc",
+      "bytes": "6475",
+      "mtimeNs": "1789372151793571988"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.test.cjs",
+      "sha256": "94fe94b5ab77cdb74de40c4a46eaa5a6410066d41a796e51b5f1ff7f28a1b3c5",
+      "bytes": "3506",
+      "mtimeNs": "1789372151793928785"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.build.cjs",
+      "sha256": "7aa0db607d866fcd89f7d7948c350fc2d241b89b356191de20ffe528db30f8b6",
+      "bytes": "35465",
+      "mtimeNs": "1789365765297063552"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.cancel-fixtures.json",
+      "sha256": "429cc5ba3a85276886b8e77062406b41acc532fa2ad97fdaeb03027caeb9d9f5",
+      "bytes": "63199",
+      "mtimeNs": "1789365320010347975"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+      "sha256": "0854a18e38ae9fa6dccc2961e77bd78785442a734eddc6fa198bd81441db9836",
+      "bytes": "24234",
+      "mtimeNs": "1789365804537835270"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.evidence.json",
+      "sha256": "6d310878f7918e6f4241e3d079b599ccb80e40a89ea13b8f5c50a5e2428bdbc0",
+      "bytes": "43043",
+      "mtimeNs": "1789365807554352582"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.fixtures.json",
+      "sha256": "52daaaade54c467965d972fc8437c7f893c795d0f3147e4d9af550fd1f57313c",
+      "bytes": "362357",
+      "mtimeNs": "1789364371401849304"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation-fixtures.json",
+      "sha256": "76dd5c9ecc869feb9892081f02a22a6734a98a122d619debb25384c29ca311f4",
+      "bytes": "61230",
+      "mtimeNs": "1789365523479217091"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation.schemas.json",
+      "sha256": "ff1103f7d31bb7d6f727811904eabd3d105d733a644e42ef34036cb085c83c5c",
+      "bytes": "17419",
+      "mtimeNs": "1789365459772171684"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.cjs",
+      "sha256": "3a4bc19e57f7249a0864754c7c59ba6816964438c7f512839aba3308456094a2",
+      "bytes": "10887",
+      "mtimeNs": "1789365239473461170"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.json",
+      "sha256": "ea8c5822fb655f448b94ac1a121d9dbf17bc21eca6eb093ded554712378bfc5c",
+      "bytes": "69312",
+      "mtimeNs": "1789365239473914659"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.json",
+      "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90",
+      "bytes": "1606606",
+      "mtimeNs": "1789365765874398592"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.md",
+      "sha256": "52e68a0197636ecdbf5d7e2111d80cb0e9261c98caf61aee9e219a7136bc1ee3",
+      "bytes": "13027",
+      "mtimeNs": "1789365765947115891"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.native-columns.json",
+      "sha256": "043e28263a9121cab7cc5505c8c825a971dbd8541bbf83bf42136c662ab0057a",
+      "bytes": "10293",
+      "mtimeNs": "1789365049693145979"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.owner-fixtures.json",
+      "sha256": "5c9f98a70150dc28e6655cfc0ac1e902bce0611b3832a480a34bc08a5f01b418",
+      "bytes": "38569",
+      "mtimeNs": "1789365150302527233"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.planned.sql",
+      "sha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+      "bytes": "111536",
+      "mtimeNs": "1789365101397570906"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.schemas.json",
+      "sha256": "07c8e2c60087e8910432afabbb08d7426aba9e5275648dfe2795b60a87e4f4e0",
+      "bytes": "26745",
+      "mtimeNs": "1789364709488676709"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.source-file-allocation.json",
+      "sha256": "02d3aa98cd1db1784c649955ee4a8996125f22974d06addd389f68c23d69e4ac",
+      "bytes": "5211",
+      "mtimeNs": "1789365687273456994"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.sql-plan.cjs",
+      "sha256": "e19379a270f0de4923f1c5377c3defd2728230332889176a5f02c430bcdd402a",
+      "bytes": "4037",
+      "mtimeNs": "1789364765336406904"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+      "bytes": "27320",
+      "mtimeNs": "1788935965796121926"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+      "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+      "bytes": "918",
+      "mtimeNs": "1789360448778031618"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+      "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+      "bytes": "9105",
+      "mtimeNs": "1789360393439338720"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+      "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+      "bytes": "1496",
+      "mtimeNs": "1789354991078381067"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+      "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+      "bytes": "4887",
+      "mtimeNs": "1789359261552529839"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+      "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+      "bytes": "1833",
+      "mtimeNs": "1788935965800010744"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.design.cjs",
+      "sha256": "a4e9b8cd68c023dc14f159db7a79eeff06b263d6037233602baa5bb4f26dd4e0",
+      "bytes": "60734",
+      "mtimeNs": "1789374055645497142"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.model.cjs",
+      "sha256": "1c84ec1b4b61bba2627075a5ae84bc1a7fc59ad2d9355d377dbaea4ec7e2e619",
+      "bytes": "25148",
+      "mtimeNs": "1789374417044490933"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.check.cjs",
+      "sha256": "8f094fbb87c235addc7f4c7f6c70f2d861b2d13a700936e3c7355fa847dc92e0",
+      "bytes": "20026",
+      "mtimeNs": "1789374417051038552"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.json",
+      "sha256": "4eaf4018e2adf556c16890ced6e67dce8a3f47451291368a7a7210d6aaeb059f",
+      "bytes": "366679",
+      "mtimeNs": "1789374089044325816"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.schemas.json",
+      "sha256": "43d6f2221a8cf7d3b1426790f22f60d05533c57e6806463771157f63d78775ce",
+      "bytes": "80440",
+      "mtimeNs": "1789373380956312406"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.fixtures.json",
+      "sha256": "46f688fcf70c3371bffbb3ae0f987a39a114f94fed3d77015e9a43bcfeb75c00",
+      "bytes": "525829",
+      "mtimeNs": "1789374318076195721"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.nullable.json",
+      "sha256": "2fef819530675951e68c894ec9b30028447910a23258f2c14cf466f6af504b09",
+      "bytes": "104646",
+      "mtimeNs": "1789373390601468086"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.source-contract.json",
+      "sha256": "f570a3d467a1bfb267c11aa47f50c7ea9215ce6485001c91b7710b58ae1a67c5",
+      "bytes": "6080",
+      "mtimeNs": "1789373814164082577"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.allocation.json",
+      "sha256": "49c6039cedd64646b1ab8cbee4bb71a5373b254bb7c24156940654f690443cce",
+      "bytes": "12125",
+      "mtimeNs": "1789373774338711090"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.record-outputs.json",
+      "sha256": "efa51dab5c1d3c9111d2cdbdb154a724719caa5a636dcb8b004360bd03d4f4ef",
+      "bytes": "264707",
+      "mtimeNs": "1789374499605571530"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.md",
+      "sha256": "7ce34ae539084493d616bd3d327cc32bbd936c1335761b2e1b5fe2018d04a573",
+      "bytes": "10069",
+      "mtimeNs": "1789374499610878350"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/pay-v2-draft-native-root-type-rls-pass-2026-09-14.json",
+      "sha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+      "bytes": "233235",
+      "mtimeNs": "1789372582225100815"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-stream-authority-decision.proposal.v1.md",
+      "sha256": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1",
+      "bytes": "10924",
+      "mtimeNs": "1789351494756304740"
+    }
+  ],
+  "sourcePinsAfter": [
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.cjs",
+      "sha256": "7b19b36d4e19ab20aa1271345fae8546ae60269a29abf5d14cb260b7dd4635fc",
+      "bytes": "6475",
+      "mtimeNs": "1789372151793571988"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-v2-independent-strict-check.v1.test.cjs",
+      "sha256": "94fe94b5ab77cdb74de40c4a46eaa5a6410066d41a796e51b5f1ff7f28a1b3c5",
+      "bytes": "3506",
+      "mtimeNs": "1789372151793928785"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.build.cjs",
+      "sha256": "7aa0db607d866fcd89f7d7948c350fc2d241b89b356191de20ffe528db30f8b6",
+      "bytes": "35465",
+      "mtimeNs": "1789365765297063552"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.cancel-fixtures.json",
+      "sha256": "429cc5ba3a85276886b8e77062406b41acc532fa2ad97fdaeb03027caeb9d9f5",
+      "bytes": "63199",
+      "mtimeNs": "1789365320010347975"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.check.cjs",
+      "sha256": "0854a18e38ae9fa6dccc2961e77bd78785442a734eddc6fa198bd81441db9836",
+      "bytes": "24234",
+      "mtimeNs": "1789365804537835270"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.evidence.json",
+      "sha256": "6d310878f7918e6f4241e3d079b599ccb80e40a89ea13b8f5c50a5e2428bdbc0",
+      "bytes": "43043",
+      "mtimeNs": "1789365807554352582"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.fixtures.json",
+      "sha256": "52daaaade54c467965d972fc8437c7f893c795d0f3147e4d9af550fd1f57313c",
+      "bytes": "362357",
+      "mtimeNs": "1789364371401849304"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation-fixtures.json",
+      "sha256": "76dd5c9ecc869feb9892081f02a22a6734a98a122d619debb25384c29ca311f4",
+      "bytes": "61230",
+      "mtimeNs": "1789365523479217091"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.foundation.schemas.json",
+      "sha256": "ff1103f7d31bb7d6f727811904eabd3d105d733a644e42ef34036cb085c83c5c",
+      "bytes": "17419",
+      "mtimeNs": "1789365459772171684"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.cjs",
+      "sha256": "3a4bc19e57f7249a0864754c7c59ba6816964438c7f512839aba3308456094a2",
+      "bytes": "10887",
+      "mtimeNs": "1789365239473461170"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.graphs.json",
+      "sha256": "ea8c5822fb655f448b94ac1a121d9dbf17bc21eca6eb093ded554712378bfc5c",
+      "bytes": "69312",
+      "mtimeNs": "1789365239473914659"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.json",
+      "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90",
+      "bytes": "1606606",
+      "mtimeNs": "1789365765874398592"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.md",
+      "sha256": "52e68a0197636ecdbf5d7e2111d80cb0e9261c98caf61aee9e219a7136bc1ee3",
+      "bytes": "13027",
+      "mtimeNs": "1789365765947115891"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.native-columns.json",
+      "sha256": "043e28263a9121cab7cc5505c8c825a971dbd8541bbf83bf42136c662ab0057a",
+      "bytes": "10293",
+      "mtimeNs": "1789365049693145979"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.owner-fixtures.json",
+      "sha256": "5c9f98a70150dc28e6655cfc0ac1e902bce0611b3832a480a34bc08a5f01b418",
+      "bytes": "38569",
+      "mtimeNs": "1789365150302527233"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.planned.sql",
+      "sha256": "3f4dfe73bbbe723e86da639438d8c8d88181a7a014dbda92a128716c94557bc3",
+      "bytes": "111536",
+      "mtimeNs": "1789365101397570906"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.schemas.json",
+      "sha256": "07c8e2c60087e8910432afabbb08d7426aba9e5275648dfe2795b60a87e4f4e0",
+      "bytes": "26745",
+      "mtimeNs": "1789364709488676709"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.source-file-allocation.json",
+      "sha256": "02d3aa98cd1db1784c649955ee4a8996125f22974d06addd389f68c23d69e4ac",
+      "bytes": "5211",
+      "mtimeNs": "1789365687273456994"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.sql-plan.cjs",
+      "sha256": "e19379a270f0de4923f1c5377c3defd2728230332889176a5f02c430bcdd402a",
+      "bytes": "4037",
+      "mtimeNs": "1789364765336406904"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "sha256": "1d5d10b46be944669efca74e7af8e3d5cd6d09f9b388f2de4accd83a18d1a40e",
+      "bytes": "27320",
+      "mtimeNs": "1788935965796121926"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V49__add_native_legal_employer_public_id.sql",
+      "sha256": "9fe9f4b2f540b94a38525544e40989452410a860dca3fdc521a0ee07c542ada3",
+      "bytes": "918",
+      "mtimeNs": "1789360448778031618"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+      "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+      "bytes": "9105",
+      "mtimeNs": "1789360393439338720"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/NativeSelfContextSetV1.java",
+      "sha256": "283cf60e9fb0f133b1642aed65d190e344ed7a215c69365ca202e19fb3ef21fc",
+      "bytes": "1496",
+      "mtimeNs": "1789354991078381067"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+      "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+      "bytes": "4887",
+      "mtimeNs": "1789359261552529839"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend/dwp-people-server/src/main/resources/db/migration/V41__harden_hcm_entity_boundaries.sql",
+      "sha256": "3f35f77a617aa7483738eefe0cae2ffa651ccc48337bcf998cb2bb2ee6946634",
+      "bytes": "1833",
+      "mtimeNs": "1788935965800010744"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.design.cjs",
+      "sha256": "a4e9b8cd68c023dc14f159db7a79eeff06b263d6037233602baa5bb4f26dd4e0",
+      "bytes": "60734",
+      "mtimeNs": "1789374055645497142"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.model.cjs",
+      "sha256": "1c84ec1b4b61bba2627075a5ae84bc1a7fc59ad2d9355d377dbaea4ec7e2e619",
+      "bytes": "25148",
+      "mtimeNs": "1789374417044490933"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.check.cjs",
+      "sha256": "8f094fbb87c235addc7f4c7f6c70f2d861b2d13a700936e3c7355fa847dc92e0",
+      "bytes": "20026",
+      "mtimeNs": "1789374417051038552"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.json",
+      "sha256": "4eaf4018e2adf556c16890ced6e67dce8a3f47451291368a7a7210d6aaeb059f",
+      "bytes": "366679",
+      "mtimeNs": "1789374089044325816"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.schemas.json",
+      "sha256": "43d6f2221a8cf7d3b1426790f22f60d05533c57e6806463771157f63d78775ce",
+      "bytes": "80440",
+      "mtimeNs": "1789373380956312406"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.fixtures.json",
+      "sha256": "46f688fcf70c3371bffbb3ae0f987a39a114f94fed3d77015e9a43bcfeb75c00",
+      "bytes": "525829",
+      "mtimeNs": "1789374318076195721"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.nullable.json",
+      "sha256": "2fef819530675951e68c894ec9b30028447910a23258f2c14cf466f6af504b09",
+      "bytes": "104646",
+      "mtimeNs": "1789373390601468086"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.source-contract.json",
+      "sha256": "f570a3d467a1bfb267c11aa47f50c7ea9215ce6485001c91b7710b58ae1a67c5",
+      "bytes": "6080",
+      "mtimeNs": "1789373814164082577"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.allocation.json",
+      "sha256": "49c6039cedd64646b1ab8cbee4bb71a5373b254bb7c24156940654f690443cce",
+      "bytes": "12125",
+      "mtimeNs": "1789373774338711090"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.record-outputs.json",
+      "sha256": "efa51dab5c1d3c9111d2cdbdb154a724719caa5a636dcb8b004360bd03d4f4ef",
+      "bytes": "264707",
+      "mtimeNs": "1789374499605571530"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.md",
+      "sha256": "7ce34ae539084493d616bd3d327cc32bbd936c1335761b2e1b5fe2018d04a573",
+      "bytes": "10069",
+      "mtimeNs": "1789374499610878350"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/reports/pay-v2-draft-native-root-type-rls-pass-2026-09-14.json",
+      "sha256": "fb0a4526e8c59c084d1f0b7876e1cf522b48775c1046d6a8cb32c5c46db4132b",
+      "bytes": "233235",
+      "mtimeNs": "1789372582225100815"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/sys-stream-authority-decision.proposal.v1.md",
+      "sha256": "4be3e9a506387c463cfea1f7d1584a10ec1fd65ce689dfb897bf0b2d4c0081a1",
+      "bytes": "10924",
+      "mtimeNs": "1789351494756304740"
+    }
+  ],
+  "sourcesUnchanged": true,
+  "sourceIssues": [],
+  "publication": {
+    "CURRENT_PUBLISHED": false,
+    "all119ExactSourceClosed": false,
+    "sourceFamilyMeaningIndependentlyApproved": false,
+    "actualDomainDml": 0,
+    "actualNativeOwnerAuthorization": 0,
+    "nativePgReproducedByThisAuthor": 0,
+    "G3Approval": false
+  }
+}

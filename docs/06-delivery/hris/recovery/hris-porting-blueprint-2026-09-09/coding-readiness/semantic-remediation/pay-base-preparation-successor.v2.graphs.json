@@ -1,0 +1,1905 @@
+{
+  "status": "EXACT_PLANNED_PARTIAL_SOURCE_GRAPH_G3_OPEN",
+  "queries": [
+    {
+      "id": "run",
+      "table": "pay_payroll_runs",
+      "schemaRef": "PAY.Row.pay_payroll_runs",
+      "sql": "SELECT r.* FROM public.pay_payroll_runs r WHERE r.tenant_id=:trustedTenant AND r.public_id=:pathRunId FOR UPDATE",
+      "inputs": [
+        "principal.tenantId",
+        "path.runId"
+      ],
+      "fieldSources": {
+        "payroll_run_id": {
+          "source": "public.pay_payroll_runs.payroll_run_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_payroll_runs.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_payroll_runs.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "pay_period_id": {
+          "source": "public.pay_payroll_runs.pay_period_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "run_type": {
+          "source": "public.pay_payroll_runs.run_type",
+          "type": "VARCHAR(20)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_snapshot_id": {
+          "source": "public.pay_payroll_runs.input_snapshot_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "supersedes_run_public_id": {
+          "source": "public.pay_payroll_runs.supersedes_run_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "status": {
+          "source": "public.pay_payroll_runs.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "target_worker_count": {
+          "source": "public.pay_payroll_runs.target_worker_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "blocking_issue_count": {
+          "source": "public.pay_payroll_runs.blocking_issue_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "latest_attempt_no": {
+          "source": "public.pay_payroll_runs.latest_attempt_no",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "approval_case_public_id": {
+          "source": "public.pay_payroll_runs.approval_case_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_payroll_runs.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_payroll_runs.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_payroll_runs.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "updated_at": {
+          "source": "public.pay_payroll_runs.updated_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "updated_by": {
+          "source": "public.pay_payroll_runs.updated_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "finalized_at": {
+          "source": "public.pay_payroll_runs.finalized_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "finalized_by": {
+          "source": "public.pay_payroll_runs.finalized_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "snapshot",
+      "table": "pay_input_snapshots",
+      "schemaRef": "PAY.Row.pay_input_snapshots",
+      "sql": "SELECT s.* FROM public.pay_input_snapshots s WHERE s.tenant_id=:trustedTenant AND s.input_snapshot_id=:run.input_snapshot_id FOR UPDATE",
+      "inputs": [
+        "principal.tenantId",
+        "run.input_snapshot_id"
+      ],
+      "fieldSources": {
+        "input_snapshot_id": {
+          "source": "public.pay_input_snapshots.input_snapshot_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_input_snapshots.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_input_snapshots.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "pay_period_public_id": {
+          "source": "public.pay_input_snapshots.pay_period_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "target_revision": {
+          "source": "public.pay_input_snapshots.target_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "people_projection_revision": {
+          "source": "public.pay_input_snapshots.people_projection_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "time_handoff_public_id": {
+          "source": "public.pay_input_snapshots.time_handoff_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "time_close_revision": {
+          "source": "public.pay_input_snapshots.time_close_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "rule_set_digest": {
+          "source": "public.pay_input_snapshots.rule_set_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_digest": {
+          "source": "public.pay_input_snapshots.input_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "worker_count": {
+          "source": "public.pay_input_snapshots.worker_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "status": {
+          "source": "public.pay_input_snapshots.status",
+          "type": "VARCHAR(20)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_input_snapshots.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_input_snapshots.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "as_of": {
+          "source": "public.pay_input_snapshots.as_of",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "source_vector_digest": {
+          "source": "public.pay_input_snapshots.source_vector_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_input_snapshots.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "vectors",
+      "table": "pay_input_source_vectors",
+      "schemaRef": "PAY.Row.pay_input_source_vectors",
+      "sql": "SELECT v.* FROM public.pay_input_source_vectors v WHERE v.tenant_id=:trustedTenant AND v.input_snapshot_id=:snapshot.input_snapshot_id ORDER BY v.source_kind,v.contract_ref,v.owner_object_public_id,v.owner_revision",
+      "inputs": [
+        "principal.tenantId",
+        "snapshot.input_snapshot_id"
+      ],
+      "fieldSources": {
+        "input_source_vector_id": {
+          "source": "public.pay_input_source_vectors.input_source_vector_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_input_source_vectors.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_input_source_vectors.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_snapshot_id": {
+          "source": "public.pay_input_source_vectors.input_snapshot_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "source_kind": {
+          "source": "public.pay_input_source_vectors.source_kind",
+          "type": "VARCHAR(40)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "owner_session": {
+          "source": "public.pay_input_source_vectors.owner_session",
+          "type": "VARCHAR(20)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "contract_ref": {
+          "source": "public.pay_input_source_vectors.contract_ref",
+          "type": "VARCHAR(160)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "owner_object_public_id": {
+          "source": "public.pay_input_source_vectors.owner_object_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "owner_revision": {
+          "source": "public.pay_input_source_vectors.owner_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "schema_version": {
+          "source": "public.pay_input_source_vectors.schema_version",
+          "type": "VARCHAR(80)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "as_of": {
+          "source": "public.pay_input_source_vectors.as_of",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "effective_from": {
+          "source": "public.pay_input_source_vectors.effective_from",
+          "type": "DATE",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "effective_to": {
+          "source": "public.pay_input_source_vectors.effective_to",
+          "type": "DATE",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "payload_digest": {
+          "source": "public.pay_input_source_vectors.payload_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "line_count": {
+          "source": "public.pay_input_source_vectors.line_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "ingest_receipt_public_id": {
+          "source": "public.pay_input_source_vectors.ingest_receipt_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "field_set_version": {
+          "source": "public.pay_input_source_vectors.field_set_version",
+          "type": "VARCHAR(80)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_input_source_vectors.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_input_source_vectors.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_input_source_vectors.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "ingests",
+      "table": "pay_input_source_ingest_receipts",
+      "schemaRef": "PAY.Row.pay_input_source_ingest_receipts",
+      "sql": "SELECT i.* FROM public.pay_input_source_ingest_receipts i WHERE i.tenant_id=:trustedTenant AND i.public_id=:vector.ingest_receipt_public_id AND i.input_snapshot_id=:snapshot.input_snapshot_id",
+      "inputs": [
+        "principal.tenantId",
+        "vectors.ingest_receipt_public_id",
+        "snapshot.input_snapshot_id"
+      ],
+      "fieldSources": {
+        "input_source_ingest_receipt_id": {
+          "source": "public.pay_input_source_ingest_receipts.input_source_ingest_receipt_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_input_source_ingest_receipts.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_input_source_ingest_receipts.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_snapshot_id": {
+          "source": "public.pay_input_source_ingest_receipts.input_snapshot_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "contract_ref": {
+          "source": "public.pay_input_source_ingest_receipts.contract_ref",
+          "type": "VARCHAR(160)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "owner_object_public_id": {
+          "source": "public.pay_input_source_ingest_receipts.owner_object_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "owner_revision": {
+          "source": "public.pay_input_source_ingest_receipts.owner_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "expected_digest": {
+          "source": "public.pay_input_source_ingest_receipts.expected_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "actual_digest": {
+          "source": "public.pay_input_source_ingest_receipts.actual_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "expected_line_count": {
+          "source": "public.pay_input_source_ingest_receipts.expected_line_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "actual_line_count": {
+          "source": "public.pay_input_source_ingest_receipts.actual_line_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "status": {
+          "source": "public.pay_input_source_ingest_receipts.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "reason_code": {
+          "source": "public.pay_input_source_ingest_receipts.reason_code",
+          "type": "VARCHAR(80)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_input_source_ingest_receipts.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_input_source_ingest_receipts.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_input_source_ingest_receipts.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "payloads",
+      "table": "pay_owner_snapshot_payloads",
+      "schemaRef": "PAY.Row.pay_owner_snapshot_payloads",
+      "sql": "SELECT p.* FROM public.pay_owner_snapshot_payloads p WHERE p.tenant_id=:trustedTenant AND p.ingest_receipt_id=:ingest.input_source_ingest_receipt_id",
+      "inputs": [
+        "principal.tenantId",
+        "ingests.input_source_ingest_receipt_id"
+      ],
+      "fieldSources": {
+        "owner_snapshot_payload_id": {
+          "source": "public.pay_owner_snapshot_payloads.owner_snapshot_payload_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_owner_snapshot_payloads.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_owner_snapshot_payloads.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "ingest_receipt_id": {
+          "source": "public.pay_owner_snapshot_payloads.ingest_receipt_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "contract_ref": {
+          "source": "public.pay_owner_snapshot_payloads.contract_ref",
+          "type": "VARCHAR(160)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "schema_version": {
+          "source": "public.pay_owner_snapshot_payloads.schema_version",
+          "type": "VARCHAR(80)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "payload_digest": {
+          "source": "public.pay_owner_snapshot_payloads.payload_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "protected_object_ref": {
+          "source": "public.pay_owner_snapshot_payloads.protected_object_ref",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_payload": {
+          "source": "public.pay_owner_snapshot_payloads.public_payload",
+          "type": "JSONB",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "field_set_version": {
+          "source": "public.pay_owner_snapshot_payloads.field_set_version",
+          "type": "VARCHAR(80)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "retention_policy_public_id": {
+          "source": "public.pay_owner_snapshot_payloads.retention_policy_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "verified_at": {
+          "source": "public.pay_owner_snapshot_payloads.verified_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_owner_snapshot_payloads.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_owner_snapshot_payloads.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_owner_snapshot_payloads.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "attempt",
+      "table": "pay_payroll_run_attempts",
+      "schemaRef": "PAY.Row.pay_payroll_run_attempts",
+      "sql": "SELECT a.* FROM public.pay_payroll_run_attempts a WHERE a.tenant_id=:trustedTenant AND a.payroll_run_id=:run.payroll_run_id AND a.attempt_no=:run.latest_attempt_no",
+      "inputs": [
+        "principal.tenantId",
+        "run.payroll_run_id",
+        "run.latest_attempt_no"
+      ],
+      "fieldSources": {
+        "payroll_run_attempt_id": {
+          "source": "public.pay_payroll_run_attempts.payroll_run_attempt_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_payroll_run_attempts.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_payroll_run_attempts.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "payroll_run_id": {
+          "source": "public.pay_payroll_run_attempts.payroll_run_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "attempt_no": {
+          "source": "public.pay_payroll_run_attempts.attempt_no",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "status": {
+          "source": "public.pay_payroll_run_attempts.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "engine_version": {
+          "source": "public.pay_payroll_run_attempts.engine_version",
+          "type": "VARCHAR(50)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "formula_set_digest": {
+          "source": "public.pay_payroll_run_attempts.formula_set_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_snapshot_digest": {
+          "source": "public.pay_payroll_run_attempts.input_snapshot_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "idempotency_key": {
+          "source": "public.pay_payroll_run_attempts.idempotency_key",
+          "type": "VARCHAR(160)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "lease_token": {
+          "source": "public.pay_payroll_run_attempts.lease_token",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "lease_expires_at": {
+          "source": "public.pay_payroll_run_attempts.lease_expires_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "started_at": {
+          "source": "public.pay_payroll_run_attempts.started_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "finished_at": {
+          "source": "public.pay_payroll_run_attempts.finished_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "output_digest": {
+          "source": "public.pay_payroll_run_attempts.output_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "error_code": {
+          "source": "public.pay_payroll_run_attempts.error_code",
+          "type": "VARCHAR(80)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "correlation_id": {
+          "source": "public.pay_payroll_run_attempts.correlation_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_payroll_run_attempts.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_payroll_run_attempts.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "manifest",
+      "table": "pay_result_staging_manifests",
+      "schemaRef": "PAY.Row.pay_result_staging_manifests",
+      "sql": "SELECT m.* FROM public.pay_result_staging_manifests m WHERE m.tenant_id=:trustedTenant AND m.attempt_id=:attempt.payroll_run_attempt_id",
+      "inputs": [
+        "principal.tenantId",
+        "attempt.payroll_run_attempt_id"
+      ],
+      "fieldSources": {
+        "result_staging_manifest_id": {
+          "source": "public.pay_result_staging_manifests.result_staging_manifest_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_result_staging_manifests.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_result_staging_manifests.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "attempt_id": {
+          "source": "public.pay_result_staging_manifests.attempt_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "fence_no": {
+          "source": "public.pay_result_staging_manifests.fence_no",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_digest": {
+          "source": "public.pay_result_staging_manifests.input_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "result_digest": {
+          "source": "public.pay_result_staging_manifests.result_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "worker_count": {
+          "source": "public.pay_result_staging_manifests.worker_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "line_count": {
+          "source": "public.pay_result_staging_manifests.line_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "staged_artifact_public_id": {
+          "source": "public.pay_result_staging_manifests.staged_artifact_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "status": {
+          "source": "public.pay_result_staging_manifests.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_result_staging_manifests.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_result_staging_manifests.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_result_staging_manifests.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "results",
+      "table": "pay_worker_results",
+      "schemaRef": "PAY.Row.pay_worker_results",
+      "sql": "SELECT w.* FROM public.pay_worker_results w WHERE w.tenant_id=:trustedTenant AND w.payroll_run_attempt_id=:attempt.payroll_run_attempt_id ORDER BY w.worker_public_id,w.assignment_public_id,w.currency_code",
+      "inputs": [
+        "principal.tenantId",
+        "attempt.payroll_run_attempt_id"
+      ],
+      "fieldSources": {
+        "worker_result_id": {
+          "source": "public.pay_worker_results.worker_result_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_worker_results.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_worker_results.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "payroll_run_attempt_id": {
+          "source": "public.pay_worker_results.payroll_run_attempt_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "worker_public_id": {
+          "source": "public.pay_worker_results.worker_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "currency_code": {
+          "source": "public.pay_worker_results.currency_code",
+          "type": "CHAR(3)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "gross_amount": {
+          "source": "public.pay_worker_results.gross_amount",
+          "type": "NUMERIC(19,4)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "deduction_amount": {
+          "source": "public.pay_worker_results.deduction_amount",
+          "type": "NUMERIC(19,4)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "net_amount": {
+          "source": "public.pay_worker_results.net_amount",
+          "type": "NUMERIC(19,4)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "employer_cost_amount": {
+          "source": "public.pay_worker_results.employer_cost_amount",
+          "type": "NUMERIC(19,4)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "line_count": {
+          "source": "public.pay_worker_results.line_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "result_digest": {
+          "source": "public.pay_worker_results.result_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "calculated_at": {
+          "source": "public.pay_worker_results.calculated_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "assignment_public_id": {
+          "source": "public.pay_worker_results.assignment_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "lines",
+      "table": "pay_result_lines",
+      "schemaRef": "PAY.Row.pay_result_lines",
+      "sql": "SELECT l.* FROM public.pay_result_lines l WHERE l.tenant_id=:trustedTenant AND l.worker_result_public_id=:result.public_id ORDER BY l.element_public_id,l.public_id",
+      "inputs": [
+        "principal.tenantId",
+        "results.public_id"
+      ],
+      "fieldSources": {
+        "result_line_id": {
+          "source": "public.pay_result_lines.result_line_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_result_lines.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_result_lines.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "worker_result_public_id": {
+          "source": "public.pay_result_lines.worker_result_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "element_public_id": {
+          "source": "public.pay_result_lines.element_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "element_version_public_id": {
+          "source": "public.pay_result_lines.element_version_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "line_type": {
+          "source": "public.pay_result_lines.line_type",
+          "type": "VARCHAR(30)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "amount": {
+          "source": "public.pay_result_lines.amount",
+          "type": "NUMERIC(19,4)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "currency_code": {
+          "source": "public.pay_result_lines.currency_code",
+          "type": "CHAR(3)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "rate": {
+          "source": "public.pay_result_lines.rate",
+          "type": "NUMERIC(19,8)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "quantity": {
+          "source": "public.pay_result_lines.quantity",
+          "type": "NUMERIC(19,6)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "balance_effect": {
+          "source": "public.pay_result_lines.balance_effect",
+          "type": "NUMERIC(19,6)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "trace_public_id": {
+          "source": "public.pay_result_lines.trace_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "source_entry_public_id": {
+          "source": "public.pay_result_lines.source_entry_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "reverses_line_public_id": {
+          "source": "public.pay_result_lines.reverses_line_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "calculated_at": {
+          "source": "public.pay_result_lines.calculated_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "report",
+      "table": "pay_run_validation_reports",
+      "schemaRef": "PAY.Row.pay_run_validation_reports",
+      "sql": "SELECT v.* FROM public.pay_run_validation_reports v WHERE v.tenant_id=:trustedTenant AND v.payroll_run_id=:run.payroll_run_id AND v.attempt_id=:attempt.payroll_run_attempt_id",
+      "inputs": [
+        "principal.tenantId",
+        "run.payroll_run_id",
+        "attempt.payroll_run_attempt_id"
+      ],
+      "fieldSources": {
+        "run_validation_report_id": {
+          "source": "public.pay_run_validation_reports.run_validation_report_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_run_validation_reports.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_run_validation_reports.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "payroll_run_id": {
+          "source": "public.pay_run_validation_reports.payroll_run_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "attempt_id": {
+          "source": "public.pay_run_validation_reports.attempt_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_digest": {
+          "source": "public.pay_run_validation_reports.input_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "result_digest": {
+          "source": "public.pay_run_validation_reports.result_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "control_totals": {
+          "source": "public.pay_run_validation_reports.control_totals",
+          "type": "JSONB",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "target_dispositions": {
+          "source": "public.pay_run_validation_reports.target_dispositions",
+          "type": "JSONB",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "blocking_issue_count": {
+          "source": "public.pay_run_validation_reports.blocking_issue_count",
+          "type": "INTEGER",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "status": {
+          "source": "public.pay_run_validation_reports.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_run_validation_reports.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_run_validation_reports.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_run_validation_reports.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "approval",
+      "table": "pay_run_approval_bindings",
+      "schemaRef": "PAY.Row.pay_run_approval_bindings",
+      "sql": "SELECT b.* FROM public.pay_run_approval_bindings b WHERE b.tenant_id=:trustedTenant AND b.public_id=:bodyApprovalBindingId AND b.subject_public_id=:run.public_id",
+      "inputs": [
+        "principal.tenantId",
+        "body.approvalBindingId",
+        "run.public_id"
+      ],
+      "fieldSources": {
+        "run_approval_binding_id": {
+          "source": "public.pay_run_approval_bindings.run_approval_binding_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_run_approval_bindings.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_run_approval_bindings.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "subject_public_id": {
+          "source": "public.pay_run_approval_bindings.subject_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "subject_revision": {
+          "source": "public.pay_run_approval_bindings.subject_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "subject_digest": {
+          "source": "public.pay_run_approval_bindings.subject_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "maker_principal_public_id": {
+          "source": "public.pay_run_approval_bindings.maker_principal_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "approval_case_public_id": {
+          "source": "public.pay_run_approval_bindings.approval_case_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "owner_decision_revision": {
+          "source": "public.pay_run_approval_bindings.owner_decision_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "owner_decision_digest": {
+          "source": "public.pay_run_approval_bindings.owner_decision_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "decision": {
+          "source": "public.pay_run_approval_bindings.decision",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "decision_actor_public_id": {
+          "source": "public.pay_run_approval_bindings.decision_actor_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "decided_at": {
+          "source": "public.pay_run_approval_bindings.decided_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_run_approval_bindings.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_run_approval_bindings.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_run_approval_bindings.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    },
+    {
+      "id": "finalization",
+      "table": "pay_run_finalization_receipts",
+      "schemaRef": "PAY.Row.pay_run_finalization_receipts",
+      "sql": "SELECT f.* FROM public.pay_run_finalization_receipts f WHERE f.tenant_id=:trustedTenant AND f.payroll_run_id=:run.payroll_run_id",
+      "inputs": [
+        "principal.tenantId",
+        "run.payroll_run_id"
+      ],
+      "fieldSources": {
+        "run_finalization_receipt_id": {
+          "source": "public.pay_run_finalization_receipts.run_finalization_receipt_id",
+          "type": "BIGSERIAL",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "public_id": {
+          "source": "public.pay_run_finalization_receipts.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "tenant_id": {
+          "source": "public.pay_run_finalization_receipts.tenant_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "payroll_run_id": {
+          "source": "public.pay_run_finalization_receipts.payroll_run_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "attempt_id": {
+          "source": "public.pay_run_finalization_receipts.attempt_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "run_revision": {
+          "source": "public.pay_run_finalization_receipts.run_revision",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "input_digest": {
+          "source": "public.pay_run_finalization_receipts.input_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "result_digest": {
+          "source": "public.pay_run_finalization_receipts.result_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "validation_report_id": {
+          "source": "public.pay_run_finalization_receipts.validation_report_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "approval_binding_id": {
+          "source": "public.pay_run_finalization_receipts.approval_binding_id",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "balance_watermark": {
+          "source": "public.pay_run_finalization_receipts.balance_watermark",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "audit_bundle_digest": {
+          "source": "public.pay_run_finalization_receipts.audit_bundle_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "finalized_at": {
+          "source": "public.pay_run_finalization_receipts.finalized_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "finalized_by": {
+          "source": "public.pay_run_finalization_receipts.finalized_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "row_version": {
+          "source": "public.pay_run_finalization_receipts.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_at": {
+          "source": "public.pay_run_finalization_receipts.created_at",
+          "type": "TIMESTAMPTZ",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "created_by": {
+          "source": "public.pay_run_finalization_receipts.created_by",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "CURRENT_EXECUTED": false,
+      "portRegistration": "PLANNED_UNPUBLISHED"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "clock",
+      "kind": "RUNTIME_CLOCK",
+      "type": "TIMESTAMPTZ",
+      "inputs": [
+        "runtime.clock.instant"
+      ]
+    },
+    {
+      "id": "newBusinessId",
+      "kind": "SECURE_UUID_ALLOCATOR",
+      "type": "UUID",
+      "inputs": [
+        "runtime.secureUuidAllocator.next"
+      ]
+    },
+    {
+      "id": "newReceiptId",
+      "kind": "SECURE_UUID_ALLOCATOR",
+      "type": "UUID",
+      "inputs": [
+        "runtime.secureUuidAllocator.next"
+      ],
+      "distinctFrom": "newBusinessId"
+    },
+    {
+      "id": "expectedVersion",
+      "kind": "VALIDATED_HEADER",
+      "type": "BIGINT",
+      "inputs": [
+        "header.If-Match"
+      ],
+      "schemaRef": "PAY.CasCommandHeaders",
+      "parse": "strict quoted decimal ETag from existing closed CAS headers; no wildcard, weak tag, coercion or actor-derived version"
+    },
+    {
+      "id": "casRunVersion",
+      "kind": "CAS_RETURNING",
+      "type": "BIGINT",
+      "inputs": [
+        "run.row_version",
+        "expectedVersion",
+        "guardedOutcome"
+      ],
+      "expression": "UPDATE public.pay_payroll_runs SET status=:guardedOutcome,row_version=row_version+1,updated_at=:clock,updated_by=:principalPublicId WHERE tenant_id=:trustedTenant AND payroll_run_id=:runLocalId AND row_version=:expectedVersion AND status=:expectedPreState RETURNING public_id,row_version; zero rows → 409",
+      "noBlindLoadedVersionIncrement": true
+    },
+    {
+      "id": "frozenInputDigest",
+      "kind": "CANONICAL_ACTUAL_PAYLOAD_HASH",
+      "type": "CHAR(64)",
+      "inputs": [
+        "vectors",
+        "ingests",
+        "payloads",
+        "snapshot.target_revision",
+        "OPEN_EXACT_NATIVE_TARGET_TUPLES",
+        "OPEN_EXACT_LOCAL_ENTRY_AND_ARTIFACT_PAYLOAD_LEAVES"
+      ],
+      "expression": "hash ordered complete actual owner payload/vector/targets/values/artifacts after SSOT Decimal normalization; own header digest excluded, nested source digest included",
+      "open": "two named leaf contracts still unpublished; no digest-only substitute"
+    },
+    {
+      "id": "financialResultDigest",
+      "kind": "CANONICAL_ACTUAL_PAYLOAD_HASH",
+      "type": "CHAR(64)",
+      "inputs": [
+        "results",
+        "manifest.result_digest",
+        "report.result_digest",
+        "body.expectedResultDigest"
+      ],
+      "expression": "recompute actual results+ordered lines+trace source tuples and compare exact manifest/report/body digests; full line/trace leaf source graph OPEN"
+    },
+    {
+      "id": "finalizeGuard",
+      "kind": "GUARDED_OUTCOME",
+      "type": "VARCHAR(24)",
+      "inputs": [
+        "run.status",
+        "snapshot.status",
+        "attempt.status",
+        "manifest.status",
+        "report.status",
+        "approval.decision",
+        "approval.subject_digest",
+        "financialResultDigest",
+        "OPEN_CURRENT_AUTH_PURPOSE_SOD_STEPUP_PROOF",
+        "OPEN_CURRENT_OWNER_INVALIDATION_QUERY"
+      ],
+      "expression": "APPROVED + FROZEN + SUCCEEDED + complete staging + valid report + exact APPROVED owner decision + current proof → FINALIZED; all failures 0 financial writes"
+    },
+    {
+      "id": "finalizationWrites",
+      "kind": "ATOMIC_INSERT_RETURNING",
+      "type": "PAY.Row.pay_run_finalization_receipts",
+      "inputs": [
+        "newBusinessId",
+        "principal.tenantId",
+        "run.payroll_run_id",
+        "attempt.payroll_run_attempt_id",
+        "casRunVersion",
+        "snapshot.input_digest",
+        "financialResultDigest",
+        "report.run_validation_report_id",
+        "approval.run_approval_binding_id",
+        "OPEN_BALANCE_WATERMARK",
+        "OPEN_ACTUAL_AUDIT_BUNDLE_DIGEST",
+        "clock",
+        "principal.publicId"
+      ],
+      "expression": "insert unique tenant/run finalization record; IDs are local parents resolved from exact rows. RETURNING public_id/row_version supplies receipt result, not actor/correlation."
+    },
+    {
+      "id": "paymentInstructionAmount",
+      "kind": "OWNER_DERIVED_MONEY",
+      "type": "NUMERIC(19,4)",
+      "inputs": [
+        "results.net_amount",
+        "results.currency_code",
+        "finalization.result_digest",
+        "OPEN_EFFECTIVE_SETTLEMENT_ROUNDING_POLICY"
+      ],
+      "expression": "consume finalized exact result net, named settlement rounding once; never caller arbitrary amount"
+    },
+    {
+      "id": "receiptDigest",
+      "kind": "NORMALIZED_MUTATION_HASH",
+      "type": "CHAR(64)",
+      "inputs": [
+        "validated.body",
+        "validated.path",
+        "current.tenant",
+        "current.actor",
+        "current.PEP.originatingAction",
+        "OPEN_OPERATION_NORMALIZED_EFFECTIVE_MUTATION"
+      ],
+      "expression": "hash operation-specific normalized command, not raw unbound refs; header Idempotency-Key scopes tenant/actor/action; same key/different digest409; original SUCCEEDED receipt replay after current auth revalidation"
+    },
+    {
+      "id": "receiptResultRef",
+      "kind": "TRANSACTION_RESULT_PROJECTION",
+      "type": "UUID",
+      "inputs": [
+        "finalizationWrites.RETURNING.public_id"
+      ],
+      "expression": "finalize resultRef=financial finalization business public UUID; receipt own UUID and audit correlation stay distinct"
+    }
+  ],
+  "cancelBranches": [
+    {
+      "kind": "CONFIG_ARTIFACT",
+      "subjectTable": "pay_config_artifact_versions",
+      "bindingTable": "pay_config_approval_bindings",
+      "subjectLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "path.subjectId"
+      },
+      "bindingLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "body.approvalBindingId",
+        "parentColumn": {
+          "source": "public.pay_config_approval_bindings.subject_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "parentValue": {
+          "source": "public.pay_config_artifact_versions.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "prestate": {
+        "state": {
+          "source": "public.pay_config_artifact_versions.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "version": {
+          "source": "public.pay_config_artifact_versions.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDecision": {
+          "source": "public.pay_config_approval_bindings.decision",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingVersion": {
+          "source": "public.pay_config_approval_bindings.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDigest": {
+          "source": "public.pay_config_approval_bindings.subject_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "inputs": [
+        "header.If-Match",
+        "body.subjectKind",
+        "body.approvalBindingId",
+        "runtime.clock.instant",
+        "runtime.secureUuidAllocator.next",
+        "owner.refetchedCancellationRequestId",
+        "owner.refetchedSubjectPublicId",
+        "owner.refetchedBindingPublicId",
+        "owner.refetchedOwnerRevision",
+        "owner.refetchedDigest",
+        "owner.refetchedOutcome"
+      ],
+      "writeSet": {
+        "CANCELLED_BEFORE_DECISION": [
+          "pay_config_artifact_versions.status",
+          "pay_config_artifact_versions.row_version",
+          "pay_config_approval_bindings.decision",
+          "pay_config_approval_bindings.row_version",
+          "pay_approval_cancellation_requests.status",
+          "pay_approval_cancellation_requests.owner_result_digest"
+        ],
+        "APPROVED": [
+          "pay_config_approval_bindings.decision",
+          "pay_config_approval_bindings.owner_decision_revision",
+          "pay_config_approval_bindings.owner_decision_digest",
+          "pay_config_artifact_versions.status",
+          "pay_config_artifact_versions.row_version"
+        ],
+        "UNKNOWN": [
+          "pay_approval_cancellation_requests.status"
+        ]
+      },
+      "guards": [
+        "route/body kind exact branch; no first UUID copy",
+        "binding.subject_public_id == loaded subject.public_id",
+        "owner subject/binding/request/native revision/digest matches",
+        "current native authority and maker/approver SoD",
+        "CANCELLED only before decision; APPROVED/REJECTED adopted as authoritative outcomes; unknown subject stays pending",
+        "all financial finalized/posted facts append-only; legal allowed source states exact branch transition review OPEN"
+      ],
+      "receiptSources": [
+        "CAS UPDATE RETURNING subject.public_id,row_version",
+        "runtime clock",
+        "separate receipt UUID",
+        "operation normalized mutation digest"
+      ],
+      "CURRENT_EXECUTED": false
+    },
+    {
+      "kind": "RUN",
+      "subjectTable": "pay_payroll_runs",
+      "bindingTable": "pay_run_approval_bindings",
+      "subjectLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "path.subjectId"
+      },
+      "bindingLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "body.approvalBindingId",
+        "parentColumn": {
+          "source": "public.pay_run_approval_bindings.subject_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "parentValue": {
+          "source": "public.pay_payroll_runs.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "prestate": {
+        "state": {
+          "source": "public.pay_payroll_runs.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "version": {
+          "source": "public.pay_payroll_runs.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDecision": {
+          "source": "public.pay_run_approval_bindings.decision",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingVersion": {
+          "source": "public.pay_run_approval_bindings.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDigest": {
+          "source": "public.pay_run_approval_bindings.subject_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "inputs": [
+        "header.If-Match",
+        "body.subjectKind",
+        "body.approvalBindingId",
+        "runtime.clock.instant",
+        "runtime.secureUuidAllocator.next",
+        "owner.refetchedCancellationRequestId",
+        "owner.refetchedSubjectPublicId",
+        "owner.refetchedBindingPublicId",
+        "owner.refetchedOwnerRevision",
+        "owner.refetchedDigest",
+        "owner.refetchedOutcome"
+      ],
+      "writeSet": {
+        "CANCELLED_BEFORE_DECISION": [
+          "pay_payroll_runs.status",
+          "pay_payroll_runs.row_version",
+          "pay_run_approval_bindings.decision",
+          "pay_run_approval_bindings.row_version",
+          "pay_approval_cancellation_requests.status",
+          "pay_approval_cancellation_requests.owner_result_digest"
+        ],
+        "APPROVED": [
+          "pay_run_approval_bindings.decision",
+          "pay_run_approval_bindings.owner_decision_revision",
+          "pay_run_approval_bindings.owner_decision_digest",
+          "pay_payroll_runs.status",
+          "pay_payroll_runs.row_version"
+        ],
+        "UNKNOWN": [
+          "pay_approval_cancellation_requests.status"
+        ]
+      },
+      "guards": [
+        "route/body kind exact branch; no first UUID copy",
+        "binding.subject_public_id == loaded subject.public_id",
+        "owner subject/binding/request/native revision/digest matches",
+        "current native authority and maker/approver SoD",
+        "CANCELLED only before decision; APPROVED/REJECTED adopted as authoritative outcomes; unknown subject stays pending",
+        "all financial finalized/posted facts append-only; legal allowed source states exact branch transition review OPEN"
+      ],
+      "receiptSources": [
+        "CAS UPDATE RETURNING subject.public_id,row_version",
+        "runtime clock",
+        "separate receipt UUID",
+        "operation normalized mutation digest"
+      ],
+      "CURRENT_EXECUTED": false
+    },
+    {
+      "kind": "PAYMENT",
+      "subjectTable": "pay_payment_batches",
+      "bindingTable": "pay_payment_approval_bindings",
+      "subjectLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "path.subjectId"
+      },
+      "bindingLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "body.approvalBindingId",
+        "parentColumn": {
+          "source": "public.pay_payment_approval_bindings.subject_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "parentValue": {
+          "source": "public.pay_payment_batches.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "prestate": {
+        "state": {
+          "source": "public.pay_payment_batches.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "version": {
+          "source": "public.pay_payment_batches.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDecision": {
+          "source": "public.pay_payment_approval_bindings.decision",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingVersion": {
+          "source": "public.pay_payment_approval_bindings.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDigest": {
+          "source": "public.pay_payment_approval_bindings.subject_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "inputs": [
+        "header.If-Match",
+        "body.subjectKind",
+        "body.approvalBindingId",
+        "runtime.clock.instant",
+        "runtime.secureUuidAllocator.next",
+        "owner.refetchedCancellationRequestId",
+        "owner.refetchedSubjectPublicId",
+        "owner.refetchedBindingPublicId",
+        "owner.refetchedOwnerRevision",
+        "owner.refetchedDigest",
+        "owner.refetchedOutcome"
+      ],
+      "writeSet": {
+        "CANCELLED_BEFORE_DECISION": [
+          "pay_payment_batches.status",
+          "pay_payment_batches.row_version",
+          "pay_payment_approval_bindings.decision",
+          "pay_payment_approval_bindings.row_version",
+          "pay_approval_cancellation_requests.status",
+          "pay_approval_cancellation_requests.owner_result_digest"
+        ],
+        "APPROVED": [
+          "pay_payment_approval_bindings.decision",
+          "pay_payment_approval_bindings.owner_decision_revision",
+          "pay_payment_approval_bindings.owner_decision_digest",
+          "pay_payment_batches.status",
+          "pay_payment_batches.row_version"
+        ],
+        "UNKNOWN": [
+          "pay_approval_cancellation_requests.status"
+        ]
+      },
+      "guards": [
+        "route/body kind exact branch; no first UUID copy",
+        "binding.subject_public_id == loaded subject.public_id",
+        "owner subject/binding/request/native revision/digest matches",
+        "current native authority and maker/approver SoD",
+        "CANCELLED only before decision; APPROVED/REJECTED adopted as authoritative outcomes; unknown subject stays pending",
+        "all financial finalized/posted facts append-only; legal allowed source states exact branch transition review OPEN"
+      ],
+      "receiptSources": [
+        "CAS UPDATE RETURNING subject.public_id,row_version",
+        "runtime clock",
+        "separate receipt UUID",
+        "operation normalized mutation digest"
+      ],
+      "CURRENT_EXECUTED": false
+    },
+    {
+      "kind": "GL",
+      "subjectTable": "pay_gl_batches",
+      "bindingTable": "pay_gl_approval_bindings",
+      "subjectLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "path.subjectId"
+      },
+      "bindingLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "body.approvalBindingId",
+        "parentColumn": {
+          "source": "public.pay_gl_approval_bindings.subject_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "parentValue": {
+          "source": "public.pay_gl_batches.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "prestate": {
+        "state": {
+          "source": "public.pay_gl_batches.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "version": {
+          "source": "public.pay_gl_batches.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDecision": {
+          "source": "public.pay_gl_approval_bindings.decision",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingVersion": {
+          "source": "public.pay_gl_approval_bindings.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDigest": {
+          "source": "public.pay_gl_approval_bindings.subject_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "inputs": [
+        "header.If-Match",
+        "body.subjectKind",
+        "body.approvalBindingId",
+        "runtime.clock.instant",
+        "runtime.secureUuidAllocator.next",
+        "owner.refetchedCancellationRequestId",
+        "owner.refetchedSubjectPublicId",
+        "owner.refetchedBindingPublicId",
+        "owner.refetchedOwnerRevision",
+        "owner.refetchedDigest",
+        "owner.refetchedOutcome"
+      ],
+      "writeSet": {
+        "CANCELLED_BEFORE_DECISION": [
+          "pay_gl_batches.status",
+          "pay_gl_batches.row_version",
+          "pay_gl_approval_bindings.decision",
+          "pay_gl_approval_bindings.row_version",
+          "pay_approval_cancellation_requests.status",
+          "pay_approval_cancellation_requests.owner_result_digest"
+        ],
+        "APPROVED": [
+          "pay_gl_approval_bindings.decision",
+          "pay_gl_approval_bindings.owner_decision_revision",
+          "pay_gl_approval_bindings.owner_decision_digest",
+          "pay_gl_batches.status",
+          "pay_gl_batches.row_version"
+        ],
+        "UNKNOWN": [
+          "pay_approval_cancellation_requests.status"
+        ]
+      },
+      "guards": [
+        "route/body kind exact branch; no first UUID copy",
+        "binding.subject_public_id == loaded subject.public_id",
+        "owner subject/binding/request/native revision/digest matches",
+        "current native authority and maker/approver SoD",
+        "CANCELLED only before decision; APPROVED/REJECTED adopted as authoritative outcomes; unknown subject stays pending",
+        "all financial finalized/posted facts append-only; legal allowed source states exact branch transition review OPEN"
+      ],
+      "receiptSources": [
+        "CAS UPDATE RETURNING subject.public_id,row_version",
+        "runtime clock",
+        "separate receipt UUID",
+        "operation normalized mutation digest"
+      ],
+      "CURRENT_EXECUTED": false
+    },
+    {
+      "kind": "RETIREMENT_CASE",
+      "subjectTable": "pay_retirement_cases",
+      "bindingTable": "pay_case_approval_bindings",
+      "subjectLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "path.subjectId"
+      },
+      "bindingLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "body.approvalBindingId",
+        "parentColumn": {
+          "source": "public.pay_case_approval_bindings.subject_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "parentValue": {
+          "source": "public.pay_retirement_cases.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "prestate": {
+        "state": {
+          "source": "public.pay_retirement_cases.status",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "version": {
+          "source": "public.pay_retirement_cases.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDecision": {
+          "source": "public.pay_case_approval_bindings.decision",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingVersion": {
+          "source": "public.pay_case_approval_bindings.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDigest": {
+          "source": "public.pay_case_approval_bindings.subject_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "inputs": [
+        "header.If-Match",
+        "body.subjectKind",
+        "body.approvalBindingId",
+        "runtime.clock.instant",
+        "runtime.secureUuidAllocator.next",
+        "owner.refetchedCancellationRequestId",
+        "owner.refetchedSubjectPublicId",
+        "owner.refetchedBindingPublicId",
+        "owner.refetchedOwnerRevision",
+        "owner.refetchedDigest",
+        "owner.refetchedOutcome"
+      ],
+      "writeSet": {
+        "CANCELLED_BEFORE_DECISION": [
+          "pay_retirement_cases.status",
+          "pay_retirement_cases.row_version",
+          "pay_case_approval_bindings.decision",
+          "pay_case_approval_bindings.row_version",
+          "pay_approval_cancellation_requests.status",
+          "pay_approval_cancellation_requests.owner_result_digest"
+        ],
+        "APPROVED": [
+          "pay_case_approval_bindings.decision",
+          "pay_case_approval_bindings.owner_decision_revision",
+          "pay_case_approval_bindings.owner_decision_digest",
+          "pay_retirement_cases.status",
+          "pay_retirement_cases.row_version"
+        ],
+        "UNKNOWN": [
+          "pay_approval_cancellation_requests.status"
+        ]
+      },
+      "guards": [
+        "route/body kind exact branch; no first UUID copy",
+        "binding.subject_public_id == loaded subject.public_id",
+        "owner subject/binding/request/native revision/digest matches",
+        "current native authority and maker/approver SoD",
+        "CANCELLED only before decision; APPROVED/REJECTED adopted as authoritative outcomes; unknown subject stays pending",
+        "all financial finalized/posted facts append-only; legal allowed source states exact branch transition review OPEN"
+      ],
+      "receiptSources": [
+        "CAS UPDATE RETURNING subject.public_id,row_version",
+        "runtime clock",
+        "separate receipt UUID",
+        "operation normalized mutation digest"
+      ],
+      "CURRENT_EXECUTED": false
+    },
+    {
+      "kind": "YEAR_END_CASE",
+      "subjectTable": "pay_year_end_cases",
+      "bindingTable": "pay_case_approval_bindings",
+      "subjectLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "path.subjectId"
+      },
+      "bindingLookup": {
+        "tenant": "principal.tenantId",
+        "publicId": "body.approvalBindingId",
+        "parentColumn": {
+          "source": "public.pay_case_approval_bindings.subject_public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "parentValue": {
+          "source": "public.pay_year_end_cases.public_id",
+          "type": "UUID",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "prestate": {
+        "state": {
+          "source": "public.pay_year_end_cases.status",
+          "type": "VARCHAR(30)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "version": {
+          "source": "public.pay_year_end_cases.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDecision": {
+          "source": "public.pay_case_approval_bindings.decision",
+          "type": "VARCHAR(24)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingVersion": {
+          "source": "public.pay_case_approval_bindings.row_version",
+          "type": "BIGINT",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        },
+        "bindingDigest": {
+          "source": "public.pay_case_approval_bindings.subject_digest",
+          "type": "CHAR(64)",
+          "kind": "LOADED_TENANT_BOUND_ROW"
+        }
+      },
+      "inputs": [
+        "header.If-Match",
+        "body.subjectKind",
+        "body.approvalBindingId",
+        "runtime.clock.instant",
+        "runtime.secureUuidAllocator.next",
+        "owner.refetchedCancellationRequestId",
+        "owner.refetchedSubjectPublicId",
+        "owner.refetchedBindingPublicId",
+        "owner.refetchedOwnerRevision",
+        "owner.refetchedDigest",
+        "owner.refetchedOutcome"
+      ],
+      "writeSet": {
+        "CANCELLED_BEFORE_DECISION": [
+          "pay_year_end_cases.status",
+          "pay_year_end_cases.row_version",
+          "pay_case_approval_bindings.decision",
+          "pay_case_approval_bindings.row_version",
+          "pay_approval_cancellation_requests.status",
+          "pay_approval_cancellation_requests.owner_result_digest"
+        ],
+        "APPROVED": [
+          "pay_case_approval_bindings.decision",
+          "pay_case_approval_bindings.owner_decision_revision",
+          "pay_case_approval_bindings.owner_decision_digest",
+          "pay_year_end_cases.status",
+          "pay_year_end_cases.row_version"
+        ],
+        "UNKNOWN": [
+          "pay_approval_cancellation_requests.status"
+        ]
+      },
+      "guards": [
+        "route/body kind exact branch; no first UUID copy",
+        "binding.subject_public_id == loaded subject.public_id",
+        "owner subject/binding/request/native revision/digest matches",
+        "current native authority and maker/approver SoD",
+        "CANCELLED only before decision; APPROVED/REJECTED adopted as authoritative outcomes; unknown subject stays pending",
+        "all financial finalized/posted facts append-only; legal allowed source states exact branch transition review OPEN"
+      ],
+      "receiptSources": [
+        "CAS UPDATE RETURNING subject.public_id,row_version",
+        "runtime clock",
+        "separate receipt UUID",
+        "operation normalized mutation digest"
+      ],
+      "CURRENT_EXECUTED": false
+    }
+  ],
+  "queryColumnClosure": "actual selected DTO table columns validated; OPEN markers are real unresolved inputs, not accepted typed-source labels",
+  "criticalGap": "pay_payroll_run_attempts actual accepted attempt selection/version and full invalidation/audit/native result binding planned producer remain OPEN",
+  "noCrossOwnerDatabaseQuery": true
+}

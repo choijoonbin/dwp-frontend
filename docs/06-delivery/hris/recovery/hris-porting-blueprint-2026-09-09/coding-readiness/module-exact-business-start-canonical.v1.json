@@ -1,0 +1,299 @@
+{
+  "contractId": "dwp.hris.module-exact-business-start-canonical.v1",
+  "schemaVersion": 1,
+  "status": "CANONICAL_G3_EXACT_BUSINESS_P0_SUCCESSOR",
+  "canonicalDesignPublished": true,
+  "runtimeImplemented": false,
+  "g3CodeGateAuthorization": "NONE_CLOSED_FAIL_SAFE",
+  "scope": {
+    "modules": ["HRIS-HRM", "HRIS-PER", "HRIS-PAY", "HRIS-TIM"],
+    "excluded": ["BENSK", "ADDSK", "customer-specific code branches", "hard-coded statutory values"],
+    "purpose": "Fix the exact business design that every module session must implement independently after Control opens the global code gate.",
+    "notClaimed": ["domain CRUD implemented", "runtime owner ports published", "G4 journeys passed", "country/provider certified", "production activated"]
+  },
+  "stageBoundary": {
+    "G3": "This artifact closes only the enumerated module exact-business design P0: request/record/state/read/write/source/owner/refetch/fixture/test allocation. Shared DTO/SPI implementation, current source sealing, migration allocation, session capacity and global LIVE publication remain separate G3 controls.",
+    "G4": "Implement migrations, handlers, projections, engines, UI functions and native happy/denied/replay/correction journeys for every selected aggregate.",
+    "G5A": "After the module's whole G4 inventory is final, produce the full-surface Design AI prompt package; never design only the pilot.",
+    "G6": "Activate real tenant identity, law packs, bank/tax/insurance/ERP providers and production operations only after named certification."
+  },
+  "operationIdentityAndTransport": {
+    "operationId": "hris.<lower-module>.<lower-kebab-aggregate>.<transition-operation>; this exact identifier is used by route, PEP duty, receipt action and event causation",
+    "create": {"method": "POST", "path": "<module.transportPrefix>/<lower-kebab-aggregate>", "idSource": "owner transaction allocator RETURNING public_id"},
+    "memberCommand": {"method": "POST", "path": "<module.transportPrefix>/<lower-kebab-aggregate>/{publicId}:<transition-operation>", "cas": "If-Match aggregate version plus body CommandContext.expectedVersion must match"},
+    "query": {"method": "GET", "path": "<module.transportPrefix>/<lower-kebab-aggregate>/{publicId}", "authorization": "resource+population+field+purpose evaluated before projection"},
+    "ownerSignal": {"method": "POST", "path": "/internal<module.transportPrefix>/<lower-kebab-aggregate>/{publicId}:<signal>", "verification": "signed owner identity, tenant, purpose, source revision, subject/action, freshness and replay fence"},
+    "errorEnvelope": "typed stable code, request/correlation IDs, retryability and current aggregate version only; no sensitive source payload",
+    "forbidden": ["PUT/PATCH arbitrary JsonNode", "silent legacy fallback", "dual write", "path/body first UUID substitution", "command response synthesized before RETURNING"]
+  },
+  "supersession": {
+    "rule": "Historical proposals remain immutable evidence and are not canonical wholesale. This successor adopts only the explicitly restated decisions below.",
+    "historicalArtifacts": [
+      {"path": "semantic-remediation/hrm-per-base-preparation-successor.proposal.v1.json", "sha256": "44c5acfe8b5cbe65a2c30e56177fe2a5313f8b72ca63a634c689fafc5c7c7a9c", "disposition": "SUPERSEDED_FOR_P0_BY_THIS_CONTRACT"},
+      {"path": "semantic-remediation/pay-base-preparation-successor.v2.json", "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90", "disposition": "SUPERSEDED_FOR_P0_BY_THIS_CONTRACT"},
+      {"path": "semantic-remediation/pay-base-source-preparation-successor.v3.json", "sha256": "4eaf4018e2adf556c16890ced6e67dce8a3f47451291368a7a7210d6aaeb059f", "disposition": "SUPERSEDED_FOR_P0_BY_THIS_CONTRACT"},
+      {"path": "semantic-remediation/tim-cross-context-boundary-successor.v4.json", "sha256": "133d6598d83d0efdc6f774c1170782fb1c483bb9577a4e7d2221034c1b896a6f", "disposition": "SUPERSEDED_FOR_P0_BY_THIS_CONTRACT"}
+    ],
+    "knownProposalDefectsNotAdopted": [
+      "closed allOf population freeze",
+      "NULL placeholders for required cycle-stage source fields",
+      "caller-supplied calibration baseline/distribution authority",
+      "free-text time or payroll executable expressions",
+      "digest-only foundation or payroll input",
+      "four-of-116 TIM operation closure",
+      "business IDs derived from correlation IDs or first UUID",
+      "unpublished proposal status presented as runtime truth"
+    ]
+  },
+  "globalInvariants": [
+    "Tenant comes only from the authenticated context; a body tenant is rejected.",
+    "Self scope is principal-to-person-to-worker-to-relationship-to-assignment and requires explicit selection when more than one effective context exists.",
+    "Every owner reference is tenant, schema, public ID, revision, digest, purpose, population, field-policy and as-of checked; missing, stale, revoked, cross-tenant or wrong-entity refs produce zero writes.",
+    "Public business UUIDs use the owner transaction allocator; correlation, idempotency, digest, array order and first-match selection never create or substitute identity.",
+    "All business effective intervals are half-open; civil dates remain civil dates and instants carry an explicit IANA timezone/DST decision where local time matters.",
+    "Every mutation uses expected aggregate version and pre-state, immutable input/source artifact, atomic receipt/audit/outbox, and response IDs/versions/states from actual RETURNING values.",
+    "No module reads or writes another owner's database. Cross-owner data is accepted only through the registered DTO/SPI snapshot or minimized event then refetched.",
+    "Optional capability absence cannot break unrelated core; a journey that declares a required owner blocks with zero effects when that owner is unavailable.",
+    "Published or financially closed facts are corrected by superseding/correction/reversal records, never destructive update/delete or history rewrite.",
+    "Company policy is versioned tenant configuration, country law is an optional signed pack, and executable scripts/SQL/JAR/shell/customer branching are forbidden."
+  ],
+  "typedOperatorRegistries": {
+    "TIM_RULE_AST_V1": {
+      "maxNodes": 512,
+      "maxDepth": 32,
+      "operators": {
+        "QUANTITY_LITERAL": {"arity": 0, "result": "declared quantity unit"},
+        "RATE_LITERAL": {"arity": 0, "result": "RATE"},
+        "BOOLEAN_LITERAL": {"arity": 0, "result": "BOOLEAN"},
+        "INPUT": {"arity": 0, "result": "published inputRef type"},
+        "ADD": {"arity": 2, "signature": "T,T->T; exact same numeric type/unit"},
+        "SUBTRACT": {"arity": 2, "signature": "T,T->T; exact same numeric type/unit"},
+        "MULTIPLY": {"arity": 2, "signature": "NUMBER|RATE with numeric quantity; registered result only"},
+        "DIVIDE": {"arity": 2, "signature": "numeric/nonzero numeric; registered result only"},
+        "MIN": {"arity": 2, "signature": "T,T->T; exact same numeric type/unit"},
+        "MAX": {"arity": 2, "signature": "T,T->T; exact same numeric type/unit"},
+        "COMPARE_LT": {"arity": 2, "signature": "T,T->BOOLEAN; exact same comparable type/unit"},
+        "COMPARE_EQ": {"arity": 2, "signature": "T,T->BOOLEAN; exact same type/unit"},
+        "AND": {"arity": 2, "signature": "BOOLEAN,BOOLEAN->BOOLEAN"},
+        "OR": {"arity": 2, "signature": "BOOLEAN,BOOLEAN->BOOLEAN"},
+        "IF": {"arity": 3, "signature": "BOOLEAN,T,T->T; branch types/units equal"},
+        "ROUND": {"arity": 1, "signature": "T->T; roundingRef required"}
+      },
+      "errors": ["UNKNOWN_INPUT", "UNKNOWN_OPERATOR", "ARITY_MISMATCH", "TYPE_MISMATCH", "UNIT_MISMATCH", "DIVIDE_BY_ZERO", "CYCLE", "LIMIT_EXCEEDED", "ROUNDING_SOURCE_STALE"]
+    },
+    "PAY_RULE_AST_V1": {
+      "maxNodes": 2048,
+      "maxDepth": 64,
+      "operators": {
+        "LITERAL": {"arity": 0, "result": "declared closed PAY value"},
+        "INPUT": {"arity": 0, "result": "declared frozen input type"},
+        "ADD": {"arity": 2, "signature": "T,T->T; same type/unit/currency"},
+        "SUBTRACT": {"arity": 2, "signature": "T,T->T; same type/unit/currency"},
+        "MULTIPLY": {"arity": 2, "signature": "MONEY*RATE->MONEY|QUANTITY*UNIT_PRICE->MONEY|NUMBER*NUMBER->NUMBER"},
+        "DIVIDE": {"arity": 2, "signature": "MONEY/RATE->MONEY|MONEY/MONEY->RATE|QUANTITY/QUANTITY->RATE|NUMBER/NUMBER->NUMBER"},
+        "MIN": {"arity": 2, "signature": "T,T->T; same type/unit/currency"},
+        "MAX": {"arity": 2, "signature": "T,T->T; same type/unit/currency"},
+        "COMPARE_EQ": {"arity": 2, "signature": "T,T->BOOLEAN; same type/unit/currency"},
+        "COMPARE_LT": {"arity": 2, "signature": "T,T->BOOLEAN; same type/unit/currency"},
+        "AND": {"arity": 2, "signature": "BOOLEAN,BOOLEAN->BOOLEAN"},
+        "OR": {"arity": 2, "signature": "BOOLEAN,BOOLEAN->BOOLEAN"},
+        "IF": {"arity": 3, "signature": "BOOLEAN,T,T->T; branch type/unit/currency equal"},
+        "ROUND": {"arity": 1, "signature": "T->T; roundingRef required"},
+        "CONVERT_MINUTE_HOUR": {"arity": 1, "signature": "MINUTE<->HOUR using exact factor 60; DAY forbidden"},
+        "LOOKUP": {"arity": 1, "signature": "typed key->declared typed value from immutable table"},
+        "SUM": {"arity": 0, "signature": "registered frozen homogeneous collection->T"},
+        "DATE_DIFFERENCE": {"arity": 2, "signature": "civil DATE,DATE->QUANTITY_DAY; no implied workday hours"}
+      },
+      "errors": ["UNKNOWN_INPUT", "UNKNOWN_OPERATOR", "ARITY_MISMATCH", "TYPE_MISMATCH", "UNIT_MISMATCH", "CURRENCY_MISMATCH", "DIVIDE_BY_ZERO", "CYCLE", "LIMIT_EXCEEDED", "ROUNDING_SOURCE_STALE"]
+    }
+  },
+  "auditClosure": [
+    {
+      "findingId": "BASE-P0-004",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-TIM",
+      "decision": "Schedule is a native period aggregate with explicit worker-assignment and immutable segment sources, validate/submit/approve/publish/amend/cancel/reconcile states, CAS and correction lineage.",
+      "schemaRefs": ["#/$defs/ScheduleCommand"],
+      "negativeFixtureIds": ["TIM-N-SCHEDULE-OVERLAP", "TIM-N-SCHEDULE-STALE", "TIM-N-SCHEDULE-CROSS-TENANT", "TIM-N-SCHEDULE-DST-GAP"]
+    },
+    {
+      "findingId": "BASE-P0-005",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-TIM",
+      "decision": "Time and leave rules use closed typed ASTs and an immutable accrual policy with eligibility, enrollment, basis, cap, carryover, expiry, proration, calendar and rounding sources.",
+      "schemaRefs": ["#/$defs/TypedRuleAst", "#/$defs/AccrualPolicy"],
+      "negativeFixtureIds": ["TIM-N-RULE-UNKNOWN-OP", "TIM-N-RULE-ARITY", "TIM-N-RULE-CYCLE", "TIM-N-ACCRUAL-UNIT", "TIM-N-ACCRUAL-EXPIRY"]
+    },
+    {
+      "findingId": "BASE-P0-006",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-TIM",
+      "decision": "Timecard storage and wire use the same literal state vocabulary; LOCKED, CLOSED and CORRECTION_REQUIRED remain distinct and only named transitions can reach them.",
+      "schemaRefs": ["#/$defs/TimecardRecord"],
+      "negativeFixtureIds": ["TIM-N-TIMECARD-LOCK-COLLAPSE", "TIM-N-TIMECARD-ILLEGAL-TRANSITION"]
+    },
+    {
+      "findingId": "BASE-P0-007",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-HRM",
+      "decision": "Employment events are a closed discriminator with event-specific payloads, exact native versions and write sets; admission, concurrent employment, leave/return, termination, correction and separation tasks are separate guarded paths.",
+      "schemaRefs": ["#/$defs/EmploymentEventCommand", "#/$defs/SelfContextSelection"],
+      "negativeFixtureIds": ["HRM-N-GENERIC-PATCH", "HRM-N-FIRST-UUID", "HRM-N-PRIMARY-OVERLAP", "HRM-N-STALE-ASSIGNMENT", "HRM-N-SEPARATION-INCOMPLETE"]
+    },
+    {
+      "findingId": "BASE-P0-008",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-PER",
+      "decision": "Every declared performance aggregate has named commands or trusted owner signals to terminal states; score, cohort and distribution baselines are owner-refetched and caller values are compare-only assertions.",
+      "schemaRefs": ["#/$defs/AggregateTransitionCommand"],
+      "negativeFixtureIds": ["PER-N-CALLER-DISTRIBUTION", "PER-N-AFTER-LOCK", "PER-N-UNREACHABLE", "PER-N-STALE-BASELINE"]
+    },
+    {
+      "findingId": "BASE-P0-009",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-PER",
+      "decision": "Population freeze is one flattened closed schema; the server recomputes membership and content hash from the pinned rule/workforce revisions before atomic freeze.",
+      "schemaRefs": ["#/$defs/FreezePopulationCommand"],
+      "negativeFixtureIds": ["PER-N-FREEZE-MISSING", "PER-N-FREEZE-UNKNOWN", "PER-N-FREEZE-HASH", "PER-N-FREEZE-STALE-WORKFORCE"]
+    },
+    {
+      "findingId": "BASE-P0-010",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-PAY",
+      "decision": "Payroll foundation stores the full typed artifact, a run freezes an exact multi-owner source vector, and formulas are a bounded typed AST with units, currency, rounding and deterministic error registry.",
+      "schemaRefs": ["#/$defs/PayrollFoundationArtifact", "#/$defs/PayrollInputSourceVector", "#/$defs/PayrollRunPrepareCommand", "#/$defs/PayFormulaAst", "#/$defs/ProviderNeutralCase"],
+      "negativeFixtureIds": ["PAY-N-DIGEST-ONLY", "PAY-N-FORMULA-STRING", "PAY-N-FORMULA-CYCLE", "PAY-N-CURRENCY", "PAY-N-SOURCE-STALE", "PAY-N-PERIOD-CLOSED", "PAY-N-PACK-NOT-INSTALLED"]
+    },
+    {
+      "findingId": "BASE-P0-011",
+      "status": "CLOSED_EXACT_DESIGN",
+      "module": "HRIS-TIM",
+      "decision": "TIM composes availability from HRM assignment/location plus TIM schedule/absence/work arrangements and optional PER skill evidence; missing optional PER has a typed state and invokes no PER call.",
+      "schemaRefs": ["#/$defs/WfmPlanningInputSnapshot"],
+      "negativeFixtureIds": ["TIM-N-WFM-HRM-OWNER-MISSING", "TIM-N-WFM-INTERVAL", "TIM-N-WFM-SOURCE-STALE", "TIM-N-WFM-OPTIONAL-PER-CALL"]
+    }
+  ],
+  "modules": {
+    "HRIS-HRM": {
+      "exactBusinessP0": "PASS",
+      "owner": "People/HRM",
+      "transportPrefix": "/api/people/v1/hris",
+      "targetFamilyRefs": ["TFR-HRM-004", "TFR-HRM-005", "TFR-HRM-007", "TFR-HRM-008", "TFR-HRM-010", "TFR-HRM-011", "TFR-HRM-013"],
+      "historicalTransportRefs": ["PEP-HRM-001", "PEP-HRM-002", "PEP-HRM-003", "PEP-HRM-004", "PEP-HRM-005", "PEP-HRM-006", "PEP-HRM-007", "PEP-HRM-008", "PEP-HRM-009", "PEP-HRM-010", "PEP-HRM-011", "PEP-HRM-013"],
+      "aggregates": {
+        "EmploymentEvent": {
+          "states": ["DRAFT", "VALIDATED", "PENDING_APPROVAL", "APPROVED", "PUBLISHED", "REJECTED", "CANCELLED", "SUPERSEDED"],
+          "terminalStates": ["PUBLISHED", "REJECTED", "CANCELLED", "SUPERSEDED"],
+          "transitions": ["create:->DRAFT", "validate:DRAFT->VALIDATED", "submit:VALIDATED->PENDING_APPROVAL", "approval.receive:PENDING_APPROVAL->APPROVED", "approval.reject:PENDING_APPROVAL->REJECTED", "publish:APPROVED->PUBLISHED", "cancel:DRAFT|VALIDATED|PENDING_APPROVAL->CANCELLED", "correct:PUBLISHED->SUPERSEDED"],
+          "schema": "#/$defs/EmploymentEventCommand",
+          "readSources": ["principal/self context", "People person/worker/relationship/assignment exact versions", "organization/job/position/location/legal-employer owner refs", "SYS event policy", "Approval decision"],
+          "writeSet": ["ppl_typed_artifacts", "ppl_assignment_events", "ppl_work_relationships", "ppl_assignments", "ppl_employment_absence_periods", "ppl_command_receipts", "ppl_audit_events", "ppl_outbox_events"],
+          "eventTypes": ["HIRE", "REHIRE", "APPOINTMENT", "TRANSFER", "PROMOTION", "DEMOTION", "CONCURRENT_EMPLOYMENT", "LEAVE", "RETURN", "TERMINATION", "CORRECTION"]
+        },
+        "SeparationCase": {
+          "states": ["DRAFT", "TASKS_ACTIVE", "READY_TO_PUBLISH", "PUBLISHED", "CORRECTION_REQUIRED", "CANCELLED"],
+          "terminalStates": ["PUBLISHED", "CORRECTION_REQUIRED", "CANCELLED"],
+          "transitions": ["create:->DRAFT", "activate:DRAFT->TASKS_ACTIVE", "task.receive:TASKS_ACTIVE->TASKS_ACTIVE|READY_TO_PUBLISH", "publish:READY_TO_PUBLISH->PUBLISHED", "reconcile:PUBLISHED->CORRECTION_REQUIRED", "cancel:DRAFT|TASKS_ACTIVE->CANCELLED"],
+          "readSources": ["immutable termination input", "typed task template", "owner callback revisions"],
+          "writeSet": ["ppl_separation_cases", "ppl_separation_tasks", "ppl_separation_callbacks", "ppl_assignment_events", "ppl_outbox_events"]
+        },
+        "Recruiting": {
+          "states": ["REQUISITION_DRAFT", "REQUISITION_OPEN", "CANDIDATE_APPLIED", "SCREENED", "INTERVIEWED", "OFFERED", "ACCEPTED", "HANDOFF_READY", "HANDOFF_RECEIVED", "REJECTED", "WITHDRAWN", "CLOSED"],
+          "terminalStates": ["CLOSED"],
+          "transitions": ["requisition.create:->REQUISITION_DRAFT", "requisition.publish:REQUISITION_DRAFT->REQUISITION_OPEN", "candidate.admit:REQUISITION_OPEN->CANDIDATE_APPLIED", "candidate.screen:CANDIDATE_APPLIED->SCREENED", "candidate.interview:SCREENED->INTERVIEWED", "offer.issue:INTERVIEWED->OFFERED", "offer.accept:OFFERED->ACCEPTED", "handoff.prepare:ACCEPTED->HANDOFF_READY", "handoff.receive:HANDOFF_READY->HANDOFF_RECEIVED", "reject:CANDIDATE_APPLIED|SCREENED|INTERVIEWED->REJECTED", "withdraw:CANDIDATE_APPLIED|SCREENED|INTERVIEWED|OFFERED->WITHDRAWN", "close:REJECTED|WITHDRAWN|HANDOFF_RECEIVED->CLOSED"],
+          "readSources": ["position/job/org snapshots", "candidate consent/retention policy", "human decision evidence"],
+          "writeSet": ["ppl_requisitions", "ppl_candidate_cases", "ppl_candidate_stage_events", "ppl_offers", "ppl_hire_handoffs", "ppl_outbox_events"]
+        },
+        "Onboarding": {
+          "states": ["TEMPLATE_DRAFT", "TEMPLATE_PUBLISHED", "ASSIGNED", "ACTIVE", "COMPLETED", "CANCELLED", "TEMPLATE_RETIRED"],
+          "terminalStates": ["COMPLETED", "CANCELLED", "TEMPLATE_RETIRED"],
+          "transitions": ["template.create:->TEMPLATE_DRAFT", "template.publish:TEMPLATE_DRAFT->TEMPLATE_PUBLISHED", "assign:TEMPLATE_PUBLISHED->ASSIGNED", "start:ASSIGNED->ACTIVE", "task.complete:ACTIVE->ACTIVE|COMPLETED", "cancel:ASSIGNED|ACTIVE->CANCELLED", "template.retire:TEMPLATE_PUBLISHED->TEMPLATE_RETIRED"],
+          "readSources": ["published template version", "hire handoff", "worker/assignment effective snapshot"],
+          "writeSet": ["ppl_onboarding_template_versions", "ppl_onboarding_assignments", "ppl_onboarding_tasks", "ppl_outbox_events"]
+        },
+        "BenefitsServiceContingent": {
+          "states": ["DRAFT", "SUBMITTED", "IN_REVIEW", "APPROVED", "ACTIVE", "RESOLVED", "ENDED", "REJECTED", "CANCELLED"],
+          "terminalStates": ["RESOLVED", "ENDED", "REJECTED", "CANCELLED"],
+          "transitions": ["create:->DRAFT", "submit:DRAFT->SUBMITTED", "claim:SUBMITTED->IN_REVIEW", "approve:IN_REVIEW->APPROVED", "activate:APPROVED->ACTIVE", "resolve:IN_REVIEW|ACTIVE->RESOLVED", "end:ACTIVE->ENDED", "reject:IN_REVIEW->REJECTED", "cancel:DRAFT|SUBMITTED->CANCELLED"],
+          "readSources": ["typed product/service/engagement definition", "worker eligibility", "approval decision", "provider-neutral fulfillment evidence"],
+          "writeSet": ["ppl_benefit_cases", "ppl_service_cases", "ppl_contingent_engagements", "ppl_case_events", "ppl_outbox_events"]
+        }
+      }
+    },
+    "HRIS-PER": {
+      "exactBusinessP0": "PASS",
+      "owner": "Performance",
+      "transportPrefix": "/api/people/v1/hris/performance",
+      "targetFamilyRefs": ["TFR-PER-002", "TFR-PER-003", "TFR-PER-005", "TFR-PER-006", "TFR-PER-008", "TFR-PER-009", "TFR-PER-012", "TFR-PER-013", "TFR-PER-014", "TFR-PER-016"],
+      "historicalTransportRefs": ["PEP-PER-002", "PEP-PER-003", "PEP-PER-004", "PEP-PER-005", "PEP-PER-006", "PEP-PER-007", "PEP-PER-008", "PEP-PER-009", "PEP-PER-010", "PEP-PER-011", "PEP-PER-012", "PEP-PER-013", "PEP-PER-014", "PEP-PER-015", "PEP-PER-016", "PEP-PER-017", "PEP-PER-018", "PEP-PER-019"],
+      "authoritativeCalculation": "Caller previousValue, proposed score, distributionImpact and preview hash are assertions only. The owner reloads frozen answers, rubric/formula, cohort and prior result, computes the authoritative value and compares assertions.",
+      "aggregates": {
+        "Cycle": {"states": ["DRAFT", "VALIDATED", "PUBLISHED", "ACTIVE", "CLOSED", "RETIRED"], "terminalStates": ["CLOSED", "RETIRED"], "transitions": ["create:->DRAFT", "replace:DRAFT->DRAFT", "validate:DRAFT->VALIDATED", "publish:VALIDATED->PUBLISHED", "activate:PUBLISHED->ACTIVE", "close:ACTIVE->CLOSED", "retire:CLOSED->RETIRED"], "writeSet": ["prf_cycles", "prf_cycle_versions", "prf_cycle_stages", "prf_outbox_events"]},
+        "PopulationFreeze": {"states": ["PREVIEWED", "FROZEN", "CONSUMED", "SUPERSEDED"], "terminalStates": ["CONSUMED", "SUPERSEDED"], "transitions": ["preview:->PREVIEWED", "freeze:PREVIEWED->FROZEN", "consume:FROZEN->CONSUMED", "supersede:FROZEN->SUPERSEDED"], "schema": "#/$defs/FreezePopulationCommand", "writeSet": ["prf_population_previews", "prf_population_freezes", "prf_population_members", "prf_outbox_events"]},
+        "Goal": {"states": ["DRAFT", "SUBMITTED", "RETURNED", "APPROVED", "ACTIVE", "COMPLETED", "CANCELLED"], "terminalStates": ["COMPLETED", "CANCELLED"], "transitions": ["create:->DRAFT", "submit:DRAFT|RETURNED->SUBMITTED", "return:SUBMITTED->RETURNED", "approve:SUBMITTED->APPROVED", "activate:APPROVED->ACTIVE", "progress:ACTIVE->ACTIVE", "complete:ACTIVE->COMPLETED", "cancel:DRAFT|SUBMITTED|RETURNED|ACTIVE->CANCELLED"], "writeSet": ["prf_goals", "prf_goal_versions", "prf_goal_progress", "prf_outbox_events"]},
+        "Evaluation": {"states": ["ASSIGNED", "DRAFT", "SUBMITTED", "RETURNED", "COMPLETED", "CANCELLED"], "terminalStates": ["COMPLETED", "CANCELLED"], "transitions": ["assign:->ASSIGNED", "save:ASSIGNED|DRAFT|RETURNED->DRAFT", "submit:DRAFT->SUBMITTED", "return:SUBMITTED->RETURNED", "complete:SUBMITTED->COMPLETED", "cancel:ASSIGNED|DRAFT->CANCELLED"], "writeSet": ["prf_reviews", "prf_review_answers", "prf_review_submissions", "prf_outbox_events"]},
+        "Feedback": {"states": ["DRAFT", "REQUESTED", "SUBMITTED", "DECLINED", "RELEASED", "ACKNOWLEDGED", "CANCELLED"], "terminalStates": ["DECLINED", "ACKNOWLEDGED", "CANCELLED"], "transitions": ["create:->DRAFT", "request:DRAFT->REQUESTED", "submit:REQUESTED->SUBMITTED", "decline:REQUESTED->DECLINED", "release:SUBMITTED->RELEASED", "acknowledge:RELEASED->ACKNOWLEDGED", "cancel:DRAFT|REQUESTED->CANCELLED"], "writeSet": ["prf_feedback_cases", "prf_feedback_evidence", "prf_outbox_events"]},
+        "CheckIn": {"states": ["DRAFT", "SCHEDULED", "HELD", "COMPLETED", "ACKNOWLEDGED", "CANCELLED"], "terminalStates": ["ACKNOWLEDGED", "CANCELLED"], "transitions": ["create:->DRAFT", "schedule:DRAFT->SCHEDULED", "hold:SCHEDULED->HELD", "complete:HELD->COMPLETED", "acknowledge:COMPLETED->ACKNOWLEDGED", "cancel:DRAFT|SCHEDULED->CANCELLED"], "writeSet": ["prf_checkins", "prf_checkin_notes", "prf_outbox_events"]},
+        "Calibration": {"states": ["DRAFT", "BASELINE_VALIDATED", "ACTIVE", "SUBMITTED", "RETURNED", "APPROVED", "LOCKED", "CANCELLED"], "terminalStates": ["LOCKED", "CANCELLED"], "transitions": ["create:->DRAFT", "baseline.validate:DRAFT->BASELINE_VALIDATED", "start:BASELINE_VALIDATED->ACTIVE", "adjust:ACTIVE->ACTIVE", "submit:ACTIVE->SUBMITTED", "return:SUBMITTED->RETURNED", "resume:RETURNED->ACTIVE", "approve:SUBMITTED->APPROVED", "lock:APPROVED->LOCKED", "cancel:DRAFT|BASELINE_VALIDATED|ACTIVE|RETURNED->CANCELLED"], "writeSet": ["prf_calibration_sessions", "prf_calibration_baselines", "prf_calibration_adjustments", "prf_outbox_events"]},
+        "ResultSet": {"states": ["CALCULATED", "VALIDATED", "APPROVED", "PUBLISHED", "SUPERSEDED"], "terminalStates": ["PUBLISHED", "SUPERSEDED"], "transitions": ["calculate:->CALCULATED", "validate:CALCULATED->VALIDATED", "approve:VALIDATED->APPROVED", "publish:APPROVED->PUBLISHED", "correct:PUBLISHED->SUPERSEDED"], "writeSet": ["prf_result_sets", "prf_result_lines", "prf_result_evidence", "prf_outbox_events"]},
+        "Appeal": {"states": ["OPEN", "IN_REVIEW", "RESOLVED", "WITHDRAWN", "CLOSED"], "terminalStates": ["CLOSED"], "transitions": ["open:->OPEN", "review:OPEN->IN_REVIEW", "resolve:IN_REVIEW->RESOLVED", "withdraw:OPEN|IN_REVIEW->WITHDRAWN", "close:RESOLVED|WITHDRAWN->CLOSED"], "writeSet": ["prf_appeals", "prf_appeal_evidence", "prf_outbox_events"]},
+        "TalentGrowth": {"states": ["DRAFT", "VALIDATED", "PUBLISHED", "ACTIVE", "COMPLETED", "RETIRED", "CANCELLED"], "terminalStates": ["COMPLETED", "RETIRED", "CANCELLED"], "transitions": ["create:->DRAFT", "validate:DRAFT->VALIDATED", "publish:VALIDATED->PUBLISHED", "assign:PUBLISHED->ACTIVE", "complete:ACTIVE->COMPLETED", "retire:PUBLISHED->RETIRED", "cancel:DRAFT|ACTIVE->CANCELLED"], "ownedKinds": ["SKILL_TAXONOMY", "GROWTH_PROFILE", "LEARNING_ITEM", "LEARNING_ASSIGNMENT", "MARKETPLACE_OPPORTUNITY", "SUCCESSION_PLAN", "COMPENSATION_PLAN"], "writeSet": ["prf_talent_definitions", "prf_talent_assignments", "prf_evidence", "prf_cmp_approved_snapshots", "prf_cmp_approved_snapshot_lines", "prf_outbox_events"]}
+      }
+    },
+    "HRIS-TIM": {
+      "exactBusinessP0": "PASS",
+      "owner": "Time/Absence",
+      "transportPrefix": "/api/time/v1/hris",
+      "targetFamilyRefs": ["TFR-TIM-003", "TFR-TIM-005", "TFR-TIM-007", "TFR-TIM-010", "TFR-TIM-011", "TFR-TIM-012", "TFR-TIM-013", "TFR-TIM-014", "TFR-TIM-015", "TFR-TIM-016", "TFR-TIM-017", "TFR-TIM-019"],
+      "historicalTransportRefs": ["PEP-TIM-002", "PEP-TIM-003", "PEP-TIM-004", "PEP-TIM-005", "PEP-TIM-006", "PEP-TIM-009", "PEP-TIM-010", "PEP-TIM-011", "PEP-TIM-012", "PEP-TIM-013", "PEP-TIM-014", "PEP-TIM-015", "PEP-TIM-016", "PEP-TIM-017", "PEP-TIM-018", "PEP-TIM-019", "PEP-TIM-020", "PEP-TIM-021", "PEP-TIM-022", "PEP-TIM-023", "PEP-TIM-024", "PEP-TIM-025", "PEP-TIM-026", "PEP-TIM-028"],
+      "aggregates": {
+        "RuleVersion": {"states": ["DRAFT", "VALIDATED", "SUBMITTED", "PUBLISHED", "REJECTED", "CANCELLED", "RETIRED"], "terminalStates": ["PUBLISHED", "REJECTED", "CANCELLED", "RETIRED"], "transitions": ["create:->DRAFT", "validate:DRAFT->VALIDATED", "simulate:VALIDATED->VALIDATED", "submit:VALIDATED->SUBMITTED", "approval.receive:SUBMITTED->PUBLISHED|REJECTED", "cancel:DRAFT|VALIDATED|SUBMITTED->CANCELLED", "retire:PUBLISHED->RETIRED"], "schema": "#/$defs/TypedRuleAst", "writeSet": ["tme_rule_versions", "tme_rule_artifacts", "tme_policy_reports", "tme_outbox_events"]},
+        "Schedule": {"states": ["DRAFT", "VALIDATED", "SUBMITTED", "APPROVED", "PUBLISHED", "AMENDMENT_DRAFT", "CANCEL_PENDING", "CANCELLED", "SUPERSEDED", "REJECTED"], "terminalStates": ["PUBLISHED", "CANCELLED", "SUPERSEDED"], "transitions": ["create:->DRAFT", "assign:DRAFT->DRAFT", "validate:DRAFT|AMENDMENT_DRAFT->VALIDATED", "submit:VALIDATED->SUBMITTED", "approval.receive:SUBMITTED->APPROVED|REJECTED", "publish:APPROVED->PUBLISHED", "amend:PUBLISHED->AMENDMENT_DRAFT", "amend.publish:APPROVED->SUPERSEDED", "cancel:DRAFT|VALIDATED|REJECTED->CANCELLED", "cancel.request:PUBLISHED->CANCEL_PENDING", "cancel.reconcile:CANCEL_PENDING->CANCELLED|PUBLISHED"], "schema": "#/$defs/ScheduleCommand", "writeSet": ["tme_schedule_periods", "tme_schedule_assignments", "tme_schedule_segments", "tme_schedule_versions", "tme_schedule_source_vectors", "tme_outbox_events"]},
+        "LeavePolicy": {"states": ["DRAFT", "VALIDATED", "SUBMITTED", "PUBLISHED", "REJECTED", "RETIRED"], "terminalStates": ["PUBLISHED", "REJECTED", "RETIRED"], "transitions": ["create:->DRAFT", "validate:DRAFT->VALIDATED", "simulate:VALIDATED->VALIDATED", "submit:VALIDATED->SUBMITTED", "approval.receive:SUBMITTED->PUBLISHED|REJECTED", "retire:PUBLISHED->RETIRED"], "schema": "#/$defs/AccrualPolicy", "writeSet": ["abs_leave_plan_versions", "abs_policy_artifacts", "abs_policy_reports", "abs_outbox_events"]},
+        "LeaveEnrollment": {"states": ["ACTIVE", "SUSPENDED", "TERMINATED", "CANCELLED", "SUPERSEDED"], "terminalStates": ["TERMINATED", "CANCELLED", "SUPERSEDED"], "transitions": ["enroll:->ACTIVE", "suspend:ACTIVE->SUSPENDED", "resume:SUSPENDED->ACTIVE", "terminate:ACTIVE|SUSPENDED->TERMINATED", "reassess:ACTIVE|SUSPENDED->SUPERSEDED", "cancel:ACTIVE|SUSPENDED->CANCELLED"], "writeSet": ["abs_worker_plan_enrollments", "abs_enrollment_decisions", "abs_outbox_events"]},
+        "EntitlementRun": {"states": ["DRAFT", "FROZEN", "QUEUED", "RUNNING", "SUCCEEDED", "PARTIAL", "FAILED", "CANCELLED", "RESULT_UNKNOWN", "RECONCILED"], "terminalStates": ["SUCCEEDED", "PARTIAL", "FAILED", "CANCELLED", "RECONCILED"], "transitions": ["create:->DRAFT", "freeze:DRAFT->FROZEN", "queue:FROZEN->QUEUED", "lease:QUEUED->RUNNING", "execute:RUNNING->RUNNING", "finalize:RUNNING->SUCCEEDED|PARTIAL|FAILED", "cancel:DRAFT|FROZEN|QUEUED->CANCELLED", "mark-unknown:RUNNING->RESULT_UNKNOWN", "reconcile:RESULT_UNKNOWN->RECONCILED"], "writeSet": ["abs_entitlement_runs", "abs_entitlement_selected_items", "abs_entitlement_run_items", "abs_leave_lot_events", "abs_outbox_events"]},
+        "LeaveRequest": {"states": ["DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "CANCEL_PENDING", "CANCELLED", "WITHDRAWN", "SUPERSEDED"], "terminalStates": ["APPROVED", "REJECTED", "CANCELLED", "WITHDRAWN", "SUPERSEDED"], "transitions": ["create:->DRAFT", "submit:DRAFT->SUBMITTED", "approval.receive:SUBMITTED->APPROVED|REJECTED", "withdraw:DRAFT|SUBMITTED->WITHDRAWN", "cancel.request:APPROVED->CANCEL_PENDING", "cancel.reconcile:CANCEL_PENDING->CANCELLED|APPROVED", "amend:APPROVED->SUPERSEDED"], "writeSet": ["abs_leave_requests", "abs_leave_request_segments", "abs_leave_decisions", "abs_leave_lot_events", "abs_outbox_events"]},
+        "Timecard": {"states": ["OPEN", "SUBMITTED", "APPROVED", "REJECTED", "CORRECTION_REQUIRED", "LOCKED", "CLOSED", "SUPERSEDED"], "terminalStates": ["CLOSED", "SUPERSEDED"], "transitions": ["materialize:->OPEN", "correct:OPEN|REJECTED|CORRECTION_REQUIRED->OPEN", "submit:OPEN->SUBMITTED", "decision:SUBMITTED->APPROVED|REJECTED|CORRECTION_REQUIRED", "lock:APPROVED->LOCKED", "close:LOCKED->CLOSED", "reopen:CLOSED->SUPERSEDED"], "schema": "#/$defs/TimecardRecord", "writeSet": ["tme_timecards", "tme_timecard_versions", "tme_timecard_lines", "tme_timecard_decisions", "tme_outbox_events"]},
+        "Availability": {"states": ["CAPTURED", "STALE", "SUPERSEDED"], "terminalStates": ["CAPTURED", "SUPERSEDED"], "transitions": ["capture:->CAPTURED", "invalidate:CAPTURED->STALE", "recapture:CAPTURED|STALE->SUPERSEDED"], "schema": "#/$defs/WfmPlanningInputSnapshot", "compositionOwner": "TIM", "optionalPERPolicy": "NOT_INSTALLED and NOT_ENTITLED are valid no-skill inputs with exactly zero PER calls; UNAVAILABLE blocks only skill-required planning.", "writeSet": ["tme_availability_snapshots", "tme_availability_source_vectors", "tme_outbox_events"]},
+        "TimePeriod": {"states": ["OPEN", "VALIDATING", "READY_TO_CLOSE", "CLOSED", "REOPENED", "SUPERSEDED"], "terminalStates": ["CLOSED", "SUPERSEDED"], "transitions": ["create:->OPEN", "validate:OPEN|REOPENED->VALIDATING", "validation.complete:VALIDATING->READY_TO_CLOSE|OPEN", "close:READY_TO_CLOSE->CLOSED", "reopen:CLOSED->REOPENED", "reclose:REOPENED->SUPERSEDED"], "writeSet": ["tme_periods", "tme_close_attempts", "tme_closed_results", "tme_payroll_handoffs", "tme_outbox_events"]}
+      }
+    },
+    "HRIS-PAY": {
+      "exactBusinessP0": "PASS",
+      "owner": "Payroll",
+      "transportPrefix": "/api/payroll/v1/hris",
+      "targetFamilyRefs": ["TFR-PAY-003", "TFR-PAY-004", "TFR-PAY-005", "TFR-PAY-006", "TFR-PAY-007", "TFR-PAY-008", "TFR-PAY-009", "TFR-PAY-010", "TFR-PAY-011", "TFR-PAY-012", "TFR-PAY-013", "TFR-PAY-014", "TFR-PAY-016", "TFR-PAY-017", "TFR-PAY-020", "TFR-PAY-021"],
+      "historicalTransportRefs": ["PEP-PAY-002", "PEP-PAY-003", "PEP-PAY-004", "PEP-PAY-005", "PEP-PAY-006", "PEP-PAY-007", "PEP-PAY-008", "PEP-PAY-009", "PEP-PAY-010", "PEP-PAY-011", "PEP-PAY-012", "PEP-PAY-013", "PEP-PAY-014", "PEP-PAY-015", "PEP-PAY-016", "PEP-PAY-017", "PEP-PAY-018", "PEP-PAY-019", "PEP-PAY-020", "PEP-PAY-021", "PEP-PAY-022", "PEP-PAY-023", "PEP-PAY-024", "PEP-PAY-025", "PEP-PAY-026", "PEP-PAY-027", "PEP-PAY-028", "PEP-PAY-029", "PEP-PAY-030", "PEP-PAY-031", "PEP-PAY-032", "PEP-PAY-033"],
+      "formulaSemantics": {"schema": "#/$defs/PayFormulaAst", "evaluation": "decimal/rational deterministic, no eval/reflection/script", "unitRule": "same unit for add/subtract; only explicit minute-hour conversion; day conversion requires a pinned calendar factor", "currencyRule": "same currency except explicit published FX operation, which is outside this v1 core", "roundingRule": "only ROUND nodes or declared output stage use a versioned rounding owner ref", "errorCodes": ["UNKNOWN_INPUT", "UNKNOWN_OPERATOR", "ARITY_MISMATCH", "TYPE_MISMATCH", "UNIT_MISMATCH", "CURRENCY_MISMATCH", "DIVIDE_BY_ZERO", "CYCLE", "LIMIT_EXCEEDED", "ROUNDING_SOURCE_STALE"]},
+      "aggregates": {
+        "FoundationVersion": {"states": ["DRAFT", "VALIDATED", "SUBMITTED", "PUBLISHED", "REJECTED", "RETIRED"], "terminalStates": ["PUBLISHED", "REJECTED", "RETIRED"], "transitions": ["create:->DRAFT", "replace:DRAFT->DRAFT", "validate:DRAFT->VALIDATED", "simulate:VALIDATED->VALIDATED", "submit:VALIDATED->SUBMITTED", "approval.receive:SUBMITTED->PUBLISHED|REJECTED", "retire:PUBLISHED->RETIRED"], "schema": "#/$defs/PayrollFoundationArtifact", "writeSet": ["pay_foundation_versions", "pay_elements", "pay_formula_versions", "pay_artifacts", "pay_validation_reports", "pay_outbox_events"]},
+        "PayrollPeriod": {"states": ["OPEN", "RUNNING", "READY_TO_CLOSE", "CLOSED", "REOPENED", "SUPERSEDED"], "terminalStates": ["CLOSED", "SUPERSEDED"], "transitions": ["create:->OPEN", "run.start:OPEN|REOPENED->RUNNING", "run.complete:RUNNING->READY_TO_CLOSE|OPEN", "close:READY_TO_CLOSE->CLOSED", "reopen:CLOSED->REOPENED", "reclose:REOPENED->SUPERSEDED"], "writeSet": ["pay_periods", "pay_period_close_attempts", "pay_outbox_events"]},
+        "PayrollRun": {"states": ["DRAFT", "INPUT_PREPARING", "INPUT_FROZEN", "CALCULATING", "CALCULATED", "VALIDATED", "APPROVED", "FINALIZED", "RESULT_UNKNOWN", "RECONCILED", "SUPERSEDED", "CANCELLED"], "terminalStates": ["FINALIZED", "RECONCILED", "SUPERSEDED", "CANCELLED"], "transitions": ["create:->DRAFT", "input.prepare:DRAFT->INPUT_PREPARING", "input.freeze:INPUT_PREPARING->INPUT_FROZEN", "calculate:INPUT_FROZEN->CALCULATING", "calculate.complete:CALCULATING->CALCULATED|RESULT_UNKNOWN", "validate:CALCULATED->VALIDATED", "approve:VALIDATED->APPROVED", "finalize:APPROVED->FINALIZED", "reconcile:RESULT_UNKNOWN->RECONCILED", "retro-or-offcycle:FINALIZED->SUPERSEDED", "cancel:DRAFT|INPUT_PREPARING|INPUT_FROZEN->CANCELLED"], "schemas": ["#/$defs/PayrollInputSourceVector", "#/$defs/PayrollRunPrepareCommand"], "writeSet": ["pay_runs", "pay_input_snapshots", "pay_input_source_refs", "pay_input_rows", "pay_run_attempts", "pay_result_headers", "pay_result_lines", "pay_calculation_trace", "pay_outbox_events"]},
+        "PaymentAccounting": {"states": ["DRAFT", "VALIDATED", "APPROVED", "RELEASED", "ACKNOWLEDGED", "POSTED", "RECONCILED", "REVERSED", "RESULT_UNKNOWN", "CANCELLED"], "terminalStates": ["RECONCILED", "REVERSED", "CANCELLED"], "transitions": ["create:->DRAFT", "validate:DRAFT->VALIDATED", "approve:VALIDATED->APPROVED", "release:APPROVED->RELEASED|RESULT_UNKNOWN", "acknowledge:RELEASED->ACKNOWLEDGED", "post:ACKNOWLEDGED->POSTED", "reconcile:POSTED|RESULT_UNKNOWN->RECONCILED", "reverse:POSTED|RECONCILED->REVERSED", "cancel:DRAFT|VALIDATED->CANCELLED"], "writeSet": ["pay_payment_batches", "pay_payment_instructions", "pay_provider_attempts", "pay_gl_batches", "pay_gl_lines", "pay_reconciliation_items", "pay_outbox_events"]},
+        "Payslip": {"states": ["DRAFT", "PUBLISHED", "REVOKED", "SUPERSEDED"], "terminalStates": ["PUBLISHED", "REVOKED", "SUPERSEDED"], "transitions": ["materialize:->DRAFT", "publish:DRAFT->PUBLISHED", "revoke:PUBLISHED->REVOKED", "correct:PUBLISHED->SUPERSEDED"], "writeSet": ["pay_payslips", "pay_payslip_documents", "pay_download_grants", "pay_outbox_events"]},
+        "RetirementYearEndCase": {"states": ["DRAFT", "VALIDATED", "BLOCKED_PACK_REQUIRED", "CALCULATED", "APPROVED", "FINALIZED", "CORRECTED", "CANCELLED"], "terminalStates": ["FINALIZED", "CORRECTED", "CANCELLED"], "transitions": ["create:->DRAFT", "validate:DRAFT->VALIDATED|BLOCKED_PACK_REQUIRED", "calculate:VALIDATED->CALCULATED", "approve:CALCULATED->APPROVED", "finalize:APPROVED->FINALIZED", "correct:FINALIZED->CORRECTED", "cancel:DRAFT|VALIDATED|BLOCKED_PACK_REQUIRED->CANCELLED"], "schema": "#/$defs/ProviderNeutralCase", "packBoundary": "Generic case, basis, evidence, validation, correction and query are core. Jurisdiction formulas, rates, filing layouts and external YEA results require an installed signed country/provider pack and never silently fall back.", "writeSet": ["pay_statutory_cases", "pay_case_basis_refs", "pay_case_evidence", "pay_case_results", "pay_case_corrections", "pay_outbox_events"]}
+      }
+    }
+  },
+  "canonicalArtifacts": {
+    "schemas": "module-exact-business-schemas.v1.json",
+    "lineageRegister": "module-exact-business-lineage-register.v1.csv",
+    "fixtures": "module-exact-business-fixtures.v1.json",
+    "validator": "validate_module_exact_business_start.cjs",
+    "sessionPrompts": ["../session-prompts/01-cloudhr-hrm-session.md", "../session-prompts/02-cloudhr-per-session.md", "../session-prompts/03-cloudhr-pay-session.md", "../session-prompts/04-cloudhr-tim-session.md"]
+  },
+  "moduleStartP0Decision": {
+    "HRIS-HRM": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED",
+    "HRIS-PER": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED",
+    "HRIS-PAY": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED",
+    "HRIS-TIM": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED"
+  },
+  "remainingOutsideThisContract": [
+    "BASE-P0-001 migration seal and current allocation",
+    "BASE-P0-002 current transport source lineage",
+    "BASE-P0-003 actual shared identity/owner adapter publication and native integration",
+    "actual shared DTO/SPI/PEP/field/purpose/population adapters and 13-stream runtime wiring",
+    "current paired source merge, clean fan-out, common catalog, session resource evidence and two authoritative LIVE validations",
+    "G4 implementation and G6 country/provider/customer activation"
+  ]
+}

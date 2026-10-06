@@ -1,0 +1,153 @@
+{
+  "schema": "dwp.hris.optional-capability-c3-final-report.v1",
+  "reportedAt": "2026-09-14T14:37:23Z",
+  "scope": "C3_OPTIONAL_CAPABILITY_START_MACHINE_AND_MOCK_CONSUMER_BOUNDARY_ONLY",
+  "verdict": {
+    "c3StartBoundary": "PASS",
+    "fullModuleCodingGate": "CLOSED_FAIL_SAFE_UNCHANGED",
+    "gateEffect": "NONE",
+    "providerImplementation": "NOT_IMPLEMENTED_G4",
+    "productionActivation": "NOT_AUTHORIZED_G6"
+  },
+  "repository": {
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/prep/optional-c3/backend",
+    "branch": "codex/hris-optional-c3-20260914",
+    "baseCommit": "b6d1f23e54e04b86d2b068e47b8bf6c9db608b5f",
+    "commit": "8dcaf1c0b69eda93584317b381503d6572aab568",
+    "tree": "e99103a30a6ca0981bf8afb0f2179b05ab283451",
+    "clean": true,
+    "mergedToIntegration": false
+  },
+  "implementation": {
+    "productionModule": "dwp-platform-contracts",
+    "productionPackage": "com.dwp.platform.contracts.hris.capability.v1",
+    "productionSourceCount": 11,
+    "consumerModuleCount": 5,
+    "consumerTestCount": 6,
+    "sharedGuardTestCount": 6,
+    "totalFocusedTestCount": 12,
+    "addedFileCount": 17,
+    "addedLineCount": 1330,
+    "consumerServices": {
+      "HRIS-HRM": "dwp-people-server",
+      "HRIS-PER": "dwp-people-server",
+      "HRIS-PAY": "dwp-payroll-server",
+      "HRIS-TIM": "dwp-time-server",
+      "HRIS-SYS": "dwp-platform-server"
+    }
+  },
+  "closedInvariants": [
+    "absent, uninstalled or disabled optional capability denies its affected operation before the callback and yields provider-call count zero",
+    "enabled capability with a missing binding, prerequisite, compatible major version or minimum version denies only the affected operation before call",
+    "unknown capability, unauthorized consumer module and unregistered operation deny before call",
+    "duplicate descriptors, operation collisions, unknown prerequisites, dependency cycles and forbidden transitive binding dependencies reject configuration",
+    "unrelated HRM/PER/TIM core and PAY generic authoring continue only through an explicit preserved-operation allowlist",
+    "connector job failure preserves only its explicitly registered manual path",
+    "WFM skill matching requires both WFM and Skills readiness while HRM/TIM core remains callable with Skills provider-call count zero",
+    "country-pay pack absence blocks statutory calculation while generic payroll authoring remains callable",
+    "employee listening requires tenant config, insights store, protected store and current issuer",
+    "non-listening Analytics/AI receives only tenant config and insights binding references; protected store and current issuer calls remain zero",
+    "the guard returns capability-scoped binding references and contains no provider object, credential, tenant activation, Spring component, HTTP or database wiring"
+  ],
+  "verification": [
+    {
+      "name": "shared optional-capability guard",
+      "command": "./gradlew :dwp-platform-contracts:test --tests com.dwp.platform.contracts.hris.capability.v1.OptionalCapabilityAdmissionGuardV1Test --no-daemon",
+      "status": "PASS",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "HRM and PER consumers",
+      "command": "./gradlew :dwp-people-server:test --tests com.dwp.services.people.hris.capability.hrm.HrmOptionalCapabilityConsumerV1Test --tests com.dwp.services.people.hris.capability.per.PerOptionalCapabilityConsumerV1Test --no-daemon",
+      "status": "PASS",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "PAY consumer",
+      "command": "./gradlew :dwp-payroll-server:test --tests com.dwp.services.payroll.hris.capability.PayOptionalCapabilityConsumerV1Test --no-daemon",
+      "status": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "TIM consumer",
+      "command": "./gradlew :dwp-time-server:test --tests com.dwp.services.time.hris.capability.TimOptionalCapabilityConsumerV1Test --no-daemon",
+      "status": "PASS",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "SYS consumers",
+      "command": "./gradlew :dwp-platform-server:test --tests com.dwp.services.platform.hris.capability.SysOptionalCapabilityConsumerV1Test --no-daemon",
+      "status": "PASS",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "architecture and source ratchets",
+      "command": "./gradlew checkServiceBoundaries checkSourceSize checkTestSourceSize checkJavaDependencyCycles checkUnusedPrivateMethods --no-daemon",
+      "status": "PASS",
+      "ratchetSelfTests": 95,
+      "productionSourcesChecked": 2183,
+      "testSourcesChecked": 1111,
+      "springConstructorCycles": 0
+    },
+    {
+      "name": "design contract validator",
+      "command": "python3 coding-readiness/validate_optional_capability_admission.py --compact && python3 coding-readiness/validate_optional_capability_admission.py --self-test --compact",
+      "status": "PASS",
+      "capabilities": 15,
+      "scenarios": 15,
+      "mutationsRejected": 14
+    },
+    {
+      "name": "static implementation validator",
+      "command": "python3 coding-readiness/validate_optional_capability_implementation.py --backend-root /Users/a10697/Work/DWP/.codex-worktrees/hris/prep/optional-c3/backend --compact && python3 coding-readiness/validate_optional_capability_implementation.py --backend-root /Users/a10697/Work/DWP/.codex-worktrees/hris/prep/optional-c3/backend --self-test --compact",
+      "status": "PASS",
+      "productionSources": 11,
+      "consumerModules": 5,
+      "artifactAggregateSha256": "a7db651a8b6cc051b5bedaed2bea7df51295c614ca0558880c84c7000dbc6e22",
+      "mutationsRejected": 10
+    }
+  ],
+  "canonicalArtifacts": [
+    {
+      "path": "coding-readiness/optional-capability-admission-contract.v1.json",
+      "sha256": "e59ea890260b01a0b6ccc6c6168b38a3f6fed4d1e7af2b4878c5fb74681fd8a5"
+    },
+    {
+      "path": "coding-readiness/validate_optional_capability_admission.py",
+      "sha256": "7eb031b0c2aae5df6e539bb933ac0c3cc4b4974d6f405204491809c5a7e58a73"
+    },
+    {
+      "path": "coding-readiness/optional-capability-implementation-manifest.v1.json",
+      "sha256": "4e833de54def5985cdae5e18765ebefc19f2c66f96eb8ce6589f0a701bf5fa4f"
+    },
+    {
+      "path": "coding-readiness/validate_optional_capability_implementation.py",
+      "sha256": "89f98b8290c60dbc2d106dc3751d4b31f5e2e35dd83f7fee8322c0451263b420"
+    }
+  ],
+  "integrationInstructions": {
+    "backend": "merge or cherry-pick commit 8dcaf1c0b69eda93584317b381503d6572aab568 onto the latest backend integration only after C1/C2 are committed, then rerun all focused tests and the implementation validator against that integration worktree",
+    "g0Companion": "in g0/validate_code_checkpoint.py validate_companion_gate_contracts, add implementation and self-test invocations of ../coding-readiness/validate_optional_capability_implementation.py with --backend-root pointing to the canonical backend integration worktree",
+    "fullReadinessPins": "add optional-capability-implementation-manifest.v1.json and validate_optional_capability_implementation.py to coding-readiness/validate_full_coding_readiness.py artifact_hashes; the existing contract and design validator entries remain",
+    "readme": "extend coding-readiness/README.md item 65 or add 65a with the manifest, implementation validator, five consumer proof and START/G4/G6 boundary",
+    "snapshot": "regenerate and verify g0/blueprint-central-snapshot-manifest.v1.json after the central artifacts and companion wiring are stable"
+  },
+  "limitations": [
+    "This branch has not been merged into backend integration.",
+    "No production provider adapter, retry, idempotency, reconciliation or feature-level G4 acceptance was implemented.",
+    "No tenant entitlement, credential, provider contract, country certification, SLO or G6 activation was implemented or authorized.",
+    "The static implementation validator and manifest are central blueprint files and still require authoritative checkpoint companion wiring and immutable artifact pinning by Integration Control.",
+    "Existing unrelated compiler warnings in baseline Time sources were observed; the new optional-capability production package compiled without a new warning.",
+    "This C3 PASS alone does not authorize any of the five module coding sessions and does not change the published CLOSED_FAIL_SAFE gate."
+  ]
+}

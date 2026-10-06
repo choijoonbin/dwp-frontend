@@ -1,0 +1,2040 @@
+{
+  "scope": "ELEVEN_SCOPED_ABS_TABLES_ONLY_112_OTHER_OPS_OPEN",
+  "sourceGraphs": {
+    "abs_entitlement_runs": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "entitlement_run_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_entitlement_runs.entitlement_run_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "leave_plan_version_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_leave_plan_versions.leave_plan_version_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "period_start": {
+        "kind": "NORMALIZED_REQUEST",
+        "inputs": [
+          "normalized.periodStart"
+        ],
+        "sqlType": "DATE",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "period_end": {
+        "kind": "NORMALIZED_REQUEST",
+        "inputs": [
+          "normalized.periodEnd"
+        ],
+        "sqlType": "DATE",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "run_mode": {
+        "kind": "NORMALIZED_REQUEST",
+        "inputs": [
+          "normalized.mode"
+        ],
+        "sqlType": "VARCHAR(10)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "status": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "constructor.run.status",
+          "loaded.run.row_version"
+        ],
+        "sqlType": "VARCHAR(24)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "input_snapshot_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.input.contentSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "rule_snapshot_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.input.policyContent",
+          "loaded.policy.content_digest"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "previous_run_id": {
+        "kind": "CORRECTION_PARENT",
+        "inputs": [
+          "normalized.correctionMode",
+          "loaded.previous_run.entitlement_run_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "row_version": {
+        "kind": "CAS_RETURNING",
+        "inputs": [
+          "loaded.run.row_version",
+          "transaction.update.run.row_version"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "lease_version": {
+        "kind": "CAS_RETURNING",
+        "inputs": [
+          "loaded.run.lease_version",
+          "transaction.update.run.lease_version"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "lease_expires_at": {
+        "kind": "LEASE_GUARD",
+        "inputs": [
+          "clock.transactionTime",
+          "loaded.run.lease_expires_at",
+          "registered.workloadLeasePolicy"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "input_version_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_entitlement_input_versions.input_version_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "selected_count": {
+        "kind": "CARDINALITY",
+        "inputs": [
+          "constructor.input.selectedItems"
+        ],
+        "sqlType": "INTEGER",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "lease_owner_public_id": {
+        "kind": "LEASE_GUARD",
+        "inputs": [
+          "invocation.workloadPrincipalPublicId",
+          "loaded.run.lease_version"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "cancel_requested_at": {
+        "kind": "CANCEL_FENCE",
+        "inputs": [
+          "clock.transactionTime",
+          "loaded.run.row_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      }
+    },
+    "abs_entitlement_run_items": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "entitlement_run_item_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_entitlement_run_items.entitlement_run_item_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "entitlement_run_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.run.entitlement_run_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "enrollment_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.selected.enrollment_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "employment_snapshot_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.selected.employment_snapshot_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "calendar_snapshot_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.selected.calendar_snapshot_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "source_refs": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "loaded.selected.selected_payload.employmentRef",
+          "loaded.selected.selected_payload.calendarRef",
+          "loaded.selected.selected_payload.configurationRef",
+          "constructor.outcome.kind"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "numerator": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.numerator",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "NUMERIC(19,6)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "denominator": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.denominator",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "NUMERIC(19,6)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "quantity": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.quantity",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "NUMERIC(19,6)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "suppressed_quantity": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.suppressedQuantity",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "NUMERIC(19,6)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "rounding_trace": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.roundingTrace",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "status": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.kind",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "VARCHAR(16)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "error_code": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.errorCode",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "VARCHAR(80)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "cancel_fence": {
+        "kind": "OUTCOME_PROJECTION",
+        "inputs": [
+          "constructor.outcome.cancelFence",
+          "loaded.run.lease_version",
+          "loaded.run.cancel_requested_at"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "unit": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.selected.selected_payload.unit",
+          "constructor.outcome.kind"
+        ],
+        "sqlType": "VARCHAR(12)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "result_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.outcome"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "input_version_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.run.input_version_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "selected_item_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.selected.selected_item_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "outcome_payload": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "constructor.outcome",
+          "loaded.run.lease_version",
+          "loaded.selected.selected_payload"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "lease_version": {
+        "kind": "LEASE_GUARD",
+        "inputs": [
+          "loaded.run.lease_version",
+          "invocation.observedLeaseVersion"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_entitlement_input_versions": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "input_version_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_entitlement_input_versions.input_version_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "run_public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.runPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "revision": {
+        "kind": "IMMUTABLE_CONSTANT",
+        "inputs": [
+          "constant.newRunInputRevision1"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "selected_count": {
+        "kind": "CARDINALITY",
+        "inputs": [
+          "constructor.input.selectedItems"
+        ],
+        "sqlType": "INTEGER",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "selection_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.input.selectedItems"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "input_payload": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "loaded.abs_leave_plan_versions.content",
+          "loaded.selection.enrollments",
+          "owner.employment.fullResponses",
+          "owner.calendar.fullResponses",
+          "owner.configuration.fullResponses",
+          "loaded.ledger.revisions",
+          "loaded.reservation.revisions",
+          "normalized.periodStart",
+          "normalized.periodEnd",
+          "normalized.asOf",
+          "normalized.mode",
+          "allocator.runPublicUuid",
+          "allocator.inputPublicUuid",
+          "clock.transactionTime"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "content_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.input",
+          "constant.ownSlot_contentSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_entitlement_selected_items": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "selected_item_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_entitlement_selected_items.selected_item_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "input_version_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_entitlement_input_versions.input_version_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "ordinal": {
+        "kind": "CANONICAL_ORDER",
+        "inputs": [
+          "constructor.input.selectedItems",
+          "constructor.selected.enrollment.enrollmentPublicId"
+        ],
+        "sqlType": "INTEGER",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "enrollment_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_worker_plan_enrollments.enrollment_id",
+          "constructor.selected.enrollment.enrollmentPublicId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "enrollment_revision": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_worker_plan_enrollments.row_version"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "employment_snapshot_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_owner_artifact_snapshots.owner_artifact_snapshot_id",
+          "owner.employment.fullResponse"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "calendar_snapshot_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_calendar_version_snapshots.calendar_snapshot_id",
+          "owner.calendar.fullResponse"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "selected_payload": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "constructor.input.selectedItems",
+          "constructor.selected.ordinal"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "content_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.selected"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_enrollment_termination_workflows": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "termination_workflow_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_enrollment_termination_workflows.termination_workflow_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "enrollment_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_worker_plan_enrollments.enrollment_id",
+          "loaded.abs_worker_plan_enrollments.row_version"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "employment_ended_on": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.termination.employmentEndedOn"
+        ],
+        "sqlType": "DATE",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "policy_treatment": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_leave_plan_versions.content.terminationTreatment"
+        ],
+        "sqlType": "VARCHAR(32)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "instruction_payload": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "owner.termination.fullResponse",
+          "loaded.abs_leave_plan_versions.content",
+          "loaded.enrollment.versionRef",
+          "loaded.ledger.summary",
+          "allocator.workflowPublicUuid"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "instruction_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.instruction",
+          "constant.ownSlot_instructionSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "status": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "constructor.instruction.treatment",
+          "loaded.workflow.status",
+          "owner.payReceipt.status"
+        ],
+        "sqlType": "VARCHAR(32)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.payReceipt.status",
+            "schemaRef": "#/$defs/PAY.TerminationSettlementReceipt.v2",
+            "fieldPath": "status",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "corrective_run_id": {
+        "kind": "CORRECTION_PARENT",
+        "inputs": [
+          "constructor.instruction.treatment",
+          "transaction.insert.abs_entitlement_runs.entitlement_run_id",
+          "loaded.originalGrant.public_id",
+          "loaded.originalRun.public_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "settlement_intent_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "constructor.instruction.treatment",
+          "transaction.insert.abs_termination_settlement_intents.settlement_intent_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "final_settlement_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.payReceipt.finalSettlementPublicId",
+          "owner.payReceipt.status",
+          "loaded.intent.command_digest"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.payReceipt.finalSettlementPublicId",
+            "schemaRef": "#/$defs/PAY.TerminationSettlementReceipt.v2",
+            "fieldPath": "finalSettlementPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          },
+          {
+            "source": "owner.payReceipt.status",
+            "schemaRef": "#/$defs/PAY.TerminationSettlementReceipt.v2",
+            "fieldPath": "status",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "row_version": {
+        "kind": "CAS_RETURNING",
+        "inputs": [
+          "loaded.workflow.row_version",
+          "transaction.update.workflow.row_version"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_termination_settlement_intents": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "settlement_intent_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_termination_settlement_intents.settlement_intent_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "termination_workflow_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_enrollment_termination_workflows.termination_workflow_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "revision": {
+        "kind": "IMMUTABLE_CONSTANT",
+        "inputs": [
+          "constant.newIntentRevision1"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "command_payload": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "constructor.instruction",
+          "loaded.ledger.summary",
+          "allocator.intentPublicUuid",
+          "registered.settlementPurpose"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "command_digest": {
+        "kind": "CANONICAL_HASH",
+        "inputs": [
+          "constructor.command",
+          "constant.ownSlot_commandSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "owner_receipt_payload": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.payReceipt.fullResponse",
+          "loaded.intent.command_digest"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "status": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.payReceipt.status",
+          "loaded.intent.status"
+        ],
+        "sqlType": "VARCHAR(24)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.payReceipt.status",
+            "schemaRef": "#/$defs/PAY.TerminationSettlementReceipt.v2",
+            "fieldPath": "status",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "row_version": {
+        "kind": "CAS_RETURNING",
+        "inputs": [
+          "loaded.intent.row_version",
+          "transaction.update.intent.row_version"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_owner_artifact_snapshots": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "owner_artifact_snapshot_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_owner_artifact_snapshots.owner_artifact_snapshot_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "owner_contract_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.ownerContractId"
+        ],
+        "sqlType": "VARCHAR(160)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "snapshot_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.header.snapshotPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "snapshot_revision": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.header.businessRevision"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "content_schema_id": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "registered.ownerSchemaByContractId"
+        ],
+        "sqlType": "VARCHAR(160)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "content": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.payload"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "content_digest": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.header.contentSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "as_of": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.header.asOf"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "valid_until": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.header.validUntil"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "source_stream_key": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.sourceStreamKey"
+        ],
+        "sqlType": "VARCHAR(100)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "purpose_code": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.header.purposeCode"
+        ],
+        "sqlType": "VARCHAR(120)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "scope_digest": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.response.header.populationScopeDigest"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_policy_evaluation_reports": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "policy_evaluation_report_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_policy_evaluation_reports.policy_evaluation_report_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "artifact_kind": {
+        "kind": "LOCAL_EVALUATOR",
+        "inputs": [
+          "evaluator.report.artifactKind"
+        ],
+        "sqlType": "VARCHAR(30)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "evaluator.report.artifactKind",
+            "schemaRef": "#/$defs/V4.PolicyReport",
+            "fieldPath": "artifactKind",
+            "authority": "ABS_LOCAL_EVALUATOR"
+          }
+        ]
+      },
+      "subject_public_id": {
+        "kind": "LOCAL_EVALUATOR",
+        "inputs": [
+          "evaluator.report.subjectPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "evaluator.report.subjectPublicId",
+            "schemaRef": "#/$defs/V4.PolicyReport",
+            "fieldPath": "subjectPublicId",
+            "authority": "ABS_LOCAL_EVALUATOR"
+          }
+        ]
+      },
+      "subject_row_version": {
+        "kind": "LOCAL_EVALUATOR",
+        "inputs": [
+          "evaluator.report.subjectRowVersion"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "evaluator.report.subjectRowVersion",
+            "schemaRef": "#/$defs/V4.PolicyReport",
+            "fieldPath": "subjectRowVersion",
+            "authority": "ABS_LOCAL_EVALUATOR"
+          }
+        ]
+      },
+      "subject_digest": {
+        "kind": "LOCAL_EVALUATOR",
+        "inputs": [
+          "evaluator.report.subjectContentSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "evaluator.report.subjectContentSha256",
+            "schemaRef": "#/$defs/V4.PolicyReport",
+            "fieldPath": "subjectContentSha256",
+            "authority": "ABS_LOCAL_EVALUATOR"
+          }
+        ]
+      },
+      "report_kind": {
+        "kind": "LOCAL_EVALUATOR",
+        "inputs": [
+          "evaluator.report.reportKind"
+        ],
+        "sqlType": "VARCHAR(20)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "evaluator.report.reportKind",
+            "schemaRef": "#/$defs/V4.PolicyReport",
+            "fieldPath": "reportKind",
+            "authority": "ABS_LOCAL_EVALUATOR"
+          }
+        ]
+      },
+      "content": {
+        "kind": "LOCAL_EVALUATOR",
+        "inputs": [
+          "evaluator.report"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "result_digest": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "constructor.reportDigest"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_policy_governance_bindings": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "policy_governance_binding_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_policy_governance_bindings.policy_governance_binding_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "leave_policy_version_id": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_leave_plan_versions.leave_plan_version_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "subject_row_version": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_leave_plan_versions.row_version"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "subject_digest": {
+        "kind": "LOADED_LOCAL",
+        "inputs": [
+          "loaded.abs_leave_plan_versions.content_digest"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "requester_public_id": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "sys_governance_request_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.governance.payload.governanceRequestPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.governance.payload.governanceRequestPublicId",
+            "schemaRef": "#/$defs/V4.GovernancePayload",
+            "fieldPath": "governanceRequestPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "owner_snapshot_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_owner_artifact_snapshots.owner_artifact_snapshot_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": true
+      },
+      "status": {
+        "kind": "GUARDED_CONSTRUCTOR",
+        "inputs": [
+          "constructor.governanceStatus"
+        ],
+        "sqlType": "VARCHAR(24)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      }
+    },
+    "abs_calendar_version_snapshots": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "calendar_snapshot_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_calendar_version_snapshots.calendar_snapshot_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "owner_snapshot_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_owner_artifact_snapshots.owner_artifact_snapshot_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "calendar_version_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.calendar.payload.calendarVersionPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.calendar.payload.calendarVersionPublicId",
+            "schemaRef": "#/$defs/V4.CalendarPayload",
+            "fieldPath": "calendarVersionPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "calendar_revision": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.calendar.payload.revision"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.calendar.payload.revision",
+            "schemaRef": "#/$defs/V4.CalendarPayload",
+            "fieldPath": "revision",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "content_digest": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.calendar.header.contentSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.calendar.header.contentSha256",
+            "schemaRef": "#/$defs/V4.Header",
+            "fieldPath": "contentSha256",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "time_zone": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.calendar.payload.timeZone"
+        ],
+        "sqlType": "VARCHAR(80)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.calendar.payload.timeZone",
+            "schemaRef": "#/$defs/V4.CalendarPayload",
+            "fieldPath": "timeZone",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "effective_from": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.calendar.payload.effectiveFrom"
+        ],
+        "sqlType": "DATE",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.calendar.payload.effectiveFrom",
+            "schemaRef": "#/$defs/V4.CalendarPayload",
+            "fieldPath": "effectiveFrom",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "effective_to": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.calendar.payload.effectiveTo"
+        ],
+        "sqlType": "DATE",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.calendar.payload.effectiveTo",
+            "schemaRef": "#/$defs/V4.CalendarPayload",
+            "fieldPath": "effectiveTo",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "entries": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.calendar.payload.entries"
+        ],
+        "sqlType": "JSONB",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.calendar.payload.entries",
+            "schemaRef": "#/$defs/V4.CalendarPayload",
+            "fieldPath": "entries",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      }
+    },
+    "abs_time_schedule_segment_snapshots": {
+      "tenant_id": {
+        "kind": "INVOCATION",
+        "inputs": [
+          "invocation.tenantId"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_at": {
+        "kind": "CLOCK",
+        "inputs": [
+          "clock.transactionTime"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "created_by": {
+        "kind": "ACTOR",
+        "inputs": [
+          "invocation.actorPrincipalPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "public_id": {
+        "kind": "ALLOCATOR",
+        "inputs": [
+          "allocator.persistedPublicUuid"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "scheduled_segment_id": {
+        "kind": "DB_RETURNING",
+        "inputs": [
+          "transaction.insert.abs_time_schedule_segment_snapshots.scheduled_segment_id"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false
+      },
+      "line_key": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.lineKey"
+        ],
+        "sqlType": "VARCHAR(100)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.lineKey",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "lineKey",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "local_work_date": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.localWorkDate"
+        ],
+        "sqlType": "DATE",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.localWorkDate",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "localWorkDate",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "starts_at": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.startsAt"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.startsAt",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "startsAt",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "ends_at": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.endsAt"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.endsAt",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "endsAt",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "source_time_zone": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.timeZone"
+        ],
+        "sqlType": "VARCHAR(80)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.timeZone",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "timeZone",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "start_utc_offset_seconds": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.startOffsetSeconds"
+        ],
+        "sqlType": "INTEGER",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.startOffsetSeconds",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "startOffsetSeconds",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "end_utc_offset_seconds": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.endOffsetSeconds"
+        ],
+        "sqlType": "INTEGER",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.endOffsetSeconds",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "endOffsetSeconds",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "tzdb_version": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.tzdbVersion"
+        ],
+        "sqlType": "VARCHAR(40)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.tzdbVersion",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "tzdbVersion",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "zone_rule_version": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.zoneRuleVersion"
+        ],
+        "sqlType": "VARCHAR(40)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.zoneRuleVersion",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "zoneRuleVersion",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "start_dst_resolution": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.startDstResolution"
+        ],
+        "sqlType": "VARCHAR(30)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.startDstResolution",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "startDstResolution",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "end_dst_resolution": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.endDstResolution"
+        ],
+        "sqlType": "VARCHAR(30)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.endDstResolution",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "endDstResolution",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "provenance_digest": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.provenanceSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.provenanceSha256",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "provenanceSha256",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "segment_type": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.kind"
+        ],
+        "sqlType": "VARCHAR(20)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.kind",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "kind",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "paid": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.paid"
+        ],
+        "sqlType": "BOOLEAN",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.paid",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "paid",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "rule_digest": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.workRuleContentSha256"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.workRuleContentSha256",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "workRuleContentSha256",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "source_segment_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.segmentPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.segmentPublicId",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "segmentPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "source_period_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.periodPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.periodPublicId",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "periodPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "worker_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.workerPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.workerPublicId",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "workerPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "assignment_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.row.assignmentPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.row.assignmentPublicId",
+            "schemaRef": "#/$defs/V4.ScheduleSegment",
+            "fieldPath": "assignmentPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "source_snapshot_public_id": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.header.snapshotPublicId"
+        ],
+        "sqlType": "UUID",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.header.snapshotPublicId",
+            "schemaRef": "#/$defs/V4.Header",
+            "fieldPath": "snapshotPublicId",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "source_revision": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.header.businessRevision"
+        ],
+        "sqlType": "BIGINT",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.header.businessRevision",
+            "schemaRef": "#/$defs/V4.Header",
+            "fieldPath": "businessRevision",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "source_as_of": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.header.asOf"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.header.asOf",
+            "schemaRef": "#/$defs/V4.Header",
+            "fieldPath": "asOf",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "valid_until": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.header.validUntil"
+        ],
+        "sqlType": "TIMESTAMPTZ",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.header.validUntil",
+            "schemaRef": "#/$defs/V4.Header",
+            "fieldPath": "validUntil",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      },
+      "population_scope_digest": {
+        "kind": "OWNER_RESPONSE",
+        "inputs": [
+          "owner.schedule.header.populationScopeDigest"
+        ],
+        "sqlType": "CHAR(64)",
+        "sourceApproval": "PLANNED_NOT_NATIVE_PEP",
+        "nullable": false,
+        "typedFieldAdapters": [
+          {
+            "source": "owner.schedule.header.populationScopeDigest",
+            "schemaRef": "#/$defs/V4.Header",
+            "fieldPath": "populationScopeDigest",
+            "authority": "PLANNED_REFETCHED_OWNER"
+          }
+        ]
+      }
+    }
+  },
+  "nativeAuthDml": false,
+  "loadedAliasMap": {
+    "loaded.run": "abs_entitlement_runs",
+    "loaded.selected": "abs_entitlement_selected_items",
+    "loaded.policy": "abs_leave_plan_versions",
+    "loaded.workflow": "abs_enrollment_termination_workflows",
+    "loaded.intent": "abs_termination_settlement_intents",
+    "loaded.previous_run": "abs_entitlement_runs",
+    "loaded.originalRun": "abs_entitlement_runs",
+    "loaded.originalGrant": "abs_entitlement_ledger_entries"
+  },
+  "normalizedRequestFields": [
+    "periodStart",
+    "periodEnd",
+    "asOf",
+    "mode",
+    "correctionMode"
+  ],
+  "fullInputAssemblerAndRefetch": "PURE_TYPED_MODEL_NOT_NATIVE_PEP_OR_ATOMIC_DML",
+  "unimplementedBranchSourceEvaluation": "FULL95_NATIVE_GRAPH_CONSUMER_ASSEMBLER_OPEN"
+}

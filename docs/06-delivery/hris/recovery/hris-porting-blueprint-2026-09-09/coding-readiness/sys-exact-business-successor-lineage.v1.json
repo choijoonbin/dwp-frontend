@@ -1,0 +1,83 @@
+{
+  "lineageId": "dwp.hris.sys-exact-business-successor-lineage.v1",
+  "schemaVersion": 1,
+  "status": "CURRENT_EXACT_SUCCESSOR_LINEAGE",
+  "artifactId": "SYS_EXACT_BUSINESS_EQUIVALENCE",
+  "scope": "HRIS_SYS_G3_EXACT_BUSINESS_DESIGN_ONLY",
+  "predecessors": [
+    {
+      "path": "coding-readiness/module-exact-business-start-canonical.v1.json",
+      "sha256": "483ae9f1aefaa59ed2758a0d0fb0e0280b7e961fb0e1340a60e75d1bbec81b36",
+      "state": "SEALED_IMMUTABLE",
+      "relation": "PRESERVED_SEALED_NON_SYS_SCOPE",
+      "scope": "HRIS-HRM|HRIS-PER|HRIS-PAY|HRIS-TIM"
+    },
+    {
+      "path": "session-evidence/sys/g2-implementation-contract.md",
+      "sha256": "2dbabebfc52c2175193821f72a3b9bf5b33b83110ed871f88e35ab07c8e0f871",
+      "state": "SUPERSEDED_IMMUTABLE",
+      "relation": "HISTORICAL_SYS_G2_IMPLEMENTATION_PREDECESSOR"
+    },
+    {
+      "path": "session-evidence/sys/validate_sys_readiness.py",
+      "sha256": "030fd2eb4189846da9385b47606468aaf545091032b4b134f902be52662fc823",
+      "state": "SUPERSEDED_IMMUTABLE",
+      "relation": "HISTORICAL_SYS_G2_VALIDATOR_PREDECESSOR"
+    }
+  ],
+  "successor": {
+    "path": "coding-readiness/sys-exact-business-start-successor.v1.json",
+    "sha256": "aa4f82925a5a34132ed69844ca088111d551b7effbe1d70d8104846db82c44be",
+    "version": 1,
+    "state": "CURRENT_EXACT_SUCCESSOR",
+    "exactOwnedSliceCount": 17,
+    "activeSliceCount": 16,
+    "retiredSliceCount": 1,
+    "baseTargetFamilyCount": 14,
+    "modernCapabilityCount": 3,
+    "modernPublicOperationCount": 22,
+    "modernInternalOperationCount": 1,
+    "modernTransitionCount": 12,
+    "modernEventCount": 18,
+    "modernTableCount": 33
+  },
+  "currentPointer": {
+    "artifactId": "SYS_EXACT_BUSINESS_EQUIVALENCE",
+    "path": "coding-readiness/sys-exact-business-start-successor.v1.json",
+    "version": 1,
+    "state": "CURRENT_EXACT_SUCCESSOR",
+    "forbidPredecessorRegression": true
+  },
+  "currentSysAuthorities": {
+    "implementation": {
+      "path": "session-evidence/sys/g2-implementation-contract.v2.md",
+      "sha256": "69c80aefe574ec1bc84cfaf7d7b5fc3fd709b3087fd387a57cf86d7dfc2a7aac",
+      "state": "CURRENT_V2_AUTHORITY"
+    },
+    "validator": {
+      "path": "session-evidence/sys/validate_sys_readiness.v2.py",
+      "sha256": "9774ac9c91dd6f853ad8aa0822adfd023967a85154f571ddd37ace98c4fc4299",
+      "state": "CURRENT_V2_AUTHORITY"
+    }
+  },
+  "currentSuccessorOverlays": {
+    "sysListeningStreamAuthority": {
+      "contractId": "dwp.hris.sys.listening.stream-authority-successor.v1",
+      "path": "coding-readiness/sys-listening-stream-authority-successor.v1.json",
+      "sha256": "c479af356c3d9fc190d12f0ca1adf01c7e6e1f1e3f8642d787b1d18829871c91",
+      "state": "CURRENT_CANONICAL_G3_START_AUTHORITY_NOT_IMPLEMENTED",
+      "supersedes": "HRIS.MODERN.EMPLOYEE_LISTENING_PREDECESSOR_ROWS_ONLY"
+    }
+  },
+  "assurance": {
+    "primaryValidator": "coding-readiness/validate_sys_exact_business_start.py",
+    "independentOracle": "coding-readiness/audit_sys_exact_business_start.cjs",
+    "pin": "coding-readiness/sys-exact-business-start-pin.v1.json",
+    "exactArtifactPinCount": 49,
+    "minimumMutationCountPerValidator": 21,
+    "normalAndMutationSelfTestsRequired": true,
+    "globalGateAuthorization": "NONE_VALIDATOR_CONTROLLED",
+    "runtimeImplemented": false,
+    "productionAuthorized": false
+  }
+}

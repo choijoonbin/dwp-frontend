@@ -1,0 +1,143 @@
+{
+  "schema": "dwp.hris.migration-successor-c1.final-report.v1",
+  "basisDate": "2026-09-14",
+  "status": "PINNED_C1_PASS_FINAL_C0_REPIN_PENDING",
+  "effectiveGate": "CLOSED_FAIL_SAFE",
+  "moduleStartAuthorization": "NONE",
+  "productionActivation": "NOT_AUTHORIZED_G6",
+  "scope": {
+    "backendSourceEdited": false,
+    "canonicalBlueprintUpdated": true,
+    "historicalProposalBytesEdited": false,
+    "copyPasteMigration": false,
+    "purpose": "seal collision-free successor allocations and exact migration lineage"
+  },
+  "sourceCheckpoint": {
+    "repository": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "commit": "b6d1f23e54e04b86d2b068e47b8bf6c9db608b5f",
+    "tree": "84345cd81f8b113d520b0018b159f7c27b503360",
+    "observedCleanBeforeConcurrentC2Work": true,
+    "migrationSqlCount": 444,
+    "migrationManifestSha256": "accbd9bf1306e3cb67fbb62922747b423587c2daff201fcc79a741b79164403b",
+    "inventoryMode": "IMMUTABLE_GIT_OBJECTS_ONLY"
+  },
+  "highWater": {
+    "authMain": 216,
+    "peopleMain": 50,
+    "platformMain": 260,
+    "approvalMain": 35,
+    "notificationMain": 30,
+    "performancePrivate": 0,
+    "payrollMain": 0,
+    "timeMain": 0
+  },
+  "canonicalAllocations": [
+    "MIG-HRM-PEOPLE-51-73",
+    "MIG-PER-PERFORMANCE-1-63",
+    "MIG-PAY-PAYROLL-1-49",
+    "MIG-TIM-TIME-1-39",
+    "MIG-SYS-AUTH-217-245",
+    "MIG-SYS-PLATFORM-261-289"
+  ],
+  "foundationAndLineage": {
+    "peopleCommonFoundationVersions": [47, 48, 49, 50],
+    "peopleCommonFoundationFiles": 4,
+    "exactRenamePairs": 11,
+    "exactRenamePairsPassed": 11,
+    "authRename": "V211/V212 -> V215/V216",
+    "platformRename": "V231..V237 -> V254..V260",
+    "approvalRename": "V15/V16 -> V34/V35",
+    "equality": "same predecessor/successor Git blob OID plus SHA-256 plus byte length",
+    "predecessorPathsAbsentAtSuccessor": true,
+    "successorPathsAbsentAtPredecessor": true
+  },
+  "plannedSuccessorReservations": {
+    "employeeListening": "dwp-platform-server/src/main/resources/db/migration/V287__hris_platform_modern_employee_listening.sql",
+    "peopleAnalytics": "dwp-platform-server/src/main/resources/db/migration/V288__hris_platform_modern_people_analytics.sql",
+    "governedAi": "dwp-platform-server/src/main/resources/db/migration/V289__hris_platform_modern_governed_ai.sql",
+    "reason": "old V257/V258/V259 names collide with the now-committed common Platform V257/V258/V259 files"
+  },
+  "validation": {
+    "migrationSuccessor": {
+      "status": "PASS",
+      "allocations": 6,
+      "streams": 8,
+      "exactRenamePairs": 11,
+      "peopleFoundationFiles": 4
+    },
+    "migrationMutationSuite": {
+      "status": "PASS",
+      "cases": 8,
+      "rejected": 8,
+      "classes": [
+        "duplicate-allocation",
+        "overlap",
+        "stale-high-water",
+        "private-to-public-leakage",
+        "lineage-byte-mutation",
+        "lineage-path-mutation",
+        "stale-source-pin",
+        "gate-open-bypass"
+      ]
+    },
+    "g3SliceGenerator": {
+      "status": "PASS",
+      "rows": 102,
+      "sha256": "37efcca9e322a4ba2ed4b209313431feacf039c52b0582cc445cc3724c34b67c"
+    },
+    "g3SliceMutationSuite": {
+      "status": "PASS",
+      "tamperCases": 50,
+      "tamperRejected": 50,
+      "positiveCases": 1,
+      "positivePassed": 1
+    },
+    "codeCheckpointIntegritySelfTest": {
+      "status": "PASS",
+      "cases": 60,
+      "passed": 60
+    },
+    "baseSchemaStatic": {
+      "status": "PASS",
+      "checks": 130,
+      "mutationCases": 14,
+      "mutationCasesPassed": 14,
+      "peopleVersions": "V1..V50"
+    },
+    "baseSchemaPostgres16": {
+      "status": "PASS",
+      "checks": 220,
+      "serverVersion": "16.15",
+      "peopleBaselineTransactions": 50,
+      "peopleTotalTransactionsWithHrmPer": 52,
+      "temporaryContainersSelfCleaned": true
+    },
+    "wholeGateStatic": {
+      "status": "CLOSED_FAIL_SAFE",
+      "migrationSpecificErrors": 0,
+      "otherReadinessBlockersRemain": true
+    }
+  },
+  "historicalBoundary": {
+    "preserved": [
+      "coding-readiness/semantic-remediation/common-migration-baseline.proposal.v1.json",
+      "coding-readiness/semantic-remediation/common-allocation-successor.v1.json"
+    ],
+    "checkpointRegisterTreatment": "entry SHA preserved; migration_ids and SYS package digest successorized as current C1 control projection",
+    "historicalPerPublicAllocation": "MIG-PER-PEOPLE-70-89 remains one HISTORICAL_G2_ONLY row and grants no authority"
+  },
+  "sameCheckpointClosure": {
+    "status": "PENDING_FINAL_C0_DESCENDANT_REPIN",
+    "reason": "C2 and C3 non-migration commits are being integrated after the pinned C1 checkpoint",
+    "mandatoryFinalAction": "after final backend integration commit, prove all eight migration subtree OIDs and the 444-file path/blob manifest byte-identical, then re-pin source commit/tree in the successor register, validator constants, allocation baseline rows and this report",
+    "mustNotOpenGateBeforeAction": true
+  },
+  "commands": [
+    "python3 g0/validate_migration_successor.py --self-test --compact",
+    "python3 coding-readiness/generate_g3_slice_code_go_register.py --check --compact",
+    "python3 coding-readiness/validate_g3_slice_code_go.py --self-test --compact",
+    "python3 g0/validate_code_checkpoint.py --self-test",
+    "python3 coding-readiness/validate_base_schema_postgres_feasibility.py --self-test --compact",
+    "python3 coding-readiness/validate_base_schema_postgres_feasibility.py --docker-postgres --compact"
+  ]
+}

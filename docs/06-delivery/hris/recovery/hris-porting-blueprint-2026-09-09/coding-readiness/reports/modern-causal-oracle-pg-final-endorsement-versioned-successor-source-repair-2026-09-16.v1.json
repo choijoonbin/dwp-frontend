@@ -1,0 +1,205 @@
+{
+  "reportId": "dwp.hris.modern.causal-oracle-pg-final-endorsement-versioned-successor-source-repair.v1",
+  "schema": "dwp.hris.modern.causal-oracle-pg-final-endorsement-versioned-successor-source-repair.v1",
+  "schemaVersion": 1,
+  "status": "PASS_SOURCE_REPAIR_SUCCESSOR_SAFE_PENDING_CANONICAL_TRANSITION",
+  "scope": "P0-03_ORDER4_VERSIONED_ORACLE_PG_ENDORSEMENT_SUCCESSOR",
+  "generatedAt": "2026-09-16T00:00:00Z",
+  "plan": {
+    "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-2026-09-16.v1.json",
+    "fileSha256": "5b213caa17c1bdb09d33778c19d4478955c9309f67b34b768fe3dd08f1229887",
+    "sealedPayloadSha256": "6496c84bd1a4d08a4b255fa9e980cc9b4080af9790a3666bfecd320489431ec3",
+    "order": 4,
+    "p0": "P0-03",
+    "name": "VERSIONED_ORACLE_PG_ENDORSEMENT_SUCCESSOR"
+  },
+  "successorProfile": {
+    "name": "successor-v2",
+    "activeGateChain": "successor-v2-pending-accepted-canonical-transition",
+    "predecessorDisposition": "HISTORICAL_BYTES_PINNED_NOT_ACTIVE_GATE_AUTHORITY",
+    "paths": {
+      "reviewInventory": "coding-readiness/modern-causal-independent-review-inventory.v2.json",
+      "reviewFinalization": "coding-readiness/modern-causal-independent-reviewed-finalization.v2.json",
+      "oracle": "coding-readiness/modern-causal-independent-oracle.v2.json",
+      "fixture": "coding-readiness/modern-causal-independent-pg-fixtures.v2.json",
+      "pgEvidence": "coding-readiness/reports/modern-causal-independent-pg-evidence.v3.json",
+      "designFindings": "coding-readiness/reports/modern-causal-independent-design-findings.v2.json",
+      "finalReview": "coding-readiness/reports/modern-causal-independent-final-hostile-review.v2.json",
+      "sourceAuthority": "coding-readiness/modern-causal-final-source-authority-manifest.v2.json",
+      "controlIntake": "g0/control-evidence-intake/modern-causal-final-endorsement.v2.json",
+      "listeningAuthority": "coding-readiness/sys-listening-stream-authority-successor.v2.json"
+    },
+    "ids": {
+      "oracle": "dwp.hris.modern.causal-independent-oracle.v2",
+      "fixture": "dwp.hris.modern.causal-independent-pg-fixtures.v2",
+      "pgEvidence": "dwp.hris.modern.causal-independent-pg-evidence.v3",
+      "finalReview": "dwp.hris.modern.causal-independent-final-hostile-review.v2",
+      "sourceAuthority": "dwp.hris.modern-causal-final-source-authority.v2",
+      "controlIntake": "dwp.hris.modern-causal-final-control-intake.v2"
+    },
+    "sourceDerivedCounts": {
+      "publicOperations": 199,
+      "commands": 133,
+      "queries": 66,
+      "systemHandlers": 27,
+      "publicEvents": 157,
+      "tableSpecifications": 131,
+      "ownerPortOperationContracts": 18,
+      "ownerDependencyContracts": 1
+    },
+    "policy": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+      "fileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+      "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2"
+    }
+  },
+  "predecessorPins": {
+    "coding-readiness/modern-causal-independent-oracle.v1.json": {
+      "fileSha256": "4e4164b5d0ef2e6817cf4e43593182d58335bb2ab8035a2637f2190e19b56828",
+      "sealedPayloadSha256": "f6d933bd39591c31bab9f4d524dfef35476612746520151dba2eea7e3ec48d46"
+    },
+    "coding-readiness/modern-causal-independent-pg-fixtures.v1.json": {
+      "fileSha256": "b2400ca2ed53b4c231653260c893cfa7227924bab7becaf09ccc806d82ffab15",
+      "sealedPayloadSha256": "75026a60d28b4248607bce6e3551b6b9bd7add03f602239dc2a9126541442ac7"
+    },
+    "coding-readiness/modern-causal-independent-review-inventory.v1.json": {
+      "fileSha256": "496f0f42db3106331f5631bc2094a8d25759328a4bc5f83f296df382e923b84f",
+      "sealedPayloadSha256": "6ce5b973cdfd5d249d2831c46bac80632602590061b776335efae01fddda3b21"
+    },
+    "coding-readiness/modern-causal-independent-reviewed-finalization.v1.json": {
+      "fileSha256": "1720100fb9f0198bfc2f911cd386f43eb349ad562ba620162079bb056071a149",
+      "sealedPayloadSha256": "2fb9d730cffae55b569b8a14c8fa4c4d2853be2fff590ffd8807047afd5a408b"
+    },
+    "coding-readiness/reports/modern-causal-independent-pg-evidence.v1.json": {
+      "fileSha256": "246ba77db5f4818ae4a37cdf8e69ef0e1bf4f2308327aae13f786d5e71c34fc2",
+      "sealedPayloadSha256": "9228f1d01f76d1cb70082d2205d45ea9d1923e1f5a3711c67f611fa0ad912f19"
+    },
+    "unpublishedPredecessors": [
+      "coding-readiness/reports/modern-causal-independent-pg-evidence.v2.json",
+      "coding-readiness/reports/modern-causal-independent-final-hostile-review.v1.json",
+      "coding-readiness/modern-causal-final-source-authority-manifest.v1.json",
+      "g0/control-evidence-intake/modern-causal-final-endorsement.v1.json"
+    ]
+  },
+  "changedSources": {
+    "coding-readiness/modern_causal_successor_profile.py": "d080d273c0ab8cb2c9c14e3fbf7d57a4ed5e677c516a9401b3b0b4b500257d8c",
+    "coding-readiness/build_modern_causal_independent_oracle.py": "a5145b5d353d7de4d8a5de5a179f38189a9d9f4386c68282fe9b45fbf705453e",
+    "coding-readiness/run_modern_causal_independent_pg_fixtures.py": "0da156bf44ac791e16243ce2c6ec66f1bc57272757b5af0f7d171cc8ec63a302",
+    "coding-readiness/validate_modern_causal_independent_oracle.py": "8098d5a34a8d5ecc7e87b860ae339070a80d21eed5732c030c95ecbb880d2ec8",
+    "coding-readiness/prepare_modern_causal_final_endorsement.py": "9a3ac06eee9499e686242f2ce2503ff633d1512f5a02271615f39a435c4fe766",
+    "coding-readiness/validate_modern_causal_final_endorsement.py": "01ef96a732170fc643a9ccd659bff0a3baf411b3535b997d7443b9a12bc289ff"
+  },
+  "tests": {
+    "sourceCompile": {
+      "status": "PASS",
+      "subjects": [
+        "modern_causal_successor_profile.py",
+        "build_modern_causal_independent_oracle.py",
+        "run_modern_causal_independent_pg_fixtures.py",
+        "validate_modern_causal_independent_oracle.py",
+        "prepare_modern_causal_final_endorsement.py",
+        "validate_modern_causal_final_endorsement.py"
+      ]
+    },
+    "successorSelfTests": {
+      "status": "PASS",
+      "builder": "PASS tests=6 failures=0",
+      "runner": "PASS tests=6 failures=0",
+      "independentOracleValidator": "PASS tests=6 failures=0",
+      "preparer": "PASS tests=8 failures=0",
+      "finalEndorsementValidator": "PASS tests=6 failures=0"
+    },
+    "successorPendingChecks": {
+      "status": "EXPECTED_FAIL_CLOSED",
+      "runner": "PENDING_ACCEPTED_CANONICAL_TRANSITION; v3 evidence absent",
+      "finalEndorsementValidator": "PENDING_ACCEPTED_CANONICAL_TRANSITION; v2 review absent",
+      "successorArtifactsPublished": false
+    },
+    "historicalModes": {
+      "status": "PRESERVED",
+      "builderCheck": "PASS operations=100 edges=58",
+      "oracleOnly": "PASS errors=0",
+      "preparerSelfTest": "PASS 28/28",
+      "runnerSelfTest": "EXPECTED_BASELINE_BLOCKED frozen candidate hash mismatch",
+      "finalSelfTest": "EXPECTED_BASELINE_BLOCKED trusted-tool-root hashes await freeze"
+    },
+    "hostileControls": [
+      "occupied successor target rejects without byte mutation",
+      "predecessor byte copied into successor path is rejected as PREDECESSOR_ALIAS",
+      "symlink parent/target, hardlink target, writable parent and traversal path reject",
+      "successor write never falls back to predecessor v1 review/oracle/fixture/evidence",
+      "successor Gate subprocess routing appends explicit --profile successor-v2"
+    ]
+  },
+  "immutability": {
+    "protectedArtifactSet": {
+      "coding-readiness/modern-causal-independent-oracle.v1.json": {
+        "beforeSha256": "4e4164b5d0ef2e6817cf4e43593182d58335bb2ab8035a2637f2190e19b56828",
+        "afterSha256": "4e4164b5d0ef2e6817cf4e43593182d58335bb2ab8035a2637f2190e19b56828",
+        "beforeInode": 46187649,
+        "afterInode": 46187649
+      },
+      "coding-readiness/modern-causal-independent-pg-fixtures.v1.json": {
+        "beforeSha256": "b2400ca2ed53b4c231653260c893cfa7227924bab7becaf09ccc806d82ffab15",
+        "afterSha256": "b2400ca2ed53b4c231653260c893cfa7227924bab7becaf09ccc806d82ffab15",
+        "beforeInode": 46187650,
+        "afterInode": 46187650
+      },
+      "coding-readiness/modern-causal-independent-review-inventory.v1.json": {
+        "beforeSha256": "496f0f42db3106331f5631bc2094a8d25759328a4bc5f83f296df382e923b84f",
+        "afterSha256": "496f0f42db3106331f5631bc2094a8d25759328a4bc5f83f296df382e923b84f",
+        "beforeInode": 45577180,
+        "afterInode": 45577180
+      },
+      "coding-readiness/modern-causal-independent-reviewed-finalization.v1.json": {
+        "beforeSha256": "1720100fb9f0198bfc2f911cd386f43eb349ad562ba620162079bb056071a149",
+        "afterSha256": "1720100fb9f0198bfc2f911cd386f43eb349ad562ba620162079bb056071a149",
+        "beforeInode": 46186737,
+        "afterInode": 46186737
+      },
+      "coding-readiness/reports/modern-causal-independent-pg-evidence.v1.json": {
+        "beforeSha256": "246ba77db5f4818ae4a37cdf8e69ef0e1bf4f2308327aae13f786d5e71c34fc2",
+        "afterSha256": "246ba77db5f4818ae4a37cdf8e69ef0e1bf4f2308327aae13f786d5e71c34fc2",
+        "beforeInode": 45638175,
+        "afterInode": 45638175
+      },
+      "coding-readiness/reports/modern-causal-independent-design-findings.v1.json": {
+        "beforeSha256": "1201ad8b67035ae48697de2007e4af86d267c4980ecfb06c281b6e3049a40a75",
+        "afterSha256": "1201ad8b67035ae48697de2007e4af86d267c4980ecfb06c281b6e3049a40a75",
+        "beforeInode": 46529937,
+        "afterInode": 46529937
+      },
+      "g0/current-g3-gate-decision.json": {
+        "beforeSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+        "afterSha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+        "beforeInode": 41742789,
+        "afterInode": 41742789
+      },
+      "g0/g3-gate-transition-register.csv": {
+        "beforeSha256": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a",
+        "afterSha256": "bffbb302ddfe62d42038a4d5ba62497de767cad394602888f4ffb9b663544f1a",
+        "beforeInode": 45989559,
+        "afterInode": 45989559
+      }
+    },
+    "candidateLiveGateModified": false,
+    "existingSealedArtifactsOverwritten": false,
+    "successorArtifactsPublished": false
+  },
+  "authorityAndSafety": {
+    "predecessorHashesAreExactPins": true,
+    "activeGatePredecessorV1References": 0,
+    "historicalV1ChainRemainsReadable": true,
+    "sourceAuthorityStatus": "TRUST_ANCHOR_STRUCTURE_READY_WAITING_TOOL_FREEZE",
+    "payProducerOwnerInvented": false,
+    "payHandling": "no new PAY producer path; existing consumer authority remains required",
+    "canonicalLivePromotion": "NOT_AUTHORIZED_PENDING_FRESH_ACCEPTED_CANONICAL_AND_LIVE_TRANSITION"
+  },
+  "knownBlockers": [
+    "successor review inventory/finalization/oracle/fixture/evidence/source-authority/control-intake artifacts are intentionally unpublished",
+    "active Gate remains CLOSED_FAIL_SAFE until successor chain is accepted and all downstream checks pass",
+    "legacy runner self-test still sees pre-existing frozen candidate hash drift",
+    "legacy final endorsement self-test still awaits trusted-tool-root freeze after source changes"
+  ],
+  "sealedPayloadSha256": "63b7ac9b45e8ff517d69ce8ca62b7eb377fcf6c5b52440e4d60f9761d1dca804"
+}

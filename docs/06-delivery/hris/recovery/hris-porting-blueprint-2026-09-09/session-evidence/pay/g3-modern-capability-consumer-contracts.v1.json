@@ -1,0 +1,186 @@
+{
+  "contractId": "dwp.hris.modern.pay-consumer.v1",
+  "schemaVersion": 1,
+  "status": "G3_CONTRACT_READY_NOT_IMPLEMENTED",
+  "session": "HRIS-PAY",
+  "runtimeOwner": "dwp-payroll-server",
+  "ownedModernCapabilities": [],
+  "consumedModernCapabilities": [
+    {
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerSession": "HRIS-PER",
+      "producerRuntime": "dwp-people-server",
+      "consumerRuntime": "dwp-payroll-server",
+      "dependencyId": "DEP-019",
+      "snapshotContract": {
+        "name": "ApprovedCompensationPlanSnapshot.v1",
+        "operationId": "getApprovedCompensationPlanSnapshot",
+        "method": "GET",
+        "ownerPath": "/internal/hris-performance/v1/approved-compensation-plan-snapshots/{snapshotId}",
+        "serviceAuthBindingId": "SVC-PEP-PER-001",
+        "callerWorkload": "dwp-payroll-server",
+        "authentication": [
+          "MTLS_SPIFFE_WORKLOAD_IDENTITY",
+          "OAUTH2_CLIENT_CREDENTIAL_JWT_AUD_DWP_PEOPLE"
+        ],
+        "tenantControls": [
+          "SIGNED_TENANT_CLAIM",
+          "OWNER_TENANT_GRANT_REVALIDATION",
+          "TARGET_TENANT_MATCH",
+          "NO_CALLER_TENANT_OVERRIDE"
+        ],
+        "purposeCode": "HRIS_APPROVED_COMPENSATION_PLAN_SNAPSHOT_REFETCH",
+        "requiredFields": [
+          "snapshotId",
+          "snapshotRevision",
+          "planId",
+          "cycleId",
+          "workerId",
+          "assignmentId",
+          "componentCode",
+          "currency",
+          "approvedAmount",
+          "effectiveFrom",
+          "effectiveTo",
+          "approvalReceiptId",
+          "sourceVersion",
+          "payloadDigest"
+        ],
+        "projection": "dwp-payroll-server/ApprovedCompensationPlanSnapshotV1",
+        "freshnessRule": "PAY blocks an input freeze when snapshot revision is stale, superseded, unapproved, outside effective range, tenant mismatched or digest mismatched",
+        "replayRule": "GET read-idempotent; cache key tenantId:snapshotId:snapshotRevision:payloadDigest; event replay never duplicates an input row"
+      },
+      "invalidationEvent": {
+        "name": "ApprovedCompensationPlanSnapshotPublished.v2",
+        "type": "ApprovedCompensationPlanSnapshotPublished",
+        "version": 2,
+        "topic": "dwp.hris.modern.approved-compensation-plan-snapshot-published.v2",
+        "requiredEnvelope": [
+          "specVersion",
+          "id",
+          "source",
+          "type",
+          "schemaVersion",
+          "time",
+          "tenantId",
+          "aggregateType",
+          "aggregateId",
+          "aggregateSequence",
+          "correlationId",
+          "data"
+        ],
+      "payloadRequired": [
+        "aggregateId",
+        "fromState",
+        "toState",
+        "aggregateVersion",
+        "occurredAt",
+        "correlationId",
+        "planId",
+        "cycleId",
+        "approvalRevision",
+          "approvalReceiptId",
+        "effectiveDate",
+        "snapshotId",
+        "lineCount",
+        "snapshotRevision",
+        "sourceVersion",
+        "payloadDigest"
+      ],
+      "consumerAction": "dedupe the post-snapshot-commit v2 event; refetch exact snapshot through SVC-PEP-PER-001 using snapshotId and snapshotRevision; verify tenant, causal state/version/time/correlation, plan/cycle identity, approval revision/receipt, effective range, lineCount and payloadDigest; materialize append-only input; quarantine any mismatch. CompensationPlanApproved.v1 and CompensationPlanApprovalRecorded.v2 never trigger PAY; dual publish is forbidden."
+      },
+      "backendRoot": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan",
+      "backendTestRoot": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/input/compensationplan",
+      "migrationFile": "dwp-payroll-server/src/main/resources/db/migration/V49__pay_modern_compensation_plan_input.sql",
+      "physicalTableDefaults": {
+        "tenantColumn": "tenant_id BIGINT NOT NULL",
+        "internalId": "module-specific BIGSERIAL PRIMARY KEY; never exposed",
+        "publicId": "public_id UUID NOT NULL; UNIQUE(tenant_id,public_id)",
+    "rowSecurity": "ENABLE ROW LEVEL SECURITY; FORCE ROW LEVEL SECURITY; tenant predicate current_setting('dwp.tenant_id',true)::bigint; application role NOBYPASSRLS",
+        "crossRuntimeRule": "no PER DB FK or repository import; only service-authenticated snapshot refetch plus event invalidation"
+      },
+      "tables": [
+        {
+          "name": "pay_compensation_plan_inputs",
+          "kind": "IMMUTABLE_INPUT_LEDGER",
+          "idColumn": "compensation_plan_input_id",
+          "effectiveTime": "effective_from DATE NOT NULL; effective_to DATE NULL; half-open [from,to)",
+          "immutability": "APPEND_ONLY_SUPERSESSION",
+          "foreignKeyBoundaries": [
+            "OPAQUE:snapshot_id->PER.ApprovedCompensationPlanSnapshot",
+            "OPAQUE:worker_id->HRM.Worker",
+            "OPAQUE:assignment_id->HRM.Assignment"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,snapshot_id,snapshot_revision,worker_id,component_code)",
+            "(tenant_id,payload_digest)"
+          ],
+          "checks": [
+            "snapshot_revision > 0",
+            "approved_amount >= 0",
+            "currency ~ '^[A-Z]{3}$'",
+            "payload_digest <> ''",
+            "effective_to IS NULL OR effective_to > effective_from"
+          ],
+          "indexes": [
+            "(tenant_id,cycle_id,worker_id,effective_from)",
+            "(tenant_id,snapshot_id,snapshot_revision DESC)"
+          ],
+          "retentionClass": "PAYROLL_INPUT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        },
+        {
+          "name": "pay_input_snapshot_compensation_refs",
+          "kind": "INPUT_SNAPSHOT_JOIN_LEDGER",
+          "idColumn": "input_snapshot_compensation_ref_id",
+          "effectiveTime": "recorded_at TIMESTAMPTZ NOT NULL",
+          "immutability": "APPEND_ONLY",
+          "foreignKeyBoundaries": [
+            "LOCAL:(tenant_id,input_snapshot_id)->pay_input_snapshots",
+            "LOCAL:(tenant_id,compensation_plan_input_id)->pay_compensation_plan_inputs"
+          ],
+          "uniqueKeys": [
+            "(tenant_id,input_snapshot_id,compensation_plan_input_id)",
+            "(tenant_id,input_snapshot_id,line_sequence)"
+          ],
+          "checks": [
+            "line_sequence > 0",
+            "line_digest <> ''"
+          ],
+          "indexes": [
+            "(tenant_id,input_snapshot_id,line_sequence)"
+          ],
+          "retentionClass": "PAYROLL_INPUT_RETENTION_POLICY_REF",
+          "rowSecurity": "INHERIT_EXACT_DEFAULT"
+        }
+      ],
+      "acceptanceTests": [
+        {
+          "testId": "MOD-PAY-COMPPLAN-CONSUME-AT-001",
+          "type": "CONTRACT",
+          "evidencePath": "../session-evidence/pay/g4/modern/compensation-planning/refetch-contract.json",
+          "assertion": "SVC-PEP-PER-001 exact caller tenant purpose field projection and required fields"
+        },
+        {
+          "testId": "MOD-PAY-COMPPLAN-CONSUME-AT-002",
+          "type": "SECURITY",
+          "evidencePath": "../session-evidence/pay/g4/modern/compensation-planning/digest-revision-negative.json",
+          "assertion": "wrong tenant stale revision unapproved snapshot and digest mismatch quarantine and block input freeze"
+        },
+        {
+          "testId": "MOD-PAY-COMPPLAN-CONSUME-AT-003",
+          "type": "ACCEPTANCE",
+          "evidencePath": "../session-evidence/pay/g4/modern/compensation-planning/handoff-reconciliation.json",
+          "assertion": "approved PER snapshot lines reconcile exactly once into PAY frozen input snapshot"
+        }
+      ],
+      "implementationState": "NOT_STARTED_G3",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "activationBoundary": [
+        "real tenant compensation cycle data",
+        "country compensation policy",
+        "parallel payroll reconciliation"
+      ]
+    }
+  ]
+}

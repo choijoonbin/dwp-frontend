@@ -1,0 +1,532 @@
+{
+  "bytes": 305301,
+  "columnCount": 48,
+  "destination": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+  "hashEvidence": {
+    "createdAtMs": 1790673900409,
+    "itemId": "exec-49156c15-b6f7-4b97-9792-8e4e7177ad67",
+    "line": "{\"schemaVersion\": 1, \"contractId\": \"HRIS-W1-SLICE-START-2026-09-17\", \"issuedAt\": \"2026-09-17T17:32:34+09:00\", \"owner\": \"HRIS-INTEGRATION-CONTROL\", \"authority\": {\"userExplicitStart\": true, \"userEvidence\": \"협의한데로 작업을 시작해주세요.\", \"sliceGate\": \"OPEN_G3_SLICE_WAVE1\", \"fullModuleGate\": \"CLOSED_FAIL_SAFE\", \"moduleCompletenessP0Passed\": false, \"productionReleaseAuthorized\": false, \"nextSliceAutoAuthorized\": false}, \"pinnedInputs\": [{\"path\": \"output/hris-final-module-adjudication-2026-09-17/final-module-adjudication.v1.json\", \"sha256\": \"61f1f09de5585cdf81031c6b22a52ef3a799ea1e742f53fd122eb79c89cedf65\"}, {\"path\": \"output/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv\", \"sha256\": \"fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725\", \"authority\": \"LINEAGE_REFERENCE_ONLY\"}, {\"path\": \"output/hris-porting-blueprint-2026-09-09/coding-readiness/g3-file-allocation-register.csv\", \"sha256\": \"a9deb03deff95bc7fc8c3126666d71a552eb9503c82508f2483d8bf4e1561219\", \"authority\": \"PATH_BOUNDARY_REFERENCE\"}], \"designSources\": [{\"id\": \"STITCH-HRIS-REVISED\", \"path\": \"/Users/a10697/Downloads/디자인파일/stitch_hris_수정.zip\", \"sha256\": \"a5c2e4ec1861337567002630ab4aad068d7d633d69a3d8200162d072cf651757\", \"authority\": \"EARLY_UX_ANCHOR_NOT_IMPLEMENTATION_AUTHORITY\"}, {\"id\": \"STITCH-HRIS-TIM-DELTA\", \"path\": \"/Users/a10697/Downloads/디자인파일/stitch_hris_TIM.zip\", \"sha256\": \"ed9f776ad2fb46239375b7b6148d332c04f3cf89006c8fe5977b332a9719a4ff\", \"authority\": \"EARLY_UX_ANCHOR_NOT_IMPLEMENTATION_AUTHORITY\"}], \"migrationPolicy\": {\"leaseRequired\": true, \"leaseIssued\": true, \"migrationAuthoringAllowed\": true, \"leaseScope\": [\"BASE-TFR-PER-005:V1__per_create_evaluation_cycle_foundation.sql\", \"BASE-TFR-PAY-007:V1__pay_create_payroll_foundation.sql\", \"BASE-TFR-TIM-016:V1__tim_create_work_regime_foundation.sql\"], \"leaseRegistry\": \"output/hris-wave1-slice-start-2026-09-17/migration-leases/wave1-jit-migration-leases.v1.json\", \"allOtherMigrationAuthoringAllowed\": false, \"continueNonSchemaWorkWhileWaiting\": true}, \"slices\": [{\"owner\": \"HRIS-INTEGRATION-CONTROL\", \"sliceId\": \"HRIS-HOME-W1-001\", \"frontendWorktree\": \"/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend\", \"backendWorktree\": \"/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend\", \"goal\": \"Role-aware integrated HRIS home shell and module widget provider contract\", \"allowedFrontend\": [\"apps/dwp/src/features/hris/home/**\", \"apps/dwp/src/features/hris/shell/**\", \"apps/dwp/src/routes/hcm-routes.tsx\", \"apps/dwp/src/pages/hcm.tsx (HRIS home provider registry wiring only; allocation amendment W1-A001)\", \"apps/dwp/src/features/hcm/** (compatibility adapter only)\", \"libs/shared-utils/src/api/hr-api.ts (getHrHome AbortSignal and missing-domain fail-closed only; allocation amendment W1-A003)\", \"libs/shared-utils/src/api/hr-api.test.ts (W1-A003 regression tests only)\", \"apps/dwp/src/components/product-manifest.ts (optional shell projection type only; allocation amendment W1-A004)\", \"apps/dwp/src/layouts/product-area-layout.tsx (optional shell projection rendering only; allocation amendment W1-A004)\", \"apps/dwp/src/layouts/hcm-layout.tsx (canonical HRIS shell projection wiring only; allocation amendment W1-A004)\", \"apps/dwp/src/routes/configured-product-surface-shell.tsx (optional shell projection forwarding only; allocation amendment W1-A004)\", \"libs/shared-i18n/src/locales/ko/hcm.json (canonical shell labels only; allocation amendment W1-A004)\", \"libs/shared-i18n/src/locales/en/hcm.json (canonical shell labels only; allocation amendment W1-A004)\", \"e2e/hris-home-*.spec.ts\"], \"allowedBackend\": [\"dwp-platform-server/src/main/java/com/dwp/services/platform/home/**\", \"dwp-platform-server/src/test/java/com/dwp/services/platform/home/**\", \"dwp-people-server/src/main/java/com/dwp/services/people/hr/HrService.java (/v1/hr/home per-domain minimum projection only; allocation amendment W1-A002)\", \"dwp-people-server/src/test/java/com/dwp/services/people/hr/HrServiceTest.java (W1-A002 regression tests only)\"]}, {\"owner\": \"HRIS-HRM\", \"sliceId\": \"BASE-TFR-HRM-004\", \"frontendWorktree\": \"/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/hrm/frontend\", \"backendWorktree\": \"/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/hrm/backend\", \"goal\": \"People 360 as-of read with person/employment/primary assignment and VIEW/MASK/OMIT\", \"allowedFrontend\": [\"apps/dwp/src/features/hris/people/**\"], \"allowedBackend\": [\"dwp-people-server/src/main/java/com/dwp/services/people/hr/**\", \"dwp-people-server/src/main/java/com/dwp/services/people/workforce/**\", \"dwp-people-server/src/test/java/com/dwp/services/people/**\"]}, {\"owner\": \"HRIS-PER\", \"sliceId\": \"BASE-TFR-PER-005\", \"frontendWorktree\": \"/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/per/frontend\", \"backendWorktree\": \"/Users/a10697/Work/DWP/.codex-worktrees/hris/authoring-v1/per/backend\", \"goal\": \"Performance cycle/version foundation and participant preview\", \"allowedFrontend\": [\"apps/dwp/src/features/hris/perfo"
+  },
+  "historicalPath": "output/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+  "inventedContent": false,
+  "lineCount": 103,
+  "schema": "dwp.hris.blueprint.numbered-line-recovery.v1",
+  "selectedLineEvidence": [
+    {
+      "createdAtMs": 1789517707995,
+      "itemId": "exec-7c574e1d-ab5a-40c2-90e1-a0a402ade9eb",
+      "line": 1
+    },
+    {
+      "createdAtMs": 1789546351734,
+      "itemId": "exec-318aa48a-62bf-418a-abca-9b0acf91977c",
+      "line": 2
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 3
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 4
+    },
+    {
+      "createdAtMs": 1789622177306,
+      "itemId": "exec-a9e49d85-119d-4007-98fa-7fc11f9864c9",
+      "line": 5
+    },
+    {
+      "createdAtMs": 1789626422694,
+      "itemId": "exec-6ebdc430-86e3-4804-87a1-145baa2fa225",
+      "line": 6
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 7
+    },
+    {
+      "createdAtMs": 1789626422694,
+      "itemId": "exec-6ebdc430-86e3-4804-87a1-145baa2fa225",
+      "line": 8
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 9
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 10
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 11
+    },
+    {
+      "createdAtMs": 1789626422694,
+      "itemId": "exec-6ebdc430-86e3-4804-87a1-145baa2fa225",
+      "line": 12
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 13
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 14
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 15
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 16
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 17
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 18
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 19
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 20
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 21
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 22
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 23
+    },
+    {
+      "createdAtMs": 1789606984357,
+      "itemId": "exec-e093f0da-e0bf-4669-b506-0507d654358d",
+      "line": 24
+    },
+    {
+      "createdAtMs": 1789606984357,
+      "itemId": "exec-e093f0da-e0bf-4669-b506-0507d654358d",
+      "line": 25
+    },
+    {
+      "createdAtMs": 1789607772933,
+      "itemId": "exec-adb2f9e8-217f-430e-87ad-491f474d3ed5",
+      "line": 26
+    },
+    {
+      "createdAtMs": 1789607772933,
+      "itemId": "exec-adb2f9e8-217f-430e-87ad-491f474d3ed5",
+      "line": 27
+    },
+    {
+      "createdAtMs": 1789620079303,
+      "itemId": "exec-40b803af-1817-4059-b774-7b22028da464",
+      "line": 28
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 29
+    },
+    {
+      "createdAtMs": 1789614152719,
+      "itemId": "exec-beb74b60-757b-4863-9c21-505843ce9234",
+      "line": 30
+    },
+    {
+      "createdAtMs": 1789606984357,
+      "itemId": "exec-e093f0da-e0bf-4669-b506-0507d654358d",
+      "line": 31
+    },
+    {
+      "createdAtMs": 1789622177306,
+      "itemId": "exec-a9e49d85-119d-4007-98fa-7fc11f9864c9",
+      "line": 32
+    },
+    {
+      "createdAtMs": 1789606984357,
+      "itemId": "exec-e093f0da-e0bf-4669-b506-0507d654358d",
+      "line": 33
+    },
+    {
+      "createdAtMs": 1789622177306,
+      "itemId": "exec-a9e49d85-119d-4007-98fa-7fc11f9864c9",
+      "line": 34
+    },
+    {
+      "createdAtMs": 1789622177306,
+      "itemId": "exec-a9e49d85-119d-4007-98fa-7fc11f9864c9",
+      "line": 35
+    },
+    {
+      "createdAtMs": 1789622177306,
+      "itemId": "exec-a9e49d85-119d-4007-98fa-7fc11f9864c9",
+      "line": 36
+    },
+    {
+      "createdAtMs": 1789606984357,
+      "itemId": "exec-e093f0da-e0bf-4669-b506-0507d654358d",
+      "line": 37
+    },
+    {
+      "createdAtMs": 1789622177306,
+      "itemId": "exec-a9e49d85-119d-4007-98fa-7fc11f9864c9",
+      "line": 38
+    },
+    {
+      "createdAtMs": 1789621227314,
+      "itemId": "exec-f96d3c52-e018-4fd7-a026-d50fa6cc2cbd",
+      "line": 39
+    },
+    {
+      "createdAtMs": 1789622177306,
+      "itemId": "exec-a9e49d85-119d-4007-98fa-7fc11f9864c9",
+      "line": 40
+    },
+    {
+      "createdAtMs": 1789626412216,
+      "itemId": "exec-2cb9ec0f-11c5-415c-9547-cfd43dd1c6d0",
+      "line": 41
+    },
+    {
+      "createdAtMs": 1789607772933,
+      "itemId": "exec-adb2f9e8-217f-430e-87ad-491f474d3ed5",
+      "line": 42
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 43
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 44
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 45
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 46
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 47
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 48
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 49
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 50
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 51
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 52
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 53
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 54
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 55
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 56
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 57
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 58
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 59
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 60
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 61
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 62
+    },
+    {
+      "createdAtMs": 1789638762453,
+      "itemId": "exec-86b164c5-ea1e-42af-a687-3f1442077658",
+      "line": 63
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 64
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 65
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 66
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 67
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 68
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 69
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 70
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 71
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 72
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 73
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 74
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 75
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 76
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 77
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 78
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 79
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 80
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 81
+    },
+    {
+      "createdAtMs": 1789634351925,
+      "itemId": "exec-96e001d4-4b33-42c4-9cf8-2e88aceaf941",
+      "line": 82
+    },
+    {
+      "createdAtMs": 1789634131235,
+      "itemId": "exec-9c287ccc-d929-4c29-b90c-a77f273497c2",
+      "line": 83
+    },
+    {
+      "createdAtMs": 1789635551143,
+      "itemId": "exec-b86aa739-d007-4d21-a689-a8f6c63803ad",
+      "line": 84
+    },
+    {
+      "createdAtMs": 1789635551143,
+      "itemId": "exec-b86aa739-d007-4d21-a689-a8f6c63803ad",
+      "line": 85
+    },
+    {
+      "createdAtMs": 1789635551143,
+      "itemId": "exec-b86aa739-d007-4d21-a689-a8f6c63803ad",
+      "line": 86
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 87
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 88
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 89
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 90
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 91
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 92
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 93
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 94
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 95
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 96
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 97
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 98
+    },
+    {
+      "createdAtMs": 1789642125186,
+      "itemId": "exec-36104034-43a5-4f7c-a41c-ca16748e3010",
+      "line": 99
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 100
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 101
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 102
+    },
+    {
+      "createdAtMs": 1789641464887,
+      "itemId": "exec-442d7093-bb7c-4422-b30b-52ebcfe03f07",
+      "line": 103
+    }
+  ],
+  "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+}

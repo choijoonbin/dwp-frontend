@@ -1,0 +1,1 @@
+receipt_seq,receipt_id,release_id,consumer_session_id,repository,predecessor_head_sha,successor_head_sha,source_commit_sha,path_manifest_sha256,conflict_count,compile_evidence_ref,compile_evidence_sha256,recorded_at,status,compile_output_ref,compile_output_sha256

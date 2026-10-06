@@ -1,0 +1,262 @@
+{
+  "status": "AUTHOR_NATIVE_SOURCE_FORWARD_DELTA_PLANNED_G3_OPEN",
+  "nativePhysicalDeltas": [
+    {
+      "table": "public.pay_payroll_run_workers",
+      "CURRENT_MATERIALIZED": false,
+      "columns": [
+        {
+          "name": "person_public_id",
+          "sqlType": "UUID",
+          "nullable": false,
+          "fieldSource": "nativeSet.personPublicId",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "person_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "nativeSet.personVersion",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "work_relationship_public_id",
+          "sqlType": "UUID",
+          "nullable": false,
+          "fieldSource": "nativeContext.relationship.publicId",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "legal_employer_public_id",
+          "sqlType": "UUID",
+          "nullable": false,
+          "fieldSource": "nativeContext.relationship.legalEmployerPublicId",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "worker_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "nativeContext.worker.version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "relationship_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "nativeContext.relationship.version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "assignment_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "nativeContext.assignment.version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "legal_employer_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "nativeLegalEmployer.version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "identity_as_of",
+          "sqlType": "TIMESTAMPTZ",
+          "nullable": false,
+          "fieldSource": "nativeSet.asOf",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "work_date_zone",
+          "sqlType": "VARCHAR(80)",
+          "nullable": false,
+          "fieldSource": "nativeContext.assignment.workZone",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "relationship_start_date",
+          "sqlType": "DATE",
+          "nullable": false,
+          "fieldSource": "nativeContext.relationship.startDate",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "relationship_end_date",
+          "sqlType": "DATE",
+          "nullable": true,
+          "fieldSource": "nativeContext.relationship.endDate",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "assignment_start_date",
+          "sqlType": "DATE",
+          "nullable": false,
+          "fieldSource": "nativeContext.assignment.effectiveStartDate",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "assignment_end_date",
+          "sqlType": "DATE",
+          "nullable": true,
+          "fieldSource": "nativeContext.assignment.effectiveEndDate",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        }
+      ],
+      "existingFieldSources": {
+        "worker_public_id": "nativeContext.worker.publicId",
+        "assignment_public_id": "nativeContext.assignment.publicId"
+      },
+      "parentBinding": "frozen owner-authorized native target by business asOf",
+      "upgradePolicy": "existing historical rows require exact owner reconstruction or unavailable/quarantine; no guessed backfill",
+      "actingAuthStamps": "separate acting tenant+actor authUserVersion/accessRevision/purpose receipt, not subject native version vector",
+      "inclusiveDatePolicy": "owner-zone civil date; inclusive relationship/assignment start/end, no UTC date coercion",
+      "noSyntheticContextId": true,
+      "noCrossOwnerForeignKey": true
+    },
+    {
+      "table": "public.pay_worker_results",
+      "CURRENT_MATERIALIZED": false,
+      "columns": [
+        {
+          "name": "person_public_id",
+          "sqlType": "UUID",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.person_public_id",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "person_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.person_version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "work_relationship_public_id",
+          "sqlType": "UUID",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.work_relationship_public_id",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "legal_employer_public_id",
+          "sqlType": "UUID",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.legal_employer_public_id",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "worker_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.worker_version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "relationship_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.relationship_version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "assignment_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.assignment_version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "legal_employer_version",
+          "sqlType": "BIGINT",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.legal_employer_version",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "identity_as_of",
+          "sqlType": "TIMESTAMPTZ",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.identity_as_of",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "work_date_zone",
+          "sqlType": "VARCHAR(80)",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.work_date_zone",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "relationship_start_date",
+          "sqlType": "DATE",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.relationship_start_date",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "relationship_end_date",
+          "sqlType": "DATE",
+          "nullable": true,
+          "fieldSource": "frozenRunWorker.relationship_end_date",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "assignment_start_date",
+          "sqlType": "DATE",
+          "nullable": false,
+          "fieldSource": "frozenRunWorker.assignment_start_date",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        },
+        {
+          "name": "assignment_end_date",
+          "sqlType": "DATE",
+          "nullable": true,
+          "fieldSource": "frozenRunWorker.assignment_end_date",
+          "sourceStatus": "OWNER_PLANNED_TRANSPORT_PEP_OPEN"
+        }
+      ],
+      "existingFieldSources": {
+        "worker_public_id": "nativeContext.worker.publicId",
+        "assignment_public_id": "nativeContext.assignment.publicId"
+      },
+      "parentBinding": "exact frozen target same tenant/run/attempt; never current self employment relookup",
+      "upgradePolicy": "existing historical rows require exact owner reconstruction or unavailable/quarantine; no guessed backfill",
+      "actingAuthStamps": "separate acting tenant+actor authUserVersion/accessRevision/purpose receipt, not subject native version vector",
+      "inclusiveDatePolicy": "owner-zone civil date; inclusive relationship/assignment start/end, no UTC date coercion",
+      "noSyntheticContextId": true,
+      "noCrossOwnerForeignKey": true
+    }
+  ],
+  "personPayslipContract": {
+    "consumer": [
+      "payslip.query",
+      "payslip.download"
+    ],
+    "source": "current Auth native person binding + immutable result person/worker/relationship/legalEmployer tuple + statement native version/digest",
+    "requestSchemaRef": "PAYV2.StatementAuthorityQuery",
+    "responseSchemaRef": "PAYV2.StatementAuthority",
+    "requiredPurpose": "SELF_PAY_READ/SELF_PAY_DOWNLOAD + HRIS_PAY app/duty/field policy/current proof",
+    "forbidden": [
+      "SELF_PROFILE_READ/HRIS_HRM proof reuse",
+      "current assignment required for former worker statement",
+      "principal UUID copied to person/worker",
+      "APP grant autoprovision"
+    ],
+    "CURRENT_PUBLISHED": false
+  },
+  "retirementYearEndBinding": {
+    "currentOperationIds": [
+      "pay.retirement.basis.create",
+      "pay.yearend.basis.create"
+    ],
+    "oldBodyField": "employmentIds",
+    "replacementPlan": "native 3-UUID selector + business asOf + immutable owner object/revision/schema/digest selectors; self person is Auth-decided, target person separately authorized population",
+    "historicalService": "exact retained intervals and legalEmployer native public UUID/version; current SelfContext alone is not credited service evidence",
+    "exactBodySchemaPublication": "OPEN; inherited v1 basis payload is not declared resolved"
+  },
+  "nativeProof": "shared mocked authority/query units are not production signed proof/population/PEP/transport",
+  "migrationPlan": "PAY public V1..49 bundle allocation pending; People common V49 reused; HRM V50+ provisional. No actual version assigned"
+}

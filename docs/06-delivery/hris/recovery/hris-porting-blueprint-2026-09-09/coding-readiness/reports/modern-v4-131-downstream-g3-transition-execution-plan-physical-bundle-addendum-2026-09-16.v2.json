@@ -1,0 +1,44 @@
+{
+  "schema": "dwp.hris.modern-v4-131-downstream-g3-transition-plan-addendum.v2",
+  "addendumId": "DWP-HRIS-MODERN-V4-131-PHYSICAL-BUNDLE-COUNT-CORRECTION-2026-09-16-V2",
+  "recordedAt": "2026-09-16",
+  "status": "FINAL_SELF_SEALED_ACTIVE_COUNT_CORRECTION_NO_EXECUTION_AUTHORITY",
+  "predecessorPlan": {
+    "path": "coding-readiness/reports/modern-v4-131-downstream-g3-transition-execution-plan-2026-09-16.v1.json",
+    "fileSha256": "5b213caa17c1bdb09d33778c19d4478955c9309f67b34b768fe3dd08f1229887",
+    "sealedPayloadSha256": "6496c84bd1a4d08a4b255fa9e980cc9b4080af9790a3666bfecd320489431ec3",
+    "disposition": "IMMUTABLE_SEALED_PREDECESSOR_BYTES_PRESERVED"
+  },
+  "correctedExecutionStep": {
+    "order": 3,
+    "name": "ATOMIC_CANONICAL_AUTHORITY_PHYSICAL_PROMOTION",
+    "staleTextDisposition": "THE_PREDECESSOR_PHRASE_SIX_PHYSICAL_ARTIFACTS_IS_SUPERSEDED_BY_THIS_EXACT_LIST",
+    "canonicalArtifactCount": 8,
+    "physicalArtifactCount": 8,
+    "totalDestinationCount": 16,
+    "physicalArtifacts": [
+      "hrm-modern-forward-ddl.v4.sql",
+      "per-modern-forward-ddl.v4.sql",
+      "tim-modern-forward-ddl.v4.sql",
+      "sys-auth-modern-forward-ddl.v4.sql",
+      "sys-platform-modern-forward-ddl.v4.sql",
+      "modern-owner-handler-physical-contracts.v4.json",
+      "modern-query-projection-physical-contracts.v4.json",
+      "physical-candidate-generation-report.v4.json"
+    ],
+    "arithmetic": "FIVE_DDL_PLUS_TWO_CONTRACTS_PLUS_ONE_SELF_SEALED_GENERATION_REPORT_EQUALS_EIGHT",
+    "atomicityContract": "ALL_EIGHT_CANONICAL_AND_ALL_EIGHT_PHYSICAL_DESTINATIONS_ONE_CONTROL_TRANSACTION",
+    "omissionPolicy": "ANY_MISSING_EXTRA_RENAMED_OR_UNSEALED_REQUIRED_ARTIFACT_FAILS_CLOSED"
+  },
+  "unchangedPlanAuthority": [
+    "all other predecessor execution ordering and exit criteria remain unchanged",
+    "candidate promotion remains unauthorized until independent canonical, physical, reader-fence and recovery evidence pass",
+    "Gate remains CLOSED_FAIL_SAFE until the later dedicated Gate transaction",
+    "production remains NOT_AUTHORIZED_G6"
+  ],
+  "promotionExecuted": false,
+  "gateAuthorityGranted": false,
+  "productionState": "NOT_AUTHORIZED_G6",
+  "sealCanonicalization": "SHA256_OF_UTF8_JSON_SORT_KEYS_COMPACT_EXCLUDING_sealedPayloadSha256",
+  "sealedPayloadSha256": "77fe9530f0f3645d18e775a680b8aff32a839f08aed031297d8a6a46a2939a73"
+}

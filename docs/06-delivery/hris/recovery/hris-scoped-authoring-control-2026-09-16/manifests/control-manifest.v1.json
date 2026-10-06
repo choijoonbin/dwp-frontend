@@ -1,0 +1,65 @@
+{
+  "developmentStarted": false,
+  "issuedAt": "2026-09-16T18:06:44+09:00",
+  "mode": "PREPARE_ONLY_NO_CODE",
+  "officialGate": "CLOSED_FAIL_SAFE",
+  "packetCount": 5,
+  "packetSchema": {
+    "path": "output/hris-scoped-authoring-control-2026-09-16/contracts/scoped-g3-authoring-packet.schema.json",
+    "sha256": "eb19af0ed471902db7ea7766480517af052dc14c2ddb6f64ffbbdf1fa2b07d9b"
+  },
+  "packets": [
+    {
+      "fileSha256": "7a9e971b865e54cbdaa0463f1d2d14d24ca2e811b6c9b463578279518e4e5551",
+      "packetId": "SCOPED-G3-AUTHORING-HRM-V1",
+      "path": "output/hris-scoped-authoring-control-2026-09-16/packets/hrm.v1.json",
+      "sealedPayloadSha256": "c34f405ce884bb5ee75415e02d02b367d6fde9826530405d8d8e9eab3b7841ca",
+      "sessionId": "HRIS-HRM",
+      "state": "PACKET_ISSUED_HOLD"
+    },
+    {
+      "fileSha256": "146e76619d69ef9d8f5813550c36765bc75d11c8960ea91edba11a7266997362",
+      "packetId": "SCOPED-G3-AUTHORING-PER-V1",
+      "path": "output/hris-scoped-authoring-control-2026-09-16/packets/per.v1.json",
+      "sealedPayloadSha256": "141eb25a7db823716dea0da7ef94072c769ec7d663fc6fae52f7d570f7bf7030",
+      "sessionId": "HRIS-PER",
+      "state": "PACKET_ISSUED_HOLD"
+    },
+    {
+      "fileSha256": "8bd514495d4c562d12f3f81602c346fbfe4c0706a5e12bfe32a21bc44692e28d",
+      "packetId": "SCOPED-G3-AUTHORING-PAY-V1",
+      "path": "output/hris-scoped-authoring-control-2026-09-16/packets/pay.v1.json",
+      "sealedPayloadSha256": "f5352140bdc1188ec70e536707b64a5e2bbbef5cae80f9db0ec7f713d1637093",
+      "sessionId": "HRIS-PAY",
+      "state": "PACKET_ISSUED_HOLD"
+    },
+    {
+      "fileSha256": "9f800295b2b2318989c3aaa32a4a40c66f171b009e3d9556279c60b4857fbd1e",
+      "packetId": "SCOPED-G3-AUTHORING-TIM-V1",
+      "path": "output/hris-scoped-authoring-control-2026-09-16/packets/tim.v1.json",
+      "sealedPayloadSha256": "8d4385322411ac64f839f47e96dd48879234bec1d17b81982d8a43598e359c6e",
+      "sessionId": "HRIS-TIM",
+      "state": "PACKET_ISSUED_HOLD"
+    },
+    {
+      "fileSha256": "34b387a717f76bdc578037d7237157648d1448093bead9d7b42c41942286f3fc",
+      "packetId": "SCOPED-G3-AUTHORING-SYS-V1",
+      "path": "output/hris-scoped-authoring-control-2026-09-16/packets/sys.v1.json",
+      "sealedPayloadSha256": "660610213ef9b11f448d653ebb5fe745d9ad6576a1b174a4740c0dc43a2b2176",
+      "sessionId": "HRIS-SYS",
+      "state": "PACKET_ISSUED_HOLD"
+    }
+  ],
+  "preflightReceiptSchema": {
+    "path": "output/hris-scoped-authoring-control-2026-09-16/contracts/scoped-g3-preflight-receipt.schema.json",
+    "sha256": "e8157788968c570c93356b730bf7f639c76ed1a8482775135469fc64f380e249"
+  },
+  "schema": "dwp.hris.scoped-authoring-control-manifest.v1",
+  "sealedPayloadSha256": "ee05810e42b9b871f557d8704d3a4c4a1dd4644c2ec8876e41c832317e61163e",
+  "startCommandIssued": false,
+  "worktreeCount": 10,
+  "worktreeRegister": {
+    "path": "output/hris-scoped-authoring-control-2026-09-16/registers/scoped-authoring-worktree-register.csv",
+    "sha256": "6bda1c8ff725c8fc87f57236b8aa8253426ce059adcf9b2dfd59f025ddc09578"
+  }
+}

@@ -1,0 +1,920 @@
+{
+  "schemaVersion": 1,
+  "contractId": "CONTROLLED_EXPORT_RESOURCE_PUBLICATION_FIXTURES_V1",
+  "mode": "SYNTHETIC_POLICY_MODEL_NOT_NATIVE_AUTH",
+  "readinessPass": false,
+  "fixtures": [
+    {
+      "caseId": "WCEP-01-MISSING-DISABLED",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [
+        101
+      ],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-02-EXISTING-TRUE",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [
+          {
+            "tenantId": 101,
+            "type": "ACTION",
+            "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+            "enabled": true,
+            "resourceId": "NATIVE_EXISTING_1001",
+            "updatedAt": "2026-09-01T00:00:00Z"
+          }
+        ],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-03-ADMIN-DISABLED",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [
+          {
+            "tenantId": 101,
+            "type": "ACTION",
+            "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+            "enabled": false,
+            "resourceId": "NATIVE_EXISTING_1002",
+            "updatedAt": "2026-09-13T12:00:00Z"
+          }
+        ],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-04-INACTIVE",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "INACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-05-APP-DISABLED",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": false,
+            "rootBound": true
+          }
+        ],
+        "resources": [],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-06-MISSING-ROOT",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": false
+          }
+        ],
+        "resources": [],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-07-FOREIGN-ROW-DOES-NOT-SHARE",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [
+          {
+            "tenantId": 202,
+            "type": "ACTION",
+            "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+            "enabled": true,
+            "resourceId": "NATIVE_FOREIGN_1",
+            "updatedAt": "2026-09-01T00:00:00Z"
+          }
+        ],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [
+        101
+      ],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-08-ACTIVE-FACTORY-DENY",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": {
+          "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+          "type": "ACTION",
+          "requiredEntitlement": "core.people",
+          "state": "ACTIVE"
+        }
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-09-FACTORY-TYPE-DENY",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": {
+          "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+          "type": "APP",
+          "requiredEntitlement": "core.people",
+          "state": "RETIRED"
+        }
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-10-TYPE-COLLISION",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [
+          {
+            "tenantId": 101,
+            "type": "APP",
+            "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+            "enabled": false,
+            "resourceId": "NATIVE_BAD",
+            "updatedAt": "T"
+          }
+        ],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [],
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-11-RETIRED-FACTORY-REPLAY",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          }
+        ],
+        "resources": [],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": {
+          "resourceKey": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+          "type": "ACTION",
+          "requiredEntitlement": "core.people",
+          "state": "RETIRED"
+        }
+      },
+      "expectedInsertedTenantIds": [
+        101
+      ],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-12-MULTI-TENANT-ISOLATED",
+      "kind": "PUBLICATION",
+      "before": {
+        "tenants": [
+          {
+            "tenantId": 101,
+            "status": "ACTIVE",
+            "hcmEnabled": true,
+            "rootBound": true
+          },
+          {
+            "tenantId": 202,
+            "status": "ACTIVE",
+            "hcmEnabled": false,
+            "rootBound": true
+          }
+        ],
+        "resources": [
+          {
+            "tenantId": 202,
+            "type": "ACTION",
+            "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+            "enabled": false,
+            "resourceId": "NATIVE_DISABLED_202",
+            "updatedAt": "T"
+          }
+        ],
+        "grants": [
+          {
+            "tenantId": 101,
+            "resource": "APP.HCM",
+            "permission": "VIEW",
+            "effect": "ALLOW"
+          }
+        ],
+        "adminAssignments": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "responsibility": "APP_CONFIG_ADMIN"
+          }
+        ],
+        "rootMembers": [
+          {
+            "tenantId": 101,
+            "root": "RS_HCM_CONFIG",
+            "resource": "APP.HCM"
+          }
+        ],
+        "bundlePointer": {
+          "bundleState": "DRAFT",
+          "activePointer": "EXISTING_UNCHANGED"
+        },
+        "peopleExportGuards": {
+          "eligibility": "UNAVAILABLE",
+          "signingCalls": 0,
+          "writer": "DISABLED",
+          "D09": "BLOCKED",
+          "D12": "BLOCKED"
+        },
+        "factory": null
+      },
+      "expectedInsertedTenantIds": [
+        101
+      ],
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-13-FUTURE-EXPLICIT-ONLY",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": true,
+        "governedReasonApproved": true,
+        "sodAllowed": true,
+        "explicitChange": true
+      },
+      "expected": "ACCEPT"
+    },
+    {
+      "caseId": "WCEP-14-FOREIGN-TENANT",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 202,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": true,
+        "governedReasonApproved": true,
+        "sodAllowed": true,
+        "explicitChange": true
+      },
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-15-WRONG-ROW",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_OTHER",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": true,
+        "governedReasonApproved": true,
+        "sodAllowed": true,
+        "explicitChange": true
+      },
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-16-STALE-CAS",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-01T00:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": true,
+        "governedReasonApproved": true,
+        "sodAllowed": true,
+        "explicitChange": true
+      },
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-17-NO-ADMIN",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": false,
+        "currentEntitlement": true,
+        "governedReasonApproved": true,
+        "sodAllowed": true,
+        "explicitChange": true
+      },
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-18-NO-ENTITLEMENT",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": false,
+        "governedReasonApproved": true,
+        "sodAllowed": true,
+        "explicitChange": true
+      },
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-19-NO-REASON",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": true,
+        "governedReasonApproved": false,
+        "sodAllowed": true,
+        "explicitChange": true
+      },
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-20-SOD-DENY",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": true,
+        "governedReasonApproved": true,
+        "sodAllowed": false,
+        "explicitChange": true
+      },
+      "expected": "REJECT"
+    },
+    {
+      "caseId": "WCEP-21-NO-EXPLICIT-CHANGE",
+      "kind": "REENABLE_FUTURE_CONTRACT",
+      "resource": {
+        "tenantId": 101,
+        "type": "ACTION",
+        "key": "ACTION.WORKFORCE_CONTROLLED_EXPORT",
+        "resourceId": "NATIVE_DISABLED_1001",
+        "enabled": false,
+        "updatedAt": "2026-09-13T12:00:00Z"
+      },
+      "request": {
+        "tenantId": 101,
+        "resourceId": "NATIVE_DISABLED_1001",
+        "expectedUpdatedAt": "2026-09-13T12:00:00Z",
+        "exactAdminScope": true,
+        "currentEntitlement": true,
+        "governedReasonApproved": true,
+        "sodAllowed": true,
+        "explicitChange": false
+      },
+      "expected": "REJECT"
+    }
+  ],
+  "nativeAuthorizationNegativesNotExecuted": [
+    "CATALOG_ONLY_NO_GRANT",
+    "APP_HCM_VIEW_IS_NOT_EXPORT",
+    "ACTION_WORKFORCE_OTHER_MANAGE_IS_NOT_EXPORT",
+    "CONTROLLED_EXPORT_VIEW_IS_NOT_EXPORT",
+    "EXPIRED_SCOPED_GRANT",
+    "REVOKED_GRANT",
+    "EXPLICIT_DENY_WINS",
+    "SOD_DENY",
+    "FOREIGN_TENANT_RESOURCE",
+    "MISSING_CURRENT_PEOPLE_ELIGIBILITY_SIGNING_CALLS_0",
+    "D09_D12_BLOCKED_WRITER_DISABLED",
+    "DRAFT_NO_APPROVED_ACTIVE_POINTER"
+  ],
+  "limitations": [
+    "These 21 fixtures are model-only, not actual Auth SQL/PEP/concurrent transactions/People export tests.",
+    "The separate 12 native negatives are plans, not executed evidence.",
+    "Future reenable model demonstrates proposed guards only; native owner port/physical CAS/adapters are not implemented."
+  ]
+}

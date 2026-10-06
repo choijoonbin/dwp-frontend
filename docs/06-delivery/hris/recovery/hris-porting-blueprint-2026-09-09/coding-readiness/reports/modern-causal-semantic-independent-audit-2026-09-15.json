@@ -1,0 +1,254 @@
+{
+  "reportId": "dwp.hris.modern.causal-semantic.independent-audit.2026-09-15",
+  "auditMode": "HOSTILE_READ_ONLY_BASELINE",
+  "status": "FAIL",
+  "overallSeverity": "P0",
+  "gateDecision": "DO_NOT_OPEN_MODERN_MODULE_CODE_GATE",
+  "falsePass": true,
+  "falsePassReason": "The official tools prove structural closure against registries generated from the same candidate graph, but do not prove operation effects, state persistence, event causality, requiredness propagation, or aggregate identity correctness.",
+  "baseline": {
+    "operationBindings": 100,
+    "operationFieldLineages": 100,
+    "events": 32,
+    "modernTables": 56,
+    "typedSources": 1183,
+    "inputMappings": 744,
+    "requiredColumnSources": 1130,
+    "responseFieldSources": 657,
+    "eventFieldSources": 548,
+    "writeSetEdges": 137,
+    "receiptContracts": 81,
+    "artifactDigests": {
+      "modern-capability-exact-schema-contracts.v1.json": "c179789e093906a882231a298dac7e9fadd04db89a25e26c1c053b321038d0d1",
+      "modern-capability-event-payload-contracts.v1.json": "737650c7a9ff6e0e1a6bc2a11769006fdbd66d89223a8effcc446dc600d79f0c",
+      "modern-capability-semantic-bindings.v1.json": "dfc70f9600b68e8539b2b2dcf1cdb7932cb3cdcdc28b94bdf35903ddc08dcc25",
+      "modern-capability-public-identity-registry.v1.json": "5463efa1c3b4644721e33107e095f6c0724e9800d5b8b1dbd97e0f2a54e7a48c",
+      "generate_modern_semantic_field_lineage.py": "6cec20372f98a3858bb0bd042d005674f3be846ed22b5092f7268e4eebaaa02d",
+      "validate_modern_semantic_field_lineage.py": "a9b5807426e0b0b537789b218d82b28e5e5ad23b4c39590160670a7984337656",
+      "test_modern_semantic_field_lineage.py": "92a1bc359d90a4e1dc7be510c558a0148ddd11e39655bac3809581a419567e32",
+      "validate_modern_capability_contracts.py": "9e111fa75d447f91454b59b1d9ce71d3add63cbc49803dd31a7c5170c2a72d6a"
+    },
+    "registrySeals": {
+      "semantic": "10f969c75f3d6fc8c02d002368a4d868b1a3517346341d61e9b3fc08d03c6cbf",
+      "publicIdentity": "cda30bd5279d7bb35e686cffce0d8708d99f8fcbd27c28ef24715387aedc40fc"
+    }
+  },
+  "reproducedChecks": [
+    {"name": "semantic-unit-suite", "status": "PASS", "tests": 93},
+    {"name": "generator-check", "status": "PASS", "typeFallbacks": 0, "eventFallbacks": 0, "explicitBindings": 3079},
+    {"name": "semantic-normal", "status": "PASS", "errors": 0, "operations": 100, "fieldSources": 2503, "typedSources": 1183},
+    {"name": "semantic-self-test", "status": "PASS", "tests": 93, "errors": 0},
+    {"name": "modern-normal", "status": "PASS", "capabilities": 16, "operations": 100, "events": 32, "tables": 56},
+    {"name": "modern-self-test", "status": "PASS", "semanticTests": 93, "schemaNegativeTests": 16},
+    {"name": "postgres-feasibility", "status": "PASS", "postgres": 16, "tables": 56, "checks": 132, "localFks": 36, "scope": "DDL_ONLY_NO_DML"}
+  ],
+  "hostileMutationReplay": {
+    "executed": 19,
+    "rejectedAsExpected": 19,
+    "cases": [
+      "missing/duplicate/unknown input target",
+      "missing/duplicate/unknown required-column target",
+      "missing/duplicate/unknown response target",
+      "missing/duplicate/unknown event target",
+      "same-session cross-capability table",
+      "receipt tenant-UUID unique-key order reversal",
+      "whole-operation omission",
+      "duplicate operation",
+      "reciprocal pin removal",
+      "public identity removal",
+      "event state source not registered transition"
+    ],
+    "limitation": "These mutations prove existing closure controls but do not exercise the seven blocker families."
+  },
+  "verifiedNonBlockers": {
+    "receiptUuidExactOrderedTenantUnique": [
+      "ppl_command_receipts.command_receipt_id",
+      "prf_command_receipts.command_receipt_id",
+      "tme_command_receipts.public_id",
+      "sys_hris_command_receipts.public_id"
+    ],
+    "sameSessionCrossCapabilitySql": "PASS",
+    "missingDuplicateUnknownTargetClosure": "PASS",
+    "operationScopeOracle": "PASS_WITH_LIMITATION_TO_OPERATION_CAPABILITY_SESSION_TABLE_OWNERSHIP",
+    "reciprocalPins": "PASS_CRYPTOGRAPHICALLY_ACYCLIC"
+  },
+  "blockers": [
+    {
+      "id": "P0-STATE-001",
+      "severity": "P0",
+      "title": "Transition persistence and aggregate-state mismatch",
+      "counts": {"transitionCommands": 81, "withoutPhysicalPostStateSink": 81, "postStateOutsideSelectedColumnCheck": 13, "nonCreatePreStateReadFromNewRow": 6},
+      "transitionOperations": [
+        "modern.recruiting.requisition.create", "modern.recruiting.requisition.publish", "modern.recruiting.candidate.stage", "modern.recruiting.offer.issue", "modern.recruiting.hire.record",
+        "modern.onboarding.template.create", "modern.onboarding.template.publish", "modern.onboarding.journey.assign", "modern.onboarding.task.complete", "modern.onboarding.journey.cancel",
+        "modern.workforceplan.scenario.create", "modern.workforceplan.scenario.simulate", "modern.workforceplan.scenario.submit", "modern.workforceplan.scenario.approve", "modern.workforceplan.scenario.publish",
+        "modern.benefits.plan.create", "modern.benefits.plan.publish", "modern.benefits.enrollment.submit", "modern.benefits.lifeevent.submit", "modern.benefits.enrollment.decide",
+        "modern.hrservice.case.create", "modern.hrservice.case.triage", "modern.hrservice.case.assign", "modern.hrservice.case.respond", "modern.hrservice.case.resolve",
+        "modern.contingent.engagement.create", "modern.contingent.engagement.submit", "modern.contingent.engagement.activate", "modern.contingent.engagement.offboard", "modern.contingent.engagement.close",
+        "modern.skills.taxonomy.create", "modern.skills.taxonomy.validate", "modern.skills.taxonomy.publish", "modern.skills.evidence.verify",
+        "modern.growth.profile.create", "modern.growth.profile.update", "modern.growth.evidence.link", "modern.growth.coaching.record", "modern.growth.profile.archive",
+        "modern.learning.offering.create", "modern.learning.offering.publish", "modern.learning.self.enroll", "modern.learning.assignment.start", "modern.learning.completion.verify",
+        "modern.opportunity.create", "modern.opportunity.publish", "modern.opportunity.apply", "modern.opportunity.shortlist", "modern.opportunity.selection.record",
+        "modern.succession.plan.create", "modern.succession.nomination.add", "modern.succession.plan.submit", "modern.succession.plan.approve", "modern.succession.plan.publish",
+        "modern.compplan.cycle.create", "modern.compplan.budget.allocate", "modern.compplan.proposal.submit", "modern.compplan.plan.approve", "modern.compplan.snapshot.publish",
+        "modern.wfm.forecast.create", "modern.wfm.schedule.optimize", "modern.wfm.schedule.validate", "modern.wfm.schedule.submit", "modern.wfm.schedule.publish",
+        "modern.listening.response.submit", "modern.listening.survey.create", "modern.listening.survey.publish", "modern.listening.survey.close", "modern.listening.action.create", "modern.listening.action.complete",
+        "modern.analytics.metric.create", "modern.analytics.metric.validate", "modern.analytics.metric.publish", "modern.analytics.export.create", "modern.analytics.metric.retire",
+        "modern.ai.assist.create", "modern.ai.policy.create", "modern.ai.policy.evaluate", "modern.ai.policy.publish", "modern.ai.kill.switch", "modern.ai.policy.retire"
+      ],
+      "invalidPostStateOperations": [
+        "modern.recruiting.offer.issue", "modern.onboarding.template.create", "modern.onboarding.template.publish", "modern.benefits.plan.create", "modern.benefits.plan.publish", "modern.benefits.enrollment.submit", "modern.benefits.lifeevent.submit", "modern.hrservice.case.respond", "modern.learning.offering.create", "modern.learning.offering.publish", "modern.opportunity.apply", "modern.opportunity.shortlist", "modern.compplan.proposal.submit"
+      ],
+      "newRowPreStateOperations": [
+        "modern.recruiting.offer.issue", "modern.onboarding.journey.assign", "modern.benefits.enrollment.submit", "modern.benefits.lifeevent.submit", "modern.learning.self.enroll", "modern.succession.nomination.add"
+      ],
+      "successor": "Each operation must declare primary aggregate, exact selector, pre-state source, physical post-state column/literal, ordered column mutation set and CHECK-compatible mapping. Non-NONE pre-state may not come from an INSERT/APPEND row."
+    },
+    {
+      "id": "P0-DDL-001",
+      "severity": "P0",
+      "title": "DEFAULT contradicts CHECK",
+      "counts": {"tables": 8, "affectedInsertAppendOperationPaths": 10},
+      "edges": [
+        {"table": "ppl_jny_assignments", "column": "status", "default": "DRAFT", "allowed": ["ASSIGNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"], "operations": ["modern.onboarding.journey.assign"]},
+        {"table": "ppl_bnf_enrollments", "column": "status", "default": "DRAFT", "allowed": ["SUBMITTED", "ACTIVE", "REJECTED", "CANCELLED"], "operations": ["modern.benefits.enrollment.submit"]},
+        {"table": "ppl_bnf_life_events", "column": "status", "default": "DRAFT", "allowed": ["PENDING", "VERIFIED", "REJECTED", "EXPIRED"], "operations": ["modern.benefits.lifeevent.submit"]},
+        {"table": "ppl_hrs_cases", "column": "status", "default": "DRAFT", "allowed": ["OPEN", "TRIAGED", "IN_PROGRESS", "WAITING", "RESOLVED", "CANCELLED"], "operations": ["modern.hrservice.case.create"]},
+        {"table": "prf_lrn_assignments", "column": "status", "default": "DRAFT", "allowed": ["ENROLLED", "IN_PROGRESS", "COMPLETED", "CANCELLED"], "operations": ["modern.learning.offering.create", "modern.learning.self.enroll"]},
+        {"table": "prf_mkt_applications", "column": "status", "default": "DRAFT", "allowed": ["APPLIED", "SHORTLISTED", "SELECTED", "NOT_SELECTED", "WITHDRAWN"], "operations": ["modern.opportunity.create", "modern.opportunity.apply"]},
+        {"table": "tme_wfm_schedule_candidates", "column": "status", "default": "DRAFT", "allowed": ["CANDIDATE_GENERATED", "VALIDATED", "PENDING_APPROVAL", "PUBLISHED", "REJECTED"], "operations": ["modern.wfm.schedule.optimize"]},
+        {"table": "sys_hris_listening_actions", "column": "status", "default": "DRAFT", "allowed": ["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"], "operations": ["modern.listening.action.create"]}
+      ],
+      "successor": "Every default must satisfy all CHECKs, and every INSERT/APPEND operation must execute a real PostgreSQL transaction whose persisted initial state equals the declared post-state."
+    },
+    {
+      "id": "P0-EVENT-001",
+      "severity": "P0",
+      "title": "Event subject and causal aggregate are not proven",
+      "counts": {"nonWriteTableEventSourceEdges": 58, "reviewFamilies": 11, "reviewOperations": 43},
+      "operationFamilies": {
+        "ATS": ["modern.recruiting.requisition.create", "modern.recruiting.requisition.publish", "modern.recruiting.candidate.stage", "modern.recruiting.offer.issue", "modern.recruiting.hire.record"],
+        "ONBOARDING": ["modern.onboarding.template.create", "modern.onboarding.template.publish", "modern.onboarding.journey.assign", "modern.onboarding.task.complete"],
+        "BENEFITS": ["modern.benefits.plan.create", "modern.benefits.plan.publish", "modern.benefits.enrollment.submit", "modern.benefits.lifeevent.submit", "modern.benefits.enrollment.decide"],
+        "SKILLS": ["modern.skills.taxonomy.create", "modern.skills.taxonomy.validate", "modern.skills.taxonomy.publish"],
+        "LEARNING": ["modern.learning.offering.create", "modern.learning.offering.publish", "modern.learning.self.enroll", "modern.learning.assignment.start", "modern.learning.completion.verify"],
+        "MARKETPLACE": ["modern.opportunity.create", "modern.opportunity.publish", "modern.opportunity.apply", "modern.opportunity.shortlist", "modern.opportunity.selection.record"],
+        "COMPENSATION": ["modern.compplan.plan.approve", "modern.compplan.snapshot.publish"],
+        "WFM": ["modern.wfm.forecast.create", "modern.wfm.schedule.optimize", "modern.wfm.schedule.validate", "modern.wfm.schedule.submit", "modern.wfm.schedule.publish"],
+        "LISTENING": ["modern.listening.response.submit", "modern.listening.action.create", "modern.listening.action.complete"],
+        "ANALYTICS": ["modern.analytics.export.create"],
+        "AI_GOVERNANCE": ["modern.ai.policy.create", "modern.ai.policy.evaluate", "modern.ai.policy.publish", "modern.ai.kill.switch", "modern.ai.policy.retire"]
+      },
+      "successor": "Each event needs a stable subject aggregate, exact subject-id source, causal write edge and post-commit phase. A non-write aggregate field requires explicit tenant-bound selector/join, cardinality, version/as-of and null rules. Split events when subject or lifecycle vocabulary differs; the generator may not auto-add readsTables."
+    },
+    {
+      "id": "P0-INPUT-001",
+      "severity": "P0",
+      "title": "Required values and target selectors can be guard-only",
+      "counts": {"requiredGuardOnlyInputs": 253, "commandBody": 187, "commandPath": 63, "queryPath": 3, "requiredPathWithoutDataDependency": 42},
+      "requiredPathWithoutDataDependency": [
+        "modern.recruiting.requisition.publish:path.requisitionId", "modern.recruiting.candidate.stage:path.candidateCaseId", "modern.onboarding.template.publish:path.templateId", "modern.onboarding.template.publish:path.version", "modern.onboarding.journey.cancel:path.assignmentId", "modern.benefits.plan.publish:path.planId", "modern.benefits.plan.publish:path.version", "modern.benefits.enrollment.decide:path.enrollmentId", "modern.hrservice.case.query:path.caseId", "modern.contingent.engagement.submit:path.engagementId", "modern.contingent.engagement.activate:path.engagementId", "modern.contingent.engagement.offboard:path.engagementId", "modern.contingent.engagement.close:path.engagementId", "modern.skills.taxonomy.validate:path.taxonomyId", "modern.skills.taxonomy.publish:path.taxonomyId", "modern.skills.evidence.verify:path.evidenceId", "modern.skills.worker.query:path.workerId", "modern.growth.profile.update:path.profileId", "modern.growth.coaching.record:path.profileId", "modern.growth.profile.archive:path.profileId", "modern.learning.offering.publish:path.offeringId", "modern.learning.assignment.start:path.assignmentId", "modern.learning.completion.verify:path.assignmentId", "modern.opportunity.publish:path.opportunityId", "modern.opportunity.apply:path.opportunityId", "modern.opportunity.selection.record:path.opportunityId", "modern.succession.plan.submit:path.planId", "modern.succession.plan.approve:path.planId", "modern.succession.plan.publish:path.planId", "modern.compplan.proposal.submit:path.proposalId", "modern.compplan.plan.approve:path.cycleId", "modern.listening.survey.publish:path.surveyId", "modern.listening.survey.close:path.surveyId", "modern.listening.cohorts.query:path.surveyId", "modern.listening.action.complete:path.actionId", "modern.analytics.metric.validate:path.metricId", "modern.analytics.metric.publish:path.metricId", "modern.analytics.metric.retire:path.metricId", "modern.ai.policy.evaluate:path.policyId", "modern.ai.policy.publish:path.policyId", "modern.ai.kill.switch:path.useCaseKey", "modern.ai.policy.retire:path.policyId"
+      ],
+      "sampleSilentLoss": ["requisition.title", "offer.amount", "offer.currency", "candidate.reasonCode", "hrCase.visibility", "multiple displayName fields"],
+      "successor": "Every request field must have a reviewed finite effect kind. Required business values need an observable persisted/event/policy effect; generic guards are insufficient. Every existing-aggregate path ID must bind tenant, scope, expected version and exact target-row selector."
+    },
+    {
+      "id": "P0-REQUIREDNESS-001",
+      "severity": "P0",
+      "title": "Optional source feeds required sink",
+      "counts": {"optionalToNotNullNoDefault": 5, "optionalToRequiredEvent": 1},
+      "edges": [
+        "modern.contingent.engagement.create:body.effectiveTo->ppl_cwk_engagements.effective_to",
+        "modern.contingent.engagement.submit:body.effectiveDate->ppl_cwk_engagements.effective_from",
+        "modern.compplan.cycle.create:body.effectiveTo->prf_cmp_cycles.effective_to",
+        "modern.compplan.proposal.submit:body.effectiveDate->prf_cmp_proposals.effective_date",
+        "modern.compplan.proposal.submit:body.effectiveDate->prf_cmp_cycles.effective_from",
+        "modern.recruiting.candidate.stage:body.decisionReceiptId->CandidateStageChanged.v1.decisionReceiptId"
+      ],
+      "successor": "Propagate requiredness through direct and derived edges. Optional-to-required is valid only with an explicit total deterministic default or conditional payload contract."
+    },
+    {
+      "id": "P0-IDENTITY-001",
+      "severity": "P0",
+      "title": "Compensation snapshot identities collapse",
+      "operation": "modern.compplan.snapshot.publish",
+      "edges": [
+        "ApprovedCompensationPlanSnapshot.v1.snapshotId->prf_cmp_approved_snapshots.public_id",
+        "ApprovedCompensationPlanSnapshot.v1.planId->prf_cmp_approved_snapshots.public_id",
+        "ApprovedCompensationPlanSnapshot.v1.cycleId->prf_cmp_approved_snapshots.public_id"
+      ],
+      "requiredDistinctSources": ["prf_cmp_approved_snapshots.public_id", "prf_cmp_approved_snapshots.plan_public_id", "prf_cmp_approved_snapshots.cycle_public_id"],
+      "successor": "Bind each identifier to its distinct physical column and entity type, and assert PAY consumes three non-collapsed identifiers."
+    },
+    {
+      "id": "P1-ORACLE-001",
+      "severity": "P1",
+      "blocking": true,
+      "title": "Circular semantic self-certification",
+      "evidence": [
+        "generator:1589-1606 builds semantic registry from canonical operation/lineage",
+        "generator:1609-1678 builds public identity registry from the same exact/event documents",
+        "validator:508-533 compares generated registry view back to canonical view",
+        "generator:603-634 and 774-805 can invent request fields",
+        "generator:1681-1707 fallback counters omit guard-only, causal-join, requiredness and state-sink failures"
+      ],
+      "successor": "Create a separately reviewed operation-level semantic oracle that pins aggregate ownership, request effects/selectors, state mutation, event subject/causality and identity edges. The candidate generator may not create or rewrite that authority."
+    }
+  ],
+  "secondaryFindings": [
+    {"id": "P2-METRICS-001", "severity": "P2", "title": "typeFallbacks/eventFallbacks counters are too narrow"},
+    {"id": "P2-PG-001", "severity": "P2", "title": "PostgreSQL check compiles DDL but executes no operation DML"}
+  ],
+  "requiredNewMutationTests": [
+    "POST_STATE_SINK_CLOSURE",
+    "TRANSITION_STATE_CHECK_MISMATCH",
+    "INSERT_FROM_NONEXISTENT_PRESTATE_FOR_ALL_NON_NONE_TRANSITIONS",
+    "TRANSITION_AGGREGATE_MISMATCH",
+    "DEFAULT_CHECK_CONTRADICTION",
+    "REQUIRED_INPUT_NO_EFFECT",
+    "TARGET_SELECTOR_MISSING",
+    "BUSINESS_VALUE_NOT_PERSISTED_OR_EMITTED",
+    "OPTIONAL_TO_REQUIRED_SINK",
+    "OPTIONAL_TO_REQUIRED_EVENT",
+    "EVENT_CAUSAL_SOURCE_UNPROVEN",
+    "EVENT_SUBJECT_AGGREGATE_MISMATCH",
+    "EVENT_AUTO_READ_FORBIDDEN",
+    "EVENT_REFERENCE_AMBIGUOUS",
+    "PUBLIC_IDENTITY_ENTITY_MISMATCH",
+    "INDEPENDENT_SUCCESSOR_ORACLE_MISMATCH_AFTER_RESEAL",
+    "GENERATED_API_SURFACE_DRIFT",
+    "POSTGRES_OPERATION_DML_FEASIBILITY"
+  ],
+  "postgresDmlGate": {
+    "requiredOperationTransactions": 45,
+    "requiredInsertAppendEdges": 58,
+    "edges": [
+      "modern.recruiting.requisition.create|INSERT|ppl_rec_requisitions", "modern.recruiting.offer.issue|INSERT|ppl_rec_offers", "modern.recruiting.hire.record|APPEND|ppl_rec_hire_handoff_receipts",
+      "modern.onboarding.template.create|INSERT|ppl_jny_templates", "modern.onboarding.journey.assign|INSERT|ppl_jny_assignments", "modern.onboarding.task.complete|APPEND|ppl_jny_task_evidence",
+      "modern.workforceplan.scenario.create|INSERT|ppl_wfp_scenarios", "modern.workforceplan.scenario.create|INSERT|ppl_wfp_scenario_revisions", "modern.workforceplan.scenario.simulate|APPEND|ppl_wfp_scenario_revisions", "modern.workforceplan.scenario.submit|APPEND|ppl_wfp_scenario_revisions", "modern.workforceplan.scenario.approve|APPEND|ppl_wfp_scenario_revisions", "modern.workforceplan.scenario.publish|APPEND|ppl_wfp_publish_receipts", "modern.workforceplan.scenario.publish|APPEND|ppl_wfp_scenario_revisions",
+      "modern.benefits.plan.create|INSERT|ppl_bnf_plans", "modern.benefits.enrollment.submit|INSERT|ppl_bnf_enrollments", "modern.benefits.lifeevent.submit|INSERT|ppl_bnf_life_events",
+      "modern.hrservice.case.create|INSERT|ppl_hrs_cases", "modern.hrservice.case.create|INSERT|ppl_hrs_case_actions", "modern.hrservice.case.triage|APPEND|ppl_hrs_case_actions", "modern.hrservice.case.assign|APPEND|ppl_hrs_case_actions", "modern.hrservice.case.respond|APPEND|ppl_hrs_case_actions", "modern.hrservice.case.resolve|APPEND|ppl_hrs_case_actions",
+      "modern.contingent.engagement.create|INSERT|ppl_cwk_engagements",
+      "modern.skills.taxonomy.create|INSERT|prf_skl_taxonomies", "modern.skills.taxonomy.create|INSERT|prf_skl_taxonomy_versions",
+      "modern.growth.profile.create|INSERT|prf_grw_profiles", "modern.growth.profile.create|INSERT|prf_grw_aspirations", "modern.growth.evidence.link|APPEND|prf_grw_evidence_links",
+      "modern.learning.offering.create|INSERT|prf_lrn_offerings", "modern.learning.offering.create|INSERT|prf_lrn_assignments", "modern.learning.self.enroll|INSERT|prf_lrn_assignments",
+      "modern.opportunity.create|INSERT|prf_mkt_opportunities", "modern.opportunity.create|INSERT|prf_mkt_applications", "modern.opportunity.apply|INSERT|prf_mkt_applications", "modern.opportunity.shortlist|APPEND|prf_mkt_match_explanations",
+      "modern.succession.plan.create|INSERT|prf_suc_plans", "modern.succession.nomination.add|APPEND|prf_suc_nominations",
+      "modern.compplan.cycle.create|INSERT|prf_cmp_cycles", "modern.compplan.budget.allocate|APPEND|prf_cmp_budget_ledger", "modern.compplan.snapshot.publish|APPEND|prf_cmp_approved_snapshots", "modern.compplan.snapshot.publish|APPEND|prf_cmp_approved_snapshot_lines",
+      "modern.wfm.forecast.create|INSERT|tme_wfm_demand_forecasts", "modern.wfm.schedule.optimize|INSERT|tme_wfm_schedule_candidates", "modern.wfm.schedule.optimize|APPEND|tme_wfm_constraint_evaluation_receipts", "modern.wfm.schedule.optimize|APPEND|tme_wfm_schedule_publish_ledger", "modern.wfm.schedule.validate|APPEND|tme_wfm_constraint_evaluation_receipts", "modern.wfm.schedule.submit|APPEND|tme_wfm_constraint_evaluation_receipts", "modern.wfm.schedule.publish|APPEND|tme_wfm_schedule_publish_ledger",
+      "modern.listening.response.submit|INSERT|sys_hris_listening_responses", "modern.listening.survey.create|INSERT|sys_hris_listening_surveys", "modern.listening.action.create|APPEND|sys_hris_listening_actions",
+      "modern.analytics.metric.create|INSERT|sys_hris_metric_definitions", "modern.analytics.metric.create|INSERT|sys_hris_metric_versions", "modern.analytics.metric.create|INSERT|sys_hris_metric_projections", "modern.analytics.export.create|APPEND|sys_hris_analytics_export_receipts",
+      "modern.ai.assist.create|INSERT|sys_hris_ai_provenance_receipts", "modern.ai.policy.create|INSERT|sys_hris_ai_use_policies", "modern.ai.policy.create|INSERT|sys_hris_ai_policy_versions"
+    ],
+    "assertions": ["minimum-valid transaction commits", "stored state equals declared post-state", "required request effects are observable", "outbox subject and payload match causal aggregate", "idempotent replay returns same receipt and IDs without duplicate rows", "failure rolls back aggregate receipt and outbox atomically"]
+  },
+  "exitCriteria": [
+    "normal validator errors=0",
+    "expanded typeFallbacks=0",
+    "expanded eventFallbacks=0",
+    "all 18 new mutation/execution families pass",
+    "all 45 PostgreSQL operation transactions and 58 INSERT/APPEND edges pass",
+    "fresh independent re-audit has no P0 or blocking P1",
+    "exact/event/semantic/identity pins are regenerated only after independent successor approval"
+  ]
+}

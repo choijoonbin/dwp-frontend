@@ -1,0 +1,127 @@
+{
+  "schema": "dwp.hris.identity-c2-immutable-pin-remediation.v1",
+  "basisDate": "2026-09-14",
+  "status": "IMPLEMENTED_FAIL_CLOSED_AWAITING_FINAL_CANONICAL_SNAPSHOT_RESEAL",
+  "authority": {
+    "effectiveGate": "CLOSED_FAIL_SAFE",
+    "moduleStartAuthorization": "NONE",
+    "productionActivation": "NOT_AUTHORIZED_G6",
+    "gateMutationPerformed": false
+  },
+  "changedFiles": [
+    "coding-readiness/validate_identity_c2_consumers.py",
+    "coding-readiness/reports/identity-c2-immutable-pin-remediation-2026-09-14.json",
+    "coding-readiness/reports/identity-c2-immutable-pin-remediation-2026-09-14.md"
+  ],
+  "validator": {
+    "path": "coding-readiness/validate_identity_c2_consumers.py",
+    "sha256": "e77be4c3ed763f715ae11cade719db42640188ca636f2310a316e4444f3aef6d",
+    "backendCommitHardcoded": false,
+    "backendTreeHardcoded": false,
+    "baselineAuthority": "g0/integration-baseline-manifest.csv bound to g0/blueprint-central-snapshot-manifest.v1.json"
+  },
+  "finalBackendObservation": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "branch": "codex/hris-integration-backend-20260909",
+    "head": "787f25753a72dc5f0fbbb06783205c0bff6635a5",
+    "tree": "00cf32bf78a46ad17f9482414806b8ffddf4e1d2",
+    "dirtyCount": 0,
+    "matchesCurrentIntegrationBaselineRow": true
+  },
+  "implementedControls": {
+    "rootBinding": [
+      "manifest integration_worktree must equal the authoritative integration backend path",
+      "DWP_BACKEND_C2_ROOT is rejected when absent-path, alternate-path, or empty-string resolution differs from the manifest root",
+      "actual git rev-parse --show-toplevel must equal the manifest root"
+    ],
+    "manifestAndGitBinding": [
+      "exactly one DWP_BACKEND row is required",
+      "integration_head_sha and integration_tree_sha must be lowercase 40-character Git identities",
+      "integration_dirty_count must equal zero",
+      "actual branch, HEAD, HEAD tree, and clean state must exactly match the manifest",
+      "the baseline manifest SHA/size/mode must match its canonical snapshot entry"
+    ],
+    "gitExecutionHardening": [
+      "fixed /usr/bin/git executable",
+      "all inherited GIT_* variables removed before each Git call",
+      "GIT_CONFIG_NOSYSTEM plus null global/system config and no terminal prompt",
+      "DYLD_INSERT_LIBRARIES and LD_PRELOAD removed",
+      "15-second command timeout",
+      "status --porcelain=v1 --untracked-files=all --ignore-submodules=none -z with exact empty-output clean rule"
+    ],
+    "toctou": [
+      "manifest and Git root/branch/HEAD/tree/dirty facts are read before source inspection",
+      "the same facts are read again after source inspection",
+      "manifest-row or any observed Git-fact change is rejected"
+    ],
+    "digestPins": {
+      "consumerExpectedPins": 5,
+      "purposeExpectedPins": 1,
+      "ownerExpectedPinsPreserved": 7,
+      "consumerPinSetMustExactlyEqualConfiguredConsumers": true,
+      "allExpectedDigestFormatsValidated": true
+    },
+    "structuredFailure": [
+      "manifest/snapshot CSV/JSON and file read failures become JSON FAIL errors",
+      "Git nonzero, timeout, and decoding anomalies become JSON FAIL errors",
+      "self-test mutation no-op and unrelated-error false positives are rejected by exact expected markers"
+    ]
+  },
+  "selfTest": {
+    "caseCount": 19,
+    "rejectedCount": 19,
+    "cases": [
+      "missing-consumer",
+      "wrong-purpose",
+      "direct-db-import",
+      "fallback-witness-removed",
+      "purpose-audience-rehome",
+      "backend-root-redirect",
+      "backend-root-empty-override",
+      "backend-dirty",
+      "backend-tree-mismatch",
+      "backend-head-mismatch",
+      "backend-branch-mismatch",
+      "manifest-dirty-not-zero",
+      "consumer-pin-set-drift",
+      "consumer-whitespace-digest-drift-hrm",
+      "consumer-whitespace-digest-drift-per",
+      "consumer-whitespace-digest-drift-pay",
+      "consumer-whitespace-digest-drift-tim",
+      "consumer-whitespace-digest-drift-sys",
+      "purpose-whitespace-digest-drift"
+    ]
+  },
+  "execution": {
+    "normal": {
+      "exitCode": 1,
+      "status": "FAIL_EXPECTED",
+      "errors": ["BASELINE_MANIFEST_SNAPSHOT_DIGEST_DRIFT"],
+      "allOtherBaselineGitAndDigestChecks": "PASS"
+    },
+    "selfTest": {
+      "exitCode": 1,
+      "status": "FAIL_EXPECTED",
+      "errors": ["BASELINE_MANIFEST_SNAPSHOT_DIGEST_DRIFT"],
+      "mutationCases": "19/19_REJECTED"
+    },
+    "alternateRootProbe": "REJECTED_BACKEND_ROOT_REDIRECT",
+    "emptyRootProbe": "REJECTED_BACKEND_ROOT_REDIRECT",
+    "hostileGitEnvironmentProbe": "SANITIZED_AND_STILL_OBSERVED_AUTHORITATIVE_GIT_FACTS"
+  },
+  "snapshotPending": {
+    "currentBaselineManifestSha256": "ee0175e172ac873a0e415eaf30a150d696ae78559874206c7f2c5985c46f8967",
+    "currentlySealedOldSha256": "6e83aae4ffee6737dcbaa3acc20994f5165b4cea55c6f2c3577c81e1f853e311",
+    "c2ValidatorCurrentSnapshotEntryCount": 0,
+    "reason": "root is still completing other final C0 canonical updates and will run the single final snapshot write afterward",
+    "requiredFinalAction": "regenerate the canonical snapshot after every C0 change, confirm exactly one entry for this validator and the refreshed baseline manifest digest are sealed, then rerun normal and self-test; both must PASS before any readiness claim"
+  },
+  "commands": [
+    "python3 -m py_compile coding-readiness/validate_identity_c2_consumers.py",
+    "python3 -B coding-readiness/validate_identity_c2_consumers.py --compact",
+    "python3 -B coding-readiness/validate_identity_c2_consumers.py --self-test --compact",
+    "DWP_BACKEND_C2_ROOT=/__redirected__ python3 -B coding-readiness/validate_identity_c2_consumers.py --compact",
+    "DWP_BACKEND_C2_ROOT= python3 -B coding-readiness/validate_identity_c2_consumers.py --compact",
+    "GIT_DIR=/__fake__ GIT_WORK_TREE=/__fake__ GIT_INDEX_FILE=/__fake__ GIT_OBJECT_DIRECTORY=/__fake__ python3 -B coding-readiness/validate_identity_c2_consumers.py --compact"
+  ]
+}

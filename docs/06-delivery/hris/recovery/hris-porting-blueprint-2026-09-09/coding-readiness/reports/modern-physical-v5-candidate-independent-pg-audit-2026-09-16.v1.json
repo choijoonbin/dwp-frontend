@@ -1,0 +1,464 @@
+{
+  "schema": "dwp.hris.modern-physical-v5-candidate-independent-pg-audit/v1",
+  "reportId": "modern-physical-v5-candidate-independent-pg-audit-2026-09-16.v1",
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-16",
+  "status": "FAIL_FROZEN_POST_AUTHOR_SEAL_REWRITE",
+  "authority": "INDEPENDENT_AUDITOR_ONLY_NOT_G3_NOT_G6",
+  "scope": {
+    "auditRoot": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "scopeProfile": "v5-131-successor",
+    "canonicalCandidate": "coding-readiness/modern-canonical-candidate.v5p1363-final",
+    "physicalCandidate": "coding-readiness/modern-physical-candidate.v5p1363-final",
+    "frozenPolicy": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+    "ownerPrefixRegister": "coding-readiness/physical-owner-prefix-register.csv",
+    "authorReport": "coding-readiness/reports/modern-physical-v5-author-repair-2026-09-16.v1.json",
+    "allowedWrite": "THIS_DISTINCT_INDEPENDENT_REPORT_ONLY",
+    "candidateMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "liveCanonicalMutation": "FORBIDDEN_AND_NOT_PERFORMED",
+    "toolGatePolicyReportPolicyMutation": "FORBIDDEN_AND_NOT_PERFORMED"
+  },
+  "integrityFinding": {
+    "code": "NO_PROMOTION_NO_REUSE_POST_SEAL_REWRITE",
+    "severity": "BLOCKING",
+    "status": "FAIL",
+    "subject": "coding-readiness/modern-canonical-candidate.v5p1363-final/modern-capability-causal-state-contracts.v2.json",
+    "finding": "The causal canonical file was confirmed to have been atomically replaced after the author report seal. The current bytes are byte-identical, but byte equality does not restore post-seal provenance.",
+    "authorReportSealedPayloadSha256": "cc2d60d8298b1048eeab5d709c518336c1b465d6dc79929dd4a5e4a9340978df",
+    "currentCausalFileSha256": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+    "currentCanonicalTreeSha256": "c10c8fc6ca2ffd96d2d30edba7363f99305c706fafec90293ba70951f8ca886b",
+    "evidenceStatus": "CONFIRMED_BY_PARENT_AUDIT",
+    "disposition": "NO_PROMOTION_NO_REUSE_POST_SEAL_REWRITE",
+    "pgEvidenceDisposition": "PRESERVE_AS_HISTORICAL_EXECUTION_EVIDENCE_NON_AUTHORITATIVE"
+  },
+  "sourcePins": {
+    "frozenV5Policy": {
+      "path": "coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+      "policyId": "DWP-HRIS-GLOBAL-HCM-NONREPLACEABLE-TABLE-EXPANSION-V5",
+      "schemaVersion": 5,
+      "fileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+      "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2",
+      "selfSealValid": true,
+      "scope": {
+        "previousTableSpecifications": 115,
+        "activeTableSpecifications": 131,
+        "deltaCount": 17,
+        "netDelta": 16,
+        "removedTableIds": [
+          "sys_hris_listening_export_receipts"
+        ]
+      }
+    },
+    "ownerPrefixRegister": {
+      "path": "coding-readiness/physical-owner-prefix-register.csv",
+      "fileSha256": "182694bf615ca633ba705f971e07b1285869621ff2dcf7380439d767fa5f9b49"
+    },
+    "changedSourceSha256": {
+      "coding-readiness/generate_modern_closed_set_manifest.py": "d497c31df6a1023ba6ebea1c325eea05d081aa9b345337218a54acb46ee63e29",
+      "coding-readiness/generate_modern_exact_event_successor.py": "60be42956716c7b60b067c74c6358764cf81c1d6b4c84bef4607a4a93316fbd1",
+      "coding-readiness/generate_modern_operation_ssot_successor.py": "733f9ccef95e6509232dcb6ae028aaa9138b4163289c025b9316ffcf78f772bc",
+      "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py": "02474c63edc006e1b2a1c2031b594fedca10cc2c1a1976283fd948b2e301f877",
+      "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py": "c8aef3074574e1f49976401727548579b66fb236e72e4033aa864576f88dbd4a",
+      "coding-readiness/sys_listening_canonical_design.py": "bc3950f505deeaff6be4ea3dd048f6ac7d662c6bdaab9f056505ebfb6482aa85"
+    },
+    "toolSha256": {
+      "coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py": "02474c63edc006e1b2a1c2031b594fedca10cc2c1a1976283fd948b2e301f877",
+      "coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py": "c8aef3074574e1f49976401727548579b66fb236e72e4033aa864576f88dbd4a"
+    },
+    "authorRepairReport": {
+      "path": "coding-readiness/reports/modern-physical-v5-author-repair-2026-09-16.v1.json",
+      "fileSha256": "0b91b5d12ac13c6de9f478ac5aa1114a5da8d968d51f053705d144b0dfa3cadb",
+      "sealedPayloadSha256": "cc2d60d8298b1048eeab5d709c518336c1b465d6dc79929dd4a5e4a9340978df",
+      "selfSealValid": true,
+      "status": "PASS_CANDIDATE_NOT_G3_AUTHORITY"
+    }
+  },
+  "candidateIntegrity": {
+    "canonical": {
+      "path": "coding-readiness/modern-canonical-candidate.v5p1363-final",
+      "exactBasenames": [
+        "modern-capability-causal-state-contracts.v2.json",
+        "modern-capability-closed-set-manifest.v3.json",
+        "modern-capability-event-payload-contracts.v1.json",
+        "modern-capability-exact-schema-contracts.v1.json",
+        "modern-capability-operation-causal-contract-ssot.v2.json",
+        "modern-capability-public-identity-registry.v1.json",
+        "modern-capability-semantic-bindings.v1.json",
+        "sys-listening-stream-authority-successor.v2.json"
+      ],
+      "fileSetExact": true,
+      "fileSha256": {
+        "modern-capability-causal-state-contracts.v2.json": "7057864e3b01e0bea2f7d88532293b6191e8d11b16dd13f240f17872decab7fe",
+        "modern-capability-closed-set-manifest.v3.json": "131e736773c6d3a21f66d129661e869cc97d27fb687c53b2d10c13d296dcd612",
+        "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+        "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+        "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+        "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+        "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598",
+        "sys-listening-stream-authority-successor.v2.json": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316"
+      },
+      "treeSha256": "c10c8fc6ca2ffd96d2d30edba7363f99305c706fafec90293ba70951f8ca886b",
+      "selfSeals": {
+        "modern-capability-causal-state-contracts.v2.json": {
+          "sealedPayloadSha256": "7d460ba031a94fa82d870f434da5e811b466da008ae970b8e079d752a01797c0",
+          "recomputed": "7d460ba031a94fa82d870f434da5e811b466da008ae970b8e079d752a01797c0",
+          "valid": true
+        },
+        "modern-capability-closed-set-manifest.v3.json": {
+          "sealedPayloadSha256": "d0bf2a0492b3fcd0acf0b201846f4d48aeabd5f3676b0346ec10ab743d49ba1a",
+          "recomputed": "d0bf2a0492b3fcd0acf0b201846f4d48aeabd5f3676b0346ec10ab743d49ba1a",
+          "valid": true
+        },
+        "modern-capability-public-identity-registry.v1.json": {
+          "sealedPayloadSha256": "a731c63d60ee4a90be5c3e89a1f8119114f9cabfb15d393ab17a9870272d6e53",
+          "recomputed": "a731c63d60ee4a90be5c3e89a1f8119114f9cabfb15d393ab17a9870272d6e53",
+          "valid": true
+        },
+        "modern-capability-semantic-bindings.v1.json": {
+          "sealedPayloadSha256": "2d02f71cfdecb51e72ca4164fc2614d4c0f16c41400fa534dcb59087a923eed7",
+          "recomputed": "2d02f71cfdecb51e72ca4164fc2614d4c0f16c41400fa534dcb59087a923eed7",
+          "valid": true
+        },
+        "sys-listening-stream-authority-successor.v2.json": {
+          "sealedPayloadSha256": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4",
+          "recomputed": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4",
+          "valid": true
+        }
+      },
+      "unsealedCoreProjections": [
+        "modern-capability-event-payload-contracts.v1.json",
+        "modern-capability-exact-schema-contracts.v1.json",
+        "modern-capability-operation-causal-contract-ssot.v2.json"
+      ],
+      "causalPublicationClosure": {
+        "causalDocument": "modern-capability-causal-state-contracts.v2.json",
+        "manifestId": "dwp.hris.modern.closed-set-manifest.v3",
+        "manifestSealPin": "d0bf2a0492b3fcd0acf0b201846f4d48aeabd5f3676b0346ec10ab743d49ba1a",
+        "manifestSealMatches": true,
+        "canonicalSourcePins": {
+          "modern-capability-event-payload-contracts.v1.json": "8249d7cd198a4c0af5b367ae7cef7302c36203d15a5282e3e392842a2dc1e4a4",
+          "modern-capability-exact-schema-contracts.v1.json": "97b5d26326b159014b5d7d7a03729f8343d115fe01484718b65be2ed7ef29c02",
+          "modern-capability-operation-causal-contract-ssot.v2.json": "419c86d6a768f40edfd6ce081a4efa4cf6c0215489d554a81121f59fd9881227",
+          "modern-capability-public-identity-registry.v1.json": "71f92e62041c9dcd6a6fe029b2510e72d8bd1b7eed437d76ce2d55567842328e",
+          "modern-capability-semantic-bindings.v1.json": "7ec591be1038082f32d7a8979aa05a91800f5456b661df7a2f39357a6d9df598"
+        },
+        "sourcePinsMatchBytes": true
+      },
+      "manifestPolicyPin": {
+        "path": "modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json",
+        "fileSha256": "ec29008105473639a2a6ffcf116295e410de4c017d5bf1c0fd5a02c228cb088b",
+        "sealedPayloadSha256": "4bdfd9282371ce9c6f32db6d2d50265b3480c8d4157d35132c1d7dccefcd69e2",
+        "predecessorPolicySha256": "afb844e6ce31f588ec04b3fc46f759c616c13227742bc3d688d8f246d92c83de",
+        "predecessorPolicySealedPayloadSha256": "a939167ed5167155cb8d08383415d8e518d25583bb2362fa7b2b5bfa95748b63",
+        "independentReviewSha256": "da7b9a3b5adfe0246f9d53e4dd42d4275135b303033782a7c84450f822198075",
+        "scopeReductionReviewSha256": "99e96abe87d7141f3d7ff6a0185db5f1820a8385e700d34d0df3b8e11a322604",
+        "matchesPolicyAndFrozenPins": true
+      },
+      "listeningAuthorityPin": {
+        "path": "coding-readiness/sys-listening-stream-authority-successor.v2.json",
+        "fileSha256": "6bb9f2cca31cd10988e463d5aed8ec67aa789812e68bccf3e76547edd28b4316",
+        "sealedPayloadSha256": "55d5b62e903b62f1b8d486ff41971ceb189bf02b8e5d8307331439dfa380d7c4",
+        "contractId": "dwp.hris.sys.listening.stream-authority-successor.v2",
+        "manifestPinMatchesFileAndSeal": true,
+        "exactCounts": {
+          "plannedTables": 23,
+          "ownerPortOperations": 18,
+          "canonicalPublicEvents": 7,
+          "publicOperations": 10,
+          "streams": 4,
+          "ownerLocalHandlers": 9
+        },
+        "exactCountsMatchManifest": true,
+        "exactSchemaAuthorityReferenceMatches": true
+      },
+      "counts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 27,
+        "events": 157,
+        "tables": 131
+      }
+    },
+    "physical": {
+      "path": "coding-readiness/modern-physical-candidate.v5p1363-final",
+      "exactBasenames": [
+        "hrm-modern-forward-ddl.v4.sql",
+        "modern-owner-handler-physical-contracts.v4.json",
+        "modern-query-projection-physical-contracts.v4.json",
+        "per-modern-forward-ddl.v4.sql",
+        "physical-candidate-generation-report.v4.json",
+        "sys-auth-modern-forward-ddl.v4.sql",
+        "sys-platform-modern-forward-ddl.v4.sql",
+        "tim-modern-forward-ddl.v4.sql"
+      ],
+      "fileSetExact": true,
+      "fileSha256": {
+        "hrm-modern-forward-ddl.v4.sql": "8f2f576e263dd4d453888bb4c7c8da2eb14884e274c755337d8d777942055975",
+        "modern-owner-handler-physical-contracts.v4.json": "260e6dc69beb689bee6cffff3f6c17ab78030510875671f09d15d967a6f389dc",
+        "modern-query-projection-physical-contracts.v4.json": "68d87728c9540ab363608cbc5eaa1fd05a3329f29c7a9e73d1178cfdc365f5b4",
+        "per-modern-forward-ddl.v4.sql": "e61f8c7cacac7306ab4e876ff5cceb31aef41ca199a74cc7d70ce72016a75780",
+        "physical-candidate-generation-report.v4.json": "113c3c0e5aa397ba15d93ad140d820a05d03a185a9a186d02a7919d50ec5eee2",
+        "sys-auth-modern-forward-ddl.v4.sql": "c302be2dfaa5753c05baf96baeacee42c8459077471ad4572a37431854ef40d6",
+        "sys-platform-modern-forward-ddl.v4.sql": "8d98b28de625aa1094177ce13f83099fe159d591c2ee5b03e31555750d342cb6",
+        "tim-modern-forward-ddl.v4.sql": "55c70d9918cc6e952aeccd9b935d704aed5044058514d964cae4f22bd5831b27"
+      },
+      "treeSha256": "5c7db9aee25c8269943d87e103c98d36e4f44b72ba828ca8445fa3b182768948",
+      "selfSeals": {
+        "modern-owner-handler-physical-contracts.v4.json": {
+          "sealedPayloadSha256": "e42c077373c8951beb852670b4464bcba640bbfd40c04f2f4f537a98f40121b5",
+          "recomputed": "e42c077373c8951beb852670b4464bcba640bbfd40c04f2f4f537a98f40121b5",
+          "valid": true
+        },
+        "modern-query-projection-physical-contracts.v4.json": {
+          "sealedPayloadSha256": "12e0902a7bd75461b32fdf5433684c09dfb994482bdc4376da4af80cc8b4da53",
+          "recomputed": "12e0902a7bd75461b32fdf5433684c09dfb994482bdc4376da4af80cc8b4da53",
+          "valid": true
+        },
+        "physical-candidate-generation-report.v4.json": {
+          "sealedPayloadSha256": "5ec37448e62c63bf4ba7f7716bed7252598e2fb2eb60e1ab718dbe4183d20912",
+          "recomputed": "5ec37448e62c63bf4ba7f7716bed7252598e2fb2eb60e1ab718dbe4183d20912",
+          "valid": true
+        }
+      }
+    }
+  },
+  "executions": {
+    "generatorToolSelfTest": {
+      "command": "python3 output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --tool-self-test",
+      "returnCode": 0,
+      "status": "PASS",
+      "passed": 44,
+      "total": 44,
+      "sealedPayloadSha256": "28153175bf09ebcbc5f00368e5cb1bf42e46e29a79a3a400c68261bd9e9bfadf"
+    },
+    "validatorToolSelfTest": {
+      "command": "python3 output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --tool-self-test",
+      "returnCode": 0,
+      "status": "PASS",
+      "passed": 45,
+      "total": 45,
+      "sealedPayloadSha256": "7e454245d2135bd603403a87df6066ce9d0799c4a15be406cbd1e3538de41b66"
+    },
+    "q0HistoricalExact38Regression": {
+      "command": "python3 output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate-tools/generate_modern_physical_candidate.py --scope-profile v3-132-historical --canonical-dir output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-canonical-candidate.q0mnJg --expansion-policy output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v3.json --owner-prefix-register output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv --preflight-only --preflight-report /private/tmp/physical-audit.irobo6/q0-preflight.json",
+      "returnCode": 3,
+      "status": "PASS_EXPECTED_BLOCK",
+      "findingCount": 38,
+      "sealedPayloadSha256": "87b6823e335d2b50a1b412cef9bcb4579bf2ec07ff094136cfca0d3097418f47",
+      "reportFileSha256": "01e3d81bf2e1a58589fd6f9f1c24c5b8a88aea0e12f95debc6f4242bd1a4bcaa",
+      "exactByteMatchStoredReport": true,
+      "categoryCounts": {
+        "PHYSICAL_OWNER_BOUNDARY": 4,
+        "PHYSICAL_SCHEMA_DDL": 4,
+        "TABLE_EXPANSION_PRODUCER_READER_CLOSURE": 16,
+        "TEMPORAL_REVISION_ARBITRATION": 14
+      },
+      "observedCounts": {
+        "operations": 199,
+        "commands": 133,
+        "queries": 66,
+        "handlers": 25,
+        "events": 155,
+        "tables": 132
+      },
+      "postgresExecution": "NOT_RUN_STATIC_FINDINGS_NONZERO"
+    },
+    "finalV5StaticValidator": {
+      "command": "python3 output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --scope-profile v5-131-successor --canonical-dir output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-canonical-candidate.v5p1363-final --expansion-policy output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json --owner-prefix-register output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv --physical-dir output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate.v5p1363-final --self-test --docker-postgres none --report /private/tmp/physical-audit.irobo6/final-static.json",
+      "returnCode": 0,
+      "status": "PASS_CANDIDATE_NOT_G3_AUTHORITY",
+      "authorityDisposition": "NON_AUTHORITATIVE_FROZEN_BY_POST_AUTHOR_SEAL_REWRITE",
+      "findingCount": 0,
+      "errors": [],
+      "hostileSelfTest": {
+        "status": "PASS",
+        "toolCases": "45/45",
+        "candidateCases": "23/23",
+        "toolSealedPayloadSha256": "7e454245d2135bd603403a87df6066ce9d0799c4a15be406cbd1e3538de41b66",
+        "candidateSealedPayloadSha256": "b94c88430feddb3119e46cc8b2612eff3ae5c46275718e048fa2c71d4c16041d"
+      },
+      "reportFileSha256": "b7d1d6218856f8e083cd6f229fde10275fe49a35426dcd14f0dd64ef13e86a38",
+      "reportSealedPayloadSha256": "b1706d0be95cde5f708c111224152f6fdbe4c220e57af4c57700400d63721a0d",
+      "postgresExecution": "NOT_REQUESTED_IN_STATIC_PHASE"
+    },
+    "physicalPostgres16And18": {
+      "command": "python3 output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate-tools/validate_modern_physical_candidate.py --scope-profile v5-131-successor --canonical-dir output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-canonical-candidate.v5p1363-final --expansion-policy output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-independent-successor/global-hcm-table-expansion-acceptance-policy.v5.json --owner-prefix-register output/hris-porting-blueprint-2026-09-09/coding-readiness/physical-owner-prefix-register.csv --physical-dir output/hris-porting-blueprint-2026-09-09/coding-readiness/modern-physical-candidate.v5p1363-final --self-test --docker-postgres all --report /private/tmp/physical-audit.irobo6/physical-pg-all.json",
+      "returnCode": 0,
+      "status": "PASS_CANDIDATE_NOT_G3_AUTHORITY",
+      "authorityDisposition": "HISTORICAL_EXECUTION_EVIDENCE_NON_AUTHORITATIVE_FROZEN_BY_POST_AUTHOR_SEAL_REWRITE",
+      "evidenceDisposition": "PRESERVE_AS_HISTORICAL_EXECUTION_EVIDENCE_NON_AUTHORITATIVE",
+      "errors": [],
+      "reportFileSha256": "04d4ae937299d9b374ce3ed00ab315d9324cfc68d518e2c696c177c155a33483",
+      "reportSealedPayloadSha256": "44051628ae4fa322d96da57fcd22f34dea221b4f73a98265169faaccee7f85a9",
+      "inputFileSha256MatchesPhysicalCandidate": true,
+      "normalizedObservationEquality": true,
+      "caseSetEquality": true,
+      "versions": {
+        "postgres:16": {
+          "status": "PASS",
+          "cleanup": "PASS",
+          "container": "dwp-hris-physical-16-b49ef75a6d",
+          "imageId": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+          "containerImageId": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+          "repositoryDigests": [
+            "postgres@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94"
+          ],
+          "immutableImageBinding": true,
+          "evidenceRowSealedPayloadSha256": "0db15287c8f66bc874d05bd818d829a18e24bf94461e028aff08b9512addff13",
+          "databases": {
+            "dwp-auth": {
+              "status": "PASS",
+              "ddl": [
+                "sys-auth-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            },
+            "dwp-people": {
+              "status": "PASS",
+              "ddl": [
+                "hrm-modern-forward-ddl.v4.sql",
+                "per-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            },
+            "dwp-platform": {
+              "status": "PASS",
+              "ddl": [
+                "sys-platform-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            },
+            "dwp-time": {
+              "status": "PASS",
+              "ddl": [
+                "tim-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            }
+          },
+          "temporalArbitration": {
+            "status": "PASS",
+            "strategy": "APPEND_ONLY_PREDECESSOR_CHAIN",
+            "cases": {
+              "concurrentSameExpectedVersion": "PASS",
+              "futureSupersedeBusinessAsOf": "PASS",
+              "sameIntervalCorrectionAndSystemAsOf": "PASS"
+            },
+            "fixtureSha256": {
+              "setup": "cb869ad5e4b24d0e64b368dd3431de794c2b6cf351bd0371a5c42fdedbf3f180",
+              "raceWinner": "c4aecc60b09c0e7746240583c8718ef77d42a9e8bc99715c092ee97833decbfb",
+              "raceLoser": "8e22d5c407e2569541b2f74f3cc90bf7b8011996ab6990cb9dc80944242a3adc",
+              "raceAssert": "351a309cce83733b354bc1a9f4e05bd1aab93dc564f0ef0332f6a042fa6b17a9"
+            }
+          }
+        },
+        "postgres:18": {
+          "status": "PASS",
+          "cleanup": "PASS",
+          "container": "dwp-hris-physical-18-a626a205a0",
+          "imageId": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280",
+          "containerImageId": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280",
+          "repositoryDigests": [
+            "postgres@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280"
+          ],
+          "immutableImageBinding": true,
+          "evidenceRowSealedPayloadSha256": "a143a15701095e693d37c15a80968bff9f37c3e8c11ec990d575a2703d70d12e",
+          "databases": {
+            "dwp-auth": {
+              "status": "PASS",
+              "ddl": [
+                "sys-auth-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            },
+            "dwp-people": {
+              "status": "PASS",
+              "ddl": [
+                "hrm-modern-forward-ddl.v4.sql",
+                "per-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            },
+            "dwp-platform": {
+              "status": "PASS",
+              "ddl": [
+                "sys-platform-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            },
+            "dwp-time": {
+              "status": "PASS",
+              "ddl": [
+                "tim-modern-forward-ddl.v4.sql"
+              ],
+              "roleProvisioning": "PASS",
+              "roleRlsAclAssertions": "PASS"
+            }
+          },
+          "temporalArbitration": {
+            "status": "PASS",
+            "strategy": "APPEND_ONLY_PREDECESSOR_CHAIN",
+            "cases": {
+              "concurrentSameExpectedVersion": "PASS",
+              "futureSupersedeBusinessAsOf": "PASS",
+              "sameIntervalCorrectionAndSystemAsOf": "PASS"
+            },
+            "fixtureSha256": {
+              "setup": "cb869ad5e4b24d0e64b368dd3431de794c2b6cf351bd0371a5c42fdedbf3f180",
+              "raceWinner": "c4aecc60b09c0e7746240583c8718ef77d42a9e8bc99715c092ee97833decbfb",
+              "raceLoser": "8e22d5c407e2569541b2f74f3cc90bf7b8011996ab6990cb9dc80944242a3adc",
+              "raceAssert": "351a309cce83733b354bc1a9f4e05bd1aab93dc564f0ef0332f6a042fa6b17a9"
+            }
+          }
+        }
+      },
+      "postRunCleanupVerification": {
+        "command": "docker ps -a --format '{{.Names}}' and exact-name checks for dwp-hris-physical-16-b49ef75a6d and dwp-hris-physical-18-a626a205a0",
+        "returnCode": 0,
+        "status": "PASS",
+        "auditContainersRemaining": []
+      }
+    }
+  },
+  "invariantChecks": {
+    "exactCandidateFileSets": "PASS",
+    "candidateTreeHashes": "PASS",
+    "requiredSelfSeals": "PASS",
+    "causalManifestAndFiveSourcePins": "PASS",
+    "manifestV5PolicyIdentityAndSeal": "PASS",
+    "manifestAndExactSchemaListeningAuthorityPins": "PASS",
+    "authorReportSelfSeal": "PASS",
+    "generatorToolSelfTest": "PASS_44_OF_44",
+    "validatorToolSelfTest": "PASS_45_OF_45",
+    "q0HistoricalExact38": "PASS_EXPECTED_BLOCK_RETURN_CODE_3",
+    "finalV5StaticFindingCount": 0,
+    "finalV5HostileSelfTest": "PASS_23_OF_23_CANDIDATE_AND_45_OF_45_TOOL",
+    "postgres16": "PASS",
+    "postgres18": "PASS",
+    "postgresNormalizedEquality": "PASS",
+    "postgresImmutableImageIdsAndDigests": "PASS",
+    "postgresCleanup": "PASS",
+    "postAuthorSealRewrite": "FAIL_BLOCKING",
+    "promotionDisposition": "NO_PROMOTION_NO_REUSE_POST_SEAL_REWRITE"
+  },
+  "errors": [
+    {
+      "code": "NO_PROMOTION_NO_REUSE_POST_SEAL_REWRITE",
+      "severity": "BLOCKING",
+      "status": "FAIL",
+      "subject": "modern-canonical-candidate.v5p1363-final/modern-capability-causal-state-contracts.v2.json",
+      "disposition": "NO_PROMOTION_NO_REUSE_POST_SEAL_REWRITE"
+    }
+  ],
+  "productionState": "FROZEN_NOT_AUTHORIZED_G3_OR_G6",
+  "conclusion": "The exact candidate sets, tree hashes, self-seals, causal and Listening authority pins, frozen policy, author report seal, generator and validator self-tests, q0 historical exact38 regression, final v5 hostile static validation, and disposable PostgreSQL 16/18 execution all produced the recorded results; PostgreSQL 16 and 18 both passed with normalized-equal observations, immutable image IDs/digests, and cleanup. However, the parent audit confirmed an atomic replacement of the causal canonical file after the author report seal. Accordingly this candidate/physical pair is FAIL and frozen: the PostgreSQL results are preserved as historical execution evidence only, and there is no promotion or reuse authority.",
+  "sealedPayloadSha256": "c3490802da8fae29e9bf837d9fa70220eba143b87112a054090393caba9667d1"
+}

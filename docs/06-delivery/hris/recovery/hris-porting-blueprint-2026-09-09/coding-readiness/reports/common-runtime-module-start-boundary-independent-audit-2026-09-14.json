@@ -1,0 +1,536 @@
+{
+  "schema": "dwp.hris.common-runtime-module-start-boundary-independent-audit.v1",
+  "auditId": "COMMON-RUNTIME-MODULE-START-BOUNDARY-2026-09-14",
+  "generatedAt": "2026-09-14T13:24:23Z",
+  "status": "FAIL_CLOSED_NO_MODULE_SESSION_START",
+  "authority": "INDEPENDENT_READ_ONLY_AUDIT_NO_CANONICAL_OR_GATE_AUTHORITY",
+  "effectiveGate": "CLOSED_FAIL_SAFE",
+  "moduleSessionStartVerdict": "NO_GO",
+  "productionActivation": "NOT_AUTHORIZED_G6",
+  "scope": {
+    "findingIds": [
+      "START-P0-003",
+      "START-P0-004",
+      "START-P0-005",
+      "START-P0-007",
+      "START-P0-008"
+    ],
+    "modules": ["HRIS-HRM", "HRIS-PER", "HRIS-PAY", "HRIS-TIM", "HRIS-SYS"],
+    "readOnlySource": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/backend",
+    "blueprintRoot": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09",
+    "excludedWrites": [
+      "backend integration source",
+      "frontend integration source",
+      "canonical registers",
+      "current G3 Gate",
+      "module worktrees"
+    ]
+  },
+  "sourceSnapshot": {
+    "backend": {
+      "head": "db0d2b5067e6fbee27ee58121c5a4406cab132b9",
+      "latestDwpDev": "315e1b27708ebee0d9a94deb568d614520094262",
+      "workingTreeEntryCountAtReadback": 68,
+      "state": "UNCOMMITTED_COMMON_IDENTITY_AUTHORITY_CONTROL_AND_DOMAIN_WORK_PRESENT",
+      "consequence": "Evidence is source-level and path-hash pinned where material; it is not a merged or immutable code checkpoint."
+    },
+    "frontend": {
+      "head": "4e1333c66dfd9563ecbf321cfcda3b3f6b7f9778",
+      "latestDwpDev": "495b6192605545587685b08fd3c4c716078048e2",
+      "workingTreeEntryCountAtReadback": 0,
+      "state": "INTEGRATION_MERGED_CURRENT_BUT_FIVE_MODULE_FRONTEND_BRANCHES_STILL_REQUIRE_FANOUT_PROOF"
+    },
+    "canonicalGate": {
+      "path": "g0/current-g3-gate-decision.json",
+      "sha256": "74c2d3724c45e10f260860bf6f54b4a6646753b72715ccb61327e5fce5f0995e",
+      "effectiveGate": "CLOSED_FAIL_SAFE",
+      "requiredInterpretation": "This audit does not open or rewrite the Gate. Any START/G4/G6 stage split must first be adopted by a canonical successor and its validators."
+    }
+  },
+  "threatModelAndNonNegotiables": [
+    {
+      "id": "TM-IDENTITY-OWNER",
+      "rule": "Auth owns subject-to-person binding; People owns person, employment, legal-employer and organization truth. A consumer cannot synthesize, choose-first, or query another owner's database."
+    },
+    {
+      "id": "TM-PEP-CURRENT",
+      "rule": "Every protected decision binds tenant, actor, subject, employment, role, scope and requested operation at the current policy-enforcement point; stale or mismatched evidence denies."
+    },
+    {
+      "id": "TM-FAIL-CLOSED",
+      "rule": "Missing owner, transport, receipt, freshness, stream binding, optional capability prerequisite or migration reservation denies the affected operation without fallback."
+    },
+    {
+      "id": "TM-RUNTIME-ONLY",
+      "rule": "Production service identities must not retain migration credentials, Flyway authority or schema-changing privileges. Runtime inspection must prove current identity and privilege surface."
+    },
+    {
+      "id": "TM-FRESHNESS-TOCTOU",
+      "rule": "A signed receipt alone is insufficient: source revision, inspection epoch, lease, revocation and point-of-use freshness must be bound; expired or replaced authority drains or denies."
+    },
+    {
+      "id": "TM-OPTIONAL-NO-CALL",
+      "rule": "A disabled or uninstalled optional capability must be absent from admission and produce zero owner/provider calls. Enabling it without its typed dependency must fail only that capability before external calls."
+    }
+  ],
+  "stageBoundaryDecision": {
+    "finding": "The existing runtime-only wiring v2 correctly describes a production-grade end state, but treating all P2-A/P2-B/P2-C/P3/P4 work as a prerequisite for domain module authoring over-scopes START and conflates G3, G4 and G6.",
+    "securityPosition": "The stage split changes timing, not security semantics. Owner/source/PEP/current freshness, fail-closed and optional no-call remain mandatory at every stage where the capability is exercised.",
+    "START": [
+      "Merge or otherwise freeze one immutable current common-source checkpoint after latest dwp-dev integration.",
+      "Provide compile-time owner-neutral identity/authority ports, native owner readers/adapters and fail-closed test doubles to every module; no direct cross-owner database read or fallback.",
+      "Freeze exact 8-service/13-stream topology and capability dependency contracts; preserve disabled optional no-call tests. Physical supplemental streams and production credentials are not required for authoring.",
+      "Publish collision-free migration successor reservations and prove them against latest upstream high-water marks.",
+      "Synchronize five clean module worktree pairs and issue scoped authoring-environment receipts. Sequential host admission is allowed.",
+      "Make optional capability admission a machine-readable shared contract with cross-module no-call negatives."
+    ],
+    "G4": [
+      "Wire actual authenticated owner transport and current PEP adapters for the feature under integration acceptance.",
+      "Register startup guards in relevant service applications and prove enabled supplemental stream schema/role/pool/bootstrap receipts.",
+      "Provide Control inspection/publication sufficient for integration, including current-source and race-negative evidence.",
+      "Run multi-service native integration, owner-unavailable, stale-receipt, wrong-tenant and privilege-drift tests."
+    ],
+    "G6": [
+      "Activate durable multi-resource publication/current ledgers, authenticated workload transport, HSM-backed signing/key rotation/revocation and continuous lease renewal/drain/offline fencing.",
+      "Distribute production credentials safely and prove all eight service identities lack migration datasource, migration secrets, Flyway and schema-changing privilege.",
+      "Complete customer adoption, production capacity, observability, backup/restore and disaster-recovery evidence."
+    ],
+    "canonicalCaveat": "Current canonical material still places broader runtime wiring under G3. Until an approved successor reclassifies the slices and all validators consume it, the effective result remains NO_GO."
+  },
+  "sourceEvidence": {
+    "identity": [
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/GuardedSelfContextPortV1.java",
+        "sha256": "c665723f366527687c9e3dec55cefd4534defdc8b0aecc596ada3ab15eb40735",
+        "observation": "Owner-neutral guarded self-context contract exists in uncommitted source."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/identity/v1/SelfContextOwnerPortsV1.java",
+        "sha256": "ccb3c2ace5e192c01cb620c8a658df8b69599e945f07181c1ced62384e0f46c4",
+        "observation": "Auth and People owner port boundaries exist."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-auth-server/src/main/java/com/dwp/services/auth/hris/identity/v1/AuthPersonBindingQueryReaderV1.java",
+        "sha256": "a1f698e3280d6629fb71ed94d3f998403eecbadef8f92fc7fdbe0750fd148f12",
+        "observation": "Native Auth reader exists but its source contract explicitly does not claim Spring registration, HTTP transport or signing."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-people-server/src/main/java/com/dwp/services/people/hris/identity/v1/NativeSelfContextQueryReaderV1.java",
+        "sha256": "9303e773d78b3b94d1bafefb6dcb474f24e101eee205ce6e6f105fb3d9492749",
+        "observation": "Native People reader preserves multi-employment selection semantics and does not use a first-row fallback, but is not a merged transport-wired owner service."
+      }
+    ],
+    "runtimeAuthority": [
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/ExactStreamTopology.java",
+        "sha256": "3ae35ffdd8416955bd4373409caa48fd92770e65f7efd4dc407ba2468fe290fb",
+        "observation": "Exact 8-service/13-stream design exists and remains UNWIRED_DISABLED_SCAFFOLD."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/StreamAuthorityContract.java",
+        "sha256": "cf9a5d83bc9b26900d885535cb39d5c4e98c78090728fb77236ddafa79e3caca",
+        "observation": "Exact 13 stream keys and supplemental capability prerequisites exist; analytics/AI can remain non-listening while employee listening requires config, insights, protected and issuer."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/CompositeRuntimeBindingGuard.java",
+        "sha256": "c47eb95d57168999fedc10dbd7f3cf4f4903ed4b630f1deaf8644210bfa4e70f",
+        "observation": "Fail-closed composition and disabled-supplier no-call logic exist, but external Control inspection is caller-supplied and the guard still accepts migration datasource inputs."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeOnlyStartupGuard.java",
+        "sha256": "5a4f2d5470e5cbe820fc7489c9a488ed1507d061be557de299de3be1f2257083",
+        "observation": "Signed seal, freshness and native inspection checks exist in uncommitted source, but no production service src/main references the guard."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/RuntimeStartupFreshnessPort.java",
+        "sha256": "4b31b7cc63b8515d17f979e9e35448d84172cfc0d0f61fbc6bf7942622a7c5df",
+        "observation": "Freshness port exists but has no production implementation or application wiring."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-core/src/main/java/com/dwp/core/database/authority/ScalarNineRuntimeRegistryContract.java",
+        "sha256": "683d57d4f799875a340c3e6fb216cf501047ee117b27b0e757e7aba8a5e1360d",
+        "observation": "Current 8-service/9-base-stream scalar contract exists; it is not proof of four supplemental stream activation."
+      }
+    ],
+    "control": [
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/ControlInspectionFenceBridgeV1.java",
+        "sha256": "4af8b071c35f2dc2896a23cec9303b39c22f0ce49b73193a597bc61d5c557b39",
+        "observation": "Native inspection bridge exists and has PostgreSQL evidence, but MigrationControlMain does not call it."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+        "sha256": "aa96d21033db7e003d2a87d30506dcaf8135fe4efd021b93427da0402ee270d8",
+        "observation": "Current Main lacks bridge/producer/transport orchestration."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/AdoptionSealer.java",
+        "sha256": "b4e69bb55768d8f1146b527d049afbf20c20885dbf681cc04522ea0c30791b41",
+        "observation": "Adoption sealing source exists; source evidence is not a durable production publication ledger."
+      },
+      {
+        "path": ".codex-worktrees/hris/integration/backend/dwp-migration-control/src/main/java/com/dwp/migration/control/startup/v1/ControlStartupLeaseAuthorityV1.java",
+        "sha256": "55235d7762f92a53e7a6b42a8efb0bd08b38b3cca38c12eef173628f36b41114",
+        "observation": "Lease authority source exists with race-oriented tests, but no authenticated cross-service transport or production key lifecycle is closed."
+      }
+    ]
+  },
+  "findings": [
+    {
+      "findingId": "START-P0-003",
+      "subject": "Identity owner adapters and consumer authorization boundary",
+      "currentState": "PARTIAL_SOURCE_PRESENT_START_BLOCKED",
+      "closedNow": [
+        "Typed owner-neutral identity contracts exist.",
+        "Native Auth and People query readers exist.",
+        "Existing reader evidence covers fail-closed and multi-employment behavior on the captured source."
+      ],
+      "openNow": [
+        "The files are uncommitted and not fanned out from a current integration checkpoint.",
+        "Owner readers are not registered as immutable owner adapters for all consumers.",
+        "Only People and Payroll consumer compile witnesses were found; no current all-five HRM/PER/PAY/TIM/SYS consumer matrix exists.",
+        "Actual authenticated owner transport, current PEP and revocation/freshness remain unwired."
+      ],
+      "START": {
+        "classification": "BLOCKER",
+        "closeConditions": [
+          "Freeze the exact DTO/SPI/guard ABI in a merged current checkpoint.",
+          "Register native Auth and People owner adapters behind their own database boundaries; consumers compile only against the owner-neutral port.",
+          "Prove all five modules compile and unit-test with fail-closed ports and have zero direct Auth/People database dependency or fallback.",
+          "Pin current-source tests for wrong tenant, missing subject/person/employment, ambiguous employment, stale source revision and owner unavailable."
+        ],
+        "minimumFiles": [
+          "dwp-platform-contracts identity v1 contracts and guard",
+          "dwp-auth-server native Auth owner adapter registration",
+          "dwp-people-server native People owner adapter registration",
+          "one consumer boundary adapter/test fixture per HRM, PER, PAY, TIM and SYS"
+        ],
+        "minimumTests": [
+          "contract ABI/JSON compatibility",
+          "Auth and People native-reader unit plus PostgreSQL tests",
+          "five consumer compile tests",
+          "zero direct cross-owner DB import/query static test",
+          "fail-closed owner-unavailable/stale/wrong-tenant/ambiguous-employment negatives"
+        ]
+      },
+      "G4": [
+        "Authenticated owner transport and current PEP implementation for each integrated protected route.",
+        "Transport replay, timeout, stale/revoked decision, tenant mismatch and point-of-use freshness tests."
+      ],
+      "G6": [
+        "Production workload identity, key rotation/revocation, customer identity adoption and continuous decision freshness operations."
+      ],
+      "parallelism": "After checkpoint freeze, identity ABI/owner registration can run in parallel with optional-dependency work; the five consumer compile slices can run in parallel after the ABI is pinned."
+    },
+    {
+      "findingId": "START-P0-004",
+      "subject": "8-service/13-stream runtime-only authority",
+      "currentState": "PARTIAL_CONTRACT_AND_TEST_SOURCE_PRESENT_NOT_RUNTIME_WIRED",
+      "closedNow": [
+        "Exact topology, stream authority, startup seal and inspection contracts exist in source.",
+        "Disabled supplemental supplier no-call and missing-binding fail-closed tests exist.",
+        "Control native inspection/lease source and PostgreSQL race evidence exist."
+      ],
+      "openNow": [
+        "All eight production service src/main trees have zero RuntimeOnlyStartupGuard or RuntimeStartupFreshnessPort references.",
+        "Current service configurations still contain migration/Flyway profiles; absence from production identity is unproved.",
+        "MigrationControlMain does not orchestrate the native inspection bridge.",
+        "No durable publication/current ledger, authenticated transport, production signer/key lifecycle or four supplemental stream runtime receipt is closed."
+      ],
+      "START": {
+        "classification": "BLOCKER_BUT_ONLY_FOR_CONTRACT_FREEZE_NOT_FULL_PRODUCTION_WIRING",
+        "closeConditions": [
+          "Commit and fan out exact 8-service/13-stream topology, capability prerequisites and fail-closed/no-call contracts from the current checkpoint.",
+          "Prove module authoring profiles can use typed mock/fail-closed ports and cannot invoke an uninstalled supplemental owner.",
+          "Keep production activation false; do not claim a live runtime-only boundary from source-only tests."
+        ],
+        "minimumFiles": [
+          "dwp-core authority topology/stream/receipt ABI",
+          "shared module-authoring authority fixture",
+          "current-checkpoint source manifest and all-five fanout receipt"
+        ],
+        "minimumTests": [
+          "exact 8 service and 13 stream key set",
+          "unknown/missing/duplicate stream rejection",
+          "disabled supplemental zero-supplier-call",
+          "analytics/AI without employee listening",
+          "employee listening prerequisite closure",
+          "all-five module compile against the same authority ABI"
+        ]
+      },
+      "G4": [
+        "Wire the startup guard and freshness port into each service used by integration acceptance.",
+        "Run native Control inspection and enabled supplemental stream schema/role/pool/bootstrap receipts.",
+        "Reject wrong role, wrong database/schema, privilege drift, stale seal, expired lease and missing current evidence before serving traffic."
+      ],
+      "G6": [
+        "Durable publication/current ledger and authenticated Control-to-service transport.",
+        "HSM or equivalent signing authority, rotation/revocation, renewal/drain/offline fencing and safe secret distribution.",
+        "Production proof that all eight service identities lack migration datasource, migration secrets, Flyway and schema-changing privileges."
+      ],
+      "parallelism": "START contract freeze can run beside identity and optional-dependency slices after checkpoint freeze. G4 wiring is service-parallel only after the shared receipt/transport ABI is frozen. G6 activation is serial under Security/Platform approval."
+    },
+    {
+      "findingId": "START-P0-005",
+      "subject": "Collision-free migration allocation",
+      "currentState": "OPEN_START_BLOCKER_WITH_CONFIRMED_PLATFORM_V253_DRIFT",
+      "closedNow": [
+        "Latest upstream commit was identified and high-water marks were recomputed from git objects.",
+        "People V47..V50 remain above upstream People V46 and can be preserved if exact bytes are pinned."
+      ],
+      "openNow": [
+        "Existing common-allocation-successor.v1 is DESIGN_PROPOSED and stale: its Auth 214, Platform 238 and People 50 assumptions are no longer valid.",
+        "Latest dwp-dev Platform high-water is V253, so integration common Platform V231..V237 collides and the previously discussed V249 boundary is also stale.",
+        "Auth integration V211/V212 collides with upstream V211..V214; Approval V15/V16 collides with upstream V15..V33.",
+        "Canonical G0/coding-readiness ranges and validators still contain old successors and must be atomically superseded before module migration authoring."
+      ],
+      "latestDwpDevHighWater": {
+        "auth-main": 214,
+        "platform-main": 253,
+        "people-main": 46,
+        "approval-main": 33,
+        "notification-main": 27
+      },
+      "proposedCollisionFreeSuccessorAfterMerge": {
+        "commonRepairs": [
+          {"stream": "auth-main", "current": "V211..V212", "successor": "V215..V216", "rule": "preserve exact SQL bytes and record rename lineage"},
+          {"stream": "platform-main", "current": "V231..V237", "successor": "V254..V260", "rule": "preserve exact SQL bytes and record rename lineage"},
+          {"stream": "approval-main", "current": "V15..V16", "successor": "V34..V35", "rule": "preserve exact SQL bytes and record rename lineage"},
+          {"stream": "notification-main", "current": "V28..V30", "successor": "V28..V30", "rule": "no upstream number collision, but prove clean and already-applied integration upgrade paths"},
+          {"stream": "people-main", "current": "V47..V50", "successor": "V47..V50", "rule": "pin exact bytes; V49/V50 are still uncommitted at snapshot"}
+        ],
+        "moduleRanges": [
+          {"module": "HRIS-HRM", "stream": "people-main", "range": "V51..V73", "capacity": 23},
+          {"module": "HRIS-PER", "stream": "performance-main", "range": "V1..V63", "capacity": 63},
+          {"module": "HRIS-PAY", "stream": "payroll-main", "range": "V1..V49", "capacity": 49},
+          {"module": "HRIS-TIM", "stream": "time-main", "range": "V1..V39", "capacity": 39},
+          {"module": "HRIS-SYS", "stream": "auth-main", "range": "V217..V245", "capacity": 29},
+          {"module": "HRIS-SYS", "stream": "platform-main", "range": "V261..V289", "capacity": 29, "constraint": "public/shared only; private capability tables belong to private streams"}
+        ],
+        "privateStreamMinimums": [
+          {"stream": "control-owned", "range": "V1 bootstrap only"},
+          {"stream": "config", "range": "V2..V4 named exact migrations only"},
+          {"stream": "protected", "range": "V2 named exact migration only"},
+          {"stream": "insights", "range": "V2..V4 named exact migrations only"},
+          {"stream": "issuer", "range": "V2 named exact migration only"}
+        ],
+        "authority": "AUDIT_RECOMMENDATION_NOT_CANONICAL_AUTHORIZATION"
+      },
+      "START": {
+        "classification": "HARD_BLOCKER",
+        "closeConditions": [
+          "Merge latest dwp-dev or calculate from the exact merge candidate, then publish one canonical successor allocation with stream owner, range, purpose and spare policy.",
+          "Rename colliding common migrations with exact-byte lineage and verify clean install plus upgrade from every supported predecessor.",
+          "Update all G0/coding-readiness registers, generators and validators atomically; reject duplicate version, stale high-water, overlap and private-to-public leakage.",
+          "Reserve module ranges before any module session authors a migration."
+        ],
+        "minimumFiles": [
+          "canonical migration allocation register",
+          "migration stream registry",
+          "file ownership/checkpoint register",
+          "range generator/validator",
+          "renamed common migration files with immutable lineage manifest"
+        ],
+        "minimumTests": [
+          "latest upstream high-water assertion",
+          "global duplicate/overlap detector",
+          "exact-byte rename lineage",
+          "clean install",
+          "upgrade from upstream dwp-dev",
+          "upgrade from existing integration database including notification V28..V30",
+          "module range boundary mutation tests"
+        ]
+      },
+      "G4": ["Execute module migrations in native integration streams and verify owner/grant/rollback-forward behavior."],
+      "G6": ["Customer upgrade rehearsal, backup/restore, irreversible migration runbook and production approval."],
+      "parallelism": "High-water/rename design is centrally serialized. After the canonical reservation is sealed, modules may author within disjoint ranges in parallel."
+    },
+    {
+      "findingId": "START-P0-007",
+      "subject": "Five independent module-session authoring environments",
+      "currentState": "OPEN_START_BLOCKER_NO_CURRENT_RECEIPT",
+      "closedNow": [
+        "A five-profile command catalog exists.",
+        "Five backend/frontend module worktree pairs exist."
+      ],
+      "openNow": [
+        "g0/session-environment-evidence.json is absent.",
+        "Five backend module branches remain at db0d2b5 while integration contains uncommitted common work; frontend module branches remain behind current integration 4e1333c6.",
+        "The worktree branch register is stale and cannot prove current common-source fanout.",
+        "Prior doctor evidence was 0/5 capacity pass; a later host-memory observation is transient and is not a sealed replacement receipt."
+      ],
+      "START": {
+        "classification": "HARD_BLOCKER",
+        "closeConditions": [
+          "Create one immutable integration checkpoint after common P0 closure and fan it out to all five backend/frontend module pairs.",
+          "Prove each pair is clean, at the recorded commit, has the module's migration reservation, resolves toolchains/dependencies and passes scoped compile/unit/static commands.",
+          "Assign unique ports, database/schema namespace, cache/build namespace and generated artifact output per session.",
+          "Issue a signed or hash-pinned authoring-environment receipt with host semaphore/admission. Sequential execution is acceptable; five simultaneous heavy stacks are not a START prerequisite."
+        ],
+        "minimumFiles": [
+          "session-environment-command-catalog successor",
+          "session-environment-evidence receipt",
+          "current worktree-branch register",
+          "module port/database/build namespace allocation",
+          "capture and validation command"
+        ],
+        "minimumTests": [
+          "clean/current commit proof for ten worktrees",
+          "five scoped backend compile/unit commands",
+          "five scoped frontend architecture/typecheck commands",
+          "unique port/database/schema/cache collision test",
+          "migration reservation readback",
+          "host semaphore exhaustion fail-closed test"
+        ]
+      },
+      "G4": ["Whole runtime/native database boot and cross-service integration profile under explicit capacity admission."],
+      "G6": ["Production capacity, SLO, autoscaling, observability and disaster-recovery evidence."],
+      "parallelism": "Checkpoint creation and namespace assignment are serialized; environment capture can then run module-by-module or within the admitted semaphore."
+    },
+    {
+      "findingId": "START-P0-008",
+      "subject": "Optional dependency admission and zero-call behavior",
+      "currentState": "PARTIAL_DATABASE_STREAM_GUARDS_PRESENT_GENERAL_PRODUCT_CONTRACT_OPEN",
+      "closedNow": [
+        "Four supplemental stream capability prerequisites exist in StreamAuthorityContract.",
+        "CompositeRuntimeBindingGuard tests prove disabled supplemental suppliers are not invoked and missing enabled bindings reject before primary-pool fallback.",
+        "All 14 generated platform dependency schema-binding classes referenced by the binding register exist."
+      ],
+      "openNow": [
+        "module-dependency-register.csv marks documentary READY states but is not a current runtime admission proof.",
+        "A file-existence readback of planned provider/consumer test references found 78 references, only 18 present and 60 absent.",
+        "There is no single machine contract covering ATS/LMS/skills/WFM/connectors/country packs and their affected-feature-only denial behavior.",
+        "Zero-call behavior is not proven across all five module consumers."
+      ],
+      "START": {
+        "classification": "BLOCKER",
+        "closeConditions": [
+          "Publish a machine-readable optional capability matrix: capability, owner, consumer, required contract version, default state, install/enable prerequisites, affected operations and failure code.",
+          "Use one shared admission guard that denies enabled-but-missing dependencies before any owner/provider call and leaves unrelated core functions available.",
+          "Generate or implement all mandatory provider/consumer contract tests and prove zero calls for disabled/uninstalled dependencies across HRM/PER/PAY/TIM/SYS."
+        ],
+        "minimumFiles": [
+          "optional capability/dependency canonical contract",
+          "shared fail-closed admission guard",
+          "typed owner/provider ports for capabilities used at START",
+          "generated per-module fixtures and validator"
+        ],
+        "minimumTests": [
+          "base core starts with optional dependencies absent and call count zero",
+          "enabled required owner missing denies affected feature before calls",
+          "analytics/AI without listening keeps protected/issuer calls at zero",
+          "employee listening requires config, insights, protected and issuer",
+          "WFM without PER skills keeps HRM/TIM available and PER skill calls at zero",
+          "manual connector-independent path works with provider absent; enabled missing provider fails only the affected job",
+          "missing country pack disables statutory execution but preserves generic payroll authoring",
+          "unknown capability/version downgrade/cyclic dependency mutation negatives"
+        ]
+      },
+      "G4": ["Wire and integration-test each enabled owner/provider adapter with timeout, retry/idempotency and current contract-version enforcement."],
+      "G6": ["Tenant/provider activation, commercial entitlement, country-pack certification, connector credentials and operational SLOs."],
+      "parallelism": "Matrix/guard work can run beside identity after the common checkpoint; per-module generated tests can run in parallel once the matrix is frozen."
+    }
+  ],
+  "boundedImplementationChunks": [
+    {
+      "chunkId": "C0-CURRENT-CHECKPOINT",
+      "classification": "START",
+      "dependency": [],
+      "work": "Integrate latest dwp-dev into backend, reconcile current uncommitted common/identity/authority/Control source, commit one immutable checkpoint, and pin BE/FE manifests.",
+      "ownerMode": "SERIAL_INTEGRATION_OWNER",
+      "exit": "Clean pinned checkpoint and no source drift across validator readback."
+    },
+    {
+      "chunkId": "C1-MIGRATION-SUCCESSOR",
+      "classification": "START",
+      "dependency": ["C0-CURRENT-CHECKPOINT"],
+      "work": "Adopt collision-free successors from actual high-water values, rename common collisions with exact-byte lineage, reserve all module/private stream ranges, and update validators atomically.",
+      "ownerMode": "SERIAL_MIGRATION_CONTROL_THEN_PARALLEL_READBACK",
+      "exit": "No collision/overlap/stale range and clean plus upgrade-path tests pass."
+    },
+    {
+      "chunkId": "C2-IDENTITY-AUTHORING-ABI",
+      "classification": "START",
+      "dependency": ["C0-CURRENT-CHECKPOINT"],
+      "work": "Freeze native owner adapters and fail-closed owner-neutral ABI; add all-five consumer compile/static/no-fallback evidence.",
+      "ownerMode": "AUTH_PEOPLE_CENTRAL_THEN_FIVE_CONSUMERS_PARALLEL",
+      "exit": "All five modules consume the same pinned ABI with owner/source/current negatives and zero direct cross-owner DB access."
+    },
+    {
+      "chunkId": "C3-OPTIONAL-ADMISSION",
+      "classification": "START",
+      "dependency": ["C0-CURRENT-CHECKPOINT"],
+      "work": "Freeze the capability dependency matrix/shared guard and generate cross-module disabled no-call and enabled-missing fail-closed tests.",
+      "ownerMode": "CENTRAL_CONTRACT_THEN_FIVE_MODULES_PARALLEL",
+      "exit": "Machine validator and all mandatory no-call/dependency mutation tests pass."
+    },
+    {
+      "chunkId": "C4-SESSION-ENVIRONMENTS",
+      "classification": "START",
+      "dependency": ["C1-MIGRATION-SUCCESSOR", "C2-IDENTITY-AUTHORING-ABI", "C3-OPTIONAL-ADMISSION"],
+      "work": "Fan out the checkpoint, allocate isolated namespaces, run scoped authoring commands and capture five current receipts under a capacity semaphore.",
+      "ownerMode": "PARALLEL_WITHIN_HOST_ADMISSION_OR_SEQUENTIAL",
+      "exit": "Five clean current BE/FE pairs and five passing authoring receipts."
+    },
+    {
+      "chunkId": "C5-INDEPENDENT-START-REAUDIT",
+      "classification": "START",
+      "dependency": ["C4-SESSION-ENVIRONMENTS"],
+      "work": "Run current code checkpoint, full readiness, published truth and mutation/self-test validators; independently pin the result.",
+      "ownerMode": "INDEPENDENT_SERIAL_GATE_AUDIT",
+      "exit": "All approved canonical START conditions pass atomically; only then may the Gate authority open module sessions."
+    },
+    {
+      "chunkId": "C6-INTEGRATION-RUNTIME-WIRING",
+      "classification": "G4",
+      "dependency": ["C5-INDEPENDENT-START-REAUDIT"],
+      "work": "Wire actual owner transport/PEP, service startup guards and enabled supplemental streams as their features enter integration acceptance.",
+      "ownerMode": "SHARED_ABI_SERIAL_THEN_SERVICE_PARALLEL",
+      "exit": "Native integration receipts and security/race negatives pass."
+    },
+    {
+      "chunkId": "C7-PRODUCTION-ACTIVATION",
+      "classification": "G6",
+      "dependency": ["C6-INTEGRATION-RUNTIME-WIRING"],
+      "work": "Complete durable publication, authenticated workload transport, key/lease lifecycle, production runtime-only privilege proof, customer adoption and operations evidence.",
+      "ownerMode": "PLATFORM_SECURITY_PRIVACY_DBA_APPROVED",
+      "exit": "G6 production activation authority explicitly approves current evidence."
+    }
+  ],
+  "requiredDecision": {
+    "now": "NO_GO",
+    "reason": "START-P0-003/004/005/007/008 are not simultaneously closed on one current immutable checkpoint; migration allocation and five session receipts are hard blockers, while identity/runtime/optional sources remain partial or unwired.",
+    "whenAllFiveMayStart": "Only after C0 through C5 pass on the same current checkpoint and an authorized canonical Gate publication changes the effective decision.",
+    "notRequiredBeforeAuthoring": [
+      "physical activation of all 13 streams",
+      "full production Control publication/transport/key lifecycle",
+      "removal proof for production credentials across all eight deployed services",
+      "customer-specific adoption data",
+      "full domain CRUD or final UI design",
+      "five simultaneous heavyweight runtime stacks"
+    ],
+    "stillMandatoryWhenExercised": [
+      "owner/source/PEP/current freshness",
+      "fail-closed and no fallback",
+      "optional disabled zero-call",
+      "runtime-only production identities",
+      "collision-free owner-scoped migrations"
+    ]
+  },
+  "auditIntegrity": {
+    "artifactSelfValidation": "PASS",
+    "validatedAt": "2026-09-14T13:29:12Z",
+    "checks": [
+      "JSON parse and required verdict fields",
+      "exact five finding IDs",
+      "non-empty close conditions and minimum file/test allocations",
+      "C0 through C7 ordering and classification",
+      "Platform V253 and SYS Platform V261..V289 readback",
+      "Markdown decision/high-water/chunk markers",
+      "material source and Gate SHA-256 pins"
+    ],
+    "frontendBackendSourceChangedByAudit": false,
+    "canonicalChangedByAudit": false,
+    "gateChangedByAudit": false
+  }
+}

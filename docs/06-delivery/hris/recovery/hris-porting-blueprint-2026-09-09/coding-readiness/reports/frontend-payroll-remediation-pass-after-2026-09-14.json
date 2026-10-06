@@ -1,0 +1,686 @@
+{
+  "schema": "dwp.frontend.payroll.scoped-remediation.actual.v1",
+  "phase": "EXACT_EXPECTATIONS_PASS_AFTER",
+  "native": false,
+  "canonicalApproval": false,
+  "status": "INDEPENDENT_FRESH_FOCUSED_JS_UNIT_REPLAY_NOT_NATIVE_PEP_G3",
+  "argv": [
+    "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--project",
+    "dwp-app",
+    "apps/dwp/src/features/hris/payroll/",
+    "--maxWorkers=1",
+    "--reporter=json"
+  ],
+  "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend",
+  "nodeVersion": "v24.19.0",
+  "startedAt": "2026-09-14T09:49:20.629176+00:00",
+  "finishedAt": "2026-09-14T09:49:30.234537+00:00",
+  "durationSeconds": 9.605802292004228,
+  "exitCode": 0,
+  "preSources": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+      "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+      "mtimeNs": "1789376764850373547",
+      "bytes": 2145
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+      "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+      "mtimeNs": "1789376764849545251",
+      "bytes": 687
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+      "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+      "mtimeNs": "1789376764852101348",
+      "bytes": 1087
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+      "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+      "mtimeNs": "1789376816340683289",
+      "bytes": 713
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+      "mtimeNs": "1789378987522511513",
+      "bytes": 8035
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+      "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+      "mtimeNs": "1789379106798956838",
+      "bytes": 8462
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+      "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+      "mtimeNs": "1789379106800047253",
+      "bytes": 14545
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+      "mtimeNs": "1789378945041726554",
+      "bytes": 16338
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+      "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+      "mtimeNs": "1788935983012002560",
+      "bytes": 3535
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+      "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+      "mtimeNs": "1788935983730374125",
+      "bytes": 19913
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+      "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+      "mtimeNs": "1788935983717918934",
+      "bytes": 39012
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+      "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+      "mtimeNs": "1789007262614952991",
+      "bytes": 11497
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/yarn.lock",
+      "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+      "mtimeNs": "1789007297916953519",
+      "bytes": 300528
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/vitest.config.ts",
+      "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+      "mtimeNs": "1788935990540016523",
+      "bytes": 333
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/vitest.config.ts",
+      "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+      "mtimeNs": "1788935983686664189",
+      "bytes": 710
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+      "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+      "mtimeNs": "1788935990538496879",
+      "bytes": 1300
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+      "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+      "mtimeNs": "1788935990538631335",
+      "bytes": 146
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/hcm-query-state.tsx",
+      "sha256": "b373c917d98042828964322de89d9c8792bd66849b1bcd1bd5382a91c746426b",
+      "mtimeNs": "1788935983034905262",
+      "bytes": 3314
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+      "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+      "mtimeNs": "1788935983069076131",
+      "bytes": 3311
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-instance.ts",
+      "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+      "mtimeNs": "1789378714720758289",
+      "bytes": 18168
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/product-surface-read-scope.ts",
+      "sha256": "9d88813d8ab122c0371ff739cb8f3ecc37e90e07b771ca1b922c1e5d9b787540",
+      "mtimeNs": "1788935990330507461",
+      "bytes": 470
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/vitest/package.json",
+      "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34",
+      "mtimeNs": "1788936289508405018",
+      "bytes": 5932
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/host_semaphore.py",
+      "sha256": "7e55dcbe122a47d799d03bb6b3750b5e4b926ed774ee5ede83a16475ff632a98",
+      "mtimeNs": "1789053706840031291",
+      "bytes": 6148
+    }
+  ],
+  "postSources": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+      "sha256": "266f2d91048bb0e0d26b873dcde01762fd8331c228ceeb41ab6085fc0bf0fc09",
+      "mtimeNs": "1789376764850373547",
+      "bytes": 2145
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.ts",
+      "sha256": "6a0dc3e4a6af5be687b633fca68c67b861f31c2c88c5e6851d0c40fc58149f09",
+      "mtimeNs": "1789376764849545251",
+      "bytes": 687
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/hooks/use-hris-payroll-workspace.ts",
+      "sha256": "4a32e1c98d4a433145b58a5dfc98a201fc8c2c7bf24e9e7d6d4266fc23eb58c4",
+      "mtimeNs": "1789376764852101348",
+      "bytes": 1087
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/index.ts",
+      "sha256": "c0dd36fb0eae9c6c098d7fee4cb76678fdb6ed82e024cc16a49a844f5ccd5711",
+      "mtimeNs": "1789376816340683289",
+      "bytes": 713
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "sha256": "86ea3fa376cd460b8672fb9c7fefeed029a793da3d01bf487ae9ac046a7b2be4",
+      "mtimeNs": "1789378987522511513",
+      "bytes": 8035
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts",
+      "sha256": "fab3174f9e2204281d1bb6f637d2ca2fe8ec49377da6be79e2c06a4674189672",
+      "mtimeNs": "1789379106798956838",
+      "bytes": 8462
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/pages/hris-payroll-workspace.tsx",
+      "sha256": "6809188708b27004eb315401ab400fbbe7f99d5e984f4962fa18a324a3c1f6ea",
+      "mtimeNs": "1789379106800047253",
+      "bytes": 14545
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "sha256": "ea26fb8bedd4bfcc7a306710357f17b0ef6b8bad740921035925fe2b52c52604",
+      "mtimeNs": "1789378945041726554",
+      "bytes": 16338
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/AGENTS.md",
+      "sha256": "81ef66092b05847fd7f8a9c62f356eb970d4f16dc8b565ca9779f7c6e8ab2744",
+      "mtimeNs": "1788935983012002560",
+      "bytes": 3535
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/04-design-system/DWP Product Experience Rules.md",
+      "sha256": "dbf0965b6c571e5ccea825d3eb514acc85a0948358574300d866c152a8fdd1d3",
+      "mtimeNs": "1788935983730374125",
+      "bytes": 19913
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/docs/02-research/DWP Experience Modernization Roadmap 2026-08-12.md",
+      "sha256": "0dd232db709548c67ec22357a419799bf8831152548d04357af15a87206bd92b",
+      "mtimeNs": "1788935983717918934",
+      "bytes": 39012
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/package.json",
+      "sha256": "eb28d07ea5d1dca9e1e498d1b8d0edfab76a5b3fb811b2f17e1342c7111c3b8f",
+      "mtimeNs": "1789007262614952991",
+      "bytes": 11497
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/yarn.lock",
+      "sha256": "96712cf8f8c7d5db3a1aecbbe9f3f0717bd7e146e3549d9c7b674da9c733611a",
+      "mtimeNs": "1789007297916953519",
+      "bytes": 300528
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/vitest.config.ts",
+      "sha256": "9a4001acc45f2304b02de1b87435318dc261a9e45cff87c412bca25fd0653e61",
+      "mtimeNs": "1788935990540016523",
+      "bytes": 333
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/vitest.config.ts",
+      "sha256": "97ad72199e0d8c4afb421936698584ad3fdedc94e69f4267ab507d90c6934d25",
+      "mtimeNs": "1788935983686664189",
+      "bytes": 710
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.base.json",
+      "sha256": "9402d3a3db91435a2162a037f4e962611133dfa390336ca8a5c76281801f12f1",
+      "mtimeNs": "1788935990538496879",
+      "bytes": 1300
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/tsconfig.json",
+      "sha256": "8fe74c6346674635b97fe260c149228453f918b041dabe0c4b0a15b5edacce1b",
+      "mtimeNs": "1788935990538631335",
+      "bytes": 146
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/hcm-query-state.tsx",
+      "sha256": "b373c917d98042828964322de89d9c8792bd66849b1bcd1bd5382a91c746426b",
+      "mtimeNs": "1788935983034905262",
+      "bytes": 3314
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/components/use-product-surface-request-scope.ts",
+      "sha256": "a70aeaa39fb1f8c23e4da71679c4e6230068e8a126e32adc878751011e41c7da",
+      "mtimeNs": "1788935983069076131",
+      "bytes": 3311
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/axios-instance.ts",
+      "sha256": "2d4c702b234ddf01d7de85ecc37156b43c6011cb25daf8f9afa39d5a82e22754",
+      "mtimeNs": "1789378714720758289",
+      "bytes": 18168
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/libs/shared-utils/src/api/product-surface-read-scope.ts",
+      "sha256": "9d88813d8ab122c0371ff739cb8f3ecc37e90e07b771ca1b922c1e5d9b787540",
+      "mtimeNs": "1788935990330507461",
+      "bytes": 470
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/node_modules/vitest/package.json",
+      "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34",
+      "mtimeNs": "1788936289508405018",
+      "bytes": 5932
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/output/hris-porting-blueprint-2026-09-09/g0/host_semaphore.py",
+      "sha256": "7e55dcbe122a47d799d03bb6b3750b5e4b926ed774ee5ede83a16475ff632a98",
+      "mtimeNs": "1789053706840031291",
+      "bytes": 6148
+    }
+  ],
+  "sourceStable": true,
+  "counts": {
+    "numTotalTestSuites": 8,
+    "numTotalTests": 58,
+    "numPassedTests": 58,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "actualTestFiles": 3,
+  "cases": [
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+      "fullName": "getHrisPayrollWorkspace binds the personal HR scope to the Gateway GET",
+      "status": "passed",
+      "duration": 3.72683399999994
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts",
+      "fullName": "getHrisPayrollWorkspace propagates React Query cancellation to the active Gateway request",
+      "status": "passed",
+      "duration": 0.9534169999999449
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states uses the scoped pay query and renders a complete loading state",
+      "status": "passed",
+      "duration": 72.26737500000036
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states does not issue a personal-pay request until the governed scope is ready",
+      "status": "passed",
+      "duration": 7.868249999999534
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states rekeys on the full authority scope and never revives an old deferred response",
+      "status": "passed",
+      "duration": 73.21670900000026
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states renders permission and generic error states without retaining payroll data",
+      "status": "passed",
+      "duration": 35.130707999999686
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states renders the empty state when the source supplies no cycle and no statements",
+      "status": "passed",
+      "duration": 22.801916999999776
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states shows reference provenance, redaction and the non-operational boundary",
+      "status": "passed",
+      "duration": 28.551415999999335
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states never renders an open or download action for an unavailable statement",
+      "status": "passed",
+      "duration": 53.122166999999536
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states does not render a dead action when secure download wiring is absent",
+      "status": "passed",
+      "duration": 21.354084000000512
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states offers an available statement only when a real download handler is supplied",
+      "status": "passed",
+      "duration": 51.28283400000055
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states reports a secure-download failure without claiming success or changing source data",
+      "status": "passed",
+      "duration": 35.5565000000006
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states clears previous authority download state even when the next scope has a fresh cache entry",
+      "status": "passed",
+      "duration": 46.716459000000214
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states fails closed on malformed downloadable source flags instead of offering an action",
+      "status": "passed",
+      "duration": 8.56054099999983
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states keeps concurrent statements independently busy and retains each failure",
+      "status": "passed",
+      "duration": 72.5577089999997
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states guards synchronous repeat clicks on one statement before state commits",
+      "status": "passed",
+      "duration": 27.610708999999588
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/testing/hris-payroll-workspace.runtime.test.tsx",
+      "fullName": "HrisPayrollWorkspace runtime states does not apply late callback failures to a remounted authority",
+      "status": "passed",
+      "duration": 36.39074999999957
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "PAYROLL_SELF_SERVICE_CONTRACT keeps the personal pay anchor outside payroll calculation and payment execution",
+      "status": "passed",
+      "duration": 1.2119579999999956
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel exposes reference provenance, source confirmation and redaction without inventing values",
+      "status": "passed",
+      "duration": 0.40500000000000114
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel reports an empty anchor only when neither cycle nor statement exists",
+      "status": "passed",
+      "duration": 0.34754199999999
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel projects only declared cycle fields and does not retain source objects or sensitive extras",
+      "status": "passed",
+      "duration": 0.5570419999999956
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed workspace field monetaryDataRedacted=\"false\" before projection",
+      "status": "passed",
+      "duration": 0.45033300000000054
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed workspace field statements=null before projection",
+      "status": "passed",
+      "duration": 0.14841599999999744
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed workspace field statements={} before projection",
+      "status": "passed",
+      "duration": 0.08529099999999801
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed workspace field nextCycle=false before projection",
+      "status": "passed",
+      "duration": 0.07408300000000168
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field payCycleId=\"\" before projection",
+      "status": "passed",
+      "duration": 0.15049999999999386
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field payCycleId=\" cycle-1\" before projection",
+      "status": "passed",
+      "duration": 0.09274999999999523
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field payCycleId=\"cycle\\n1\" before projection",
+      "status": "passed",
+      "duration": 0.06183299999999292
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field name={\"secret\":\"must-not-reach-ui\"} before projection",
+      "status": "passed",
+      "duration": 0.057999999999992724
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field status=1 before projection",
+      "status": "passed",
+      "duration": 0.10124999999999318
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field timeValidated=\"false\" before projection",
+      "status": "passed",
+      "duration": 0.06766700000000014
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field absenceValidated=0 before projection",
+      "status": "passed",
+      "duration": 0.056249999999991473
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field sourceConfirmed={} before projection",
+      "status": "passed",
+      "duration": 0.0609579999999994
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field dataOrigin=\"CUSTOM\" before projection",
+      "status": "passed",
+      "duration": 0.04641699999999105
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field periodStart=\"2026-02-30\" before projection",
+      "status": "passed",
+      "duration": 0.045249999999995794
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field periodEnd=\"2026-13-01\" before projection",
+      "status": "passed",
+      "duration": 0.04087499999999977
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects malformed cycle field payDate=\"not-a-date\" before projection",
+      "status": "passed",
+      "duration": 0.03841700000000969
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel rejects reversed periods, sparse lists and colliding statement identities",
+      "status": "passed",
+      "duration": 0.23399999999999466
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "buildPayrollSelfServiceModel does not echo rejected source values or accept nested source references",
+      "status": "passed",
+      "duration": 0.22024999999999295
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability normalizes \" available \" conservatively to AVAILABLE",
+      "status": "passed",
+      "duration": 0.049083999999993466
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability normalizes \"PENDING\" conservatively to PENDING",
+      "status": "passed",
+      "duration": 0.02433399999999608
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability normalizes \"withheld\" conservatively to WITHHELD",
+      "status": "passed",
+      "duration": 0.02179200000000492
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability normalizes \"RETIRED\" conservatively to RETIRED",
+      "status": "passed",
+      "duration": 0.019333000000003153
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability normalizes \"PUBLISHED\" conservatively to UNKNOWN",
+      "status": "passed",
+      "duration": 0.02533299999998917
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability normalizes \"\" conservatively to UNKNOWN",
+      "status": "passed",
+      "duration": 0.023375000000001478
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability requires both AVAILABLE state and the source download flag",
+      "status": "passed",
+      "duration": 0.11808400000001029
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability preserves an unknown source value for truthful display",
+      "status": "passed",
+      "duration": 0.04800000000000182
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field statementId=\"\" without coercion",
+      "status": "passed",
+      "duration": 0.06616700000000719
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field statementId=\" statement-1\" without coercion",
+      "status": "passed",
+      "duration": 0.045000000000001705
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field periodLabel={} without coercion",
+      "status": "passed",
+      "duration": 0.03679100000000801
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field availabilityState=7 without coercion",
+      "status": "passed",
+      "duration": 0.039249999999995566
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field downloadable=\"false\" without coercion",
+      "status": "passed",
+      "duration": 0.038666000000006306
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field downloadable=1 without coercion",
+      "status": "passed",
+      "duration": 0.034874999999999545
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field publishedAt=\"2026-02-30T00:00:00Z\" without coercion",
+      "status": "passed",
+      "duration": 0.041208999999994944
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field publishedAt=\"2026-08-25\" without coercion",
+      "status": "passed",
+      "duration": 0.03745800000000088
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects malformed statement field publishedAt=\"2026-08-25T24:00:00Z\" without coercion",
+      "status": "passed",
+      "duration": 0.056167000000002076
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability accepts calendar-valid leap dates, explicit offsets and fractional publication instants",
+      "status": "passed",
+      "duration": 0.5809169999999995
+    },
+    {
+      "file": "/Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts",
+      "fullName": "pay statement availability rejects non-string availability through its public normalizer",
+      "status": "passed",
+      "duration": 0.19316700000000253
+    }
+  ],
+  "uniqueCaseCount": 58,
+  "stdoutArchive": {
+    "sha256": "d356cb5aea7d11997f205718eb3bdd662d0a2b782a9ebf8d4e7d77f3420b494a",
+    "bytes": 20740,
+    "gzipBase64": "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"
+  },
+  "stderrArchive": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "gzipBase64": "H4sIAAAAAAACEwMAAAAAAAAAAAA="
+  },
+  "mockBoundary": "Existing API tests use explicit global fetch fake; UI runtime uses mocked API and request scope. No native PEP/server/browser claim.",
+  "browserQaSourceExcluded": true,
+  "hostLock": {
+    "schema": "dwp.hris.host-semaphore-receipt.v1",
+    "name": "hris-verification",
+    "lockPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/.control-locks/hris-verification.lock",
+    "requestedAt": "2026-09-14T09:49:20.619Z",
+    "acquiredAt": "2026-09-14T09:49:20.620Z",
+    "releasedAt": "2026-09-14T09:49:30.240Z",
+    "waitMilliseconds": 0,
+    "status": "RELEASED"
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "schema": "dwp.hris.module-exact-business-p0-successor-independent-pass.v1",
+  "generatedAt": "2026-09-14T13:12:53Z",
+  "status": "PASS_SCOPED_EXACT_BUSINESS_DESIGN_ONLY",
+  "authority": "INDEPENDENT_REAUDIT_EVIDENCE_NO_GATE_AUTHORITY",
+  "effectiveGate": "CLOSED_FAIL_SAFE",
+  "startP0Verdict": "NO_G3_START",
+  "scope": {
+    "modules": [
+      "HRIS-HRM",
+      "HRIS-PER",
+      "HRIS-PAY",
+      "HRIS-TIM"
+    ],
+    "baseAuditFindingsClosedAtExactDesign": [
+      "BASE-P0-004",
+      "BASE-P0-005",
+      "BASE-P0-006",
+      "BASE-P0-007",
+      "BASE-P0-008",
+      "BASE-P0-009",
+      "BASE-P0-010",
+      "BASE-P0-011"
+    ],
+    "aggregateStateMachines": 30,
+    "schemaDefinitions": 34,
+    "lineageBindings": 16,
+    "runtimeImplementationClaimed": false,
+    "sysModuleChanged": false,
+    "frontendBackendSourceChanged": false
+  },
+  "auditedInputs": [
+    {
+      "path": "coding-readiness/reports/base-scope-business-readiness-audit-2026-09-14.json",
+      "sha256": "b0785ae509688a3094db999b2da4c25f95b7ad86e555f72a417d42b1fdba692d",
+      "use": "BASE-P0-004..011 closing conditions and BASE-P0-001..003 separation"
+    },
+    {
+      "path": "coding-readiness/reports/five-module-start-readiness-independent-review-2026-09-14.json",
+      "sha256": "ccb68b6707dea519620b46f4ec1145cb63922399b7cfa5c125c0eb198ab57fe9",
+      "use": "START-P0-001..008 global start controls and per-module NO_G3_START conclusions"
+    }
+  ],
+  "proposalDisposition": {
+    "rule": "No proposal was promoted wholesale. Only decisions restated in the versioned canonical successor are adopted.",
+    "historicalPins": [
+      {
+        "path": "coding-readiness/semantic-remediation/hrm-per-base-preparation-successor.proposal.v1.json",
+        "sha256": "44c5acfe8b5cbe65a2c30e56177fe2a5313f8b72ca63a634c689fafc5c7c7a9c",
+        "reasonNotPromoted": "DESIGN_PROPOSED, null required cycle-stage sources and incomplete performance terminal commands"
+      },
+      {
+        "path": "coding-readiness/semantic-remediation/pay-base-preparation-successor.v2.json",
+        "sha256": "9bebce09bd59908aaf67205c462f707f3d83356af790776931a623b64be24e90",
+        "reasonNotPromoted": "author-only proposal with unresolved authoritative source and native authority boundaries"
+      },
+      {
+        "path": "coding-readiness/semantic-remediation/pay-base-source-preparation-successor.v3.json",
+        "sha256": "4eaf4018e2adf556c16890ced6e67dce8a3f47451291368a7a7210d6aaeb059f",
+        "reasonNotPromoted": "source proposal did not independently close full typed formula, foundation and frozen input lifecycle"
+      },
+      {
+        "path": "coding-readiness/semantic-remediation/tim-cross-context-boundary-successor.v4.json",
+        "sha256": "133d6598d83d0efdc6f774c1170782fb1c483bb9577a4e7d2221034c1b896a6f",
+        "reasonNotPromoted": "only four of 116 operations were source-closed and native schedule/timecard/accrual remained incomplete"
+      }
+    ],
+    "rejectedPatterns": [
+      "OPEN_EXACT_SOURCE",
+      "closed allOf with disjoint required properties",
+      "generic or untyped business patch",
+      "caller-authoritative baseline or distribution",
+      "free-text executable formula or time rule",
+      "digest-only foundation or payroll input",
+      "first UUID or correlation-derived business identity",
+      "silent fallback or cross-owner direct database read"
+    ]
+  },
+  "findingResolution": [
+    {
+      "findingId": "BASE-P0-004",
+      "module": "HRIS-TIM",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "Native Schedule aggregate owns period, assignment, segment and immutable source vector; validate, submit, approve, publish, amend, cancel and reconcile are CAS-guarded named transitions with timezone/DST and correction lineage negatives."
+    },
+    {
+      "findingId": "BASE-P0-005",
+      "module": "HRIS-TIM",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "Closed typed time-rule AST and accrual policy replace strings; operator arity/types, unit, eligibility, enrollment, basis, cap, carryover, expiry, proration, calendar and rounding are executable schema or registry facts."
+    },
+    {
+      "findingId": "BASE-P0-006",
+      "module": "HRIS-TIM",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "Storage and wire share a literal Timecard state vocabulary. LOCKED, CLOSED and CORRECTION_REQUIRED are not collapsed and every legal or illegal transition is enumerated."
+    },
+    {
+      "findingId": "BASE-P0-007",
+      "module": "HRIS-HRM",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "EmploymentEventCommand is a closed event discriminator with event-specific fields and exact write sets for admission, concurrent employment, appointment, transfer, promotion, demotion, leave, return, termination and correction; separation is a distinct guarded aggregate."
+    },
+    {
+      "findingId": "BASE-P0-008",
+      "module": "HRIS-PER",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "Cycle, population, goal, evaluation, feedback, check-in, calibration, result, appeal and talent/growth aggregates have reachable state machines and named command or trusted owner-signal transitions. Caller score/cohort/distribution data is compare-only."
+    },
+    {
+      "findingId": "BASE-P0-009",
+      "module": "HRIS-PER",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "FreezePopulationCommand is a single closed object with four typed required fields. Server refetch, recomputation, hash comparison, stale revision rejection and atomic membership freeze replace the impossible allOf."
+    },
+    {
+      "findingId": "BASE-P0-010",
+      "module": "HRIS-PAY",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "Full typed foundation artifacts, an exact HRM/TIM/PER/config/country-pack input source vector, bounded typed formula AST, currency/unit/rounding rules, immutable run attempts and close/reopen/correction lifecycles replace digest-only and string contracts."
+    },
+    {
+      "findingId": "BASE-P0-011",
+      "module": "HRIS-TIM",
+      "status": "CLOSED_EXACT_DESIGN",
+      "resolution": "TIM owns WFM availability orchestration and composes versioned HRM assignment/location with TIM schedule, leave and arrangement sources. PER skill evidence is optional with an explicit NOT_INSTALLED state and zero PER calls when absent."
+    }
+  ],
+  "canonicalArtifactPin": {
+    "path": "coding-readiness/module-exact-business-start-pin.v1.json",
+    "sha256": "2d482081ccf3a227582454d171ff7fcf825a0f70af58c54971bcf4aafca7b25c",
+    "pinnedArtifacts": 9,
+    "gateAuthorization": "NONE_CLOSED_FAIL_SAFE",
+    "independentReplay": "python3 coding-readiness/audit_module_exact_business_start.py --self-test"
+  },
+  "verification": {
+    "uniqueExactBusinessFixtureScenarios": 74,
+    "primaryExplicitScenarioExecutions": 86,
+    "executionBreakdown": {
+      "primary": {
+        "validSchemaFixtures": 12,
+        "positiveJourneyFixtures": 11,
+        "negativeFixtures": 51,
+        "mutationSelfTests": 12,
+        "total": 86
+      },
+      "independent": {
+        "fixtureInventoryAndClosureLinks": 74,
+        "pinnedArtifacts": 9,
+        "stateMachines": 30,
+        "lineageBindings": 16,
+        "mutationSelfTests": 12,
+        "note": "Independent structural and semantic invariant re-audit; it does not claim a second JSON-Schema execution of all fixtures."
+      }
+    },
+    "structuralAssertionsPerImplementation": {
+      "stateMachines": 30,
+      "lineageBindings": 16,
+      "auditFindings": 8,
+      "schemaDefinitions": 34
+    },
+    "supportingTransportMutationCases": 28,
+    "commands": [
+      {
+        "argv": "node coding-readiness/validate_module_exact_business_start.cjs --self-test",
+        "status": "PASS",
+        "scopeVerdict": "MODULE_EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_G3_CONTROLS_STILL_REQUIRED"
+      },
+      {
+        "argv": "python3 -B coding-readiness/audit_module_exact_business_start.py --self-test",
+        "status": "PASS",
+        "scopeVerdict": "INDEPENDENT_PINNED_MODULE_EXACT_BUSINESS_DESIGN_P0_PASS",
+        "implementationIndependence": "Does not import or execute the Node validator; verifies the nine-artifact immutable pin first, then independently recomputes critical closed-schema, operator, state-reachability and lineage invariants and rejects 12 mutations."
+      },
+      {
+        "argv": "python3 coding-readiness/validate_target_family_resolution.py --compact",
+        "status": "PASS",
+        "coverage": "86 families, 2269 parents, 10001 children"
+      },
+      {
+        "argv": "python3 coding-readiness/validate_transport_schema_resolution.py --self-test --compact",
+        "status": "PASS",
+        "mutationCases": 28
+      },
+      {
+        "argv": "python3 coding-readiness/validate_hris_api_sor_transitions.py --compact",
+        "status": "FAIL_EXPECTED_GLOBAL_BLOCKER",
+        "error": "Missing current integration frontend file /Users/a10697/Work/DWP/.codex-worktrees/hris/integration/frontend/apps/dwp/src/features/hris/payroll/payroll-api.ts",
+        "interpretation": "The current FE source/transition seal is not resolvable; this report must not authorize module start."
+      }
+    ],
+    "validatorRobustnessFailBefore": {
+      "observed": "The first independent mutation run raised an uncaught KeyError after intentionally removing a module.",
+      "fix": "The independent auditor now reports MODULE_SET_DRIFT before dereferencing the missing module.",
+      "finalValidatorSha256": "f33eb83d92e930986fc74517ed38920dd9d00a02ec3e7d5dde4bb200f7414ed8",
+      "finalResult": "PASS_12_OF_12_MUTATIONS_REJECTED"
+    }
+  },
+  "canonicalArtifactSha256": {
+    "coding-readiness/module-exact-business-start-canonical.v1.json": "4ce667fa273055b02cbc1753f5e748ec8f7aa583d933e5d871e09ef8e0040dc1",
+    "coding-readiness/module-exact-business-schemas.v1.json": "aae9414546202ad8b80d4562bf634c2a3b6e4972c6210e8eb96a0828e7dfa31f",
+    "coding-readiness/module-exact-business-fixtures.v1.json": "7fec66f3f49f96d09a7fafb8cfdcc56b49ffe67c6aa528a6367fd56e7b272345",
+    "coding-readiness/module-exact-business-lineage-register.v1.csv": "da13aea7aa9af894a71f218a178c37400c8d0f25b6a9284ec5d11dd6888bd41e",
+    "coding-readiness/validate_module_exact_business_start.cjs": "1bebec86e15f1b536317a555108a17093b0fd6cfa9a5dab63179ee127f465109",
+    "coding-readiness/audit_module_exact_business_start.py": "f33eb83d92e930986fc74517ed38920dd9d00a02ec3e7d5dde4bb200f7414ed8"
+  },
+  "remainingOpen": [
+    {
+      "ref": "BASE-P0-001 / START-P0-005",
+      "reason": "Current migration prefix and create-only owner allocation successor are not globally sealed."
+    },
+    {
+      "ref": "BASE-P0-002 / START-P0-001 / START-P0-002",
+      "reason": "Current transport/API source lineage and corrected central bytes are not authoritatively published; current API-SoR validation fails."
+    },
+    {
+      "ref": "BASE-P0-003 / START-P0-003",
+      "reason": "The schema defines explicit multi-employment selection, but the real Auth principal to People person/worker/relationship/assignment owner adapter, freshness and lifecycle wiring remain unimplemented and unverified."
+    },
+    {
+      "ref": "START-P0-004",
+      "reason": "Shared DTO/SPI/PEP, field/purpose/population enforcement and 13-stream startup authority are not integrated against the current baseline."
+    },
+    {
+      "ref": "START-P0-006",
+      "reason": "Current complete common and module execution evidence plus two authoritative LIVE validations are absent."
+    },
+    {
+      "ref": "START-P0-007",
+      "reason": "Five independently operable session-environment receipts and an approved capacity/concurrency plan are absent."
+    },
+    {
+      "ref": "START-P0-008",
+      "reason": "The optional-dependency design is exact here for WFM, but actual installed/uninstalled admission and owner-call fixtures remain runtime work."
+    },
+    {
+      "ref": "G4 / G6",
+      "reason": "No migrations, handlers, projections, engines or G4 native journeys were implemented; no real country pack, provider or tenant activation was authorized."
+    }
+  ],
+  "moduleDecision": {
+    "HRIS-HRM": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED",
+    "HRIS-PER": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED",
+    "HRIS-PAY": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED",
+    "HRIS-TIM": "EXACT_BUSINESS_DESIGN_P0_PASS_GLOBAL_GATE_STILL_REQUIRED"
+  },
+  "finalDecision": {
+    "moduleExactBusinessContract": "CANONICAL_VERSIONED_SUCCESSOR_PUBLISHED_AND_INDEPENDENTLY_REPLAYABLE",
+    "g4Ready": false,
+    "g3CodeGateAuthorization": "NONE_CLOSED_FAIL_SAFE",
+    "startP0": "FAIL_CLOSED_NO_G3_START",
+    "reason": "Module-local exact-business design P0 is closed, but unresolved shared identity/source/stream/migration/current-execution/session-capacity controls are mandatory predecessors to independent coding sessions."
+  }
+}

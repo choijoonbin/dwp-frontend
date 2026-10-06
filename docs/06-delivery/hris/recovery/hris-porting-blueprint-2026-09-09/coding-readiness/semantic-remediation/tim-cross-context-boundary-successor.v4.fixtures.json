@@ -1,0 +1,1033 @@
+{
+  "fixtureGrade": "API_SHAPE_VALID_SYNTHETIC_OWNER_AND_DB_RETURNING_NOT_NATIVE",
+  "inputsAB": [
+    {
+      "inputVersionPublicId": "a0000000-0000-4000-8000-000000000100",
+      "runPublicId": "a0000000-0000-4000-8000-000000000200",
+      "revision": 1,
+      "capturedAt": "2026-11-01T00:00:00Z",
+      "asOf": "2026-11-01T00:00:00Z",
+      "periodStart": "2026-10-01",
+      "periodEnd": "2026-11-01",
+      "mode": "POST",
+      "policyRef": {
+        "contractId": "TIM.LeavePolicyArtifactSnapshot.v1",
+        "schemaVersion": 1,
+        "snapshotPublicId": "90000000-0000-4000-8000-000000001031",
+        "revision": 1,
+        "contentSha256": "d05b702ebd8c0bdcaae563736f70862f00a3fa7b55cbc1bcb2bf488dce0d1222",
+        "asOf": "2026-11-01T00:00:00Z",
+        "validUntil": "2026-12-31T23:59:59Z",
+        "ownerService": "dwp-time-server",
+        "streamKey": "time-main",
+        "purposeCode": "SYNTHETIC_TIM_ENTITLEMENT",
+        "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "policyContent": {
+        "unit": "HOUR",
+        "eligibility": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "BOOLEAN_CONST",
+              "nodeId": "eligible",
+              "value": true
+            }
+          ],
+          "rootNodeId": "eligible",
+          "declaredOutput": "BOOLEAN"
+        },
+        "enrollmentMode": "EXPLICIT_AUTHORIZED",
+        "accrualAmount": {
+          "value": "2",
+          "unit": "HOUR"
+        },
+        "prorationBasis": "CALENDAR_DAYS",
+        "proration": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "INPUT",
+              "nodeId": "eligible",
+              "inputKey": "EMPLOYMENT_ELIGIBLE_DAYS"
+            },
+            {
+              "kind": "INPUT",
+              "nodeId": "period",
+              "inputKey": "PERIOD_CALENDAR_DAYS"
+            },
+            {
+              "kind": "OPERATOR",
+              "nodeId": "ratio",
+              "operator": "DIVIDE_TO_RATE",
+              "operandNodeIds": [
+                "eligible",
+                "period"
+              ]
+            }
+          ],
+          "rootNodeId": "ratio",
+          "declaredOutput": "RATE"
+        },
+        "carryoverCap": {
+          "value": "1",
+          "unit": "HOUR"
+        },
+        "balanceCap": {
+          "value": "20",
+          "unit": "HOUR"
+        },
+        "capTreatment": "CLAMP_GRANT_WITH_SUPPRESSED_AMOUNT",
+        "terminationTreatment": "PRORATE_FINAL_PERIOD",
+        "negativeBalanceAllowed": false,
+        "reservationMode": "RESERVE_ON_SUBMIT",
+        "rounding": [
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "PRORATION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "GRANT"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CONVERSION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CARRYOVER"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "TERMINATION"
+          }
+        ],
+        "calendarRef": {
+          "contractId": "SYS.TimeCalendarSnapshot.v1",
+          "schemaVersion": 1,
+          "snapshotPublicId": "90000000-0000-4000-8000-000000001001",
+          "revision": 1,
+          "contentSha256": "3cdf2dcadb42cce82248edc35679861340c532112205bd5855daa40c2b203700",
+          "asOf": "2026-10-01T00:00:00Z",
+          "validUntil": "2026-12-31T23:59:59Z",
+          "ownerService": "dwp-platform-server",
+          "streamKey": "platform-hris-configuration",
+          "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+          "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "sourceRefs": [
+          {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000001001",
+            "revision": 1,
+            "contentSha256": "3cdf2dcadb42cce82248edc35679861340c532112205bd5855daa40c2b203700",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        ],
+        "expiry": {
+          "kind": "AFTER_CALENDAR_DAYS",
+          "days": 365
+        },
+        "accrualSchedule": {
+          "kind": "MONTHLY",
+          "anchorDayOfMonth": 1,
+          "invalidDayPolicy": "CLAMP_LAST_DAY",
+          "localPeriodBoundaryTime": "00:00:00"
+        }
+      },
+      "selectedCount": 1,
+      "selectionDigest": "d72140caadb9cdd2977d88ec6416de39af813bf430eb0ea3986a0c746d811e95",
+      "selectedItems": [
+        {
+          "selectedItemPublicId": "a0000000-0000-4000-8000-000000000300",
+          "inputVersionPublicId": "a0000000-0000-4000-8000-000000000100",
+          "ordinal": 1,
+          "enrollment": {
+            "enrollmentPublicId": "90000000-0000-4000-8000-000000001032",
+            "rowVersion": 0,
+            "workerPublicId": "90000000-0000-4000-8000-000000001021",
+            "assignmentPublicId": "90000000-0000-4000-8000-000000001022",
+            "effectiveFrom": "2026-10-17",
+            "effectiveTo": null
+          },
+          "employmentRef": {
+            "contractId": "HRM.EffectiveAssignmentSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000001040",
+            "revision": 1,
+            "contentSha256": "2fad45b38cd08e905babd137e3da43d2d7d6a34ae4267f99bd06479fbc4e10ef",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-people-server",
+            "streamKey": "people-main",
+            "purposeCode": "SYNTHETIC_TIM_ENTITLEMENT",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "calendarRef": {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000001001",
+            "revision": 1,
+            "contentSha256": "3cdf2dcadb42cce82248edc35679861340c532112205bd5855daa40c2b203700",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "configurationRef": {
+            "contractId": "SYS.EffectiveTimeConfigurationSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000001004",
+            "revision": 1,
+            "contentSha256": "d6e326e8650bc0ff4f9ae066fce683453b5ec22902ef34b2961b081756d3c472",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "unit": "HOUR",
+          "ledgerRevision": 0,
+          "reservationRevision": 0,
+          "correctionMode": "NONE",
+          "originalGrantPublicId": null,
+          "originalRunPublicId": null
+        }
+      ],
+      "contentSha256": "2578b59317b06db6cd71ad1daad37b66ea072afc9ebeaeea2e62b7ebd599c06d"
+    },
+    {
+      "inputVersionPublicId": "a0000000-0000-4000-8000-000000000101",
+      "runPublicId": "a0000000-0000-4000-8000-000000000201",
+      "revision": 1,
+      "capturedAt": "2026-11-01T00:00:00Z",
+      "asOf": "2026-11-01T00:00:00Z",
+      "periodStart": "2026-10-01",
+      "periodEnd": "2026-11-01",
+      "mode": "POST",
+      "policyRef": {
+        "contractId": "TIM.LeavePolicyArtifactSnapshot.v1",
+        "schemaVersion": 1,
+        "snapshotPublicId": "90000000-0000-4000-8000-000000002031",
+        "revision": 1,
+        "contentSha256": "e2de1101756d546051c1ad65b405b70d2d6f09f8238a715e114ea24bf2932e99",
+        "asOf": "2026-11-01T00:00:00Z",
+        "validUntil": "2026-12-31T23:59:59Z",
+        "ownerService": "dwp-time-server",
+        "streamKey": "time-main",
+        "purposeCode": "SYNTHETIC_TIM_ENTITLEMENT",
+        "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "policyContent": {
+        "unit": "HOUR",
+        "eligibility": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "BOOLEAN_CONST",
+              "nodeId": "eligible",
+              "value": true
+            }
+          ],
+          "rootNodeId": "eligible",
+          "declaredOutput": "BOOLEAN"
+        },
+        "enrollmentMode": "EXPLICIT_AUTHORIZED",
+        "accrualAmount": {
+          "value": "4",
+          "unit": "HOUR"
+        },
+        "prorationBasis": "CALENDAR_DAYS",
+        "proration": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "INPUT",
+              "nodeId": "eligible",
+              "inputKey": "EMPLOYMENT_ELIGIBLE_DAYS"
+            },
+            {
+              "kind": "INPUT",
+              "nodeId": "period",
+              "inputKey": "PERIOD_CALENDAR_DAYS"
+            },
+            {
+              "kind": "OPERATOR",
+              "nodeId": "ratio",
+              "operator": "DIVIDE_TO_RATE",
+              "operandNodeIds": [
+                "eligible",
+                "period"
+              ]
+            }
+          ],
+          "rootNodeId": "ratio",
+          "declaredOutput": "RATE"
+        },
+        "carryoverCap": {
+          "value": "2",
+          "unit": "HOUR"
+        },
+        "balanceCap": {
+          "value": "20",
+          "unit": "HOUR"
+        },
+        "capTreatment": "CLAMP_GRANT_WITH_SUPPRESSED_AMOUNT",
+        "terminationTreatment": "PRORATE_FINAL_PERIOD",
+        "negativeBalanceAllowed": false,
+        "reservationMode": "RESERVE_ON_SUBMIT",
+        "rounding": [
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "PRORATION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "GRANT"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CONVERSION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CARRYOVER"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "TERMINATION"
+          }
+        ],
+        "calendarRef": {
+          "contractId": "SYS.TimeCalendarSnapshot.v1",
+          "schemaVersion": 1,
+          "snapshotPublicId": "90000000-0000-4000-8000-000000002001",
+          "revision": 1,
+          "contentSha256": "d0535c03e4d0336f4522905c8060df64fd9b9223ffc903c042b95bd198ed6ce3",
+          "asOf": "2026-10-01T00:00:00Z",
+          "validUntil": "2026-12-31T23:59:59Z",
+          "ownerService": "dwp-platform-server",
+          "streamKey": "platform-hris-configuration",
+          "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+          "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "sourceRefs": [
+          {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000002001",
+            "revision": 1,
+            "contentSha256": "d0535c03e4d0336f4522905c8060df64fd9b9223ffc903c042b95bd198ed6ce3",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        ],
+        "expiry": {
+          "kind": "AFTER_CALENDAR_DAYS",
+          "days": 365
+        },
+        "accrualSchedule": {
+          "kind": "MONTHLY",
+          "anchorDayOfMonth": 1,
+          "invalidDayPolicy": "CLAMP_LAST_DAY",
+          "localPeriodBoundaryTime": "00:00:00"
+        }
+      },
+      "selectedCount": 1,
+      "selectionDigest": "a2a6e35e6a04b903ff2257fedcedd61889cf432a74617922cd45ec42da92adf0",
+      "selectedItems": [
+        {
+          "selectedItemPublicId": "a0000000-0000-4000-8000-000000000301",
+          "inputVersionPublicId": "a0000000-0000-4000-8000-000000000101",
+          "ordinal": 1,
+          "enrollment": {
+            "enrollmentPublicId": "90000000-0000-4000-8000-000000002032",
+            "rowVersion": 0,
+            "workerPublicId": "90000000-0000-4000-8000-000000002021",
+            "assignmentPublicId": "90000000-0000-4000-8000-000000002022",
+            "effectiveFrom": "2026-10-17",
+            "effectiveTo": null
+          },
+          "employmentRef": {
+            "contractId": "HRM.EffectiveAssignmentSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000002040",
+            "revision": 1,
+            "contentSha256": "864849dcb9764946e68f481547588bf26920f193a8a11094589f292a16ed77c5",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-people-server",
+            "streamKey": "people-main",
+            "purposeCode": "SYNTHETIC_TIM_ENTITLEMENT",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "calendarRef": {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000002001",
+            "revision": 1,
+            "contentSha256": "d0535c03e4d0336f4522905c8060df64fd9b9223ffc903c042b95bd198ed6ce3",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "configurationRef": {
+            "contractId": "SYS.EffectiveTimeConfigurationSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000002004",
+            "revision": 1,
+            "contentSha256": "dc221c1450a7861ef44d4a760d1352aad1e368be40709760710f41fa85288702",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "unit": "HOUR",
+          "ledgerRevision": 0,
+          "reservationRevision": 0,
+          "correctionMode": "NONE",
+          "originalGrantPublicId": null,
+          "originalRunPublicId": null
+        }
+      ],
+      "contentSha256": "9028b15958e21148386f2678241a574437853d81d4670e6a9f7791e40ca1894b"
+    }
+  ],
+  "instructionsAB": [
+    {
+      "workflowPublicId": "b0000000-0000-4000-8000-000000000070",
+      "enrollment": {
+        "enrollmentPublicId": "90000000-0000-4000-8000-000000001032",
+        "rowVersion": 0,
+        "workerPublicId": "90000000-0000-4000-8000-000000001021",
+        "assignmentPublicId": "90000000-0000-4000-8000-000000001022",
+        "effectiveFrom": "2026-10-17",
+        "effectiveTo": null
+      },
+      "employmentTermination": {
+        "snapshotPublicId": "b0000000-0000-4000-8000-000000000001",
+        "employmentPublicId": "b0000000-0000-4000-8000-000000000001",
+        "workerPublicId": "90000000-0000-4000-8000-000000001021",
+        "assignmentPublicIds": [
+          "90000000-0000-4000-8000-000000001022"
+        ],
+        "employmentState": "SEPARATED",
+        "employmentEndedOn": "2026-10-24",
+        "revision": 1,
+        "asOf": "2026-11-01T00:00:00Z",
+        "validUntil": "2026-12-31T00:00:00Z",
+        "contentSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "sourceRefs": [
+          {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000001001",
+            "revision": 1,
+            "contentSha256": "3cdf2dcadb42cce82248edc35679861340c532112205bd5855daa40c2b203700",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        ]
+      },
+      "policyRef": {
+        "contractId": "TIM.LeavePolicyArtifactSnapshot.v1",
+        "schemaVersion": 1,
+        "snapshotPublicId": "90000000-0000-4000-8000-000000001031",
+        "revision": 1,
+        "contentSha256": "d05b702ebd8c0bdcaae563736f70862f00a3fa7b55cbc1bcb2bf488dce0d1222",
+        "asOf": "2026-11-01T00:00:00Z",
+        "validUntil": "2026-12-31T23:59:59Z",
+        "ownerService": "dwp-time-server",
+        "streamKey": "time-main",
+        "purposeCode": "SYNTHETIC_TIM_ENTITLEMENT",
+        "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "policyContent": {
+        "unit": "HOUR",
+        "eligibility": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "BOOLEAN_CONST",
+              "nodeId": "eligible",
+              "value": true
+            }
+          ],
+          "rootNodeId": "eligible",
+          "declaredOutput": "BOOLEAN"
+        },
+        "enrollmentMode": "EXPLICIT_AUTHORIZED",
+        "accrualAmount": {
+          "value": "2",
+          "unit": "HOUR"
+        },
+        "prorationBasis": "CALENDAR_DAYS",
+        "proration": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "INPUT",
+              "nodeId": "eligible",
+              "inputKey": "EMPLOYMENT_ELIGIBLE_DAYS"
+            },
+            {
+              "kind": "INPUT",
+              "nodeId": "period",
+              "inputKey": "PERIOD_CALENDAR_DAYS"
+            },
+            {
+              "kind": "OPERATOR",
+              "nodeId": "ratio",
+              "operator": "DIVIDE_TO_RATE",
+              "operandNodeIds": [
+                "eligible",
+                "period"
+              ]
+            }
+          ],
+          "rootNodeId": "ratio",
+          "declaredOutput": "RATE"
+        },
+        "carryoverCap": {
+          "value": "1",
+          "unit": "HOUR"
+        },
+        "balanceCap": {
+          "value": "20",
+          "unit": "HOUR"
+        },
+        "capTreatment": "CLAMP_GRANT_WITH_SUPPRESSED_AMOUNT",
+        "terminationTreatment": "PRORATE_FINAL_PERIOD",
+        "negativeBalanceAllowed": false,
+        "reservationMode": "RESERVE_ON_SUBMIT",
+        "rounding": [
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "PRORATION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "GRANT"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CONVERSION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CARRYOVER"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "TERMINATION"
+          }
+        ],
+        "calendarRef": {
+          "contractId": "SYS.TimeCalendarSnapshot.v1",
+          "schemaVersion": 1,
+          "snapshotPublicId": "90000000-0000-4000-8000-000000001001",
+          "revision": 1,
+          "contentSha256": "3cdf2dcadb42cce82248edc35679861340c532112205bd5855daa40c2b203700",
+          "asOf": "2026-10-01T00:00:00Z",
+          "validUntil": "2026-12-31T23:59:59Z",
+          "ownerService": "dwp-platform-server",
+          "streamKey": "platform-hris-configuration",
+          "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+          "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "sourceRefs": [
+          {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000001001",
+            "revision": 1,
+            "contentSha256": "3cdf2dcadb42cce82248edc35679861340c532112205bd5855daa40c2b203700",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        ],
+        "expiry": {
+          "kind": "AFTER_CALENDAR_DAYS",
+          "days": 365
+        },
+        "accrualSchedule": {
+          "kind": "MONTHLY",
+          "anchorDayOfMonth": 1,
+          "invalidDayPolicy": "CLAMP_LAST_DAY",
+          "localPeriodBoundaryTime": "00:00:00"
+        }
+      },
+      "ledgerSummary": {
+        "enrollmentPublicId": "90000000-0000-4000-8000-000000001032",
+        "ledgerRevision": 0,
+        "reservationRevision": 0,
+        "unit": "HOUR",
+        "postedBalance": "1",
+        "reservedQuantity": "0",
+        "originalGrantPublicIds": [],
+        "closedPeriodPublicIds": [],
+        "summarySha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "treatment": "PRORATE_FINAL_PERIOD",
+      "instructionSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "workflowPublicId": "b0000000-0000-4000-8000-000000000070",
+      "enrollment": {
+        "enrollmentPublicId": "90000000-0000-4000-8000-000000002032",
+        "rowVersion": 0,
+        "workerPublicId": "90000000-0000-4000-8000-000000002021",
+        "assignmentPublicId": "90000000-0000-4000-8000-000000002022",
+        "effectiveFrom": "2026-10-17",
+        "effectiveTo": null
+      },
+      "employmentTermination": {
+        "snapshotPublicId": "b0000000-0000-4000-8000-000000000001",
+        "employmentPublicId": "b0000000-0000-4000-8000-000000000001",
+        "workerPublicId": "90000000-0000-4000-8000-000000002021",
+        "assignmentPublicIds": [
+          "90000000-0000-4000-8000-000000002022"
+        ],
+        "employmentState": "SEPARATED",
+        "employmentEndedOn": "2026-10-24",
+        "revision": 1,
+        "asOf": "2026-11-01T00:00:00Z",
+        "validUntil": "2026-12-31T00:00:00Z",
+        "contentSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "sourceRefs": [
+          {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000002001",
+            "revision": 1,
+            "contentSha256": "d0535c03e4d0336f4522905c8060df64fd9b9223ffc903c042b95bd198ed6ce3",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        ]
+      },
+      "policyRef": {
+        "contractId": "TIM.LeavePolicyArtifactSnapshot.v1",
+        "schemaVersion": 1,
+        "snapshotPublicId": "90000000-0000-4000-8000-000000002031",
+        "revision": 1,
+        "contentSha256": "e2de1101756d546051c1ad65b405b70d2d6f09f8238a715e114ea24bf2932e99",
+        "asOf": "2026-11-01T00:00:00Z",
+        "validUntil": "2026-12-31T23:59:59Z",
+        "ownerService": "dwp-time-server",
+        "streamKey": "time-main",
+        "purposeCode": "SYNTHETIC_TIM_ENTITLEMENT",
+        "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "policyContent": {
+        "unit": "HOUR",
+        "eligibility": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "BOOLEAN_CONST",
+              "nodeId": "eligible",
+              "value": true
+            }
+          ],
+          "rootNodeId": "eligible",
+          "declaredOutput": "BOOLEAN"
+        },
+        "enrollmentMode": "EXPLICIT_AUTHORIZED",
+        "accrualAmount": {
+          "value": "4",
+          "unit": "HOUR"
+        },
+        "prorationBasis": "CALENDAR_DAYS",
+        "proration": {
+          "schemaVersion": 1,
+          "nodes": [
+            {
+              "kind": "INPUT",
+              "nodeId": "eligible",
+              "inputKey": "EMPLOYMENT_ELIGIBLE_DAYS"
+            },
+            {
+              "kind": "INPUT",
+              "nodeId": "period",
+              "inputKey": "PERIOD_CALENDAR_DAYS"
+            },
+            {
+              "kind": "OPERATOR",
+              "nodeId": "ratio",
+              "operator": "DIVIDE_TO_RATE",
+              "operandNodeIds": [
+                "eligible",
+                "period"
+              ]
+            }
+          ],
+          "rootNodeId": "ratio",
+          "declaredOutput": "RATE"
+        },
+        "carryoverCap": {
+          "value": "2",
+          "unit": "HOUR"
+        },
+        "balanceCap": {
+          "value": "20",
+          "unit": "HOUR"
+        },
+        "capTreatment": "CLAMP_GRANT_WITH_SUPPRESSED_AMOUNT",
+        "terminationTreatment": "PRORATE_FINAL_PERIOD",
+        "negativeBalanceAllowed": false,
+        "reservationMode": "RESERVE_ON_SUBMIT",
+        "rounding": [
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "PRORATION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "GRANT"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CONVERSION"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "CARRYOVER"
+          },
+          {
+            "scale": 6,
+            "mode": "HALF_UP",
+            "stage": "TERMINATION"
+          }
+        ],
+        "calendarRef": {
+          "contractId": "SYS.TimeCalendarSnapshot.v1",
+          "schemaVersion": 1,
+          "snapshotPublicId": "90000000-0000-4000-8000-000000002001",
+          "revision": 1,
+          "contentSha256": "d0535c03e4d0336f4522905c8060df64fd9b9223ffc903c042b95bd198ed6ce3",
+          "asOf": "2026-10-01T00:00:00Z",
+          "validUntil": "2026-12-31T23:59:59Z",
+          "ownerService": "dwp-platform-server",
+          "streamKey": "platform-hris-configuration",
+          "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+          "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "sourceRefs": [
+          {
+            "contractId": "SYS.TimeCalendarSnapshot.v1",
+            "schemaVersion": 1,
+            "snapshotPublicId": "90000000-0000-4000-8000-000000002001",
+            "revision": 1,
+            "contentSha256": "d0535c03e4d0336f4522905c8060df64fd9b9223ffc903c042b95bd198ed6ce3",
+            "asOf": "2026-10-01T00:00:00Z",
+            "validUntil": "2026-12-31T23:59:59Z",
+            "ownerService": "dwp-platform-server",
+            "streamKey": "platform-hris-configuration",
+            "purposeCode": "TIM_FIXTURE_AUTHORIZED",
+            "populationScopeDigest": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        ],
+        "expiry": {
+          "kind": "AFTER_CALENDAR_DAYS",
+          "days": 365
+        },
+        "accrualSchedule": {
+          "kind": "MONTHLY",
+          "anchorDayOfMonth": 1,
+          "invalidDayPolicy": "CLAMP_LAST_DAY",
+          "localPeriodBoundaryTime": "00:00:00"
+        }
+      },
+      "ledgerSummary": {
+        "enrollmentPublicId": "90000000-0000-4000-8000-000000002032",
+        "ledgerRevision": 0,
+        "reservationRevision": 0,
+        "unit": "HOUR",
+        "postedBalance": "1",
+        "reservedQuantity": "0",
+        "originalGrantPublicIds": [],
+        "closedPeriodPublicIds": [],
+        "summarySha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "treatment": "PRORATE_FINAL_PERIOD",
+      "instructionSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "scheduleOwner": {
+    "ownerContractId": "TIME.PublishedScheduleSnapshot.proposal.v4",
+    "sourceStreamKey": "time-schedule",
+    "header": {
+      "tenantId": 7,
+      "snapshotPublicId": "b0000000-0000-4000-8000-000000000020",
+      "businessRevision": 1,
+      "asOf": "2026-10-24T08:00:00Z",
+      "validUntil": "2026-10-24T12:00:00Z",
+      "purposeCode": "ABS_LEAVE_SEGMENT",
+      "populationScopeDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "contentSha256": "9bc4855057b8b5a5892a097bbe75b0e3248423e91664c264fd3496d730347b35",
+      "actorAuthority": {
+        "actorPrincipalPublicId": "b0000000-0000-4000-8000-000000000010",
+        "actorUserRowVersion": 0,
+        "actorAccessRevision": 0,
+        "authRevision": "auth-0000000000000000000000000000000000000000000000000000000000000000",
+        "policyRevision": "policy-synthetic-v1",
+        "contextKey": "psc-0000000000000000000000000000000000000000000000000000000000000000",
+        "decisionRevision": "psr-0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "payload": {
+      "publicationPublicId": "b0000000-0000-4000-8000-000000000030",
+      "publicationRevision": 1,
+      "segments": [
+        {
+          "segmentPublicId": "b0000000-0000-4000-8000-000000000050",
+          "periodPublicId": "b0000000-0000-4000-8000-000000000040",
+          "workerPublicId": "90000000-0000-4000-8000-000000001021",
+          "assignmentPublicId": "90000000-0000-4000-8000-000000001022",
+          "lineKey": "native-line-1",
+          "localWorkDate": "2026-10-24",
+          "startsAt": "2026-10-24T09:00:00Z",
+          "endsAt": "2026-10-24T10:00:00Z",
+          "timeZone": "Etc/UTC",
+          "startOffsetSeconds": 0,
+          "endOffsetSeconds": 0,
+          "tzdbVersion": "synthetic-2026a",
+          "zoneRuleVersion": "synthetic-owner1",
+          "startDstResolution": "UNIQUE",
+          "endDstResolution": "UNIQUE",
+          "provenanceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "kind": "WORK",
+          "paid": true,
+          "workRuleContentSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    }
+  },
+  "scheduleLocal": {
+    "tenantId": 7,
+    "purposeCode": "ABS_LEAVE_SEGMENT",
+    "scopeDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+    "now": "2026-10-24T08:30:00Z",
+    "workerPublicId": "90000000-0000-4000-8000-000000001021",
+    "assignmentPublicId": "90000000-0000-4000-8000-000000001022",
+    "actorPrincipalPublicId": "b0000000-0000-4000-8000-000000000010",
+    "projectionPublicId": "b0000000-0000-4000-8000-000000000060",
+    "returningInternalId": 123
+  },
+  "importEnvironment": {
+    "invocation": {
+      "tenantId": 7,
+      "actorPrincipalPublicId": "b0000000-0000-4000-8000-000000000010",
+      "purposeCode": "ABS_LEAVE_SEGMENT",
+      "scopeDigest": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "clock": {
+      "transactionTime": "2026-10-24T08:30:00Z"
+    },
+    "allocator": {
+      "persistedPublicUuid": "b0000000-0000-4000-8000-000000000001"
+    },
+    "transaction": {
+      "insert": {
+        "abs_owner_artifact_snapshots": {
+          "owner_artifact_snapshot_id": 123
+        },
+        "abs_calendar_version_snapshots": {
+          "calendar_snapshot_id": 123
+        },
+        "abs_policy_evaluation_reports": {
+          "policy_evaluation_report_id": 123
+        },
+        "abs_policy_governance_bindings": {
+          "policy_governance_binding_id": 123
+        }
+      }
+    },
+    "owner": {
+      "response": {
+        "ownerContractId": "SYS.TimeCalendarSnapshot.proposal.v4",
+        "sourceStreamKey": "configuration-calendar",
+        "header": {
+          "tenantId": 7,
+          "snapshotPublicId": "b0000000-0000-4000-8000-000000000020",
+          "businessRevision": 1,
+          "asOf": "2026-10-24T08:00:00Z",
+          "validUntil": "2026-10-24T12:00:00Z",
+          "purposeCode": "ABS_LEAVE_SEGMENT",
+          "populationScopeDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+          "contentSha256": "d4ad5e043a6e99d58343b4c129cd6f42578c9b739b4f8835b73e7c3028f081a4",
+          "actorAuthority": {
+            "actorPrincipalPublicId": "b0000000-0000-4000-8000-000000000010",
+            "actorUserRowVersion": 0,
+            "actorAccessRevision": 0,
+            "authRevision": "auth-0000000000000000000000000000000000000000000000000000000000000000",
+            "policyRevision": "policy-synthetic-v1",
+            "contextKey": "psc-0000000000000000000000000000000000000000000000000000000000000000",
+            "decisionRevision": "psr-0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        "payload": {
+          "calendarVersionPublicId": "b0000000-0000-4000-8000-000000000001",
+          "revision": 1,
+          "timeZone": "Etc/UTC",
+          "effectiveFrom": "2026-10-01",
+          "effectiveTo": "2026-11-01",
+          "entries": [
+            {
+              "localDate": "2026-10-24",
+              "workingDay": true,
+              "scheduledMinutes": 60,
+              "holidayCode": null
+            }
+          ]
+        }
+      },
+      "calendar": {
+        "ownerContractId": "SYS.TimeCalendarSnapshot.proposal.v4",
+        "sourceStreamKey": "configuration-calendar",
+        "header": {
+          "tenantId": 7,
+          "snapshotPublicId": "b0000000-0000-4000-8000-000000000020",
+          "businessRevision": 1,
+          "asOf": "2026-10-24T08:00:00Z",
+          "validUntil": "2026-10-24T12:00:00Z",
+          "purposeCode": "ABS_LEAVE_SEGMENT",
+          "populationScopeDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+          "contentSha256": "d4ad5e043a6e99d58343b4c129cd6f42578c9b739b4f8835b73e7c3028f081a4",
+          "actorAuthority": {
+            "actorPrincipalPublicId": "b0000000-0000-4000-8000-000000000010",
+            "actorUserRowVersion": 0,
+            "actorAccessRevision": 0,
+            "authRevision": "auth-0000000000000000000000000000000000000000000000000000000000000000",
+            "policyRevision": "policy-synthetic-v1",
+            "contextKey": "psc-0000000000000000000000000000000000000000000000000000000000000000",
+            "decisionRevision": "psr-0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        "payload": {
+          "calendarVersionPublicId": "b0000000-0000-4000-8000-000000000001",
+          "revision": 1,
+          "timeZone": "Etc/UTC",
+          "effectiveFrom": "2026-10-01",
+          "effectiveTo": "2026-11-01",
+          "entries": [
+            {
+              "localDate": "2026-10-24",
+              "workingDay": true,
+              "scheduledMinutes": 60,
+              "holidayCode": null
+            }
+          ]
+        }
+      }
+    },
+    "registered": {
+      "ownerSchemaByContractId": "V4.CalendarPayload"
+    },
+    "loaded": {
+      "abs_leave_plan_versions": {
+        "leave_plan_version_id": 42,
+        "public_id": "b0000000-0000-4000-8000-000000000001",
+        "row_version": 0,
+        "content_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "evaluator": {
+      "report": {
+        "artifactKind": "LeavePolicy",
+        "subjectPublicId": "b0000000-0000-4000-8000-000000000001",
+        "subjectRowVersion": 0,
+        "subjectContentSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "reportKind": "VALIDATION",
+        "ruleVersion": "synthetic-local1",
+        "findings": [],
+        "measures": []
+      }
+    },
+    "constructor": {
+      "reportDigest": "978227de2b8f579a1c8ff3c1600634d2e2ac91e82670f741c420c5942d375ee3",
+      "governanceStatus": "PENDING"
+    }
+  },
+  "governanceResponse": {
+    "ownerContractId": "SYS.AbsGovernanceDecision.proposal.v4",
+    "sourceStreamKey": "configuration-leave-governance",
+    "header": {
+      "tenantId": 7,
+      "snapshotPublicId": "b0000000-0000-4000-8000-000000000020",
+      "businessRevision": 1,
+      "asOf": "2026-10-24T08:00:00Z",
+      "validUntil": "2026-10-24T12:00:00Z",
+      "purposeCode": "ABS_LEAVE_SEGMENT",
+      "populationScopeDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "contentSha256": "9d00175714af4e5f01425074da14ef8c525a7467254509ca72ecaf018e99482f",
+      "actorAuthority": {
+        "actorPrincipalPublicId": "b0000000-0000-4000-8000-000000000010",
+        "actorUserRowVersion": 0,
+        "actorAccessRevision": 0,
+        "authRevision": "auth-0000000000000000000000000000000000000000000000000000000000000000",
+        "policyRevision": "policy-synthetic-v1",
+        "contextKey": "psc-0000000000000000000000000000000000000000000000000000000000000000",
+        "decisionRevision": "psr-0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "payload": {
+      "governanceRequestPublicId": "b0000000-0000-4000-8000-000000000001",
+      "subjectPublicId": "b0000000-0000-4000-8000-000000000001",
+      "subjectRowVersion": 0,
+      "subjectContentSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "decision": "PENDING"
+    }
+  }
+}

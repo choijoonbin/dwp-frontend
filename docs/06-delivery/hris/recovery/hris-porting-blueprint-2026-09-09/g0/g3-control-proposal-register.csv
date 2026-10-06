@@ -1,0 +1,1 @@
+proposal_seq,proposal_id,owner_session_id,writer_session_id,repository,slice_id,source_checkpoint_id,source_head_sha,source_tree_sha,source_touch_manifest_sha256,proposal_blob_oid,proposal_ref,proposal_sha256,proposer_role,approved_by_role,approval_reference,approved_at,status

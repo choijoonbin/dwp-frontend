@@ -1,0 +1,307 @@
+{
+  "reportId": "DWP-HRIS-MODERN-OPERATION-SIX-P0-INDEPENDENT-CLASSIFICATION-v1",
+  "schemaVersion": "1.0.0",
+  "status": "FINAL_SELF_SEALED_READ_ONLY_FINDING_CLASSIFICATION",
+  "verdict": "TWO_TRUE_POSITIVES_FOUR_VALIDATOR_FALSE_POSITIVES_SOURCE_AND_VALIDATOR_CORRECTION_REQUIRED",
+  "reviewedAt": "2026-09-16T01:19:00Z",
+  "reviewer": "independent-operation-semantics-review-agent",
+  "scope": {
+    "task": "Classify all six P0 findings in the independent operation audit against the candidate execution semantics and the self-sealed SYS Listening authority.",
+    "candidateDirectory": "coding-readiness/modern-canonical-candidate.uaHfXj",
+    "readOnlyTargets": [
+      "candidate canonical artifacts",
+      "live canonical artifacts",
+      "Gate state",
+      "generator and validator source",
+      "SYS Listening authority"
+    ],
+    "onlyWrite": "this independent report",
+    "canonicalOrGateMutation": false,
+    "sourceMutation": false
+  },
+  "safetyBoundary": {
+    "securityOrPrivacyWeakeningForbidden": true,
+    "rawCredentialTokenAnswerPersistenceOrLoggingForbidden": true,
+    "authenticatedPrincipalWorkerPersonOrSessionCorrelationInAnonymousProtectedFlowForbidden": true,
+    "publicOrBrokerOutboxForProtectedResponseSubmissionForbidden": true,
+    "untrustedDuplicateClientAuthorityFieldsForbidden": true,
+    "decision": "A validator finding may be cleared only by preserving or strengthening the sealed authority. Adding fields, lookups, callbacks, events, or outbox delivery merely to satisfy a string-matching validator is prohibited."
+  },
+  "inputPins": {
+    "operationAudit": {
+      "path": "/tmp/hris-uaHfXj-operation-audit.json",
+      "sha256": "d6cc5e1dcb8d18f78d4c8658f3671a0ee35332537226aca9d51778d648c97371",
+      "sealed": false
+    },
+    "candidateOperationSsot": {
+      "path": "coding-readiness/modern-canonical-candidate.uaHfXj/modern-capability-operation-causal-contract-ssot.v2.json",
+      "sha256": "27cae6ed93c084bb5f489a3d3c0996a4eebf9b0e2faabd68839614c5343b7a2a"
+    },
+    "candidateExactSchema": {
+      "path": "coding-readiness/modern-canonical-candidate.uaHfXj/modern-capability-exact-schema-contracts.v1.json",
+      "sha256": "248a40ab0fdc82b59681344f7d400a025f0d0171df43496e9011e0151893cb23"
+    },
+    "candidateListeningAuthority": {
+      "path": "coding-readiness/modern-canonical-candidate.uaHfXj/sys-listening-stream-authority-successor.v2.json",
+      "fileSha256": "230a945fe98d872c56b8f5f8838b6a0cc29e248fa6e5a6d6df11736e71b05b00",
+      "sealedPayloadSha256": "950217094f49e8761245e56c171948b074846beff8eb00602838d82e6138e66c",
+      "sealVerified": true
+    },
+    "listeningAuthoritySource": {
+      "path": "coding-readiness/sys_listening_canonical_design.py",
+      "sha256": "aae08dfb730240eeeb9fcf269b21c737c845b1964afe652cd61cf3ff7f58e7e2"
+    },
+    "auditProducingValidatorSnapshot": {
+      "path": "coding-readiness/modern-independent-successor/audit_modern_operation_semantics.py",
+      "sha256ObservedBeforeConcurrentRemediation": "c7af0b9c8e841fb95227bae58609228b34cd00088e7a15b920c61fdf409ab813",
+      "currentPathBytesMayDiffer": true,
+      "role": "BEHAVIORAL_SNAPSHOT_THAT_PRODUCED_THE_CLASSIFIED_FINDINGS"
+    },
+    "acceptedSourceArchitectureReview": {
+      "path": "coding-readiness/reports/modern-closed-set-listening-pre-emit-independent-design-review-2026-09-16.v2.json",
+      "fileSha256": "3c6aef861603588d558c3836ed517bfffd3a5284539bb85eb43212d5833a8cb8",
+      "sealedPayloadSha256": "9e57dabbd19ea1e0aa7a649b996e76db00dbdb1c9f6c5bc78df1a03cb142c6c8",
+      "sealVerified": true,
+      "acceptedOperationGeneratorSha256": "32d049194e262fab8ec99bef64ad25738ceae4757df7dc2bf286fce15a01d6e9"
+    }
+  },
+  "authorityFacts": {
+    "protectedSubmitRequestFields": [
+      "signedParticipationCredential",
+      "surveyId",
+      "responseToken",
+      "answers"
+    ],
+    "separateParticipationEnvelopeRequired": false,
+    "separateFormRevisionRequired": false,
+    "credentialClaimsPinningForm": [
+      "formVersionPublicId",
+      "formArtifactDigest"
+    ],
+    "lockedAdmissionSuppliesFormRevision": true,
+    "callerAuth": {
+      "mode": "SIGNED_PARTICIPATION_CREDENTIAL",
+      "principalClass": "ANONYMOUS_CREDENTIAL_HOLDER",
+      "signature": "active issuer/source-stream key; exact audience and digest",
+      "audience": "DWP.HRIS.LISTENING.PROTECTED"
+    },
+    "protectedSubmitAtomicOrder": [
+      "CLAIM_OR_REPLAY protected receipt",
+      "LOCK_FOR_UPDATE latest stable admission",
+      "CLAIM_OR_REPLAY one-time token consumption",
+      "APPEND anonymous response with per-response key",
+      "APPEND_MANY encrypted typed answers",
+      "UPDATE_CAS token-to-response binding",
+      "UPDATE_CAS private receipt close"
+    ],
+    "protectedSubmitDelivery": {
+      "receiptTable": "sys_hris_listening_protected_receipts",
+      "outboxTable": null,
+      "atomicity": "OWNER_LOCAL_DOMAIN_AND_PRIVATE_RECEIPT_ONE_TRANSACTION;BROKER_OUTBOX_FORBIDDEN",
+      "publicResponseAnswerTokenEvents": "FORBIDDEN"
+    }
+  },
+  "validatorRootCauses": [
+    {
+      "id": "VR-1",
+      "description": "selector_findings indexes selectors only by exact selector.source and requires an exact string match with the parent request-field source. It does not recognize closed signed artifacts whose executable selectors consume nested signed claims."
+    },
+    {
+      "id": "VR-2",
+      "description": "selector_findings does not recognize a composite path-to-signed-claim-to-locked-row equality proof even when the input effect and locked admission selector require that equality fail-closed."
+    },
+    {
+      "id": "VR-3",
+      "description": "listening_authority_findings hardcodes stale body fields participationEnvelope and formRevision instead of reading the self-sealed v2 authority request schema."
+    },
+    {
+      "id": "VR-4",
+      "description": "The audit correction text incorrectly asks for an outbox on protected submit, while the authority explicitly requires owner-local private receipt delivery and forbids broker outbox publication."
+    }
+  ],
+  "findingClassifications": [
+    {
+      "findingId": "C-DEF92E16540C5622",
+      "auditCode": "REFERENCE_WITHOUT_EXPLICIT_SELECTOR",
+      "subject": "modern.listening.active.query headers.X-Listening-Participation-Credential",
+      "classification": "FALSE_POSITIVE_COMPOSITE_CRYPTOGRAPHIC_VERIFIER_NOT_RECOGNIZED",
+      "severityAfterClassification": "NONE_FOR_CANDIDATE_SEMANTICS_VALIDATOR_P0_REMAINS",
+      "reason": "The credential is a closed signed artifact, not a database public-ID selector. The authority defines SIGNED_PARTICIPATION_CREDENTIAL caller authentication. The candidate consumes credential.admissionPublicId through a tenant-bound latest-stable admission selector and credential.aud through OWNER_PORT::DWP.Listening.ProtectedResourceAudienceVerifier, with active issuer-key, time-window, audience, offline non-revocation, exact form/admission, and fail-closed rules. The validator sees neither selector because both sources are nested under the parent credential source.",
+      "acceptableCorrection": {
+        "preferred": "Represent the parent field as a typed SIGNED_CREDENTIAL verification contract, or add a resolution discriminator, and make the validator require the matching callerAuth plus the closed value schema, nested admission selector, nested audience cryptographic verifier, time/non-revocation checks, and fail-closed behavior.",
+        "forbidden": [
+          "inventing a credential database table",
+          "persisting or logging the compact credential",
+          "issuer callback from the anonymous protected endpoint",
+          "accepting prose or a substring without structured nested selectors"
+        ]
+      }
+    },
+    {
+      "findingId": "C-8722AC5AC8584F38",
+      "auditCode": "REFERENCE_WITHOUT_EXPLICIT_SELECTOR",
+      "subject": "modern.listening.response.submit body.signedParticipationCredential",
+      "classification": "FALSE_POSITIVE_COMPOSITE_CRYPTOGRAPHIC_VERIFIER_NOT_RECOGNIZED",
+      "severityAfterClassification": "NONE_FOR_CANDIDATE_SEMANTICS_VALIDATOR_P0_REMAINS",
+      "reason": "The submit credential has a closed schema and an OFFLINE_SIGNED_CREDENTIAL_AND_NONREVOCATION_PROOF input effect. Its nested admission claim selects and locks the exact owner-local admission tip; its nested audience claim invokes the typed protected-resource verifier. The authority calls this the caller-auth mechanism and never defines it as a database row reference. Exact parent-source matching therefore produces a false P0.",
+      "acceptableCorrection": {
+        "preferred": "Use the same typed signed-credential verification-contract rule as active.query, additionally requiring zero mutation for invalid signature, algorithm, key, audience, time, proof, tenant, survey, admission, form, consent, or token-commitment mismatch.",
+        "forbidden": [
+          "removing signature or non-revocation checks",
+          "changing anonymous callerAuth to authenticated principal",
+          "turning the credential into a durable local identity row",
+          "accepting a selector that validates only aud but not the complete signed artifact"
+        ]
+      }
+    },
+    {
+      "findingId": "C-EE1526DDBA5B0CDA",
+      "auditCode": "REFERENCE_WITHOUT_EXPLICIT_SELECTOR",
+      "subject": "modern.listening.response.submit pathParameters.surveyId",
+      "classification": "FALSE_POSITIVE_COMPOSITE_LOCKED_BINDING_NOT_RECOGNIZED",
+      "severityAfterClassification": "NONE_FOR_EXECUTION_SEMANTICS_FORMALIZATION_RECOMMENDED",
+      "reason": "The route value is intentionally not an independent foreign lookup. Its reference resolution is PROTECTED_LOCAL_SIGNED_ADMISSION_CLAIM_EQUALITY_ONLY; the input effect requires SIGNED_CLAIM_EQUALITY_ONLY; and the locked admission selector requires path survey = credential survey = target survey with zero mutation on mismatch. The validator only performs exact source-string matching and ignores that composite equality proof.",
+      "acceptableCorrection": {
+        "preferred": "Either teach the validator to accept this exact structured composite proof, or materialize an explicit PROTECTED_LOCAL_ROUTE_SURVEY_EQUALITY selector sourced from pathParameters.surveyId and targeting the already locked admission survey_public_id with complete tenant, purpose, version/as-of, causal equality, cardinality, and fail-closed fields.",
+        "forbidden": [
+          "a second cross-owner survey lookup",
+          "accepting path-to-credential equality without equality to the locked admission row",
+          "latest fallback or non-tenant-bound comparison"
+        ]
+      }
+    },
+    {
+      "findingId": "C-9F84FD5631B05D68",
+      "auditCode": "LISTENING_PROTECTED_SUBMIT_ATOMIC_CONTRACT_INCOMPLETE",
+      "subject": "modern.listening.response.submit formRevision and participationEnvelope",
+      "classification": "FALSE_POSITIVE_STALE_HARDCODED_AUTHORITY_SHAPE",
+      "severityAfterClassification": "NONE_FOR_NAMED_MISSING_FIELDS_VALIDATOR_P0_REMAINS",
+      "reason": "The self-sealed v2 authority requires signedParticipationCredential, surveyId, responseToken, and answers. It does not require a second participationEnvelope or a client formRevision. The signed credential pins formVersionPublicId and formArtifactDigest; the locked admission supplies form_revision and the authoritative typed question set. The candidate already performs the seven owner-local receipt, admission lock, token, response, answer, bind, and private-receipt-close steps. The authority explicitly sets outboxTable to null and BROKER_OUTBOX_FORBIDDEN.",
+      "acceptableCorrection": {
+        "preferred": "Derive validator requirements from the pinned self-sealed authority. Require the four authority inputs, exact credential/locked-admission form binding, all seven atomic stages, private receipt replay/erasure behavior, and no broker outbox.",
+        "authoritySuccessorException": "A second protected-owner envelope is acceptable only through an explicitly versioned and independently reviewed authority successor that defines its producer, delivery through active query, signature key ownership, expiry/revocation, credential/token/form binding, replay behavior, and privacy boundary. It cannot be invented only to clear this audit.",
+        "forbidden": [
+          "trusting a standalone client formRevision",
+          "requiring a second envelope with no authoritative producer lifecycle",
+          "adding protected response or answer publication to an outbox",
+          "emitting raw response, answer, token, credential, principal, worker, IP, session, or issuer-trace data"
+        ]
+      }
+    },
+    {
+      "findingId": "C-FD0D98BBE776B719",
+      "auditCode": "UNDECLARED_BODY_SOURCE_USED",
+      "subject": "modern.learning.completion.verify body.skillEvidenceIds",
+      "classification": "TRUE_POSITIVE",
+      "severityAfterClassification": "P0",
+      "reason": "The child row stores skill_evidence_public_id from ownerProof.body.evidencePublicId.skillEvidenceIds[*] but resolves worker_skill_evidence_id from undeclared body.skillEvidenceIds[*]. The body field is absent from requestFields and inputEffects, and the two identity sources can diverge. This is an executable ghost input and an integrity gap.",
+      "acceptableCorrection": {
+        "preferred": "Remove the ghost body source. Derive the ordered public-ID set exclusively from the immutable, exact-version owner proof; batch-select every corresponding prf_skl_worker_evidence row by same tenant, authorized purpose/population, expected worker/assignment relationship, and exact as-of/version; require set equality, uniqueness, stable ordering, and exactly one local row per proof ID before appending child references.",
+        "lessPreferred": "A declared client field is acceptable only if it is closed typed and its ordered set is proven exactly equal to the immutable owner-proof set before any write. It must never override the owner proof.",
+        "forbidden": [
+          "silently accepting extra, missing, duplicate, cross-tenant, wrong-worker, stale, or revoked skill-evidence IDs",
+          "using client IDs as authority without equality to the owner proof",
+          "partial child insertion"
+        ]
+      }
+    },
+    {
+      "findingId": "C-0BDDF2EC1C59DC24",
+      "auditCode": "HANDLER_EVENT_REFETCH_NOT_EXACT_AGGREGATE_REENTRY",
+      "subject": "internal.workforceplan.simulation-result.consume WorkforceScenarioSimulated.v2",
+      "classification": "TRUE_POSITIVE",
+      "severityAfterClassification": "P0",
+      "reason": "The handler performs its terminal CAS on ppl_wfp_simulation_requests and the event aggregateEntityType and refetch entity are both that simulation-request table. modern.workforceplan.scenario.query accepts a scenario identity and returns a scenario projection; merely joining simulation requests cannot re-enter the emitted aggregate identity or exact event revision. The correct aggregate is the simulation request, not the scenario.",
+      "acceptableCorrection": {
+        "preferred": "Set refetch mode to FORBIDDEN for both success and failure events, remove endpointOperationId/entity/version/as-of refetch hints, and declare PAYLOAD_SUFFICIENT_NOTIFICATION_ONLY, NO_LATEST_FALLBACK, and AGGREGATE_LOOKUP_FORBIDDEN. The current internal HRIS-HRM-only payload already carries simulationRequestId/revision, scenarioId, state transition, aggregateVersion, occurredAt, correlationId, and exact result receipt revision/schema/digest. Consumers must use a separately authorized SimulationResultReceipt/artifact owner contract for result content, with exact receipt revision/schema/digest and deny-on-unavailable; the event remains a minimized notification and proof pointer.",
+        "productRequirementAlternative": "Only if a real consumer requirement for aggregate detail re-entry is documented, add modern.workforceplan.simulation.query with simulationRequestId as a typed path selector, optional parent scenario equality, response entity table:ppl_wfp_simulation_requests, event.simulationRequestRevision exact with no latest fallback, event.occurredAt as-of, same-tenant PEP, and the exact event field allowlist. Accept the resulting operation/query count and all manifest/downstream count cascades; do not preserve 199/66 artificially.",
+        "forbidden": [
+          "changing the event aggregate to scenario without a scenario-root state mutation and version append",
+          "treating a joined child table as exact identity re-entry",
+          "latest-version fallback",
+          "omitting tenant, purpose, consumer, field, revision, or as-of enforcement"
+        ]
+      }
+    }
+  ],
+  "classificationSummary": {
+    "inputP0Findings": 6,
+    "truePositiveP0": 2,
+    "validatorFalsePositive": 4,
+    "truePositiveFindingIds": [
+      "C-FD0D98BBE776B719",
+      "C-0BDDF2EC1C59DC24"
+    ],
+    "falsePositiveFindingIds": [
+      "C-DEF92E16540C5622",
+      "C-8722AC5AC8584F38",
+      "C-EE1526DDBA5B0CDA",
+      "C-9F84FD5631B05D68"
+    ],
+    "gateDisposition": "BLOCKED_UNTIL_TRUE_POSITIVES_ARE_FIXED_AND_VALIDATOR_FALSE_POSITIVES_ARE_CORRECTED_WITH_HOSTILE_TESTS"
+  },
+  "hostileRegressionRequirements": {
+    "signedCredentialVerifier": [
+      "reject missing or altered signature, kid, alg, audience, iat, nbf, exp, or non-revocation proof",
+      "reject inactive or unknown issuer key and expired or future proof",
+      "reject credential tenant, survey, admission, admission version, form, consent, or token commitment mismatch",
+      "reject worker, person, principal, employee, session, IP, user-agent, or issuer-trace claims in the protected anonymous boundary",
+      "reject a mere prose marker or target-name substring when structured callerAuth and nested selectors are absent",
+      "reject persistence or logging of raw credential or raw response token"
+    ],
+    "routeSurveyBinding": [
+      "reject route survey != signed credential survey",
+      "reject signed credential survey != locked admission survey",
+      "reject cross-tenant, stale admission tip, closed window, or inactive admission",
+      "prove the equality uses the same locked admission row and does not perform a foreign-owner repository read"
+    ],
+    "protectedSubmitAuthority": [
+      "reject missing credential, token, answers, or route survey",
+      "reject answers not in the locked form key/type/cardinality/choice vocabulary",
+      "reject standalone client formRevision as authority",
+      "reject any unproduced participation envelope",
+      "reject any broker/public outbox for response, answer, token, or credential facts",
+      "concurrent submit versus close uses the same admission lock fence",
+      "same token and same digest returns the sealed private result with zero writes",
+      "same token and different digest conflicts with zero mutation",
+      "replay after erasure returns only the non-linkable tombstone without a comparison oracle",
+      "fault injection at each of the seven stages rolls back every stage"
+    ],
+    "learningCompletionEvidence": [
+      "reject undeclared body.skillEvidenceIds",
+      "reject any set mismatch between owner proof and local selected skill evidence",
+      "reject duplicates, missing rows, extra rows, cross-tenant rows, wrong-worker rows, stale rows, revoked rows, and unstable ordering",
+      "fault injection prevents partial child append"
+    ],
+    "workforceSimulationRefetch": [
+      "reject scenario query as refetch for a simulation-request aggregate",
+      "when refetch is FORBIDDEN, reject any endpointOperationId, entity, revision, as-of, latest-fallback, or aggregate-query hint and require payload-sufficient notification-only semantics",
+      "require result content access through an independently authorized exact SimulationResultReceipt/artifact owner contract; deny on unavailable and never fall back to scenario projection",
+      "reject wrong simulationRequestId, parent scenario, tenant, revision, as-of, purpose, consumer, or field allowlist",
+      "reject latest fallback",
+      "apply the same exact detail-query or explicit FORBIDDEN rule to success and failure events"
+    ]
+  },
+  "concurrentSourceObservation": {
+    "acceptedArchitectureReviewPinsOperationGeneratorSha256": "32d049194e262fab8ec99bef64ad25738ceae4757df7dc2bf286fce15a01d6e9",
+    "workingGeneratorWasChangingDuringReview": true,
+    "validatorWasAlsoChangingDuringReview": true,
+    "disposition": "Any unreviewed working-source attempt that adds participationEnvelope or formRevision is outside the self-sealed authority and must not be accepted merely because it clears the stale validator. It requires either removal or a separately versioned authority-successor review with a complete producer lifecycle.",
+    "candidateAndAuthorityPinsRemainTheClassificationBasis": true
+  },
+  "requiredCloseoutOrder": [
+    "Correct the two true-positive source semantics without weakening owner proof, tenancy, as-of, or atomicity.",
+    "Correct the validator to model typed signed-artifact verification and composite locked equality, and to read the self-sealed Listening request and outbox policy instead of stale hardcoded fields.",
+    "Add all hostile regressions listed in this report and prove they fail closed.",
+    "Generate a new distinct candidate from reviewed source; never mutate or promote uaHfXj in place.",
+    "Run independent operation, route, owner-boundary, physical, PostgreSQL 16/18, and downstream lineage gates on the same reviewed bytes.",
+    "Keep Gate closed until all authoritative gates pass."
+  ],
+  "residualBlockers": [
+    "Learning completion ghost source remains a P0 in candidate uaHfXj.",
+    "Workforce simulation-result event refetch remains a P0 in candidate uaHfXj.",
+    "The current independent validator is not safe to use as a zero-finding acceptance authority until the four false-positive rules and hostile tests are corrected.",
+    "Any unreviewed generator change that introduces a second envelope or client form revision remains outside authority."
+  ],
+  "sealedPayloadSha256": "a5262ef48ea0d1ec2731410be2af71d51448d1bc467bd1dd186eee3b9cb0d5e6"
+}

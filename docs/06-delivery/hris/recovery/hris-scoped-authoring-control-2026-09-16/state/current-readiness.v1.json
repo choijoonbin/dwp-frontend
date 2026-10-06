@@ -1,0 +1,52 @@
+{
+  "aggregateState": "ALL_MODULES_READY_TO_START_HOLD",
+  "controlManifestPayloadSha256": "ee05810e42b9b871f557d8704d3a4c4a1dd4644c2ec8876e41c832317e61163e",
+  "controlManifestSha256": "52847941cae2a224c338ab78c31c14f3c7efd0132bd98188570fc96b4056f53f",
+  "developmentStarted": false,
+  "moduleStates": {
+    "HRIS-HRM": "READY_TO_START_HOLD",
+    "HRIS-PAY": "READY_TO_START_HOLD",
+    "HRIS-PER": "READY_TO_START_HOLD",
+    "HRIS-SYS": "READY_TO_START_HOLD",
+    "HRIS-TIM": "READY_TO_START_HOLD"
+  },
+  "nextForbiddenAction": "START_SCOPED_AUTHORING",
+  "nextPermittedAction": "WAIT_FOR_EXPLICIT_USER_START_INSTRUCTION",
+  "observedAt": "2026-09-16T18:09:30+09:00",
+  "officialGate": "CLOSED_FAIL_SAFE",
+  "receiptRefs": [
+    {
+      "path": "output/hris-scoped-authoring-control-2026-09-16/receipts/hrm-preflight.v1.json",
+      "result": "PREFLIGHT_PASS_READY_TO_START_HOLD",
+      "sessionId": "HRIS-HRM",
+      "sha256": "729721fd536c557bee7593b532a988d24f515e97f35f2300b6724036741be353"
+    },
+    {
+      "path": "output/hris-scoped-authoring-control-2026-09-16/receipts/per-preflight.v1.json",
+      "result": "PREFLIGHT_PASS_READY_TO_START_HOLD",
+      "sessionId": "HRIS-PER",
+      "sha256": "25be40af568ff25a904853e110f89f7c6d5af16c0acdce0d6ab9f134982630dc"
+    },
+    {
+      "path": "output/hris-scoped-authoring-control-2026-09-16/receipts/pay-preflight.v1.json",
+      "result": "PREFLIGHT_PASS_READY_TO_START_HOLD",
+      "sessionId": "HRIS-PAY",
+      "sha256": "451f758da2c64a1b10062fcbef95b50c166c4521a3771f50ef659f3d4058640e"
+    },
+    {
+      "path": "output/hris-scoped-authoring-control-2026-09-16/receipts/tim-preflight.v1.json",
+      "result": "PREFLIGHT_PASS_READY_TO_START_HOLD",
+      "sessionId": "HRIS-TIM",
+      "sha256": "87d06ef7ed613df2ba692d9188091fc7bbba349eaeca85172ce343223895e88f"
+    },
+    {
+      "path": "output/hris-scoped-authoring-control-2026-09-16/receipts/sys-preflight.v1.json",
+      "result": "PREFLIGHT_PASS_READY_TO_START_HOLD",
+      "sessionId": "HRIS-SYS",
+      "sha256": "90a40e1c6c184448c322322952028f043e5d22b601517173394236ce6013690c"
+    }
+  ],
+  "schema": "dwp.hris.scoped-authoring-readiness-state.v1",
+  "sealedPayloadSha256": "e6383c01b10a53b9c96a6bee8c685c45cc29b2556d79a346ea7a3e278065d1e4",
+  "startCommandIssued": false
+}
