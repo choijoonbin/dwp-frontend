@@ -90,6 +90,12 @@ describe('HRIS visible product identity', () => {
     const notifications = locale(`libs/shared-i18n/src/locales/${language}/notifications.json`) as {
       sources: { hcm: string };
     };
+    const mail = locale(`libs/shared-i18n/src/locales/${language}/mail.json`) as {
+      proposal: {
+        targets: { hr: string };
+        types: { leaveRequest: { confirm: string } };
+      };
+    };
 
     expect(home.flow.apps['APP.HCM']).toBe('HRIS');
     expect(home.flow.context.domains.people).toBe('HRIS');
@@ -98,5 +104,7 @@ describe('HRIS visible product identity', () => {
     expect(work.reference.apps['ref-app-people'].name).toBe('HRIS');
     expect(admin.appGovernance.adoption.products.hcm).toBe('HRIS');
     expect(notifications.sources.hcm).toBe('HRIS');
+    expect(mail.proposal.targets.hr).toBe('HRIS');
+    expect(mail.proposal.types.leaveRequest.confirm).toContain('HRIS');
   });
 });

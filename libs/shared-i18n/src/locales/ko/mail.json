@@ -892,7 +892,7 @@
       },
       "leaveRequest": {
         "label": "휴가 요청 준비",
-        "confirm": "승인하고 인사 앱 열기"
+        "confirm": "승인하고 HRIS 열기"
       },
       "task": {
         "label": "업무 항목 생성",
@@ -905,7 +905,7 @@
     },
     "targets": {
       "calendar": "캘린더",
-      "hr": "인사",
+      "hr": "HRIS",
       "mail": "메일 임시 보관함",
       "notifications": "알림",
       "work": "업무"

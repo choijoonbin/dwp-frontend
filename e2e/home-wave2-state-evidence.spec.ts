@@ -935,6 +935,8 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   await expect(spec).toContainText(/Exactly 6 State Variants Cards/u);
   await expect(spec).toContainText(/Standard Motion vs Reduced Motion/u);
   await expect(spec).toContainText(/Single Document Scroll & Geometry/u);
+  await expect(spec.getByRole('button', { name: 'HRIS', exact: true })).toBeVisible();
+  await expect(spec.getByRole('button', { name: '인사', exact: true })).toHaveCount(0);
   await captureEvidence(page, 'C18-KEYBOARD-REDUCED-MOTION-SPEC-r02', fixtureId, 'body');
   expect(unexpectedRouterWarnings).toEqual([]);
 });
