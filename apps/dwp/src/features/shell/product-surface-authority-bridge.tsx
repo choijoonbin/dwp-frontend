@@ -516,13 +516,14 @@ function pageEvaluationEnabled(flags: ProductSurfaceRolloutFlags | undefined): b
   );
 }
 
-function surfaceDecision(
+export function resolveSurfaceDecision(
   decisions: readonly SurfaceDecision[],
   activePageDecision?: SurfaceDecision
 ): SurfaceDecision {
   return (
     (activePageDecision?.state === 'allowed' ? activePageDecision : undefined) ??
     decisions.find((decision) => decision.state === 'allowed') ??
+    (activePageDecision?.state !== 'authority-unavailable' ? activePageDecision : undefined) ??
     decisions.find((decision) => decision.state === 'authority-unavailable') ??
     decisions[0] ?? { state: 'authority-unavailable' }
   );
@@ -825,7 +826,7 @@ export function ProductSurfaceAuthorityBridge({
       Object.fromEntries(
         [...new Set(requests.map(({ route }) => route.surfaceId))].map((surfaceId) => [
           surfaceId,
-          surfaceDecision(
+          resolveSurfaceDecision(
             requests
               .filter(({ route }) => route.surfaceId === surfaceId)
               .map(({ route }) => routeDecisions[route.routeContractKey]!),

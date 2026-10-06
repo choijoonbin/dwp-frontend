@@ -9,6 +9,7 @@ import {
   resolveGovernedPageEvaluationRoutes,
   resolveGovernedSurfaceOperationTarget,
   resolveProductSurfaceEvaluationScopeKey,
+  resolveSurfaceDecision,
 } from './product-surface-authority-bridge';
 import {
   GOVERNED_PRODUCT_MANIFESTS,
@@ -34,6 +35,18 @@ const routes = [
 ] as const;
 
 describe('product surface authority bridge routing', () => {
+  it('keeps the active PAGE denial when a sibling authority result is unavailable', () => {
+    const activeDenial = {
+      state: 'route-denied' as const,
+      detail: { correlationId: 'active-page-denial' },
+    };
+    const siblingUnavailable = { state: 'authority-unavailable' as const };
+
+    expect(resolveSurfaceDecision([siblingUnavailable, activeDenial], activeDenial)).toBe(
+      activeDenial
+    );
+  });
+
   it('registers each governed product exactly once against a unique PAGE source', () => {
     const manifestIds = new Set(GOVERNED_SURFACE_PRODUCT_IDS);
     const routeProductIds = new Set(GOVERNED_SURFACE_PAGE_ROUTES.map((route) => route.productId));
