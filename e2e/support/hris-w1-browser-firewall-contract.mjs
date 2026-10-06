@@ -50,6 +50,63 @@ const OFFICIAL_PAGE_KEYS = Object.freeze([
   'routeId',
   'surfaceId',
 ]);
+const HCM_HIGH_OPERATION_BINDINGS = Object.freeze([
+  ['HCM_ORG_PUBLISH', 'hcm.management', 'route.hcm.management.org-publish.action', 'SYS'],
+  [
+    'HCM_EXPORT_CREATE',
+    'hcm.management',
+    'route.hcm.management.controlled-export-create.action',
+    'SYS',
+  ],
+  [
+    'HCM_EXPORT_RETRY',
+    'hcm.management',
+    'route.hcm.management.controlled-export-retry.action',
+    'SYS',
+  ],
+  [
+    'HCM_INTEGRATION_CONFIGURATION_CHECK',
+    'hcm.management',
+    'route.hcm.management.integration-execute.action',
+    'SYS',
+  ],
+  [
+    'HCM_INTEGRATION_EXECUTE',
+    'hcm.management',
+    'route.hcm.management.integration-execute.action',
+    'SYS',
+  ],
+  [
+    'HCM_INTEGRATION_RETRY',
+    'hcm.management',
+    'route.hcm.management.integration-execute.action',
+    'SYS',
+  ],
+  [
+    'HCM_INTEGRATION_RECONCILE',
+    'hcm.management',
+    'route.hcm.management.integration-execute.action',
+    'SYS',
+  ],
+  [
+    'HCM_PERFORMANCE_CYCLE_PUBLISH',
+    'hcm.operations',
+    'route.hcm.operations.performance-cycle-publish.action',
+    'PER',
+  ],
+  [
+    'HCM_PAYROLL_FOUNDATION_PUBLISH',
+    'hcm.operations',
+    'route.hcm.operations.payroll-foundation-publish.action',
+    'PAY',
+  ],
+  [
+    'HCM_PAYROLL_FOUNDATION_REVERSE',
+    'hcm.operations',
+    'route.hcm.operations.payroll-foundation-reverse.action',
+    'PAY',
+  ],
+]);
 
 function fail(message) {
   throw new Error(`HRIS W1 browser firewall contract: ${message}`);
@@ -138,6 +195,39 @@ export function exactHrisW1EvaluationShape(body, subject, contextScopeKey) {
   );
 }
 
+export function resolveHrisW1HighEvaluationContract(route) {
+  const preview = valueRecord(route?.highRiskPreview);
+  const operationBindings = HCM_HIGH_OPERATION_BINDINGS.filter(
+    ([operation]) => operation === preview?.expectedOperation
+  );
+  if (operationBindings.length !== 1) {
+    fail('HIGH expectedOperation must resolve one canonical HCM binding');
+  }
+  const [operation, surfaceKey, routeContractKey, module] = operationBindings[0];
+  const pageSurfaceKey = `hcm.${String(route?.pageRouteContractKey ?? '').split('.')[2]}`;
+  if (
+    preview.expectedRouteContractKey !== routeContractKey ||
+    route?.module !== module ||
+    pageSurfaceKey !== surfaceKey
+  ) {
+    fail('HIGH operation, module, PAGE route, and ACTION route binding is not canonical');
+  }
+  const indistinguishableBindings = HCM_HIGH_OPERATION_BINDINGS.filter(
+    ([, candidateSurfaceKey, candidateRouteContractKey]) =>
+      candidateSurfaceKey === surfaceKey && candidateRouteContractKey === routeContractKey
+  );
+  if (indistinguishableBindings.length !== 1) {
+    fail('HIGH operation cannot be uniquely attested by its live authority wire contract');
+  }
+  if (
+    (preview.expectedProductKey !== undefined && preview.expectedProductKey !== 'hcm') ||
+    (preview.expectedSurfaceKey !== undefined && preview.expectedSurfaceKey !== surfaceKey)
+  ) {
+    fail('HIGH derived product/surface binding does not match the parsed browser contract');
+  }
+  return Object.freeze({ operation, productKey: 'hcm', surfaceKey, routeContractKey });
+}
+
 export function buildHrisW1ActiveEvaluationContracts(routes, enabled = true) {
   if (!enabled) return [];
   return routes.flatMap((route) => {
@@ -154,15 +244,18 @@ export function buildHrisW1ActiveEvaluationContracts(routes, enabled = true) {
             },
           ];
     const high = route.highRiskPreview
-      ? [
-          {
-            kind: 'HIGH',
-            routeContractKey: route.highRiskPreview.expectedRouteContractKey,
-            productKey: route.highRiskPreview.expectedProductKey,
-            surfaceKey: route.highRiskPreview.expectedSurfaceKey,
-            contextScopeKey: route.expectedScopeKey ?? null,
-          },
-        ]
+      ? (() => {
+          const binding = resolveHrisW1HighEvaluationContract(route);
+          return [
+            {
+              kind: 'HIGH',
+              routeContractKey: binding.routeContractKey,
+              productKey: binding.productKey,
+              surfaceKey: binding.surfaceKey,
+              contextScopeKey: route.expectedScopeKey ?? null,
+            },
+          ];
+        })()
       : [];
     return [...page, ...high];
   });

@@ -5,6 +5,7 @@ import path from 'node:path';
 import test from 'node:test';
 
 import { CheckpointHold, sha256Canonical } from './hris-w1-checkpoint-core.mjs';
+import { buildRouteMatrices } from './hris-w1-checkpoint-live.mjs';
 import {
   validateBrowserRuntimeObservation,
   validateHomeLaunchpadIdentityEvidence,
@@ -215,6 +216,57 @@ test('browser v4 runtime evidence accepts exact authority and blocked SHADOW sid
   assert.equal(validated.firewall.evaluationRequests.length, 2);
   assert.equal(validated.firewall.expectedBlockedSideEffects.length, 1);
   assert.equal(validated.homeRuntime.runtimeState, 'SHADOW_COMPARE');
+});
+
+test('postflight accepts an exact HIGH tuple from the raw live route matrix', () => {
+  const definitions = {
+    HRM: ['route.hcm.operations.people.page', 'hcm-scope-active'],
+    PER: ['route.hcm.personal.talent.page', 'scope-per'],
+    PAY: ['route.hcm.personal.pay.page', 'scope-pay'],
+    TIM: ['route.hcm.personal.time.page', 'scope-tim'],
+    SYS: ['route.hcm.personal.home.page', 'scope-sys'],
+  };
+  const evaluations = Object.fromEntries(
+    Object.entries(definitions).map(([module, [routeContractKey, contextScopeKey]]) => [
+      module,
+      { routeContractKey, contextScopeKey },
+    ])
+  );
+  const matrices = buildRouteMatrices(
+    evaluations,
+    { contextScopeKey: 'scope-payroll-owner' },
+    {
+      id: 'tenant-a-team-denied',
+      module: 'SYS',
+      pageRouteContractKey: 'route.hcm.team.home.page',
+      path: '/hr/team',
+      accessState: 'surface-denied',
+    }
+  );
+  const observation = runtimeObservation();
+  const high = structuredClone(observation.firewall.evaluationRequests[0]);
+  Object.assign(high, {
+    routeContractKey: 'route.hcm.operations.payroll-foundation-publish.action',
+    contextScopeKey: 'scope-payroll-owner',
+    subjectSurfaceKey: 'hcm.operations',
+    reason: 'EXACT_HIGH_CONTRACT',
+  });
+  observation.firewall.interceptedHttpRequests += 1;
+  observation.firewall.continuedHttpRequests += 1;
+  observation.firewall.continuedMutations.push({
+    method: 'POST',
+    path: '/api/auth/product-surface-access/evaluate',
+  });
+  observation.firewall.evaluationRequests.push(high);
+
+  const validated = validateBrowserRuntimeObservation(
+    observation,
+    'tenant-a',
+    matrices.tenantA,
+    true
+  );
+
+  assert.equal(validated.firewall.evaluationRequests.at(-1).reason, 'EXACT_HIGH_CONTRACT');
 });
 
 test('browser v4 runtime evidence rejects duplicate receipts, missing responses, and diagnostics', () => {

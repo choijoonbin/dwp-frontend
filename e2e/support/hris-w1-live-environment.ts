@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import { resolveHrisW1HighEvaluationContract } from './hris-w1-browser-firewall-contract.mjs';
+
 export const HRIS_W1_LIVE_ACK = 'LOCAL_SYNTHETIC_ONLY' as const;
 
 const LOCAL_PROTOCOL = 'http:';
@@ -69,66 +71,6 @@ const CANONICAL_MODULE_ROUTES: Readonly<
     apiPath: '/api/people/v1/hr/home',
   },
 };
-
-// Exact HCM projection of PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG. Keep this parser boundary
-// dependency-free so the Playwright config can fail closed before Vite starts.
-const HCM_HIGH_OPERATION_BINDINGS = [
-  ['HCM_ORG_PUBLISH', 'hcm.management', 'route.hcm.management.org-publish.action', 'SYS'],
-  [
-    'HCM_EXPORT_CREATE',
-    'hcm.management',
-    'route.hcm.management.controlled-export-create.action',
-    'SYS',
-  ],
-  [
-    'HCM_EXPORT_RETRY',
-    'hcm.management',
-    'route.hcm.management.controlled-export-retry.action',
-    'SYS',
-  ],
-  [
-    'HCM_INTEGRATION_CONFIGURATION_CHECK',
-    'hcm.management',
-    'route.hcm.management.integration-execute.action',
-    'SYS',
-  ],
-  [
-    'HCM_INTEGRATION_EXECUTE',
-    'hcm.management',
-    'route.hcm.management.integration-execute.action',
-    'SYS',
-  ],
-  [
-    'HCM_INTEGRATION_RETRY',
-    'hcm.management',
-    'route.hcm.management.integration-execute.action',
-    'SYS',
-  ],
-  [
-    'HCM_INTEGRATION_RECONCILE',
-    'hcm.management',
-    'route.hcm.management.integration-execute.action',
-    'SYS',
-  ],
-  [
-    'HCM_PERFORMANCE_CYCLE_PUBLISH',
-    'hcm.operations',
-    'route.hcm.operations.performance-cycle-publish.action',
-    'PER',
-  ],
-  [
-    'HCM_PAYROLL_FOUNDATION_PUBLISH',
-    'hcm.operations',
-    'route.hcm.operations.payroll-foundation-publish.action',
-    'PAY',
-  ],
-  [
-    'HCM_PAYROLL_FOUNDATION_REVERSE',
-    'hcm.operations',
-    'route.hcm.operations.payroll-foundation-reverse.action',
-    'PAY',
-  ],
-] as const;
 
 export type HrisW1ApiExpectation = Readonly<{
   path: string;
@@ -376,33 +318,11 @@ function parseHighRiskPreview(
   if (!/^HCM_[A-Z0-9_]+$/u.test(expectedOperation)) {
     fail(`${location}.expectedOperation must be an exact HCM_* operation`);
   }
-  const operationBindings = HCM_HIGH_OPERATION_BINDINGS.filter(
-    ([operation]) => operation === expectedOperation
-  );
-  if (operationBindings.length !== 1) {
-    fail(`${location}.expectedOperation must resolve one canonical HCM HIGH binding`);
-  }
-  const operationBinding = operationBindings[0]!;
-  if (operationBinding[2] !== expectedRouteContractKey) {
-    fail(
-      `${location}.expectedOperation must map to ${expectedRouteContractKey} in the canonical HIGH catalog`
-    );
-  }
-  if (operationBinding[3] !== module) {
-    fail(`${location}.expectedOperation is not canonical for module ${module}`);
-  }
-  if (`hcm.${pageRouteContractKey.split('.')[2]}` !== operationBinding[1]) {
-    fail(`${location}.expectedOperation must use the same surface as pageRouteContractKey`);
-  }
-  const indistinguishableBindings = HCM_HIGH_OPERATION_BINDINGS.filter(
-    ([, surfaceKey, routeContractKey]) =>
-      surfaceKey === operationBinding[1] && routeContractKey === operationBinding[2]
-  );
-  if (indistinguishableBindings.length !== 1) {
-    fail(
-      `${location}.expectedOperation cannot be uniquely attested by the live authority wire contract`
-    );
-  }
+  const operationBinding = resolveHrisW1HighEvaluationContract({
+    module,
+    pageRouteContractKey,
+    highRiskPreview: { expectedOperation, expectedRouteContractKey },
+  });
   return {
     clickSelectors,
     dialogSelector: nonBlankString(candidate.dialogSelector, `${location}.dialogSelector`),
@@ -410,8 +330,8 @@ function parseHighRiskPreview(
     allowedRequestPaths,
     expectedRouteContractKey,
     expectedOperation,
-    expectedProductKey: 'hcm',
-    expectedSurfaceKey: operationBinding[1],
+    expectedProductKey: operationBinding.productKey,
+    expectedSurfaceKey: operationBinding.surfaceKey,
   };
 }
 
