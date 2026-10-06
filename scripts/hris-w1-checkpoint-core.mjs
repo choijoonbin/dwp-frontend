@@ -415,10 +415,16 @@ function tenantFromEnvironment(env, lane) {
     if (actor === target) hold(`${prefix}_${label} must differ from its target population member.`);
   }
   const targetPopulationRevision = required(env, `${prefix}_TARGET_POPULATION_REVISION`);
+  const populationFieldGroups =
+    lane === 'A'
+      ? 'DIRECTORY, EMPLOYMENT, JOB_GRADE, WORKER_IDENTIFIERS'
+      : 'DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS';
+  const targetPopulationPattern = new RegExp(
+    `^[0-9a-f]{32}:true\\|\\[\\]\\|\\[${populationFieldGroups}\\]\\|READ$`,
+    'u'
+  );
   if (
-    !/^[0-9a-f]{32}:true\|\[\]\|\[DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS\]\|READ$/u.test(
-      targetPopulationRevision
-    )
+    !targetPopulationPattern.test(targetPopulationRevision)
   ) {
     hold(`${prefix}_TARGET_POPULATION_REVISION must be the exact owner policy revision.`);
   }

@@ -597,6 +597,8 @@ test('checkpoint environment parser accepts only the frozen runner contract', ()
   assert.equal(parsed.tenants[0].workerPublicId, uuid('1', 3));
   assert.equal(parsed.tenants[0].targetPopulationCount, 1);
   assert.equal(parsed.tenants[1].actorLegalEmployerPublicId, uuid('2', 5));
+  assert.match(parsed.tenants[0].targetPopulationRevision, /JOB_GRADE/u);
+  assert.doesNotMatch(parsed.tenants[1].targetPopulationRevision, /JOB_GRADE/u);
 });
 
 test('checkpoint environment parser fails closed on unknown variables and ambiguous bindings', () => {
@@ -613,6 +615,11 @@ test('checkpoint environment parser fails closed on unknown variables and ambigu
   actorAsTarget.DWP_W1_TENANT_A_TARGET_PERSON_PUBLIC_ID =
     actorAsTarget.DWP_W1_TENANT_A_PERSON_PUBLIC_ID;
   assert.throws(() => parseCheckpointEnvironment(actorAsTarget), CheckpointHold);
+
+  const tenantBWithTenantARoles = validEnvironment();
+  tenantBWithTenantARoles.DWP_W1_TENANT_B_TARGET_POPULATION_REVISION =
+    `${'b'.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, JOB_GRADE, WORKER_IDENTIFIERS]|READ`;
+  assert.throws(() => parseCheckpointEnvironment(tenantBWithTenantARoles), CheckpointHold);
 });
 
 test('runtime validator closes every backend field and database lineage relation', () => {
@@ -774,7 +781,7 @@ test('scope binding permits route-specific context keys but requires one owner s
 });
 
 test('People policy revision is derived from the exact target population revision', () => {
-  const revision = `${'a'.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS]|READ`;
+  const revision = `${'a'.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, JOB_GRADE, WORKER_IDENTIFIERS]|READ`;
   const expected = createHash('sha256')
     .update(Buffer.concat([Buffer.from('policy'), Buffer.from([0]), Buffer.from(revision)]))
     .digest('hex');

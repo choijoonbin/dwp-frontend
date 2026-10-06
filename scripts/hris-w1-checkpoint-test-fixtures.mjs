@@ -7,6 +7,10 @@ export function uuid(prefix, suffix) {
 }
 
 function tenantEnvironment(lane, prefix, numericOffset) {
+  const populationFieldGroups =
+    lane === 'A'
+      ? 'DIRECTORY, EMPLOYMENT, JOB_GRADE, WORKER_IDENTIFIERS'
+      : 'DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS';
   return {
     [`DWP_W1_TENANT_${lane}_PROVIDER_TENANT_ID`]: uuid(prefix, 1),
     [`DWP_W1_TENANT_${lane}_ID`]: String(1000 + numericOffset),
@@ -18,7 +22,7 @@ function tenantEnvironment(lane, prefix, numericOffset) {
     [`DWP_W1_TENANT_${lane}_TARGET_PERSON_PUBLIC_ID`]: uuid(prefix, 6),
     [`DWP_W1_TENANT_${lane}_TARGET_WORKER_PUBLIC_ID`]: uuid(prefix, 7),
     [`DWP_W1_TENANT_${lane}_TARGET_ASSIGNMENT_PUBLIC_ID`]: uuid(prefix, 8),
-    [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_REVISION`]: `${prefix.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, WORKER_IDENTIFIERS]|READ`,
+    [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_REVISION`]: `${prefix.repeat(32)}:true|[]|[${populationFieldGroups}]|READ`,
     [`DWP_W1_TENANT_${lane}_TARGET_POPULATION_COUNT`]: '1',
     [`DWP_W1_TENANT_${lane}_KEY`]: `synthetic-${lane.toLowerCase()}`,
     [`DWP_W1_TENANT_${lane}_EMAIL`]: `admin-${lane.toLowerCase()}@dwp.test`,
