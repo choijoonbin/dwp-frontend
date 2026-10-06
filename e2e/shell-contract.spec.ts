@@ -98,10 +98,10 @@ test('tenant shells keep one application-context and global-utility contract', a
 
   await page.goto('/hr/directory');
   const hcmHeader = page.getByTestId('hcm-header');
-  await expectHeaderContract(hcmHeader, 'HR', 'tenant', mobile, 'hcm', false);
+  await expectHeaderContract(hcmHeader, 'HRIS', 'tenant', mobile, 'hcm', false);
   await expect(hcmHeader.getByText('Tenant Admin', { exact: true })).toBeHidden();
   if (mobile) {
-    await page.getByRole('button', { name: 'Open HR navigation' }).click();
+    await page.getByRole('button', { name: 'Open HRIS navigation' }).click();
     await expect(
       page.getByTestId('hcm-mobile-sidebar').getByText('Digital Workplace', { exact: true })
     ).toBeVisible();

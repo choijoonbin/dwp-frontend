@@ -538,7 +538,7 @@
         "apps": {
           "approvals": "Approvals",
           "communications": "News",
-          "hcm": "HR",
+          "hcm": "HRIS",
           "messaging": "Messages",
           "space": "Space",
           "mail": "Mail",
@@ -563,7 +563,7 @@
       "APP.CALENDAR": "Calendar",
       "APP.ACTIVITY": "Activity",
       "APP.APPROVALS": "Approvals",
-      "APP.HCM": "HR",
+      "APP.HCM": "HRIS",
       "APP.EMPLOYEE_SERVICES": "Services",
       "APP.WORKPLACE": "Workplace",
       "APP.NOTIFICATIONS": "Notifications"
@@ -576,7 +576,7 @@
       "communications": "Newsroom",
       "recommendations": "Recommendations",
       "approvals": "Approvals",
-      "people": "People",
+      "people": "HRIS",
       "erp": "ERP",
       "connectedService": "Connected work service"
     },
@@ -620,7 +620,7 @@
         "activity": "Activity",
         "communications": "News",
         "approvals": "Approvals",
-        "people": "People",
+        "people": "HRIS",
         "services": "Service requests",
         "workplace": "Workplace bookings",
         "notifications": "Notifications"
@@ -1033,9 +1033,9 @@
         "description": "IT, people, workplace, finance, and procurement requests"
       },
       "ref-app-people": {
-        "name": "HR",
-        "shortName": "HR",
-        "description": "Personal HR, people, organization, and workforce operations in DWP HCM"
+        "name": "HRIS",
+        "shortName": "HRIS",
+        "description": "Personal HR, people, organization, and workforce operations in DWP HRIS"
       },
       "ref-app-knowledge": {
         "name": "Knowledge",

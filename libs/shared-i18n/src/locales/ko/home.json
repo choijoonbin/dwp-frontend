@@ -538,7 +538,7 @@
         "apps": {
           "approvals": "전자결재",
           "communications": "소식",
-          "hcm": "인사",
+          "hcm": "HRIS",
           "messaging": "메시지",
           "space": "Space",
           "mail": "메일",
@@ -563,7 +563,7 @@
       "APP.CALENDAR": "캘린더",
       "APP.ACTIVITY": "활동",
       "APP.APPROVALS": "전자결재",
-      "APP.HCM": "인사",
+      "APP.HCM": "HRIS",
       "APP.EMPLOYEE_SERVICES": "서비스",
       "APP.WORKPLACE": "근무 공간",
       "APP.NOTIFICATIONS": "알림"
@@ -576,7 +576,7 @@
       "communications": "소식",
       "recommendations": "추천",
       "approvals": "전자결재",
-      "people": "인사",
+      "people": "HRIS",
       "erp": "ERP",
       "connectedService": "연결된 업무 서비스"
     },
@@ -620,7 +620,7 @@
         "activity": "활동",
         "communications": "소식",
         "approvals": "결재",
-        "people": "인사",
+        "people": "HRIS",
         "services": "서비스 요청",
         "workplace": "공간 예약",
         "notifications": "알림"
@@ -1026,9 +1026,9 @@
         "description": "IT, 구성원, 업무 환경, 재무 및 구매 요청"
       },
       "ref-app-people": {
-        "name": "인사",
-        "shortName": "인사",
-        "description": "DWP HCM에서 나의 인사, 구성원, 조직 및 권한별 인력 운영을 연결합니다"
+        "name": "HRIS",
+        "shortName": "HRIS",
+        "description": "DWP HRIS에서 나의 인사, 구성원, 조직 및 권한별 인력 운영을 연결합니다"
       },
       "ref-app-knowledge": {
         "name": "지식",

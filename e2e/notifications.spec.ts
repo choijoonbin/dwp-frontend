@@ -170,7 +170,7 @@ test('알림 홈은 실제 집계와 우선 업무를 반응형 실행 허브로
   const updateNotification = {
     ...notification,
     notificationId: 'notification-home-update-1',
-    source: { appKey: 'hcm', appName: 'HR', accent: '#7A4EAB' },
+    source: { appKey: 'hcm', appName: 'HRIS', accent: '#7A4EAB' },
     typeKey: 'HCM.LEAVE_APPROVED',
     title: '휴가 신청이 승인되었습니다',
     preview: '일정과 팀 공유 상태를 확인해 주세요.',

@@ -18,7 +18,7 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 async function openMobileHcmNavigation(page: Page) {
   if ((page.viewportSize()?.width ?? 1280) >= 900) return;
-  const openButton = page.getByRole('button', { name: 'Open HR navigation' });
+  const openButton = page.getByRole('button', { name: 'Open HRIS navigation' });
   await expect(openButton).toBeVisible();
   await openButton.click();
 }
@@ -122,7 +122,7 @@ test('employees can compose and persist their personal HR home', async ({ page }
   });
 
   await page.goto('/hr/home');
-  await page.getByRole('button', { name: 'Customize HR home' }).click();
+  await page.getByRole('button', { name: 'Customize HRIS home' }).click();
 
   const profileWidget = page.locator('[data-workspace-widget="profile"]');
   await expect(profileWidget).toBeVisible();
@@ -130,13 +130,13 @@ test('employees can compose and persist their personal HR home', async ({ page }
   await page.getByRole('button', { name: 'Expressive' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 
-  await expect(page.getByRole('button', { name: 'Customize HR home' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Customize HRIS home' })).toBeVisible();
   await expect(profileWidget).toHaveCount(0);
   await page.reload();
   await expect(page.locator('[data-workspace-presentation="expressive"]')).toBeVisible();
   await expect(page.locator('[data-workspace-widget="profile"]')).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Customize HR home' }).click();
+  await page.getByRole('button', { name: 'Customize HRIS home' }).click();
   await page.getByRole('button', { name: 'Add widget' }).click();
   await expect(page.getByRole('dialog', { name: 'Add widgets' })).toBeVisible();
   await page.getByRole('button', { name: 'Add', exact: true }).click();

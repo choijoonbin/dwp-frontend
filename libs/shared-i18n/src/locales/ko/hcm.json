@@ -5,12 +5,12 @@
   },
   "shell": {
     "tenantFallback": "회사",
-    "openNavigation": "인사 메뉴 열기",
+    "openNavigation": "HRIS 메뉴 열기",
     "backToHome": "개인 홈으로 돌아가기",
     "hcm": {
-      "name": "인사",
-      "context": "DWP HCM",
-      "navigationLabel": "인사 메뉴"
+      "name": "HRIS",
+      "context": "DWP HRIS",
+      "navigationLabel": "HRIS 메뉴"
     }
   },
   "navigation": {
@@ -27,7 +27,7 @@
     },
     "items": {
       "hcm": {
-        "home": { "label": "HR 홈" },
+        "home": { "label": "HRIS 홈" },
         "me": { "label": "나의 인사정보" },
         "time": { "label": "나의 근태" },
         "absence": { "label": "휴가" },
@@ -62,122 +62,122 @@
     },
     "hcm": {
       "me": {
-        "eyebrow": "인사 / 나의 인사",
+        "eyebrow": "HRIS / 나의 인사",
         "title": "나의 인사정보",
         "description": "현재 근로관계, 발령 및 조직 정보를 확인합니다."
       },
       "time": {
-        "eyebrow": "인사 / 나의 인사",
+        "eyebrow": "HRIS / 나의 인사",
         "title": "나의 근태",
         "description": "이번 주 근무 기록과 예외를 확인하고 제출합니다."
       },
       "absence": {
-        "eyebrow": "인사 / 나의 인사",
+        "eyebrow": "HRIS / 나의 인사",
         "title": "휴가",
         "description": "사용 가능 휴가를 확인하고 새로운 휴가를 신청합니다."
       },
       "benefits": {
-        "eyebrow": "인사 / 나의 인사",
+        "eyebrow": "HRIS / 나의 인사",
         "title": "복리후생",
         "description": "현재 가입 혜택과 등록 가능 기간을 한곳에서 확인합니다."
       },
       "pay": {
-        "eyebrow": "인사 / 나의 인사",
+        "eyebrow": "HRIS / 나의 인사",
         "title": "급여 명세",
         "description": "급여일과 보안이 적용된 급여 명세 제공 상태를 확인합니다."
       },
       "talent": {
-        "eyebrow": "인사 / 나의 인사",
+        "eyebrow": "HRIS / 나의 인사",
         "title": "성장과 커리어",
         "description": "성장 여정, 목표와 필수 학습을 이어서 관리합니다."
       },
       "services": {
-        "eyebrow": "인사 / 나의 인사",
+        "eyebrow": "HRIS / 나의 인사",
         "title": "HR 도움 및 요청",
         "description": "인사정보, 급여, 복리후생과 증명서 요청을 보안이 적용된 하나의 창구에서 관리합니다."
       },
       "directory": {
-        "eyebrow": "인사 / 조직",
+        "eyebrow": "HRIS / 조직",
         "title": "구성원 찾기",
         "description": "동료가 조직 내에 공유한 현재 업무 정보를 찾습니다."
       },
       "organization": {
-        "eyebrow": "인사 / 조직",
+        "eyebrow": "HRIS / 조직",
         "title": "조직 탐색",
         "description": "업무에 필요한 팀과 보고 관계를 공개 범위 안에서 탐색합니다."
       },
       "team": {
-        "eyebrow": "인사 / 팀 관리",
+        "eyebrow": "HRIS / 팀 관리",
         "title": "내 팀",
         "description": "현재 보고 관계를 기준으로 팀 구성과 업무 위치를 확인합니다."
       },
       "team-time": {
-        "eyebrow": "인사 / 팀 관리",
+        "eyebrow": "HRIS / 팀 관리",
         "title": "팀 근태 승인",
         "description": "현재 보고 관계에 속한 팀원의 제출 근태를 검토합니다."
       },
       "team-absence": {
-        "eyebrow": "인사 / 팀 관리",
+        "eyebrow": "HRIS / 팀 관리",
         "title": "팀 휴가 승인",
         "description": "현재 보고 관계에 속한 팀원의 휴가 신청을 검토합니다."
       },
       "operations": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "인력 운영 현황",
         "description": "인력 데이터 무결성, 조직 신호 및 원천 데이터 최신성을 점검합니다."
       },
       "people": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "인력 정보",
         "description": "유효일 기준 구성원, 발령, 조직 및 접근 권한 맥락을 검토합니다."
       },
       "assignments": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "발령 현황",
         "description": "선택한 유효일의 현재 발령 투영 정보를 점검합니다."
       },
       "time-operations": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "근태 운영",
         "description": "근태 예외, 제출 대기와 마감 준비도를 관리합니다."
       },
       "absence-operations": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "휴가 운영",
         "description": "휴가 정책, 잔여일과 승인 대기 상태를 통제합니다."
       },
       "benefits-operations": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "복리후생 운영",
         "description": "혜택 프로그램, 등록 기간과 가입 준비도를 관리합니다."
       },
       "pay-operations": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "급여 운영",
         "description": "급여 주기 준비도와 명세 발행 상태를 통제합니다."
       },
       "talent-operations": {
-        "eyebrow": "인사 / HR 운영",
+        "eyebrow": "HRIS / HR 운영",
         "title": "인재 운영",
         "description": "성장 여정, 목표 위험과 필수 학습 상태를 관리합니다."
       },
       "organization-design": {
-        "eyebrow": "인사 / 조직 설계",
+        "eyebrow": "HRIS / 조직 설계",
         "title": "조직 설계",
         "description": "검토와 승인이 가능한 시나리오로 조직과 포지션을 설계합니다."
       },
       "reference-data": {
-        "eyebrow": "인사 / 데이터 거버넌스",
+        "eyebrow": "HRIS / 데이터 거버넌스",
         "title": "인력 기준정보",
         "description": "제품 소유 계약을 보존하면서 회사별 HR 코드값을 관리합니다."
       },
       "data-operations": {
-        "eyebrow": "인사 / HRIS 연계",
+        "eyebrow": "HRIS / 연계",
         "title": "연계 및 정합성",
         "description": "원천 커넥터, 매핑, 동기화와 정합성 처리 근거를 통제합니다."
       },
       "exports": {
-        "eyebrow": "인사 / 데이터 거버넌스",
+        "eyebrow": "HRIS / 데이터 거버넌스",
         "title": "통제형 데이터 반출",
         "description": "데이터 경계를 검토하고 승인 가능한 반출 수명주기 근거를 보존합니다."
       }
@@ -186,10 +186,10 @@
   "home": {
     "personFallback": "구성원",
     "customize": "홈 구성",
-    "customizeLabel": "HR 홈 위젯 구성",
-    "saved": "HR 홈 구성을 저장했습니다.",
-    "saveConflict": "다른 세션에서 HR 홈이 변경되었습니다. 최신 구성을 불러왔으니 다시 확인한 후 편집해 주세요.",
-    "saveError": "HR 홈 구성을 저장하지 못했습니다. 최신 구성을 다시 확인해 주세요.",
+    "customizeLabel": "HRIS 홈 위젯 구성",
+    "saved": "HRIS 홈 구성을 저장했습니다.",
+    "saveConflict": "다른 세션에서 HRIS 홈이 변경되었습니다. 최신 구성을 불러왔으니 다시 확인한 후 편집해 주세요.",
+    "saveError": "HRIS 홈 구성을 저장하지 못했습니다. 최신 구성을 다시 확인해 주세요.",
     "error": {
       "description": "홈 집계를 불러오지 못했습니다. 다시 시도해도 계속되면 인사 서비스 연결 상태를 확인해 주세요."
     },
@@ -239,7 +239,7 @@
       "operationsSummary": "현재 인력 데이터 품질은 {{quality}}이며 원천 연계와 운영 예외를 함께 점검합니다."
     },
     "mode": {
-      "label": "HR 홈 범위",
+      "label": "HRIS 홈 범위",
       "personal": "나",
       "team": "내 팀",
       "operations": "HR 운영"

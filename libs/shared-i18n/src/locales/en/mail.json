@@ -892,7 +892,7 @@
       },
       "leaveRequest": {
         "label": "Leave request",
-        "confirm": "Approve and open HR"
+        "confirm": "Approve and open HRIS"
       },
       "task": {
         "label": "Work item",
@@ -905,7 +905,7 @@
     },
     "targets": {
       "calendar": "Calendar",
-      "hr": "HR",
+      "hr": "HRIS",
       "mail": "Mail drafts",
       "notifications": "Notifications",
       "work": "Work"

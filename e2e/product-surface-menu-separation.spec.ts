@@ -686,7 +686,7 @@ test('HCM 다중 Surface 전환은 320px·200% text에서도 한 줄과 키보�
     const managementEntry = switcher.getByTestId('product-surface-management-entry');
     await expect(areaTrigger).toBeVisible();
     await expect(managementEntry).toBeVisible();
-    await expect(managementEntry).toHaveAccessibleName('앱 관리: 인사');
+    await expect(managementEntry).toHaveAccessibleName('앱 관리: HRIS');
     await managementEntry.focus();
     await expect(managementEntry).toBeFocused();
 
@@ -709,7 +709,7 @@ test('HCM 다중 Surface 전환은 320px·200% text에서도 한 줄과 키보�
     const workReturn = switcher.getByTestId('product-surface-work-return');
     await expect(areaTrigger).toBeVisible();
     await expect(workReturn).toBeVisible();
-    await expect(workReturn).toHaveAccessibleName('업무로 돌아가기: 인사');
+    await expect(workReturn).toHaveAccessibleName('업무로 돌아가기: HRIS');
     await workReturn.focus();
     await expect(workReturn).toBeFocused();
 
@@ -753,7 +753,7 @@ test('HCM 관리 헤더는 1280·1440·200% text에서 현재 영역과 복귀 �
     await expect(managementMode).toBeVisible();
     await expect(areaTrigger).toBeVisible();
     await expect(workReturn).toBeVisible();
-    await expect(workReturn).toHaveAccessibleName('업무로 돌아가기: 인사');
+    await expect(workReturn).toHaveAccessibleName('업무로 돌아가기: HRIS');
 
     if (!scenario.zoomed) {
       const visibleAreaLabel = areaTrigger.getByText('데이터 및 연계', { exact: true });

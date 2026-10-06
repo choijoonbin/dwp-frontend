@@ -638,7 +638,7 @@ export type HrContributionData = Readonly<{
 
 export const hrContributionProvider = createHomeContributionProvider<HrContributionData>({
   key: 'hr-home',
-  owner: { source: 'DWP_HCM', appKey: 'APP.HCM', appLabel: 'HR' },
+  owner: { source: 'DWP_HCM', appKey: 'APP.HCM', appLabel: 'HRIS' },
   supportedKinds: ['ACTION', 'PULSE'],
   authority: homeHcmReadAuthority,
   freshnessMs: HOME_SOURCE_FRESHNESS_MS,

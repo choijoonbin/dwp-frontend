@@ -23,6 +23,16 @@ import {
 } from './app-launchpad-model';
 
 describe('personal home app entitlements', () => {
+  it('presents the canonical HCM resource as the HRIS app', () => {
+    expect(HOME_APPS.find((app) => app.id === 'ref-app-people')).toMatchObject({
+      name: 'HRIS',
+      shortName: 'HRIS',
+      route: '/hr',
+      resourceKey: 'APP.HCM',
+      notificationSourceKey: 'hcm',
+    });
+  });
+
   it('launches Workplace at its home instead of the space discovery screen', () => {
     expect(HOME_APPS.find((app) => app.id === 'dwp-rooms')).toMatchObject({
       route: '/workplace/home',

@@ -5,12 +5,12 @@
   },
   "shell": {
     "tenantFallback": "Company",
-    "openNavigation": "Open HR navigation",
+    "openNavigation": "Open HRIS navigation",
     "backToHome": "Back to personal home",
     "hcm": {
-      "name": "HR",
-      "context": "DWP HCM",
-      "navigationLabel": "HR navigation"
+      "name": "HRIS",
+      "context": "DWP HRIS",
+      "navigationLabel": "HRIS navigation"
     }
   },
   "navigation": {
@@ -27,7 +27,7 @@
     },
     "items": {
       "hcm": {
-        "home": { "label": "HR home" },
+        "home": { "label": "HRIS home" },
         "me": { "label": "My HR profile" },
         "time": { "label": "My time" },
         "absence": { "label": "Time off" },
@@ -62,122 +62,122 @@
     },
     "hcm": {
       "me": {
-        "eyebrow": "HR / My HR",
+        "eyebrow": "HRIS / My HR",
         "title": "My HR profile",
         "description": "Review your current work relationships, assignments, and organization details."
       },
       "time": {
-        "eyebrow": "HR / My HR",
+        "eyebrow": "HRIS / My HR",
         "title": "My time",
         "description": "Review this week's work record and exceptions before submitting."
       },
       "absence": {
-        "eyebrow": "HR / My HR",
+        "eyebrow": "HRIS / My HR",
         "title": "Time off",
         "description": "Review available leave and submit a new time-off request."
       },
       "benefits": {
-        "eyebrow": "HR / My HR",
+        "eyebrow": "HRIS / My HR",
         "title": "Benefits",
         "description": "Review current coverage and open enrollment windows in one place."
       },
       "pay": {
-        "eyebrow": "HR / My HR",
+        "eyebrow": "HRIS / My HR",
         "title": "Pay statements",
         "description": "Review the next pay date and secure statement availability."
       },
       "talent": {
-        "eyebrow": "HR / My HR",
+        "eyebrow": "HRIS / My HR",
         "title": "Growth and career",
         "description": "Continue growth journeys, goals, and required learning."
       },
       "services": {
-        "eyebrow": "HR / My HR",
+        "eyebrow": "HRIS / My HR",
         "title": "HR help and requests",
         "description": "Manage HR data, pay, benefits, and document requests through one secure channel."
       },
       "directory": {
-        "eyebrow": "HR / Organization",
+        "eyebrow": "HRIS / Organization",
         "title": "Find people",
         "description": "Find the current work details colleagues share inside the organization."
       },
       "organization": {
-        "eyebrow": "HR / Organization",
+        "eyebrow": "HRIS / Organization",
         "title": "Explore the organization",
         "description": "Navigate teams and reporting relationships within the directory-safe boundary."
       },
       "team": {
-        "eyebrow": "HR / Team management",
+        "eyebrow": "HRIS / Team management",
         "title": "My team",
         "description": "Review team composition and work locations from current reporting relationships."
       },
       "team-time": {
-        "eyebrow": "HR / Team management",
+        "eyebrow": "HRIS / Team management",
         "title": "Team time approvals",
         "description": "Review submitted time cards inside your current reporting population."
       },
       "team-absence": {
-        "eyebrow": "HR / Team management",
+        "eyebrow": "HRIS / Team management",
         "title": "Team leave approvals",
         "description": "Review time-off requests inside your current reporting population."
       },
       "operations": {
-        "eyebrow": "HR / Operations",
+        "eyebrow": "HRIS / Operations",
         "title": "Workforce operations",
         "description": "Review workforce integrity, structure signals, and source freshness."
       },
       "people": {
-        "eyebrow": "HR / Operations",
+        "eyebrow": "HRIS / Operations",
         "title": "Workforce people",
         "description": "Review effective-dated worker, assignment, organization, and access context."
       },
       "assignments": {
-        "eyebrow": "HR / Operations",
+        "eyebrow": "HRIS / Operations",
         "title": "Assignment register",
         "description": "Inspect the current assignment projection for a selected effective date."
       },
       "time-operations": {
-        "eyebrow": "HR / HR operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Time operations",
         "description": "Manage time exceptions, submitted cards, and close readiness."
       },
       "absence-operations": {
-        "eyebrow": "HR / HR operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Absence operations",
         "description": "Control leave plans, balances, and pending requests."
       },
       "benefits-operations": {
-        "eyebrow": "HR / HR operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Benefits operations",
         "description": "Manage benefit programs, enrollment windows, and readiness."
       },
       "pay-operations": {
-        "eyebrow": "HR / HR operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Pay operations",
         "description": "Control payroll-cycle readiness and statement publication."
       },
       "talent-operations": {
-        "eyebrow": "HR / HR operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Talent operations",
         "description": "Manage journeys, goal risk, and required learning."
       },
       "organization-design": {
-        "eyebrow": "HR / Organization design",
+        "eyebrow": "HRIS / Organization design",
         "title": "Organization design",
         "description": "Model organizations and positions through governed, reviewable scenarios."
       },
       "reference-data": {
-        "eyebrow": "HR / Data governance",
+        "eyebrow": "HRIS / Data governance",
         "title": "Workforce reference data",
         "description": "Govern company-owned HR codes while preserving product-owned contracts."
       },
       "data-operations": {
-        "eyebrow": "HR / HRIS integrations",
+        "eyebrow": "HRIS / Integrations",
         "title": "Integrations and reconciliation",
         "description": "Control source connectors, mappings, synchronization, and reconciliation evidence."
       },
       "exports": {
-        "eyebrow": "HR / Data governance",
+        "eyebrow": "HRIS / Data governance",
         "title": "Governed data exports",
         "description": "Review data boundaries and retain evidence across an approvable export lifecycle."
       }
@@ -186,10 +186,10 @@
   "home": {
     "personFallback": "colleague",
     "customize": "Customize home",
-    "customizeLabel": "Customize HR home widgets",
-    "saved": "Your HR home was saved.",
-    "saveConflict": "Your HR home changed in another session. The latest version is now shown; review it before editing again.",
-    "saveError": "Your HR home could not be saved. Review the latest composition and try again.",
+    "customizeLabel": "Customize HRIS home widgets",
+    "saved": "Your HRIS home was saved.",
+    "saveConflict": "Your HRIS home changed in another session. The latest version is now shown; review it before editing again.",
+    "saveError": "Your HRIS home could not be saved. Review the latest composition and try again.",
     "error": {
       "description": "The home aggregate could not be loaded. If retrying does not help, check the People service connection."
     },
@@ -239,7 +239,7 @@
       "operationsSummary": "Workforce data quality is {{quality}}; review source freshness and operating exceptions together."
     },
     "mode": {
-      "label": "HR home scope",
+      "label": "HRIS home scope",
       "personal": "Me",
       "team": "My team",
       "operations": "HR operations"
