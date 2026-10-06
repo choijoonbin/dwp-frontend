@@ -728,6 +728,7 @@ test('route matrices carry live page scopes and one registered live denial', () 
   );
 
   assert.equal(matrices.tenantA[0].path, '/hr/operations/people?scope=scope-hrm');
+  assert.equal(matrices.tenantA[0].marker, 'input[data-testid="hris-people360-search"]');
   assert.equal(matrices.tenantA.at(-1).path, '/hr/team');
   assert.deepEqual(matrices.tenantA.at(-1).accessStates, ['surface-denied']);
   assert.equal(matrices.tenantB.length, 5);
@@ -832,19 +833,19 @@ test('browser PAY selector requires one digest-bound exact configuration respons
   );
 });
 
-test('browser v3 manifest validation rejects schema expansion before trusting evidence', () => {
+test('browser v4 manifest validation rejects schema expansion before trusting evidence', () => {
   assert.throws(
     () => validateBrowserManifest({ schemaVersion: BROWSER_SCHEMA, extra: true }, {}),
     /unexpected field set/u
   );
 });
 
-test('browser v3 manifest validation rejects the prior schema version', () => {
+test('browser v4 manifest validation rejects the prior schema version', () => {
   assert.throws(
     () =>
       validateBrowserManifest(
         {
-          schemaVersion: 'hris-w1-live-browser/v2',
+          schemaVersion: 'hris-w1-live-browser/v3',
           runId: RUN_ID,
           generatedAt: '2026-10-02T00:00:00.000Z',
           status: 'PASS',

@@ -150,6 +150,11 @@ describe('People 360 governed runtime', () => {
     await renderRuntime({ source });
     await shown('Synthetic Worker Alpha');
 
+    const search = document.querySelector<HTMLInputElement>(
+      'input[data-testid="hris-people360-search"]'
+    );
+    expect(search).not.toBeNull();
+    expect(search?.getAttribute('aria-label')).toBe('Search authorized people');
     expect(source.list).toHaveBeenCalledWith(
       expect.objectContaining({
         projection: 'people360',

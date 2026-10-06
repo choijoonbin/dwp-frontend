@@ -6,6 +6,7 @@ import {
   PAYROLL_ROUTES,
   SHA256,
   UUID,
+  canonicalJson,
   exactKeys,
   hold,
   instant,
@@ -14,6 +15,13 @@ import {
   safeApiPath,
   textValue,
 } from './hris-w1-checkpoint-core.mjs';
+import {
+  HRIS_W1_AUTHORITY_EVALUATION_PATH,
+  buildHrisW1ActiveEvaluationContracts,
+  isExactHrisW1AuthorityResponseEvidence,
+  isExactHrisW1ExpectedBlockedSideEffect,
+  isHrisW1BackgroundPageEvaluationTuple,
+} from '../e2e/support/hris-w1-browser-firewall-contract.mjs';
 
 function relativeInside(root, candidate, location) {
   const absolute = path.resolve(candidate);
@@ -264,7 +272,7 @@ export function validateHomeLaunchpadIdentityEvidence(
   });
 }
 
-function validateFirewall(value, label) {
+function validateFirewall(value, label, routeMatrix) {
   const firewall = record(value, `${label}.firewall`);
   exactKeys(
     firewall,
@@ -273,6 +281,7 @@ function validateFirewall(value, label) {
       'continuedHttpRequests',
       'continuedMutations',
       'evaluationRequests',
+      'expectedBlockedSideEffects',
       'blockedMutations',
       'blockedExternalHttp',
       'blockedExternalWebSockets',
@@ -284,18 +293,28 @@ function validateFirewall(value, label) {
     firewall.interceptedHttpRequests <= 0 ||
     !Number.isSafeInteger(firewall.continuedHttpRequests) ||
     firewall.continuedHttpRequests <= 0 ||
-    !Array.isArray(firewall.continuedMutations)
+    firewall.continuedHttpRequests > firewall.interceptedHttpRequests ||
+    !Array.isArray(firewall.continuedMutations) ||
+    !Array.isArray(firewall.expectedBlockedSideEffects)
   ) {
     hold(`${label}.firewall counters/mutations are invalid.`);
+  }
+  if (
+    firewall.interceptedHttpRequests !==
+    firewall.continuedHttpRequests + firewall.expectedBlockedSideEffects.length
+  ) {
+    hold(`${label}.firewall HTTP requests do not have exactly one terminal action.`);
   }
   for (const item of firewall.continuedMutations) {
     const mutation = record(item, `${label}.firewall.continuedMutations[]`);
     exactKeys(mutation, ['method', 'path'], `${label}.firewall.continuedMutations[]`);
-    if (
-      mutation.method !== 'POST' ||
-      mutation.path !== '/api/auth/product-surface-access/evaluate'
-    ) {
+    if (mutation.method !== 'POST' || mutation.path !== HRIS_W1_AUTHORITY_EVALUATION_PATH) {
       hold(`${label}.firewall forwarded a non-authority mutation.`);
+    }
+  }
+  for (const item of firewall.expectedBlockedSideEffects) {
+    if (!isExactHrisW1ExpectedBlockedSideEffect(item)) {
+      hold(`${label}.firewall contains a malformed expected blocked side effect.`);
     }
   }
   for (const key of ['blockedMutations', 'blockedExternalHttp', 'blockedExternalWebSockets']) {
@@ -306,6 +325,8 @@ function validateFirewall(value, label) {
   if (!Array.isArray(firewall.evaluationRequests)) {
     hold(`${label}.firewall.evaluationRequests must be an array.`);
   }
+  const activeContracts = buildHrisW1ActiveEvaluationContracts(routeMatrix, label === 'tenant-a');
+  let backgroundCount = 0;
   for (const item of firewall.evaluationRequests) {
     const evaluation = record(item, `${label}.firewall.evaluationRequests[]`);
     exactKeys(
@@ -318,21 +339,122 @@ function validateFirewall(value, label) {
         'subjectSurfaceKey',
         'action',
         'reason',
+        'response',
       ],
       `${label}.firewall.evaluationRequests[]`
     );
     if (
       evaluation.action !== 'CONTINUED' ||
-      !['EXACT_PAGE_CONTRACT', 'EXACT_HIGH_CONTRACT'].includes(evaluation.reason) ||
+      !['EXACT_PAGE_CONTRACT', 'EXACT_HIGH_CONTRACT', 'EXACT_BACKGROUND_PAGE_CONTRACT'].includes(
+        evaluation.reason
+      ) ||
       evaluation.subjectType !== 'PRODUCT' ||
       evaluation.subjectProductKey !== 'hcm' ||
       typeof evaluation.subjectSurfaceKey !== 'string' ||
-      typeof evaluation.routeContractKey !== 'string'
+      typeof evaluation.routeContractKey !== 'string' ||
+      !isExactHrisW1AuthorityResponseEvidence(evaluation.response)
     ) {
       hold(`${label}.firewall contains an unexpected authority evaluation.`);
     }
+    if (evaluation.reason === 'EXACT_BACKGROUND_PAGE_CONTRACT') {
+      backgroundCount += 1;
+      if (
+        evaluation.contextScopeKey !== null ||
+        !isHrisW1BackgroundPageEvaluationTuple(
+          evaluation.routeContractKey,
+          evaluation.subjectSurfaceKey
+        )
+      ) {
+        hold(`${label}.firewall contains a non-official background PAGE evaluation.`);
+      }
+      continue;
+    }
+    const kind = evaluation.reason === 'EXACT_PAGE_CONTRACT' ? 'PAGE' : 'HIGH';
+    if (
+      !activeContracts.some(
+        (candidate) =>
+          candidate.kind === kind &&
+          candidate.routeContractKey === evaluation.routeContractKey &&
+          candidate.contextScopeKey === evaluation.contextScopeKey &&
+          candidate.productKey === evaluation.subjectProductKey &&
+          candidate.surfaceKey === evaluation.subjectSurfaceKey
+      )
+    ) {
+      hold(`${label}.firewall authority evaluation is outside the live route matrix.`);
+    }
+  }
+  if (
+    firewall.continuedMutations.length !== firewall.evaluationRequests.length ||
+    (label === 'tenant-a' && backgroundCount < 1) ||
+    (label === 'tenant-b' && firewall.evaluationRequests.length !== 0)
+  ) {
+    hold(`${label}.firewall authority evaluation lifecycle is incomplete.`);
   }
   return firewall;
+}
+
+function validateRuntimeDiagnostics(value, label) {
+  const diagnostics = record(value, `${label}.diagnostics`);
+  exactKeys(
+    diagnostics,
+    ['consoleErrorCount', 'consoleErrorSha256', 'pageErrorCount', 'pageErrorSha256'],
+    `${label}.diagnostics`
+  );
+  if (
+    !Number.isSafeInteger(diagnostics.consoleErrorCount) ||
+    !Number.isSafeInteger(diagnostics.pageErrorCount) ||
+    !Array.isArray(diagnostics.consoleErrorSha256) ||
+    !Array.isArray(diagnostics.pageErrorSha256) ||
+    diagnostics.consoleErrorCount !== diagnostics.consoleErrorSha256.length ||
+    diagnostics.pageErrorCount !== diagnostics.pageErrorSha256.length ||
+    !diagnostics.consoleErrorSha256.every((digest) => SHA256.test(String(digest))) ||
+    !diagnostics.pageErrorSha256.every((digest) => SHA256.test(String(digest))) ||
+    diagnostics.consoleErrorCount !== 0 ||
+    diagnostics.pageErrorCount !== 0
+  ) {
+    hold(`${label}.diagnostics must prove a zero-error browser runtime.`);
+  }
+  return diagnostics;
+}
+
+function validateHomeRuntime(value, label, enabled) {
+  if (!enabled) {
+    if (value !== null) hold(`${label}.homeRuntime must be null while Home is not exercised.`);
+    return null;
+  }
+  const runtime = record(value, `${label}.homeRuntime`);
+  exactKeys(
+    runtime,
+    ['runtimeState', 'renderAuthority', 'actionAuthority'],
+    `${label}.homeRuntime`
+  );
+  if (
+    runtime.runtimeState !== 'SHADOW_COMPARE' ||
+    runtime.renderAuthority !== 'LEGACY' ||
+    runtime.actionAuthority !== 'DISABLED'
+  ) {
+    hold(`${label}.homeRuntime is not the exact safe SHADOW_COMPARE boundary.`);
+  }
+  return runtime;
+}
+
+export function validateBrowserRuntimeObservation(value, expectedLabel, routeMatrix, homeEnabled) {
+  const observation = record(value, `${expectedLabel}.runtimeObservation`);
+  exactKeys(
+    observation,
+    ['label', 'firewall', 'homeRuntime', 'diagnostics'],
+    `${expectedLabel}.runtimeObservation`
+  );
+  if (observation.label !== expectedLabel) {
+    hold(`${expectedLabel}.runtimeObservation label is invalid.`);
+  }
+  const firewall = validateFirewall(observation.firewall, expectedLabel, routeMatrix);
+  const homeRuntime = validateHomeRuntime(observation.homeRuntime, expectedLabel, homeEnabled);
+  validateRuntimeDiagnostics(observation.diagnostics, expectedLabel);
+  if (firewall.expectedBlockedSideEffects.length !== (homeRuntime ? 1 : 0)) {
+    hold(`${expectedLabel} expected blocked side-effect count is not runtime-bound.`);
+  }
+  return Object.freeze({ firewall, homeRuntime });
 }
 
 export function validateBrowserManifest(manifestValue, options) {
@@ -394,6 +516,7 @@ export function validateBrowserManifest(manifestValue, options) {
       'continuedHttpRequestCount',
       'forwardedAuthorityEvaluationCount',
       'forwardedOwnerMutationCount',
+      'expectedBlockedSideEffects',
       'blockedOwnerMutationAttempts',
       'blockedExternalHttp',
       'blockedExternalWebSockets',
@@ -411,6 +534,9 @@ export function validateBrowserManifest(manifestValue, options) {
     !Number.isSafeInteger(requestBoundary.forwardedAuthorityEvaluationCount) ||
     requestBoundary.forwardedAuthorityEvaluationCount <= 0 ||
     requestBoundary.forwardedOwnerMutationCount !== 0 ||
+    !Array.isArray(requestBoundary.expectedBlockedSideEffects) ||
+    requestBoundary.expectedBlockedSideEffects.length !== 1 ||
+    !requestBoundary.expectedBlockedSideEffects.every(isExactHrisW1ExpectedBlockedSideEffect) ||
     !Array.isArray(requestBoundary.blockedOwnerMutationAttempts) ||
     requestBoundary.blockedOwnerMutationAttempts.length ||
     !Array.isArray(requestBoundary.blockedExternalHttp) ||
@@ -515,14 +641,18 @@ export function validateBrowserManifest(manifestValue, options) {
   if (!Array.isArray(manifest.runtimeObservations) || manifest.runtimeObservations.length !== 2) {
     hold('Browser runtime observations must contain exactly two tenant firewalls.');
   }
-  const firewalls = manifest.runtimeObservations.map((candidate, index) => {
-    const observation = record(candidate, `browser runtimeObservations[${index}]`);
-    exactKeys(observation, ['label', 'firewall'], `browser runtimeObservations[${index}]`);
-    if (observation.label !== options.environment.tenants[index].label) {
-      hold('Browser runtime observation label/order is invalid.');
-    }
-    return validateFirewall(observation.firewall, observation.label);
+  const runtimeBoundaries = manifest.runtimeObservations.map((candidate, index) => {
+    return validateBrowserRuntimeObservation(
+      candidate,
+      options.environment.tenants[index].label,
+      routeMatrices[index],
+      index === 0
+    );
   });
+  const firewalls = runtimeBoundaries.map(({ firewall }) => firewall);
+  const expectedBlockedSideEffects = firewalls.flatMap(
+    (firewall) => firewall.expectedBlockedSideEffects
+  );
   const totals = {
     intercepted: firewalls.reduce((total, item) => total + item.interceptedHttpRequests, 0),
     continued: firewalls.reduce((total, item) => total + item.continuedHttpRequests, 0),
@@ -531,7 +661,9 @@ export function validateBrowserManifest(manifestValue, options) {
   if (
     requestBoundary.interceptedHttpRequestCount !== totals.intercepted ||
     requestBoundary.continuedHttpRequestCount !== totals.continued ||
-    requestBoundary.forwardedAuthorityEvaluationCount !== totals.authority
+    requestBoundary.forwardedAuthorityEvaluationCount !== totals.authority ||
+    canonicalJson(requestBoundary.expectedBlockedSideEffects) !==
+      canonicalJson(expectedBlockedSideEffects)
   ) {
     hold('Browser boundary counters do not equal the exact tenant firewall totals.');
   }

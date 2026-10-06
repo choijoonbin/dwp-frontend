@@ -15,7 +15,12 @@ export function StatusPage({ code, titleKey }: StatusPageProps) {
   const { t } = useTranslation('shell');
 
   return (
-    <Box sx={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', p: 3 }}>
+    <Box
+      component="main"
+      id="dwp-main-content"
+      tabIndex={-1}
+      sx={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', p: 3, outline: 'none' }}
+    >
       <ProductMark
         aria-label={t('brand.productName')}
         sx={{ position: 'fixed', top: 24, left: 24 }}

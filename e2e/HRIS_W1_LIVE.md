@@ -2,9 +2,10 @@
 
 This suite is an opt-in browser gate for a disposable localhost HRIS runtime. It never fulfills a
 request or replays a HAR. Its request interception is a safety firewall: reads and the exact
-authority-evaluation endpoint continue to the live Gateway, while external traffic and owner
-mutations are aborted before transmission. A collected test and a successful `--list` command are
-not live acceptance evidence.
+active or official HCM PAGE authority-evaluation tuples continue to the live Gateway, while
+external traffic and owner mutations are aborted before transmission. The exact aggregate Home
+`SHADOW_COMPARE` receipt is also aborted and recorded as an expected side effect; it is never
+forwarded. A collected test and a successful `--list` command are not live acceptance evidence.
 
 Current handoff status (2026-10-01): **HOLD — not live-executed**. Run only after the isolated
 Gateway, version-33 authorization activation, and two synthetic tenants are ready. Never use a
@@ -35,7 +36,7 @@ preserve both values. A registered PAGE contract must return a live fail-closed 
 can become the browser denial case.
 
 The bridge owns a new loopback frontend port and a new browser artifact, runs this existing
-Playwright suite, and validates the complete `hris-w1-live-browser/v3` manifest before trusting it.
+Playwright suite, and validates the complete `hris-w1-live-browser/v4` manifest before trusting it.
 The browser PAY response records its raw body SHA-256 and the one expected configuration id. For
 tenant A, the browser also opens the global Home `/`, requires exactly one `ref-app-people` tile,
 proves that its visible, short, and full labels are all exactly `HRIS`, and binds a screenshot to
@@ -226,7 +227,7 @@ Each `*_ROUTES_JSON` value is a JSON array of one to twelve objects:
 
 | Module | Canonical path          | PAGE contract                      | Required marker                                                  | Required live GET                 |
 | ------ | ----------------------- | ---------------------------------- | ---------------------------------------------------------------- | --------------------------------- |
-| HRM    | `/hr/operations/people` | `route.hcm.operations.people.page` | `input[aria-label="Search people"]`                              | `/api/people/v1/workforce/people` |
+| HRM    | `/hr/operations/people` | `route.hcm.operations.people.page` | `input[data-testid="hris-people360-search"]`                     | `/api/people/v1/workforce/people` |
 | PER    | `/hr/talent`            | `route.hcm.personal.talent.page`   | `[data-route="/hr/talent"][data-scope="personal-goal-progress"]` | `/api/people/v1/hr/talent`        |
 | PAY    | `/hr/pay`               | `route.hcm.personal.pay.page`      | `[data-testid="hris-payroll-workspace"]`                         | `/api/people/v1/hr/pay`           |
 | TIM    | `/hr/time`              | `route.hcm.personal.time.page`     | `[data-testid="hris-query-state"][data-query-state="ready"]`     | `/api/people/v1/hr/time`          |
@@ -264,8 +265,19 @@ has `STEP_UP_REQUIRED`, the same reason code, a nonblank revision, and
 catalog; operation is intentionally not a field in the Gateway evaluation wire body. Operations
 that share the same product/surface/route tuple are rejected at config load because the live wire
 cannot distinguish them. Only after those checks can the dialog count as evidence. The firewall
-permits only exact PAGE/ACTION authority tuples and no other same-origin non-read request;
-step-up challenge issuance and payroll, time, performance, or other owner commands are aborted and
+permits the live route matrix's exact PAGE/ACTION tuples and exact no-scope HCM PAGE tuples from
+`architecture/product-page-routes.v1.json`; a synchronization test proves that this official set
+matches `PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS`. Every continued evaluation must return HTTP 200,
+have a bounded non-empty body with a SHA-256 digest, and not come from a service worker. Unknown,
+malformed, query-bearing, or mismatched evaluations remain blocked and fail acceptance.
+
+The only non-owner exception is the exact Home shadow-comparison receipt. Its method, path, empty
+query, closed aggregate body schema, `SHADOW_COMPARE` state, bounded body, and decision-revision
+header are validated before it is aborted. The manifest retains only safe metadata plus body and
+revision SHA-256 digests. Tenant A must independently prove the DOM boundary
+`SHADOW_COMPARE`/`LEGACY`/`DISABLED` and observe exactly one blocked receipt before leaving Home;
+tenant B must observe none. A malformed, duplicate, or forwarded receipt fails acceptance.
+Step-up challenge issuance and payroll, time, performance, or other owner commands are aborted and
 counted as acceptance failures. The dialog is captured and closed before any identity verification
 or owner dispatch.
 
@@ -289,8 +301,12 @@ the file.
 
 The manifest can report `PASS` only after both browser contexts have closed and the global boundary
 shows zero owner/mismatched-authority mutation attempts, zero external HTTP/WebSocket attempts,
-zero unexpected evaluations, and zero forwarded owner mutations. This catches requests that occur
-between route-level checks or during teardown.
+zero unexpected evaluations, zero forwarded owner mutations, and exactly one tenant-A expected
+blocked Home side effect. Every intercepted HTTP request must have exactly one terminal action:
+continued or expected-aborted. Browser console/page diagnostics retain only secret-redacted SHA-256
+digests and counts (never raw text), and `PASS` requires both diagnostic counts and digest arrays to
+be empty. This catches requests or runtime errors that occur between route-level checks or during
+teardown.
 
 Crash limit: although the password is never sent in the recorded context, an ungraceful process or
 host termination can occur before sanitization and leave a raw HAR containing session cookies or

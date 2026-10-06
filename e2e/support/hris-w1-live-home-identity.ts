@@ -66,3 +66,16 @@ export async function verifyHomeLaunchpadIdentity(
     screenshot,
   };
 }
+
+export async function readHrisW1HomeRuntimeBoundary(page: PW.Page, runtime: HrisW1LiveEnvironment) {
+  const root = page.locator('[data-home-runtime-state]').first();
+  await expect(root).toBeVisible({ timeout: runtime.assertionTimeoutMs });
+  await expect(root).toHaveAttribute('data-home-runtime-state', 'shadow_compare');
+  await expect(root).toHaveAttribute('data-home-render-authority', 'legacy');
+  await expect(root).toHaveAttribute('data-home-action-authority', 'disabled');
+  return Object.freeze({
+    runtimeState: 'SHADOW_COMPARE' as const,
+    renderAuthority: 'LEGACY' as const,
+    actionAuthority: 'DISABLED' as const,
+  });
+}

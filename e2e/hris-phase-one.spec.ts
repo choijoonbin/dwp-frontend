@@ -2,6 +2,11 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 import {
+  people360ListSnapshot,
+  people360Page,
+  people360Snapshot,
+} from '../apps/dwp/src/features/hris/people/testing/people-360.test-support';
+import {
   HR_HOME_FIXTURE,
   HR_PAY_FIXTURE,
   HR_TALENT_FIXTURE,
@@ -21,7 +26,7 @@ const DATA_ANCHORS = [
     apiPath: '/api/people/v1/workforce/people',
     contextScopeKey: 'scope:hcm:operations',
     heading: 'Workforce people',
-    marker: 'input[aria-label="Search people"]',
+    marker: 'input[data-testid="hris-people360-search"]',
   },
   {
     module: 'TIM',
@@ -61,59 +66,9 @@ const HRIS_TIME_ANCHOR_FIXTURE = {
   })),
 } as const;
 
-const PEOPLE_FIXTURE = {
-  personId: 'person-hris-phase-one',
+const PEOPLE_IDENTITY = {
+  personId: '11111111-1111-4111-8111-111111111111',
   displayName: 'Phase One Person',
-  lifecycleState: 'ACTIVE',
-  workerNumber: '****42',
-  workerType: 'EMPLOYEE',
-  workerStatus: 'ACTIVE',
-  assignmentKey: 'ASG-HRIS-PHASE-ONE',
-  businessTitle: 'HRIS product specialist',
-  organizationId: 'org-people-platform',
-  organizationKey: 'PEOPLE-PLATFORM',
-  organizationName: 'People Platform',
-  jobProfileName: 'HRIS product specialist',
-  managementLevel: 'INDIVIDUAL_CONTRIBUTOR',
-  jobGradeKey: 'G5',
-  jobGradeName: 'Grade 5',
-  locationKey: 'SEOUL-HQ',
-  locationName: 'Seoul HQ',
-  workEmail: 'phase.one@dwp.local',
-  profileImageKey: null,
-  assignmentEffectiveFrom: '2026-01-01',
-  managerPersonId: 'person-hris-manager',
-  managerDisplayName: 'HRIS Manager',
-  directReportCount: 0,
-  dataAccess: {
-    classification: 'CONFIDENTIAL',
-    workerNumberMasked: true,
-    excludedFieldGroups: ['COMPENSATION'],
-  },
-} as const;
-
-const PEOPLE_DETAIL_FIXTURE = {
-  person: PEOPLE_FIXTURE,
-  originalHireDate: '2024-04-15',
-  legalEmployerName: 'DWP Korea',
-  managerAssignmentKey: 'ASG-HRIS-MANAGER',
-  assignments: [
-    {
-      assignmentKey: PEOPLE_FIXTURE.assignmentKey,
-      assignmentStatus: 'ACTIVE',
-      primaryAssignment: true,
-      effectiveStartDate: '2026-01-01',
-      effectiveEndDate: null,
-      businessTitle: PEOPLE_FIXTURE.businessTitle,
-      organizationName: PEOPLE_FIXTURE.organizationName,
-      jobProfileName: PEOPLE_FIXTURE.jobProfileName,
-      jobGradeName: PEOPLE_FIXTURE.jobGradeName,
-      locationName: PEOPLE_FIXTURE.locationName,
-      managerAssignmentKey: 'ASG-HRIS-MANAGER',
-      changeReasonCode: 'HIRE',
-    },
-  ],
-  workers: [],
 } as const;
 
 async function expectNoDocumentOverflow(page: Page) {
@@ -274,26 +229,24 @@ test('People 360 search keeps the operations scope and opens detail from the key
   const listRequests: URL[] = [];
   const detailRequests: URL[] = [];
   const peoplePath = '/api/people/v1/workforce/people';
-  const detailPath = `${peoplePath}/${PEOPLE_FIXTURE.personId}`;
+  const detailPath = `${peoplePath}/${PEOPLE_IDENTITY.personId}`;
   await page.route('**/api/people/v1/workforce/people**', (route) => {
     const url = new URL(route.request().url());
+    const asOf = url.searchParams.get('asOf') ?? '2026-09-10';
     if (url.pathname === detailPath) {
       detailRequests.push(url);
-      return fulfillSuccess(route, PEOPLE_DETAIL_FIXTURE);
+      return fulfillSuccess(route, people360Snapshot({ ...PEOPLE_IDENTITY, asOf }));
     }
     if (url.pathname !== peoplePath) return route.fallback();
     listRequests.push(url);
-    return fulfillSuccess(route, {
-      items: url.searchParams.get('query') ? [PEOPLE_FIXTURE] : [],
-      nextCursor: null,
-      size: 100,
-      hasMore: false,
-      asOf: url.searchParams.get('asOf') ?? '2026-09-10',
-    });
+    const items = url.searchParams.get('query')
+      ? [people360ListSnapshot({ ...PEOPLE_IDENTITY, asOf })]
+      : [];
+    return fulfillSuccess(route, people360Page(items, { asOf }));
   });
 
   await page.goto('/hr/operations/people');
-  const search = page.getByRole('textbox', { name: 'Search people' });
+  const search = page.getByTestId('hris-people360-search');
   await expect(search).toBeVisible();
   await search.fill('Phase One');
   await expect
@@ -306,19 +259,19 @@ test('People 360 search keeps the operations scope and opens detail from the key
     )
     .toBe(true);
 
-  await expect(page.getByText(PEOPLE_FIXTURE.displayName, { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(PEOPLE_IDENTITY.displayName, { exact: true }).first()).toBeVisible();
   const detailAction = page.getByRole('button', { name: /Phase One Person/u }).last();
   await expect(detailAction).toBeVisible();
   await detailAction.focus();
   await expect(detailAction).toBeFocused();
   await detailAction.press('Enter');
 
-  const inspector = page.getByRole('complementary', { name: PEOPLE_FIXTURE.displayName });
+  const inspector = page.getByRole('complementary', { name: PEOPLE_IDENTITY.displayName });
   await expect(inspector).toBeVisible();
-  await expect(inspector.getByText(PEOPLE_FIXTURE.organizationName, { exact: true })).toBeVisible();
+  await expect(inspector.getByText('Synthetic People Operations', { exact: true })).toBeVisible();
   await expect
     .poll(() => new URL(page.url()).searchParams.get('person'))
-    .toBe(PEOPLE_FIXTURE.personId);
+    .toBe(PEOPLE_IDENTITY.personId);
   await expect.poll(() => detailRequests.length).toBe(1);
   expect(detailRequests[0]?.searchParams.getAll('contextScopeKey')).toEqual([
     'scope:hcm:operations',

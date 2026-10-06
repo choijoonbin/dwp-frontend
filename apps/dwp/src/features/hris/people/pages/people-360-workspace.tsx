@@ -358,7 +358,10 @@ export function People360Runtime({
               value={filters.query}
               onChange={(event) => updateParams({ q: event.target.value || null, person: null })}
               placeholder={copy.searchPlaceholder}
-              inputProps={{ 'aria-label': copy.searchLabel }}
+              inputProps={{
+                'aria-label': copy.searchLabel,
+                'data-testid': 'hris-people360-search',
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

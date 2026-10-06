@@ -44,11 +44,28 @@ describe('durable identity plane contract', () => {
       )
     ).toBe(false);
     expect(
-      canEnterTenantControlPlane(
-        { identityPlane: 'PROVIDER', roles: [], resourceRoles: [] },
-        true
-      )
+      canEnterTenantControlPlane({ identityPlane: 'PROVIDER', roles: [], resourceRoles: [] }, true)
     ).toBe(false);
+    expect(canEnterTenantControlPlane(null, true)).toBe(false);
+    expect(canEnterTenantControlPlane(undefined, true)).toBe(false);
+    expect(
+      canEnterTenantControlPlane(
+        {
+          identityPlane: 'TENANT',
+          roles: [],
+          resourceRoles: [
+            {
+              responsibilityCode: 'APP_OWNER',
+              resourceType: 'APP',
+              resourceKey: 'people',
+              resourceSetId: 'set-1',
+              resourceSetKey: 'people-owners',
+            },
+          ],
+        },
+        false
+      )
+    ).toBe(true);
   });
 
   it.each([

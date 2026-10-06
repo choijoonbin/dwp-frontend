@@ -41,7 +41,7 @@ const CANONICAL_MODULE_ROUTES: Readonly<
   HRM: {
     path: '/hr/operations/people',
     pageRouteContractKey: 'route.hcm.operations.people.page',
-    marker: 'input[aria-label="Search people"]',
+    marker: 'input[data-testid="hris-people360-search"]',
     apiPath: '/api/people/v1/workforce/people',
   },
   PER: {

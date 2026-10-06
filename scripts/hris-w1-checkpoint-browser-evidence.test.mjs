@@ -5,7 +5,10 @@ import path from 'node:path';
 import test from 'node:test';
 
 import { CheckpointHold, sha256Canonical } from './hris-w1-checkpoint-core.mjs';
-import { validateHomeLaunchpadIdentityEvidence } from './hris-w1-checkpoint-browser-evidence.mjs';
+import {
+  validateBrowserRuntimeObservation,
+  validateHomeLaunchpadIdentityEvidence,
+} from './hris-w1-checkpoint-browser-evidence.mjs';
 import {
   globalHomeIdentityObservation,
   pathBrowserGatewayOwnerDbObservations,
@@ -121,4 +124,133 @@ test('fails closed when final Global Home evidence is missing or mutated', (t) =
         error instanceof CheckpointHold && /digest-bound Global Home HRIS/u.test(error.message)
     );
   }
+});
+
+function runtimeObservation() {
+  const response = {
+    status: 200,
+    bodyByteLength: 128,
+    responseBodySha256: 'a'.repeat(64),
+    fromServiceWorker: false,
+  };
+  const authority = (routeContractKey, contextScopeKey, subjectSurfaceKey, reason) => ({
+    routeContractKey,
+    contextScopeKey,
+    subjectType: 'PRODUCT',
+    subjectProductKey: 'hcm',
+    subjectSurfaceKey,
+    action: 'CONTINUED',
+    reason,
+    response,
+  });
+  return {
+    label: 'tenant-a',
+    homeRuntime: {
+      runtimeState: 'SHADOW_COMPARE',
+      renderAuthority: 'LEGACY',
+      actionAuthority: 'DISABLED',
+    },
+    diagnostics: {
+      consoleErrorCount: 0,
+      consoleErrorSha256: [],
+      pageErrorCount: 0,
+      pageErrorSha256: [],
+    },
+    firewall: {
+      interceptedHttpRequests: 19,
+      continuedHttpRequests: 18,
+      continuedMutations: [
+        { method: 'POST', path: '/api/auth/product-surface-access/evaluate' },
+        { method: 'POST', path: '/api/auth/product-surface-access/evaluate' },
+      ],
+      evaluationRequests: [
+        authority(
+          'route.hcm.operations.people.page',
+          'hcm-scope-active',
+          'hcm.operations',
+          'EXACT_PAGE_CONTRACT'
+        ),
+        authority(
+          'route.hcm.personal.directory.page',
+          null,
+          'hcm.personal',
+          'EXACT_BACKGROUND_PAGE_CONTRACT'
+        ),
+      ],
+      expectedBlockedSideEffects: [
+        {
+          method: 'POST',
+          path: '/api/platform/v2/home/shadow-receipts',
+          query: '',
+          reason: 'EXPECTED_BLOCKED_HOME_SHADOW_RECEIPT',
+          runtimeState: 'SHADOW_COMPARE',
+          bodyByteLength: 256,
+          requestBodySha256: 'b'.repeat(64),
+          decisionRevisionSha256: 'c'.repeat(64),
+        },
+      ],
+      blockedMutations: [],
+      blockedExternalHttp: [],
+      blockedExternalWebSockets: [],
+    },
+  };
+}
+
+const runtimeRouteMatrix = [
+  {
+    outcome: 'allowed',
+    pageRouteContractKey: 'route.hcm.operations.people.page',
+    expectedScopeKey: 'hcm-scope-active',
+  },
+];
+
+test('browser v4 runtime evidence accepts exact authority and blocked SHADOW side effect', () => {
+  const validated = validateBrowserRuntimeObservation(
+    runtimeObservation(),
+    'tenant-a',
+    runtimeRouteMatrix,
+    true
+  );
+
+  assert.equal(validated.firewall.evaluationRequests.length, 2);
+  assert.equal(validated.firewall.expectedBlockedSideEffects.length, 1);
+  assert.equal(validated.homeRuntime.runtimeState, 'SHADOW_COMPARE');
+});
+
+test('browser v4 runtime evidence rejects duplicate receipts, missing responses, and diagnostics', () => {
+  const duplicate = runtimeObservation();
+  duplicate.firewall.expectedBlockedSideEffects.push(
+    structuredClone(duplicate.firewall.expectedBlockedSideEffects[0])
+  );
+  duplicate.firewall.interceptedHttpRequests += 1;
+  assert.throws(
+    () => validateBrowserRuntimeObservation(duplicate, 'tenant-a', runtimeRouteMatrix, true),
+    (error) => error instanceof CheckpointHold && /side-effect count/u.test(error.message)
+  );
+
+  const missingResponse = runtimeObservation();
+  missingResponse.firewall.evaluationRequests[0].response = null;
+  assert.throws(
+    () => validateBrowserRuntimeObservation(missingResponse, 'tenant-a', runtimeRouteMatrix, true),
+    (error) =>
+      error instanceof CheckpointHold && /unexpected authority evaluation/u.test(error.message)
+  );
+
+  const unofficialBackground = runtimeObservation();
+  unofficialBackground.firewall.evaluationRequests[1].routeContractKey =
+    'route.hcm.personal.unofficial.page';
+  assert.throws(
+    () =>
+      validateBrowserRuntimeObservation(unofficialBackground, 'tenant-a', runtimeRouteMatrix, true),
+    (error) =>
+      error instanceof CheckpointHold && /non-official background PAGE/u.test(error.message)
+  );
+
+  const diagnostics = runtimeObservation();
+  diagnostics.diagnostics.consoleErrorCount = 1;
+  diagnostics.diagnostics.consoleErrorSha256 = ['d'.repeat(64)];
+  assert.throws(
+    () => validateBrowserRuntimeObservation(diagnostics, 'tenant-a', runtimeRouteMatrix, true),
+    (error) => error instanceof CheckpointHold && /zero-error browser runtime/u.test(error.message)
+  );
 });

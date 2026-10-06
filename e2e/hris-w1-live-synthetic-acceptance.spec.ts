@@ -12,14 +12,22 @@ import {
   type HrisW1Tenant,
 } from './support/hris-w1-live-environment';
 import { sanitizeHrisW1Har } from './support/hris-w1-live-artifact-sanitizer';
-import { verifyHomeLaunchpadIdentity } from './support/hris-w1-live-home-identity';
+import {
+  buildHrisW1ActiveEvaluationContracts,
+  exactHrisW1EvaluationShape,
+  installHrisW1BrowserFirewall,
+  isExactHrisW1AuthorityResponseEvidence,
+  newHrisW1FirewallObservation,
+} from './support/hris-w1-browser-firewall-contract.mjs';
+import {
+  readHrisW1HomeRuntimeBoundary,
+  verifyHomeLaunchpadIdentity,
+} from './support/hris-w1-live-home-identity';
 
 const runtime = loadHrisW1LiveEnvironment();
 const baseOrigin = new URL(runtime.baseURL).origin;
-const SAFE_READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 const ACCESS_STATE_SELECTOR = '[data-testid="product-surface-access-state"]';
 const REQUIRED_HIGH_ASSURANCE = 'urn:dwp:assurance:high';
-const baseURL = new URL(runtime.baseURL);
 
 type JsonRecord = Record<string, unknown>;
 
@@ -41,13 +49,35 @@ type EvaluationRequestObservation = Readonly<{
   subjectProductKey: string | null;
   subjectSurfaceKey: string | null;
   action: 'CONTINUED' | 'BLOCKED';
-  reason: 'EXACT_PAGE_CONTRACT' | 'EXACT_HIGH_CONTRACT' | 'OTHER_AUTHORITY_EVALUATION';
+  reason:
+    | 'EXACT_PAGE_CONTRACT'
+    | 'EXACT_HIGH_CONTRACT'
+    | 'EXACT_BACKGROUND_PAGE_CONTRACT'
+    | 'OTHER_AUTHORITY_EVALUATION';
+  response?: Readonly<{
+    status: 200;
+    bodyByteLength: number;
+    responseBodySha256: string;
+    fromServiceWorker: false;
+  }> | null;
 }>;
 
 type BlockedRequestObservation = Readonly<{
   method: string;
   path: string;
-  reason: 'OWNER_MUTATION' | 'AUTHORITY_CONTRACT_MISMATCH';
+  reason:
+    'OWNER_MUTATION' | 'AUTHORITY_CONTRACT_MISMATCH' | 'EXPECTED_SIDE_EFFECT_CONTRACT_MISMATCH';
+}>;
+
+type ExpectedBlockedSideEffectObservation = Readonly<{
+  method: 'POST';
+  path: '/api/platform/v2/home/shadow-receipts';
+  query: '';
+  reason: 'EXPECTED_BLOCKED_HOME_SHADOW_RECEIPT';
+  runtimeState: 'SHADOW_COMPARE';
+  bodyByteLength: number;
+  requestBodySha256: string;
+  decisionRevisionSha256: string;
 }>;
 
 type FirewallObservation = {
@@ -55,6 +85,7 @@ type FirewallObservation = {
   continuedHttpRequests: number;
   continuedMutations: Array<Readonly<{ method: string; path: string }>>;
   evaluationRequests: EvaluationRequestObservation[];
+  expectedBlockedSideEffects: ExpectedBlockedSideEffectObservation[];
   blockedMutations: BlockedRequestObservation[];
   blockedExternalHttp: Array<Readonly<{ method: string; url: string }>>;
   blockedExternalWebSockets: string[];
@@ -73,26 +104,6 @@ type StepUpEvidence = Readonly<{
   revalidateAt: string;
   observedAt: string;
 }>;
-
-function exactKeys(value: JsonRecord | null, expected: readonly string[]): boolean {
-  return value !== null && Object.keys(value).sort().join('\n') === [...expected].sort().join('\n');
-}
-
-function exactEvaluationShape(
-  body: JsonRecord | null,
-  subject: JsonRecord | null,
-  contextScopeKey: string | null
-): boolean {
-  const bodyKeys =
-    contextScopeKey === null
-      ? ['routeContractKey', 'subject']
-      : ['contextScopeKey', 'routeContractKey', 'subject'];
-  return (
-    exactKeys(body, bodyKeys) &&
-    exactKeys(subject, ['productKey', 'surfaceKey', 'type']) &&
-    body?.contextKey === undefined
-  );
-}
 
 type RouteEvidence = Readonly<{
   id: string;
@@ -133,7 +144,24 @@ type TenantEvidence = Readonly<{
 type TenantRuntimeObservation = Readonly<{
   label: HrisW1Tenant['label'];
   firewall: Readonly<FirewallObservation>;
+  homeRuntime: Awaited<ReturnType<typeof readHrisW1HomeRuntimeBoundary>> | null;
+  diagnostics: Readonly<{
+    consoleErrorCount: number;
+    consoleErrorSha256: readonly string[];
+    pageErrorCount: number;
+    pageErrorSha256: readonly string[];
+  }>;
 }>;
+
+function diagnosticSha256(messages: readonly string[], tenant: HrisW1Tenant) {
+  return messages.map((message) => {
+    const sanitized = [tenant.email, tenant.password].reduce(
+      (value, secret) => value.replaceAll(secret, '[REDACTED]'),
+      message
+    );
+    return createHash('sha256').update(sanitized, 'utf8').digest('hex');
+  });
+}
 
 function jsonRecord(value: unknown, location: string): JsonRecord {
   expect(value, `${location} must be an object`).toBeTruthy();
@@ -152,149 +180,8 @@ async function responseJson(response: PW.APIResponse, location: string): Promise
   return jsonRecord(await response.json(), location);
 }
 
-function newFirewallObservation(): FirewallObservation {
-  return {
-    interceptedHttpRequests: 0,
-    continuedHttpRequests: 0,
-    continuedMutations: [],
-    evaluationRequests: [],
-    blockedMutations: [],
-    blockedExternalHttp: [],
-    blockedExternalWebSockets: [],
-  };
-}
-
 function valueRecord(value: unknown): JsonRecord | null {
   return value && typeof value === 'object' && !Array.isArray(value) ? (value as JsonRecord) : null;
-}
-
-async function installBrowserFirewall(
-  context: PW.BrowserContext,
-  tenant: HrisW1Tenant,
-  observation: FirewallObservation
-) {
-  const expectedEvaluationContracts =
-    tenant.label === 'tenant-a'
-      ? tenant.routes.flatMap((route) => {
-          const pageContract =
-            route.outcome === 'redirected'
-              ? []
-              : [
-                  {
-                    kind: 'PAGE' as const,
-                    routeContractKey: route.pageRouteContractKey,
-                    productKey: 'hcm',
-                    surfaceKey: `hcm.${route.pageRouteContractKey.split('.')[2]}`,
-                    contextScopeKey: route.expectedScopeKey ?? null,
-                  },
-                ];
-          const actionContract = route.highRiskPreview
-            ? [
-                {
-                  kind: 'HIGH' as const,
-                  routeContractKey: route.highRiskPreview.expectedRouteContractKey,
-                  productKey: route.highRiskPreview.expectedProductKey,
-                  surfaceKey: route.highRiskPreview.expectedSurfaceKey,
-                  contextScopeKey: route.expectedScopeKey ?? null,
-                },
-              ]
-            : [];
-          return [...pageContract, ...actionContract];
-        })
-      : [];
-
-  await context.route('**/*', async (route) => {
-    const request = route.request();
-    const method = request.method().toUpperCase();
-    const url = new URL(request.url());
-    observation.interceptedHttpRequests += 1;
-
-    if (['http:', 'https:'].includes(url.protocol) && url.origin !== baseOrigin) {
-      observation.blockedExternalHttp.push({ method, url: redactURL(url.toString()) });
-      await route.abort('blockedbyclient');
-      return;
-    }
-
-    if (url.origin === baseOrigin && !SAFE_READ_METHODS.has(method)) {
-      if (method === 'POST' && url.pathname === HRIS_W1_HIGH_RISK_EVALUATION_PATH) {
-        let body: JsonRecord | null = null;
-        try {
-          body = valueRecord(request.postDataJSON());
-        } catch {
-          body = null;
-        }
-        const routeContractKey =
-          typeof body?.routeContractKey === 'string' ? body.routeContractKey : null;
-        const contextScopeKey =
-          typeof body?.contextScopeKey === 'string' ? body.contextScopeKey : null;
-        const subject = valueRecord(body?.subject);
-        const subjectType = typeof subject?.type === 'string' ? subject.type : null;
-        const subjectProductKey =
-          typeof subject?.productKey === 'string' ? subject.productKey : null;
-        const subjectSurfaceKey =
-          typeof subject?.surfaceKey === 'string' ? subject.surfaceKey : null;
-        const expectedContract =
-          url.search === '' && exactEvaluationShape(body, subject, contextScopeKey)
-            ? expectedEvaluationContracts.find(
-                (expected) =>
-                  expected.routeContractKey === routeContractKey &&
-                  expected.contextScopeKey === contextScopeKey &&
-                  subjectType === 'PRODUCT' &&
-                  expected.productKey === subjectProductKey &&
-                  expected.surfaceKey === subjectSurfaceKey
-              )
-            : undefined;
-        observation.evaluationRequests.push({
-          routeContractKey,
-          contextScopeKey,
-          subjectType,
-          subjectProductKey,
-          subjectSurfaceKey,
-          action: expectedContract ? 'CONTINUED' : 'BLOCKED',
-          reason:
-            expectedContract?.kind === 'PAGE'
-              ? 'EXACT_PAGE_CONTRACT'
-              : expectedContract?.kind === 'HIGH'
-                ? 'EXACT_HIGH_CONTRACT'
-                : 'OTHER_AUTHORITY_EVALUATION',
-        });
-        if (expectedContract) {
-          observation.continuedHttpRequests += 1;
-          observation.continuedMutations.push({ method, path: url.pathname });
-          await route.continue();
-          return;
-        }
-        observation.blockedMutations.push({
-          method,
-          path: url.pathname,
-          reason: 'AUTHORITY_CONTRACT_MISMATCH',
-        });
-        await route.abort('blockedbyclient');
-        return;
-      }
-
-      observation.blockedMutations.push({
-        method,
-        path: url.pathname,
-        reason: 'OWNER_MUTATION',
-      });
-      await route.abort('blockedbyclient');
-      return;
-    }
-
-    observation.continuedHttpRequests += 1;
-    await route.continue();
-  });
-
-  await context.routeWebSocket(
-    (url) =>
-      ['ws:', 'wss:'].includes(url.protocol) &&
-      !(url.protocol === 'ws:' && url.host === baseURL.host),
-    async (webSocket) => {
-      observation.blockedExternalWebSockets.push(redactURL(webSocket.url()));
-      await webSocket.close({ code: 1008, reason: 'HRIS W1 live localhost-only boundary' });
-    }
-  );
 }
 
 function assertApiBoundary(response: PW.APIResponse, expectedPath: string, location: string) {
@@ -433,12 +320,24 @@ async function exerciseRoute(
   const blockedExternalWebSocketOffset = firewall.blockedExternalWebSockets.length;
   const evaluationOffset = firewall.evaluationRequests.length;
   await page.goto(route.path, { waitUntil: 'domcontentloaded' });
+  if (route.outcome === 'redirected') {
+    await expect
+      .poll(() => {
+        const current = new URL(page.url());
+        return { origin: current.origin, path: `${current.pathname}${current.search}` };
+      })
+      .toEqual({ origin: baseOrigin, path: route.redirectPath });
+  }
   await expect(page.getByTestId('product-surface-loading-shell')).toHaveCount(0, {
     timeout: runtime.assertionTimeoutMs,
   });
-  await expect(page.locator('#dwp-main-content').first()).toBeVisible({
+  const main = page.locator('main#dwp-main-content').first();
+  await expect(main).toBeVisible({
     timeout: runtime.assertionTimeoutMs,
   });
+  if (route.outcome === 'redirected') {
+    await expect(main.getByRole('heading', { name: '403', exact: true })).toBeVisible();
+  }
 
   let accessState: string | null | undefined;
   if (route.outcome === 'allowed') {
@@ -481,9 +380,7 @@ async function exerciseRoute(
         }
       )
       .toBe(true);
-  } else if (route.outcome === 'redirected') {
-    await expect.poll(() => browserPath(page.url())).toBe(route.redirectPath);
-  } else {
+  } else if (route.outcome !== 'redirected') {
     const access = page.locator(ACCESS_STATE_SELECTOR).first();
     await expect(access).toBeVisible();
     accessState = await access.getAttribute('data-product-access-state');
@@ -509,7 +406,7 @@ async function exerciseRoute(
             const body = valueRecord(response.request().postDataJSON());
             const subject = valueRecord(body?.subject);
             return (
-              exactEvaluationShape(body, subject, String(body?.contextScopeKey ?? '')) &&
+              exactHrisW1EvaluationShape(body, subject, String(body?.contextScopeKey ?? '')) &&
               body?.routeContractKey === highRisk.expectedRouteContractKey &&
               body?.contextScopeKey === route.expectedScopeKey &&
               subject?.type === 'PRODUCT' &&
@@ -743,9 +640,11 @@ async function runTenant(
 ): Promise<TenantEvidence> {
   const rawHar = info.outputPath(`${tenant.label}-raw.har`);
   const har = info.outputPath(`${tenant.label}.sanitized.har.json`);
-  const firewall = newFirewallObservation();
+  const firewall = newHrisW1FirewallObservation() as FirewallObservation;
   const records: NetworkRecord[] = [];
+  const consoleErrors: string[] = [];
   const pageErrors: string[] = [];
+  let homeRuntime: Awaited<ReturnType<typeof readHrisW1HomeRuntimeBoundary>> | null = null;
   let result: Omit<TenantEvidence, 'har' | 'trace'> | undefined;
   let context: PW.BrowserContext | undefined;
   let page: PW.Page | undefined;
@@ -762,7 +661,16 @@ async function runTenant(
       storageState: authenticated.storageState,
       recordHar: { path: rawHar, mode: 'full', content: 'omit' },
     });
-    await installBrowserFirewall(context, tenant, firewall);
+    await installHrisW1BrowserFirewall({
+      context,
+      baseOrigin,
+      baseURL: runtime.baseURL,
+      activeContracts: buildHrisW1ActiveEvaluationContracts(
+        tenant.routes,
+        tenant.label === 'tenant-a'
+      ),
+      observation: firewall,
+    });
     const tenantPage = await context.newPage();
     page = tenantPage;
     tenantPage.on('request', (request) => {
@@ -818,12 +726,24 @@ async function runTenant(
         fromServiceWorker: response.fromServiceWorker(),
       });
     });
+    tenantPage.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
     tenantPage.on('pageerror', (error) => pageErrors.push(error.message));
 
     const homeLaunchpadIdentity =
       tenant.label === 'tenant-a'
         ? await verifyHomeLaunchpadIdentity(tenantPage, tenant, info, runtime)
         : undefined;
+    if (homeLaunchpadIdentity) {
+      homeRuntime = await readHrisW1HomeRuntimeBoundary(tenantPage, runtime);
+      await expect
+        .poll(() => firewall.expectedBlockedSideEffects.length, {
+          timeout: runtime.assertionTimeoutMs,
+          message: 'Tenant A Home SHADOW_COMPARE receipt was not intercepted exactly once.',
+        })
+        .toBe(1);
+    }
     const routes: RouteEvidence[] = [];
     for (const route of tenant.routes) {
       routes.push(
@@ -842,7 +762,8 @@ async function runTenant(
     );
     expect(storedSecrets.some((value) => value.includes(tenant.password))).toBe(false);
     expect(storedSecrets.some((value) => /accessToken|refreshToken/iu.test(value))).toBe(false);
-    expect(pageErrors, 'The live HRIS journey emitted unhandled page errors.').toEqual([]);
+    expect(consoleErrors.length, 'The live HRIS journey emitted console errors.').toBe(0);
+    expect(pageErrors.length, 'The live HRIS journey emitted unhandled page errors.').toBe(0);
     result = {
       label: tenant.label,
       tenantId: tenant.tenantId,
@@ -878,7 +799,17 @@ async function runTenant(
         });
       }
     } finally {
-      runtimeObservations.push({ label: tenant.label, firewall });
+      runtimeObservations.push({
+        label: tenant.label,
+        firewall,
+        homeRuntime,
+        diagnostics: {
+          consoleErrorCount: consoleErrors.length,
+          consoleErrorSha256: diagnosticSha256(consoleErrors, tenant),
+          pageErrorCount: pageErrors.length,
+          pageErrorSha256: diagnosticSha256(pageErrors, tenant),
+        },
+      });
     }
   }
   if (!result) throw new Error(`${tenant.label} live journey completed without evidence`);
@@ -915,10 +846,32 @@ test('W1 uses live Gateway authority for isolated tenant A and keeps tenant B of
   const blockedExternalWebSockets = firewalls.flatMap(
     (firewall) => firewall.blockedExternalWebSockets
   );
+  const expectedBlockedSideEffects = firewalls.flatMap(
+    (firewall) => firewall.expectedBlockedSideEffects
+  );
   const unexpectedEvaluations = firewalls.flatMap((firewall) =>
     firewall.evaluationRequests.filter(
-      (request) => request.action !== 'CONTINUED' || request.reason === 'OTHER_AUTHORITY_EVALUATION'
+      (request) =>
+        request.action !== 'CONTINUED' ||
+        request.reason === 'OTHER_AUTHORITY_EVALUATION' ||
+        !isExactHrisW1AuthorityResponseEvidence(request.response)
     )
+  );
+  const tenantARuntime = runtimeObservations.find(
+    (observation) => observation.label === 'tenant-a'
+  );
+  const tenantBRuntime = runtimeObservations.find(
+    (observation) => observation.label === 'tenant-b'
+  );
+  const expectedBlockedSideEffectsPassed =
+    tenantARuntime?.homeRuntime?.runtimeState === 'SHADOW_COMPARE' &&
+    tenantARuntime.firewall.expectedBlockedSideEffects.length === 1 &&
+    tenantBRuntime?.homeRuntime === null &&
+    tenantBRuntime?.firewall.expectedBlockedSideEffects.length === 0;
+  const httpLifecycleComplete = firewalls.every(
+    (firewall) =>
+      firewall.interceptedHttpRequests ===
+      firewall.continuedHttpRequests + firewall.expectedBlockedSideEffects.length
   );
   const requestBoundaryEvidence = {
     interceptionPolicy:
@@ -937,6 +890,7 @@ test('W1 uses live Gateway authority for isolated tenant A and keeps tenant B of
     forwardedOwnerMutationCount: continuedMutations.filter(
       (request) => request.path !== HRIS_W1_HIGH_RISK_EVALUATION_PATH
     ).length,
+    expectedBlockedSideEffects,
     blockedOwnerMutationAttempts: blockedMutations,
     blockedExternalHttp,
     blockedExternalWebSockets,
@@ -944,6 +898,8 @@ test('W1 uses live Gateway authority for isolated tenant A and keeps tenant B of
   };
   const boundaryPassed =
     requestBoundaryEvidence.forwardedOwnerMutationCount === 0 &&
+    expectedBlockedSideEffectsPassed &&
+    httpLifecycleComplete &&
     blockedMutations.length === 0 &&
     blockedExternalHttp.length === 0 &&
     blockedExternalWebSockets.length === 0 &&
@@ -955,7 +911,7 @@ test('W1 uses live Gateway authority for isolated tenant A and keeps tenant B of
     manifestPath,
     `${JSON.stringify(
       {
-        schemaVersion: 'hris-w1-live-browser/v3',
+        schemaVersion: 'hris-w1-live-browser/v4',
         runId: runtime.runId,
         generatedAt: new Date().toISOString(),
         status: acceptancePassed ? 'PASS' : 'FAIL',
@@ -988,6 +944,14 @@ test('W1 uses live Gateway authority for isolated tenant A and keeps tenant B of
   expect(failures.map((failure) => failure.message)).toEqual([]);
   expect(evidence).toHaveLength(2);
   expect(requestBoundaryEvidence.forwardedOwnerMutationCount).toBe(0);
+  expect(
+    expectedBlockedSideEffectsPassed,
+    'Tenant A SHADOW_COMPARE must abort exactly one aggregate Home receipt; tenant B must abort none.'
+  ).toBe(true);
+  expect(
+    httpLifecycleComplete,
+    'Every intercepted HTTP request must have one terminal action.'
+  ).toBe(true);
   expect(blockedMutations, 'No owner or mismatched authority mutation may be attempted.').toEqual(
     []
   );

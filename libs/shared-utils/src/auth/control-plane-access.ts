@@ -127,13 +127,10 @@ export function hasProviderControlPlaneRole(roles: readonly string[]): boolean {
 }
 
 export function canEnterTenantControlPlane(
-  identity:
-    | Pick<MeResponse, 'identityPlane' | 'roles' | 'resourceRoles'>
-    | null
-    | undefined,
+  identity: Pick<MeResponse, 'identityPlane' | 'roles' | 'resourceRoles'> | null | undefined,
   hasAuthorizedAdministrationEntry: boolean
 ): boolean {
-  if (!isTenantIdentity(identity)) return false;
+  if (!identity || !isTenantIdentity(identity)) return false;
   return (
     hasAuthorizedAdministrationEntry ||
     (identity.resourceRoles ?? []).some((role) =>
