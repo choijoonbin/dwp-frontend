@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_WEB_VITALS_ENDPOINT?: string;
   readonly VITE_HOME_PERSONALIZATION_V2_ENABLED?: string;
   readonly VITE_HOME_WIDGET_LIBRARY_ENABLED?: string;
+  readonly VITE_PRODUCT_NOTIFICATION_RUNTIME?: string;
   readonly VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION?: string;
 }
 

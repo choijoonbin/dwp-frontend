@@ -15,7 +15,10 @@ import { useQuery } from '@tanstack/react-query';
 import { ContentDialog } from '@dwp-frontend/design-system/components/dialogs/content-dialog';
 import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
 import { getNotificationSummary } from '@dwp-frontend/shared-utils/api/notification-summary-api';
-import { WORKSPACE_NAME } from '@dwp-frontend/shared-utils/env';
+import {
+  PRODUCT_NOTIFICATION_RUNTIME_ENABLED,
+  WORKSPACE_NAME,
+} from '@dwp-frontend/shared-utils/env';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import {
@@ -534,6 +537,7 @@ export function NotificationMenu() {
   const [triggerLabel, setTriggerLabel] = useState(t('notifications.label'));
   const [badgeContent, setBadgeContent] = useState(0);
   const notificationAuthorized = Boolean(
+    PRODUCT_NOTIFICATION_RUNTIME_ENABLED &&
     auth.isAuthenticated &&
     auth.user &&
     permissionsLoaded &&

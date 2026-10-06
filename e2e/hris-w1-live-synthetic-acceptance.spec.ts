@@ -26,6 +26,11 @@ import {
 
 const runtime = loadHrisW1LiveEnvironment();
 const baseOrigin = new URL(runtime.baseURL).origin;
+const DISABLED_RUNTIME_READ_PATHS = new Set([
+  '/api/notifications/v1/summary',
+  '/api/notifications/v1/summary/by-app',
+  '/api/platform/v1/catalog/code-sets/PLATFORM.HOME_WIDGET',
+]);
 const ACCESS_STATE_SELECTOR = '[data-testid="product-surface-access-state"]';
 const REQUIRED_HIGH_ASSURANCE = 'urn:dwp:assurance:high';
 
@@ -757,6 +762,12 @@ async function runTenant(
         'Rollout-off tenant B must stay on the seeded legacy-denied boundary without product evaluation.'
       ).toEqual([]);
     }
+    expect(
+      records
+        .filter((record) => DISABLED_RUNTIME_READ_PATHS.has(record.path))
+        .map((record) => ({ method: record.method, path: record.path })),
+      'Disabled notification and Home widget runtimes must not issue background reads.'
+    ).toEqual([]);
     const storedSecrets = await tenantPage.evaluate(() =>
       Object.entries(window.localStorage).map(([key, value]) => `${key}=${value}`)
     );
