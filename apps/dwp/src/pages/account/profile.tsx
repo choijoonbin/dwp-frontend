@@ -107,7 +107,7 @@ export default function ProfilePage() {
 
   return (
     <PageCanvas mode="workspace">
-      <Box sx={{ width: 1, maxWidth: 1240, mx: 'auto' }}>
+      <Box sx={{ width: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
           <Avatar
             aria-hidden="true"

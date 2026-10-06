@@ -656,6 +656,7 @@ export function HomePersonalizationStudio({
     legacyStore,
     composerEnabled,
   });
+  const pageUsesDocumentScroll = presentation === 'page' && section !== 'layout';
 
   const selectSection = (nextSection: ActiveHomeStudioSection) => {
     setSection(nextSection);
@@ -690,8 +691,11 @@ export function HomePersonalizationStudio({
           advancedMode || presentation === 'page'
             ? 'minmax(0, 1fr)'
             : { xs: 'minmax(0, 1fr)', md: '220px minmax(0, 1fr)' },
-        gridTemplateRows:
-          advancedMode || presentation === 'page' ? 'auto minmax(0, 1fr)' : undefined,
+        gridTemplateRows: pageUsesDocumentScroll
+          ? 'auto auto'
+          : advancedMode || presentation === 'page'
+            ? 'auto minmax(0, 1fr)'
+            : undefined,
         height:
           presentation === 'page'
             ? section === 'layout'
@@ -717,11 +721,11 @@ export function HomePersonalizationStudio({
         role="tabpanel"
         tabIndex={0}
         aria-label={t(`sections.${section}`)}
-        data-home-editor-scroll-scope="active-panel"
+        data-home-editor-scroll-scope={pageUsesDocumentScroll ? 'document' : 'active-panel'}
         data-home-editor-focus-contract="dialog-trap-panel-focus-close-restore"
         sx={{
-          overflowY: section === 'layout' ? 'hidden' : 'auto',
-          overscrollBehaviorY: 'contain',
+          overflowY: section === 'layout' ? 'hidden' : pageUsesDocumentScroll ? 'visible' : 'auto',
+          overscrollBehaviorY: pageUsesDocumentScroll ? 'auto' : 'contain',
           scrollBehavior: 'auto',
           p: section === 'layout' ? 0 : { xs: 2, sm: 3, lg: 4 },
           '&:focus-visible': {

@@ -243,83 +243,86 @@
     "conflict": "다른 위치에서 홈이 변경되었습니다. 최신 버전을 불러왔습니다."
   },
   "modePreset": {
-    "title": "사용할 홈 모드 선택",
-    "description": "Classic, Flow, AI Stage의 정보 구성 방식을 비교하고 선택합니다. 모드를 바꿔도 승인된 공통 앱 18개의 순서와 접근 권한은 그대로 유지됩니다.",
-    "groupLabel": "홈 모드",
+    "title": "홈 모드 선택",
+    "description": "업무를 시작할 때 무엇을 먼저 보고, 어떤 행동으로 이어갈지 선택하세요.",
+    "groupLabel": "홈 모드 비교",
+    "selectionHelp": "모드를 선택하면 홈 화면 예시가 바로 바뀝니다.",
     "current": "현재 적용 중",
     "selected": "선택됨",
     "default": "조직 기본값",
-    "policyUnavailable": "조직에서 사용 허용되지 않음",
-    "rolloutUnavailable": "배포 정책으로 일시 사용 불가",
-    "layoutPreservation": "모드를 전환해도 각 모드의 레이아웃과 기기 설정은 별도로 보존됩니다.",
+    "policyUnavailable": "조직 정책에 따라 선택할 수 없음",
+    "rolloutUnavailable": "배포 정책에 따라 일시적으로 선택할 수 없음",
+    "preservationTitle": "변경해도 유지되는 항목",
+    "layoutPreservation": "공통 앱 {{count}}개의 순서와 접근 권한은 유지됩니다. 모드별 레이아웃과 기기 설정도 따로 보관됩니다.",
+    "cancelSelection": "선택 취소",
+    "applyMode": "{{mode}} 적용",
+    "applyingMode": "{{mode}} 적용 중…",
     "apply": "변경 사항 적용하기",
     "applying": "적용 중",
     "options": {
       "CLASSIC": {
-        "title": "Classic 조직 포털",
-        "description": "조직 소식, 승인 앱, 지원 정보를 익숙한 포털 구조에서 차례로 확인합니다."
+        "title": "Classic · 조직 포털",
+        "description": "조직 소식과 지식, 지원 정보를 차분히 살펴보는 홈입니다."
       },
       "FLOW_V1": {
-        "title": "Flow 업무 홈",
-        "description": "지금 처리할 업무와 일정, 응답 요청을 우선순위에 따라 한 흐름으로 확인합니다."
+        "title": "Flow · 업무 홈",
+        "description": "마감 업무와 일정, 응답 요청을 우선순위대로 처리하는 홈입니다."
       },
       "MZ_V1": {
         "title": "AI Stage",
-        "description": "명확한 업무 의도를 근거와 검토 가능한 계획으로 만든 뒤 담당 앱에 안전하게 인계합니다."
+        "description": "업무 의도를 입력해 근거와 실행 계획을 준비하는 AI 중심 홈입니다."
       }
     },
     "preview": {
-      "blindTestTitle": "Blind Header Test",
-      "blindTestDescription": "헤더를 가려도 조직 브리프형 Classic, 긴급 실행형 Flow, 근거 기반 AI Stage가 즉시 구별됩니다.",
-      "axisIntegrity": "정보구조 · 표현 폭 · 공통 앱 18개 순서를 각각 보존",
-      "firstQuestion": "첫 질문:",
-      "primaryAction": "주 행동:",
-      "sharedApps": "내 앱 18종:",
+      "selectedLabel": "선택한 모드",
+      "exampleLabel": "홈 화면 예시",
+      "disclaimer": "화면 구성을 설명하기 위한 예시입니다. 실제 항목은 내 권한과 업무 데이터에 따라 달라집니다.",
+      "currentBadge": "현재 화면",
+      "pendingBadge": "적용 전 미리보기",
+      "firstQuestion": "먼저 보여주는 정보",
+      "primaryAction": "주요 동작",
       "CLASSIC": {
-        "firstQuestion": "조직 지식·경영 공지",
-        "primaryAction": "전사 공지 서명과 핸드북",
-        "sharedApps": "공통 순서 100% 보존"
+        "firstQuestion": "조직 공지 · 소식 · 지원 정보",
+        "primaryAction": "내용 확인 · 원문 열기"
       },
       "FLOW_V1": {
-        "firstQuestion": "마감 업무·회의 사전 준비",
-        "primaryAction": "우선 큐 처리와 일정 재승인",
-        "sharedApps": "공통 순서 100% 보존"
+        "firstQuestion": "우선 업무 · 오늘 일정 · 응답 요청",
+        "primaryAction": "지금 할 일 바로 처리"
       },
       "MZ_V1": {
-        "firstQuestion": "AI가 어떤 결과를 근거와 함께 준비해야 하는가",
-        "primaryAction": "근거 기반 계획 검토 후 담당 앱 인계",
-        "sharedApps": "공통 순서 100% 보존"
+        "firstQuestion": "업무 의도 · 근거 · 실행 계획",
+        "primaryAction": "계획 검토 · 담당 앱에서 계속"
       },
-      "appsTitle": "내 앱 바로가기 (18개 승인 자산)",
-      "appsSynced": "공통 순서 동기화 완료",
-      "classicTag": "전사 공지",
-      "classicMeta": "인재개발팀 · 오늘 18:00 마감",
+      "appsTitle": "승인된 앱 {{count}}개",
+      "appsShown": "{{count}}개 중 {{visible}}개 표시",
+      "classicTag": "조직 정보 중심",
+      "classicMeta": "공지와 원문을 한 화면에서 확인",
       "classicHero": "전사 조직문화 개편안 및 온보딩 가이드라인 확정 배포",
       "classicAction": "원문 지침 열람",
-      "flowTag": "마감 22분 전",
-      "flowMeta": "오늘의 긴급 최우선 실행 업무 #1",
+      "flowTag": "실행 우선",
+      "flowMeta": "우선순위가 높은 업무부터 정렬",
       "flowHero": "출시 점검 회의 사전 브리프 자료 취합 및 최종 검토",
       "flowAction": "즉시 검토 및 브리프",
-      "mzTag": "근거 기반 AI Stage",
-      "mzMeta": "담당 앱 인계 전 검토 필수",
+      "mzTag": "AI 계획 중심",
+      "mzMeta": "검토 후 담당 앱으로 안전하게 연결",
       "mzHero": "필요한 결과를 설명하고 근거가 연결된 편집 가능한 계획 만들기",
       "mzAction": "검토 작업 공간 열기",
-      "news": "사내 소식 · 경영 브리핑 (65%)",
+      "news": "사내 소식 · 경영 브리핑",
       "newsItem1": "Q2 글로벌 거점 오피스 자율 좌석제 운영 변경",
       "newsItem2": "AI 트랜스포메이션 로드맵 다시보기",
-      "handbook": "조직 지원 핸드북 (35%)",
+      "handbook": "조직 지원 핸드북",
       "handbookItem1": "경비 청구 규정집",
       "handbookItem2": "법인차량 배차 신청",
       "handbookItem3": "IT 헬프데스크 접수",
-      "queue": "우선 대기 큐 (38%)",
+      "queue": "우선 대기 큐",
       "queueItem1": "[결재] 구매 품의 요청",
       "queueItem2": "[업무] 스프린트 재할당",
-      "timeline": "시간 흐름 (34%)",
-      "timelineItem1": "10:30 출시 점검 정기 회의",
-      "timelineItem2": "13:30 집중 업무 블록",
-      "requests": "내 요청 (28%)",
-      "requestsItem1": "미확인 메일 5건",
-      "requestsItem2": "멘션 요청 1건",
+      "timeline": "시간 흐름",
+      "timelineItem1": "출시 점검 정기 회의",
+      "timelineItem2": "집중 업무 블록",
+      "requests": "내 요청",
+      "requestsItem1": "미확인 메일 확인",
+      "requestsItem2": "멘션 요청 확인",
       "evidence": "근거 자료",
       "evidenceItem1": "현재 업무와 마감일",
       "evidenceItem2": "일정과 원본 자료",
@@ -331,16 +334,16 @@
       "handoffItem2": "접수 기록에서 이어가기"
     },
     "sharedApps": {
-      "title": "공통 앱 {{count}}개 순서 잠금",
-      "description": "세 모드는 동일한 승인 앱과 순서를 사용합니다. 모드 선택으로 앱 권한이나 배치 순서는 바뀌지 않습니다.",
-      "orderLabel": "잠긴 공통 앱 순서",
+      "title": "모든 모드에서 유지되는 공통 앱 {{count}}개",
+      "description": "펼쳐서 앱 순서를 확인할 수 있습니다. 모드를 바꿔도 순서와 접근 권한은 달라지지 않습니다.",
+      "orderLabel": "유지되는 공통 앱 순서",
       "position": "{{position}}번"
     },
     "status": {
-      "saved": "현재 적용된 모드와 선택한 모드가 같습니다.",
-      "dirty": "{{mode}} 모드를 선택했습니다. 적용 전까지 현재 홈은 유지됩니다.",
-      "applying": "선택한 홈 모드를 적용하고 있습니다.",
-      "disabled": "현재는 홈 모드를 변경할 수 없습니다."
+      "saved": "현재 사용 중인 모드입니다.",
+      "dirty": "선택한 모드: {{mode}}. 적용하기 전까지 기존 홈이 유지됩니다.",
+      "applying": "선택한 홈 모드를 적용하고 있습니다…",
+      "disabled": "현재 홈 모드를 변경할 수 없습니다."
     }
   },
   "layout": {

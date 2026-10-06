@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Chip,
   FormControl,
@@ -8,20 +11,20 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { alpha, darken } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 import {
   Bell,
   Bot,
   Briefcase,
   CalendarDays,
   Check,
+  ChevronDown,
   Columns3,
   FileText,
   LockKeyhole,
   Newspaper,
   Rows3,
   Sparkles,
-  Zap,
 } from 'lucide-react';
 import { useId, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -69,49 +72,44 @@ const previewTypography = {
   hero: foundationTokens.workplace.typography.smallBody.fontSize,
 } as const;
 
-const previewColors = {
-  appSurface: foundationTokens.color.neutral[50],
-  appAccent: foundationTokens.color.product.primary,
-  textSubdued: foundationTokens.color.neutral[500],
-  classicAccent: foundationTokens.color.product.primary,
-  classicHeroSurface: alpha(foundationTokens.color.product.primary, 0.08),
-  flowHeroSurface: foundationTokens.color.product.primary,
-  chipText: foundationTokens.color.neutral[0],
-  attention: foundationTokens.color.status.error,
-  flowRowSurface: alpha(foundationTokens.color.product.primary, 0.08),
-  quietRowSurface: foundationTokens.color.neutral[25],
-  selectedText: darken(foundationTokens.color.product.primary, 0.08),
-} as const;
-
-const flowPreviewGradient = `linear-gradient(120deg, ${foundationTokens.color.product.primary} 0%, ${darken(foundationTokens.color.product.primary, 0.18)} 100%)`;
-const classicPreviewGradient = `linear-gradient(90deg, ${previewColors.classicHeroSurface} 0%, ${foundationTokens.color.neutral[25]} 100%)`;
-const classicPreviewBorder = `4px solid ${previewColors.classicAccent}`;
-
 function PreviewAppRail({ apps }: { apps: readonly HomeModeSharedApp[] }) {
   const { t } = useTranslation('homeStudio');
+  const visibleApps = apps.slice(0, previewAppIcons.length);
+
   return (
     <Box sx={{ p: 1.25, borderRadius: previewRadius.rail, bgcolor: 'background.paper' }}>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        justifyContent="space-between"
+        gap={0.5}
+      >
         <Typography variant="caption" fontWeight={foundationTokens.home.typography.weightHeavy}>
-          {t('modePreset.preview.appsTitle')}
+          {t('modePreset.preview.appsTitle', { count: apps.length })}
         </Typography>
         <Typography
           variant="caption"
           color="primary.main"
           sx={{ fontSize: previewTypography.compact }}
         >
-          {t('modePreset.preview.appsSynced')}
+          {t('modePreset.preview.appsShown', {
+            visible: visibleApps.length,
+            count: apps.length,
+          })}
         </Typography>
       </Stack>
       <Box
         sx={{
           mt: 0.75,
           display: 'grid',
-          gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
+          gridTemplateColumns: {
+            xs: 'repeat(3, minmax(0, 1fr))',
+            sm: 'repeat(6, minmax(0, 1fr))',
+          },
           gap: 0.75,
         }}
       >
-        {apps.slice(0, 6).map((app, index) => {
+        {visibleApps.map((app, index) => {
           const Icon = previewAppIcons[index] ?? Briefcase;
           return (
             <Stack
@@ -123,14 +121,18 @@ function PreviewAppRail({ apps }: { apps: readonly HomeModeSharedApp[] }) {
                 minWidth: 0,
                 height: 46,
                 borderRadius: previewRadius.tile,
-                bgcolor: previewColors.appSurface,
+                bgcolor: 'action.hover',
               }}
             >
-              <Icon
-                size={15}
-                color={index < 4 ? previewColors.appAccent : previewColors.textSubdued}
-                aria-hidden="true"
-              />
+              <Box
+                component="span"
+                sx={{
+                  display: 'inline-flex',
+                  color: index < 4 ? 'primary.main' : 'text.secondary',
+                }}
+              >
+                <Icon size={15} color="currentColor" aria-hidden="true" />
+              </Box>
               <Typography
                 variant="caption"
                 title={app.label}
@@ -169,12 +171,11 @@ function ModePreview({
       aria-hidden="true"
       data-mode-preview={mode}
       sx={(theme) => ({
-        height: 326,
+        minHeight: { sm: 326 },
         p: 1.25,
         display: 'flex',
         flexDirection: 'column',
         gap: 1,
-        overflow: 'hidden',
         border: 1,
         borderColor: 'divider',
         borderRadius: previewRadius.surface,
@@ -185,20 +186,19 @@ function ModePreview({
     >
       <PreviewAppRail apps={apps} />
       <Box
-        sx={{
+        sx={(theme) => ({
           p: 1.25,
           borderRadius: previewRadius.rail,
-          borderLeft: actionOriented ? 0 : classicPreviewBorder,
+          borderLeft: actionOriented ? 0 : 4,
+          borderLeftColor: 'primary.main',
           color: actionOriented ? 'common.white' : 'text.primary',
-          bgcolor: actionOriented
-            ? previewColors.flowHeroSurface
-            : previewColors.classicHeroSurface,
-          background: mz
-            ? previewColors.flowHeroSurface
-            : flow
-              ? flowPreviewGradient
-              : classicPreviewGradient,
-        }}
+          bgcolor: actionOriented ? 'primary.main' : 'action.hover',
+          overflowWrap: 'anywhere',
+          wordBreak: 'keep-all',
+          ...(theme.palette.mode === 'dark' && !actionOriented
+            ? { bgcolor: alpha(theme.palette.primary.main, 0.12) }
+            : {}),
+        })}
       >
         <Stack direction="row" alignItems="center" gap={0.75}>
           <Chip
@@ -210,13 +210,21 @@ function ModePreview({
                   ? 'modePreset.preview.flowTag'
                   : 'modePreset.preview.classicTag'
             )}
-            sx={{
+            sx={(theme) => ({
               height: 22,
-              color: previewColors.chipText,
-              bgcolor: actionOriented ? previewColors.attention : previewColors.classicAccent,
+              color: flow
+                ? theme.palette.error.contrastText
+                : actionOriented
+                  ? theme.palette.primary.main
+                  : theme.palette.primary.contrastText,
+              bgcolor: flow
+                ? theme.palette.error.main
+                : actionOriented
+                  ? theme.palette.primary.contrastText
+                  : theme.palette.primary.main,
               fontSize: previewTypography.compact,
               fontWeight: foundationTokens.home.typography.weightHeavy,
-            }}
+            })}
           />
           <Typography variant="caption" sx={{ opacity: 0.82, fontSize: previewTypography.compact }}>
             {t(
@@ -232,8 +240,10 @@ function ModePreview({
           sx={{
             mt: 0.75,
             fontSize: previewTypography.hero,
-            fontWeight: foundationTokens.home.typography.weightHeavy + 50,
+            fontWeight: foundationTokens.home.typography.weightHeavy,
             lineHeight: foundationTokens.home.typography.cardLineHeight,
+            wordBreak: 'keep-all',
+            overflowWrap: 'anywhere',
           }}
         >
           {t(
@@ -247,15 +257,15 @@ function ModePreview({
         <Stack direction="row" gap={0.75} sx={{ mt: 1 }}>
           <Box
             component="span"
-            sx={{
+            sx={(theme) => ({
               px: 1,
               py: 0.5,
               borderRadius: previewRadius.action,
-              bgcolor: actionOriented ? 'common.white' : previewColors.classicAccent,
-              color: actionOriented ? previewColors.flowHeroSurface : 'common.white',
+              bgcolor: actionOriented ? 'common.white' : 'primary.main',
+              color: actionOriented ? theme.palette.primary.main : 'primary.contrastText',
               fontSize: previewTypography.compact,
               fontWeight: foundationTokens.home.typography.weightEmphasis,
-            }}
+            })}
           >
             {t(
               mz
@@ -272,7 +282,10 @@ function ModePreview({
           flex: 1,
           minHeight: 0,
           display: 'grid',
-          gridTemplateColumns: actionOriented ? '1.15fr 1fr 0.82fr' : '1.85fr 1fr',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: actionOriented ? '1.15fr 1fr 0.82fr' : '1.85fr 1fr',
+          },
           gap: 1,
         }}
       >
@@ -291,29 +304,24 @@ function ModePreview({
               bgcolor: 'background.paper',
             }}
           >
-            <Stack direction="row" alignItems="center" justifyContent="space-between" gap={0.5}>
+            <Stack direction="row" alignItems="center" gap={0.5}>
               <Typography
                 variant="caption"
                 fontWeight={foundationTokens.home.typography.weightHeavy}
-                sx={{ fontSize: previewTypography.compactHeading }}
+                sx={{
+                  fontSize: previewTypography.compactHeading,
+                  wordBreak: 'keep-all',
+                  overflowWrap: 'anywhere',
+                }}
               >
                 {t(`modePreset.preview.${area}`)}
               </Typography>
-              {actionOriented && (
-                <Typography
-                  variant="caption"
-                  color="primary.main"
-                  sx={{ fontSize: previewTypography.micro }}
-                >
-                  {index === 0 ? '3건' : index === 1 ? '10:30' : '2건'}
-                </Typography>
-              )}
             </Stack>
             <Stack gap={0.5} sx={{ mt: 0.75 }}>
               {[0, 1, 2].slice(0, index === 1 && !actionOriented ? 3 : 2).map((row) => (
                 <Box
                   key={row}
-                  sx={{
+                  sx={(theme) => ({
                     height: actionOriented ? 27 : 24,
                     px: 0.75,
                     display: 'flex',
@@ -321,17 +329,20 @@ function ModePreview({
                     borderRadius: previewRadius.action,
                     bgcolor:
                       row === 0 && actionOriented
-                        ? previewColors.flowRowSurface
-                        : previewColors.quietRowSurface,
+                        ? alpha(
+                            theme.palette.primary.main,
+                            theme.palette.mode === 'dark' ? 0.22 : 0.08
+                          )
+                        : theme.palette.action.hover,
                     color:
                       row === 0 && actionOriented
-                        ? previewColors.selectedText
-                        : previewColors.textSubdued,
+                        ? theme.palette.primary.main
+                        : theme.palette.text.secondary,
                     fontSize: previewTypography.micro,
                     overflow: 'hidden',
                     whiteSpace: 'nowrap',
                     textOverflow: 'ellipsis',
-                  }}
+                  })}
                 >
                   {t(`modePreset.preview.${area}Item${row + 1}`)}
                 </Box>
@@ -392,10 +403,18 @@ export function HomeModePresetComparison({
   const { t } = useTranslation('homeStudio');
   const headingId = useId();
   const descriptionId = useId();
+  const selectionHelpId = useId();
+  const preservationDescriptionId = useId();
+  const choiceIdPrefix = useId();
+  const selectedPreviewTitleId = useId();
   const sharedAppsId = useId();
   const statusId = useId();
   const hasApplicableChange = dirty && selectedMode !== currentMode;
   const controlsDisabled = disabled || applying;
+  const selectedModeIsCurrent = selectedMode === currentMode;
+  const selectedModeTitle = t(`modePreset.options.${selectedMode}.title`);
+  const SelectedModeIcon =
+    selectedMode === 'CLASSIC' ? Rows3 : selectedMode === 'FLOW_V1' ? Columns3 : Bot;
 
   const handleKeyboardSelection = (event: KeyboardEvent<HTMLDivElement>) => {
     if (controlsDisabled) return;
@@ -416,7 +435,7 @@ export function HomeModePresetComparison({
       ? t('modePreset.status.disabled')
       : hasApplicableChange
         ? t('modePreset.status.dirty', {
-            mode: t(`modePreset.options.${selectedMode}.title`),
+            mode: selectedModeTitle,
           })
         : t('modePreset.status.saved');
 
@@ -440,7 +459,7 @@ export function HomeModePresetComparison({
         bgcolor: 'background.paper',
       }}
     >
-      <Stack gap={0.75}>
+      <Stack component="header" gap={1}>
         <Typography
           id={headingId}
           component="h2"
@@ -449,294 +468,463 @@ export function HomeModePresetComparison({
         >
           {t('modePreset.title')}
         </Typography>
-        <Typography id={descriptionId} color="text.secondary">
+        <Typography
+          id={descriptionId}
+          color="text.secondary"
+          sx={{ maxWidth: '72ch', wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+        >
           {t('modePreset.description')}
         </Typography>
-        <Typography variant="caption" color="text.secondary" data-mode-layout-preservation>
-          {t('modePreset.layoutPreservation')}
-        </Typography>
         <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          alignItems={{ md: 'center' }}
-          justifyContent="space-between"
-          gap={1}
-          sx={{
-            mt: 0.75,
-            px: 1.25,
-            py: 0.75,
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: previewRadius.rail,
-            bgcolor: 'action.hover',
-          }}
+          role="note"
+          direction="row"
+          alignItems="flex-start"
+          gap={1.25}
+          data-mode-layout-preservation
+          sx={(theme) => ({
+            mt: 0.5,
+            p: 1.5,
+            borderRadius: foundationTokens.home.radius.control,
+            color: 'text.primary',
+            bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.06),
+          })}
         >
-          <Stack direction="row" alignItems="center" gap={0.75}>
-            <Zap size={16} color={previewColors.appAccent} aria-hidden="true" />
+          <Box component="span" sx={{ mt: 0.15, display: 'inline-flex', color: 'primary.main' }}>
+            <LockKeyhole size={18} color="currentColor" aria-hidden="true" />
+          </Box>
+          <Stack gap={0.25} sx={{ minWidth: 0 }}>
             <Typography
-              variant="caption"
+              component="p"
+              variant="subtitle2"
               fontWeight={foundationTokens.home.typography.weightHeavy}
-              color="primary.main"
             >
-              {t('modePreset.preview.blindTestTitle')}
+              {t('modePreset.preservationTitle')}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t('modePreset.preview.blindTestDescription')}
+            <Typography
+              id={preservationDescriptionId}
+              variant="body2"
+              color="text.secondary"
+              sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+            >
+              {t('modePreset.layoutPreservation', { count: sharedAppOrder.length })}
             </Typography>
           </Stack>
-          <Typography variant="caption" color="text.secondary">
-            {t('modePreset.preview.axisIntegrity')}
-          </Typography>
         </Stack>
       </Stack>
 
-      <FormControl component="fieldset" disabled={controlsDisabled} fullWidth sx={{ mt: 2 }}>
-        <Typography
-          component="legend"
-          variant="subtitle2"
-          fontWeight={foundationTokens.home.typography.weightEmphasis}
-          sx={{ mb: 1.25 }}
-        >
-          {t('modePreset.groupLabel')}
-        </Typography>
-        <RadioGroup
-          row
-          aria-label={t('modePreset.groupLabel')}
-          value={selectedMode}
-          onChange={(event) => onSelect(event.target.value as HomeExperienceVariant)}
-          onKeyDown={handleKeyboardSelection}
+      <Box
+        data-mode-comparison-layout
+        sx={{
+          mt: 2.5,
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'minmax(0, 1fr)',
+            lg: 'minmax(18rem, 21rem) minmax(0, 1fr)',
+          },
+          alignItems: 'start',
+          gap: { xs: 2, lg: 3 },
+        }}
+      >
+        <FormControl component="fieldset" disabled={controlsDisabled} fullWidth data-mode-selector>
+          <Typography
+            component="legend"
+            variant="subtitle2"
+            fontWeight={foundationTokens.home.typography.weightEmphasis}
+          >
+            {t('modePreset.groupLabel')}
+          </Typography>
+          <Typography
+            id={selectionHelpId}
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 0.5, mb: 1.25, wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+          >
+            {t('modePreset.selectionHelp')}
+          </Typography>
+          <RadioGroup
+            aria-label={t('modePreset.groupLabel')}
+            aria-describedby={selectionHelpId}
+            value={selectedMode}
+            onChange={(event) => onSelect(event.target.value as HomeExperienceVariant)}
+            onKeyDown={handleKeyboardSelection}
+            sx={{ display: 'grid', gap: 1 }}
+          >
+            {MODE_OPTIONS.map((mode) => {
+              const isCurrent = currentMode === mode;
+              const isSelected = selectedMode === mode;
+              const isTenantAllowed = allowedModes.includes(mode);
+              const isAllowed = isTenantAllowed && enabledModes.includes(mode);
+              const isDefault = defaultMode === mode;
+              const OptionIcon = mode === 'CLASSIC' ? Rows3 : mode === 'FLOW_V1' ? Columns3 : Bot;
+              const titleId = `${choiceIdPrefix}-${mode}-title`;
+              const modeDescriptionId = `${choiceIdPrefix}-${mode}-description`;
+              const modeStatusId = `${choiceIdPrefix}-${mode}-status`;
+
+              return (
+                <FormControlLabel
+                  key={mode}
+                  value={mode}
+                  labelPlacement="start"
+                  data-mode-choice={mode}
+                  data-mode-allowed={isAllowed ? 'true' : 'false'}
+                  disabled={controlsDisabled || !isAllowed}
+                  control={
+                    <Radio
+                      inputProps={{
+                        'aria-labelledby': titleId,
+                        'aria-describedby': `${modeDescriptionId} ${modeStatusId} ${preservationDescriptionId}`,
+                      }}
+                    />
+                  }
+                  label={
+                    <Stack component="span" gap={0.75} sx={{ minWidth: 0, textAlign: 'left' }}>
+                      <Stack component="span" direction="row" alignItems="center" gap={0.75}>
+                        <Box
+                          component="span"
+                          sx={{ display: 'inline-flex', color: 'text.secondary' }}
+                        >
+                          <OptionIcon size={18} color="currentColor" aria-hidden="true" />
+                        </Box>
+                        <Typography
+                          id={titleId}
+                          component="span"
+                          variant="subtitle1"
+                          fontWeight={foundationTokens.home.typography.weightHeavy}
+                          sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+                        >
+                          {t(`modePreset.options.${mode}.title`)}
+                        </Typography>
+                      </Stack>
+                      <Typography
+                        id={modeDescriptionId}
+                        component="span"
+                        variant="body2"
+                        color="text.secondary"
+                        data-mode-choice-description
+                        sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+                      >
+                        {t(`modePreset.options.${mode}.description`)}
+                      </Typography>
+                      <Stack
+                        id={modeStatusId}
+                        component="span"
+                        direction="row"
+                        flexWrap="wrap"
+                        gap={0.5}
+                      >
+                        {isCurrent && (
+                          <Chip
+                            component="span"
+                            size="small"
+                            color="default"
+                            label={t('modePreset.current')}
+                            data-current-mode-indicator
+                          />
+                        )}
+                        {isDefault && (
+                          <Chip
+                            component="span"
+                            size="small"
+                            variant="outlined"
+                            label={t('modePreset.default')}
+                            data-default-mode-indicator
+                          />
+                        )}
+                        {!isAllowed && (
+                          <Chip
+                            component="span"
+                            size="small"
+                            color="warning"
+                            variant="outlined"
+                            label={t(
+                              isTenantAllowed && disabledModeReasons?.[mode]
+                                ? 'modePreset.rolloutUnavailable'
+                                : 'modePreset.policyUnavailable'
+                            )}
+                            data-mode-policy-unavailable
+                          />
+                        )}
+                      </Stack>
+                    </Stack>
+                  }
+                  sx={(theme) => ({
+                    width: 1,
+                    minHeight: 132,
+                    m: 0,
+                    p: 1.5,
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                    gap: 1,
+                    border: isSelected ? 2 : 1,
+                    borderColor: isSelected ? 'primary.main' : 'divider',
+                    borderRadius: foundationTokens.home.radius.surface,
+                    bgcolor: isSelected
+                      ? alpha(
+                          theme.palette.primary.main,
+                          theme.palette.mode === 'dark' ? 0.16 : 0.055
+                        )
+                      : 'background.paper',
+                    cursor: controlsDisabled || !isAllowed ? 'default' : 'pointer',
+                    transition: theme.transitions.create(['border-color', 'background-color'], {
+                      duration: theme.transitions.duration.shortest,
+                    }),
+                    '& .MuiRadio-root': { minWidth: 44, minHeight: 44, p: 1.25, mt: -0.5 },
+                    '& .MuiRadio-root.Mui-focusVisible': {
+                      outline: '3px solid',
+                      outlineColor: alpha(theme.palette.primary.main, 0.44),
+                      outlineOffset: 2,
+                    },
+                    '& .MuiFormControlLabel-label': { flex: 1, minWidth: 0 },
+                  })}
+                />
+              );
+            })}
+          </RadioGroup>
+        </FormControl>
+
+        <Box
+          component="section"
+          aria-labelledby={selectedPreviewTitleId}
+          data-selected-mode-preview={selectedMode}
           sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-            gap: 1.5,
+            minWidth: 0,
+            p: { xs: 1.5, sm: 2 },
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: foundationTokens.home.radius.surface,
+            bgcolor: 'background.paper',
           }}
         >
-          {MODE_OPTIONS.map((mode) => {
-            const isCurrent = currentMode === mode;
-            const isSelected = selectedMode === mode;
-            const isTenantAllowed = allowedModes.includes(mode);
-            const isAllowed = isTenantAllowed && enabledModes.includes(mode);
-            const isDefault = defaultMode === mode;
-            const OptionIcon = mode === 'CLASSIC' ? Rows3 : mode === 'FLOW_V1' ? Columns3 : Bot;
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            alignItems={{ xs: 'flex-start', sm: 'center' }}
+            justifyContent="space-between"
+            gap={1}
+          >
+            <Typography variant="overline" color="text.secondary">
+              {t('modePreset.preview.selectedLabel')}
+            </Typography>
+            <Chip
+              size="small"
+              color={selectedModeIsCurrent ? 'default' : 'primary'}
+              variant={selectedModeIsCurrent ? 'outlined' : 'filled'}
+              label={t(
+                selectedModeIsCurrent
+                  ? 'modePreset.preview.currentBadge'
+                  : 'modePreset.preview.pendingBadge'
+              )}
+            />
+          </Stack>
+          <Stack direction="row" alignItems="center" gap={1} sx={{ mt: 0.5 }}>
+            <Box component="span" sx={{ display: 'inline-flex', color: 'primary.main' }}>
+              <SelectedModeIcon size={21} color="currentColor" aria-hidden="true" />
+            </Box>
+            <Typography
+              id={selectedPreviewTitleId}
+              component="h3"
+              variant="h6"
+              fontWeight={foundationTokens.home.typography.weightHeavy}
+              sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+            >
+              {selectedModeTitle}
+            </Typography>
+          </Stack>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 0.75, wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+          >
+            {t(`modePreset.options.${selectedMode}.description`)}
+          </Typography>
 
-            return (
-              <FormControlLabel
-                key={mode}
-                value={mode}
-                data-mode-choice={mode}
-                data-mode-allowed={isAllowed ? 'true' : 'false'}
-                disabled={controlsDisabled || !isAllowed}
-                control={
-                  <Radio inputProps={{ 'aria-describedby': `${descriptionId} ${sharedAppsId}` }} />
-                }
-                label={
-                  <Stack component="span" gap={1.1} sx={{ width: 1, minWidth: 0 }}>
-                    <Stack
-                      component="span"
-                      direction="row"
-                      alignItems="center"
-                      gap={1}
-                      flexWrap="wrap"
-                    >
-                      <OptionIcon size={19} aria-hidden="true" />
-                      <Typography
-                        component="span"
-                        variant="subtitle1"
-                        fontWeight={foundationTokens.home.typography.weightHeavy}
-                      >
-                        {t(`modePreset.options.${mode}.title`)}
-                      </Typography>
-                      {isCurrent && (
-                        <Chip
-                          size="small"
-                          color="default"
-                          label={t('modePreset.current')}
-                          data-current-mode-indicator
-                        />
-                      )}
-                      {isDefault && (
-                        <Chip
-                          size="small"
-                          variant="outlined"
-                          label={t('modePreset.default')}
-                          data-default-mode-indicator
-                        />
-                      )}
-                      {!isAllowed && (
-                        <Chip
-                          size="small"
-                          color="warning"
-                          variant="outlined"
-                          label={t(
-                            isTenantAllowed && disabledModeReasons?.[mode]
-                              ? 'modePreset.rolloutUnavailable'
-                              : 'modePreset.policyUnavailable'
-                          )}
-                          data-mode-policy-unavailable
-                        />
-                      )}
-                      {isSelected && (
-                        <Chip
-                          size="small"
-                          color="primary"
-                          icon={<Check size={14} aria-hidden="true" />}
-                          label={t('modePreset.selected')}
-                          data-selected-mode-indicator
-                        />
-                      )}
-                    </Stack>
-                    <Typography component="span" variant="body2" color="text.secondary">
-                      {t(`modePreset.options.${mode}.description`)}
-                    </Typography>
-                    <Box
-                      component="span"
-                      sx={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                        gap: 0.5,
-                        p: 0.75,
-                        borderRadius: previewRadius.tile,
-                        bgcolor: 'action.hover',
-                      }}
-                    >
-                      {(['firstQuestion', 'primaryAction', 'sharedApps'] as const).map((key) => (
-                        <Typography
-                          component="span"
-                          key={key}
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ fontSize: previewTypography.compactHeading }}
-                        >
-                          <Box component="strong" sx={{ color: 'text.primary' }}>
-                            {t(`modePreset.preview.${key}`)}
-                          </Box>{' '}
-                          {t(`modePreset.preview.${mode}.${key}`)}
-                        </Typography>
-                      ))}
-                    </Box>
-                    <ModePreview mode={mode} apps={sharedAppOrder} />
-                  </Stack>
-                }
-                sx={(theme) => ({
-                  minHeight: 480,
-                  m: 0,
-                  px: 1.5,
-                  py: 1.5,
-                  alignItems: 'flex-start',
-                  gap: 0,
-                  position: 'relative',
-                  border: isSelected ? 2 : 1,
-                  borderColor: isSelected ? 'primary.main' : 'divider',
-                  borderRadius: foundationTokens.home.radius.surface,
-                  bgcolor: isSelected
-                    ? alpha(theme.palette.primary.main, 0.055)
-                    : 'background.paper',
-                  cursor: controlsDisabled ? 'default' : 'pointer',
-                  transition: theme.transitions.create(['border-color', 'background-color'], {
-                    duration: theme.transitions.duration.shortest,
-                  }),
-                  '&:focus-within': {
-                    outline: '3px solid',
-                    outlineColor: alpha(theme.palette.primary.main, 0.44),
-                    outlineOffset: 2,
-                  },
-                  '& .MuiRadio-root': {
-                    minWidth: 44,
-                    minHeight: 44,
-                    p: 1.25,
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    zIndex: 1,
-                  },
-                  '& .MuiFormControlLabel-label': { flex: 1, minWidth: 0, pr: 4.5 },
-                })}
-              />
-            );
-          })}
-        </RadioGroup>
-      </FormControl>
+          <Box
+            data-mode-features
+            sx={{
+              mt: 1.5,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+              gap: 1,
+            }}
+          >
+            {(['firstQuestion', 'primaryAction'] as const).map((key) => (
+              <Box
+                key={key}
+                sx={{
+                  minWidth: 0,
+                  p: 1.25,
+                  borderRadius: foundationTokens.home.radius.control,
+                  bgcolor: 'action.hover',
+                }}
+              >
+                <Typography
+                  display="block"
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={foundationTokens.home.typography.weightEmphasis}
+                >
+                  {t(`modePreset.preview.${key}`)}
+                </Typography>
+                <Typography
+                  sx={{
+                    mt: 0.35,
+                    fontSize: foundationTokens.workplace.typography.smallBody.fontSize,
+                    fontWeight: foundationTokens.home.typography.weightSemibold,
+                    wordBreak: 'keep-all',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {t(`modePreset.preview.${selectedMode}.${key}`)}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
 
-      <Box
-        id={sharedAppsId}
+          <Box
+            component="figure"
+            data-mode-preview-frame
+            sx={{ m: 0, mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }}
+          >
+            <Box component="figcaption">
+              <Stack alignItems="flex-start" gap={0.35}>
+                <Typography
+                  component="span"
+                  variant="subtitle2"
+                  fontWeight={foundationTokens.home.typography.weightHeavy}
+                  sx={{ flexShrink: 0, wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+                >
+                  {t('modePreset.preview.exampleLabel')}
+                </Typography>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
+                >
+                  {t('modePreset.preview.disclaimer')}
+                </Typography>
+              </Stack>
+            </Box>
+            <Box sx={{ mt: 1 }}>
+              <ModePreview mode={selectedMode} apps={sharedAppOrder} />
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+
+      <Accordion
+        disableGutters
+        elevation={0}
         data-shared-app-order={sharedAppOrder.map(({ id }) => id).join(',')}
         sx={(theme) => ({
           mt: 2.5,
-          p: 2,
           border: 1,
           borderColor: 'divider',
           borderRadius: foundationTokens.home.radius.surface,
           bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.025),
+          overflow: 'hidden',
+          '&:before': { display: 'none' },
         })}
       >
-        <Stack direction="row" alignItems="flex-start" gap={1.25}>
-          <LockKeyhole size={20} aria-hidden="true" />
-          <Stack gap={0.25} sx={{ minWidth: 0 }}>
-            <Typography
-              variant="subtitle2"
-              fontWeight={foundationTokens.home.typography.weightHeavy}
-            >
-              {t('modePreset.sharedApps.title', { count: sharedAppOrder.length })}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t('modePreset.sharedApps.description')}
-            </Typography>
-          </Stack>
-        </Stack>
-        <Box
-          component="ol"
-          aria-label={t('modePreset.sharedApps.orderLabel')}
-          sx={{
-            m: 0,
-            mt: 1.5,
-            p: 0,
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: 'repeat(3, minmax(0, 1fr))',
-              sm: 'repeat(6, 1fr)',
-              md: 'repeat(9, 1fr)',
-            },
-            gap: 0.75,
-            listStyle: 'none',
-          }}
+        <AccordionSummary
+          id={`${sharedAppsId}-summary`}
+          aria-controls={`${sharedAppsId}-panel`}
+          expandIcon={<ChevronDown size={18} aria-hidden="true" />}
+          sx={{ px: { xs: 1.5, sm: 2 }, py: 0.5 }}
         >
-          {sharedAppOrder.map((app, index) => (
-            <Box
-              component="li"
-              key={app.id}
-              data-shared-app-id={app.id}
-              sx={{
-                minWidth: 0,
-                px: 0.75,
-                py: 0.75,
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: foundationTokens.home.radius.control,
-                bgcolor: 'background.paper',
-              }}
-            >
-              <Typography display="block" variant="caption" color="text.secondary">
-                {t('modePreset.sharedApps.position', { position: index + 1 })}
+          <Stack component="span" direction="row" alignItems="flex-start" gap={1.25}>
+            <Box component="span" sx={{ mt: 0.25, display: 'inline-flex' }}>
+              <LockKeyhole size={19} aria-hidden="true" />
+            </Box>
+            <Stack component="span" gap={0.25} sx={{ minWidth: 0, textAlign: 'left' }}>
+              <Typography
+                component="span"
+                variant="subtitle2"
+                fontWeight={foundationTokens.home.typography.weightHeavy}
+              >
+                {t('modePreset.sharedApps.title', { count: sharedAppOrder.length })}
               </Typography>
               <Typography
-                display="block"
-                variant="caption"
-                fontWeight={foundationTokens.home.typography.weightEmphasis}
-                noWrap
-                title={app.label}
+                component="span"
+                variant="body2"
+                color="text.secondary"
+                sx={{ wordBreak: 'keep-all', overflowWrap: 'anywhere' }}
               >
-                {app.label}
+                {t('modePreset.sharedApps.description')}
               </Typography>
-            </Box>
-          ))}
-        </Box>
-      </Box>
+            </Stack>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails
+          id={`${sharedAppsId}-panel`}
+          aria-labelledby={`${sharedAppsId}-summary`}
+          sx={{ px: { xs: 1.5, sm: 2 }, pt: 0, pb: 2 }}
+        >
+          <Box
+            component="ol"
+            aria-label={t('modePreset.sharedApps.orderLabel')}
+            sx={{
+              m: 0,
+              p: 0,
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(2, minmax(0, 1fr))',
+                sm: 'repeat(3, minmax(0, 1fr))',
+                md: 'repeat(6, minmax(0, 1fr))',
+                lg: 'repeat(9, minmax(0, 1fr))',
+              },
+              gap: 0.75,
+              listStyle: 'none',
+            }}
+          >
+            {sharedAppOrder.map((app, index) => (
+              <Box
+                component="li"
+                key={app.id}
+                data-shared-app-id={app.id}
+                sx={{
+                  minWidth: 0,
+                  px: 0.75,
+                  py: 0.75,
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: foundationTokens.home.radius.control,
+                  bgcolor: 'background.paper',
+                }}
+              >
+                <Typography display="block" variant="caption" color="text.secondary">
+                  {t('modePreset.sharedApps.position', { position: index + 1 })}
+                </Typography>
+                <Typography
+                  display="block"
+                  variant="caption"
+                  fontWeight={foundationTokens.home.typography.weightEmphasis}
+                  noWrap
+                  title={app.label}
+                >
+                  {app.label}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </AccordionDetails>
+      </Accordion>
 
       <Stack
+        data-mode-actions
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'stretch', sm: 'center' }}
         justifyContent="space-between"
         gap={1.5}
-        sx={{ mt: 2.5 }}
+        sx={{
+          position: { xs: 'static', sm: 'sticky' },
+          bottom: { sm: 0 },
+          zIndex: 1,
+          mt: 2.5,
+          py: 1.5,
+          borderTop: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+        }}
       >
         <Typography
           id={statusId}
@@ -757,12 +945,12 @@ export function HomeModePresetComparison({
             <ActionButton
               type="button"
               intent="quiet"
-              disabled={controlsDisabled}
+              disabled={controlsDisabled || !hasApplicableChange}
               onClick={onCancel}
               data-mode-cancel
               sx={{ minHeight: 44, minWidth: { xs: 1, sm: 96 } }}
             >
-              {t('common.cancel')}
+              {t('modePreset.cancelSelection')}
             </ActionButton>
           )}
           <ActionButton
@@ -774,7 +962,9 @@ export function HomeModePresetComparison({
             data-mode-apply
             sx={{ minHeight: 44, minWidth: { xs: 1, sm: 184 } }}
           >
-            {applying ? t('modePreset.applying') : t('modePreset.apply')}
+            {applying
+              ? t('modePreset.applyingMode', { mode: selectedModeTitle })
+              : t('modePreset.applyMode', { mode: selectedModeTitle })}
           </ActionButton>
         </Stack>
       </Stack>

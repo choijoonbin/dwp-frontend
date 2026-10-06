@@ -33,6 +33,7 @@ import type { HomeExperienceVariant } from '@dwp-frontend/shared-utils';
 
 export const ACCOUNT_HOME_SECTIONS = [
   'overview',
+  'mode',
   'views',
   'layout',
   'appearance',
@@ -46,6 +47,7 @@ export type AccountHomeSection = (typeof ACCOUNT_HOME_SECTIONS)[number];
 
 const routeToStudioSection: Record<AccountHomeSection, ActiveHomeStudioSection> = {
   overview: 'overview',
+  mode: 'mode',
   views: 'profiles',
   layout: 'layout',
   appearance: 'appearance',
@@ -57,6 +59,7 @@ const routeToStudioSection: Record<AccountHomeSection, ActiveHomeStudioSection> 
 
 const studioSectionToRoute: Partial<Record<ActiveHomeStudioSection, AccountHomeSection>> = {
   overview: 'overview',
+  mode: 'mode',
   profiles: 'views',
   layout: 'layout',
   appearance: 'appearance',

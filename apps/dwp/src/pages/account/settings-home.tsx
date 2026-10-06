@@ -178,7 +178,7 @@ export default function SettingsHomePage() {
   );
 
   return (
-    <PageCanvas mode="focus">
+    <PageCanvas mode="workspace">
       <Stack gap={3}>
         <Stack
           direction={{ xs: 'column', sm: 'row' }}

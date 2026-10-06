@@ -244,82 +244,85 @@
   },
   "modePreset": {
     "title": "Choose a Home mode",
-    "description": "Compare how Classic, Flow, and AI Stage organize information. Changing modes preserves the order and access rights of all 18 approved shared apps.",
-    "groupLabel": "Home mode",
+    "description": "Choose what you want to see first and how you want to begin your work.",
+    "groupLabel": "Compare Home modes",
+    "selectionHelp": "Select a mode to update the Home screen example.",
     "current": "Currently applied",
     "selected": "Selected",
     "default": "Organization default",
     "policyUnavailable": "Not enabled by your organization",
     "rolloutUnavailable": "Temporarily unavailable by rollout policy",
-    "layoutPreservation": "Each mode keeps its own layout and device settings when you switch.",
+    "preservationTitle": "What stays the same",
+    "layoutPreservation": "The order and access rights of {{count}} shared apps stay the same. Each mode also keeps its own layout and device settings.",
+    "cancelSelection": "Cancel selection",
+    "applyMode": "Apply {{mode}}",
+    "applyingMode": "Applying {{mode}}…",
     "apply": "Apply changes",
     "applying": "Applying",
     "options": {
       "CLASSIC": {
-        "title": "Classic organization portal",
-        "description": "Review organization news, approved apps, and support information in a familiar portal structure."
+        "title": "Classic · Organization portal",
+        "description": "A calm Home for browsing organization news, knowledge, and support information."
       },
       "FLOW_V1": {
-        "title": "Flow work home",
-        "description": "Review priority work, calendar events, and response requests in one action-oriented flow."
+        "title": "Flow · Work Home",
+        "description": "An action-oriented Home for handling due work, schedules, and response requests by priority."
       },
       "MZ_V1": {
         "title": "AI Stage",
-        "description": "Turn an explicit intent into grounded evidence and a reviewable plan before handing actions to their owner products."
+        "description": "An AI-centered Home for turning intent into evidence and an actionable plan."
       }
     },
     "preview": {
-      "blindTestTitle": "Blind Header Test",
-      "blindTestDescription": "Classic's organization brief, Flow's urgent action canvas, and grounded AI Stage remain distinct without their headers.",
-      "axisIntegrity": "Preserves information architecture, expression width, and the order of all 18 shared apps",
-      "firstQuestion": "First question:",
-      "primaryAction": "Primary action:",
-      "sharedApps": "18 shared apps:",
+      "selectedLabel": "Selected mode",
+      "exampleLabel": "Home screen example",
+      "disclaimer": "This example explains the screen structure. Actual items depend on your access and work data.",
+      "currentBadge": "Current screen",
+      "pendingBadge": "Preview before applying",
+      "firstQuestion": "Information shown first",
+      "primaryAction": "Primary action",
       "CLASSIC": {
-        "firstQuestion": "Organization knowledge and executive news",
-        "primaryAction": "Acknowledge notices and open handbooks",
-        "sharedApps": "Order preserved 100%"
+        "firstQuestion": "Announcements · news · support information",
+        "primaryAction": "Review content · open source"
       },
       "FLOW_V1": {
-        "firstQuestion": "Due work and meeting preparation",
-        "primaryAction": "Triage the priority queue and timeline",
-        "sharedApps": "Order preserved 100%"
+        "firstQuestion": "Priority work · today's schedule · requests",
+        "primaryAction": "Act on the next task"
       },
       "MZ_V1": {
-        "firstQuestion": "What outcome should AI prepare with evidence?",
-        "primaryAction": "Review a grounded plan and hand off owner actions",
-        "sharedApps": "Order preserved 100%"
+        "firstQuestion": "Intent · evidence · action plan",
+        "primaryAction": "Review plan · continue in owner app"
       },
-      "appsTitle": "My apps (18 approved assets)",
-      "appsSynced": "Shared order synchronized",
-      "classicTag": "Organization notice",
-      "classicMeta": "People team · due today at 18:00",
+      "appsTitle": "{{count}} approved apps",
+      "appsShown": "Showing {{visible}} of {{count}}",
+      "classicTag": "Organization information",
+      "classicMeta": "Review announcements with their source material",
       "classicHero": "Organization culture and onboarding guide published",
       "classicAction": "Open the source guide",
-      "flowTag": "Due in 22 minutes",
-      "flowMeta": "Today's highest-priority action #1",
+      "flowTag": "Action first",
+      "flowMeta": "Higher-priority work appears first",
       "flowHero": "Review the launch checkpoint meeting brief and final evidence",
       "flowAction": "Review and open brief",
-      "mzTag": "Grounded AI Stage",
-      "mzMeta": "Review required before owner handoff",
+      "mzTag": "AI planning",
+      "mzMeta": "Review before continuing safely in the owner app",
       "mzHero": "Describe an outcome and build an evidence-backed, editable plan",
       "mzAction": "Open review workspace",
-      "news": "Organization news and executive brief (65%)",
+      "news": "Organization news and executive brief",
       "newsItem1": "Global hub flexible seating policy update",
       "newsItem2": "AI transformation roadmap recording",
-      "handbook": "Organization support handbooks (35%)",
+      "handbook": "Organization support handbooks",
       "handbookItem1": "Expense policy",
       "handbookItem2": "Fleet booking",
       "handbookItem3": "IT service desk",
-      "queue": "Priority queue (38%)",
+      "queue": "Priority queue",
       "queueItem1": "[Approval] Purchase request",
       "queueItem2": "[Work] Sprint reassignment",
-      "timeline": "Timeline (34%)",
-      "timelineItem1": "10:30 Launch checkpoint meeting",
-      "timelineItem2": "13:30 Focus block",
-      "requests": "My requests (28%)",
-      "requestsItem1": "5 unread messages",
-      "requestsItem2": "1 mention request",
+      "timeline": "Timeline",
+      "timelineItem1": "Launch checkpoint meeting",
+      "timelineItem2": "Focus block",
+      "requests": "My requests",
+      "requestsItem1": "Review unread messages",
+      "requestsItem2": "Review mention requests",
       "evidence": "Grounded evidence",
       "evidenceItem1": "Current work and due dates",
       "evidenceItem2": "Calendar and source material",
@@ -331,15 +334,15 @@
       "handoffItem2": "Resume from receipt"
     },
     "sharedApps": {
-      "title": "Shared order locked for {{count}} apps",
-      "description": "All three modes use the same approved apps in the same order. Choosing a mode does not change app access or placement order.",
-      "orderLabel": "Locked shared app order",
+      "title": "{{count}} shared apps preserved across every mode",
+      "description": "Expand to review their order. Changing modes does not change app order or access rights.",
+      "orderLabel": "Preserved shared app order",
       "position": "Position {{position}}"
     },
     "status": {
-      "saved": "The selected mode matches the currently applied mode.",
+      "saved": "This is your current Home mode.",
       "dirty": "{{mode}} is selected. Your current Home remains active until you apply it.",
-      "applying": "Applying the selected Home mode.",
+      "applying": "Applying the selected Home mode…",
       "disabled": "Home mode changes are currently unavailable."
     }
   },

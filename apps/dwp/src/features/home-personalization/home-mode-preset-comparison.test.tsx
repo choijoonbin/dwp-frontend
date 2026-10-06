@@ -102,16 +102,27 @@ describe('HomeModePresetComparison', () => {
     expect(
       container.querySelector('[data-mode-choice="CLASSIC"] [data-current-mode-indicator]')
     ).not.toBeNull();
-    expect(
-      container.querySelector('[data-mode-choice="FLOW_V1"] [data-selected-mode-indicator]')
-    ).not.toBeNull();
+    expect(container.querySelector('[data-selected-mode-preview="FLOW_V1"]')).not.toBeNull();
+    expect(container.querySelectorAll('[data-mode-preview]')).toHaveLength(1);
+    expect(container.querySelector('[data-mode-preview="FLOW_V1"]')).not.toBeNull();
+    expect(container.querySelector('[data-mode-features]')).not.toBeNull();
+    expect(container.querySelector('[data-mode-preview-frame]')).not.toBeNull();
+    expect(container.textContent).not.toContain('Blind Header Test');
 
     const lockedRegion = container.querySelector<HTMLElement>('[data-shared-app-order]');
     expect(lockedRegion?.dataset.sharedAppOrder).toBe(sharedApps.map(({ id }) => id).join(','));
     expect(container.querySelectorAll('[data-shared-app-id]')).toHaveLength(18);
-    expect(container.textContent).toContain('공통 앱 18개 순서 잠금');
+    expect(container.textContent).toContain('모든 모드에서 유지되는 공통 앱 18개');
+    const sharedAppsSummary = getByRole(container, 'button', {
+      name: /모든 모드에서 유지되는 공통 앱 18개/,
+    });
+    expect(sharedAppsSummary.getAttribute('aria-expanded')).toBe('false');
+    await act(async () => fireEvent.click(sharedAppsSummary));
+    expect(sharedAppsSummary.getAttribute('aria-expanded')).toBe('true');
 
-    const applyButton = getByRole(container, 'button', { name: ko.modePreset.apply });
+    const applyButton = getByRole(container, 'button', {
+      name: `${ko.modePreset.options.FLOW_V1.title} 적용`,
+    });
     expect(applyButton.hasAttribute('disabled')).toBe(false);
     await act(async () => fireEvent.click(applyButton));
     expect(props.onApply).toHaveBeenCalledTimes(1);
@@ -120,7 +131,9 @@ describe('HomeModePresetComparison', () => {
   it('keeps apply disabled when the selected mode is already current or the surface is disabled', async () => {
     await render({ selectedMode: 'CLASSIC', dirty: false });
 
-    let applyButton = getByRole(container, 'button', { name: ko.modePreset.apply });
+    let applyButton = getByRole(container, 'button', {
+      name: `${ko.modePreset.options.CLASSIC.title} 적용`,
+    });
     expect(applyButton.hasAttribute('disabled')).toBe(true);
     expect(
       container.querySelector('[data-home-mode-preset-comparison]')?.getAttribute('data-dirty')
@@ -128,7 +141,9 @@ describe('HomeModePresetComparison', () => {
     expect(getByRole(container, 'status').textContent).toBe(ko.modePreset.status.saved);
 
     await render({ disabled: true });
-    applyButton = getByRole(container, 'button', { name: ko.modePreset.apply });
+    applyButton = getByRole(container, 'button', {
+      name: `${ko.modePreset.options.FLOW_V1.title} 적용`,
+    });
     expect(applyButton.hasAttribute('disabled')).toBe(true);
     expect(getAllByRole(container, 'radio').every((radio) => radio.hasAttribute('disabled'))).toBe(
       true
@@ -194,7 +209,9 @@ describe('HomeModePresetComparison', () => {
 
     expect(getByRole(container, 'status').textContent).toBe(en.modePreset.status.applying);
     expect(
-      getByRole(container, 'button', { name: en.modePreset.applying }).hasAttribute('disabled')
+      getByRole(container, 'button', {
+        name: `Applying ${en.modePreset.options.FLOW_V1.title}…`,
+      }).hasAttribute('disabled')
     ).toBe(true);
     expect(getAllByRole(container, 'radio').every((radio) => radio.hasAttribute('disabled'))).toBe(
       true

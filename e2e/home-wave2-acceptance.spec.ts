@@ -117,12 +117,13 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
     if (item.width > 600) {
       await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
         'data-home-navigation-pattern',
-        'drawer'
+        'none'
       );
       await expect
         .poll(async () => Math.round((await main.boundingBox())?.width ?? 0))
         .toBe(item.width);
-      await expect(page.getByTestId('home-mobile-navigation-trigger')).toBeVisible();
+      await expect(page.getByTestId('home-mobile-navigation-trigger')).toHaveCount(0);
+      await expect(page.getByTestId('home-mobile-navigation')).toHaveCount(0);
       await expect(page.getByTestId('home-mobile-bottom-navigation')).toHaveCount(0);
     } else {
       await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
@@ -226,9 +227,7 @@ test('Classic compositions preserve the 18-app contract and document scroll at e
   }
 });
 
-test('HomeLayout keeps the root Home sidebar-free and exposes navigation from the header', async ({
-  page,
-}) => {
+test('HomeLayout keeps the root Home free of sidebar and drawer navigation', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1080 });
   await page.goto('/');
   const main = page.getByTestId('personal-home-main');
@@ -248,15 +247,31 @@ test('HomeLayout keeps the root Home sidebar-free and exposes navigation from th
     .toBe(1440);
   await expectNoDocumentOrNestedScroll(root);
 
-  const navigationTrigger = page.getByTestId('home-mobile-navigation-trigger');
-  await expect(navigationTrigger).toBeVisible();
-  await navigationTrigger.click();
-  const navigation = page.getByTestId('home-mobile-navigation');
-  await expect(navigation).toBeVisible();
-  await expect(navigation.locator('[data-testid^="home-navigation-item-"]')).toHaveCount(7);
-  await navigation.getByRole('button', { name: '탐색 메뉴 닫기' }).click();
-  await expect(navigation).toBeHidden();
-  await expect(navigationTrigger).toBeFocused();
+  await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
+    'data-home-navigation-pattern',
+    'none'
+  );
+  await expect(page.getByTestId('home-mobile-navigation-trigger')).toHaveCount(0);
+  await expect(page.getByTestId('home-mobile-navigation')).toHaveCount(0);
+  await expect(page.getByTestId('home-mobile-bottom-navigation')).toHaveCount(0);
+
+  await page.setViewportSize({ width: 600, height: 900 });
+  await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
+    'data-home-navigation-pattern',
+    'bottom'
+  );
+  await expect(page.getByTestId('home-mobile-bottom-navigation')).toBeVisible();
+  await expect(page.getByTestId('home-mobile-navigation-trigger')).toHaveCount(0);
+  await expect(page.getByTestId('home-mobile-navigation')).toHaveCount(0);
+
+  await page.setViewportSize({ width: 601, height: 900 });
+  await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
+    'data-home-navigation-pattern',
+    'none'
+  );
+  await expect(page.getByTestId('home-mobile-bottom-navigation')).toHaveCount(0);
+  await expect(page.getByTestId('home-mobile-navigation-trigger')).toHaveCount(0);
+  await expect(page.getByTestId('home-mobile-navigation')).toHaveCount(0);
   await expectCanonicalClassicLaunchpad(root);
   await expectNoLaunchpadLabelClipping(root);
   await expectNoDocumentOrNestedScroll(root);
@@ -490,11 +505,13 @@ test('Flow base and personalized compositions keep personal-action IA and all ap
     await expect(root).toHaveAttribute('data-home-scroll-contract', 'single-document');
     await expect(root).toHaveAttribute('data-flow-home-presentation', item.presentation);
     await expect(page.getByTestId('home-sidebar')).toHaveCount(0);
-    if (item.width >= 1200) {
+    if (item.width > 600) {
       await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
         'data-home-navigation-pattern',
-        'drawer'
+        'none'
       );
+      await expect(page.getByTestId('home-mobile-navigation-trigger')).toHaveCount(0);
+      await expect(page.getByTestId('home-mobile-navigation')).toHaveCount(0);
       await expect
         .poll(async () =>
           Math.round((await page.getByTestId('personal-home-main').boundingBox())?.width ?? 0)
@@ -850,18 +867,12 @@ test('200% browser and text reflow keep the complete Home document usable', asyn
   await expect(root).toBeVisible();
   await expect(page.getByTestId('home-sidebar')).toBeHidden();
   await expect(page.getByTestId('home-mobile-bottom-navigation')).toBeHidden();
-  const compactNavigationTrigger = page.getByTestId('home-mobile-navigation-trigger');
-  await expect(compactNavigationTrigger).toBeVisible();
-  const compactTriggerBounds = await compactNavigationTrigger.boundingBox();
-  expect(compactTriggerBounds?.width ?? 0).toBeGreaterThanOrEqual(44);
-  expect(compactTriggerBounds?.height ?? 0).toBeGreaterThanOrEqual(44);
-  await compactNavigationTrigger.click();
-  const compactNavigation = page.getByTestId('home-mobile-navigation');
-  await expect(compactNavigation).toBeVisible();
-  await expect(compactNavigation.locator('[data-testid^="home-navigation-item-"]')).toHaveCount(7);
-  await compactNavigation.getByRole('button', { name: '탐색 메뉴 닫기' }).click();
-  await expect(compactNavigation).toBeHidden();
-  await expect(compactNavigationTrigger).toBeFocused();
+  await expect(page.getByTestId('personal-home-shell')).toHaveAttribute(
+    'data-home-navigation-pattern',
+    'none'
+  );
+  await expect(page.getByTestId('home-mobile-navigation-trigger')).toHaveCount(0);
+  await expect(page.getByTestId('home-mobile-navigation')).toHaveCount(0);
   await expectCanonicalClassicLaunchpad(root);
   await expectNoDocumentOrNestedScroll(root);
   await stabilizeHomeWave2Visual(page);

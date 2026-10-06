@@ -546,7 +546,7 @@ test('preferences light visual baseline', async ({ page }) => {
     reduceMotion: true,
   });
 
-  await page.goto('/account/settings');
+  await page.goto('/account/settings/appearance');
   await expect(page).toHaveURL(/\/account\/settings\/appearance/);
   await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
   await expect(page.getByTestId('account-shell')).toBeVisible();
@@ -569,7 +569,7 @@ test('preferences dark high-contrast visual baseline', async ({ page }) => {
     reduceMotion: true,
   });
 
-  await page.goto('/account/settings');
+  await page.goto('/account/settings/appearance');
   await expect(page).toHaveURL(/\/account\/settings\/appearance/);
   await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');

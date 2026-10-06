@@ -215,7 +215,9 @@ async function routeAccountHome(page: Page, options: AccountHomeRouteOptions = {
       generatedAt: NOW,
     })
   );
-  await page.route('**/api/platform/v1/home-templates**', (route) => fulfillSuccess(route, []));
+  await page.route('**/api/platform/v1/home-templates**', (route) =>
+    fulfillSuccess(route, { items: [], hasMore: false, limit: 100 })
+  );
   await page.route('**/api/platform/v1/home-views**', async (route: Route) => {
     const request = route.request();
     const url = new URL(request.url());
@@ -245,25 +247,34 @@ async function routeAccountHome(page: Page, options: AccountHomeRouteOptions = {
     }
     if (request.method() === 'GET' && path.endsWith('/revisions')) {
       const viewId = path.split('/').at(-2)!;
-      return fulfillSuccess(route, [
-        {
-          revisionId: 'revision-wave5-1',
-          viewId,
-          revisionNumber: 1,
-          source: 'USER',
-          changeSummary: 'created',
-          schemaVersion: 5,
-          snapshot: {
-            snapshotVersion: 1,
-            legacyLayoutOnly: false,
-            view: { name: 'Keyboard home', modeKey: 'FLOW_V1', schemaVersion: 5, layout: layout() },
-            widgetConfigurations: {},
-            deviceLayouts: {},
+      return fulfillSuccess(route, {
+        items: [
+          {
+            revisionId: 'revision-wave5-1',
+            viewId,
+            revisionNumber: 1,
+            source: 'USER',
+            changeSummary: 'created',
+            schemaVersion: 5,
+            snapshot: {
+              snapshotVersion: 1,
+              legacyLayoutOnly: false,
+              view: {
+                name: 'Keyboard home',
+                modeKey: 'FLOW_V1',
+                schemaVersion: 5,
+                layout: layout(),
+              },
+              widgetConfigurations: {},
+              deviceLayouts: {},
+            },
+            createdAt: NOW,
+            createdBy: 42,
           },
-          createdAt: NOW,
-          createdBy: 42,
-        },
-      ]);
+        ],
+        hasMore: false,
+        limit: 50,
+      });
     }
     const restoreMatch = path.match(
       /^\/api\/platform\/v1\/home-views\/([^/]+)\/revisions\/([^/]+)\/restore$/u
@@ -351,6 +362,7 @@ test('keyboard-only create, edit, conflict reapply, and revision restore preserv
   const edit = createdRow.getByRole('button', { name: 'Edit layout' });
   await edit.press('Enter');
   await expect(page).toHaveURL(/\/account\/settings\/home\/layout$/u);
+  await expect(page.locator('[data-home-studio-dirty="false"]').first()).toBeVisible();
 
   const hide = page.getByRole('button', { name: 'Hide' });
   await hide.press('Enter');
@@ -410,6 +422,7 @@ test('every Account Home route supports direct entry and hard refresh', async ({
 
   const sections = [
     ['overview', 'Overview'],
+    ['mode', 'Home mode'],
     ['views', 'My homes'],
     ['layout', 'Layout studio'],
     ['appearance', 'Layout style'],
@@ -454,19 +467,107 @@ test('Account personalization is the single Home mode switcher and lists all thr
   page,
 }) => {
   await routeAccountHome(page);
-  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/account/settings/home/overview');
 
   await page.getByRole('tab', { name: 'Home mode' }).click();
+  await expect(page).toHaveURL(/\/account\/settings\/home\/mode$/u);
+  const panel = page.getByRole('tabpanel', { name: 'Home mode' });
+  await expect(panel).toHaveAttribute('data-home-editor-scroll-scope', 'document');
   const choices = page.locator('[data-mode-choice]');
   await expect(choices).toHaveCount(3);
   await expect(choices.nth(0)).toHaveAttribute('data-mode-choice', 'CLASSIC');
   await expect(choices.nth(1)).toHaveAttribute('data-mode-choice', 'FLOW_V1');
   await expect(choices.nth(2)).toHaveAttribute('data-mode-choice', 'MZ_V1');
-  await expect(choices.nth(0)).toContainText('Classic organization portal');
-  await expect(choices.nth(1)).toContainText('Flow work home');
+  await expect(choices.nth(0)).toContainText('Classic · Organization portal');
+  await expect(choices.nth(1)).toContainText('Flow · Work Home');
   await expect(choices.nth(2)).toContainText('AI Stage');
   await expect(choices.nth(2)).not.toContainText('MZ');
+  await expect
+    .poll(() =>
+      panel.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          overflowY: style.overflowY,
+          overscrollBehaviorY: style.overscrollBehaviorY,
+        };
+      })
+    )
+    .toEqual({ overflowY: 'visible', overscrollBehaviorY: 'auto' });
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const scrollingElement = document.scrollingElement;
+        return scrollingElement ? scrollingElement.scrollHeight - scrollingElement.clientHeight : 0;
+      })
+    )
+    .toBeGreaterThan(0);
+
+  await choices.nth(0).getByRole('radio').check();
+  await expect(page.locator('[data-home-mode-preset-comparison]')).toHaveAttribute(
+    'data-selected-mode',
+    'CLASSIC'
+  );
+  await expect(page.locator('[data-selected-mode-preview]')).toHaveAttribute(
+    'data-selected-mode-preview',
+    'CLASSIC'
+  );
+  await expect(page.locator('[data-mode-preview]')).toHaveCount(1);
+  await expect(page.locator('[data-mode-preview]')).toHaveAttribute('data-mode-preview', 'CLASSIC');
+
+  await panel.focus();
+  await page.mouse.move(720, 760);
+  await page.mouse.wheel(0, 900);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  const applyMode = page.locator('[data-mode-apply]');
+  await expect(applyMode).toBeInViewport({ ratio: 1 });
+  await expect(applyMode).toBeEnabled();
+});
+
+test('Home mode comparison keeps list and preview distinct across responsive widths', async ({
+  page,
+}) => {
+  await routeAccountHome(page);
+  await page.setViewportSize({ width: 1903, height: 1013 });
+  await page.goto('/account/settings/home/mode');
+
+  const selector = page.locator('[data-mode-selector]');
+  const preview = page.locator('[data-selected-mode-preview]');
+
+  for (const viewport of [
+    { width: 1903, height: 1013, columns: true },
+    { width: 1440, height: 900, columns: true },
+    { width: 1024, height: 900, columns: false },
+    { width: 390, height: 844, columns: false },
+  ]) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+        )
+      )
+      .toBe(true);
+
+    const selectorBox = await selector.boundingBox();
+    const previewBox = await preview.boundingBox();
+    expect(selectorBox).not.toBeNull();
+    expect(previewBox).not.toBeNull();
+    if (viewport.columns) {
+      expect(previewBox!.x).toBeGreaterThan(selectorBox!.x + selectorBox!.width - 2);
+    } else {
+      expect(previewBox!.y).toBeGreaterThan(selectorBox!.y + selectorBox!.height - 2);
+    }
+  }
+
+  await expect(page.locator('[data-mode-choice-description]').first()).toHaveCSS(
+    'word-break',
+    'keep-all'
+  );
+  await page.locator('[data-mode-choice="MZ_V1"] input[type="radio"]').check();
+  await expect(preview).toHaveAttribute('data-selected-mode-preview', 'MZ_V1');
+  await expect(page.locator('[data-mode-preview]')).toHaveAttribute('data-mode-preview', 'MZ_V1');
 });
 
 test('100-definition effective catalog stays bounded at the 30-instance editor ceiling', async ({

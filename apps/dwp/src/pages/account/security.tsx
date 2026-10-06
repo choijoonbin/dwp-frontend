@@ -212,7 +212,7 @@ export default function SecurityPage() {
   };
 
   return (
-    <PageCanvas mode="focus">
+    <PageCanvas mode="workspace">
       <Box
         sx={{
           display: 'flex',

@@ -357,6 +357,106 @@ async function expectNoHorizontalOverflow(page: Page, context: string) {
   ).toBeLessThanOrEqual(geometry.clientWidth + 1);
 }
 
+async function expectWorkspaceCanvas(page: Page, expectedGutter: number, context: string) {
+  const canvas = page.locator('#dwp-main-content > [data-dwp-page-canvas="workspace"]').first();
+  await expect(canvas, `${context}: workspace canvas is missing`).toBeVisible();
+  await expect(page.locator('#dwp-main-content > [data-dwp-page-canvas="focus"]')).toHaveCount(0);
+
+  const geometry = await canvas.evaluate((element) => {
+    const canvasRect = element.getBoundingClientRect();
+    const contentRect = element.firstElementChild?.getBoundingClientRect();
+    const mainRect = element.parentElement?.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      canvasLeft: canvasRect.left,
+      canvasRight: canvasRect.right,
+      contentLeft: contentRect?.left ?? null,
+      contentRight: contentRect?.right ?? null,
+      mainLeft: mainRect?.left ?? null,
+      mainRight: mainRect?.right ?? null,
+      maxWidth: style.maxWidth,
+      marginLeft: Number.parseFloat(style.marginLeft),
+      marginRight: Number.parseFloat(style.marginRight),
+      paddingLeft: Number.parseFloat(style.paddingLeft),
+      paddingRight: Number.parseFloat(style.paddingRight),
+    };
+  });
+
+  expect(geometry.maxWidth, `${context}: canvas must remain fluid`).toBe('none');
+  expect(Math.round(geometry.marginLeft), `${context}: left auto margin must be absent`).toBe(0);
+  expect(Math.round(geometry.marginRight), `${context}: right auto margin must be absent`).toBe(0);
+  expect(Math.round(geometry.paddingLeft), `${context}: left gutter`).toBe(expectedGutter);
+  expect(Math.round(geometry.paddingRight), `${context}: right gutter`).toBe(expectedGutter);
+  expect(Math.abs(geometry.canvasLeft - (geometry.mainLeft ?? geometry.canvasLeft))).toBeLessThan(
+    1
+  );
+  expect(
+    Math.abs(geometry.canvasRight - (geometry.mainRight ?? geometry.canvasRight))
+  ).toBeLessThan(1);
+  expect(
+    Math.abs((geometry.contentLeft ?? geometry.canvasLeft) - geometry.canvasLeft - expectedGutter),
+    `${context}: content must start on the shared gutter`
+  ).toBeLessThan(1);
+  expect(
+    Math.abs(
+      geometry.canvasRight - expectedGutter - (geometry.contentRight ?? geometry.canvasRight)
+    ),
+    `${context}: content must end on the shared gutter`
+  ).toBeLessThan(1);
+}
+
+test('personal settings surfaces share the administration workspace width', async ({ page }) => {
+  await prepare(page, ['TENANT_ADMIN']);
+  await routeProductivityConnections(page);
+  await page.route('**/api/auth/me/policy', (route) =>
+    fulfillSuccess(route, {
+      tenantId: 1,
+      defaultLoginType: 'SSO',
+      allowedLoginTypes: ['LOCAL', 'SSO'],
+      localLoginEnabled: true,
+      ssoLoginEnabled: true,
+      ssoProviderKey: 'enterprise-sso',
+      requireMfa: true,
+    })
+  );
+  await page.route('**/api/auth/idp', (route) => fulfillSuccess(route, []));
+
+  await page.setViewportSize({ width: 1848, height: 966 });
+  for (const path of [
+    '/account/settings',
+    '/account/profile',
+    '/account/security',
+    '/account/settings/appearance',
+    '/account/settings/accessibility',
+    '/account/settings/language',
+    '/account/settings/managed',
+  ]) {
+    await page.goto(path);
+    await expectWorkspaceCanvas(page, 32, path);
+    await expectNoHorizontalOverflow(page, path);
+    if (path === '/account/settings' || path === '/account/security') {
+      const surface = path === '/account/settings' ? 'S02-settings' : 'S04-security';
+      await page.screenshot({
+        path: `${EVIDENCE_DIRECTORY}/${surface}-workspace-width-1848.png`,
+        fullPage: true,
+        animations: 'disabled',
+      });
+    }
+  }
+
+  for (const viewport of [
+    { width: 1440, height: 900, gutter: 24 },
+    { width: 1280, height: 800, gutter: 24 },
+    { width: 390, height: 844, gutter: 16 },
+    { width: 320, height: 720, gutter: 16 },
+  ]) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('/account/settings');
+    await expectWorkspaceCanvas(page, viewport.gutter, `${viewport.width}px`);
+    await expectNoHorizontalOverflow(page, `${viewport.width}px`);
+  }
+});
+
 test('S01 account menu renders authoritative identity and permitted control-plane actions', async ({
   page,
 }) => {

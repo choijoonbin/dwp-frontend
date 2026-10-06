@@ -876,13 +876,8 @@ test('C18 keeps the real Home keyboard path and disables motion', async ({ page 
   await expect(page.getByTestId('personal-home-main')).toBeFocused();
   await skipLink.focus();
   await expect(skipLink).toBeFocused();
-  const modeControl = page.getByTestId('home-mobile-navigation-trigger');
-  await tabTo(page, modeControl, 8);
-  await page.keyboard.press('Enter');
-  await expect(page.getByTestId('home-mobile-navigation')).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(page.getByTestId('home-mobile-navigation')).toBeHidden();
-  await expect(modeControl).toBeFocused();
+  await expect(page.getByTestId('home-mobile-navigation-trigger')).toHaveCount(0);
+  await expect(page.getByTestId('home-mobile-navigation')).toHaveCount(0);
   const firstApp = page.locator('[data-launchpad-tile]').first();
   await tabTo(page, firstApp, 80);
   await expect(firstApp).toBeFocused();

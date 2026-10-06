@@ -277,7 +277,7 @@ export default function SettingsPage() {
 
   if (section === 'appearance') {
     return (
-      <PageCanvas mode="focus">
+      <PageCanvas mode="workspace">
         {preferenceError}
         <PageHeading
           section={section}
@@ -345,7 +345,7 @@ export default function SettingsPage() {
 
   if (section === 'accessibility') {
     return (
-      <PageCanvas mode="focus">
+      <PageCanvas mode="workspace">
         {preferenceError}
         <PageHeading
           section={section}
@@ -421,7 +421,7 @@ export default function SettingsPage() {
 
   if (section === 'language') {
     return (
-      <PageCanvas mode="focus">
+      <PageCanvas mode="workspace">
         <PageHeading
           section={section}
           title={t('sections.language.title')}
@@ -582,7 +582,7 @@ export default function SettingsPage() {
 
   if (section === 'home') {
     return (
-      <PageCanvas mode="focus">
+      <PageCanvas mode="workspace">
         <PageHeading
           section={section}
           title={t('sections.home.title')}
@@ -615,7 +615,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <PageCanvas mode="focus">
+    <PageCanvas mode="workspace">
       <PageHeading
         section={section}
         title={t('sections.managed.title')}
